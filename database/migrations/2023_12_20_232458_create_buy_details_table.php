@@ -1,0 +1,41 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class CreateBuyDetailsTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('buy_details', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('buy_id'); 
+            $table->unsignedBigInteger('clothing_id');
+            $table->unsignedBigInteger('size_id'); 
+            $table->string('total'); 
+            $table->string('iva');      
+            $table->string('quantity');       
+            $table->foreign('buy_id')->references('id')->on('buys')->onDelete('cascade');
+            $table->foreign('clothing_id')->references('id')->on('clothing')->onDelete('cascade');
+            $table->foreign('size_id')->references('id')->on('sizes')->onDelete('cascade');            
+            
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('buy_details');
+    }
+}
