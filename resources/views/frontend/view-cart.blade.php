@@ -36,8 +36,11 @@
                                             <td>
                                                 <div class="d-flex px-2 py-1">
                                                     <div>
-                                                        <img src="{{ asset('storage') . '/' . $item->image }}"
-                                                            class="img-fluid shadow border-radius-lg">
+                                                        <a target="blank" data-fancybox="gallery"
+                                                            href="{{ asset('storage') . '/' . $item->image }}">
+                                                            <img src="{{ asset('storage') . '/' . $item->image }}"
+                                                                class="img-fluid shadow border-radius-lg">
+                                                        </a>
                                                     </div>
                                                 </div>
                                             </td>
@@ -66,7 +69,7 @@
                                             <td class="align-middle">
                                                 <form name="delete-item-cart{{ $item->id }}"
                                                     id="delete-item-cart{{ $item->id }}" method="post"
-                                                    action="{{ url('/delete-item-cart/' . $item->id . '/' .$item->size_id) }}">
+                                                    action="{{ url('/delete-item-cart/' . $item->id . '/' . $item->size_id) }}">
                                                     {{ csrf_field() }}
                                                     {{ method_field('DELETE') }}
                                                     <button onclick="return confirm('Deseas borrar este artículo?')"
@@ -106,9 +109,11 @@
                         <hr class="dark horizontal my-0">
                         <div class="card-footer d-flex">
 
-                            <p class="font-weight-normal text-success my-auto" id="totalIvaElement">I.V.A: ₡{{ number_format($iva) }}</p>
+                            <p class="font-weight-normal text-success my-auto" id="totalIvaElement">I.V.A:
+                                ₡{{ number_format($iva) }}</p>
                             <i class="material-icons text-success position-relative ms-auto text-lg me-1 my-auto">paid</i>
-                            <p class="font-weight-normal text-success my-auto" id="totalPriceElement">Total: ₡{{ number_format($total_price) }}</p>
+                            <p class="font-weight-normal text-success my-auto" id="totalPriceElement">Total:
+                                ₡{{ number_format($total_price) }}</p>
 
                             </p>
                         </div>
@@ -180,7 +185,7 @@
             const filas = document.querySelectorAll('#cartTable tbody tr');
 
             filas.forEach((fila) => {
-                const precio = parseFloat(fila.querySelector('.price').value);                
+                const precio = parseFloat(fila.querySelector('.price').value);
                 const cantidad = parseInt(fila.querySelector('.quantity').value);
 
                 const subtotal = precio * cantidad;

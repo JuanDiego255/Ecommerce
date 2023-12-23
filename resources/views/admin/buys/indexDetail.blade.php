@@ -62,8 +62,11 @@
                                             <td>
                                                 <div class="d-flex px-2 py-1">
                                                     <div>
-                                                        <img src="{{ asset('storage') . '/' . $buy->image }}"
-                                                            class="text-center img-fluid shadow border-radius-lg w-25">
+                                                        <a target="blank" data-fancybox="gallery"
+                                                            href="{{ asset('storage') . '/' . $buy->image }}">
+                                                            <img src="{{ asset('storage') . '/' . $buy->image }}"
+                                                                class="text-center img-fluid shadow border-radius-lg w-25"></a>
+
                                                     </div>
                                                 </div>
                                             </td>
@@ -109,7 +112,7 @@
                                             <i class="material-icons my-auto">done</i>
                                             Provincia: {{ $item->province }}<br>
                                             <i class="material-icons my-auto">done</i>
-                                            Ciudad: {{ $item->city }}<br>                                            
+                                            Ciudad: {{ $item->city }}<br>
                                             <i class="material-icons my-auto">done</i>
                                             Dirección: {{ $item->address }}<br>
                                             <i class="material-icons my-auto">done</i>

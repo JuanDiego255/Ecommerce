@@ -57,8 +57,11 @@
                                     <td>
                                         <div class="d-flex px-2 py-1">
                                             <div>
-                                                <img src="{{ asset('storage') . '/' . $buy->image }}"
-                                                    class="text-center img-fluid shadow border-radius-lg w-25">
+                                                <a target="blank" data-fancybox="gallery"
+                                                    href="{{ asset('storage') . '/' . $buy->image }}">
+                                                    <img src="{{ asset('storage') . '/' . $buy->image }}"
+                                                        class="text-center img-fluid shadow border-radius-lg w-25">
+                                                </a>
                                             </div>
                                         </div>
                                     </td>
