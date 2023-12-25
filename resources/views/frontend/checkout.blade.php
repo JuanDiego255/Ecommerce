@@ -145,4 +145,5 @@
         </center>
        
     </div>
+    @include('layouts.inc.indexfooter')
 @endsection

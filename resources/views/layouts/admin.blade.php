@@ -42,21 +42,17 @@
 
     </main>
 
-    <script src="{{ asset('js/popper.min.js') }}" defer></script> <!-- Si se usa Bootstrap, Popper.js debe cargarse antes de Bootstrap -->
+    <script src="{{ asset('js/popper.min.js') }}" defer></script>
     <script src="{{ asset('js/bootstrap.min.js') }}" defer></script>
-    <script src="{{ asset('js/chartjs.min.js') }}" defer></script>
+    <script src="{{ asset('js/perfect-scrollbar.min.js') }}" defer></script>
     <script src="{{ asset('js/smooth-scrollbar.min.js') }}" defer></script>
+    <script src="{{ asset('js/chartjs.min.js') }}" defer></script>
     <script async defer src="https://buttons.github.io/buttons.js"></script>
-
-    <!-- A continuación, las bibliotecas de terceros -->
-
-    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script> <!-- Biblioteca externa -->
-    <script src="{{ asset('frontend/js/jquery-3.6.0.min.js') }}"></script> <!-- jQuery debe cargarse antes de DataTables y Material Dashboard -->
-    <script src="{{ asset('js/jquery.dataTables.min.js') }}"></script>
-    <script src="{{ asset('js/dataTables.bootstrap5.min.js') }}"></script>
-
-    <!-- Finalmente, el script principal de la interfaz -->
-
+   
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="{{ asset('frontend/js/jquery-3.6.0.min.js') }}"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
     <script src="{{ asset('js/material-dashboard.min.js') }}" defer></script>
 
     @if (session('status'))

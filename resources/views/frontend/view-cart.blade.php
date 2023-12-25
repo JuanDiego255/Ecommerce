@@ -5,7 +5,7 @@
 @endsection
 @section('content')
     <h1 class="text-dark text-center mb-5">Hola {{ $name }}</h1>
-    <div class="product_data" style="margin-left: 100px; margin-right:80px;">
+    <div class="product_data mb-3" style="margin-left: 100px; margin-right:80px;">
         <center>
             <div class=" ml-5 row row-cols-1 row-cols-md-2 g-4 align-content-center card-group mt-5">
                 <div class="col ml-5 bg-transparent">
@@ -121,8 +121,9 @@
                 </div>
             </div>
         </center>
-
+        
     </div>
+    @include('layouts.inc.indexfooter')
 @endsection
 @section('scripts')
     <script>

@@ -7,6 +7,7 @@ use App\Models\Categories;
 use App\Models\ClothingCategory;
 use App\Models\MetaTags;
 use App\Models\SizeCloth;
+use App\Models\SocialNetwork;
 use Artesaos\SEOTools\Facades\OpenGraph;
 use Artesaos\SEOTools\Facades\SEOMeta;
 use Illuminate\Http\Request;
@@ -18,6 +19,7 @@ class FrontendController extends Controller
     public function index()
     {
         $clothings = ClothingCategory::where('trending', 1)->take(15)->get();
+        $social = SocialNetwork::get();
         $tags = MetaTags::where('section', 'Inicio')->get();
         foreach ($tags as $tag) {
             SEOMeta::setTitle($tag->title);
@@ -28,7 +30,7 @@ class FrontendController extends Controller
             OpenGraph::setTitle($tag->title);
             OpenGraph::setDescription($tag->meta_og_description);
         }
-        return view('frontend.index', compact('clothings'));
+        return view('frontend.index', compact('clothings','social'));
     }
     public function category()
     {

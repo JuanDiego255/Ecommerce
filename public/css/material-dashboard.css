@@ -276,7 +276,7 @@ a {
 }
 
 a:hover {
-  color: var(--bs-link-hover-color);
+  color: #66EEB8 !important;
   text-decoration: none;
 }
 
@@ -10563,6 +10563,8 @@ fieldset:disabled .btn {
   color: #616262 !important;
 }
 
+
+
 .text-white {
   color: #fff !important;
 }
@@ -10607,6 +10609,38 @@ fieldset:disabled .btn {
   --bs-text-opacity: 1;
 }
 
+.animado{
+  opacity: 0;
+  transition: all 2s;
+}
+.foto{
+    opacity: 0;
+    transition: all 3s;
+}
+
+.mostrarArriba{
+  animation: mostrarArriba 1s;
+}
+.mostrarAbajo{
+    animation: mostrarAbajo;
+  }
+@keyframes mostrarArriba{
+  0%{
+    transform: translateX(-100px);
+  }
+  100%{
+    transform: translateX(0);
+  }
+}
+@keyframes mostrarAbajo{
+    0%{
+      transform: scale(10px) ;
+    }
+    100%{
+      transform: translateY(0) 5s;
+    }
+  }
+
 .bg-primary {
   background-color: #e91e63 !important;
 }
@@ -10621,6 +10655,9 @@ fieldset:disabled .btn {
 
 .bg-info {
   background-color: #1A73E8 !important;
+}
+.bg-velvet-mision {
+  background-color: #EDFDFB !important;
 }
 
 .bg-warning {
@@ -10710,7 +10747,14 @@ fieldset:disabled .btn {
 .bg-gradient {
   background-image: var(--bs-gradient) !important;
 }
+.card-icon {
+  display: flex;
+  align-items: center;
+}
 
+.card-icon a {
+  margin-right: 10px; /* Ajusta el espaciado entre los iconos si es necesario */
+}
 .user-select-all {
   user-select: all !important;
 }

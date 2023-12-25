@@ -5,11 +5,10 @@
 @endsection
 @section('content')
     <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
-        <div class="carousel-inner mb-4">
+        <div class="carousel-inner mb-4 foto">
 
             <div class="carousel-item">
-                <div class="page-header min-vh-75 m-3 border-radius-xl"
-                    style="background-image: url('images/carousel2.png');">
+                <div class="page-header min-vh-75 m-3" style="background-image: url('images/carousel2.PNG');">
                     <span class="mask bg-gradient-dark"></span>
                     <div class="container">
                         <div class="row">
@@ -23,8 +22,7 @@
                 </div>
             </div>
             <div class="carousel-item active">
-                <div class="page-header min-vh-75 m-3 border-radius-xl"
-                    style="background-image: url('images/carousel1.png');">
+                <div class="page-header min-vh-75 m-3" style="background-image: url('images/carousel1.PNG');">
                     <span class="mask bg-gradient-dark"></span>
                     <div class="container">
                         <div class="row">
@@ -49,17 +47,72 @@
             </a>
         </div>
     </div>
-    <h1 class="text-center text-dark">Prendas En Tendencia</h1>
-    <div class="py-5">
+
+    <hr class="text-dark">
+    <h3 class="text-center text-dark mt-5">Instragram <a href="https://www.instagram.com/velvetboutiquegrecia/">Velvet
+            Boutique</a></h3>
+    <h5 class="text-center text-muted"><span>Compartimos con ustedes lo que nos hace sentir mejor, un excelente
+            outfit!</span></h5>
+    <hr class="dark horizontal text-danger mb-3">
+
+    <div class="row mb-5 ">
+        @foreach ($social as $item)
+            <div class="col-md-6 mt-4">
+                <div class="card text-center">
+                    <div class="overflow-hidden position-relative bg-cover p-3"
+                        style="background-image: url('{{ asset('storage') . '/' . $item->image }}'); height:700px;">
+                        <span class="mask bg-gradient-dark opacity-6"></span>
+                        <div class="card-body position-relative z-index-1 d-flex flex-column mt-5">
+                            <h3 class="text-white font-weight-bolder">{{ $item->description }}.</h3>
+                            <a target="blank" class="text-white text-sm font-weight-bold mb-0 icon-move-right mt-4"
+                                href="{{ $item->url }}">
+                                <h3 class="text-white font-weight-bolder"> Ver fotografía
+                                    <i class="material-icons text-sm ms-1 position-relative"
+                                        aria-hidden="true">arrow_forward</i>
+                                </h3>
+
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endforeach
+
+    </div>
+
+    <div class="bg-velvet-mision p-3 mb-3">
+        <h3 class="text-center text-dark mt-3">Velvet Boutique</h3>
+        <h5 class="text-center text-muted"><span>Nuestra misión es envolverte con nuestros atuendos, y hacerlos llegar a la
+                puerta de tu casa.</span></h5>
+        <h5 class="text-center text-muted"><span>Realizamos envios a nivel nacional.</span></h5>
+
+    </div>
+    {{-- <div class="col-md-12 mt-5 mb-5">
+        <div class="card text-center">
+            <div class="overflow-hidden position-relative bg-cover p-3"
+                style="background-image: url('images/playa.PNG'); height:500px;">
+                <span class="mask bg-gradient-dark opacity-6"></span>
+               
+            </div>
+        </div>
+    </div> --}}
+    <hr class="dark horizontal text-danger mb-3">
+    <h3 class="text-center text-dark mt-5">Outfit`s En Tendencia</h3>
+    <h5 class="text-center text-muted"><span>Nuestras últimas colecciones, los artículos más solicitados!</span></h5>
+    <hr class="dark horizontal text-danger my-0">
+
+    <div class="mt-3 mb-5">
         <div class="container">
             <div class="row">
-                <div class="owl-carousel featured-carousel owl-theme mt-3">
+                <div class="owl-carousel featured-carousel owl-theme">
                     @foreach ($clothings as $clothing)
                         <div class="item">
                             <div class="card" data-animation="true">
 
                                 <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-                                    <a target="blank" data-fancybox="gallery" href="{{ asset('storage') . '/' . $clothing->image }}" class="d-block blur-shadow-image">
+                                    <a target="blank" data-fancybox="gallery"
+                                        href="{{ asset('storage') . '/' . $clothing->image }}"
+                                        class="d-block blur-shadow-image">
                                         <img src="{{ asset('storage') . '/' . $clothing->image }}" alt="img-blur-shadow"
                                             class="img-fluid shadow border-radius-lg w-100" style="height:300px;">
                                     </a>
@@ -88,7 +141,8 @@
                                         </a> --}}
                                     </div>
                                     <h5 class="font-weight-normal mt-3">
-                                        <a href="{{url('detail-clothing/' . $clothing->id . '/' .$clothing->category_id)}}">{{ $clothing->name }}</a>
+                                        <a
+                                            href="{{ url('detail-clothing/' . $clothing->id . '/' . $clothing->category_id) }}">{{ $clothing->name }}</a>
                                     </h5>
                                     <p class="mb-0">
                                         {{ $clothing->description }}
@@ -100,7 +154,7 @@
                                     </p>
                                     <i
                                         class="material-icons position-relative ms-auto text-lg me-1 my-auto">electric_bolt</i>
-                                   
+
                                     <i class="material-icons position-relative ms-auto text-lg me-1 my-auto">inventory</i>
                                     <p class="text-sm my-auto"> Stock: {{ $clothing->stock }}</p>
                                 </div>
@@ -111,13 +165,15 @@
             </div>
         </div>
     </div>
+
+    @include('layouts.inc.indexfooter')
 @endsection
 @section('scripts')
     <script>
         $('.featured-carousel').owlCarousel({
             loop: true,
             margin: 10,
-           
+
             dots: false,
             responsive: {
                 0: {

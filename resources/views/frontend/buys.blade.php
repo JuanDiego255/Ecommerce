@@ -118,6 +118,7 @@
             <a href="{{ url('/') }}" class="btn btn-outline-secondary">Volver</a>
         </div>
     </center>
+    @include('layouts.inc.indexfooter')
 @endsection
 @section('scripts')
     <script>

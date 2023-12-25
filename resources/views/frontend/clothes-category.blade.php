@@ -66,4 +66,5 @@
             <a href="{{ url('category/') }}" class="btn btn-outline-secondary">Todas Las Categorías</a>
         </div>
     </center>
+    @include('layouts.inc.indexfooter')
 @endsection

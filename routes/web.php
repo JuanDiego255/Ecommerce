@@ -8,6 +8,7 @@ use App\Http\Controllers\Frontend\CartController;
 use App\Http\Controllers\Frontend\CheckOutController;
 use App\Http\Controllers\MetaTagsController;
 use App\Http\Controllers\SizeController;
+use App\Http\Controllers\SocialNetworkController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -68,7 +69,7 @@ Route::group(['middleware' => 'isAdmin'], function () {
     Route::put('/approve/{id}/{approved}', [BuyController::class, 'approve']);
     Route::put('/delivery/{id}/{delivery}', [BuyController::class, 'delivery']);
 
-    //Rutas para ejercicios
+    //Rutas para tallas
     Route::post('sizes/store', [SizeController::class, 'store']);
     Route::put('/sizes/update/{id}', [SizeController::class, 'update']);
     Route::get('/sizes', [SizeController::class, 'index']);
@@ -80,4 +81,9 @@ Route::group(['middleware' => 'isAdmin'], function () {
     Route::get('metatag/edit/{id}', [MetaTagsController::class, 'edit']);
     Route::put('metatags/{id}', [MetaTagsController::class, 'update']);
     Route::delete('delete-metatag/{id}', [MetaTagsController::class, 'destroy']);
+    //Rutas para redes sociales seccion
+    Route::post('social/store', [SocialNetworkController::class, 'store']);
+    Route::put('/social/update/{id}', [SocialNetworkController::class, 'update']);
+    Route::get('/social-network', [SocialNetworkController::class, 'index']);
+    Route::delete('/delete/social/{id}', [SocialNetworkController::class, 'destroy']);
 });

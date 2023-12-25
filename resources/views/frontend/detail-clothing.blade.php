@@ -111,6 +111,7 @@
             <a href="{{ url('clothes-category/' . $category_id) }}" class="btn btn-velvet w-25">Volver</a>
         </div>
     </center>
+    @include('layouts.inc.indexfooter')
 @endsection
 @section('scripts')
     <script>

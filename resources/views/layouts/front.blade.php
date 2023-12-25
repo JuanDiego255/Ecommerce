@@ -23,6 +23,7 @@
     <link href="{{ asset('css/material-dashboard.css') }}" rel="stylesheet">
     <link href="{{ asset('frontend/css/owl.carousel.min.css') }}" rel="stylesheet">
     <link href="{{ asset('frontend/css/owl.theme.default.min.css') }}" rel="stylesheet">
+    
    {{--  <link href="{{ asset('css/material-dashboard.css.map') }}" rel="stylesheet">
 
     <link href="{{ asset('css/material-dashboard.min.css') }}" rel="stylesheet"> --}}
@@ -54,7 +55,7 @@
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
     <script src="{{ asset('js/material-dashboard.min.js') }}" defer></script>
-  
+    <script src="{{ asset('js/jquery.js') }}" defer></script>
     @if (session('status'))
         <script>
             swal({

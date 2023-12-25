@@ -51,5 +51,6 @@
                 <a href="{{ url('/') }}" class="btn btn-velvet w-25">Volver</a>
             </div>
         </center>
+        @include('layouts.inc.indexfooter')
     </div>
 @endsection
