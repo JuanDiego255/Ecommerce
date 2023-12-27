@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="{{ asset('images/logo-velvet.PNG') }}" type="image/x-icon">
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -35,9 +36,9 @@
 
     
     <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
-        
-        <div class="container-fluid py-4">
-            @include('layouts.inc.frontnavbar')
+       
+        <div>
+            @include('layouts.inc.frontnavbar')            
             @yield('content')
         </div>
     </main>
@@ -54,7 +55,7 @@
     <script src="{{ asset('frontend/js/owl.carousel.min.js') }}"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-    <script src="{{ asset('js/material-dashboard.min.js') }}" defer></script>
+
     <script src="{{ asset('js/jquery.js') }}" defer></script>
     @if (session('status'))
         <script>

@@ -55,7 +55,7 @@
             outfit!</span></h5>
     <hr class="dark horizontal text-danger mb-3">
 
-    <div class="row mb-5 ">
+    <div class="row mb-5 container-fluid">
         @foreach ($social as $item)
             <div class="col-md-6 mt-4">
                 <div class="card text-center">

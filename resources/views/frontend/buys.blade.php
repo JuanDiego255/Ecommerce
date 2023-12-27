@@ -4,8 +4,15 @@
     {!! OpenGraph::generate() !!}
 @endsection
 @section('content')
-    <h1 class="text-dark text-center">Mis Compras</h1>
     <div class="container">
+        <div class="alert alert-secondary alert-dismissible text-white fade show mt-4" role="alert">
+            <span class="alert-icon align-middle">
+                <span class="material-icons text-md">
+                    payments
+                </span>
+            </span>
+            <span class="alert-text"><strong>Mis Compras</strong></span>
+        </div>
         <div class="row w-100">
             <div class="col-md-6">
                 <div class="input-group input-group-lg input-group-static my-3 w-100">

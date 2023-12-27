@@ -4,8 +4,15 @@
     {!! OpenGraph::generate() !!}
 @endsection
 @section('content')
-    <h1 class="text-dark text-center">{{ $category_name }}</h1>
     <div class="container">
+        <div class="alert alert-secondary alert-dismissible text-white fade show mt-4" role="alert">
+            <span class="alert-icon align-middle">
+                <span class="material-icons text-md">
+                    checkroom
+                </span>
+            </span>
+            <span class="alert-text"><strong>{{ $category_name }}</strong></span>
+        </div>
         <div class="row row-cols-1 row-cols-md-3 g-4 align-content-center card-group mt-5 mb-5">
             @foreach ($clothings as $clothing)
                 @if ($clothing->total_stock != 0)

@@ -31,9 +31,9 @@ class LoginController extends Controller
     protected function authenticated()
     {
         if (Auth::user()->role_as == '1') {
-            return redirect('categories')->with('status', 'Bienvienido a Velvet Boutique');
+            return redirect('categories')->with(['status' => 'Hola '.Auth::user()->name.' '.Auth::user()->last_name, 'icon' => 'success']);
         } elseif (Auth::user()->role_as == '0') {
-            return redirect('/')->with('status', 'Inicio de sesión exitoso!');
+            return redirect('/')->with(['status' => 'Hola '.Auth::user()->name.' '.Auth::user()->last_name, 'icon' => 'success']);
         }
     }
     /**

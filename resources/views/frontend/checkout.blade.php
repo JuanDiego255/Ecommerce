@@ -4,10 +4,23 @@
     {!! OpenGraph::generate() !!}
 @endsection
 @section('content')
-    <h1 class="ps-3 text-center">Completar La Compra</h1>
-    <h6 class="ps-3 text-center mt-2">Debes adjuntar el comprobante del SINPE Móvil, una vez verificado te haremos
-        llegar el envío.</h6>
     <div class="container">
+        <div class="alert alert-secondary alert-dismissible text-white fade show mt-4" role="alert">
+            <span class="alert-icon align-middle">
+                <span class="material-icons text-md">
+                    payments
+                </span>
+            </span>
+            <span class="alert-text"><strong>Completar La Compra!</strong></span><br>
+            <span class="alert-icon align-middle">
+                <span class="material-icons text-md">
+                    domain_verification
+                </span>
+            </span>
+            <span class="alert-text"><strong>Debes adjuntar el comprobante del SINPE Móvil, una vez verificado te haremos
+                    llegar el envío.</strong></span>
+
+        </div>
         <center>
 
             <form action="{{ url('payment') }}" method="POST" enctype="multipart/form-data">
@@ -23,71 +36,71 @@
                                     <div class="col-md-6">
                                         <div class="input-group input-group-static mb-4">
                                             <label>Nombre</label>
-                                            <input value="{{Auth::user()->name}}" required type="text" name="first_name"
-                                                class="form-control float-left w-100">
+                                            <input value="{{ Auth::user()->name }}" required type="text"
+                                                name="first_name" class="form-control float-left w-100">
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="input-group input-group-static mb-4">
                                             <label>Apellidos</label>
-                                            <input value="{{Auth::user()->last_name}}" required type="text" name="last_name"
-                                                class="form-control float-left w-100">
+                                            <input value="{{ Auth::user()->last_name }}" required type="text"
+                                                name="last_name" class="form-control float-left w-100">
                                         </div>
                                     </div>
                                     <div class="col-md-6 mt-2">
                                         <div class="input-group input-group-static mb-4">
                                             <label>E-mail</label>
-                                            <input value="{{Auth::user()->email}}" required type="text" name="email"
+                                            <input value="{{ Auth::user()->email }}" required type="text" name="email"
                                                 class="form-control float-left w-100">
                                         </div>
                                     </div>
                                     <div class="col-md-6 mt-2">
                                         <div class="input-group input-group-static mb-4">
                                             <label>Teléfono</label>
-                                            <input value="{{Auth::user()->telephone}}" required type="text" name="telephone"
-                                                class="form-control float-left w-100">
+                                            <input value="{{ Auth::user()->telephone }}" required type="text"
+                                                name="telephone" class="form-control float-left w-100">
                                         </div>
                                     </div>
                                     <div class="col-md-6 mt-2">
                                         <div class="input-group input-group-static mb-4">
                                             <label>Dirección 1</label>
-                                            <input value="{{Auth::user()->address}}" required type="text" name="address"
-                                                class="form-control float-left w-100">
+                                            <input value="{{ Auth::user()->address }}" required type="text"
+                                                name="address" class="form-control float-left w-100">
                                         </div>
                                     </div>
                                     <div class="col-md-6 mt-2">
                                         <div class="input-group input-group-static mb-4">
                                             <label>Dirección 2</label>
-                                            <input value="{{Auth::user()->address_two}}" type="text" name="address_optional"
-                                                class="form-control float-left w-100">
+                                            <input value="{{ Auth::user()->address_two }}" type="text"
+                                                name="address_optional" class="form-control float-left w-100">
                                         </div>
                                     </div>
                                     <div class="col-md-6 mt-2">
                                         <div class="input-group input-group-static mb-4">
                                             <label>Ciudad</label>
-                                            <input value="{{Auth::user()->city}}" required type="text" name="city"
+                                            <input value="{{ Auth::user()->city }}" required type="text" name="city"
                                                 class="form-control float-left w-100">
                                         </div>
                                     </div>
                                     <div class="col-md-6 mt-2">
                                         <div class="input-group input-group-static mb-4">
                                             <label>Provincia</label>
-                                            <input value="{{Auth::user()->province}}" required type="text" name="state"
-                                                class="form-control float-left w-100">
+                                            <input value="{{ Auth::user()->province }}" required type="text"
+                                                name="state" class="form-control float-left w-100">
                                         </div>
                                     </div>
                                     <div class="col-md-6 mt-2">
                                         <div class="input-group input-group-static mb-4">
                                             <label>País</label>
-                                            <input value="{{Auth::user()->country}}" required value="Costa Rica" type="text" name="country"
-                                                class="form-control float-left w-100">
+                                            <input value="{{ Auth::user()->country }}" required value="Costa Rica"
+                                                type="text" name="country" class="form-control float-left w-100">
                                         </div>
                                     </div>
                                     <div class="col-md-6 mt-2">
                                         <div class="input-group input-group-static mb-4">
                                             <label>Código Postal</label>
-                                            <input value="{{Auth::user()->postal_code}}" required type="text" name="code_postal"
-                                                class="form-control float-left w-100">
+                                            <input value="{{ Auth::user()->postal_code }}" required type="text"
+                                                name="code_postal" class="form-control float-left w-100">
                                         </div>
                                     </div>
                                     <div class="col-md-12 mb-3">
@@ -143,7 +156,7 @@
                 </div>
             </form>
         </center>
-       
+
     </div>
     @include('layouts.inc.indexfooter')
 @endsection

@@ -4,15 +4,28 @@
     {!! OpenGraph::generate() !!}
 @endsection
 @section('content')
-    <h1 class="text-dark text-center mb-5">Detalles</h1>
     <div class="container">
         <center>
+            <div class="alert w-75 alert-secondary alert-dismissible text-white fade show mt-4" role="alert">
+                <span class="alert-icon align-middle">
+                    <span class="material-icons text-md">
+                        apparel
+                    </span>
+                </span>
+                <span class="alert-text"><strong>
+                        @foreach ($clothes as $item)
+                        {{$item->name.' | '.$item->description}}
+                        @endforeach
+                    </strong></span>
+            </div>
+
             @foreach ($clothes as $item)
                 <div class="card w-75 product_data">
                     <div class="row row-cols-1 row-cols-md-2 g-4 align-content-center card-group mt-5">
                         <div class="col bg-transparent">
                             <div class="card-header p-0 position-relative mt-n4 mx-3 pb-5 z-index-2">
-                                <a target="blank" data-fancybox="gallery" href="{{ asset('storage') . '/' . $item->image }}" class="d-block blur-shadow-image">
+                                <a target="blank" data-fancybox="gallery" href="{{ asset('storage') . '/' . $item->image }}"
+                                    class="d-block blur-shadow-image">
                                     <img src="{{ asset('storage') . '/' . $item->image }}" style="width: 600px"
                                         alt="img-blur-shadow" class="img-fluid shadow border-radius-lg">
                                 </a>
@@ -23,14 +36,7 @@
                         </div>
                         <div class="col bg-transparent">
                             <div class="card-body pb-4 pt-2">
-                                <a href="javascript:;">
-                                    <h3 class="font-weight-normal mt-3">
-                                        {{ $item->name }}
-                                    </h3>
-                                </a>
-                                <p>
-                                    {{ $item->description }}
-                                </p>
+
                                 @php
                                     $sizes = explode(',', $item->available_sizes);
                                     $stockPerSize = explode(',', $item->stock_per_size);
@@ -173,6 +179,5 @@
                 }
             });
         });
-    
     </script>
 @endsection

@@ -1,14 +1,15 @@
-@extends('layouts.app')
+@extends('layouts.front')
 @section('metatag')
     {!! SEOMeta::generate() !!}
     {!! OpenGraph::generate() !!}
 @endsection
 @section('content')
-    <div class="container">
+    <div class="container mt-4">
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card">
-                    <div class="card-header">{{ __('Nuevo Registro(Todos los campos son requeridos, para los procesos de compra.)') }}</div>
+                    <div class="card-header">
+                        {{ __('Nuevo Registro(Todos los campos son requeridos, para los procesos de compra.)') }}</div>
 
                     <div class="card-body">
                         <form method="POST" action="{{ route('register') }}">
@@ -212,13 +213,13 @@
                                 </div>
                             </div>
 
-                            <div class="row mb-0">
-                                <div class="col-md-6 offset-md-4">
-                                    <button type="submit" class="btn btn-primary">
-                                        {{ __('Registrarse') }}
-                                    </button>
-                                </div>
+
+                            <div class="col-md-12 text-center">
+                                <button type="submit" class="btn btn-info">
+                                    {{ __('Registrarse') }}
+                                </button>
                             </div>
+
                         </form>
                     </div>
                 </div>

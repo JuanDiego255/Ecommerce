@@ -1,4 +1,49 @@
 
+jQuery(window).scroll(function () {
+    var windowScrollPosTop = jQuery(window).scrollTop();
+    
+    if (windowScrollPosTop >= 40) {
+        
+        
+        
+        $('#menu').css({
+            "transition": "all .4s ease"
+        });
+        
+        $('.navbar-light .navbar-nav .nav-link').css({
+            "color": "#fff"
+        });
+        $('.navbar-light .navbar-nav .seleccionado').css({
+            "color": "#fff"
+        });
+        $('.velvet-title').css({
+            "color": "#fff"
+        });
+        $('#menu').removeClass('navbar-light');
+        jQuery("#menu").addClass('bg-transition');
+    }
+    else {
+        $('#menu').removeClass('bg-transition');
+        jQuery("#menu").addClass('navbar-light');
+       
+        $('.navbar-light .navbar-nav .nav-link').css({
+            "color": "#344767"
+        });
+        $('.navbar-light .navbar-nav .seleccionado').css({
+            "color": "#344767"
+        });
+        $('.velvet-title').css({
+            "color": "#344767"
+        });
+        $('#menu').css({
+            "transition": "all .4s ease"
+        });
+
+        $('.navbar-light .navbar-nav .nav-link').removeClass('text-item');
+    }
+});
+
+
 var animado = document.querySelectorAll(".animado");
 
 function mostrarScroll() {

@@ -4,8 +4,16 @@
     {!! OpenGraph::generate() !!}
 @endsection
 @section('content')
-    <h1 class="text-dark text-center mb-5">Hola {{ $name }}</h1>
+    
     <div class="product_data mb-3" style="margin-left: 100px; margin-right:80px;">
+        <div class="alert alert-secondary alert-dismissible text-white fade show mt-4" role="alert">
+            <span class="alert-icon align-middle">
+                <span class="material-icons text-md">
+                    waving_hand
+                </span>
+            </span>
+            <span class="alert-text"><strong>Hola {{ $name }}</strong></span>
+        </div>
         <center>
             <div class=" ml-5 row row-cols-1 row-cols-md-2 g-4 align-content-center card-group mt-5">
                 <div class="col ml-5 bg-transparent">
