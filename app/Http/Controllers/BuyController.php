@@ -37,21 +37,26 @@ class BuyController extends Controller
 
     public function indexAdmin()
     {
-        $buys = Buy::join('users', 'buys.user_id', 'users.id')->select(
-            'buys.id as id',
-            'buys.total_iva as total_iva',
-            'buys.total_buy as total_buy',
-            'buys.delivered as delivered',
-            'buys.approved as approved',
-            'buys.created_at as created_at',
-            'buys.image as image',
-            'users.id as user_id',
-            'users.name as name',
-            'users.last_name as last_name',
-            'users.telephone as telephone',
-            'users.email as email'
-
-        )->get();
+        $buys = Buy::leftJoin('users', 'buys.user_id', 'users.id')
+            ->select(
+                'buys.id as id',
+                'buys.total_iva as total_iva',
+                'buys.total_buy as total_buy',
+                'buys.delivered as delivered',
+                'buys.approved as approved',
+                'buys.created_at as created_at',
+                'buys.image as image',
+                'users.id as user_id',
+                'users.name as name',
+                'users.last_name as last_name',
+                'users.telephone as telephone',
+                'users.email as email',
+                'buys.name as name_b',
+                'buys.last_name as last_name_b',
+                'buys.telephone as telephone_b',
+                'buys.email as email_b'
+            )
+            ->get();
 
         if (count($buys) == 0) {
             return redirect()->back()->with(['status' => 'No hay compras registradas!', 'icon' => 'warning']);
@@ -113,7 +118,7 @@ class BuyController extends Controller
             )->get();
 
         $buysDetailsPerson = Buy::where('buys.id', $id)
-            ->join('users', 'buys.user_id', 'users.id')
+            ->leftJoin('users', 'buys.user_id', 'users.id')
             ->select(
                 'users.id as user_id',
                 'users.address as address',
@@ -122,6 +127,12 @@ class BuyController extends Controller
                 'users.country as country',
                 'users.province as province',
                 'users.postal_code as postal_code',
+                'buys.address as address_b',
+                'buys.address_two as address_two_b',
+                'buys.city as city_b',
+                'buys.country as country_b',
+                'buys.province as province_b',
+                'buys.postal_code as postal_code_b'
 
             )->get();
         return view('admin.buys.indexDetail', compact('buysDetails', 'buysDetailsPerson'));

@@ -108,17 +108,17 @@
 
                                         <h4 class="ps-3 text-muted">
                                             <i class="material-icons my-auto">done</i>
-                                            País: {{ $item->country }}<br>
+                                            País: {{ isset($item->country) ? $item->country : $item->country_b }}<br>
                                             <i class="material-icons my-auto">done</i>
-                                            Provincia: {{ $item->province }}<br>
+                                            Provincia: {{ isset($item->province) ? $item->province : $item->province_b }}<br>
                                             <i class="material-icons my-auto">done</i>
-                                            Ciudad: {{ $item->city }}<br>
+                                            Ciudad: {{ isset($item->city) ? $item->city : $item->city_b }}<br>
                                             <i class="material-icons my-auto">done</i>
-                                            Dirección: {{ $item->address }}<br>
+                                            Dirección: {{ isset($item->address) ? $item->address : $item->address_b }}<br>
                                             <i class="material-icons my-auto">done</i>
-                                            Dirección 2: {{ $item->address_two }}<br>
+                                            Dirección 2: {{ isset($item->address_two) ? $item->address_two : $item->address_two_b }}<br>
                                             <i class="material-icons my-auto">done</i>
-                                            Código Postal: {{ $item->postal_code }}
+                                            Código Postal: {{ isset($item->postal_code) ? $item->postal_code : $item->postal_code_b }}
 
                                         </h4>
 

@@ -45,6 +45,23 @@
                         <a id="inicio" class=" nav-link font-weight-bold"
                             href="{{ route('register') }}">{{ __('REGISTRARSE') }}</a>
                     </li>
+                    <li class="nav-item text-center">
+                        @if ($view_name == 'frontend_view-cart')
+                            <a id="inicio" style="border-bottom:5px solid;"
+                                class="nav-link font-weight-bold seleccionado"
+                                href="{{ url('view-cart') }}">{{ __('CARRITO') }}
+                                <span
+                                class="badge text-secondary badge-primary border border-secondary badge-circle badge-sm  border-2">{{ $cartNumber }}</span>
+                            </a>
+                        @else
+                            <a id="inicio" class=" nav-link font-weight-bold"
+                                href="{{ url('view-cart') }}">{{ __('CARRITO') }}
+                                <span
+                                class="badge text-secondary badge-primary border border-secondary badge-circle badge-sm  border-2">{{ $cartNumber }}</span>
+                            </a>
+                        @endif
+
+                    </li>
                 @else
                     <li class="nav-item text-center">
                         @if ($view_name == 'frontend_index')

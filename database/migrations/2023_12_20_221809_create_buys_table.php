@@ -15,7 +15,18 @@ class CreateBuysTable extends Migration
     {
         Schema::create('buys', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id'); 
+            $table->unsignedBigInteger('user_id')->nullable(); 
+            $table->string('session_id')->nullable();
+            $table->string('name')->nullable();
+            $table->string('last_name')->nullable();
+            $table->string('email')->nullable();
+            $table->string('telephone')->nullable();
+            $table->string('address')->nullable();
+            $table->string('address_two')->nullable();
+            $table->string('city')->nullable();
+            $table->string('province')->nullable();
+            $table->string('country')->nullable();
+            $table->string('postal_code')->nullable();           
             $table->string('total_iva'); 
             $table->string('total_buy'); 
             $table->tinyInteger('delivered');  

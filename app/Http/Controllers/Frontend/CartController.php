@@ -51,7 +51,35 @@ class CartController extends Controller
                 } else {
                 }
             } else {
-                return response()->json(['status' => 'Debes iniciar sesión']);
+                $session_id = session()->get('session_id');
+
+                if (!$session_id) {
+                    $session_id = uniqid(); // Genera un identificador único temporal
+                    session()->put('session_id', $session_id);
+                }
+
+                // Verificar si el producto ya está en el carrito del usuario anónimo
+                if (Cart::where('clothing_id', $clothing_id)
+                    ->where('session_id', $session_id)
+                    ->where('sold', 0)
+                    ->where('size_id', $size_id)->first()
+                ) {
+                    return response()->json(['status' => 'El producto ya existe en el carrito', 'icon' => 'warning']);
+                } else {
+                    $cart_item = new Cart();
+                    $cart_item->session_id = $session_id;
+                    $cart_item->clothing_id = $clothing_id;
+                    $cart_item->quantity = $quantity;
+                    $cart_item->size_id = $size_id;
+                    $cart_item->sold = 0;
+                    $cart_item->save();
+
+                    // Obtener el número de elementos en el carrito anónimo
+                    $newCartNumber = count(Cart::where('session_id', $session_id)->where('sold', 0)->get());
+
+                    DB::commit();
+                    return response()->json(['status' => 'Se ha agregado la prenda al carrito', 'icon' => 'success', 'cartNumber' => $newCartNumber]);
+                }
             }
         } catch (\Throwable $th) {
             DB::rollBack();
@@ -60,54 +88,80 @@ class CartController extends Controller
     }
     public function viewCart()
     {
-        $cart_items = Cart::where('carts.user_id', Auth::id())
-            ->where('carts.sold', 0)
-            ->join('users', 'carts.user_id', 'users.id')
-            ->join('stocks', function ($join) {
-                $join->on('carts.clothing_id', '=', 'stocks.clothing_id')
-                    ->on('carts.size_id', '=', 'stocks.size_id');
-            })
-            ->join('clothing', 'carts.clothing_id', 'clothing.id')
-            ->join('sizes', 'carts.size_id', 'sizes.id')
-            ->select(
-                'clothing.id as id',
-                'clothing.name as name',
-                'clothing.description as description',
-                'clothing.price as price',
-                'clothing.image as image',
-                'clothing.status as status',
-                'sizes.size as size',
-                'sizes.id as size_id',
-                'carts.quantity as quantity',
-                'stocks.stock as stock'
-            )
-            ->groupBy(
-                'clothing.id',
-                'clothing.name',
-                'clothing.description',
-                'clothing.price',
-                'clothing.image',
-                'clothing.status',
-                'sizes.size',
-                'sizes.id',
-                'carts.quantity',
-                'stocks.stock'
-            ) // Agrupar por clothing.id
-            ->get();
-            $tags = MetaTags::where('section', 'Carrito')->get();
-            foreach ($tags as $tag) {
-                SEOMeta::setTitle($tag->title);
-                SEOMeta::setKeywords($tag->meta_keywords);
-                SEOMeta::setDescription($tag->meta_description);
-                //Opengraph
-                OpenGraph::addImage(URL::to($tag->url_image_og));
-                OpenGraph::setTitle($tag->title);
-                OpenGraph::setDescription($tag->meta_og_description);
-            }
+        $userId = Auth::id();
+
+        if (Auth::check()) {
+            $cart_items = Cart::where('carts.user_id', $userId)
+                ->where('carts.sold', 0)
+                ->join('users', 'carts.user_id', 'users.id')
+                ->join('stocks', function ($join) {
+                    $join->on('carts.clothing_id', '=', 'stocks.clothing_id')
+                        ->on('carts.size_id', '=', 'stocks.size_id');
+                })
+                ->join('clothing', 'carts.clothing_id', 'clothing.id')
+                ->join('sizes', 'carts.size_id', 'sizes.id')
+                ->select(
+                    'clothing.id as id',
+                    'clothing.name as name',
+                    'clothing.description as description',
+                    'clothing.price as price',
+                    'clothing.image as image',
+                    'clothing.status as status',
+                    'sizes.size as size',
+                    'sizes.id as size_id',
+                    'carts.quantity as quantity',
+                    'stocks.stock as stock'
+                )
+                ->groupBy(
+                    'clothing.id',
+                    'clothing.name',
+                    'clothing.description',
+                    'clothing.price',
+                    'clothing.image',
+                    'clothing.status',
+                    'sizes.size',
+                    'sizes.id',
+                    'carts.quantity',
+                    'stocks.stock'
+                )
+                ->get();
+        } else {
+            $session_id = session()->get('session_id');
+            $cart_items = Cart::where('session_id', $session_id)
+                ->where('sold', 0)
+                ->join('clothing', 'carts.clothing_id', 'clothing.id')
+                ->join('sizes', 'carts.size_id', 'sizes.id')
+                ->select(
+                    'clothing.id as id',
+                    'clothing.name as name',
+                    'clothing.description as description',
+                    'clothing.price as price',
+                    'clothing.image as image',
+                    'clothing.status as status',
+                    'sizes.size as size',
+                    'sizes.id as size_id',
+                    'carts.quantity as quantity'
+                )
+                ->get();
+        }
+
+        $tags = MetaTags::where('section', 'Carrito')->get();
+        foreach ($tags as $tag) {
+            SEOMeta::setTitle($tag->title);
+            SEOMeta::setKeywords($tag->meta_keywords);
+            SEOMeta::setDescription($tag->meta_description);
+            //Opengraph
+            OpenGraph::addImage(URL::to($tag->url_image_og));
+            OpenGraph::setTitle($tag->title);
+            OpenGraph::setDescription($tag->meta_og_description);
+        }
+
         if (count($cart_items) == 0) {
             return redirect('/category')->with(['status' => 'NO HAY PRODUCTOS EN EL CARRITO :(', 'icon' => 'warning']);
         }
-        $name = Auth::user()->name;
+
+        $name = Auth::user()->name ?? null;
+
         $cloth_price = 0;
         foreach ($cart_items as $item) {
             $cloth_price += $item->price * $item->quantity;
@@ -115,12 +169,15 @@ class CartController extends Controller
 
         $iva = $cloth_price * 0.13;
         $total_price = $cloth_price + $iva;
+
         return view('frontend.view-cart', compact('cart_items', 'name', 'cloth_price', 'iva', 'total_price'));
     }
     public function delete($id, $size_id)
     {
         DB::beginTransaction();
+
         try {
+            $session_id = session()->get('session_id');
             if (Auth::check()) {
 
                 if (Cart::where('clothing_id', $id)
@@ -137,7 +194,19 @@ class CartController extends Controller
                     return redirect()->back()->with(['status' => 'Se ha eliminado el artículo del carrito', 'icon' => 'success'])->with(['alert' => 'error']);
                 }
             } else {
-                return redirect()->back()->with(['status' => 'Debes iniciar sesión', 'icon' => 'warning']);
+                if (Cart::where('clothing_id', $id)
+                    ->where('session_id',$session_id)
+                    ->where('sold', 0)
+                    ->where('size_id', $size_id)->exists()
+                ) {
+                    $cartitem = Cart::where('clothing_id', $id)
+                        ->where('session_id', $session_id)
+                        ->where('sold', 0)
+                        ->where('size_id', $size_id)->first();
+                    $cartitem->delete();
+                    DB::commit();
+                    return redirect()->back()->with(['status' => 'Se ha eliminado el artículo del carrito', 'icon' => 'success'])->with(['alert' => 'error']);
+                }
             }
         } catch (\Throwable $th) {
             DB::rollBack();
@@ -150,9 +219,10 @@ class CartController extends Controller
         try {
             $clothing_id = $request->clothing_id;
             $quantity = $request->quantity;
-    
+            $session_id = session()->get('session_id');
+
             if (Auth::check()) {
-    
+
                 if (Cart::where('clothing_id', $clothing_id)->where('user_id', Auth::id())->exists()) {
                     $cartitem = Cart::where('clothing_id', $clothing_id)->where('user_id', Auth::id())->first();
                     $cartitem->quantity = $quantity;
@@ -161,11 +231,16 @@ class CartController extends Controller
                     return response()->json(['status' => 'Exito']);
                 }
             } else {
-                return response()->json(['status' => 'Debes iniciar sesión']);
+                if (Cart::where('clothing_id', $clothing_id)->where('session_id', $session_id)->exists()) {
+                    $cartitem = Cart::where('clothing_id', $clothing_id)->where('session_id', $session_id)->first();
+                    $cartitem->quantity = $quantity;
+                    $cartitem->update();
+                    DB::commit();
+                    return response()->json(['status' => 'Exito']);
+                }
             }
         } catch (\Throwable $th) {
             DB::rollBack();
         }
-       
     }
 }

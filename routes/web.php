@@ -33,14 +33,15 @@ Route::get('/', [FrontendController::class, 'index']);
 Route::get('category', [FrontendController::class, 'category']);
 Route::get('clothes-category/{id}', [FrontendController::class, 'clothesByCategory']);
 Route::get('detail-clothing/{id}/{cat_id}', [FrontendController::class, 'DetailClothingById']);
+Route::post('/add-to-cart', [CartController::class, 'store']);
+Route::post('/edit-quantity', [CartController::class, 'updateQuantity']);
+Route::get('/view-cart', [CartController::class, 'viewCart']);
+Route::delete('/delete-item-cart/{id}/{size_id}', [CartController::class, 'delete']);
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::group(['auth'], function () {
-    Route::post('/add-to-cart', [CartController::class, 'store']);
-    Route::post('/edit-quantity', [CartController::class, 'updateQuantity']);
-    Route::get('/view-cart', [CartController::class, 'viewCart']);
-    Route::delete('/delete-item-cart/{id}/{size_id}', [CartController::class, 'delete']);
+   
     Route::get('checkout', [CheckOutController::class, 'index']);
     Route::post('/payment', [CheckOutController::class, 'payment']);
     Route::get('/buys', [BuyController::class, 'index']);

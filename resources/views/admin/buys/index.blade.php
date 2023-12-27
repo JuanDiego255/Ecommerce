@@ -72,13 +72,13 @@
                                         </div>
                                     </td>
                                     <td class="align-middle text-xxs text-center">
-                                        <p class=" font-weight-bold mb-0">{{ $buy->name . ' ' . $buy->last_name }}</p>
+                                        <p class=" font-weight-bold mb-0">{{ isset($buy->name) ? $buy->name : $buy->name_b }} {{isset($buy->last_name) ? $buy->last_name : $buy->last_name_b}}</p>
                                     </td>
                                     <td class="align-middle text-xxs text-center">
-                                        <p class=" font-weight-bold mb-0">{{ $buy->telephone }}</p>
+                                        <p class=" font-weight-bold mb-0">{{ isset($buy->telephone) ? $buy->telephone : $buy->telephone_b }}</p>
                                     </td>
                                     <td class="align-middle text-xxs text-center">
-                                        <p class=" font-weight-bold mb-0">{{ $buy->email }}</p>
+                                        <p class=" font-weight-bold mb-0">{{ isset($buy->email) ? $buy->email : $buy->email_b }}</p>
                                     </td>
                                     <td class="align-middle text-xxs text-center">
                                         <p class=" font-weight-bold mb-0">₡{{ number_format($buy->total_buy) }}</p>

@@ -12,7 +12,7 @@
                     waving_hand
                 </span>
             </span>
-            <span class="alert-text"><strong>Hola {{ $name }}</strong></span>
+            <span class="alert-text"><strong>Hola, <a class="text-white" href="{{url('category')}}">¿Desea realizar más compras?</a></strong></span>
         </div>
         <center>
             <div class=" ml-5 row row-cols-1 row-cols-md-2 g-4 align-content-center card-group mt-5">
