@@ -29,7 +29,17 @@ class AppServiceProvider extends ServiceProvider
         Schema::defaultStringLength(191);
         view()->composer('*', function ($view) {
             $view_name = str_replace('.', '_', $view->getName());
-            $cartNumber = count(Cart::where('user_id', Auth::id())->where('sold', 0)->get());
+            $session_id = session()->get('session_id');
+            if (Auth::check()) {
+                $cartNumber = count(Cart::where('user_id', Auth::id())
+                    ->where('session_id', null)
+                    ->where('sold', 0)->get());
+            } else {
+                $cartNumber = count(Cart::where('session_id', $session_id)
+                    ->where('user_id', null)
+                    ->where('sold', 0)->get());
+            }
+
             view()->share([
                 'view_name' => $view_name,
                 'cartNumber' => $cartNumber

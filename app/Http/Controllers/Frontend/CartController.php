@@ -88,10 +88,10 @@ class CartController extends Controller
     }
     public function viewCart()
     {
-        $userId = Auth::id();
-
         if (Auth::check()) {
+            $userId = Auth::id();
             $cart_items = Cart::where('carts.user_id', $userId)
+            ->where('carts.session_id', null)
                 ->where('carts.sold', 0)
                 ->join('users', 'carts.user_id', 'users.id')
                 ->join('stocks', function ($join) {
@@ -127,8 +127,13 @@ class CartController extends Controller
                 ->get();
         } else {
             $session_id = session()->get('session_id');
-            $cart_items = Cart::where('session_id', $session_id)
-                ->where('sold', 0)
+            $cart_items = Cart::where('carts.session_id', $session_id)
+                ->where('carts.user_id', null)
+                ->where('carts.sold', 0)
+                ->join('stocks', function ($join) {
+                    $join->on('carts.clothing_id', '=', 'stocks.clothing_id')
+                        ->on('carts.size_id', '=', 'stocks.size_id');
+                })
                 ->join('clothing', 'carts.clothing_id', 'clothing.id')
                 ->join('sizes', 'carts.size_id', 'sizes.id')
                 ->select(
@@ -140,7 +145,20 @@ class CartController extends Controller
                     'clothing.status as status',
                     'sizes.size as size',
                     'sizes.id as size_id',
-                    'carts.quantity as quantity'
+                    'carts.quantity as quantity',
+                    'stocks.stock as stock'
+                )
+                ->groupBy(
+                    'clothing.id',
+                    'clothing.name',
+                    'clothing.description',
+                    'clothing.price',
+                    'clothing.image',
+                    'clothing.status',
+                    'sizes.size',
+                    'sizes.id',
+                    'carts.quantity',
+                    'stocks.stock'
                 )
                 ->get();
         }
@@ -157,7 +175,7 @@ class CartController extends Controller
         }
 
         if (count($cart_items) == 0) {
-            return redirect('/category')->with(['status' => 'NO HAY PRODUCTOS EN EL CARRITO :(', 'icon' => 'warning']);
+            return redirect()->back()->with(['status' => 'NO HAY PRODUCTOS EN EL CARRITO :(', 'icon' => 'warning']);
         }
 
         $name = Auth::user()->name ?? null;
@@ -195,7 +213,7 @@ class CartController extends Controller
                 }
             } else {
                 if (Cart::where('clothing_id', $id)
-                    ->where('session_id',$session_id)
+                    ->where('session_id', $session_id)
                     ->where('sold', 0)
                     ->where('size_id', $size_id)->exists()
                 ) {
