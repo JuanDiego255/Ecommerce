@@ -218,7 +218,7 @@
                 <a href="{{ route('login') }}" class="nav-menu-item"><i class="fa fa-sign-in me-3"></i>INGRESAR</a>
                 <div class="nav-menu-item">
                     <i class="fas fa-tshirt me-3"></i><a class="color-menu" href="javascript:void(0);"
-                        id="toggleCategories">CATEGORIAS</a>
+                        id="toggleCategories">CATEGORIAS   <i class="fa fa-arrow-circle-down ml-3"></i></a>
                     <div class="subcategories" id="categoriesDropdown">
                         <ul>
                             <li class="item-submenu"><a href="{{ url('category/') }}" class="nav-submenu-item">
@@ -248,7 +248,7 @@
                 <a href="{{ url('buys') }}" class="nav-menu-item"><i class="fa fa-credit-card me-3"></i>MIS COMPRAS</a>
                 <div class="nav-menu-item">
                     <i class="fas fa-tshirt me-3"></i><a class="color-menu" href="javascript:void(0);"
-                        id="toggleCategories">CATEGORIAS</a>
+                        id="toggleCategories">CATEGORIAS   <i class="fa fa-arrow-circle-down ml-3"></i></a>
                     <div class="subcategories" id="categoriesDropdown">
                         <ul>
                             <li class="item-submenu"><a href="{{ url('category/') }}" class="nav-submenu-item">
@@ -270,7 +270,7 @@
                 </div>
                 <div class="nav-menu-item">
                     <a class="color-menu" href="javascript:void(0);" id="toggleLogout"><i
-                            class="fas fa-user-minus me-3"></i>{{ Auth::user()->name }} {{ Auth::user()->last_name }}</a>
+                            class="fas fa-user-minus me-3"></i>{{ Auth::user()->name }} {{ Auth::user()->last_name }}   <i class="fa fa-arrow-circle-down me-3"></i></a>
                     <div class="subLogout" id="logoutDropdown">
                         <ul>
                             <li class="item-submenu">
