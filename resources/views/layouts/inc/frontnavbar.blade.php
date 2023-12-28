@@ -169,8 +169,10 @@
             </div>
 
             <div class="flex2 text-end d-block d-md-none">
-                <a href="{{route('login')}}"><button id="btnIngresar" class="whiteLink siteLink"><i class="fa fa-sign-in"></i></button></a>
-                <a href="{{url('view-cart')}}"><button class="whiteLink siteLink"><i class="fa fa-shopping-cart"> {{ $cartNumber }}</i></button></a>              
+                <a href="{{ route('login') }}"><button id="btnIngresar" class="whiteLink siteLink"><i
+                            class="fa fa-sign-in"></i></button></a>
+                <a href="{{ url('view-cart') }}"><button class="whiteLink siteLink"><i class="fa fa-shopping-cart">
+                            {{ $cartNumber }}</i></button></a>
             </div>
 
             <div class="flex2 text-end d-none d-md-block">
@@ -192,6 +194,8 @@
 
         <div>
             @guest
+                <a class="nav-menu-item" href="javascript:void(0);" onclick="menuToggle()"><i
+                        class="fa fa-arrow-circle-left me-3"></i>CERRAR MENU</a>
                 <a href="{{ url('/') }}" class="nav-menu-item"><i class="fas fa-home me-3"></i>INICIO</a>
                 <a href="{{ url('view-cart') }}" class="nav-menu-item"><i class="fa fa-shopping-cart me-3"></i>CARRITO <span
                         class="badge badge-sm text-dark badge-info border border-2 text-xxs">{{ $cartNumber }}</span></a>
@@ -220,9 +224,12 @@
                     </div>
                 </div>
             @else
+                <a class="nav-menu-item" href="javascript:void(0);" onclick="menuToggle()"><i
+                        class="fa fa-arrow-circle-left me-3"></i>CERRAR MENU</a>
                 <a href="{{ url('/') }}" class="nav-menu-item"><i class="fas fa-home me-3"></i>INICIO</a>
                 <a href="{{ url('view-cart') }}" class="nav-menu-item"><i class="fa fa-shopping-cart me-3"></i>CARRITO
-                    <span class="badge badge-sm text-dark badge-info border border-2 text-xxs">{{ $cartNumber }}</span></a>
+                    <span
+                        class="badge badge-sm text-dark badge-info border border-2 text-xxs">{{ $cartNumber }}</span></a>
                 <a href="{{ url('buys') }}" class="nav-menu-item"><i class="fa fa-credit-card me-3"></i>MIS COMPRAS</a>
                 <div class="nav-menu-item">
                     <i class="fas fa-tshirt me-3"></i><a class="color-menu" href="javascript:void(0);"
@@ -270,7 +277,6 @@
                         <!-- Agrega más subcategorías si es necesario -->
                     </div>
                 </div>
-
             @endguest
 
         </div>
