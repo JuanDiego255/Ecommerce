@@ -193,7 +193,8 @@
         <div>
             @guest
                 <a href="{{ url('/') }}" class="nav-menu-item"><i class="fas fa-home me-3"></i>INICIO</a>
-                <a href="{{ url('view-cart') }}" class="nav-menu-item"><i class="fa fa-shopping-cart me-3"></i>CARRITO</a>
+                <a href="{{ url('view-cart') }}" class="nav-menu-item"><i class="fa fa-shopping-cart me-3"></i>CARRITO <span
+                        class="badge badge-sm text-dark badge-info border border-2 text-xxs">{{ $cartNumber }}</span></a>
                 <a href="{{ route('register') }}" class="nav-menu-item"><i class="fa fa-user-plus me-3"></i>REGISTRARSE</a>
                 <a href="{{ route('login') }}" class="nav-menu-item"><i class="fa fa-sign-in me-3"></i>INGRESAR</a>
                 <div class="nav-menu-item">
@@ -220,9 +221,9 @@
                 </div>
             @else
                 <a href="{{ url('/') }}" class="nav-menu-item"><i class="fas fa-home me-3"></i>INICIO</a>
-
+                <a href="{{ url('view-cart') }}" class="nav-menu-item"><i class="fa fa-shopping-cart me-3"></i>CARRITO
+                    <span class="badge badge-sm text-dark badge-info border border-2 text-xxs">{{ $cartNumber }}</span></a>
                 <a href="{{ url('buys') }}" class="nav-menu-item"><i class="fa fa-credit-card me-3"></i>MIS COMPRAS</a>
-                <a href="{{ url('view-cart') }}" class="nav-menu-item"><i class="fa fa-shopping-cart me-3"></i>CARRITO</a>
                 <div class="nav-menu-item">
                     <i class="fas fa-tshirt me-3"></i><a class="color-menu" href="javascript:void(0);"
                         id="toggleCategories">CATEGORIAS</a>
