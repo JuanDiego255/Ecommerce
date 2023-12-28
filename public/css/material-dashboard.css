@@ -27738,7 +27738,7 @@ pre[class*="language-"] {
 button.siteLink {
   margin-left:-5px;
   border:none;
-  padding:24px;
+  padding:30px;
   display:inline-block;
   min-width:115px;
 }
@@ -27762,7 +27762,7 @@ button.siteLink {
 #siteBrand {
   font-family: impact;
   letter-spacing : -1px;
-  font-size:32px;
+  font-size:25px;
   color:#252525;
   line-height : 1em;
 }
