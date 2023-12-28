@@ -162,7 +162,7 @@
         <div class="flexMain">
             <div class="flex2">
                 <button class="whiteLink siteLink" id="btnMenu" style="border-right:1px solid #eaeaea"
-                    onclick="menuToggle()"><i class="fas fa-bars me-2"></i> MENU</button>                
+                    onclick="menuToggle()"><i class="fas fa-bars me-2"></i> MENU</button>
             </div>
             <div class="flex3 text-center" id="siteBrand">
                 <a class="velvet-title" href="{{ url('/') }}">VELVET BOUTIQUE</a>
@@ -193,40 +193,83 @@
         <div>
             @guest
                 <a href="{{ url('/') }}" class="nav-menu-item"><i class="fas fa-home me-3"></i>INICIO</a>
-                <a href="{{ url('category') }}" class="nav-menu-item"><i class="fas fa-tshirt me-3"></i>CATEGORIAS</a>
                 <a href="{{ url('view-cart') }}" class="nav-menu-item"><i class="fa fa-shopping-cart me-3"></i>CARRITO</a>
                 <a href="{{ route('register') }}" class="nav-menu-item"><i class="fa fa-user-plus me-3"></i>REGISTRARSE</a>
+                <a href="{{ route('login') }}" class="nav-menu-item"><i class="fa fa-sign-in me-3"></i>INGRESAR</a>
+                <div class="nav-menu-item">
+                    <i class="fas fa-tshirt me-3"></i><a class="color-menu" href="javascript:void(0);"
+                        id="toggleCategories">CATEGORIAS</a>
+                    <div class="subcategories" id="categoriesDropdown">
+                        <ul>
+                            <li class="item-submenu"><a href="{{ url('category/') }}" class="nav-submenu-item">
+                                    <span class="alert-icon align-middle">
+                                        <span class="material-icons text-md">label</span>
+                                    </span>TODAS LAS CATEGORIAS</a>
+                            </li>
+                            @foreach ($categories as $item)
+                                <li class="item-submenu"><a href="{{ url('clothes-category/' . $item->id) }}"
+                                        class="nav-submenu-item">
+                                        <span class="alert-icon align-middle">
+                                            <span class="material-icons text-md">label</span>
+                                        </span>{{ $item->name }}</a>
+                                </li>
+                            @endforeach
+                        </ul>
+                        <!-- Agrega más subcategorías si es necesario -->
+                    </div>
+                </div>
             @else
                 <a href="{{ url('/') }}" class="nav-menu-item"><i class="fas fa-home me-3"></i>INICIO</a>
-                <a href="{{ url('category') }}" class="nav-menu-item"><i class="fas fa-tshirt me-3"></i>CATEGORIAS</a>
+
                 <a href="{{ url('buys') }}" class="nav-menu-item"><i class="fa fa-credit-card me-3"></i>MIS COMPRAS</a>
                 <a href="{{ url('view-cart') }}" class="nav-menu-item"><i class="fa fa-shopping-cart me-3"></i>CARRITO</a>
-                <a id="navbarDropdown" class="nav-menu-item" href="javascript:;" role="button" data-bs-toggle="dropdown"
-                    aria-haspopup="true" aria-expanded="false" v-pre><i
-                        class="fas fa-user-minus me-3"></i>{{ Auth::user()->name }} {{ Auth::user()->last_name }}
-                </a>
-
-                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item border-radius-md" href="{{ route('logout') }}"
-                        onclick="event.preventDefault();
-                                            document.getElementById('logout-form').submit();">
-                        <div class="d-flex align-items-center py-1">
-                            <div class="my-auto">
-                                <span class="material-icons">
-                                    logout
-                                </span>
-                            </div>
-                            <div class="ms-2">
-                                <h6 class="text-sm font-weight-normal mb-0">
-                                    Cerrar Sesión
-                                </h6>
-                            </div>
-                            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                @csrf
-                            </form>
-                        </div>
-                    </a>
+                <div class="nav-menu-item">
+                    <i class="fas fa-tshirt me-3"></i><a class="color-menu" href="javascript:void(0);"
+                        id="toggleCategories">CATEGORIAS</a>
+                    <div class="subcategories" id="categoriesDropdown">
+                        <ul>
+                            <li class="item-submenu"><a href="{{ url('category/') }}" class="nav-submenu-item">
+                                    <span class="alert-icon align-middle">
+                                        <span class="material-icons text-md">label</span>
+                                    </span>Todas las categorías</a>
+                            </li>
+                            @foreach ($categories as $item)
+                                <li class="item-submenu"><a href="{{ url('clothes-category/' . $item->id) }}"
+                                        class="nav-submenu-item">
+                                        <span class="alert-icon align-middle">
+                                            <span class="material-icons text-md">label</span>
+                                        </span>{{ $item->name }}</a>
+                                </li>
+                            @endforeach
+                        </ul>
+                        <!-- Agrega más subcategorías si es necesario -->
+                    </div>
                 </div>
+                <div class="nav-menu-item">
+                    <a class="color-menu" href="javascript:void(0);" id="toggleLogout"><i
+                            class="fas fa-user-minus me-3"></i>{{ Auth::user()->name }} {{ Auth::user()->last_name }}</a>
+                    <div class="subLogout" id="logoutDropdown">
+                        <ul>
+                            <li class="item-submenu">
+                                <a href="{{ route('logout') }}"
+                                    onclick="event.preventDefault();
+                                document.getElementById('logout-form').submit();"
+                                    class="nav-submenu-item">
+                                    <span class="alert-icon align-middle">
+                                        <span class="material-icons text-md">logout</span>
+                                    </span>Salir
+                                    <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                                        class="d-none">
+                                        @csrf
+                                    </form>
+                                </a>
+                            </li>
+
+                        </ul>
+                        <!-- Agrega más subcategorías si es necesario -->
+                    </div>
+                </div>
+
             @endguest
 
         </div>

@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\Cart;
+use App\Models\Categories;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
@@ -39,10 +40,12 @@ class AppServiceProvider extends ServiceProvider
                     ->where('user_id', null)
                     ->where('sold', 0)->get());
             }
+            $categories = Categories::get();
 
             view()->share([
                 'view_name' => $view_name,
-                'cartNumber' => $cartNumber
+                'cartNumber' => $cartNumber,
+                'categories' => $categories
             ]);
         });
     }

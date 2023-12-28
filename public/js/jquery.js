@@ -143,6 +143,12 @@ window.onresize = function () {
     if (window.innerWidth < 420) siteBrand.innerHTML = "VB"
     else siteBrand.innerHTML = "VELVET BOUTIQUE"
 }
+$('#toggleCategories').click(function() {
+    $('#categoriesDropdown').slideToggle('fast');
+});
+$('#toggleLogout').click(function() {
+    $('#logoutDropdown').slideToggle('fast');
+});
 
 
 

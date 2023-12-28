@@ -27813,7 +27813,45 @@ a.nav-menu-item{
   font-weight:bold;
   color:#343434
 }
+div.nav-menu-item{
+  transition:border 200ms linear;
+  text-decoration:none;
+  display:block;
+  padding:18px;
+  padding-left:32px;
+  border-bottom:1px solid #eaeaea;
+  font-weight:bold;
+  color:#343434
+}
+a.nav-submenu-item{
+  transition:border 200ms linear;
+  text-decoration:none;
+  text-transform: uppercase;
+  display:block;
+  padding:10px;
+  padding-left:10px;
+  border-bottom:1px solid #eaeaea;
+  font-weight:bold;
+  color:#343434;
+}
+a.color-menu{
+  color:#343434;
+  text-transform: uppercase;
+}
+a.nav-submenu-item:hover {
+  margin-left:2px;
+  border-left:10px solid black;
+}
+.item-submenu{
+  list-style-type: none;
+}
 select.noStyle {
   border:none;
   outline:none
+}
+#categoriesDropdown {
+  display: none; /* Oculta las subcategorías por defecto */
+}
+#logoutDropdown {
+  display: none; /* Oculta las subcategorías por defecto */
 }
