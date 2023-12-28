@@ -169,8 +169,8 @@
             </div>
 
             <div class="flex2 text-end d-block d-md-none">
-                <button id="btnIngresar" class="whiteLink siteLink"><i class="fa fa-sign-in"></i></button>
-                <button class="whiteLink siteLink"><i class="fa fa-shopping-cart"> {{ $cartNumber }}</i></button>
+                <a href="{{route('login')}}"><button id="btnIngresar" class="whiteLink siteLink"><i class="fa fa-sign-in"></i></button></a>
+                <a href="{{url('view-cart')}}"><button class="whiteLink siteLink"><i class="fa fa-shopping-cart"> {{ $cartNumber }}</i></button></a>              
             </div>
 
             <div class="flex2 text-end d-none d-md-block">
