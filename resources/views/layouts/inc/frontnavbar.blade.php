@@ -19,43 +19,43 @@
                         @if ($view_name == 'frontend_index')
                             <a id="inicio" style="border-bottom:5px solid;"
                                 class="nav-link font-weight-bold seleccionado"
-                                href="{{ url('/') }}">{{ __('INICIO') }}</a>
+                                href="{{ url('/') }}"><i class="fa fa-home"></i> {{ __('INICIO') }}</a>
                         @else
                             <a id="inicio" class=" nav-link font-weight-bold"
-                                href="{{ url('/') }}">{{ __('INICIO') }}</a>
+                                href="{{ url('/') }}"><i class="fa fa-home"></i> {{ __('INICIO') }}</a>
                         @endif
                     </li>
                     <li class="nav-item text-center">
                         @if ($view_name == 'frontend_category')
                             <a id="inicio" style="border-bottom:5px solid;"
                                 class="nav-link font-weight-bold seleccionado"
-                                href="{{ url('category') }}">{{ __('CATEGORIAS') }}
+                                href="{{ url('category') }}"><i class="fas fa-tshirt"></i> {{ __('CATEGORIAS') }}
                             </a>
                         @else
                             <a id="inicio" class=" nav-link font-weight-bold"
-                                href="{{ url('category') }}">{{ __('CATEGORIAS') }}                               
+                                href="{{ url('category') }}"><i class="fas fa-tshirt"></i> {{ __('CATEGORIAS') }}                               
                             </a>
                         @endif
                     </li>
                     <li class="nav-item text-center">
                         <a id="inicio" class=" nav-link font-weight-bold"
-                            href="{{ route('login') }}">{{ __('INGRESAR') }}</a>
+                            href="{{ route('login') }}"><i class="fa fa-sign-in"></i> {{ __('INGRESAR') }}</a>
                     </li>
                     <li class="nav-item text-center">
                         <a id="inicio" class=" nav-link font-weight-bold"
-                            href="{{ route('register') }}">{{ __('REGISTRARSE') }}</a>
+                            href="{{ route('register') }}"><i class="fa fa-user-plus"></i> {{ __('REGISTRARSE') }}</a>
                     </li>
                     <li class="nav-item text-center">
                         @if ($view_name == 'frontend_view-cart')
                             <a id="inicio" style="border-bottom:5px solid;"
                                 class="nav-link font-weight-bold seleccionado"
-                                href="{{ url('view-cart') }}">{{ __('CARRITO') }}
+                                href="{{ url('view-cart') }}"><i class="fa fa-shopping-cart"></i> {{ __('CARRITO') }}
                                 <span
                                 class="badge text-secondary badge-primary border border-secondary badge-circle badge-sm  border-2">{{ $cartNumber }}</span>
                             </a>
                         @else
                             <a id="inicio" class=" nav-link font-weight-bold"
-                                href="{{ url('view-cart') }}">{{ __('CARRITO') }}
+                                href="{{ url('view-cart') }}"><i class="fa fa-shopping-cart"></i> {{ __('CARRITO') }}
                                 <span
                                 class="badge text-secondary badge-primary border border-secondary badge-circle badge-sm  border-2">{{ $cartNumber }}</span>
                             </a>
@@ -67,10 +67,10 @@
                         @if ($view_name == 'frontend_index')
                             <a id="inicio" style="border-bottom:5px solid;"
                                 class="nav-link font-weight-bold seleccionado"
-                                href="{{ url('/') }}">{{ __('INICIO') }}</a>
+                                href="{{ url('/') }}"><i class="fa fa-heart"></i> {{ __('INICIO') }}</a>
                         @else
                             <a id="inicio" class=" nav-link font-weight-bold"
-                                href="{{ url('/') }}">{{ __('INICIO') }}</a>
+                                href="{{ url('/') }}"><i class="fa fa-heart"></i> {{ __('INICIO') }}</a>
                         @endif
                     </li>
                     <li class="nav-item text-center">
@@ -80,11 +80,11 @@
                                 $view_name == 'frontend_detail-clothing')
                             <a id="inicio" style="border-bottom:5px solid;"
                                 class="nav-link font-weight-bold seleccionado"
-                                href="{{ url('category') }}">{{ __('CATEGORIAS') }}
+                                href="{{ url('category') }}"><i class="fas fa-tshirt"></i> {{ __('CATEGORIAS') }}
                             </a>
                         @else
                             <a id="inicio" class=" nav-link font-weight-bold"
-                                href="{{ url('category') }}">{{ __('CATEGORIAS') }}
+                                href="{{ url('category') }}"><i class="fas fa-tshirt"></i> {{ __('CATEGORIAS') }}
                             </a>
                         @endif
 
@@ -93,10 +93,10 @@
                         @if ($view_name == 'frontend_buys' || $view_name == 'frontend_detail-buy')
                             <a id="inicio" style="border-bottom:5px solid;"
                                 class="nav-link font-weight-bold seleccionado"
-                                href="{{ url('buys') }}">{{ __('MIS COMPRAS') }}</a>
+                                href="{{ url('buys') }}"><i class="fa fa-credit-card"></i> {{ __('MIS COMPRAS') }}</a>
                         @else
                             <a id="inicio" class=" nav-link font-weight-bold"
-                                href="{{ url('buys') }}">{{ __('MIS COMPRAS') }}</a>
+                                href="{{ url('buys') }}"><i class="fa fa-credit-card"></i> {{ __('MIS COMPRAS') }}</a>
                         @endif
 
                     </li>
@@ -104,13 +104,13 @@
                         @if ($view_name == 'frontend_view-cart')
                             <a id="inicio" style="border-bottom:5px solid;"
                                 class="nav-link font-weight-bold seleccionado"
-                                href="{{ url('view-cart') }}">{{ __('CARRITO') }}
+                                href="{{ url('view-cart') }}"><i class="fa fa-shopping-cart"></i> {{ __('CARRITO') }}
                                 <span
                                 class="badge text-secondary badge-primary border border-secondary badge-circle badge-sm  border-2">{{ $cartNumber }}</span>
                             </a>
                         @else
                             <a id="inicio" class=" nav-link font-weight-bold"
-                                href="{{ url('view-cart') }}">{{ __('CARRITO') }}
+                                href="{{ url('view-cart') }}"><i class="fa fa-shopping-cart"></i> {{ __('CARRITO') }}
                                 <span
                                 class="badge text-secondary badge-primary border border-secondary badge-circle badge-sm  border-2">{{ $cartNumber }}</span>
                             </a>

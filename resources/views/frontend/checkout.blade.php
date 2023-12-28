@@ -26,9 +26,12 @@
                         person_add
                     </span>
                 </span>
-                <span class="alert-text"><strong>Una vez que te <a class="text-info"
+                <span class="alert-text">
+                    <strong>Una vez que te <a class="text-info"
                             href="{{ route('register') }}">registres</a> no deberás completar los detalles de entrega, e
-                        información personal.</strong></span>
+                        información personal. Además de encontrar increíbles descuentos, y promociones.
+                    </strong>
+                </span>
             @endif
 
 
@@ -114,7 +117,7 @@
                                     <div class="col-md-6 mt-2">
                                         <div class="input-group input-group-static mb-4">
                                             <label>País</label>
-                                            <input value="{{ isset(Auth::user()->country) ? Auth::user()->country : '' }}"
+                                            <input value="{{ isset(Auth::user()->country) ? Auth::user()->country : 'Costa Rica' }}"
                                                 required value="Costa Rica" type="text" name="country"
                                                 class="form-control float-left w-100">
                                         </div>

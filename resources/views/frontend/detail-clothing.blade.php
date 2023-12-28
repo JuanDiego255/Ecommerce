@@ -6,7 +6,7 @@
 @section('content')
     <div class="container">
         <center>
-            <div class="alert w-75 alert-secondary alert-dismissible text-white fade show mt-4" role="alert">
+            <div class="alert w-75 text-left alert-secondary alert-dismissible text-white fade show mt-4" role="alert">
                 <span class="alert-icon align-middle">
                     <span class="material-icons text-md">
                         apparel

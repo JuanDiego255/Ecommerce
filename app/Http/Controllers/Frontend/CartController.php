@@ -91,7 +91,7 @@ class CartController extends Controller
         if (Auth::check()) {
             $userId = Auth::id();
             $cart_items = Cart::where('carts.user_id', $userId)
-            ->where('carts.session_id', null)
+                ->where('carts.session_id', null)
                 ->where('carts.sold', 0)
                 ->join('users', 'carts.user_id', 'users.id')
                 ->join('stocks', function ($join) {
@@ -209,6 +209,10 @@ class CartController extends Controller
                         ->where('size_id', $size_id)->first();
                     $cartitem->delete();
                     DB::commit();
+                    if (count(Cart::where('user_id', Auth::id())
+                        ->where('sold', 0)->get()) == 0) {
+                        return redirect('/')->with(['status' => 'Se ha eliminado el último artículo del carrito', 'icon' => 'success'])->with(['alert' => 'error']);
+                    }
                     return redirect()->back()->with(['status' => 'Se ha eliminado el artículo del carrito', 'icon' => 'success'])->with(['alert' => 'error']);
                 }
             } else {
@@ -223,6 +227,10 @@ class CartController extends Controller
                         ->where('size_id', $size_id)->first();
                     $cartitem->delete();
                     DB::commit();
+                    if (count(Cart::where('session_id', $session_id)
+                        ->where('sold', 0)->get()) == 0) {
+                        return redirect('/')->with(['status' => 'Se ha eliminado el último artículo del carrito', 'icon' => 'success'])->with(['alert' => 'error']);
+                    }
                     return redirect()->back()->with(['status' => 'Se ha eliminado el artículo del carrito', 'icon' => 'success'])->with(['alert' => 'error']);
                 }
             }
