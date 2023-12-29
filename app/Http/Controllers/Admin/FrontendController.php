@@ -18,9 +18,29 @@ class FrontendController extends Controller
 {
     public function index()
     {
-        $clothings = ClothingCategory::where('trending', 1)->take(15)->get();
         $social = SocialNetwork::get();
         $tags = MetaTags::where('section', 'Inicio')->get();
+
+        $clothings = ClothingCategory::where('clothing.trending', 1)            
+            ->join('categories', 'clothing.category_id', 'categories.id')
+            ->join('stocks', 'clothing.id', 'stocks.clothing_id')
+            ->join('sizes', 'stocks.size_id', 'sizes.id')
+            ->select(
+                'categories.name as category',
+                'categories.id as category_id',
+                'clothing.id as id',
+                'clothing.trending as trending',
+                'clothing.name as name',
+                'clothing.description as description',
+                'clothing.price as price',
+                'clothing.image as image',
+                DB::raw('SUM(stocks.stock) as total_stock'),
+                DB::raw('GROUP_CONCAT(sizes.size) AS available_sizes'), // Obtener tallas dinámicas
+                DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size') // Obtener stock por talla
+            )
+            ->groupBy('clothing.id', 'categories.name','categories.id', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'clothing.image')
+            ->take(15)->get();
+
         foreach ($tags as $tag) {
             SEOMeta::setTitle($tag->title);
             SEOMeta::setKeywords($tag->meta_keywords);
@@ -30,7 +50,7 @@ class FrontendController extends Controller
             OpenGraph::setTitle($tag->title);
             OpenGraph::setDescription($tag->meta_og_description);
         }
-        return view('frontend.index', compact('clothings','social'));
+        return view('frontend.index', compact('clothings', 'social'));
     }
     public function category()
     {
