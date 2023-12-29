@@ -190,8 +190,7 @@ h6,
 }
 
 p {
-  margin-top: 0;
-  margin-bottom: 1rem;
+ font-size: 38px;
 }
 
 abbr[title] {
@@ -10579,7 +10578,8 @@ fieldset:disabled .btn {
 }
 
 .text-muted {
-  color: #6c757d !important;
+  color: #60676C !important;
+  font-size: 18px;
 }
 
 .text-black-50 {

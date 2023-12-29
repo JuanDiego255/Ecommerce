@@ -51,8 +51,8 @@
     <hr class="text-dark">
     <h3 class="text-center text-dark mt-5">Instragram <a href="https://www.instagram.com/velvetboutiquegrecia/">Velvet
             Boutique</a></h3>
-    <h5 class="text-center text-muted"><span>Compartimos con ustedes lo que nos hace sentir mejor, un excelente
-            outfit!</span></h5>
+    <p class="text-center text-muted"><span>Compartimos con ustedes lo que nos hace sentir mejor, un excelente
+            outfit!</span></p>
     <hr class="dark horizontal text-danger mb-3">
 
     <div class="row mb-5 container-fluid">
@@ -82,9 +82,9 @@
 
     <div class="bg-velvet-mision p-3 mb-3">
         <h3 class="text-center text-dark mt-3">Velvet Boutique</h3>
-        <h5 class="text-center text-muted"><span>Nuestra misión es envolverte con nuestros atuendos, y hacerlos llegar a la
-                puerta de tu casa.</span></h5>
-        <h5 class="text-center text-muted"><span>Realizamos envios a nivel nacional.</span></h5>
+        <p class="text-center text-muted"><span>Nuestra misión es envolverte con nuestros atuendos, y hacerlos llegar a la
+                puerta de tu casa.<br>Realizamos envios a nivel nacional.</span></p>
+       
 
     </div>
     {{-- <div class="col-md-12 mt-5 mb-5">
@@ -98,7 +98,7 @@
     </div> --}}
     <hr class="dark horizontal text-danger mb-3">
     <h3 class="text-center text-dark mt-5">Outfit`s En Tendencia</h3>
-    <h5 class="text-center text-muted"><span>Nuestras últimas colecciones, los artículos más solicitados!</span></h5>
+    <p class="text-center text-muted"><span>Nuestras últimas colecciones, los artículos más solicitados!</span></p>
     <hr class="dark horizontal text-danger my-0">
 
     <div class="mt-3 mb-5">
