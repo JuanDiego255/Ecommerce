@@ -132,11 +132,16 @@
                                         </div>
                                     </div>
                                     <div class="card-body text-center">
+                                        <div class="mt-n6 mx-auto text-center">
+                                            <center>
+                                                <h5 class="text-center font-weight-normal mt-3">
+                                                    <a
+                                                        href="{{ url('detail-clothing/' . $clothing->id . '/' . $clothing->category_id) }}">{{ $clothing->name }}</a>
+                                                </h5>
+                                            </center>
 
-                                        <h5 class="font-weight-normal mt-3">
-                                            <a
-                                                href="{{ url('detail-clothing/' . $clothing->id . '/' . $clothing->category_id) }}">{{ $clothing->name }}</a>
-                                        </h5>
+                                        </div>
+
                                         <p class="mb-0">
                                             {{ $clothing->description }}
                                         </p>
