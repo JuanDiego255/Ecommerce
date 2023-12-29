@@ -11,7 +11,13 @@
                     payments
                 </span>
             </span>
-            <span class="alert-text"><strong>Mis Compras</strong></span>
+            <span class="alert-text"><strong>Mis Compras</strong></span><br>
+            <span class="alert-icon align-middle">
+                <span class="material-icons text-md">
+                    cancel
+                </span>
+            </span>
+            <span class="alert-text"><strong>Una vez que la compra esté aprobada, no se puede cancelar la compra, ni artículos de ella</strong></span>
         </div>
         <div class="row w-100">
             <div class="col-md-6">
@@ -42,8 +48,6 @@
                         <thead>
                             <tr>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                    Número de compra</th>
-                                <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                     Precio + IVA</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                     IVA</th>
@@ -51,6 +55,8 @@
                                     Entregado</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                     Aprobado</th>
+                                <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
+                                    Compra</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                     Fecha</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
@@ -61,10 +67,6 @@
                         <tbody>
                             @foreach ($buys as $buy)
                                 <tr>
-
-                                    <td class="align-middle text-xxs text-center">
-                                        <p class=" font-weight-bold mb-0">{{ $buy->id }}</p>
-                                    </td>
                                     <td class="align-middle text-xxs text-center">
                                         <p class=" font-weight-bold mb-0">₡{{ number_format($buy->total_buy) }}</p>
                                     </td>
@@ -80,13 +82,30 @@
                                             @endif
                                         </p>
                                     </td>
+
                                     <td class="align-middle text-xxs text-center">
                                         <p class=" font-weight-bold mb-0">
-                                            @if ($buy->approved == 0)
+                                            @if ($buy->aprroved == 0)
                                                 Pendiente
                                             @else
                                                 Aprobado
                                             @endif
+                                        </p>
+                                    </td>
+                                    <td class="align-middle text-xxs text-center">
+                                        <p class=" font-weight-bold mb-0">
+                                            @switch($buy->cancel_buy)
+                                                @case(0)
+                                                    Vigente
+                                                @break
+
+                                                @case(1)
+                                                    En proceso cancelación
+                                                @break
+
+                                                @default
+                                                    Cancelada
+                                            @endswitch
                                         </p>
                                     </td>
                                     <td class="align-middle text-xxs text-center">
@@ -95,16 +114,26 @@
 
                                     <td class="align-middle">
                                         <center>
-                                            <a class="btn btn-velvet" style="text-decoration: none;"
-                                                href="{{ url('buy/details/' . $buy->id) }}">Ver Detalle</a>
-                                            <form method="post" action="{{ url('/delete/buy/' . $buy->id) }}"
+                                            @if ($buy->cancel_buy == 0)
+                                                <a class="btn btn-velvet" style="text-decoration: none;"
+                                                    href="{{ url('buy/details/' . $buy->id) }}">Ver
+                                                    Detalle</a>
+                                            @endif
+
+                                            <form method="post"
+                                                action="{{ url('/cancel/buy/' . $buy->id . '/' . $buy->cancel_buy) }}"
                                                 style="display:inline">
                                                 {{ csrf_field() }}
-                                                {{ method_field('DELETE') }}
-                                                <button type="submit" data-bs-toggle="modal"
-                                                    onclick="return confirm('Deseas borrar esta talla?')"
-                                                    class="btn btn-velvet" style="text-decoration: none;">Cancelar
-                                                    Compra</button>
+                                                <button @if ($buy->cancel_buy != 0 || $buy->approved != 0) disabled @endif type="submit"
+                                                    data-bs-toggle="modal"
+                                                    onclick="return confirm('Deseas cancelar este pedido?')"
+                                                    class="btn btn-velvet" style="text-decoration: none;">
+                                                    @if ($buy->cancel_buy != 0)
+                                                        Cancelado
+                                                    @else
+                                                        Cancelar Compra
+                                                    @endif
+                                                </button>
                                             </form>
                                         </center>
 

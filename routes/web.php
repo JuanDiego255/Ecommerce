@@ -45,6 +45,8 @@ Route::group(['auth'], function () {
     Route::get('checkout', [CheckOutController::class, 'index']);
     Route::post('/payment', [CheckOutController::class, 'payment']);
     Route::get('/buys', [BuyController::class, 'index']);
+    Route::post('cancel/buy/{id}/{status}', [BuyController::class, 'cancelBuy']);
+    Route::post('cancel/buy-item/{id}/{status}', [BuyController::class, 'cancelBuyItem']);
     Route::get('/buy/details/{id}', [BuyController::class, 'buyDetails']);
 });
 

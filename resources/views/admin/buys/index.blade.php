@@ -50,6 +50,8 @@
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                     Aprobado</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
+                                    Compra</th>
+                                <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                     Fecha</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                     Acciones</th>
@@ -72,13 +74,17 @@
                                         </div>
                                     </td>
                                     <td class="align-middle text-xxs text-center">
-                                        <p class=" font-weight-bold mb-0">{{ isset($buy->name) ? $buy->name : $buy->name_b }} {{isset($buy->last_name) ? $buy->last_name : $buy->last_name_b}}</p>
+                                        <p class=" font-weight-bold mb-0">
+                                            {{ isset($buy->name) ? $buy->name : $buy->name_b }}
+                                            {{ isset($buy->last_name) ? $buy->last_name : $buy->last_name_b }}</p>
                                     </td>
                                     <td class="align-middle text-xxs text-center">
-                                        <p class=" font-weight-bold mb-0">{{ isset($buy->telephone) ? $buy->telephone : $buy->telephone_b }}</p>
+                                        <p class=" font-weight-bold mb-0">
+                                            {{ isset($buy->telephone) ? $buy->telephone : $buy->telephone_b }}</p>
                                     </td>
                                     <td class="align-middle text-xxs text-center">
-                                        <p class=" font-weight-bold mb-0">{{ isset($buy->email) ? $buy->email : $buy->email_b }}</p>
+                                        <p class=" font-weight-bold mb-0">
+                                            {{ isset($buy->email) ? $buy->email : $buy->email_b }}</p>
                                     </td>
                                     <td class="align-middle text-xxs text-center">
                                         <p class=" font-weight-bold mb-0">₡{{ number_format($buy->total_buy) }}</p>
@@ -104,55 +110,109 @@
                                         </p>
                                     </td>
                                     <td class="align-middle text-xxs text-center">
+                                        <p class=" font-weight-bold mb-0">
+                                            @switch($buy->cancel_buy)
+                                                @case(0)
+                                                    Vigente
+                                                @break
+
+                                                @case(1)
+                                                    En proceso cancelación
+                                                @break
+
+                                                @default
+                                                    Cancelada
+                                            @endswitch
+                                        </p>
+                                    </td>
+                                    <td class="align-middle text-xxs text-center">
                                         <p class=" font-weight-bold mb-0">{{ $buy->created_at }}</p>
                                     </td>
 
                                     <td class="align-middle">
                                         <center>
-                                            <a data-bs-toggle="tooltip" data-bs-placement="top" title="Ver Detalle"
-                                                data-container="body" data-animation="true" class="btn btn-velvet"
-                                                style="text-decoration: none;"
-                                                href="{{ url('buy/details/admin/' . $buy->id) }}"><i
-                                                    class="material-icons opacity-10">visibility</i></a>
-                                            <form style="display:inline"
-                                                action="{{ url('approve/' . $buy->id . '/' . $buy->approved) }}"
-                                                method="POST" enctype="multipart/form-data">
-                                                @csrf
-                                                @method('PUT')
+                                            @if ($buy->cancel_buy == 0)
+                                                <a data-bs-toggle="tooltip" data-bs-placement="top" title="Ver Detalle"
+                                                    data-container="body" data-animation="true" class="btn btn-velvet"
+                                                    style="text-decoration: none;"
+                                                    href="{{ url('buy/details/admin/' . $buy->id) }}"><i
+                                                        class="material-icons opacity-10">visibility</i></a>
+                                            @endif
 
-                                                <button class="btn btn-velvet text-white btn-tooltip"
-                                                    data-bs-toggle="tooltip" data-bs-placement="top"
-                                                    title="{{ $buy->approved == 1 ? 'Desaprobar Compra' : 'Aprobar Compra' }}"
-                                                    data-container="body" data-animation="true" type="submit"> <i
-                                                        class="material-icons opacity-10">
-                                                        @if ($buy->approved == 1)
-                                                            cancel
-                                                        @else
-                                                            check_circle
-                                                        @endif
-                                                    </i>
-                                                </button>
-                                            </form>
+                                            @if ($buy->cancel_buy == 0)
+                                                <form style="display:inline"
+                                                    action="{{ url('approve/' . $buy->id . '/' . $buy->approved) }}"
+                                                    method="POST" enctype="multipart/form-data">
+                                                    @csrf
+                                                    @method('PUT')
 
-                                            <form style="display:inline"
-                                                action="{{ url('delivery/' . $buy->id . '/' . $buy->delivered) }}"
-                                                method="POST" enctype="multipart/form-data">
-                                                @csrf
-                                                @method('PUT')
+                                                    <button class="btn btn-velvet text-white btn-tooltip"
+                                                        data-bs-toggle="tooltip" data-bs-placement="top"
+                                                        title="{{ $buy->approved == 1 ? 'Desaprobar Compra' : 'Aprobar Compra' }}"
+                                                        data-container="body" data-animation="true" type="submit"> <i
+                                                            class="material-icons opacity-10">
+                                                            @if ($buy->approved == 1)
+                                                                cancel
+                                                            @else
+                                                                check_circle
+                                                            @endif
+                                                        </i>
+                                                    </button>
+                                                </form>
 
-                                                <button class="btn btn-velvet text-white btn-tooltip"
-                                                    data-bs-toggle="tooltip" data-bs-placement="top"
-                                                    title="{{ $buy->delivered == 1 ? 'No Entregado' : 'Entregado' }}"
-                                                    data-container="body" data-animation="true" type="submit"> <i
-                                                        class="material-icons opacity-10">
-                                                        @if ($buy->delivered == 1)
-                                                            close
-                                                        @else
+                                                <form style="display:inline"
+                                                    action="{{ url('delivery/' . $buy->id . '/' . $buy->delivered) }}"
+                                                    method="POST" enctype="multipart/form-data">
+                                                    @csrf
+                                                    @method('PUT')
+
+                                                    <button class="btn btn-velvet text-white btn-tooltip"
+                                                        data-bs-toggle="tooltip" data-bs-placement="top"
+                                                        title="{{ $buy->delivered == 1 ? 'No Entregado' : 'Entregado' }}"
+                                                        data-container="body" data-animation="true" type="submit"> <i
+                                                            class="material-icons opacity-10">
+                                                            @if ($buy->delivered == 1)
+                                                                close
+                                                            @else
+                                                                check
+                                                            @endif
+                                                        </i>
+                                                    </button>
+                                                </form>
+                                            @endif
+
+                                            @if ($buy->cancel_buy == 1)
+                                                <form style="display:inline"
+                                                    action="{{ url('cancel/buy/' . $buy->id . '/' . $buy->cancel_buy) }}"
+                                                    method="POST" enctype="multipart/form-data">
+                                                    @csrf
+
+                                                    <input type="hidden" name="action" value="1">
+                                                    <button class="btn btn-velvet text-white btn-tooltip"
+                                                        data-bs-toggle="tooltip" data-bs-placement="top"
+                                                        title="Aprobar Cancelación" data-container="body"
+                                                        data-animation="true" type="submit"> <i
+                                                            class="material-icons opacity-10">
                                                             check
-                                                        @endif
-                                                    </i>
-                                                </button>
-                                            </form>
+                                                        </i>
+                                                    </button>
+                                                </form>
+                                                <form style="display:inline"
+                                                    action="{{ url('cancel/buy/' . $buy->id . '/' . $buy->cancel_buy) }}"
+                                                    method="POST" enctype="multipart/form-data">
+                                                    @csrf
+
+                                                    <input type="hidden" name="action" value="0">
+                                                    <button class="btn btn-velvet text-white btn-tooltip"
+                                                        data-bs-toggle="tooltip" data-bs-placement="top"
+                                                        title="Desaprobar Cancelación" data-container="body"
+                                                        data-animation="true" type="submit"> <i
+                                                            class="material-icons opacity-10">
+                                                            cancel
+                                                        </i>
+                                                    </button>
+                                                </form>
+                                            @endif
                                         </center>
 
                                     </td>

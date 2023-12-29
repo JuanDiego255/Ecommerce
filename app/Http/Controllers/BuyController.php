@@ -54,7 +54,8 @@ class BuyController extends Controller
                 'buys.name as name_b',
                 'buys.last_name as last_name_b',
                 'buys.telephone as telephone_b',
-                'buys.email as email_b'
+                'buys.email as email_b',
+                'buys.cancel_buy as cancel_buy'
             )
             ->get();
 
@@ -78,10 +79,14 @@ class BuyController extends Controller
                 'clothing.description as description',
                 'buy_details.total as total',
                 'buy_details.iva as iva',
+                'buy_details.id as buy_id',
+                'buy_details.buy_id as buy',
+                'buy_details.cancel_item as cancel_item',
                 'clothing.image as image',
                 'clothing.status as status',
                 'sizes.size as size',
-                'buy_details.quantity as quantity'
+                'buy_details.quantity as quantity',
+                'buys.approved as approved'
 
             )->get();
         $tags = MetaTags::where('section', 'Mis Compras')->get();
@@ -113,7 +118,10 @@ class BuyController extends Controller
                 'clothing.image as image',
                 'clothing.status as status',
                 'sizes.size as size',
-                'buy_details.quantity as quantity'
+                'buy_details.quantity as quantity',
+                'buy_details.cancel_item as cancel_item',
+                'buy_details.id as item_id',
+                'buy_details.buy_id as buy'
 
             )->get();
 
@@ -165,6 +173,98 @@ class BuyController extends Controller
             Buy::where('id', $id)->update(['delivered' => $status]);
             DB::commit();
             return redirect()->back()->with(['status' => 'Se ha cambiado el estado de la entrega!', 'icon' => 'success']);
+        } catch (Exception $th) {
+            DB::rollBack();
+        }
+    }
+    public function cancelBuy($id, $cancel_buy, Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $status = 1;
+            $action = $request->action;
+            if ($cancel_buy == 1) {
+                if ($action != null) {
+                    if ($action == 0) {
+                        $status = 0;
+                    } else {
+                        $status = 2;
+                    }
+                } else {
+                    $status = 0;
+                }
+            }
+            Buy::where('id', $id)->update(['cancel_buy' => $status]);
+
+            BuyDetail::where('buy_id', $id)
+            ->where('cancel_item','!=',2)
+            ->update(['cancel_item' => $status]);
+
+            DB::commit();
+            switch ($status) {
+                case (1):
+                    $status_desc = "Proceso de cancelación";
+                    break;
+                case (2):
+                    $status_desc = "Cancelada";
+                    break;
+                default:
+                    $status_desc = "Vigente";
+            }
+            return redirect()->back()->with(['status' => 'Proceso de compra: ' . $status_desc, 'icon' => 'success']);
+        } catch (Exception $th) {
+            DB::rollBack();
+        }
+    }
+    public function cancelBuyItem($id, $cancel_item, Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $buy = $request->buy;
+
+            $status = 1;
+            $action = $request->action;
+            if ($cancel_item == 1) {
+                if ($action != null) {
+                    if ($action == 0) {
+                        $status = 0;
+                    } else {
+                        $status = 2;
+                    }
+                } else {
+                    $status = 0;
+                }
+            }
+            BuyDetail::where('id', $id)->update(['cancel_item' => $status]);
+            if($status == 2){
+                $buysDetails = BuyDetail::where('id', $id)->first();
+                $total_det = $buysDetails->total;
+                $iva_det = $buysDetails->iva;
+                $buys = Buy::where('id', $buy)->first();
+                $total_buy = $buys->total_buy;
+                $iva_buy = $buys->total_iva;
+                $total_buy = $total_buy - $total_det;
+                $iva_buy = $iva_buy - $iva_det;
+                Buy::where('id', $buy)->update(['total_buy' => $total_buy,'total_iva' => $iva_buy]);
+            }
+
+            if (count(BuyDetail::where('buy_id', $buy)->where('cancel_item', 0)->get()) == 0) {
+                Buy::where('id', $buy)->update(['cancel_buy' => $status]);
+                DB::commit();
+                return redirect('buys')->with(['status' => 'Se ha cancelado el artículo, y la compra!', 'icon' => 'success']);
+            }
+            DB::commit();
+            switch ($status) {
+                case (1):
+                    $status_desc = "Proceso de cancelación";
+                    break;
+                case (2):
+                    $status_desc = "Cancelada";
+                    break;
+                default:
+                    $status_desc = "Vigente";
+            }
+            return redirect()->back()->with(['status' => 'Proceso de artículo: ' . $status_desc, 'icon' => 'success']);
         } catch (Exception $th) {
             DB::rollBack();
         }

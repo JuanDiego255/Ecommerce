@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Buy;
 use App\Models\Cart;
 use App\Models\Categories;
 use Illuminate\Support\Facades\Auth;
@@ -35,17 +36,24 @@ class AppServiceProvider extends ServiceProvider
                 $cartNumber = count(Cart::where('user_id', Auth::id())
                     ->where('session_id', null)
                     ->where('sold', 0)->get());
+                $buys = count(Buy::where('user_id', Auth::id())
+                    ->where('session_id', null)
+                    ->get());
             } else {
                 $cartNumber = count(Cart::where('session_id', $session_id)
                     ->where('user_id', null)
                     ->where('sold', 0)->get());
+                $buys = count(Buy::where('user_id', null)
+                    ->where('session_id', $session_id)
+                    ->get());
             }
             $categories = Categories::get();
 
             view()->share([
                 'view_name' => $view_name,
                 'cartNumber' => $cartNumber,
-                'categories' => $categories
+                'categories' => $categories,
+                'buys' => $buys
             ]);
         });
     }

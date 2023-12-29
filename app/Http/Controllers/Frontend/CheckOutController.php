@@ -122,6 +122,7 @@ class CheckOutController extends Controller
                 $buy->total_buy =  $total_price;
                 $buy->delivered = 0;
                 $buy->approved = 0;
+                $buy->cancel_buy = 0;
                 $buy->save();
                 $buy_id = $buy->id;
 
@@ -133,6 +134,7 @@ class CheckOutController extends Controller
                     $buy_detail->total = ($cart->price * $cart->quantity) + ($cart->price * 0.13);
                     $buy_detail->iva = $cart->price * 0.13;
                     $buy_detail->quantity = $cart->quantity;
+                    $buy_detail->cancel_item = 0;
                     $buy_detail->save();
                     $stock = Stock::where('clothing_id', $cart->clothing_id)
                         ->where('size_id', $cart->size_id)
@@ -188,6 +190,7 @@ class CheckOutController extends Controller
                 $buy->total_buy =  $total_price;
                 $buy->delivered = 0;
                 $buy->approved = 0;
+                $buy->cancel_buy = 0;
                 $buy->save();
                 $buy_id = $buy->id;
 
@@ -199,6 +202,7 @@ class CheckOutController extends Controller
                     $buy_detail->total = ($cart->price * $cart->quantity) + ($cart->price * 0.13);
                     $buy_detail->iva = $cart->price * 0.13;
                     $buy_detail->quantity = $cart->quantity;
+                    $buy_detail->cancel_item = 0;
                     $buy_detail->save();
                     $stock = Stock::where('clothing_id', $cart->clothing_id)
                         ->where('size_id', $cart->size_id)

@@ -4,7 +4,6 @@
     {!! OpenGraph::generate() !!}
 @endsection
 @section('content')
-    
     <div class="container">
         <div class="alert alert-secondary alert-dismissible text-white fade show mt-4" role="alert">
             <span class="alert-icon align-middle">
@@ -12,7 +11,13 @@
                     payments
                 </span>
             </span>
-            <span class="alert-text"><strong>Detalles de la compra!</strong></span>
+            <span class="alert-text"><strong>Detalles de la compra!</strong></span><br>
+            <span class="alert-icon align-middle">
+                <span class="material-icons text-md">
+                    cancel
+                </span>
+            </span>
+            <span class="alert-text"><strong>Una vez que la compra esté aprobada, no se puede cancelar la compra, ni artículos de ella</strong></span>
         </div>
         <div class="row w-100">
             <div class="col-md-6">
@@ -53,6 +58,8 @@
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                     IVA</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
+                                    Pedido</th>
+                                <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                     Cantidad</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                     Acciones</th>
@@ -86,19 +93,45 @@
                                         <p class=" font-weight-bold mb-0">₡{{ number_format($buy->iva) }}</p>
                                     </td>
                                     <td class="align-middle text-xxs text-center">
+                                        <p class=" font-weight-bold mb-0">
+                                            @switch($buy->cancel_item)
+                                                @case(0)
+                                                    Vigente
+                                                @break
+
+                                                @case(1)
+                                                    En proceso cancelación
+                                                @break
+
+                                                @default
+                                                    Cancelada
+                                            @endswitch
+                                        </p>
+                                    </td>
+                                    <td class="align-middle text-xxs text-center">
                                         <p class=" font-weight-bold mb-0">{{ $buy->quantity }}</p>
                                     </td>
 
                                     <td class="align-middle">
                                         <center>
 
-                                            <form method="post" action="{{ url('/delete/buy/' . $buy->id) }}"
+                                            <form method="post"
+                                                action="{{ url('/cancel/buy-item/' . $buy->buy_id . '/' . $buy->cancel_item) }}"
                                                 style="display:inline">
                                                 {{ csrf_field() }}
-                                                {{ method_field('DELETE') }}
-                                                <button type="submit" data-bs-toggle="modal"
-                                                    onclick="return confirm('Deseas borrar este artículo?')"
-                                                    class="btn btn-velvet" style="text-decoration: none;">Borrar</button>
+
+                                                <input type="hidden" name="buy" value="{{$buy->buy}}">
+                                                
+                                                <button @if ($buy->cancel_item != 0 || $buy->approved != 0) disabled @endif type="submit"
+                                                    data-bs-toggle="modal"
+                                                    onclick="return confirm('Deseas cancelar este artículo?')"
+                                                    class="btn btn-velvet" style="text-decoration: none;">
+                                                    @if ($buy->cancel_item != 0)
+                                                        Cancelada
+                                                    @else
+                                                        Cancelar
+                                                    @endif
+                                                </button>
                                             </form>
                                         </center>
 

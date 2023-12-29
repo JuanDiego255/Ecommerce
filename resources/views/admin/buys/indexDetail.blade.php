@@ -52,7 +52,13 @@
                                             IVA</th>
                                         <th
                                             class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
+                                            Estado</th>
+                                        <th
+                                            class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                             Cantidad</th>
+                                        <th
+                                            class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
+                                            Acciones</th>
 
                                     </tr>
                                 </thead>
@@ -83,9 +89,60 @@
                                                 <p class=" font-weight-bold mb-0">₡{{ number_format($buy->iva) }}</p>
                                             </td>
                                             <td class="align-middle text-xxs text-center">
+                                                <p class=" font-weight-bold mb-0">
+                                                    @switch($buy->cancel_item)
+                                                        @case(0)
+                                                            Vigente
+                                                        @break
+
+                                                        @case(1)
+                                                            En proceso cancelación
+                                                        @break
+
+                                                        @default
+                                                            Cancelada
+                                                    @endswitch
+                                                </p>
+                                            </td>
+                                            <td class="align-middle text-xxs text-center">
                                                 <p class=" font-weight-bold mb-0">{{ $buy->quantity }}</p>
                                             </td>
+                                            <td class="align-middle">
+                                                @if ($buy->cancel_item == 1)
+                                                    <form style="display:inline"
+                                                        action="{{ url('cancel/buy-item/' . $buy->item_id . '/' . $buy->cancel_item) }}"
+                                                        method="POST" enctype="multipart/form-data">
+                                                        @csrf
 
+                                                        <input type="hidden" name="action" value="1">
+                                                        <input type="hidden" name="buy" value="{{$buy->buy}}">
+                                                        <button class="btn btn-velvet text-white btn-tooltip"
+                                                            data-bs-toggle="tooltip" data-bs-placement="top"
+                                                            title="Aprobar Cancelación" data-container="body"
+                                                            data-animation="true" type="submit"> <i
+                                                                class="material-icons opacity-10">
+                                                                check
+                                                            </i>
+                                                        </button>
+                                                    </form>
+                                                    <form style="display:inline"
+                                                        action="{{ url('cancel/buy-item/' . $buy->item_id . '/' . $buy->cancel_item) }}"
+                                                        method="POST" enctype="multipart/form-data">
+                                                        @csrf
+
+                                                        <input type="hidden" name="action" value="0">
+                                                        <input type="hidden" name="buy" value="{{$buy->buy}}">
+                                                        <button class="btn btn-velvet text-white btn-tooltip"
+                                                            data-bs-toggle="tooltip" data-bs-placement="top"
+                                                            title="Desaprobar Cancelación" data-container="body"
+                                                            data-animation="true" type="submit"> <i
+                                                                class="material-icons opacity-10">
+                                                                cancel
+                                                            </i>
+                                                        </button>
+                                                    </form>
+                                                @endif
+                                            </td>
 
 
                                         </tr>
@@ -110,15 +167,18 @@
                                             <i class="material-icons my-auto">done</i>
                                             País: {{ isset($item->country) ? $item->country : $item->country_b }}<br>
                                             <i class="material-icons my-auto">done</i>
-                                            Provincia: {{ isset($item->province) ? $item->province : $item->province_b }}<br>
+                                            Provincia:
+                                            {{ isset($item->province) ? $item->province : $item->province_b }}<br>
                                             <i class="material-icons my-auto">done</i>
                                             Ciudad: {{ isset($item->city) ? $item->city : $item->city_b }}<br>
                                             <i class="material-icons my-auto">done</i>
                                             Dirección: {{ isset($item->address) ? $item->address : $item->address_b }}<br>
                                             <i class="material-icons my-auto">done</i>
-                                            Dirección 2: {{ isset($item->address_two) ? $item->address_two : $item->address_two_b }}<br>
+                                            Dirección 2:
+                                            {{ isset($item->address_two) ? $item->address_two : $item->address_two_b }}<br>
                                             <i class="material-icons my-auto">done</i>
-                                            Código Postal: {{ isset($item->postal_code) ? $item->postal_code : $item->postal_code_b }}
+                                            Código Postal:
+                                            {{ isset($item->postal_code) ? $item->postal_code : $item->postal_code_b }}
 
                                         </h4>
 
