@@ -11,7 +11,7 @@
                     category
                 </span>
             </span>
-            <span class="alert-text"><strong>Nuestras Categorías!</strong></span>
+            <span class="alert-text text-white"><strong>Nuestras Categorías!</strong></span>
         </div>
         <div class="row row-cols-1 row-cols-md-3 g-4 align-content-center card-group mt-5 mb-5">
             @foreach ($category as $item)

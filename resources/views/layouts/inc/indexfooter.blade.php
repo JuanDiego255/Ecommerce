@@ -22,11 +22,11 @@
                     <div>
                         <p class="text-muted">
                             <a style="text-decoration: none;" class="mr-5 text-muted" href="{{ route('register') }}">
-                                <i class="fa fa-envelope"> Ingresa tu información y regístrate </i>
+                                <i class="fa fa-envelope"></i> Ingresa tu información y regístrate
                             </a><br>
 
-                            <i class="fas fa-percentage text-muted"> Una vez registrado tendrás más exclusividades por
-                                Velvet Boutique!</i>
+                            <i class="fas fa-percentage"></i> Una vez registrado tendrás más exclusividades por
+                            Velvet Boutique!
 
                         </p>
                     </div>

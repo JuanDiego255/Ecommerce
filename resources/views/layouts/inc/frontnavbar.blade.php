@@ -165,7 +165,7 @@
                     onclick="menuToggle()"><i class="fas fa-bars me-2"></i> MENU</button>
             </div>
             <div class="flex3 text-center" id="siteBrand">
-                <a class="velvet-title" href="{{ url('/') }}">VELVET BOUTIQUE</a>
+                <a class="velvet-title text-title" href="{{ url('/') }}">VELVET BOUTIQUE</a>
             </div>
 
             <div class="flex2 text-end d-block d-md-none">
@@ -185,17 +185,17 @@
                 @guest
                     <a href="{{ route('login') }}">
                         <button id="btnIngresarLogo" class="whiteLink siteLink" style="border-right:1px solid #eaeaea"><i
-                                class="fa fa-sign-in"></i> Ingresar</button>
+                                class="fa fa-sign-in"></i> INGRESAR</button>
                     </a>
                 @else
                     <a href="{{ url('buys') }}">
                         <button id="btnIngresarLogo" class="whiteLink siteLink" style="border-right:1px solid #eaeaea"><i
-                                class="fa fa-credit-card"></i> Mis Compras</button>
+                                class="fa fa-credit-card"></i> MIS COMPRAS</button>
                     </a>
                 @endguest
 
                 <a href="{{ url('view-cart') }}"><button class="blackLink siteLink"><i class="fa fa-shopping-cart"></i>
-                        Carrito <span class="badge badge-sm badge-info border text-xxs">{{ $cartNumber }}</span>
+                        CARRITO <span class="badge badge-sm badge-info border text-xxs">{{ $cartNumber }}</span>
                     </button>
                 </a>
 

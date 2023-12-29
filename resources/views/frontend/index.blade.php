@@ -49,10 +49,16 @@
     </div>
 
     <hr class="text-dark">
-    <h3 class="text-center text-dark mt-5">Instragram <a href="https://www.instagram.com/velvetboutiquegrecia/">Velvet
-            Boutique</a></h3>
-    <p class="text-center text-muted"><span>Compartimos con ustedes lo que nos hace sentir mejor, un excelente
-            outfit!</span></p>
+    <div class="text-center">
+        <h3 class="text-center text-dark mt-5">Instragram <a class="text-title"
+                href="https://www.instagram.com/velvetboutiquegrecia/">Velvet
+                Boutique.</a></h3>
+
+        <span class="text-muted text-center">Compartimos con ustedes lo que nos hace sentir mejor, un excelente
+            outfit!</span>
+    </div>
+
+
     <hr class="dark horizontal text-danger mb-3">
 
     <div class="row mb-5 container-fluid">
@@ -63,10 +69,10 @@
                         style="background-image: url('{{ asset('storage') . '/' . $item->image }}'); height:700px;">
                         <span class="mask bg-gradient-dark opacity-6"></span>
                         <div class="card-body position-relative z-index-1 d-flex flex-column mt-5">
-                            <h3 class="text-white font-weight-bolder">{{ $item->description }}.</h3>
-                            <a target="blank" class="text-white text-sm font-weight-bold mb-0 icon-move-right mt-4"
+                            <h3 class="text-white">{{ $item->description }}.</h3>
+                            <a target="blank" class="text-white text-sm mb-0 icon-move-right mt-4"
                                 href="{{ $item->url }}">
-                                <h3 class="text-white font-weight-bolder"> Ver fotografía
+                                <h3 class="text-white"> Ver fotografía
                                     <i class="material-icons text-sm ms-1 position-relative"
                                         aria-hidden="true">arrow_forward</i>
                                 </h3>
@@ -80,11 +86,11 @@
 
     </div>
 
-    <div class="bg-velvet-mision p-3 mb-3">
-        <h3 class="text-center text-dark mt-3">Velvet Boutique</h3>
-        <p class="text-center text-muted"><span>Nuestra misión es envolverte con nuestros atuendos, y hacerlos llegar a la
-                puerta de tu casa.<br>Realizamos envios a nivel nacional.</span></p>
-       
+    <div class="bg-velvet-mision p-3 mb-3 text-center">
+        <h3 class="text-center text-title mt-3">Velvet Boutique</h3>
+        <span class="text-center text-muted">Nuestra misión es envolverte con nuestros atuendos, y hacerlos llegar a la
+            puerta de tu casa.<br>Realizamos envios a nivel nacional.</span>
+
 
     </div>
     {{-- <div class="col-md-12 mt-5 mb-5">
@@ -96,9 +102,13 @@
             </div>
         </div>
     </div> --}}
+
     <hr class="dark horizontal text-danger mb-3">
-    <h3 class="text-center text-dark mt-5">Outfit`s En Tendencia</h3>
-    <p class="text-center text-muted"><span>Nuestras últimas colecciones, los artículos más solicitados!</span></p>
+    <div class="text-center">
+        <h3 class="text-center text-dark mt-5">Outfit`s En Tendencia</h3>
+        <span class="text-muted">Nuestras últimas colecciones, los artículos más solicitados!</span>
+    </div>
+
     <hr class="dark horizontal text-danger my-0">
 
     <div class="mt-3 mb-5">

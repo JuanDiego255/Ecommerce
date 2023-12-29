@@ -42,7 +42,7 @@
                                     $stockPerSize = explode(',', $clothing->stock_per_size);
                                 @endphp
                                 @for ($i = 0; $i < count($sizes); $i++)
-                                    <p class="mb-0">Talla {{ $sizes[$i] }}: {{ $stockPerSize[$i] }}</p>
+                                    <span class="text-center">Talla {{ $sizes[$i] }}: {{ $stockPerSize[$i] }}</span><br>
                                 @endfor
                                 <a href="{{ url('detail-clothing/' . $clothing->id . '/' . $category_id) }}"
                                     class="btn btn-icon btn-3 mt-2 btn-outline-secondary">
