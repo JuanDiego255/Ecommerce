@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\FrontendController;
 use App\Http\Controllers\BuyController;
@@ -30,27 +31,15 @@ use function Ramsey\Uuid\v1;
 /* Route::get('/', function () {
     return view('welcome');
 }); */
+//Google authentication ----->
+Route::get('/google-auth/redirect', [AuthController::class, 'redirectGoogle']);
+Route::get('/google-auth/callback', [AuthController::class, 'callbackGoogle']);
+//Google authentication <-----
 
-Route::get('/google-auth/redirect', function () {
-    return Socialite::driver('google')->redirect();
-});
-
-Route::get('/google-auth/callback', function () {
-    $user_google = Socialite::driver('google')->user();
-    $given_name = $user_google->user['given_name'];
-    dd($given_name);
-    $user = User::updateOrCreate([
-        'google_id' => $user_google->id,
-    ], [
-        'name' => $user_google->given_name,
-        'last_name' => $user_google->family_name,
-        'email' => $user_google->email,
-        'role_as' => 0,
-    ]);
-
-    Auth::login($user);
-    return redirect('/');
-});
+//Facebook authentication ------>
+Route::get('/facebook-auth/redirect', [AuthController::class, 'redirectFacebook']);
+Route::get('/facebook-auth/callback', [AuthController::class, 'callbackFacebook']);
+//Facebook authentication <------
 
 Route::get('/', [FrontendController::class, 'index']);
 Route::get('category', [FrontendController::class, 'category']);

@@ -29,7 +29,7 @@ class User extends Authenticatable
         'postal_code',
         'email',
         'password',
-        'google_id'
+        'auth_id'
     ];
 
     /**

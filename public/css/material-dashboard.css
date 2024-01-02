@@ -3693,8 +3693,8 @@ fieldset:disabled .btn {
 }
 .btn-google {
   --bs-btn-color: #fff;
-  --bs-btn-bg: #D42412;
-  --bs-btn-border-color: #D42412;
+  --bs-btn-bg: #DB4437;
+  --bs-btn-border-color: #DB4437;
   --bs-btn-hover-color: #000;
   --bs-btn-hover-bg: #868787;
   --bs-btn-hover-border-color: #868787;
@@ -3704,8 +3704,25 @@ fieldset:disabled .btn {
   --bs-btn-active-border-color: #868787;
   --bs-btn-active-shadow: none;
   --bs-btn-disabled-color: #000;
-  --bs-btn-disabled-bg: #D42412;
-  --bs-btn-disabled-border-color: #D42412;
+  --bs-btn-disabled-bg: #DB4437;
+  --bs-btn-disabled-border-color: #DB4437;
+}
+
+.btn-facebook {
+  --bs-btn-color: #fff;
+  --bs-btn-bg: #3b5998;
+  --bs-btn-border-color: #3b5998;
+  --bs-btn-hover-color: #000;
+  --bs-btn-hover-bg: #868787;
+  --bs-btn-hover-border-color: #868787;
+  --bs-btn-focus-shadow-rgb: 198, 26, 84;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: #868787;
+  --bs-btn-active-border-color: #868787;
+  --bs-btn-active-shadow: none;
+  --bs-btn-disabled-color: #000;
+  --bs-btn-disabled-bg: #3b5998;
+  --bs-btn-disabled-border-color: #3b5998;
 }
 
 .btn-secondary {
