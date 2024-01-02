@@ -17,17 +17,16 @@
                             <div class="col-md-12 mt-2">
                                 <div class="input-group input-group-static mb-4">
                                     <label>E-mail</label>
-                                    <input value="{{ old('email') }}" autocomplete="email" required type="email" name="email"
-                                        class="form-control float-left w-100">
+                                    <input value="{{ old('email') }}" autocomplete="email" required type="email"
+                                        name="email" class="form-control float-left w-100">
                                 </div>
                             </div>
 
                             <div class="col-md-12 mt-2">
                                 <div class="input-group input-group-static mb-4">
                                     <label>Contraseña</label>
-                                    <input value="{{ old('password') }}"  required autocomplete="current-password"
-                                     type="password" name="password"
-                                        class="form-control float-left w-100">
+                                    <input value="{{ old('password') }}" required autocomplete="current-password"
+                                        type="password" name="password" class="form-control float-left w-100">
                                 </div>
                             </div>
 
@@ -42,7 +41,17 @@
                                             {{ __('Olvidó su contraseña?') }}
                                         </a>
                                     @endif
+
                                 </div>
+
+                            </div>
+                            <div class="row text-center">
+                                <center>
+                                    <a class="btn btn-google w-50 text-center" href="/google-auth/redirect">
+                                        <i class="fa fa-google"></i> {{ __('Ingresar con Google') }}
+                                    </a>
+                                </center>
+
                             </div>
                         </form>
                     </div>

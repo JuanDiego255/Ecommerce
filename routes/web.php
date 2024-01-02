@@ -11,6 +11,8 @@ use App\Http\Controllers\SizeController;
 use App\Http\Controllers\SocialNetworkController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Laravel\Socialite\Facades\Socialite;
+use App\Models\User;
 
 use function Ramsey\Uuid\v1;
 
@@ -29,6 +31,27 @@ use function Ramsey\Uuid\v1;
     return view('welcome');
 }); */
 
+Route::get('/google-auth/redirect', function () {
+    return Socialite::driver('google')->redirect();
+});
+
+Route::get('/google-auth/callback', function () {
+    $user_google = Socialite::driver('google')->user();
+    $given_name = $user_google->user['given_name'];
+    dd($given_name);
+    $user = User::updateOrCreate([
+        'google_id' => $user_google->id,
+    ], [
+        'name' => $user_google->given_name,
+        'last_name' => $user_google->family_name,
+        'email' => $user_google->email,
+        'role_as' => 0,
+    ]);
+
+    Auth::login($user);
+    return redirect('/');
+});
+
 Route::get('/', [FrontendController::class, 'index']);
 Route::get('category', [FrontendController::class, 'category']);
 Route::get('clothes-category/{id}', [FrontendController::class, 'clothesByCategory']);
@@ -41,12 +64,12 @@ Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::group(['auth'], function () {
-   
+
     Route::get('checkout', [CheckOutController::class, 'index']);
     Route::post('/payment', [CheckOutController::class, 'payment']);
     Route::get('/buys', [BuyController::class, 'index']);
-    Route::post('cancel/buy/{id}/{status}', [BuyController::class, 'cancelBuy']);
-    Route::post('cancel/buy-item/{id}/{status}', [BuyController::class, 'cancelBuyItem']);
+    //::post('cancel/buy/{id}/{status}', [BuyController::class, 'cancelBuy']);
+    //Route::post('cancel/buy-item/{id}/{status}', [BuyController::class, 'cancelBuyItem']);
     Route::get('/buy/details/{id}', [BuyController::class, 'buyDetails']);
 });
 

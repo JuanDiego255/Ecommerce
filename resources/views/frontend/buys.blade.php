@@ -11,13 +11,13 @@
                     payments
                 </span>
             </span>
-            <span class="alert-text"><strong>Mis Compras</strong></span><br>
-            <span class="alert-icon align-middle">
+            <span class="alert-text"><strong>Historial de pedidos</strong></span><br>
+           {{--  <span class="alert-icon align-middle">
                 <span class="material-icons text-md">
                     cancel
                 </span>
             </span>
-            <span class="alert-text"><strong>Una vez que la compra esté aprobada, no se puede cancelar la compra, ni artículos de ella</strong></span>
+            <span class="alert-text"><strong>Una vez que la compra esté aprobada, no se puede cancelar la compra, ni artículos de ella</strong></span> --}}
         </div>
         <div class="row w-100">
             <div class="col-md-6">
@@ -120,7 +120,7 @@
                                                     Detalle</a>
                                             @endif
 
-                                            <form method="post"
+                                            {{-- <form method="post"
                                                 action="{{ url('/cancel/buy/' . $buy->id . '/' . $buy->cancel_buy) }}"
                                                 style="display:inline">
                                                 {{ csrf_field() }}
@@ -134,7 +134,7 @@
                                                         Cancelar Compra
                                                     @endif
                                                 </button>
-                                            </form>
+                                            </form> --}}
                                         </center>
 
                                     </td>

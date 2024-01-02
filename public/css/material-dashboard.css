@@ -3691,6 +3691,22 @@ fieldset:disabled .btn {
   --bs-btn-disabled-bg: #616262;
   --bs-btn-disabled-border-color: #616262;
 }
+.btn-google {
+  --bs-btn-color: #fff;
+  --bs-btn-bg: #D42412;
+  --bs-btn-border-color: #D42412;
+  --bs-btn-hover-color: #000;
+  --bs-btn-hover-bg: #868787;
+  --bs-btn-hover-border-color: #868787;
+  --bs-btn-focus-shadow-rgb: 198, 26, 84;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: #868787;
+  --bs-btn-active-border-color: #868787;
+  --bs-btn-active-shadow: none;
+  --bs-btn-disabled-color: #000;
+  --bs-btn-disabled-bg: #D42412;
+  --bs-btn-disabled-border-color: #D42412;
+}
 
 .btn-secondary {
   --bs-btn-color: #000;

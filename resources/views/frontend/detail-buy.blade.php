@@ -11,13 +11,13 @@
                     payments
                 </span>
             </span>
-            <span class="alert-text"><strong>Detalles de la compra!</strong></span><br>
-            <span class="alert-icon align-middle">
+            <span class="alert-text"><strong>Detalles del pedido!</strong></span><br>
+            {{--             <span class="alert-icon align-middle">
                 <span class="material-icons text-md">
                     cancel
                 </span>
             </span>
-            <span class="alert-text"><strong>Una vez que la compra esté aprobada, no se puede cancelar la compra, ni artículos de ella</strong></span>
+            <span class="alert-text"><strong>Una vez que la compra esté aprobada, no se puede cancelar la compra, ni artículos de ella</strong></span> --}}
         </div>
         <div class="row w-100">
             <div class="col-md-6">
@@ -61,8 +61,8 @@
                                     Pedido</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                     Cantidad</th>
-                                <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                    Acciones</th>
+                                {{-- <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
+                                    Acciones</th> --}}
 
                             </tr>
                         </thead>
@@ -112,7 +112,7 @@
                                         <p class=" font-weight-bold mb-0">{{ $buy->quantity }}</p>
                                     </td>
 
-                                    <td class="align-middle">
+                                    {{-- <td class="align-middle">
                                         <center>
 
                                             <form method="post"
@@ -120,8 +120,8 @@
                                                 style="display:inline">
                                                 {{ csrf_field() }}
 
-                                                <input type="hidden" name="buy" value="{{$buy->buy}}">
-                                                
+                                                <input type="hidden" name="buy" value="{{ $buy->buy }}">
+
                                                 <button @if ($buy->cancel_item != 0 || $buy->approved != 0) disabled @endif type="submit"
                                                     data-bs-toggle="modal"
                                                     onclick="return confirm('Deseas cancelar este artículo?')"
@@ -136,7 +136,7 @@
                                         </center>
 
                                     </td>
-
+ --}}
                                 </tr>
                             @endforeach
                         </tbody>
