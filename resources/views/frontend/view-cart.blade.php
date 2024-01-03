@@ -4,7 +4,6 @@
     {!! OpenGraph::generate() !!}
 @endsection
 @section('content')
-    
     <div class="product_data mb-3" style="margin-left: 100px; margin-right:80px;">
         <div class="alert alert-secondary alert-dismissible text-white fade show mt-4" role="alert">
             <span class="alert-icon align-middle">
@@ -12,11 +11,13 @@
                     waving_hand
                 </span>
             </span>
-            <span class="alert-text"><strong>Hola, <a class="text-white" href="{{url('category')}}">¿Desea realizar más compras?</a></strong></span>
+            <span class="alert-text"><strong>Hola, <a class="text-white" href="{{ url('category') }}">¿Desea realizar más
+                        compras?</a></strong></span>
         </div>
+        
         <center>
             <div class=" ml-5 row row-cols-1 row-cols-md-2 g-4 align-content-center card-group mt-5">
-                <div class="col ml-5 bg-transparent">
+                <div class="col-lg-8 ml-5 bg-transparent">
                     <div class="card ml-5 w-100">
 
                         <div class="table-responsive">
@@ -47,7 +48,7 @@
                                                         <a target="blank" data-fancybox="gallery"
                                                             href="{{ asset('storage') . '/' . $item->image }}">
                                                             <img src="{{ asset('storage') . '/' . $item->image }}"
-                                                                class="img-fluid shadow border-radius-lg">
+                                                                class="img-fluid shadow border-radius-lg w-25">
                                                         </a>
                                                     </div>
                                                 </div>
@@ -98,38 +99,37 @@
                     </div>
 
                 </div>
-                <div class="col bg-transparent">
-                    <div class="card card-frame w-100">
+                <div class="col-lg-4 bg-transparent">
+                    <div class="card mb-4">
                         <div class="card-body">
-                            <h5 class="font-weight-normal">
-                                Total a Pagar
+                            <ul class="list-group list-group-flush">
+                                <li
+                                    class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
+                                    Productos
+                                    <span id="totalCloth">₡{{ number_format($cloth_price) }}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                    I.V.A
+                                    <span id="totalIvaElement">₡{{ number_format($iva) }}</span>
+                                </li>
+                                <li
+                                    class="list-group-item d-flex justify-content-between border-0 px-0 mb-3">
+                                   
+                                        <strong>Total</strong>                                   
+                                    <span><strong  id="totalPriceElement">₡{{ number_format($total_price) }}</strong></span>
+                                </li>
+                            </ul>
 
-                            </h5>
-                            <p class="mb-0">
-                                Valor Absoluto + I.V.A
-                            </p>
-                            <a class="btn btn-icon btn-3 mt-4 btn-info" href="{{ url('checkout') }}">
+                            <a class="btn btn-icon btn-3 mt-2 btn-info" href="{{ url('checkout') }}">
                                 <span class="btn-inner--icon"><i class="material-icons">local_atm</i></span>
                                 <span class="btn-inner--text">Ir a pagar</span>
                             </a>
-
-                        </div>
-                        <hr class="dark horizontal my-0">
-                        <div class="card-footer d-flex">
-
-                            <p class="font-weight-normal text-success my-auto" id="totalIvaElement">I.V.A:
-                                ₡{{ number_format($iva) }}</p>
-                            <i class="material-icons text-success position-relative ms-auto text-lg me-1 my-auto">paid</i>
-                            <p class="font-weight-normal text-success my-auto" id="totalPriceElement">Total:
-                                ₡{{ number_format($total_price) }}</p>
-
-                            </p>
                         </div>
                     </div>
                 </div>
             </div>
         </center>
-        
+
     </div>
     @include('layouts.inc.indexfooter')
 @endsection
@@ -188,6 +188,7 @@
 
         function calcularTotal() {
             let total = 0;
+            let total_cloth = 0;
             let iva = 0.13;
             let total_iva = 0;
             // Obtener todas las filas de la tabla
@@ -202,13 +203,16 @@
             });
 
             total_iva = total * iva;
+            total_cloth = total;
             total = total + total_iva;
 
             // Mostrar el total actualizado en el elemento correspondiente
             const totalElement = document.getElementById('totalPriceElement');
             const totalIvaElement = document.getElementById('totalIvaElement');
-            totalElement.textContent = `Total: ₡${total.toLocaleString()}`;
-            totalIvaElement.textContent = `Total: ₡${total_iva.toLocaleString()}`;
+            const totalCloth = document.getElementById('totalCloth');
+            totalElement.textContent = `₡${total.toLocaleString()}`;
+            totalIvaElement.textContent = `₡${total_iva.toLocaleString()}`;
+            totalCloth.textContent = `₡${total_cloth.toLocaleString()}`;
         }
     </script>
 @endsection
