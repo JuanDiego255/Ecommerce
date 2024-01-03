@@ -3708,6 +3708,7 @@ fieldset:disabled .btn {
   --bs-btn-disabled-border-color: #DB4437;
 }
 
+
 .btn-facebook {
   --bs-btn-color: #fff;
   --bs-btn-bg: #3b5998;
@@ -10587,6 +10588,20 @@ fieldset:disabled .btn {
 
 .text-danger {
   color: #F44335 !important;
+}
+.text-facebook {
+  font-size: 24px;
+  color: #3b5998 !important;
+}
+.text-google {
+  font-size: 24px;
+  color: #DB4437 !important;
+}
+.text-facebook:hover {
+  color: #4A71C2 !important;
+}
+.text-google:hover {
+  color: #F04D3F !important;
 }
 
 .text-light {
@@ -27883,4 +27898,15 @@ select.noStyle {
 }
 #logoutDropdown {
   display: none; /* Oculta las subcategorías por defecto */
+}
+.divider:after,
+.divider:before {
+content: "";
+flex: 1;
+height: 1px;
+background: #eee;
+}
+.card-login{
+  background: hsla(0, 0%, 100%, 0.55);
+  backdrop-filter: blur(30px);
 }
