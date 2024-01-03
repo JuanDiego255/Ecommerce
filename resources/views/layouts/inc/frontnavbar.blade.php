@@ -246,6 +246,7 @@
                     <span
                         class="badge badge-sm text-dark badge-info border border-2 text-xxs">{{ $cartNumber }}</span></a>
                 <a href="{{ url('buys') }}" class="nav-menu-item"><i class="fa fa-credit-card me-3"></i>MIS COMPRAS</a>
+                <a href="{{ url('/address') }}" class="nav-menu-item"><i class="fas fa-map-marker me-3"></i>DIRECCIONES</a>
                 <div class="nav-menu-item">
                     <i class="fas fa-tshirt me-3"></i><a class="color-menu" href="javascript:void(0);"
                         id="toggleCategories">CATEGORIAS   <i class="fa fa-arrow-circle-down ml-3"></i></a>

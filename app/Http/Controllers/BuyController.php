@@ -48,7 +48,6 @@ class BuyController extends Controller
                 'buys.image as image',
                 'users.id as user_id',
                 'users.name as name',
-                'users.last_name as last_name',
                 'users.telephone as telephone',
                 'users.email as email',
                 'buys.name as name_b',
@@ -126,15 +125,16 @@ class BuyController extends Controller
             )->get();
 
         $buysDetailsPerson = Buy::where('buys.id', $id)
-            ->leftJoin('users', 'buys.user_id', 'users.id')
+            ->leftJoin('address_users', 'buys.user_id', 'address_users.user_id')
+            ->where('address_users.status', 1)
             ->select(
-                'users.id as user_id',
-                'users.address as address',
-                'users.address_two as address_two',
-                'users.city as city',
-                'users.country as country',
-                'users.province as province',
-                'users.postal_code as postal_code',
+                'address_users.user_id as user_id',
+                'address_users.address as address',
+                'address_users.address_two as address_two',
+                'address_users.city as city',
+                'address_users.country as country',
+                'address_users.province as province',
+                'address_users.postal_code as postal_code',
                 'buys.address as address_b',
                 'buys.address_two as address_two_b',
                 'buys.city as city_b',

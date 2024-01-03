@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AddressUserController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\FrontendController;
@@ -60,6 +61,11 @@ Route::group(['auth'], function () {
     //::post('cancel/buy/{id}/{status}', [BuyController::class, 'cancelBuy']);
     //Route::post('cancel/buy-item/{id}/{status}', [BuyController::class, 'cancelBuyItem']);
     Route::get('/buy/details/{id}', [BuyController::class, 'buyDetails']);
+    Route::post('address/store', [AddressUserController::class, 'store']);
+    Route::post('address/status/{id}', [AddressUserController::class, 'status']);
+    Route::put('/address/update/{id}', [AddressUserController::class, 'update']);
+    Route::get('/address', [AddressUserController::class, 'index']);
+    Route::delete('/delete/address/{id}', [AddressUserController::class, 'destroy']);
 });
 
 Route::group(['middleware' => 'isAdmin'], function () {

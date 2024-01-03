@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Models\AddressUser;
 use App\Models\Buy;
 use App\Models\BuyDetail;
 use App\Models\Cart;
@@ -22,6 +23,7 @@ class CheckOutController extends Controller
 
     public function index()
     {
+        $user_info = null;
         if (Auth::check()) {
             $cartItems = Cart::where('user_id', Auth::id())
                 ->where('carts.sold', 0)
@@ -43,7 +45,8 @@ class CheckOutController extends Controller
             foreach ($cartItems as $item) {
                 $cloth_price += $item->price * $item->quantity;
             }
-
+            $user_info = AddressUser::where('user_id',Auth::user()->id)
+            ->where('status',1)->first();
             $iva = $cloth_price * 0.13;
             $total_price = $cloth_price + $iva;
         } else {
@@ -83,7 +86,7 @@ class CheckOutController extends Controller
             OpenGraph::setDescription($tag->meta_og_description);
         }
 
-        return view('frontend.checkout', compact('cartItems', 'iva', 'total_price', 'cloth_price'));
+        return view('frontend.checkout', compact('cartItems', 'iva', 'total_price', 'cloth_price','user_info'));
     }
 
     public function payment(Request $request)
@@ -118,6 +121,12 @@ class CheckOutController extends Controller
                     $buy->image = $request->file('image')->store('uploads', 'public');
                 }
                 $buy->user_id =  Auth::user()->id;
+                $buy->address =  $request->address;
+                $buy->address_two =  $request->address_two;
+                $buy->city =  $request->city;
+                $buy->province =  $request->province;
+                $buy->country =  $request->country;
+                $buy->postal_code =  $request->postal_code;
                 $buy->total_iva =  $iva;
                 $buy->total_buy =  $total_price;
                 $buy->delivered = 0;
