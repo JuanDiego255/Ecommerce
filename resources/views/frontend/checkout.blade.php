@@ -27,9 +27,21 @@
                     </span>
                 </span>
                 <span class="alert-text">
-                    <strong>Una vez que te <a class="text-info"
-                            href="{{ route('register') }}">registres</a> no deberás completar los detalles de entrega, e
+                    <strong>Una vez que te <a class="text-info" href="{{ route('register') }}">registres</a> no deberás
+                        completar los detalles de entrega, e
                         información personal. Además de encontrar increíbles descuentos, y promociones.
+                    </strong>
+                </span>
+            @else
+                <br>
+                <span class="alert-icon align-middle">
+                    <span class="material-icons text-md">
+                        location_on
+                    </span>
+                </span>
+                <span class="alert-text">
+                    <strong>Para cambiar la dirección de entrega ve a 
+                        <a class="text-info" href="{{url('address')}}">direcciones</a> y selecciona la que desees.
                     </strong>
                 </span>
             @endif
@@ -93,9 +105,8 @@
                                     <div class="col-md-6 mt-2">
                                         <div class="input-group input-group-static mb-4">
                                             <label>Ciudad</label>
-                                            <input value="{{ isset($user_info->city) ? $user_info->city : '' }}"
-                                                required type="text" name="city"
-                                                class="form-control float-left w-100">
+                                            <input value="{{ isset($user_info->city) ? $user_info->city : '' }}" required
+                                                type="text" name="city" class="form-control float-left w-100">
                                         </div>
                                     </div>
                                     <div class="col-md-6 mt-2">
@@ -109,7 +120,8 @@
                                     <div class="col-md-6 mt-2">
                                         <div class="input-group input-group-static mb-4">
                                             <label>País</label>
-                                            <input value="{{ isset($user_info->country) ? $user_info->country : 'Costa Rica' }}"
+                                            <input
+                                                value="{{ isset($user_info->country) ? $user_info->country : 'Costa Rica' }}"
                                                 required value="Costa Rica" type="text" name="country"
                                                 class="form-control float-left w-100">
                                         </div>
