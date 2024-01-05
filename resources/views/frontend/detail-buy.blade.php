@@ -5,19 +5,11 @@
 @endsection
 @section('content')
     <div class="container">
-        <div class="alert alert-secondary alert-dismissible text-white fade show mt-4" role="alert">
-            <span class="alert-icon align-middle">
-                <span class="material-icons text-md">
-                    payments
-                </span>
-            </span>
-            <span class="alert-text"><strong>Detalles del pedido!</strong></span><br>
-            {{--             <span class="alert-icon align-middle">
-                <span class="material-icons text-md">
-                    cancel
-                </span>
-            </span>
-            <span class="alert-text"><strong>Una vez que la compra esté aprobada, no se puede cancelar la compra, ni artículos de ella</strong></span> --}}
+        <div class="breadcrumb-nav bc3x mt-4">
+            <li class="home"><a href="{{ url('/') }}"><i class="fas fa-home me-1"></i></a></li>
+            <li class="bread-standard"><a href="{{ url('/buys') }}"><i class="fa fa-shopping-cart me-1"></i>Mis Compras</a>
+            </li>
+            <li class="bread-standard"><a href="#"><i class="fab fa-cc-mastercard me-1"></i>Detalles Del Pedido</a></li>
         </div>
         <div class="row w-100">
             <div class="col-md-6">
@@ -145,12 +137,6 @@
             </div>
         </center>
     </div>
-    <center>
-
-        <div class="col-md-12">
-            <a href="{{ url('buys') }}" class="btn btn-outline-secondary">Volver</a>
-        </div>
-    </center>
     @include('layouts.inc.indexfooter')
 @endsection
 @section('scripts')

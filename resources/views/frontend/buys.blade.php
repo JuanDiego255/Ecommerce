@@ -4,20 +4,10 @@
     {!! OpenGraph::generate() !!}
 @endsection
 @section('content')
-    <div class="container">
-        <div class="alert alert-secondary alert-dismissible text-white fade show mt-4" role="alert">
-            <span class="alert-icon align-middle">
-                <span class="material-icons text-md">
-                    payments
-                </span>
-            </span>
-            <span class="alert-text"><strong>Historial de pedidos</strong></span><br>
-           {{--  <span class="alert-icon align-middle">
-                <span class="material-icons text-md">
-                    cancel
-                </span>
-            </span>
-            <span class="alert-text"><strong>Una vez que la compra esté aprobada, no se puede cancelar la compra, ni artículos de ella</strong></span> --}}
+    <div class="container mb-4">
+        <div class="breadcrumb-nav bc3x mt-4">
+            <li class="home"><a href="{{ url('/') }}"><i class="fas fa-home me-1"></i></a></li>
+            <li class="bread-standard"><a href="#"><i class="fab fa-cc-mastercard me-1"></i>Historial De pedidos</a></li>
         </div>
         <div class="row w-100">
             <div class="col-md-6">
@@ -148,12 +138,6 @@
         </center>
 
     </div>
-    <center>
-
-        <div class="col-md-12">
-            <a href="{{ url('/') }}" class="btn btn-outline-secondary">Volver</a>
-        </div>
-    </center>
     @include('layouts.inc.indexfooter')
 @endsection
 @section('scripts')

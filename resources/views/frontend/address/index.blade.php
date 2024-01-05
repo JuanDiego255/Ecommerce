@@ -5,16 +5,14 @@
 @endsection
 @section('content')
     <div class="container">
-        <div class="alert alert-secondary alert-dismissible text-white fade show mt-4" role="alert">
-            <span class="alert-icon align-middle">
-                <span class="material-icons text-md">
-                    location_on
-                </span>
-            </span>
-            <span class="alert-text"><strong>Direcciones</strong></span>
+        <div class="breadcrumb-nav bc3x mt-4">
+            <li class="home"><a href="{{ url('/') }}"><i class="fas fa-home me-1"></i></a></li>
+            <li class="bread-standard"><a class="location" href="#"><i class="fas fa-map-marker me-1"></i>Mis Direcciones</a></li>
+            <li class="bread-standard"><a type="button" data-bs-toggle="modal" data-bs-target="#add-address-modal"><i class="fas fa-plus me-1"></i>Nueva
+                    Dirección</a></li>            
+            <li></li>
         </div>
-        <button type="button" data-bs-toggle="modal" data-bs-target="#add-address-modal" class="btn btn-velvet">Nueva
-            Dirección</button>
+
 
         <center>
 
@@ -69,7 +67,7 @@
                         <tbody>
                             @foreach ($address as $item)
                                 <tr>
-                                    <form id="myForm" action="{{ url('address/status/'.$item->id) }}" method="POST">
+                                    <form id="myForm" action="{{ url('address/status/' . $item->id) }}" method="POST">
                                         @csrf
                                         <!-- Otros campos del formulario -->
                                         <td class="align-middle text-center">
@@ -130,6 +128,7 @@
 
         </center>
     </div>
+    @include('layouts.inc.indexfooter')
 @endsection
 @section('scripts')
     <script>

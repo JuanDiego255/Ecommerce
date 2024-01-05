@@ -14,7 +14,7 @@
                 </span>
                 <span class="alert-text"><strong>
                         @foreach ($clothes as $item)
-                        {{$item->name.' | '.$item->description}}
+                            {{ $item->name . ' | ' . $item->description }}
                         @endforeach
                     </strong></span>
             </div>

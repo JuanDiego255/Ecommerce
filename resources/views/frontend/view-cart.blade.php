@@ -4,19 +4,16 @@
     {!! OpenGraph::generate() !!}
 @endsection
 @section('content')
-    <div class="product_data mb-3" style="margin-left: 100px; margin-right:80px;">
-        <div class="alert alert-secondary alert-dismissible text-white fade show mt-4" role="alert">
-            <span class="alert-icon align-middle">
-                <span class="material-icons text-md">
-                    waving_hand
-                </span>
-            </span>
-            <span class="alert-text"><strong>Hola, <a class="text-white" href="{{ url('category') }}">¿Desea realizar más
-                        compras?</a></strong></span>
+    <div class="product_data mb-3 mt-4" style="margin-left: 100px; margin-right:80px;">
+        <div class="breadcrumb-nav bc3x">
+               
+            <li class="home"><a href="{{ url('/') }}"><i class="fas fa-home me-1"></i></a></li>
+            <li class="bread-standard"><a href="{{ url('category/') }}"><i class="fas fa-box me-1"></i>¿Desea realizar más
+                compras?</a></li>
+            <li class="bread-standard"><a href="#"><i class="fa fa-shopping-cart me-1"></i>Carrito</a></li>
         </div>
-        
         <center>
-            <div class=" ml-5 row row-cols-1 row-cols-md-2 g-4 align-content-center card-group mt-5">
+            <div class=" ml-5 row row-cols-1 row-cols-md-2 g-4 align-content-center card-group mt-2">
                 <div class="col-lg-8 ml-5 bg-transparent">
                     <div class="card ml-5 w-100">
 

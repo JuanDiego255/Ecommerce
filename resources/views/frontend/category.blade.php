@@ -4,14 +4,11 @@
     {!! OpenGraph::generate() !!}
 @endsection
 @section('content')
-    <div class="container">
-        <div class="alert alert-secondary alert-dismissible text-white fade show mt-4" role="alert">
-            <span class="alert-icon align-middle">
-                <span class="material-icons text-md">
-                    category
-                </span>
-            </span>
-            <span class="alert-text text-white"><strong>Nuestras Categorías!</strong></span>
+    <div class="container mt-4">
+        <div class="breadcrumb-nav bc3x">
+               
+            <li class="home"><a href="{{ url('/') }}"><i class="fas fa-home me-1"></i>Inicio</a></li>
+            <li class="bread-standard"><a href="#"><i class="fas fa-box me-1"></i>Categorías</a></li>
         </div>
         <div class="row row-cols-1 row-cols-md-3 g-4 align-content-center card-group mt-5 mb-5">
             @foreach ($category as $item)
@@ -54,12 +51,7 @@
                 </div>
             @endforeach
 
-        </div>
-        <center>
-            <div class="col-md-12">
-                <a href="{{ url('/') }}" class="btn btn-velvet w-25">Volver</a>
-            </div>
-        </center>
-        @include('layouts.inc.indexfooter')
+        </div>       
     </div>
+    @include('layouts.inc.indexfooter')
 @endsection
