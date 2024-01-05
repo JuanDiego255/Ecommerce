@@ -3792,6 +3792,38 @@ fieldset:disabled .btn {
   --bs-btn-disabled-bg: #fb8c00;
   --bs-btn-disabled-border-color: #fb8c00;
 }
+.btn-add_to_cart {
+  --bs-btn-color: #fff;
+  --bs-btn-bg: #A5BA8D;
+  --bs-btn-border-color: #A5BA8D;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: #A5BA8D;
+  --bs-btn-hover-border-color: #A5BA8D;
+  --bs-btn-focus-shadow-rgb: 213, 119, 0;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: #A5BA8D;
+  --bs-btn-active-border-color: #A5BA8D;
+  --bs-btn-active-shadow: none;
+  --bs-btn-disabled-color: #fff;
+  --bs-btn-disabled-bg: #A5BA8D;
+  --bs-btn-disabled-border-color: #A5BA8D;
+}
+.btn-add_to_cart:hover {
+  --bs-btn-color: #fff;
+  --bs-btn-bg: #889677;
+  --bs-btn-border-color: #889677;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: #889677;
+  --bs-btn-hover-border-color: #889677;
+  --bs-btn-focus-shadow-rgb: 213, 119, 0;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: #889677;
+  --bs-btn-active-border-color: #889677;
+  --bs-btn-active-shadow: none;
+  --bs-btn-disabled-color: #fff;
+  --bs-btn-disabled-bg: #889677;
+  --bs-btn-disabled-border-color: #889677;
+}
 
 .btn-danger {
   --bs-btn-color: #000;
