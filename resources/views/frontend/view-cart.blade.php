@@ -21,14 +21,14 @@
                             <table class="table align-items-center mb-0" id="cartTable">
                                 <thead>
                                     <tr>
-                                        <th class="text-uppercase text-secondary font-weight-bolder opacity-7">Imagen</th>
-                                        <th class="text-uppercase text-secondary font-weight-bolder opacity-7 ps-2">Producto
+                                        <th class="text-secondary font-weight-bolder opacity-7">Imagen</th>
+                                        <th class="text-secondary font-weight-bolder opacity-7 ps-2">Producto
                                         </th>
-                                        <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7">
+                                        <th class="text-center text-secondary font-weight-bolder opacity-7">
                                             Precio</th>
-                                        <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7">
+                                        <th class="text-center text-secondary font-weight-bolder opacity-7">
                                             Talla</th>
-                                        <th class="text-center text-uppercase text-secondary font-weight-bolder opacity-7">
+                                        <th class="text-center text-secondary font-weight-bolder opacity-7">
                                             Cant</th>
                                         <th class="text-secondary opacity-7"></th>
                                     </tr>
