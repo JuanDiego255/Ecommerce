@@ -159,6 +159,7 @@ class FrontendController extends Controller
             ->join('sizes', 'stocks.size_id', 'sizes.id')
             ->select(
                 'categories.name as category',
+                'categories.id as category_id',
                 'clothing.id as id',
                 'clothing.trending as trending',
                 'clothing.name as name',
@@ -169,10 +170,11 @@ class FrontendController extends Controller
                 DB::raw('GROUP_CONCAT(sizes.size) AS available_sizes'), // Obtener tallas dinámicas
                 DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size') // Obtener stock por talla
             )
-            ->groupBy('clothing.id', 'categories.name', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'clothing.image')
+            ->groupBy('clothing.id', 'categories.name','categories.id', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'clothing.image')
             ->inRandomOrder()
             ->take(5)
             ->get();
+            
         return view('frontend.detail-clothing', compact('clothes', 'category_id', 'size_active', 'clothings_trending'));
     }
 }

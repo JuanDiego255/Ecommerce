@@ -117,7 +117,7 @@
                                 </li>
                             </ul>
 
-                            <a class="btn btn-icon btn-3 mt-2 btn-info" href="{{ url('checkout') }}">
+                            <a class="btn btn-icon btn-3 mt-2 btn-add_to_cart" href="{{ url('checkout') }}">
                                 <span class="btn-inner--icon"><i class="material-icons">local_atm</i></span>
                                 <span class="btn-inner--text">Ir a pagar</span>
                             </a>

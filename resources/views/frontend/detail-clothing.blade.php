@@ -21,7 +21,7 @@
                 $sizes = explode(',', $item->available_sizes);
                 $stockPerSize = explode(',', $item->stock_per_size);
             @endphp
-            <section class="py-5">
+            <section class="pt-4">
                 <div class="container product_data">
                     <div class="row gx-5">
                         <aside class="col-lg-6">
@@ -115,7 +115,7 @@
                                 </div>
 
                                 <button @if ($item->total_stock > 0) @else disabled @endif
-                                    class="btn btn-warning shadow-0 btnAddToCart"> <i
+                                    class="btn btn-add_to_cart shadow-0 btnAddToCart"> <i
                                         class="me-1 fa fa-shopping-basket"></i>
                                     @if ($item->total_stock > 0)
                                         Agregar Al Carrito
@@ -128,40 +128,36 @@
                     </div>
                 </div>
             </section>
-            {{--  <section class="bg-light border-top py-4">
-                <div class="container">
-                    <div class="row gx-4">
-                        <div class="col-lg-12">
-                            <div class="px-0 border rounded-2 shadow-0">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <h5 class="card-title">Otros atuendos en tendencia</h5>
-                                        @foreach ($clothings_trending as $item)
-                                            <div class="d-flex mb-3">
-                                                <a href="{{ asset('storage') . '/' . $item->image }}" class="me-3">
-                                                    <img src="{{ asset('storage') . '/' . $item->image }}"
-                                                        style="min-width: 96px; height: 96px;"
-                                                        class="img-md img-thumbnail" />
-                                                </a>
-                                                <div class="info">
-                                                    <a href="#" class="nav-link mb-1">
-                                                        Rucksack Backpack Large <br />
-                                                        Line Mounts
-                                                    </a>
-                                                    <strong class="text-dark"> $38.90</strong>
-                                                </div>
-                                            </div>
-                                        @endforeach
+        @endforeach
 
-                                    </div>
-                                </div>
-                            </div>
+        <div class="text-center">
+            <h3 class="text-center text-dark mt-5">Potencia tu outfit con estas opciones</h3>
+        </div>
+        <hr class="dark horizontal text-danger mb-3">
+        <div class="row mt-4">
+            @foreach ($clothings_trending as $item)
+            <input type="hidden" class="cloth_id" value="{{ $item->id }}">
+            <input type="hidden" class="quantity" value="1">
+                <div class="col-md-3 col-sm-6">
+                    <div class="product-grid product_data">
+                        <div class="product-image">
+                            <img src="{{ asset('storage') . '/' . $item->image }}">
+                            <ul class="product-links">
+                                <li><a target="blank" href="{{ asset('storage') . '/' . $item->image }}"><i class="fas fa-eye"></i></a></li>
+                            </ul>
+                            <a href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}"
+                                class="add-to-cart">Detallar</a>
+                        </div>
+                        <div class="product-content">
+                            <h3 class="title"><a href="#">{{ $item->name }}</a></h3>
+                            <h4 class="title"><a href="#">Stock: {{ $item->total_stock }}</a></h4>
+                            <div class="price">₡{{ number_format($item->price) }}</span></div>
                         </div>
                     </div>
                 </div>
-            </section> --}}
-        @endforeach
+            @endforeach
 
+        </div>
     </div>
     @include('layouts.inc.indexfooter')
 @endsection
