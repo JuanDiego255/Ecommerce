@@ -2943,7 +2943,6 @@ textarea.form-control-lg {
 .form-check {
   display: block;
   min-height: auto;
-  padding-left: 1.73em;
   margin-bottom: 0.125rem;
 }
 
@@ -22459,7 +22458,7 @@ body.dark-version {
 
 .form-check:not(.form-switch) .form-check-input[type="checkbox"]:checked,
 .form-check:not(.form-switch) .form-check-input[type="radio"]:checked {
-  border-color: #e91e63;
+  border-color: #000;
 }
 
 .form-check:not(.form-switch) .form-check-input[type="checkbox"] {
@@ -22501,7 +22500,7 @@ body.dark-version {
   width: 0.8375rem;
   height: 0.8375rem;
   border-radius: 50%;
-  background-image: linear-gradient(195deg, #EC407A 0%, #D81B60 100%), var(--bs-gradient);
+  background-image: linear-gradient(195deg, #000 0%, #000 100%), var(--bs-gradient);
   opacity: 0;
   left: 0;
   right: 0;
@@ -28014,4 +28013,13 @@ background: #eee;
 
 .breadcrumb-nav li .location:after {
   border-left-color: #B8B7B7;
+}
+.icon-hover:hover {
+  border-color: #3b71ca !important;
+  background-color: white !important;
+  color: #3b71ca !important;
+}
+
+.icon-hover:hover i {
+  color: #3b71ca !important;
 }

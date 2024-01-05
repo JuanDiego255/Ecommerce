@@ -5,118 +5,164 @@
 @endsection
 @section('content')
     <div class="container">
-        <center>
-            <div class="alert w-75 text-left alert-secondary alert-dismissible text-white fade show mt-4" role="alert">
-                <span class="alert-icon align-middle">
-                    <span class="material-icons text-md">
-                        apparel
-                    </span>
-                </span>
-                <span class="alert-text"><strong>
-                        @foreach ($clothes as $item)
-                            {{ $item->name . ' | ' . $item->description }}
-                        @endforeach
-                    </strong></span>
+
+
+        @foreach ($clothes as $item)
+            <div class="breadcrumb-nav bc3x mt-4">
+
+                <li class="home"><a href="{{ url('/') }}"><i class="fas fa-home me-1"></i></a></li>
+                <li class="bread-standard"><a href="{{ url('category/') }}"><i class="fas fa-box me-1"></i>Categorías</a></li>
+                <li class="bread-standard"><a href="{{ url('clothes-category/' . $category_id) }}"><i
+                            class="fas fa-tshirt me-1"></i>{{ $item->category }}</a></li>
+                <li class="bread-standard"><a class="location" href="#"><i class="fas fa-socks me-1"></i>Detalles</a>
+                </li>
             </div>
-
-            @foreach ($clothes as $item)
-                <div class="card w-75 product_data">
-                    <div class="row row-cols-1 row-cols-md-2 g-4 align-content-center card-group mt-5">
-                        <div class="col bg-transparent">
-                            <div class="card-header p-0 position-relative mt-n4 mx-3 pb-5 z-index-2">
-                                <a target="blank" data-fancybox="gallery" href="{{ asset('storage') . '/' . $item->image }}"
-                                    class="d-block blur-shadow-image">
-                                    <img src="{{ asset('storage') . '/' . $item->image }}" style="width: 600px"
-                                        alt="img-blur-shadow" class="img-fluid shadow border-radius-lg">
+            @php
+                $sizes = explode(',', $item->available_sizes);
+                $stockPerSize = explode(',', $item->stock_per_size);
+            @endphp
+            <section class="py-5">
+                <div class="container product_data">
+                    <div class="row gx-5">
+                        <aside class="col-lg-6">
+                            <div class="rounded-4 mb-3 d-flex justify-content-center">
+                                <a data-fslightbox="mygalley" class="rounded-4" target="_blank" data-type="image"
+                                    href="{{ asset('storage') . '/' . $item->image }}">
+                                    <img style="max-width: 100%; max-height: 100vh; margin: auto;" class="rounded-4 fit"
+                                        src="{{ asset('storage') . '/' . $item->image }}" />
                                 </a>
-                                <div class="colored-shadow"
-                                    style="background-image: url(&quot;https://demos.creative-tim.com/test/material-dashboard-pro/assets/img/products/product-1-min.jpg&quot;);">
-                                </div>
                             </div>
-                        </div>
-                        <div class="col bg-transparent">
-                            <div class="card-body pb-4 pt-2">
+                            <!-- thumbs-wrap.// -->
+                            <!-- gallery-wrap .end// -->
+                        </aside>
+                        <main class="col-lg-6">
+                            <div class="ps-lg-3">
+                                <h4 class="title text-dark">
+                                    {{ $item->name }}
+                                </h4>
+                                <div class="d-flex flex-row my-3">
+                                    @if ($item->trending == 1)
+                                        <div class="text-warning mb-1 me-2">
 
-                                @php
-                                    $sizes = explode(',', $item->available_sizes);
-                                    $stockPerSize = explode(',', $item->stock_per_size);
-                                @endphp
+                                            <i
+                                                class="material-icons text-danger position-relative ms-auto text-lg me-1 my-auto">trending_up</i>
 
-                                <input type="hidden" class="cloth_id" value="{{ $item->id }}">
-                                <div class="input-group input-group-static mb-4">
-                                    <label>Cantidad</label>
-                                    <input min="1" max="{{ $item->stock }}" value="1" type="number"
-                                        name="quantity" class="form-control float-left w-100 quantity">
-                                </div>
+                                            <span class="text-danger my-auto">Tendencia</span>
 
-                                <div class="col-md-12 mb-3">
-                                    <label
-                                        class="control-label control-label text-formulario {{ $errors->has('size_id') ? 'is-invalid' : '' }}"
-                                        for="size_id">Tallas</label><br>
-                                    @foreach ($size_active as $key => $size)
-                                        <div class="form-check form-check-inline">
-                                            <input required name="size_id" class="size_id form-check-input mb-2"
-                                                type="radio" value="{{ $size->id }}" id="size_{{ $size->id }}"
-                                                {{ $key === 0 ? 'checked' : '' }}>
-                                            <label class="form-check-label table-text text-dark mb-2"
-                                                for="size_{{ $size->id }}">
-                                                {{ $size->size }}
-                                            </label>
                                         </div>
-                                    @endforeach
+                                    @endif
+                                    <span class="text-muted-normal"><i
+                                            class="fas fa-shopping-basket fa-sm mx-1"></i>{{ $item->total_stock }}
+                                        {{ $item->total_stock > 1 ? 'órdenes' : 'orden' }}</span>
+                                    @if ($item->total_stock > 0)
+                                        <span class="text-success ms-2">In stock</span>
+                                    @else
+                                        <span class="text-success ms-2">Not stock</span>
+                                    @endif
+
                                 </div>
-                                <button type="button" @if ($item->total_stock > 0) @else disabled @endif
-                                    class="btn btn-outline-info mt-3 mb-0 btnAddToCart">
+
+                                <div class="mb-1">
+                                    <span class="text-muted"> ₡{{ number_format($item->price) }}</span>
+                                    <span class="text-muted">/ por unidad</span>
+                                </div>
+
+                                <p>
+                                    {{ $item->description }}
+                                </p>
+
+                                {{-- <div class="row">
+                                    <dt class="col-3">Type:</dt>
+                                    <dd class="col-9">Regular</dd>
+
+                                    <dt class="col-3">Color</dt>
+                                    <dd class="col-9">Brown</dd>
+
+                                    <dt class="col-3">Material</dt>
+                                    <dd class="col-9">Cotton, Jeans</dd>
+
+                                    <dt class="col-3">Brand</dt>
+                                    <dd class="col-9">Reebook</dd>
+                                </div> --}}
+
+                                <div class="row mb-3">
+                                    <div class="col-md-6 col-12">
+                                        <div class="input-group input-group-static w-25">
+                                            <label>Cantidad</label>
+                                            <input min="1" max="{{ $item->stock }}" id="quantityInput"
+                                                value="1" type="number" name="quantity"
+                                                class="form-control float-left w-100 quantity">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 col-12">
+                                        <label class="">Tallas</label><br>
+                                        @foreach ($size_active as $key => $size)
+                                            <div class="form-check form-check-inline">
+                                                <input required name="size_id" class="size_id form-check-input mb-2"
+                                                    type="radio" value="{{ $size->id }}"
+                                                    id="size_{{ $size->id }}" {{ $key === 0 ? 'checked' : '' }}>
+                                                <label class="form-check-label table-text text-dark mb-2"
+                                                    for="size_{{ $size->id }}">
+                                                    {{ $size->size }}
+                                                </label>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                    <!-- col.// -->
+                                    <input type="hidden" class="cloth_id" value="{{ $item->id }}">
+
+
+                                </div>
+
+                                <button @if ($item->total_stock > 0) @else disabled @endif
+                                    class="btn btn-warning shadow-0 btnAddToCart"> <i
+                                        class="me-1 fa fa-shopping-basket"></i>
                                     @if ($item->total_stock > 0)
                                         Agregar Al Carrito
                                     @else
                                         Vendido!
                                     @endif
                                 </button>
-
-
-
                             </div>
-                            <div class="card-footer d-flex">
-                                <p class="font-weight-normal text-success text- my-auto">Precio:
-                                    ₡{{ number_format($item->price) }}</p>
-                                @if ($item->trending == 1)
-                                    <i
-                                        class="material-icons text-danger position-relative ms-auto text-lg me-1 my-auto">trending_up</i>
-                                    <strong>
-                                        <p class="text-danger my-auto">Tendencia</p>
-                                    </strong>
-                                @endif
-                                @if ($item->total_stock > 0)
-                                    <i
-                                        class="material-icons text-info position-relative ms-auto text-lg me-1 my-auto">inventory</i>
-                                    <strong>
-                                        <p class="text-info my-auto">In Stock</p>
-                                    </strong>
-                                @else
-                                    <i
-                                        class="material-icons text-info position-relative ms-auto text-lg me-1 my-auto">inventory</i>
-                                    <strong>
-                                        <s>
-                                            <p class="text-info my-auto">Not Stock</p>
-                                        </s>
-                                    </strong>
-                                @endif
+                        </main>
+                    </div>
+                </div>
+            </section>
+            {{--  <section class="bg-light border-top py-4">
+                <div class="container">
+                    <div class="row gx-4">
+                        <div class="col-lg-12">
+                            <div class="px-0 border rounded-2 shadow-0">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Otros atuendos en tendencia</h5>
+                                        @foreach ($clothings_trending as $item)
+                                            <div class="d-flex mb-3">
+                                                <a href="{{ asset('storage') . '/' . $item->image }}" class="me-3">
+                                                    <img src="{{ asset('storage') . '/' . $item->image }}"
+                                                        style="min-width: 96px; height: 96px;"
+                                                        class="img-md img-thumbnail" />
+                                                </a>
+                                                <div class="info">
+                                                    <a href="#" class="nav-link mb-1">
+                                                        Rucksack Backpack Large <br />
+                                                        Line Mounts
+                                                    </a>
+                                                    <strong class="text-dark"> $38.90</strong>
+                                                </div>
+                                            </div>
+                                        @endforeach
 
-
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            @endforeach
-        </center>
+            </section> --}}
+        @endforeach
 
     </div>
-    <center>
-        <div class="col-md-12 mt-3">
-            <a href="{{ url('clothes-category/' . $category_id) }}" class="btn btn-velvet w-25">Volver</a>
-        </div>
-    </center>
     @include('layouts.inc.indexfooter')
 @endsection
 @section('scripts')
@@ -176,6 +222,17 @@
                     // Actualizar el atributo 'max' del input quantity
                     $('input[name="quantity"]').attr('max', maxStock);
                     $('input[name="quantity"]').val(1);
+                }
+            });
+
+            const quantityInput = document.getElementById('quantityInput');
+
+            quantityInput.addEventListener('keydown', function(event) {
+                if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+                    return true;
+                } else {
+                    event.preventDefault();
+                    return false;
                 }
             });
         });

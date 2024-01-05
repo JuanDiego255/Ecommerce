@@ -21,7 +21,7 @@ class FrontendController extends Controller
         $social = SocialNetwork::get();
         $tags = MetaTags::where('section', 'Inicio')->get();
 
-        $clothings = ClothingCategory::where('clothing.trending', 1)            
+        $clothings = ClothingCategory::where('clothing.trending', 1)
             ->join('categories', 'clothing.category_id', 'categories.id')
             ->join('stocks', 'clothing.id', 'stocks.clothing_id')
             ->join('sizes', 'stocks.size_id', 'sizes.id')
@@ -38,7 +38,7 @@ class FrontendController extends Controller
                 DB::raw('GROUP_CONCAT(sizes.size) AS available_sizes'), // Obtener tallas dinámicas
                 DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size') // Obtener stock por talla
             )
-            ->groupBy('clothing.id', 'categories.name','categories.id', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'clothing.image')
+            ->groupBy('clothing.id', 'categories.name', 'categories.id', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'clothing.image')
             ->take(15)->get();
 
         foreach ($tags as $tag) {
@@ -151,6 +151,28 @@ class FrontendController extends Controller
             OpenGraph::setTitle($tag->title);
             OpenGraph::setDescription($tag->meta_og_description);
         }
-        return view('frontend.detail-clothing', compact('clothes', 'category_id', 'size_active'));
+
+        $clothings_trending = ClothingCategory::where('clothing.trending', 1)
+            ->where('clothing.id', '!=', $id)
+            ->join('categories', 'clothing.category_id', 'categories.id')
+            ->join('stocks', 'clothing.id', 'stocks.clothing_id')
+            ->join('sizes', 'stocks.size_id', 'sizes.id')
+            ->select(
+                'categories.name as category',
+                'clothing.id as id',
+                'clothing.trending as trending',
+                'clothing.name as name',
+                'clothing.description as description',
+                'clothing.price as price',
+                'clothing.image as image',
+                DB::raw('SUM(stocks.stock) as total_stock'),
+                DB::raw('GROUP_CONCAT(sizes.size) AS available_sizes'), // Obtener tallas dinámicas
+                DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size') // Obtener stock por talla
+            )
+            ->groupBy('clothing.id', 'categories.name', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'clothing.image')
+            ->inRandomOrder()
+            ->take(5)
+            ->get();
+        return view('frontend.detail-clothing', compact('clothes', 'category_id', 'size_active', 'clothings_trending'));
     }
 }
