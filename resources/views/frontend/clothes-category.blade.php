@@ -33,9 +33,7 @@
                                     <a
                                         href="{{ url('detail-clothing/' . $clothing->id . '/' . $category_id) }}">{{ $clothing->name }}</a>
                                 </h5>
-                                <p class="mb-0">
-                                    {{ $clothing->description }}
-                                </p>
+                             
                                 @php
                                     $sizes = explode(',', $clothing->available_sizes);
                                     $stockPerSize = explode(',', $clothing->stock_per_size);

@@ -12,7 +12,7 @@
         </div>
         <div class="row row-cols-1 row-cols-md-3 g-4 align-content-center card-group mt-5 mb-5">
             @foreach ($category as $item)
-                <div class="col bg-transparent mb-2">
+                <div class="col bg-transparent mb-4">
                     <div class="card">
 
                         <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">

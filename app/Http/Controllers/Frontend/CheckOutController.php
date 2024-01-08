@@ -15,11 +15,24 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Artesaos\SEOTools\Facades\OpenGraph;
 use Artesaos\SEOTools\Facades\SEOMeta;
+use GuzzleHttp\Client;
 use Illuminate\Support\Facades\URL;
 
 class CheckOutController extends Controller
 {
     //
+    private $client;
+    private $clientId;
+    private $secret;
+
+    public function __construct()
+    {
+        $this->client = new Client([
+            'base_uri' => 'https://api-m.sandbox.paypal.com'
+        ]);
+        $this->clientId = env('PAYPAL_CLIENT_ID');
+        $this->secret = env('PAYPAL_SECRET');
+    }
 
     public function index()
     {
@@ -45,8 +58,8 @@ class CheckOutController extends Controller
             foreach ($cartItems as $item) {
                 $cloth_price += $item->price * $item->quantity;
             }
-            $user_info = AddressUser::where('user_id',Auth::user()->id)
-            ->where('status',1)->first();
+            $user_info = AddressUser::where('user_id', Auth::user()->id)
+                ->where('status', 1)->first();
             $iva = $cloth_price * 0.13;
             $total_price = $cloth_price + $iva;
         } else {
@@ -75,6 +88,19 @@ class CheckOutController extends Controller
             $iva = $cloth_price * 0.13;
             $total_price = $cloth_price + $iva;
         }
+
+        $response = file_get_contents(env('URL_TIPO_CAMBIO_CR'));
+
+        if ($response !== false) {
+            $exchangeRates = json_decode($response, true);           
+            $tipoCambio = $exchangeRates['venta'];   
+            $tipoCambio = round($tipoCambio, 2);        
+        } else {           
+            $tipoCambio = 1;
+        }
+
+        $paypal_amount = $total_price / $tipoCambio;
+        $paypal_amount = round($paypal_amount, 2);
         $tags = MetaTags::where('section', 'Checkout')->get();
         foreach ($tags as $tag) {
             SEOMeta::setTitle($tag->title);
@@ -86,12 +112,22 @@ class CheckOutController extends Controller
             OpenGraph::setDescription($tag->meta_og_description);
         }
 
-        return view('frontend.checkout', compact('cartItems', 'iva', 'total_price', 'cloth_price','user_info'));
+        return view('frontend.checkout', compact('cartItems', 'iva', 'total_price', 'cloth_price', 'user_info', 'paypal_amount'));
     }
 
-    public function payment(Request $request)
-    {
+    public function payment(
+        $name = null,
+        $email = null,
+        $telephone = null,
+        $address = null,
+        $address_two = null,
+        $country = null,
+        $city = null,
+        $province = null,
+        $postal_code = null
+    ) {
         try {
+            $request = request();
             DB::beginTransaction();
             if (Auth::check()) {
                 $cartItems = Cart::where('user_id', Auth::user()->id)->where('sold', 0)
@@ -117,16 +153,37 @@ class CheckOutController extends Controller
                 $total_price = $cloth_price + $iva;
 
                 $buy = new Buy();
-                if ($request->hasFile('image')) {
-                    $buy->image = $request->file('image')->store('uploads', 'public');
+                if ($request !== null) {
+                    if ($request->hasFile('image')) {
+                        $buy->image = $request->file('image')->store('uploads', 'public');
+                    }
+                    if ($request->has('address')) {
+                        $address = $request->address;
+                    }
+                    if ($request->has('address_two')) {
+                        $address_two = $request->address_two;
+                    }
+                    if ($request->has('city')) {
+                        $city = $request->city;
+                    }
+                    if ($request->has('province')) {
+                        $province = $request->province;
+                    }
+                    if ($request->has('country')) {
+                        $country = $request->country;
+                    }
+                    if ($request->has('postal_code')) {
+                        $postal_code = $request->postal_code;
+                    }
                 }
+
                 $buy->user_id =  Auth::user()->id;
-                $buy->address =  $request->address;
-                $buy->address_two =  $request->address_two;
-                $buy->city =  $request->city;
-                $buy->province =  $request->province;
-                $buy->country =  $request->country;
-                $buy->postal_code =  $request->postal_code;
+                $buy->address =  $address;
+                $buy->address_two =  $address_two;
+                $buy->city =  $city;
+                $buy->province =  $province;
+                $buy->country =  $country;
+                $buy->postal_code =  $postal_code;
                 $buy->total_iva =  $iva;
                 $buy->total_buy =  $total_price;
                 $buy->delivered = 0;
@@ -180,21 +237,48 @@ class CheckOutController extends Controller
                 $total_price = $cloth_price + $iva;
 
                 $buy = new Buy();
-                if ($request->hasFile('image')) {
-                    $buy->image = $request->file('image')->store('uploads', 'public');
+                if ($request !== null) {
+                    if ($request->hasFile('image')) {
+                        $buy->image = $request->file('image')->store('uploads', 'public');
+                    }
+                    if ($request->has('name')) {
+                        $address = $request->name;
+                    }
+                    if ($request->has('email')) {
+                        $address = $request->email;
+                    }
+                    if ($request->has('telephone')) {
+                        $address = $request->telephone;
+                    }
+                    if ($request->has('address')) {
+                        $address = $request->address;
+                    }
+                    if ($request->has('address_two')) {
+                        $address_two = $request->address_two;
+                    }
+                    if ($request->has('city')) {
+                        $city = $request->city;
+                    }
+                    if ($request->has('province')) {
+                        $province = $request->province;
+                    }
+                    if ($request->has('country')) {
+                        $country = $request->country;
+                    }
+                    if ($request->has('postal_code')) {
+                        $postal_code = $request->postal_code;
+                    }
                 }
                 $buy->session_id =  $session_id;
-                $buy->name =  $request->name;
-                $buy->last_name =  $request->last_name;
-                $buy->email =  $request->email;
-                $buy->telephone =  $request->telephone;
-                $buy->address =  $request->address;
-                $buy->address_two =  $request->address_two;
-                $buy->city =  $request->city;
-                $buy->province =  $request->province;
-                $buy->country =  $request->country;
-                $buy->postal_code =  $request->postal_code;
-                $buy->name =  $request->name;
+                $buy->name =  $name;
+                $buy->email =  $email;
+                $buy->telephone =  $telephone;
+                $buy->address =  $address;
+                $buy->address_two =  $address_two;
+                $buy->city =  $city;
+                $buy->province =  $province;
+                $buy->country =  $country;
+                $buy->postal_code =  $postal_code;
                 $buy->total_iva =  $iva;
                 $buy->total_buy =  $total_price;
                 $buy->delivered = 0;
@@ -224,11 +308,82 @@ class CheckOutController extends Controller
                 Cart::where('session_id', $session_id)->where('sold', 0)->update(['sold' => 1]);
                 DB::commit();
             }
-
-            return redirect('/')->with(['status' => 'Se ha creado su compra con éxito, revise sus compras con su correo!', 'icon' => 'success']);
+            if ($request->has('telephone')) {
+                return redirect('/')->with(['status' => 'Se ha realizado la compra con éxito.', 'icon' => 'success'])->with(['alert' => 'error']);
+            }
+            return true;
         } catch (Exception $th) {
-            return redirect()->back()->with(['status' => 'Error! ' . $th, 'icon' => 'warning']);
+            return false;
             DB::rollBack();
+        }
+    }
+    public function getAccessToken()
+    {
+        try {
+            $response = $this->client->request('POST', '/v1/oauth2/token', [
+                'headers' => [
+                    'Accept' => 'application/json',
+                    'Content-Type' => 'application/x-www-form-urlencoded'
+                ],
+                'form_params' => [
+                    'grant_type' => 'client_credentials'
+                ],
+                'auth' => [
+                    $this->clientId, $this->secret
+                ]
+            ]);
+
+            $body = $response->getBody()->getContents();
+            $data = json_decode($body, true);
+
+            return $data['access_token'] ?? null;
+        } catch (\Exception $e) {
+            // Manejo de errores
+            return null;
+        }
+    }
+
+    public function process($orderId)
+    {
+        try {
+            $accessToken = $this->getAccessToken();
+
+            if ($accessToken) {
+                $response = $this->client->request('GET', "/v2/checkout/orders/$orderId", [
+                    'headers' => [
+                        'Accept' => 'application/json',
+                        'Authorization' => "Bearer $accessToken"
+                    ],
+                ]);
+
+                $body = $response->getBody()->getContents();
+                $data = json_decode($body, true); // Convierte el cuerpo de la respuesta a un arreglo asociativo
+
+                if ($data['status'] === 'APPROVED') {
+                    $name = $data['payer']['name']['given_name'] . ' ' . $data['payer']['name']['surname'];
+                    $email = $data['payer']['email_address'];
+                    $address = $data['purchase_units'][0]['shipping']['address']['address_line_1'];
+                    $address_two = $data['purchase_units'][0]['shipping']['address']['address_line_2'];
+                    $city = $data['purchase_units'][0]['shipping']['address']['admin_area_2'];
+                    $province = $data['purchase_units'][0]['shipping']['address']['admin_area_1'];
+                    $postal_code = $data['purchase_units'][0]['shipping']['address']['postal_code'];
+                    return [
+                        'success' => $this->payment($name, $email, '', $address, $address_two, 'Costa Rica', $city, $province, $postal_code),
+                        'status' => 'Se realizó la transacción sin problemas.',
+                        'icon' => 'success'
+                    ];
+                }
+                return [
+                    'success' => false,
+                    'status' => 'Ocurrió un problema al realizar el pago.',
+                    'icon' => 'error'
+                ];
+            } else {
+                return 'No se pudo obtener el token de acceso';
+            }
+        } catch (\Exception $e) {
+            // Manejo de errores
+            return 'Error al procesar la solicitud: ' . $e->getMessage();
         }
     }
 }

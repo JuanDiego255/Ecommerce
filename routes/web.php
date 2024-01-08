@@ -50,13 +50,14 @@ Route::post('/add-to-cart', [CartController::class, 'store']);
 Route::post('/edit-quantity', [CartController::class, 'updateQuantity']);
 Route::get('/view-cart', [CartController::class, 'viewCart']);
 Route::delete('/delete-item-cart/{id}/{size_id}', [CartController::class, 'delete']);
+Route::post('/payment', [CheckOutController::class, 'payment']);
+Route::get('/paypal/process/{orderId}', [CheckOutController::class, 'process']);
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::group(['auth'], function () {
 
     Route::get('checkout', [CheckOutController::class, 'index']);
-    Route::post('/payment', [CheckOutController::class, 'payment']);
     Route::get('/buys', [BuyController::class, 'index']);
     //::post('cancel/buy/{id}/{status}', [BuyController::class, 'cancelBuy']);
     //Route::post('cancel/buy-item/{id}/{status}', [BuyController::class, 'cancelBuyItem']);

@@ -86,7 +86,7 @@
 
     </div>
 
-    <div class="bg-velvet-mision p-3 mb-3 text-center">
+    <div class="bg-footer p-3 mb-3 text-center">
         <h3 class="text-center text-title mt-3">Velvet Boutique</h3>
         <span class="text-center text-muted">Nuestra misión es envolverte con nuestros atuendos, y hacerlos llegar a la
             puerta de tu casa.<br>Realizamos envios a nivel nacional.</span>
@@ -136,14 +136,14 @@
                                             <center>
                                                 <h5 class="text-center font-weight-normal mt-3">
                                                     <a
-                                                        href="{{ url('detail-clothing/' . $clothing->id . '/' . $clothing->category_id) }}">{{ $clothing->name }}</a>
+                                                        href="{{ url('detail-clothing/' . $clothing->id . '/' . $clothing->category_id) }}">Ver Detalles</a>
                                                 </h5>
                                             </center>
 
                                         </div>
 
                                         <p class="mb-0">
-                                            {{ $clothing->description }}
+                                            {{ $clothing->name }}
                                         </p>
                                     </div>
                                     <hr class="dark horizontal my-0">
