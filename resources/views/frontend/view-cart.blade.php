@@ -38,7 +38,7 @@
                                             <input type="hidden" name="prod_id" value="{{ $item->id }}"
                                                 class="prod_id">
 
-                                            <td>
+                                            <td class="w-50">
                                                 <div class="d-flex px-2 py-1">
                                                     <div>
                                                         <a target="blank" data-fancybox="gallery"
@@ -50,7 +50,7 @@
                                                 </div>
                                             </td>
                                             <td>
-                                                <p class="text-dark font-weight-bold mb-0">{{ $item->name }}</p>
+                                                <p class="text-justify text-truncate para mb-0">{{ $item->name }}</p>
 
                                             </td>
                                             <td class="align-middle text-center text-sm">
@@ -58,11 +58,11 @@
                                                 <input type="hidden" class="price" value="{{ $item->price }}">
                                             </td>
                                             <td>
-                                                <p class="text-dark text-center font-weight-bold mb-0">{{ $item->size }}
+                                                <p class="text-center text-truncate para mb-0">{{ $item->size }}
                                                 </p>
                                             </td>
                                             <td class="align-middle text-center text-sm">
-                                                <div class="input-group text-center input-group-static mb-4 w-100">
+                                                <div class="input-group text-center input-group-static w-100">
 
                                                     <input min="1" max="{{ $item->stock }}"
                                                         value="{{ $item->quantity }}" type="number" name="quantity"

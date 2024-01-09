@@ -16,7 +16,7 @@
 
         <div class="row row-cols-1 row-cols-md-2 g-4 align-content-center card-group mt-1">
             <div class="col bg-transparent">
-                <div id="sinpeContent" class="bg-transparent" style="display: none;">
+                <div id="sinpeContent" class="bg-transparent">
                     <div class="card card-frame">
                         <h3 class="ps-3 mt-2 text-center">
                             Detalles Básicos
@@ -134,16 +134,16 @@
                         </div>
                     </div>
                 </div>
-                <div id="cardContent" class="container">
+                <div id="cardContent" class="container" style="display: none;">
                     <div class="col col-12 ps-md-5 p-0">
                         <div class="box-left">
-                            <p class="fw-bold h7">Pagar Factura</p>
+                            <p class="fw-bold h7">Nuestro método de pago por medio de tarjeta se encuentra deshabilitado.</p>
 
                             <div class="">
 
-                                <div class="btn-add_to_cart" id="paypal-button-container">
+                                {{--<div class="btn-add_to_cart" id="paypal-button-container">
 
-                                </div>
+                                </div> --}}
                             </div>
                         </div>
                     </div>
@@ -188,7 +188,7 @@
                                 <label for="checkboxSubmit">
                                     <div class="form-check">
                                         <input id="sinpe" class="form-check-input" type="checkbox" value=""
-                                            name="sinpe" onchange="togglePaypalButton();">
+                                            name="sinpe" checked onchange="togglePaypalButton();">
                                         <label class="form-check-label mb-2" for="sinpe">
                                             Pagar Por SINPE
                                         </label>
@@ -212,7 +212,7 @@
         src="https://www.paypal.com/sdk/js?client-id={{ env('PAYPAL_CLIENT_ID') }}&components=buttons,funding-eligibility">
     </script>
     <script>
-        paypal.Buttons({
+       /*  paypal.Buttons({
             locale: 'es',
             fundingSource: paypal.FUNDING.CARD,
             createOrder: function(data, actions) {
@@ -230,7 +230,7 @@
                     },
                     purchase_units: [{
                         amount: {
-                            value: {{$paypal_amount}}
+                            value: {{ $paypal_amount }}
                         }
                     }]
                 });
@@ -267,7 +267,7 @@
             onError: function(err) {
                 alert(err);
             }
-        }).render('#paypal-button-container');
+        }).render('#paypal-button-container'); */
 
         function togglePaypalButton() {
             var checkBox = document.getElementById("sinpe");
@@ -276,11 +276,11 @@
             var cardContent = document.getElementById("cardContent");
 
             if (checkBox.checked != true) {
-                paypalButton.style.display = "block";
+                //paypalButton.style.display = "block";
                 sinpeContent.style.display = "none";
                 cardContent.style.display = "block";
             } else {
-                paypalButton.style.display = "none";
+                //paypalButton.style.display = "none";
                 sinpeContent.style.display = "block";
                 cardContent.style.display = "none";
             }
