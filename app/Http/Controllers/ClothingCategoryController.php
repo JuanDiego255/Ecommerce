@@ -50,7 +50,7 @@ class ClothingCategoryController extends Controller
                 'product_images.image as image' // Obtener la imagen del producto
             )
             ->groupBy('clothing.id', 'categories.name', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
-            ->simplePaginate(3);
+            ->simplePaginate(4);
 
         return view('admin.clothing.index', compact('clothings', 'category_name', 'category_id'));
     }

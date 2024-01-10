@@ -72,7 +72,7 @@ class FrontendController extends Controller
     }
     public function category()
     {
-        $category = Categories::where('status', 0)->get();
+        $category = Categories::where('status', 0)->simplePaginate(8);
         $tags = MetaTags::where('section', 'Categorías')->get();
         foreach ($tags as $tag) {
             SEOMeta::setTitle($tag->title);

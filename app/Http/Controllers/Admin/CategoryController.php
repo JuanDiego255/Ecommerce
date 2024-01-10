@@ -12,7 +12,7 @@ class CategoryController extends Controller
 {
     public function index()
     {
-        $categories = Categories::simplePaginate(3);
+        $categories = Categories::simplePaginate(8);
         return view('admin.categories.index', compact('categories'));
     }
     public function add()

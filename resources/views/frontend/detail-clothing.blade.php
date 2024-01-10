@@ -188,7 +188,7 @@
         @foreach ($clothings_trending as $item)
             <input type="hidden" class="cloth_id" value="{{ $item->id }}">
             <input type="hidden" class="quantity" value="1">
-            <div class="col-md-3 col-sm-6">
+            <div class="col-md-3 col-sm-6 mb-2">
                 <div class="product-grid product_data">
                     <div class="product-image">
                         <img src="{{ asset('storage') . '/' . $item->image }}">
