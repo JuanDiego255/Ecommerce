@@ -100,29 +100,36 @@ class CartController extends Controller
                 })
                 ->join('clothing', 'carts.clothing_id', 'clothing.id')
                 ->join('sizes', 'carts.size_id', 'sizes.id')
+                ->leftJoin('product_images', function ($join) {
+                    $join->on('clothing.id', '=', 'product_images.clothing_id')
+                        ->whereRaw('product_images.id = (
+                        SELECT MIN(id) FROM product_images 
+                        WHERE product_images.clothing_id = clothing.id
+                    )');
+                })
                 ->select(
                     'clothing.id as id',
                     'clothing.name as name',
                     'clothing.description as description',
                     'clothing.price as price',
-                    'clothing.image as image',
                     'clothing.status as status',
                     'sizes.size as size',
                     'sizes.id as size_id',
                     'carts.quantity as quantity',
-                    'stocks.stock as stock'
+                    'stocks.stock as stock',
+                    DB::raw('IFNULL(product_images.image, "") as image') // Obtener la primera imagen del producto
                 )
                 ->groupBy(
                     'clothing.id',
                     'clothing.name',
                     'clothing.description',
                     'clothing.price',
-                    'clothing.image',
                     'clothing.status',
                     'sizes.size',
                     'sizes.id',
                     'carts.quantity',
-                    'stocks.stock'
+                    'stocks.stock',
+                    'product_images.image'
                 )
                 ->get();
         } else {
@@ -136,29 +143,36 @@ class CartController extends Controller
                 })
                 ->join('clothing', 'carts.clothing_id', 'clothing.id')
                 ->join('sizes', 'carts.size_id', 'sizes.id')
+                ->leftJoin('product_images', function ($join) {
+                    $join->on('clothing.id', '=', 'product_images.clothing_id')
+                        ->whereRaw('product_images.id = (
+                SELECT MIN(id) FROM product_images 
+                WHERE product_images.clothing_id = clothing.id
+            )');
+                })
                 ->select(
                     'clothing.id as id',
                     'clothing.name as name',
                     'clothing.description as description',
                     'clothing.price as price',
-                    'clothing.image as image',
                     'clothing.status as status',
                     'sizes.size as size',
                     'sizes.id as size_id',
                     'carts.quantity as quantity',
-                    'stocks.stock as stock'
+                    'stocks.stock as stock',
+                    DB::raw('IFNULL(product_images.image, "") as image') // Obtener la primera imagen del producto
                 )
                 ->groupBy(
                     'clothing.id',
                     'clothing.name',
                     'clothing.description',
                     'clothing.price',
-                    'clothing.image',
                     'clothing.status',
                     'sizes.size',
                     'sizes.id',
                     'carts.quantity',
-                    'stocks.stock'
+                    'stocks.stock',
+                    'product_images.image'
                 )
                 ->get();
         }

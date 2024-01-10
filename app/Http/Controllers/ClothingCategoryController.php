@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Categories;
 use App\Models\ClothingCategory;
 use App\Models\MetaTags;
+use App\Models\ProductImage;
 use App\Models\Size;
 use App\Models\SizeCloth;
 use App\Models\Stock;
@@ -29,6 +30,13 @@ class ClothingCategoryController extends Controller
             ->join('categories', 'clothing.category_id', 'categories.id')
             ->join('stocks', 'clothing.id', 'stocks.clothing_id')
             ->join('sizes', 'stocks.size_id', 'sizes.id')
+            ->leftJoin('product_images', function ($join) {
+                $join->on('clothing.id', '=', 'product_images.clothing_id')
+                    ->whereRaw('product_images.id = (
+                        SELECT MIN(id) FROM product_images 
+                        WHERE product_images.clothing_id = clothing.id
+                    )');
+            })
             ->select(
                 'categories.name as category',
                 'clothing.id as id',
@@ -36,17 +44,17 @@ class ClothingCategoryController extends Controller
                 'clothing.name as name',
                 'clothing.description as description',
                 'clothing.price as price',
-                'clothing.image as image',
                 DB::raw('SUM(stocks.stock) as total_stock'),
                 DB::raw('GROUP_CONCAT(sizes.size) AS available_sizes'), // Obtener tallas dinámicas
-                DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size') // Obtener stock por talla
+                DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'), // Obtener stock por talla
+                'product_images.image as image' // Obtener la imagen del producto
             )
-            ->groupBy('clothing.id', 'categories.name', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'clothing.image')
+            ->groupBy('clothing.id', 'categories.name', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
             ->simplePaginate(3);
 
-       
         return view('admin.clothing.index', compact('clothings', 'category_name', 'category_id'));
     }
+
     public function add($id)
     {
         $category = Categories::find($id);
@@ -58,6 +66,13 @@ class ClothingCategoryController extends Controller
     {
 
         $clothing = ClothingCategory::join('stocks', 'clothing.id', 'stocks.clothing_id')
+            ->leftJoin('product_images', function ($join) {
+                $join->on('clothing.id', '=', 'product_images.clothing_id')
+                    ->whereRaw('product_images.id = (
+                    SELECT MIN(id) FROM product_images 
+                    WHERE product_images.clothing_id = clothing.id
+                )');
+            })
             ->where('clothing.id', $id)
             ->select(
                 'clothing.id as id',
@@ -66,9 +81,18 @@ class ClothingCategoryController extends Controller
                 'clothing.trending as trending',
                 'clothing.description as description',
                 'clothing.price as price',
-                'clothing.image as image',
-                DB::raw('SUM(stocks.stock) as total_stock')
-            )->groupBy('clothing.id', 'clothing.name', 'clothing.category_id', 'clothing.description', 'clothing.trending', 'clothing.price', 'clothing.image')
+                DB::raw('SUM(stocks.stock) as total_stock'),
+                'product_images.image as image' // Obtener la primera imagen del producto
+            )
+            ->groupBy(
+                'clothing.id',
+                'clothing.name',
+                'clothing.category_id',
+                'clothing.description',
+                'clothing.trending',
+                'clothing.price',
+                'product_images.image'
+            )
             ->first();
         $size_active = SizeCloth::where('clothing_id', $id)->get();
         $sizes = Size::get();
@@ -79,9 +103,7 @@ class ClothingCategoryController extends Controller
         DB::beginTransaction();
         try {
             $clothing =  new ClothingCategory();
-            if ($request->hasFile('image')) {
-                $clothing->image = $request->file('image')->store('uploads', 'public');
-            }
+
             $clothing->category_id = $request->category_id;
             $clothing->name = $request->name;
             $clothing->description = $request->description;
@@ -103,6 +125,19 @@ class ClothingCategoryController extends Controller
 
             $clothing->save();
             $clothingId = $clothing->id;
+
+
+
+            if ($request->hasFile('images')) {
+                $images = $request->file('images');
+
+                foreach ($images as $image) {
+                    $imageObj = new ProductImage();
+                    $imageObj->clothing_id = $clothingId;
+                    $imageObj->image = $image->store('uploads', 'public');
+                    $imageObj->save();
+                }
+            }
 
             foreach ($sizes as $size) {
                 $size_cloth =  new SizeCloth();
@@ -127,18 +162,13 @@ class ClothingCategoryController extends Controller
     {
         DB::beginTransaction();
         try {
-            if ($request->hasFile('image')) {
-                $clothing = ClothingCategory::findOrfail($id);
-
-                Storage::delete('public/' . $clothing->image);
-
-                $image = $request->file('image')->store('uploads', 'public');
+            if ($request->hasFile('images')) {
+                $clothing = ClothingCategory::findOrfail($id);            
 
                 $clothing->category_id = $request->category_id;
                 $clothing->name = $request->name;
                 $clothing->description = $request->description;
-                $clothing->price = $request->price;
-                $clothing->image = $image;
+                $clothing->price = $request->price;               
 
                 $clothing->status = 1;
 
@@ -156,6 +186,27 @@ class ClothingCategoryController extends Controller
 
                 $clothing->update();
                 SizeCloth::where('clothing_id', $id)->delete();
+              
+                $imagesProduct =  ProductImage::where('clothing_id', $id)->get();
+
+                foreach($imagesProduct as $img){
+                    Storage::delete('public/' . $img->image);
+                }
+
+                ProductImage::where('clothing_id', $id)->delete();
+
+                if ($request->hasFile('images')) {
+                    $images = $request->file('images');
+    
+                    foreach ($images as $image) {
+                        $imageObj = new ProductImage();
+                        $imageObj->clothing_id = $id;
+                        $imageObj->image = $image->store('uploads', 'public');
+                        $imageObj->save();
+                    }
+                }
+
+               
 
                 foreach ($sizes as $size) {
                     $size_cloth =  new SizeCloth();

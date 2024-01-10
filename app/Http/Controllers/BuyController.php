@@ -71,8 +71,14 @@ class BuyController extends Controller
             ->join('buys', 'buy_details.buy_id', 'buys.id')
             ->join('clothing', 'buy_details.clothing_id', 'clothing.id')
             ->join('sizes', 'buy_details.size_id', 'sizes.id')
+            ->leftJoin('product_images', function ($join) {
+                $join->on('clothing.id', '=', 'product_images.clothing_id')
+                    ->whereRaw('product_images.id = (
+                SELECT MIN(id) FROM product_images 
+                WHERE product_images.clothing_id = clothing.id
+            )');
+            })
             ->select(
-
                 'clothing.id as id',
                 'clothing.name as name',
                 'clothing.description as description',
@@ -81,13 +87,14 @@ class BuyController extends Controller
                 'buy_details.id as buy_id',
                 'buy_details.buy_id as buy',
                 'buy_details.cancel_item as cancel_item',
-                'clothing.image as image',
                 'clothing.status as status',
                 'sizes.size as size',
                 'buy_details.quantity as quantity',
-                'buys.approved as approved'
+                'buys.approved as approved',
+                DB::raw('IFNULL(product_images.image, "") as image') // Obtener la primera imagen del producto
+            )
+            ->get();
 
-            )->get();
         $tags = MetaTags::where('section', 'Mis Compras')->get();
         foreach ($tags as $tag) {
             SEOMeta::setTitle($tag->title);
@@ -107,22 +114,28 @@ class BuyController extends Controller
             ->join('buys', 'buy_details.buy_id', 'buys.id')
             ->join('clothing', 'buy_details.clothing_id', 'clothing.id')
             ->join('sizes', 'buy_details.size_id', 'sizes.id')
+            ->leftJoin('product_images', function ($join) {
+                $join->on('clothing.id', '=', 'product_images.clothing_id')
+                    ->whereRaw('product_images.id = (
+                SELECT MIN(id) FROM product_images 
+                WHERE product_images.clothing_id = clothing.id
+            )');
+            })
             ->select(
-
                 'clothing.id as id',
                 'clothing.name as name',
                 'clothing.description as description',
                 'buy_details.total as total',
                 'buy_details.iva as iva',
-                'clothing.image as image',
                 'clothing.status as status',
                 'sizes.size as size',
                 'buy_details.quantity as quantity',
                 'buy_details.cancel_item as cancel_item',
                 'buy_details.id as item_id',
-                'buy_details.buy_id as buy'
-
-            )->get();
+                'buy_details.buy_id as buy',
+                DB::raw('IFNULL(product_images.image, "") as image') // Obtener la primera imagen del producto
+            )
+            ->get();
 
         $buysDetailsPerson = Buy::where('buys.id', $id)
             ->leftJoin('address_users', 'buys.user_id', 'address_users.user_id')
@@ -197,8 +210,8 @@ class BuyController extends Controller
             Buy::where('id', $id)->update(['cancel_buy' => $status]);
 
             BuyDetail::where('buy_id', $id)
-            ->where('cancel_item','!=',2)
-            ->update(['cancel_item' => $status]);
+                ->where('cancel_item', '!=', 2)
+                ->update(['cancel_item' => $status]);
 
             DB::commit();
             switch ($status) {
@@ -236,7 +249,7 @@ class BuyController extends Controller
                 }
             }
             BuyDetail::where('id', $id)->update(['cancel_item' => $status]);
-            if($status == 2){
+            if ($status == 2) {
                 $buysDetails = BuyDetail::where('id', $id)->first();
                 $total_det = $buysDetails->total;
                 $iva_det = $buysDetails->iva;
@@ -245,7 +258,7 @@ class BuyController extends Controller
                 $iva_buy = $buys->total_iva;
                 $total_buy = $total_buy - $total_det;
                 $iva_buy = $iva_buy - $iva_det;
-                Buy::where('id', $buy)->update(['total_buy' => $total_buy,'total_iva' => $iva_buy]);
+                Buy::where('id', $buy)->update(['total_buy' => $total_buy, 'total_iva' => $iva_buy]);
             }
 
             if (count(BuyDetail::where('buy_id', $buy)->where('cancel_item', 0)->get()) == 0) {

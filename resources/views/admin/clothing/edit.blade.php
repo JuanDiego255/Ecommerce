@@ -72,7 +72,7 @@
                     @endif
                     <div class="col-md-6 mb-3">
                         <div class="input-group input-group-static mb-4">
-                            <input required class="form-control" type="file" name="image">
+                            <input multiple required class="form-control" type="file" name="images[]">
                         </div>
                     </div>
                 </div>
