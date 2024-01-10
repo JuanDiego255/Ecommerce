@@ -10663,8 +10663,20 @@ fieldset:disabled .btn {
 
 .text-muted {
   color: #60676C !important;
+  font-size: 18px;
+  font-family:"Metropolis", Arial, Helvetica, sans-serif;
+  font-weight: 300;
+}
+.text-muted-title {
+  color: #60676C !important;
+  font-size: 20px;
+  font-weight: 300;
+  font-family:"Metropolis", Arial, Helvetica, sans-serif;
+}
+.text-page {
+  color: #60676C !important;
   font-size: 22px;
-  font-family:'Times New Roman', Times, serif;
+  font-family:"Times New Roman", "Georgia", "Bodoni";
 }
 .text-muted-normal {
   color: #60676C !important;
@@ -26122,11 +26134,6 @@ p {
 
 .blockquote>span {
   font-style: italic;
-}
-
-.text-muted {
-  color: #7b809a !important;
-  font-family:'Times New Roman', Times, serif;
 }
 
 .text-black-50 {

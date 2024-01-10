@@ -50,12 +50,8 @@
 
     <hr class="text-dark">
     <div class="text-center">
-        <h3 class="text-center text-dark mt-5">Instragram <a class="text-title"
-                href="https://www.instagram.com/velvetboutiquegrecia/">Velvet
-                Boutique.</a></h3>
-
-        <span class="text-muted text-center">Compartimos con ustedes lo que nos hace sentir mejor, un excelente
-            outfit!</span>
+        <span class="text-muted text-center">¡Descubre Velvet Boutique en <a
+            href="https://www.instagram.com/velvetboutiquegrecia/">Instagram</a>! Compartimos lo que nos hace sentir mejor: ¡outfits excepcionales! ¿Qué te parecen estos?</span>
     </div>
 
 
@@ -88,8 +84,7 @@
 
     <div class="bg-footer p-3 mb-3 text-center">
         <h3 class="text-center text-title mt-3">Velvet Boutique</h3>
-        <span class="text-center text-muted">Nuestra misión es envolverte con nuestros atuendos, y hacerlos llegar a la
-            puerta de tu casa.<br>Realizamos envios a nivel nacional.</span>
+        <span class="text-center text-muted">Queremos envolverte con nuestra selección de atuendos y entregarlos hasta la puerta de tu hogar.<br>Realizamos envios a nivel nacional.</span>
 
 
     </div>
@@ -105,8 +100,7 @@
 
     <hr class="dark horizontal text-danger mb-3">
     <div class="text-center">
-        <h3 class="text-center text-dark mt-5">Outfit`s En Tendencia</h3>
-        <span class="text-muted">Nuestras últimas colecciones, los artículos más solicitados!</span>
+        <h3 class="text-center text-muted mt-5">¡Explora nuestras últimas colecciones y descubre los artículos más solicitados en tendencia!</h3>
     </div>
 
     <hr class="dark horizontal text-danger my-0">
@@ -115,46 +109,25 @@
         <div class="container">
             <div class="row">
                 <div class="owl-carousel featured-carousel owl-theme">
-                    @foreach ($clothings as $clothing)
-                        @if ($clothing->total_stock != 0)
+                    @foreach ($clothings as $item)
+                        @if ($item->total_stock != 0)
                             <div class="item">
-                                <div class="card" data-animation="true">
-
-                                    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-                                        <a target="blank" data-fancybox="gallery"
-                                            href="{{ asset('storage') . '/' . $clothing->image }}"
-                                            class="d-block blur-shadow-image">
-                                            <img src="{{ asset('storage') . '/' . $clothing->image }}" alt="img-blur-shadow"
-                                                class="img-fluid shadow border-radius-lg w-100" style="height:300px;">
-                                        </a>
-                                        <div class="colored-shadow"
-                                            style="background-image: url(&quot;https://demos.creative-tim.com/test/material-dashboard-pro/assets/img/products/product-1-min.jpg&quot;);">
-                                        </div>
+                                <div class="product-grid product_data">
+                                    <div class="product-image">
+                                        <img src="{{ asset('storage') . '/' . $item->image }}">
+                                        <ul class="product-links">
+                                            <li><a target="blank" href="{{ asset('storage') . '/' . $item->image }}"><i
+                                                        class="fas fa-eye"></i></a></li>
+                                        </ul>
+                                        <a href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}"
+                                            class="add-to-cart">Detallar</a>
                                     </div>
-                                    <div class="card-body text-center">
-                                        <div class="mt-n6 mx-auto text-center">
-                                            <center>
-                                                <h5 class="text-center font-weight-normal mt-3">
-                                                    <a
-                                                        href="{{ url('detail-clothing/' . $clothing->id . '/' . $clothing->category_id) }}">Ver Detalles</a>
-                                                </h5>
-                                            </center>
-
-                                        </div>
-
-                                        <p class="mb-0">
-                                            {{ $clothing->name }}
-                                        </p>
-                                    </div>
-                                    <hr class="dark horizontal my-0">
-                                    <div class="card-footer d-flex">
-                                        <p class="font-weight-normal my-auto">Precio: ₡{{ number_format($clothing->price) }}
-                                        </p>
-
-
-                                        <i
-                                            class="material-icons position-relative ms-auto text-lg me-1 my-auto">inventory</i>
-                                        <p class="text-sm my-auto"> Stock: {{ $clothing->total_stock }}</p>
+                                    <div class="product-content">
+                                        <h3 class="title"><a
+                                                href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}">{{ $item->name }}</a>
+                                        </h3>
+                                        <h4 class="title">Stock: {{ $item->total_stock }}</h4>
+                                        <div class="price">₡{{ number_format($item->price) }}</span></div>
                                     </div>
                                 </div>
                             </div>

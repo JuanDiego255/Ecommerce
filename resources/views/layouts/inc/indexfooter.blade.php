@@ -4,13 +4,13 @@
         <div class="row mt-5 pt-5">
 
             <div class="col-md-4">
-                <h5 class="text-uppercase">Redes Sociales</h5>
+                <h5 class="text-uppercase text-muted-title">Redes Sociales</h5>
                 <div>
                     <p class="text-muted text-uppercase text-lg">
-                        <a class="mr-5" href="https://www.instagram.com/velvetboutiquegrecia/">
+                        <a class="mr-5 text-muted" href="https://www.instagram.com/velvetboutiquegrecia/">
                             <i class="fa fa-instagram"> Instagram</i>
                         </a><br>
-                        <a href="https://www.facebook.com/profile.php?id=100063754080413&locale=es_LA">
+                        <a class="text-muted" href="https://www.facebook.com/profile.php?id=100063754080413&locale=es_LA">
                             <i class="fa fa-facebook"> Facebook</i>
                         </a>
                     </p>
@@ -34,14 +34,14 @@
 
             </div>
             <div class="col-md-4">
-                <h5 class="text-uppercase">Más Información!</h5>
+                <h5 class="text-uppercase text-muted-title">Más Información!</h5>
                 <div>
                     <p class="text-muted text-uppercase text-lg">
-                        <a style="text-decoration: none;" class="mr-5"
+                        <a style="text-decoration: none;" class="mr-5 text-muted"
                             href="#">
                             <i class="fa fa-envelope"></i> Envíos por correos de C.R
                         </a><br>
-                        <a href="#">
+                        <a href="#" class="text-muted">
                             <i class="fa fa-whatsapp"> 87395732</i>
                         </a>
                     </p>

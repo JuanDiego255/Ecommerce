@@ -181,7 +181,7 @@
 
 
     <div class="text-center">
-        <h3 class="text-center text-dark mt-5">Potencia tu outfit con estas opciones</h3>
+        <h3 class="text-center text-muted-title mt-5">Potencia tu outfit con estas opciones</h3>
     </div>
     <hr class="dark horizontal text-danger mb-3">
     <div class="row mt-4">
