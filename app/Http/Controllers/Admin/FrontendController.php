@@ -146,8 +146,7 @@ class FrontendController extends Controller
                 'clothing.description as description',
                 'clothing.price as price',
                 'product_images.image as image', // columna de imagen
-                DB::raw('GROUP_CONCAT(product_images.image) AS images'),
-
+                DB::raw('GROUP_CONCAT(product_images.image ORDER BY product_images.id ASC) AS images'),
                 DB::raw('SUM(stocks.stock) as total_stock'),
                 DB::raw('GROUP_CONCAT(sizes.id) AS available_sizes'), // Obtener tallas dinámicas
                 DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size') // Obtener stock por talla

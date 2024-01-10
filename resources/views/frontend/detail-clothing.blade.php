@@ -35,7 +35,8 @@
                                         @foreach ($clothes as $clothing)
                                             @if (!empty($clothing->images))
                                                 @php
-                                                    $images = explode(',', $clothing->images); // Convertir la lista de imágenes en un array
+                                                    $images = explode(',', $clothing->images); 
+                                                    // Convertir la lista de imágenes en un array
                                                     $firstImage = reset($images); // Obtener la primera imagen
                                                 @endphp
                                                 <div class="item">

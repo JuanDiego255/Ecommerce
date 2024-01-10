@@ -15,7 +15,6 @@
                             <div class="col-lg-6 my-auto">
                                 <h4 class="text-white mb-0 fadeIn1 fadeInBottom">Para todas las chicas.</h4>
                                 <h1 class="text-white fadeIn2 fadeInBottom">Gran Variedad De Estilos</h1>
-                                <p class="lead text-white opacity-8 fadeIn3 fadeInBottom">No dudes en contactarnos.</p>
                             </div>
                         </div>
                     </div>
@@ -27,7 +26,7 @@
                     <div class="container">
                         <div class="row">
                             <div class="col-lg-6 my-auto">
-                                <h4 class="text-white mb-0 fadeIn1 fadeInBottom">Somos Un Nuevo Emprendimiento.</h4>
+                                <h4 class="text-white mb-0 fadeIn1 fadeInBottom">Explora nuestro catálogo y elige entre nuestras exclusivas prendas para realzar tu estilo único.</h4>
                                 <h1 class="text-white fadeIn2 fadeInBottom">Velvet Boutique</h1>
 
                             </div>
