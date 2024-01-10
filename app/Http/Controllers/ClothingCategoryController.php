@@ -9,12 +9,15 @@ use App\Models\ProductImage;
 use App\Models\Size;
 use App\Models\SizeCloth;
 use App\Models\Stock;
+use App\Rules\FourImage;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Artesaos\SEOTools\Facades\OpenGraph;
 use Artesaos\SEOTools\Facades\SEOMeta;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\URL;
 
 class ClothingCategoryController extends Controller
@@ -102,6 +105,16 @@ class ClothingCategoryController extends Controller
     {
         DB::beginTransaction();
         try {
+            $validator = Validator::make($request->all(), [
+                'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Validación básica de cada imagen
+                'images' => [ // Regla personalizada para validar la cantidad máxima de imágenes
+                    new FourImage,
+                ],
+            ]);
+        
+            if ($validator->fails()) {
+                return redirect('/new-item/' . $request->category_id)->with(['status' => 'No puede seleccionar más de 4 imágenes!', 'icon' => 'warning']);
+            }
             $clothing =  new ClothingCategory();
 
             $clothing->category_id = $request->category_id;
@@ -163,6 +176,17 @@ class ClothingCategoryController extends Controller
         DB::beginTransaction();
         try {
             if ($request->hasFile('images')) {
+
+                $validator = Validator::make($request->all(), [
+                    'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Validación básica de cada imagen
+                    'images' => [ // Regla personalizada para validar la cantidad máxima de imágenes
+                        new FourImage,
+                    ],
+                ]);
+            
+                if ($validator->fails()) {
+                    return redirect('/edit-clothing/' .$id.'/'. $request->category_id)->with(['status' => 'No puede seleccionar más de 4 imágenes!', 'icon' => 'warning']);
+                }
                 $clothing = ClothingCategory::findOrfail($id);            
 
                 $clothing->category_id = $request->category_id;
@@ -181,7 +205,7 @@ class ClothingCategoryController extends Controller
                 $sizes = $request->input('sizes_id');
 
                 if ($sizes == null) {
-                    return redirect('/edit-clothing/' . $request->category_id)->with(['status' => 'Debe seleccionar al menos una talla!', 'icon' => 'warning']);
+                    return redirect('/edit-clothing/' .$id.'/'. $request->category_id)->with(['status' => 'Debe seleccionar al menos una talla!', 'icon' => 'warning']);
                 }
 
                 $clothing->update();
