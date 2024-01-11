@@ -10680,7 +10680,8 @@ fieldset:disabled .btn {
 }
 .text-muted-normal {
   color: #60676C !important;
-  font-family:'Times New Roman', Times, serif;
+  font-size: 16px;
+  font-family:"Metropolis", Arial, Helvetica, sans-serif;
 }
 .text-title {
   color: #000 !important;

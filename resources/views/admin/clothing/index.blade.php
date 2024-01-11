@@ -18,7 +18,7 @@
 
     <div class="row row-cols-1 row-cols-md-3 g-4 align-content-center card-group mt-5 mb-5">
         @foreach ($clothings as $clothing)
-            <div class="col bg-transparent">
+            <div class="col bg-transparent mb-2">
                 <div class="card" data-animation="true">
 
                     <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
@@ -40,12 +40,12 @@
                             <button form="delete-clothing{{ $clothing->id }}" type="submit"
                                 onclick="return confirm('Deseas borrar esta prenda?')"
                                 class="btn btn-link text-velvet ms-auto border-0" data-bs-toggle="tooltip"
-                                data-bs-placement="bottom" title="Delete">
+                                data-bs-placement="bottom" title="Eliminar">
                                 <i class="material-icons text-lg">delete</i>
                             </button>
                             <a class="btn btn-link text-velvet me-auto border-0"
                                 href="{{ url('/edit-clothing') . '/' . $clothing->id . '/' . $category_id }}"
-                                data-bs-toggle="tooltip" data-bs-placement="bottom" title="Edit">
+                                data-bs-toggle="tooltip" data-bs-placement="bottom" title="Editar">
                                 <i class="material-icons text-lg">edit</i>
                             </a>
                         </div>
