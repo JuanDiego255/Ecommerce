@@ -197,11 +197,13 @@ class CartController extends Controller
         $name = Auth::user()->name ?? null;
 
         $cloth_price = 0;
+        $you_save = 0;
         foreach ($cart_items as $item) {
             $precio = $item->price;
             $descuentoPorcentaje = $item->discount;
             // Calcular el descuento
             $descuento = ($precio * $descuentoPorcentaje) / 100;
+            $you_save = $you_save + $descuento;
             // Calcular el precio con el descuento aplicado
             $precioConDescuento = $precio - $descuento;
             $cloth_price += $precioConDescuento * $item->quantity;
@@ -210,7 +212,7 @@ class CartController extends Controller
         $iva = $cloth_price * 0.13;
         $total_price = $cloth_price + $iva;
 
-        return view('frontend.view-cart', compact('cart_items', 'name', 'cloth_price', 'iva', 'total_price'));
+        return view('frontend.view-cart', compact('cart_items', 'name', 'cloth_price', 'iva', 'total_price','you_save'));
     }
     public function delete($id, $size_id)
     {

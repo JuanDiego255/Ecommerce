@@ -62,8 +62,14 @@
                                                     // Calcular el precio con el descuento aplicado
                                                     $precioConDescuento = $precio - $descuento;
                                                 @endphp
-                                                <p class="text-success mb-0">₡ {{ $item->discount > 0 ? $precioConDescuento : $item->price }}</p>
-                                                <input type="hidden" class="price" value="{{ $item->discount > 0 ? $precioConDescuento : $item->price }}">
+                                                <p class="text-success mb-0">₡
+                                                    {{ $item->discount > 0 ? $precioConDescuento : $item->price }}
+                                                    @if ($item->discount > 0)
+                                                        <s class="text-danger">{{ $item->price }}</s>
+                                                    @endif
+                                                </p>
+                                                <input type="hidden" class="price"
+                                                    value="{{ $item->discount > 0 ? $precioConDescuento : $item->price }}">
                                             </td>
                                             <td>
                                                 <p class="text-center text-truncate para mb-0">{{ $item->size }}
@@ -116,6 +122,13 @@
                                     I.V.A
                                     <span id="totalIvaElement">₡{{ number_format($iva) }}</span>
                                 </li>
+                                @if ($you_save > 0)
+                                    <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                        Ahorraste
+                                        <span id="totalIvaElement">₡{{ number_format($you_save) }}</span>
+                                    </li>
+                                @endif
+
                                 <li class="list-group-item d-flex justify-content-between border-0 px-0 mb-3">
 
                                     <strong>Total</strong>
