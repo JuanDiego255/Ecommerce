@@ -30,7 +30,7 @@
                                     entre
                                     nuestras exclusivas prendas para realzar tu estilo único.</h4>
                                 <h1 class="text-white fadeIn2 fadeInBottom"><a href="#offer"
-                                        class="text-white fadeIn2 fadeInBottom" href="#">70% Off en productos
+                                        class="text-white fadeIn2 fadeInBottom" href="#">70% OFF en productos
                                         seleccionados.</a></h1>
 
                             </div>

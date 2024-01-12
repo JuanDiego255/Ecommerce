@@ -204,6 +204,7 @@ class CheckOutController extends Controller
                 $buy->postal_code =  $postal_code;
                 $buy->total_iva =  $iva;
                 $buy->total_buy =  $total_price;
+                $buy->total_delivery =  $request->delivery;
                 $buy->delivered = 0;
                 $buy->approved = 0;
                 $buy->cancel_buy = 0;
@@ -311,6 +312,7 @@ class CheckOutController extends Controller
                 $buy->postal_code =  $postal_code;
                 $buy->total_iva =  $iva;
                 $buy->total_buy =  $total_price;
+                $buy->total_delivery =  $request->delivery;
                 $buy->delivered = 0;
                 $buy->approved = 0;
                 $buy->cancel_buy = 0;

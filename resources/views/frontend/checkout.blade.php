@@ -24,6 +24,7 @@
                         <div class="card-body">
                             <form action="{{ url('payment') }}" method="POST" enctype="multipart/form-data">
                                 @csrf
+                                <input type="hidden" value="0" name="delivery" id="delivery">
                                 <div class="row checkout-form">
                                     <div class="col-md-6">
                                         <div class="input-group input-group-static mb-4">
@@ -108,7 +109,7 @@
                                     </div>
 
                                     <button id="btnSinpe" type="submit" class="btn btn-add_to_cart d-block h8">Pagar
-                                        ₡{{ number_format($total_price) }}<span
+                                        ₡<span id="btnPay">{{ number_format($total_price) }}</span><span
                                             class="ms-3 fas fa-arrow-right"></span></button>
                                     @if (!Auth::check())
                                         <h5 class="text-muted-normal">
@@ -174,14 +175,30 @@
                                                 {{ $item->name }} | Cant: {{ $item->quantity }} | Talla:
                                                 {{ $item->size }}
                                                 |
-                                                Precio: ₡{{ $item->discount > 0 ? $precioConDescuento * $item->quantity : $item->price * $item->quantity }}</span>
+                                                Precio:
+                                                ₡{{ $item->discount > 0 ? $precioConDescuento * $item->quantity : $item->price * $item->quantity }}
+                                            </span>
                                         </div>
                                         <hr class="dark horizontal my-0">
                                     @endforeach
                                 </div>
                                 <div class="d-flex h7">
                                     <p class="">Total + I.V.A</p>
-                                    <p class="ms-auto"></span>₡{{ number_format($total_price) }}</p>
+                                    <p class="ms-auto"></span>₡<span
+                                        id="totalIva">{{ number_format($total_price) }}</span></p>
+                                </div>
+                                <p class="fw-bold h7">Tarifa de envío por correos de C.R ₡3000 (Grecia o alrededores no se
+                                    cobra envío.)</p>
+                                <div class="h8">
+                                    <label for="checkboxSubmit">
+                                        <div class="form-check">
+                                            <input id="envio" class="form-check-input" type="checkbox"
+                                                value="" name="envio" onchange="checkEnvio();">
+                                            <label class="form-check-label mb-2" for="envio">
+                                                Realizar Envío
+                                            </label>
+                                        </div>
+                                    </label>
                                 </div>
 
                             </div>
@@ -222,61 +239,61 @@
     </script>
     <script>
         /*  paypal.Buttons({
-                locale: 'es',
-                fundingSource: paypal.FUNDING.CARD,
-                createOrder: function(data, actions) {
-                    return actions.order.create({
+                            locale: 'es',
+                            fundingSource: paypal.FUNDING.CARD,
+                            createOrder: function(data, actions) {
+                                return actions.order.create({
 
-                        payer: {
-                            email_address: '{{ isset(Auth::user()->email) ? Auth::user()->email : '' }}',
-                            name: {
-                                given_name: '{{ isset(Auth::user()->name) ? Auth::user()->name : '' }}',
-                                surname: ''
-                            },
-                            address: {
-                                country_code: "CR",
-                            }
-                        },
-                        purchase_units: [{
-                            amount: {
-                                value: {{ $paypal_amount }}
-                            }
-                        }]
-                    });
-                },
-
-                onApprove(data) {
-                    return fetch("/paypal/process/" + data.orderID)
-                        .then((response) => response.json())
-                        .then((orderData) => {
-                            if (!orderData.success) {
-                                swal({
-                                    title: orderData.status,
-                                    icon: orderData.icon,
-                                }).then((value) => {
-                                    // Esta función se ejecuta cuando el usuario hace clic en el botón "Ok"
-                                    if (value) {
-                                        // Recargar la página
-                                        window.location.href = '{{ url('/') }}';
-                                    }
+                                    payer: {
+                                        email_address: '{{ isset(Auth::user()->email) ? Auth::user()->email : '' }}',
+                                        name: {
+                                            given_name: '{{ isset(Auth::user()->name) ? Auth::user()->name : '' }}',
+                                            surname: ''
+                                        },
+                                        address: {
+                                            country_code: "CR",
+                                        }
+                                    },
+                                    purchase_units: [{
+                                        amount: {
+                                            value: {{ $paypal_amount }}
+                                        }
+                                    }]
                                 });
+                            },
+
+                            onApprove(data) {
+                                return fetch("/paypal/process/" + data.orderID)
+                                    .then((response) => response.json())
+                                    .then((orderData) => {
+                                        if (!orderData.success) {
+                                            swal({
+                                                title: orderData.status,
+                                                icon: orderData.icon,
+                                            }).then((value) => {
+                                                // Esta función se ejecuta cuando el usuario hace clic en el botón "Ok"
+                                                if (value) {
+                                                    // Recargar la página
+                                                    window.location.href = '{{ url('/') }}';
+                                                }
+                                            });
+                                        }
+                                        swal({
+                                            title: orderData.status,
+                                            icon: orderData.icon,
+                                        }).then((value) => {
+                                            // Esta función se ejecuta cuando el usuario hace clic en el botón "Ok"
+                                            if (value) {
+                                                // Recargar la página
+                                                window.location.href = '{{ url('/') }}';
+                                            }
+                                        });
+                                    });
+                            },
+                            onError: function(err) {
+                                alert(err);
                             }
-                            swal({
-                                title: orderData.status,
-                                icon: orderData.icon,
-                            }).then((value) => {
-                                // Esta función se ejecuta cuando el usuario hace clic en el botón "Ok"
-                                if (value) {
-                                    // Recargar la página
-                                    window.location.href = '{{ url('/') }}';
-                                }
-                            });
-                        });
-                },
-                onError: function(err) {
-                    alert(err);
-                }
-            }).render('#paypal-button-container'); */
+                        }).render('#paypal-button-container'); */
 
         function togglePaypalButton() {
             var checkBox = document.getElementById("sinpe");
@@ -292,6 +309,26 @@
                 //paypalButton.style.display = "none";
                 sinpeContent.style.display = "block";
                 cardContent.style.display = "none";
+            }
+        }
+
+        function checkEnvio() {
+            var envio = 3000;
+            var checkBox = document.getElementById("envio");
+            var labelTotal = document.getElementById("totalIva");
+            var labelBtnPay = document.getElementById("btnPay");
+            var inputTotal = document.getElementById("delivery");
+            var cardContent = document.getElementById("cardContent");
+            var numericTotalIva = parseFloat(labelTotal.textContent.replace(',', ''));
+
+            if (checkBox.checked) {                
+                labelTotal.textContent = `${(numericTotalIva + envio).toLocaleString()}`;
+                labelBtnPay.textContent = `${(numericTotalIva + envio).toLocaleString()}`;
+                inputTotal.value = envio;
+            } else {             
+                labelTotal.textContent = `${(numericTotalIva - envio).toLocaleString()}`;
+                labelBtnPay.textContent = `${(numericTotalIva - envio).toLocaleString()}`;
+                inputTotal.value = 0;
             }
         }
     </script>

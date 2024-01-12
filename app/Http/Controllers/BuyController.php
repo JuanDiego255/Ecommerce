@@ -42,6 +42,7 @@ class BuyController extends Controller
                 'buys.id as id',
                 'buys.total_iva as total_iva',
                 'buys.total_buy as total_buy',
+                'buys.total_delivery as total_delivery',
                 'buys.delivered as delivered',
                 'buys.approved as approved',
                 'buys.created_at as created_at',
