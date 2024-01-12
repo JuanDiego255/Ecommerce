@@ -19,6 +19,10 @@
                         <div class="product-grid product_data">
                             <div class="product-image">
                                 <img src="{{ asset('storage') . '/' . $item->image }}">
+                                @if ($item->discount)
+                                    <span class="product-discount-label">-{{ $item->discount }}%</span>
+                                @endif
+
                                 <ul class="product-links">
                                     <li><a target="blank" href="{{ asset('storage') . '/' . $item->image }}"><i
                                                 class="fas fa-eye"></i></a></li>
@@ -27,9 +31,24 @@
                                     class="add-to-cart">Detallar</a>
                             </div>
                             <div class="product-content">
-                                <h3 class="title"><a href="{{ url('detail-clothing/' . $item->id . '/' . $category_id) }}">{{ $item->name }}</a></h3>
+                                <h3 class="title"><a
+                                        href="{{ url('detail-clothing/' . $item->id . '/' . $category_id) }}">{{ $item->name }}</a>
+                                </h3>
                                 <h4 class="title">Stock: {{ $item->total_stock }}</h4>
-                                <div class="price">₡{{ number_format($item->price) }}</span></div>
+                                @php
+                                    $precio = $item->price;
+                                    $descuentoPorcentaje = $item->discount;
+                                    // Calcular el descuento
+                                    $descuento = ($precio * $descuentoPorcentaje) / 100;
+                                    // Calcular el precio con el descuento aplicado
+                                    $precioConDescuento = $precio - $descuento;
+                                @endphp
+                                <div class="price">₡{{ number_format($precioConDescuento) }}
+                                    @if ($item->discount)
+                                        <s class="text-danger"><span class="text-danger">₡{{ number_format($item->price) }}
+                                            </span></s>
+                                    @endif
+                                </div>
                             </div>
                         </div>
                     </div>

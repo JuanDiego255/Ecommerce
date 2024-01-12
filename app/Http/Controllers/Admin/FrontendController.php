@@ -31,6 +31,7 @@ class FrontendController extends Controller
                 'categories.id as category_id',
                 'clothing.id as id',
                 'clothing.trending as trending',
+                'clothing.discount as discount',
                 'clothing.name as name',
                 'clothing.description as description',
                 'clothing.price as price',
@@ -43,6 +44,7 @@ class FrontendController extends Controller
                 'categories.name',
                 'categories.id',
                 'clothing.name',
+                'clothing.discount',
                 'clothing.trending',
                 'clothing.description',
                 'clothing.price'
@@ -68,7 +70,52 @@ class FrontendController extends Controller
             OpenGraph::setTitle($tag->title);
             OpenGraph::setDescription($tag->meta_og_description);
         }
-        return view('frontend.index', compact('clothings', 'social'));
+
+        //Promociones
+        $clothings_offer = ClothingCategory::where('clothing.category_id', 16)
+            ->join('categories', 'clothing.category_id', 'categories.id')
+            ->join('stocks', 'clothing.id', 'stocks.clothing_id')
+            ->join('sizes', 'stocks.size_id', 'sizes.id')
+            ->select(
+                'categories.name as category',
+                'categories.id as category_id',
+                'clothing.id as id',
+                'clothing.trending as trending',
+                'clothing.discount as discount',
+                'clothing.name as name',
+                'clothing.description as description',
+                'clothing.price as price',
+                DB::raw('SUM(stocks.stock) as total_stock'),
+                DB::raw('GROUP_CONCAT(sizes.size) AS available_sizes'), // Obtener tallas dinámicas
+                DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size')
+            )
+            ->groupBy(
+                'clothing.id',
+                'categories.name',
+                'categories.id',
+                'clothing.name',
+                'clothing.discount',
+                'clothing.trending',
+                'clothing.description',
+                'clothing.price'
+            )
+            ->get();
+
+        // Obtener las primeras imágenes de las prendas obtenidas
+        foreach ($clothings_offer as $offer) {
+            $firstTwoImages = ProductImage::where('clothing_id', $offer->id)
+                ->orderBy('id')
+                ->take(2) // Limitar a las primeras dos imágenes
+                ->get();
+
+            // Obtener las rutas de las imágenes
+            $imagePaths = $firstTwoImages->pluck('image')->toArray();
+
+            // Asegurarse de tener al menos un elemento en el array
+            $offer->images = $imagePaths ?: [null];
+        }
+       
+        return view('frontend.index', compact('clothings', 'social','clothings_offer'));
     }
     public function category()
     {
@@ -106,6 +153,7 @@ class FrontendController extends Controller
                 'categories.name as category',
                 'clothing.id as id',
                 'clothing.name as name',
+                'clothing.discount as discount',
                 'clothing.description as description',
                 'clothing.price as price',
                 'product_images.image as image', // Obtener la primera imagen del producto
@@ -113,7 +161,7 @@ class FrontendController extends Controller
                 DB::raw('GROUP_CONCAT(sizes.size) AS available_sizes'), // Obtener tallas dinámicas
                 DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size') // Obtener stock por talla
             )
-            ->groupBy('clothing.id', 'categories.name', 'clothing.name', 'clothing.description', 'clothing.price', 'product_images.image')
+            ->groupBy('clothing.id', 'categories.name', 'clothing.discount', 'clothing.name', 'clothing.description', 'clothing.price', 'product_images.image')
             ->simplePaginate(3);
         if (count($clothings) == 0) {
             return redirect()->back()->with(['status' => 'No hay artículos en esta categoría', 'icon' => 'warning']);
@@ -143,6 +191,7 @@ class FrontendController extends Controller
                 'clothing.id as id',
                 'clothing.trending as trending',
                 'clothing.name as name',
+                'clothing.discount as discount',
                 'clothing.description as description',
                 'clothing.price as price',
                 'product_images.image as image', // columna de imagen
@@ -151,7 +200,7 @@ class FrontendController extends Controller
                 DB::raw('GROUP_CONCAT(sizes.id) AS available_sizes'), // Obtener tallas dinámicas
                 DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size') // Obtener stock por talla
             )
-            ->groupBy('clothing.id', 'categories.name', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
+            ->groupBy('clothing.id', 'clothing.discount', 'categories.name', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
             ->get();
         //$clothes = ClothingCategory::where('id', $id)->get();
         $size_active = SizeCloth::where('clothing_id', $id)
@@ -196,6 +245,7 @@ class FrontendController extends Controller
                 'categories.id as category_id',
                 'clothing.id as id',
                 'clothing.trending as trending',
+                'clothing.discount as discount',
                 'clothing.name as name',
                 'clothing.description as description',
                 'clothing.price as price',
@@ -204,7 +254,7 @@ class FrontendController extends Controller
                 DB::raw('GROUP_CONCAT(sizes.size) AS available_sizes'), // Obtener tallas dinámicas
                 DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size') // Obtener stock por talla
             )
-            ->groupBy('clothing.id', 'categories.name', 'categories.id', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
+            ->groupBy('clothing.id', 'clothing.discount', 'categories.name', 'categories.id', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
             ->inRandomOrder()
             ->take(5)
             ->get();

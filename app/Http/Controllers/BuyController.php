@@ -50,8 +50,7 @@ class BuyController extends Controller
                 'users.name as name',
                 'users.telephone as telephone',
                 'users.email as email',
-                'buys.name as name_b',
-                'buys.last_name as last_name_b',
+                'buys.name as name_b',               
                 'buys.telephone as telephone_b',
                 'buys.email as email_b',
                 'buys.cancel_buy as cancel_buy'

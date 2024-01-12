@@ -112,6 +112,7 @@ class CartController extends Controller
                     'clothing.name as name',
                     'clothing.description as description',
                     'clothing.price as price',
+                    'clothing.discount as discount',
                     'clothing.status as status',
                     'sizes.size as size',
                     'sizes.id as size_id',
@@ -125,6 +126,7 @@ class CartController extends Controller
                     'clothing.description',
                     'clothing.price',
                     'clothing.status',
+                    'clothing.discount',
                     'sizes.size',
                     'sizes.id',
                     'carts.quantity',
@@ -196,7 +198,13 @@ class CartController extends Controller
 
         $cloth_price = 0;
         foreach ($cart_items as $item) {
-            $cloth_price += $item->price * $item->quantity;
+            $precio = $item->price;
+            $descuentoPorcentaje = $item->discount;
+            // Calcular el descuento
+            $descuento = ($precio * $descuentoPorcentaje) / 100;
+            // Calcular el precio con el descuento aplicado
+            $precioConDescuento = $precio - $descuento;
+            $cloth_price += $precioConDescuento * $item->quantity;
         }
 
         $iva = $cloth_price * 0.13;

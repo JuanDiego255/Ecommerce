@@ -137,11 +137,12 @@
                 <div id="cardContent" class="container" style="display: none;">
                     <div class="col col-12 ps-md-5 p-0">
                         <div class="box-left">
-                            <p class="fw-bold h7">Nuestro método de pago por medio de tarjeta se encuentra deshabilitado.</p>
+                            <p class="fw-bold h7">Nuestro método de pago por medio de tarjeta se encuentra deshabilitado.
+                            </p>
 
                             <div class="">
 
-                                {{--<div class="btn-add_to_cart" id="paypal-button-container">
+                                {{-- <div class="btn-add_to_cart" id="paypal-button-container">
 
                                 </div> --}}
                             </div>
@@ -158,6 +159,14 @@
                             <div class="h8">
                                 <div class="row m-0 border mb-3">
                                     @foreach ($cartItems as $item)
+                                        @php
+                                            $precio = $item->price;
+                                            $descuentoPorcentaje = $item->discount;
+                                            // Calcular el descuento
+                                            $descuento = ($precio * $descuentoPorcentaje) / 100;
+                                            // Calcular el precio con el descuento aplicado
+                                            $precioConDescuento = $precio - $descuento;
+                                        @endphp
                                         <div class="d-flex justify-content-lg-start justify-content-center p-2">
 
                                             <span class="ps-3 textmuted"><i
@@ -165,7 +174,7 @@
                                                 {{ $item->name }} | Cant: {{ $item->quantity }} | Talla:
                                                 {{ $item->size }}
                                                 |
-                                                Precio: ₡{{ number_format($item->price * $item->quantity) }}</span>
+                                                Precio: ₡{{ $item->discount > 0 ? $precioConDescuento * $item->quantity : $item->price * $item->quantity }}</span>
                                         </div>
                                         <hr class="dark horizontal my-0">
                                     @endforeach
@@ -212,35 +221,46 @@
         src="https://www.paypal.com/sdk/js?client-id={{ env('PAYPAL_CLIENT_ID') }}&components=buttons,funding-eligibility">
     </script>
     <script>
-       /*  paypal.Buttons({
-            locale: 'es',
-            fundingSource: paypal.FUNDING.CARD,
-            createOrder: function(data, actions) {
-                return actions.order.create({
+        /*  paypal.Buttons({
+                locale: 'es',
+                fundingSource: paypal.FUNDING.CARD,
+                createOrder: function(data, actions) {
+                    return actions.order.create({
 
-                    payer: {
-                        email_address: '{{ isset(Auth::user()->email) ? Auth::user()->email : '' }}',
-                        name: {
-                            given_name: '{{ isset(Auth::user()->name) ? Auth::user()->name : '' }}',
-                            surname: ''
+                        payer: {
+                            email_address: '{{ isset(Auth::user()->email) ? Auth::user()->email : '' }}',
+                            name: {
+                                given_name: '{{ isset(Auth::user()->name) ? Auth::user()->name : '' }}',
+                                surname: ''
+                            },
+                            address: {
+                                country_code: "CR",
+                            }
                         },
-                        address: {
-                            country_code: "CR",
-                        }
-                    },
-                    purchase_units: [{
-                        amount: {
-                            value: {{ $paypal_amount }}
-                        }
-                    }]
-                });
-            },
+                        purchase_units: [{
+                            amount: {
+                                value: {{ $paypal_amount }}
+                            }
+                        }]
+                    });
+                },
 
-            onApprove(data) {
-                return fetch("/paypal/process/" + data.orderID)
-                    .then((response) => response.json())
-                    .then((orderData) => {
-                        if (!orderData.success) {
+                onApprove(data) {
+                    return fetch("/paypal/process/" + data.orderID)
+                        .then((response) => response.json())
+                        .then((orderData) => {
+                            if (!orderData.success) {
+                                swal({
+                                    title: orderData.status,
+                                    icon: orderData.icon,
+                                }).then((value) => {
+                                    // Esta función se ejecuta cuando el usuario hace clic en el botón "Ok"
+                                    if (value) {
+                                        // Recargar la página
+                                        window.location.href = '{{ url('/') }}';
+                                    }
+                                });
+                            }
                             swal({
                                 title: orderData.status,
                                 icon: orderData.icon,
@@ -251,23 +271,12 @@
                                     window.location.href = '{{ url('/') }}';
                                 }
                             });
-                        }
-                        swal({
-                            title: orderData.status,
-                            icon: orderData.icon,
-                        }).then((value) => {
-                            // Esta función se ejecuta cuando el usuario hace clic en el botón "Ok"
-                            if (value) {
-                                // Recargar la página
-                                window.location.href = '{{ url('/') }}';
-                            }
                         });
-                    });
-            },
-            onError: function(err) {
-                alert(err);
-            }
-        }).render('#paypal-button-container'); */
+                },
+                onError: function(err) {
+                    alert(err);
+                }
+            }).render('#paypal-button-container'); */
 
         function togglePaypalButton() {
             var checkBox = document.getElementById("sinpe");

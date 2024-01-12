@@ -22,7 +22,8 @@
                 <div class="card" data-animation="true">
 
                     <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-                        <a target="blank" data-fancybox="gallery" href="{{ asset('storage') . '/' . $clothing->image }}" class="d-block blur-shadow-image">
+                        <a target="blank" data-fancybox="gallery" href="{{ asset('storage') . '/' . $clothing->image }}"
+                            class="d-block blur-shadow-image">
                             <img src="{{ asset('storage') . '/' . $clothing->image }}" alt="img-blur-shadow"
                                 class="img-fluid shadow border-radius-lg w-100" style="height:300px;">
                         </a>
@@ -62,6 +63,12 @@
                         @for ($i = 0; $i < count($sizes); $i++)
                             <p class="mb-0">Talla {{ $sizes[$i] }}: {{ $stockPerSize[$i] }}</p>
                         @endfor
+                        @if ($clothing->discount)
+                            <p class="mb-0">
+                                Descuento: {{ $clothing->discount }}%
+                            </p>
+                        @endif
+
                     </div>
                     <hr class="dark horizontal my-0">
                     <div class="card-footer d-flex">

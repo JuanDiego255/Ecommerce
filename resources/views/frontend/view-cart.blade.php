@@ -6,7 +6,7 @@
 @section('content')
     <div class="product_data mb-3 mt-4" style="margin-left: 100px; margin-right:80px;">
         <div class="breadcrumb-nav bc3x">
-               
+
             <li class="home"><a href="{{ url('/') }}"><i class="fas fa-home me-1"></i></a></li>
             <li class="bread-standard"><a href="{{ url('category/') }}"><i class="fas fa-box me-1"></i>Categorías</a></li>
             <li class="bread-standard"><a href="#"><i class="fa fa-shopping-cart me-1"></i>Carrito</a></li>
@@ -54,8 +54,16 @@
 
                                             </td>
                                             <td class="align-middle text-center text-sm">
-                                                <p class="text-success mb-0">₡ {{ number_format($item->price) }}</p>
-                                                <input type="hidden" class="price" value="{{ $item->price }}">
+                                                @php
+                                                    $precio = $item->price;
+                                                    $descuentoPorcentaje = $item->discount;
+                                                    // Calcular el descuento
+                                                    $descuento = ($precio * $descuentoPorcentaje) / 100;
+                                                    // Calcular el precio con el descuento aplicado
+                                                    $precioConDescuento = $precio - $descuento;
+                                                @endphp
+                                                <p class="text-success mb-0">₡ {{ $item->discount > 0 ? $precioConDescuento : $item->price }}</p>
+                                                <input type="hidden" class="price" value="{{ $item->discount > 0 ? $precioConDescuento : $item->price }}">
                                             </td>
                                             <td>
                                                 <p class="text-center text-truncate para mb-0">{{ $item->size }}
@@ -108,11 +116,10 @@
                                     I.V.A
                                     <span id="totalIvaElement">₡{{ number_format($iva) }}</span>
                                 </li>
-                                <li
-                                    class="list-group-item d-flex justify-content-between border-0 px-0 mb-3">
-                                   
-                                        <strong>Total</strong>                                   
-                                    <span><strong  id="totalPriceElement">₡{{ number_format($total_price) }}</strong></span>
+                                <li class="list-group-item d-flex justify-content-between border-0 px-0 mb-3">
+
+                                    <strong>Total</strong>
+                                    <span><strong id="totalPriceElement">₡{{ number_format($total_price) }}</strong></span>
                                 </li>
                             </ul>
 

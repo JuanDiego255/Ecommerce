@@ -35,7 +35,7 @@
                                         @foreach ($clothes as $clothing)
                                             @if (!empty($clothing->images))
                                                 @php
-                                                    $images = explode(',', $clothing->images); 
+                                                    $images = explode(',', $clothing->images);
                                                     // Convertir la lista de imágenes en un array
                                                     $firstImage = reset($images); // Obtener la primera imagen
                                                 @endphp
@@ -109,8 +109,25 @@
                                     </div>
 
                                     <div class="mb-1">
-                                        <span class="text-muted"> ₡{{ number_format($item->price) }}</span>
-                                        <span class="text-muted">/ por unidad</span>
+
+                                        @php
+                                            $precio = $item->price;
+                                            $descuentoPorcentaje = $item->discount;
+                                            // Calcular el descuento
+                                            $descuento = ($precio * $descuentoPorcentaje) / 100;
+                                            // Calcular el precio con el descuento aplicado
+                                            $precioConDescuento = $precio - $descuento;
+                                        @endphp
+
+                                        <div class="price">₡{{ number_format($precioConDescuento) }}
+                                            @if ($item->discount)
+                                                <s class="text-danger"><span
+                                                        class="text-danger">₡{{ number_format($item->price) }} </span></s>
+                                                / por unidad
+                                            @endif
+
+                                        </div>
+
                                     </div>
 
                                     <p>

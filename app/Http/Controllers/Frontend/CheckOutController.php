@@ -47,7 +47,8 @@ class CheckOutController extends Controller
                     'clothing.id as id',
                     'clothing.name as name',
                     'clothing.description as description',
-                    'clothing.price as price',                   
+                    'clothing.discount as discount',
+                    'clothing.price as price',
                     'clothing.status as status',
                     'sizes.size as size',
                     'carts.quantity as quantity'
@@ -55,7 +56,13 @@ class CheckOutController extends Controller
                 )->get();
             $cloth_price = 0;
             foreach ($cartItems as $item) {
-                $cloth_price += $item->price * $item->quantity;
+                $precio = $item->price;
+                $descuentoPorcentaje = $item->discount;
+                // Calcular el descuento
+                $descuento = ($precio * $descuentoPorcentaje) / 100;
+                // Calcular el precio con el descuento aplicado
+                $precioConDescuento = $precio - $descuento;
+                $cloth_price += $precioConDescuento * $item->quantity;
             }
             $user_info = AddressUser::where('user_id', Auth::user()->id)
                 ->where('status', 1)->first();
@@ -71,8 +78,9 @@ class CheckOutController extends Controller
 
                     'clothing.id as id',
                     'clothing.name as name',
+                    'clothing.discount as discount',
                     'clothing.description as description',
-                    'clothing.price as price',                   
+                    'clothing.price as price',
                     'clothing.status as status',
                     'sizes.size as size',
                     'carts.quantity as quantity'
@@ -80,14 +88,20 @@ class CheckOutController extends Controller
                 )->get();
             $cloth_price = 0;
             foreach ($cartItems as $item) {
-                $cloth_price += $item->price * $item->quantity;
+                $precio = $item->price;
+                $descuentoPorcentaje = $item->discount;
+                // Calcular el descuento
+                $descuento = ($precio * $descuentoPorcentaje) / 100;
+                // Calcular el precio con el descuento aplicado
+                $precioConDescuento = $precio - $descuento;
+                $cloth_price += $precioConDescuento * $item->quantity;
             }
 
             $iva = $cloth_price * 0.13;
             $total_price = $cloth_price + $iva;
         }
 
-        $response = file_get_contents(env('URL_TIPO_CAMBIO_CR'));
+        /* $response = file_get_contents(env('URL_TIPO_CAMBIO_CR'));
 
         if ($response !== false) {
             $exchangeRates = json_decode($response, true);           
@@ -95,9 +109,9 @@ class CheckOutController extends Controller
             $tipoCambio = round($tipoCambio, 2);        
         } else {           
             $tipoCambio = 1;
-        }
+        } */
 
-        $paypal_amount = $total_price / $tipoCambio;
+        $paypal_amount = $total_price / 1;
         $paypal_amount = round($paypal_amount, 2);
         $tags = MetaTags::where('section', 'Checkout')->get();
         foreach ($tags as $tag) {
@@ -136,6 +150,7 @@ class CheckOutController extends Controller
                         'clothing.name as name',
                         'clothing.description as description',
                         'clothing.price as price',
+                        'clothing.discount as discount',
                         'clothing.status as status',
                         'sizes.size as size',
                         'carts.quantity as quantity',
@@ -144,7 +159,13 @@ class CheckOutController extends Controller
                 $cloth_price = 0;
 
                 foreach ($cartItems as $cart) {
-                    $cloth_price += $cart->price * $cart->quantity;
+                    $precio = $cart->price;
+                    $descuentoPorcentaje = $cart->discount;
+                    // Calcular el descuento
+                    $descuento = ($precio * $descuentoPorcentaje) / 100;
+                    // Calcular el precio con el descuento aplicado
+                    $precioConDescuento = $precio - $descuento;
+                    $cloth_price += $precioConDescuento * $cart->quantity;
                 }
                 $iva = $cloth_price * 0.13;
                 $total_price = $cloth_price + $iva;
@@ -190,12 +211,18 @@ class CheckOutController extends Controller
                 $buy_id = $buy->id;
 
                 foreach ($cartItems as $cart) {
+                    $precio = $cart->price;
+                    $descuentoPorcentaje = $cart->discount;
+                    // Calcular el descuento
+                    $descuento = ($precio * $descuentoPorcentaje) / 100;
+                    // Calcular el precio con el descuento aplicado
+                    $precioConDescuento = $precio - $descuento;
                     $buy_detail = new BuyDetail();
                     $buy_detail->buy_id = $buy_id;
                     $buy_detail->clothing_id = $cart->clothing_id;
                     $buy_detail->size_id = $cart->size_id;
-                    $buy_detail->total = ($cart->price * $cart->quantity) + ($cart->price * 0.13);
-                    $buy_detail->iva = $cart->price * 0.13;
+                    $buy_detail->total = ($precioConDescuento * $cart->quantity) + ($precioConDescuento * 0.13);
+                    $buy_detail->iva = $precioConDescuento * 0.13;
                     $buy_detail->quantity = $cart->quantity;
                     $buy_detail->cancel_item = 0;
                     $buy_detail->save();
@@ -218,7 +245,8 @@ class CheckOutController extends Controller
                         'clothing.id as clothing_id',
                         'clothing.name as name',
                         'clothing.description as description',
-                        'clothing.price as price',                       
+                        'clothing.discount as discount',
+                        'clothing.price as price',
                         'clothing.status as status',
                         'sizes.size as size',
                         'carts.quantity as quantity',
@@ -227,7 +255,13 @@ class CheckOutController extends Controller
                 $cloth_price = 0;
 
                 foreach ($cartItems as $cart) {
-                    $cloth_price += $cart->price * $cart->quantity;
+                    $precio = $cart->price;
+                    $descuentoPorcentaje = $cart->discount;
+                    // Calcular el descuento
+                    $descuento = ($precio * $descuentoPorcentaje) / 100;
+                    // Calcular el precio con el descuento aplicado
+                    $precioConDescuento = $precio - $descuento;
+                    $cloth_price += $precioConDescuento * $cart->quantity;
                 }
                 $iva = $cloth_price * 0.13;
                 $total_price = $cloth_price + $iva;
@@ -284,12 +318,18 @@ class CheckOutController extends Controller
                 $buy_id = $buy->id;
 
                 foreach ($cartItems as $cart) {
+                    $precio = $cart->price;
+                    $descuentoPorcentaje = $cart->discount;
+                    // Calcular el descuento
+                    $descuento = ($precio * $descuentoPorcentaje) / 100;
+                    // Calcular el precio con el descuento aplicado
+                    $precioConDescuento = $precio - $descuento;
                     $buy_detail = new BuyDetail();
                     $buy_detail->buy_id = $buy_id;
                     $buy_detail->clothing_id = $cart->clothing_id;
                     $buy_detail->size_id = $cart->size_id;
-                    $buy_detail->total = ($cart->price * $cart->quantity) + ($cart->price * 0.13);
-                    $buy_detail->iva = $cart->price * 0.13;
+                    $buy_detail->total = ($precioConDescuento * $cart->quantity) + ($precioConDescuento * 0.13);
+                    $buy_detail->iva = $precioConDescuento * 0.13;
                     $buy_detail->quantity = $cart->quantity;
                     $buy_detail->cancel_item = 0;
                     $buy_detail->save();

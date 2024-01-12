@@ -26,8 +26,12 @@
                     <div class="container">
                         <div class="row">
                             <div class="col-lg-6 my-auto">
-                                <h4 class="text-white mb-0 fadeIn1 fadeInBottom">Explora nuestro catálogo y elige entre nuestras exclusivas prendas para realzar tu estilo único.</h4>
-                                <h1 class="text-white fadeIn2 fadeInBottom">Velvet Boutique</h1>
+                                <h4 class="text-white mb-0 fadeIn1 fadeInBottom">Llegaron los mejores descuentos, elige
+                                    entre
+                                    nuestras exclusivas prendas para realzar tu estilo único.</h4>
+                                <h1 class="text-white fadeIn2 fadeInBottom"><a href="#offer"
+                                        class="text-white fadeIn2 fadeInBottom" href="#">70% Off en productos
+                                        seleccionados.</a></h1>
 
                             </div>
                         </div>
@@ -46,11 +50,76 @@
             </a>
         </div>
     </div>
+    @if ($clothings_offer)
+        <div class="container-fluid mb-5 offer">
+            <div class="text-center">
+                <h3 class="text-center text-muted mt-5">¡Nuestros productos seleccionados con grandes descuentos!</h3>
+            </div>
+            <hr class="dark horizontal text-danger mb-3">
+            <div class="row">
+                @foreach ($clothings_offer as $item)
+                    @php
+                        $cant_img = 0;
+                    @endphp
+                    <div class="col-md-3 col-sm-6">
+                        <div class="product-grid-offer">
+                            <div class="product-image-offer">
+                                <a href="#" class="image-offer">
+                                    @if (!empty($item->images))
+                                        @foreach ($item->images as $index => $image)
+                                            @php
+                                                $cant_img++;
+                                            @endphp
+                                            <img class="pic-{{ $index + 1 }}"
+                                                src="{{ asset('storage') . '/' . $image }}">
+                                        @endforeach
+                                        @if ($cant_img == 1)
+                                            <img class="pic-2" src="{{ asset('storage') . '/' . $image }}">
+                                        @endif
+                                    @endif
+                                </a>
+                                <span class="product-hot-label">-{{ $item->discount }}%</span>
+                                <ul class="product-links-offer">
+                                    <li><a href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}"
+                                            data-tip="Detallar"><i class="fa fa-eye"></i></a></li>
+
+                                </ul>
+                            </div>
+                            <div class="product-content-offer">
+                                <a class="add-to-cart" href="{{ url('clothes-category/' . $item->category_id) }}">
+                                    <i class="fas fa-plus"></i>Más ofertas
+                                </a>
+                                <h3 class="title"><a
+                                        href="{{ url('clothes-category/' . $item->category_id) }}">{{ $item->name }}</a>
+                                </h3>
+                                @php
+                                    $precio = $item->price;
+                                    $descuentoPorcentaje = $item->discount;
+                                    // Calcular el descuento
+                                    $descuento = ($precio * $descuentoPorcentaje) / 100;
+                                    // Calcular el precio con el descuento aplicado
+                                    $precioConDescuento = $precio - $descuento;
+                                @endphp
+                                <div class="price">₡{{ number_format($precioConDescuento) }}
+                                    @if ($item->discount)
+                                        <s class="text-danger"><span class="text-danger">₡{{ number_format($item->price) }}
+                                            </span></s>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+
+            </div>
+        </div>
+    @endif
 
     <hr class="text-dark">
     <div class="text-center">
         <span class="text-muted text-center">¡Descubre Velvet Boutique en <a
-            href="https://www.instagram.com/velvetboutiquegrecia/">Instagram</a>! Compartimos lo que nos hace sentir mejor: ¡outfits excepcionales! ¿Qué te parecen estos?</span>
+                href="https://www.instagram.com/velvetboutiquegrecia/">Instagram</a>! Compartimos lo que nos hace sentir
+            mejor: ¡outfits excepcionales! ¿Qué te parecen estos?</span>
     </div>
 
 
@@ -83,7 +152,8 @@
 
     <div class="bg-footer p-3 mb-3 text-center">
         <h3 class="text-center text-title mt-3">Velvet Boutique</h3>
-        <span class="text-center text-muted">Queremos envolverte con nuestra selección de atuendos y entregarlos hasta la puerta de tu hogar.<br>Realizamos envios a nivel nacional.</span>
+        <span class="text-center text-muted">Queremos envolverte con nuestra selección de atuendos y entregarlos hasta la
+            puerta de tu hogar.<br>Realizamos envios a nivel nacional.</span>
 
 
     </div>
@@ -97,10 +167,13 @@
         </div>
     </div> --}}
 
-    <hr class="dark horizontal text-danger mb-3">
-    <div class="text-center">
-        <h3 class="text-center text-muted mt-5">¡Explora nuestras últimas colecciones y descubre los artículos más solicitados en tendencia!</h3>
-    </div>
+    @if ($clothings)
+        <div class="text-center">
+            <h3 class="text-center text-muted mt-5">¡Explora nuestras últimas colecciones y descubre los artículos más
+                solicitados en tendencia!</h3>
+        </div>
+    @endif
+
 
     <hr class="dark horizontal text-danger my-0">
 
@@ -114,6 +187,9 @@
                                 <div class="product-grid product_data">
                                     <div class="product-image">
                                         <img src="{{ asset('storage') . '/' . $item->image }}">
+                                        @if ($item->discount)
+                                            <span class="product-discount-label">-{{ $item->discount }}%</span>
+                                        @endif
                                         <ul class="product-links">
                                             <li><a target="blank" href="{{ asset('storage') . '/' . $item->image }}"><i
                                                         class="fas fa-eye"></i></a></li>
@@ -122,11 +198,26 @@
                                             class="add-to-cart">Detallar</a>
                                     </div>
                                     <div class="product-content">
+
                                         <h3 class="title"><a
                                                 href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}">{{ $item->name }}</a>
                                         </h3>
                                         <h4 class="title">Stock: {{ $item->total_stock }}</h4>
-                                        <div class="price">₡{{ number_format($item->price) }}</span></div>
+                                        @php
+                                            $precio = $item->price;
+                                            $descuentoPorcentaje = $item->discount;
+                                            // Calcular el descuento
+                                            $descuento = ($precio * $descuentoPorcentaje) / 100;
+                                            // Calcular el precio con el descuento aplicado
+                                            $precioConDescuento = $precio - $descuento;
+                                        @endphp
+                                        <div class="price">₡{{ number_format($precioConDescuento) }}
+                                            @if ($item->discount)
+                                                <s class="text-danger"><span
+                                                        class="text-danger">₡{{ number_format($item->price) }}
+                                                    </span></s>
+                                            @endif
+                                        </div>
                                     </div>
                                 </div>
                             </div>

@@ -16,34 +16,44 @@
                     <div class="col-md-6 mb-3">
                         <div class="input-group input-group-static mb-4">
                             <label>Prenda</label>
-                            <input required value="{{ $clothing->name }}" type="text" class="form-control form-control-lg"
-                                name="name">
+                            <input required value="{{ $clothing->name }}" type="text"
+                                class="form-control form-control-lg" name="name">
                         </div>
                     </div>
                     <input type="hidden" name="category_id" value="{{ $clothing->category_id }}">
                     <div class="col-md-6 mb-3">
                         <div class="input-group input-group-static mb-4">
                             <label>Descripción</label><br>
-                            <input required value="{{ $clothing->description }}" type="text" class="form-control form-control-lg"
-                                name="description">
+                            <input required value="{{ $clothing->description }}" type="text"
+                                class="form-control form-control-lg" name="description">
                         </div>
                     </div>
 
                     <div class="col-md-6 mb-3">
                         <div class="input-group input-group-static mb-4">
                             <label>Price</label>
-                            <input required type="text" value="{{ $clothing->price }}" class="form-control form-control-lg"
-                                name="price">
+                            <input required type="text" value="{{ $clothing->price }}"
+                                class="form-control form-control-lg" name="price">
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="input-group input-group-static mb-4">
+                            <label>Descuento (%)</label>
+                            <input type="number" value="{{ $clothing->discount }}" class="form-control form-control-lg"
+                                name="discount">
                         </div>
                     </div>
 
                     <div class="col-md-6 mb-3">
                         <div class="input-group input-group-static mb-4">
-                            <label>Stock (El dato que se ingresa aumenta el stock ya existente en las tallas seleccionadas, siempre y cuando este sea 0)</label>
-                            <input min="1" required value="{{$clothing->total_stock == 0 ? "1" : $clothing->total_stock}}" type="number" class="form-control form-control-lg"
-                                name="stock">
+                            <label>Stock (El dato que se ingresa aumenta el stock ya existente en las tallas seleccionadas,
+                                siempre y cuando este sea 0)</label>
+                            <input min="1" required
+                                value="{{ $clothing->total_stock == 0 ? '1' : $clothing->total_stock }}" type="number"
+                                class="form-control form-control-lg" name="stock">
                         </div>
                     </div>
+                                     
                     <div class="col-md-12 mb-3">
                         <label
                             class="control-label control-label text-formulario {{ $errors->has('sizes_id[]') ? 'is-invalid' : '' }}"
@@ -66,15 +76,17 @@
                             <label class="custom-control-label" for="customCheck1">Trending</label>
                         </div>
                     </div>
-                    @if ($clothing->image)
+                    <div class="col-md-12 mb-3">
+                        @if ($clothing->image)
                         <img class="img-fluid img-thumbnail" src="{{ asset('storage') . '/' . $clothing->image }}"
                             style="width: 150px; height:150px;" alt="image">
                     @endif
-                    <div class="col-md-6 mb-3">
+                        <label>Imágenes (Máximo 4)</label>
                         <div class="input-group input-group-static mb-4">
-                            <input multiple required class="form-control" type="file" name="images[]">
+                            <input multiple required class="form-control form-control-lg" type="file" name="images[]">
                         </div>
                     </div>
+
                 </div>
 
                 <div class="col-md-12 mt-3 text-center">

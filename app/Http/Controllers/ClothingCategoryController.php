@@ -45,6 +45,7 @@ class ClothingCategoryController extends Controller
                 'clothing.id as id',
                 'clothing.trending as trending',
                 'clothing.name as name',
+                'clothing.discount as discount',
                 'clothing.description as description',
                 'clothing.price as price',
                 DB::raw('SUM(stocks.stock) as total_stock'),
@@ -52,7 +53,7 @@ class ClothingCategoryController extends Controller
                 DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'), // Obtener stock por talla
                 'product_images.image as image' // Obtener la imagen del producto
             )
-            ->groupBy('clothing.id', 'categories.name', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
+            ->groupBy('clothing.id', 'clothing.discount', 'categories.name', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
             ->simplePaginate(4);
 
         return view('admin.clothing.index', compact('clothings', 'category_name', 'category_id'));
@@ -81,6 +82,7 @@ class ClothingCategoryController extends Controller
                 'clothing.id as id',
                 'clothing.category_id as category_id',
                 'clothing.name as name',
+                'clothing.discount as discount',
                 'clothing.trending as trending',
                 'clothing.description as description',
                 'clothing.price as price',
@@ -94,7 +96,8 @@ class ClothingCategoryController extends Controller
                 'clothing.description',
                 'clothing.trending',
                 'clothing.price',
-                'product_images.image'
+                'product_images.image',
+                'clothing.discount'
             )
             ->first();
         $size_active = SizeCloth::where('clothing_id', $id)->get();
@@ -121,6 +124,9 @@ class ClothingCategoryController extends Controller
             $clothing->name = $request->name;
             $clothing->description = $request->description;
             $clothing->price = $request->price;
+            if($request->has('discount')){
+                $clothing->discount = $request->discount;
+            }
 
             $sizes = $request->input('sizes_id');
 
@@ -192,7 +198,10 @@ class ClothingCategoryController extends Controller
                 $clothing->category_id = $request->category_id;
                 $clothing->name = $request->name;
                 $clothing->description = $request->description;
-                $clothing->price = $request->price;               
+                $clothing->price = $request->price; 
+                if($request->has('discount')){
+                    $clothing->discount = $request->discount;
+                }              
 
                 $clothing->status = 1;
 

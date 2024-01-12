@@ -33,16 +33,28 @@
                         </div>
                     </div>
 
-                    <div class="col-md-12 mb-3">
+                    <div class="col-md-6 mb-3">
                         <div class="input-group input-group-static mb-4">
                             <label>Precio</label>
                             <input required type="number" class="form-control form-control-lg" name="price">
                         </div>
                     </div>
-                    <div class="col-md-12 mb-3">
+                    <div class="col-md-6 mb-3">
+                        <div class="input-group input-group-static mb-4">
+                            <label>Descuento (%)</label>
+                            <input type="number" class="form-control form-control-lg" name="discount">
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
                         <div class="input-group input-group-static mb-4">
                             <label>Stock</label>
                             <input required type="number" class="form-control form-control-lg" name="stock">
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="input-group input-group-static mb-4">
+                            <label>Imagenes (Máximo 4)</label>
+                            <input multiple required class="form-control form-control-lg" type="file" name="images[]">
                         </div>
                     </div>
                     <div class="col-md-12 mb-3">
@@ -67,11 +79,7 @@
                             <label class="custom-control-label" for="customCheck1">Trending</label>
                         </div>
                     </div>
-                    <div class="col-md-12 mb-3">
-                        <div class="input-group input-group-static mb-4">
-                            <input multiple required class="form-control" type="file" name="images[]">
-                        </div>
-                    </div>
+                    
                 </div>
 
 
