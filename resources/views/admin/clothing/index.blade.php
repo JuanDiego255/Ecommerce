@@ -25,7 +25,7 @@
                         <a target="blank" data-fancybox="gallery" href="{{ asset('storage') . '/' . $clothing->image }}"
                             class="d-block blur-shadow-image">
                             <img src="{{ asset('storage') . '/' . $clothing->image }}" alt="img-blur-shadow"
-                                class="img-fluid shadow border-radius-lg w-100" style="height:300px;">
+                                class="img-fluid shadow border-radius-lg w-100">
                         </a>
                         <div class="colored-shadow"
                             style="background-image: url(&quot;https://demos.creative-tim.com/test/material-dashboard-pro/assets/img/products/product-1-min.jpg&quot;);">

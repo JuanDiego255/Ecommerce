@@ -21,6 +21,7 @@
                         <h3 class="ps-3 mt-2 text-center">
                             Detalles Básicos
                         </h3>
+                       
                         <div class="card-body">
                             <form action="{{ url('payment') }}" method="POST" enctype="multipart/form-data">
                                 @csrf
@@ -107,10 +108,10 @@
                                             <input required class="form-control" type="file" name="image">
                                         </div>
                                     </div>
+                                    <span class="text-muted">SINPE Móvil: 8739-5732</span>
 
                                     <button id="btnSinpe" type="submit" class="btn btn-add_to_cart d-block h8">Pagar
-                                        ₡<span id="btnPay">{{ number_format($total_price) }}</span><span
-                                            class="ms-3 fas fa-arrow-right"></span></button>
+                                        ₡<span id="btnPay">{{ number_format($total_price) }}</span></button>
                                     @if (!Auth::check())
                                         <h5 class="text-muted-normal">
                                             Una vez que te <a class="text-info"
