@@ -71,7 +71,7 @@
                         </div>
                     </div>
                     @if ($categories->image)
-                        <img class="img-fluid img-thumbnail" src="{{ asset('storage') . '/' . $categories->image }}"
+                        <img class="img-fluid img-thumbnail" src="{{tenant_asset('/') . '/'. $categories->image}}"
                             style="width: 150px; height:150px;" alt="image">
                     @endif
                     <div class="col-md-12 mb-3">

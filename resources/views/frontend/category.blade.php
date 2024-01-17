@@ -16,9 +16,9 @@
                 <div class="col-md-3 col-sm-6 mb-2">
                     <div class="product-grid product_data">
                         <div class="product-image">
-                            <img src="{{ asset('storage') . '/' . $item->image }}">
+                            <img src="{{tenant_asset('/') . '/'. $item->image}}">
                             <ul class="product-links">
-                                <li><a target="blank" href="{{ asset('storage') . '/' . $item->image }}"><i
+                                <li><a target="blank" href="{{tenant_asset('/') . '/'. $item->image}}"><i
                                             class="fas fa-eye"></i></a></li>
                             </ul>
                             <a href="{{ url('clothes-category/' . $item->id) }}"

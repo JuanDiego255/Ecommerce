@@ -78,7 +78,7 @@
                     </div>
                     <div class="col-md-12 mb-3">
                         @if ($clothing->image)
-                        <img class="img-fluid img-thumbnail" src="{{ asset('storage') . '/' . $clothing->image }}"
+                        <img class="img-fluid img-thumbnail" src="{{tenant_asset('/') . '/'. $clothing->image}}"
                             style="width: 150px; height:150px;" alt="image">
                     @endif
                         <label>Imágenes (Máximo 4)</label>

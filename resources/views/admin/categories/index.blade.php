@@ -16,7 +16,8 @@
             <div class="col-md-3 col-sm-6 mb-2">
                 <div class="product-grid product_data">
                     <div class="product-image">
-                        <img src="{{ asset('storage') . '/' . $item->image }}">
+                    
+                        <img src="{{tenant_asset('/') . '/'. $item->image}}">
                         <ul class="product-links">
                             <li><a data-bs-toggle="tooltip" data-bs-placement="bottom" title="Editar" target="blank"
                                     href="{{ url('/edit-category') . '/' . $item->id }}"><i class="fa fa-pencil"></i></a>
@@ -37,8 +38,7 @@
                         <a href="{{ url('/add-item') . '/' . $item->id }}" class="add-to-cart">Ver Colección</a>
                     </div>
                     <div class="product-content">
-                        <h3 class="text-muted"><a
-                            href="{{ url('/add-item') . '/' . $item->id }}">{{ $item->name }}</a>
+                        <h3 class="text-muted"><a href="{{ url('/add-item') . '/' . $item->id }}">{{ $item->name }}</a>
                         </h3>
                         <h5 class="text-muted-normal">{{ $item->description }}
                         </h5>

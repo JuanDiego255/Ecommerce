@@ -22,9 +22,9 @@
                 <div class="card" data-animation="true">
 
                     <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-                        <a target="blank" data-fancybox="gallery" href="{{ asset('storage') . '/' . $clothing->image }}"
+                        <a target="blank" data-fancybox="gallery" href="{{tenant_asset('/') . '/'. $clothing->image}}"
                             class="d-block blur-shadow-image">
-                            <img src="{{ asset('storage') . '/' . $clothing->image }}" alt="img-blur-shadow"
+                            <img src="{{tenant_asset('/') . '/'. $clothing->image}}" alt="img-blur-shadow"
                                 class="img-fluid shadow border-radius-lg w-100">
                         </a>
                         <div class="colored-shadow"

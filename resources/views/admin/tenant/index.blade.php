@@ -6,17 +6,17 @@
 @section('content')
     <div class="container">
 
-        <h2 class="text-center font-title"><strong>Administra las fotografías para la sección de redes sociales.</strong>
+        <h2 class="text-center font-title"><strong>Administra los inquilinos desde acá</strong>
         </h2>
 
         <hr class="hr-servicios">
 
-        <button type="button" data-bs-toggle="modal" data-bs-target="#add-size-modal" class="btn btn-velvet">Nueva
-            Fotografía</button>
+        <button type="button" data-bs-toggle="modal" data-bs-target="#add-tenant-modal" class="btn btn-velvet">Nuevo
+            Inquilino</button>
 
         <center>
 
-            @include('admin.social.add')
+            @include('admin.tenant.add')
             <div class="row w-100">
                 <div class="col-md-6">
                     <div class="input-group input-group-lg input-group-static my-3 w-100">
@@ -42,58 +42,54 @@
 
             <div class="card w-100 mb-4">
                 <div class="table-responsive">
-                    <table id="social" class="table align-items-center mb-0">
+                    <table id="sizes" class="table align-items-center mb-0">
                         <thead>
                             <tr>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                    Imagen</th>
+                                    Inquilino</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                    Descripción</th>
-                                <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                    URL Instagram</th>
+                                    Dominio</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                     Acciones</th>
 
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($social as $item)
+                            @foreach ($tenants as $tenant)
                                 <tr>
-                                    <td class="text-center">
 
-                                        <a target="blank" data-fancybox="gallery"
-                                            href="{{tenant_asset('/') . '/'. $item->image}}">
-                                            <img src="{{tenant_asset('/') . '/'. $item->image}}"
-                                                class="text-center img-fluid shadow border-radius-lg w-25"></a>
-
-
+                                    <td class="align-middle text-xxs text-center">
+                                        <p class=" font-weight-bold mb-0">{{ $tenant->id }}</p>
                                     </td>
                                     <td class="align-middle text-xxs text-center">
-                                        <p class=" font-weight-bold mb-0">{{ $item->description }}</p>
-                                    </td>
-                                    <td class="align-middle text-xxs text-center">
-                                        <p class=" font-weight-bold mb-0">{{ $item->url }}</p>
+                                        <p class=" font-weight-bold mb-0">{{ $tenant->domains->first()->domain ?? '' }}</p>
                                     </td>
 
                                     <td class="align-middle">
                                         <center>
                                             <button type="button" data-bs-toggle="modal"
-                                                data-bs-target="#edit-social-modal{{ $item->id }}"
+                                                data-bs-target="#edit-tenant-modal{{ $tenant->id }}"
                                                 class="btn btn-velvet" style="text-decoration: none;">Editar</button>
 
-                                            <form method="post" action="{{ url('/delete/social/' . $item->id) }}"
+                                            <form method="post" action="{{ url('/delete/tenants/' . $tenant->id) }}"
                                                 style="display:inline">
                                                 {{ csrf_field() }}
                                                 {{ method_field('DELETE') }}
                                                 <button type="submit" data-bs-toggle="modal"
-                                                    onclick="return confirm('Deseas borrar esta talla?')"
-                                                    data-bs-target="#edit-social-modal{{ $item->id }}"
+                                                    onclick="return confirm('Deseas borrar este inquilino?')"                                                   
                                                     class="btn btn-velvet" style="text-decoration: none;">Borrar</button>
+                                            </form>
+                                            <form method="post" action="{{ url('/domain/tenants/' . $tenant) }}"
+                                                style="display:inline">
+                                                {{ csrf_field() }}
+                                                <input type="hidden" name="tenant_id" value="{{$tenant->id}}">
+                                              
+                                                <button type="submit" class="btn btn-velvet" style="text-decoration: none;">Dominio</button>
                                             </form>
                                         </center>
 
                                     </td>
-                                    @include('admin.social.edit')
+                                    @include('admin.tenant.edit')
                                 </tr>
                             @endforeach
                         </tbody>
@@ -107,7 +103,7 @@
 @endsection
 @section('script')
     <script>
-        var dataTable = $('#social').DataTable({
+        var dataTable = $('#sizes').DataTable({
             searching: true,
             lengthChange: false,
 

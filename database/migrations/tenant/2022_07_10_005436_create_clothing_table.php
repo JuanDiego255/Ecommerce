@@ -22,6 +22,7 @@ class CreateClothingTable extends Migration
             $table->string('image');
             $table->string('status');
             $table->string('discount',30)->nullable();
+            $table->tinyInteger('trending')->nullable();
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
             $table->timestamps();
         });

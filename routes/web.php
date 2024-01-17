@@ -11,6 +11,7 @@ use App\Http\Controllers\Frontend\CheckOutController;
 use App\Http\Controllers\MetaTagsController;
 use App\Http\Controllers\SizeController;
 use App\Http\Controllers\SocialNetworkController;
+use App\Http\Controllers\TenantController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Laravel\Socialite\Facades\Socialite;
@@ -108,4 +109,10 @@ Route::group(['middleware' => 'isAdmin'], function () {
     Route::put('/social/update/{id}', [SocialNetworkController::class, 'update']);
     Route::get('/social-network', [SocialNetworkController::class, 'index']);
     Route::delete('/delete/social/{id}', [SocialNetworkController::class, 'destroy']);
+    //Rutas para inquilinos
+    Route::post('tenants/store', [TenantController::class, 'store']);
+    Route::put('/tenants/update/{id}', [TenantController::class, 'update']);
+    Route::get('/tenants', [TenantController::class, 'index']);
+    Route::delete('/delete/tenants/{id}', [TenantController::class, 'destroy']);
+    Route::delete('/domain/tenants/{id}', [TenantController::class, 'domain']);
 });
