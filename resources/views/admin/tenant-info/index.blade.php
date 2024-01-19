@@ -61,31 +61,31 @@
                 <div class="flex3 text-center" id="siteBrand">
                     {{ $item->title }}
                 </div>
-                <span class="text-s">Sección: Negocio</span>
+                <span class="text-s">Sección: Negocio, con este nombre te verán tus clientes</span>
                 <hr class="dark horizontal text-danger">
                 <div class="text-center">
                     <h3 class="text-center text-muted">{{ $item->title_discount }}</h3>
                 </div>
-                <span class="text-s">Sección: Productos en descuento</span>
+                <span class="text-s">Sección: Productos en descuento, esta descripción se mostrará en la sección de descuentos del cliente en la página principal</span>
                 <hr class="dark horizontal text-danger">
                 <div class="text-center">
                     <span class="text-muted text-center"><a href="#">Instagram</a> |
                         {{ $item->title_instagram }}</span>
                 </div>
-                <span class="text-s">Sección: Instagram</span>
+                <span class="text-s">Sección: Instagram, esta descripción se mostrará en la sección de Instagram en la página principal</span>
                 <hr class="dark horizontal text-danger">
                 <div class="bg-footer p-3 text-center">
                     <h3 class="text-center text-title">{{ $item->title }}</h3>
                     <span class="text-center text-muted">{{ $item->mision }}</span>
                 </div>
-                <span class="text-s">Sección: misión de la empresa</span>
+                <span class="text-s">Sección: misión de la empresa, esta misión se mostrará en la sección de Misión en la página principal</span>
                 <hr class="dark horizontal text-danger">
                 <div class="text-center">
                     <h3 class="text-center text-muted">{{ $item->title_trend }}</h3>
                 </div>
-                <span class="text-s">Sección: Productos en tendencia</span>
+                <span class="text-s">Sección: Productos en tendencia, esta descripción se mostrará en la sección de artículos en tendencia en la página principal</span>
                 <hr class="dark horizontal text-danger mb-3">
-                <span class="text-s">Sección: Carrusel <a href="#" data-bs-toggle="modal"
+                <span class="text-s">Sección: Carrusel, se mostrará al principio del Inicio de la página.<a href="#" data-bs-toggle="modal"
                         data-bs-target="#add-tenant-carousel-modal"><i class="fa fa-plus me-3"></i></a></span>
                 @if (count($tenantcarousel) != 0)
                     <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
