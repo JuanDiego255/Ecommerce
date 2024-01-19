@@ -13,8 +13,10 @@ use App\Http\Controllers\Frontend\CheckOutController;
 use App\Http\Controllers\MetaTagsController;
 use App\Http\Controllers\SizeController;
 use App\Http\Controllers\SocialNetworkController;
+use App\Http\Controllers\TenantCarouselController;
 use App\Http\Controllers\TenantInfoController;
 use App\Http\Controllers\TenantSocialNetworkController;
+use App\Models\TenantCarousel;
 use App\Models\TenantSocialNetwork;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -127,6 +129,10 @@ Route::middleware([
         Route::post('tenant-social/store', [TenantSocialNetworkController::class, 'store']);
         Route::put('/tenant-social/update/{id}', [TenantSocialNetworkController::class, 'update']);
         Route::delete('/delete/tenant-social/{id}', [TenantSocialNetworkController::class, 'destroy']);
+        //Rutas para carousel de la empresa
+        Route::post('tenant-carousel/store', [TenantCarouselController::class, 'store']);
+        Route::put('/tenant-carousel/update/{id}', [TenantCarouselController::class, 'update']);
+        Route::delete('/delete/tenant-carousel/{id}', [TenantCarouselController::class, 'destroy']);
 
     });
 

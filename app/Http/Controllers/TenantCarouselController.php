@@ -4,30 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\TenantCarousel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class TenantCarouselController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
+   /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -35,51 +17,81 @@ class TenantCarouselController extends Controller
      */
     public function store(Request $request)
     {
-        //
-    }
+        DB::beginTransaction();
+        try {
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\TenantCarousel  $tenantCarousel
-     * @return \Illuminate\Http\Response
-     */
-    public function show(TenantCarousel $tenantCarousel)
-    {
-        //
-    }
+            $tenant_carousel =  new TenantCarousel();
+            if ($request->hasFile('image')) {
+                $tenant_carousel->image = $request->file('image')->store('uploads', 'public');
+            }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\TenantCarousel  $tenantCarousel
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(TenantCarousel $tenantCarousel)
-    {
-        //
+            $tenant_carousel->text1 = $request->text1;
+            $tenant_carousel->text2 = $request->text2;            
+
+            $tenant_carousel->save();
+            DB::commit();
+            return redirect('/tenant-info')->with(['status' => 'Se ha guardado la imagen del carrusel', 'icon' => 'success']);
+        } catch (\Exception $th) {
+            DB::rollBack();
+            return redirect('/tenant-info')->with(['status' => 'No se pudo guardar la imagen del carrusel', 'icon' => 'error']);
+        }
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\TenantCarousel  $tenantCarousel
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, TenantCarousel $tenantCarousel)
+    public function update(Request $request, $id)
     {
         //
+        DB::beginTransaction();
+        try {
+
+            $tenantcarousel = TenantCarousel::findOrfail($id);
+            if ($request->hasFile('image')) {
+                Storage::delete('public/' . $tenantcarousel->image);
+                $image = $request->file('image')->store('uploads', 'public');
+                $tenantcarousel->image = $image;
+            }
+            $tenantcarousel->text1 = $request->text1;
+            $tenantcarousel->text2 = $request->text2;     
+            
+            $tenantcarousel->update();
+            DB::commit();
+            return redirect('/tenant-info')->with(['status' => 'Se ha editado la imagen del carrusel con éxito', 'icon' => 'success']);
+        } catch (\Exception $th) {
+            DB::rollBack();
+            return redirect('/tenant-info')->with(['status' => 'No se pudo editar la imagen del carrusel', 'icon' => 'error']);
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\TenantCarousel  $tenantCarousel
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(TenantCarousel $tenantCarousel)
+    public function destroy($id)
     {
         //
+        DB::beginTransaction();
+        try {
+
+            $tenantcarousel = TenantCarousel::findOrfail($id);
+            if (
+                Storage::delete('public/' . $tenantcarousel->image)
+            ) {
+                TenantCarousel::destroy($id);
+            }
+            TenantCarousel::destroy($id);
+            DB::commit();
+            return redirect('/tenant-info')->with(['status' => 'Se ha eliminado la imagen del carousel', 'icon' => 'success']);
+        } catch (\Exception $th) {
+            //throw $th;
+            DB::rollBack();
+        }
     }
 }

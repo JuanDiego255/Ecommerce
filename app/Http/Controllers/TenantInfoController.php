@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\TenantCarousel;
 use App\Models\TenantInfo;
 use App\Models\TenantSocialNetwork;
 use Illuminate\Http\Request;
@@ -20,7 +21,8 @@ class TenantInfoController extends Controller
         //
         $tenantinfo = TenantInfo::get();
         $tenantsocial = TenantSocialNetwork::get();
-        return view('admin.tenant-info.index', compact('tenantinfo','tenantsocial'));
+        $tenantcarousel = TenantCarousel::get();
+        return view('admin.tenant-info.index', compact('tenantinfo','tenantsocial','tenantcarousel'));
     }
 
     /**

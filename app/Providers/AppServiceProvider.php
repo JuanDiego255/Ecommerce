@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Models\Buy;
 use App\Models\Cart;
 use App\Models\Categories;
+use App\Models\TenantCarousel;
 use App\Models\TenantInfo;
 use App\Models\TenantSocialNetwork;
 use Illuminate\Support\Facades\Auth;
@@ -51,6 +52,7 @@ class AppServiceProvider extends ServiceProvider
             }
             $categories = Categories::get();
             $social_network = TenantSocialNetwork::get();
+            $tenantcarousel = TenantCarousel::get();
             $instagram = null;
             $facebook = null;
             $twitter = null;
@@ -78,6 +80,7 @@ class AppServiceProvider extends ServiceProvider
                 'twitter' => $twitter,
                 'instagram' => $instagram,
                 'facebook' => $facebook,
+                'tenantcarousel' => $tenantcarousel
             ]);
         });
     }

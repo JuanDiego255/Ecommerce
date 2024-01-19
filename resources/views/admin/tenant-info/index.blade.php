@@ -6,6 +6,7 @@
 @section('content')
     @include('admin.tenant-info.add')
     @include('admin.tenant-info.social-modal')
+    @include('admin.tenant-info.carousel-modal')
     <div class="container">
 
         <h2 class="text-center font-title"><strong>Administra la información de tu negocio.</strong>
@@ -27,6 +28,60 @@
 
         <center>
 
+            <hr class="dark horizontal text-danger mb-3">
+            <span class="text-s">Sección: Carrusel <a href="#" data-bs-toggle="modal"
+                    data-bs-target="#add-tenant-carousel-modal"><i class="fa fa-plus me-3"></i></a></span>
+            @if (count($tenantcarousel) != 0)
+                <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner mb-4">
+                        @foreach ($tenantcarousel as $key => $carousel)
+                            @include('admin.tenant-info.carousel-modal-edit')
+                            <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
+                                <div class="page-header min-vh-75 m-3"
+                                    style="background-image: url('{{ tenant_asset('/') . '/' . $carousel->image }}');">
+                                    <span class="mask bg-gradient-dark"></span>
+                                    <div class="container">
+                                        <div class="row">
+                                            <div class="col-lg-6 my-auto">
+                                                <h4 class="text-white mb-0 fadeIn1 fadeInBottom">{{ $carousel->text1 }}</h4>
+                                                <h1 class="text-white fadeIn2 fadeInBottom">{{ $carousel->text2 }}</h1>
+                                                <a data-bs-toggle="modal"
+                                                    data-bs-target="#edit-tenant-carousel-modal{{ $carousel->id }}"
+                                                    class="mr-5 text-white" href="#">
+                                                    <i class="fa fa-edit"></i>
+                                                </a>
+                                                <form id="deleteFormCarousel{{ $carousel->id }}" method="post"
+                                                    action="{{ url('/delete/tenant-carousel/' . $carousel->id) }}"
+                                                    style="display:inline">
+                                                    {{ csrf_field() }}
+                                                    {{ method_field('DELETE') }}
+                                                    <a href="#" class="mr-5 text-white"
+                                                        onclick="confirmAndSubmitCar({{ $carousel->id }})"
+                                                        style="text-decoration: none;"><i
+                                                            class="fa fa-minus-circle me-3"></i>
+                                                    </a>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                    <div class="min-vh-75 position-absolute w-100 top-0">
+                        <a class="carousel-control-prev" href="#carouselExampleControls" role="button"
+                            data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon position-absolute bottom-50" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </a>
+                        <a class="carousel-control-next" href="#carouselExampleControls" role="button"
+                            data-bs-slide="next">
+                            <span class="carousel-control-next-icon position-absolute bottom-50" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </a>
+                    </div>
+                </div>
+            @endif
 
             @foreach ($tenantinfo as $item)
                 <hr class="dark horizontal text-danger mb-3">
@@ -99,7 +154,7 @@
                                                 {{ csrf_field() }}
                                                 {{ method_field('DELETE') }}
                                                 <a href="#" class="mr-5 text-muted"
-                                                    onclick="confirmAndSubmit({{$social->id}})"
+                                                    onclick="confirmAndSubmit({{ $social->id }})"
                                                     style="text-decoration: none;"><i class="fa fa-minus-circle me-3"></i>
                                                 </a>
                                             </form><br>
@@ -166,9 +221,16 @@
 @section('script')
     <script>
         function confirmAndSubmit(id) {
-            
+
             if (confirm('¿Deseas borrar esta red social?')) {
-                document.getElementById('deleteForm'+id).submit();
+                document.getElementById('deleteForm' + id).submit();
+            }
+        }
+
+        function confirmAndSubmitCar(id) {
+
+            if (confirm('¿Deseas borrar esta imagen del carousel?')) {
+                document.getElementById('deleteFormCarousel' + id).submit();
             }
         }
     </script>

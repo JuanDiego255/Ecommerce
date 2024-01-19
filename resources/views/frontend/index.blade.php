@@ -4,52 +4,38 @@
     {!! OpenGraph::generate() !!}
 @endsection
 @section('content')
-    <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
-        <div class="carousel-inner mb-4 foto">
-
-            <div class="carousel-item">
-                <div class="page-header min-vh-75 m-3" style="background-image: url('images/carousel2.PNG');">
-                    <span class="mask bg-gradient-dark"></span>
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-lg-6 my-auto">
-                                <h4 class="text-white mb-0 fadeIn1 fadeInBottom">Para todas las chicas.</h4>
-                                <h1 class="text-white fadeIn2 fadeInBottom">Gran Variedad De Estilos</h1>
+    @if (count($tenantcarousel) != 0)
+        <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner mb-4 foto">
+                @foreach ($tenantcarousel as $key => $carousel)
+                    <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
+                        <div class="page-header min-vh-75 m-3"
+                            style="background-image: url('{{ tenant_asset('/') . '/' . $carousel->image }}');">
+                            <span class="mask bg-gradient-dark"></span>
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-lg-6 my-auto">
+                                        <h4 class="text-white mb-0 fadeIn1 fadeInBottom">{{ $carousel->text1 }}</h4>
+                                        <h1 class="text-white fadeIn2 fadeInBottom">{{ $carousel->text2 }}</h1>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                @endforeach
             </div>
-            <div class="carousel-item active">
-                <div class="page-header min-vh-75 m-3" style="background-image: url('images/carousel1.PNG');">
-                    <span class="mask bg-gradient-dark"></span>
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-lg-6 my-auto">
-                                <h4 class="text-white mb-0 fadeIn1 fadeInBottom">Llegaron los mejores descuentos, elige
-                                    entre
-                                    nuestras exclusivas prendas para realzar tu estilo único.</h4>
-                                <h1 class="text-white fadeIn2 fadeInBottom"><a href="#offer"
-                                        class="text-white fadeIn2 fadeInBottom" href="#">70% OFF en productos
-                                        seleccionados.</a></h1>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="min-vh-75 position-absolute w-100 top-0">
+                <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon position-absolute bottom-50" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-bs-slide="next">
+                    <span class="carousel-control-next-icon position-absolute bottom-50" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </a>
             </div>
         </div>
-        <div class="min-vh-75 position-absolute w-100 top-0">
-            <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon position-absolute bottom-50" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-            </a>
-            <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-bs-slide="next">
-                <span class="carousel-control-next-icon position-absolute bottom-50" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-            </a>
-        </div>
-    </div>
+    @endif
     @if ($clothings_offer)
         <div class="container-fluid mb-5 offer">
             <div class="text-center">
