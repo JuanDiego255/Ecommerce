@@ -59,7 +59,7 @@
                 <a @if ($view_name == 'admin_tenant-info_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-dark" @endif
                     href="{{ url('tenant-info') }}">
                     <div class="text-dark text-center me-2 d-flex align-items-center justify-content-center">
-                        <i class="material-icons opacity-10">locals</i>
+                        <i class="material-icons opacity-10">store</i>
                     </div>
                     <span class="nav-link-text ms-1">Mi Negocio</span>
                 </a>

@@ -85,7 +85,7 @@ class TenantSocialNetworkController extends Controller
         try {           
             TenantSocialNetwork::destroy($id);
             DB::commit();
-            return redirect('/tenant-info')->with(['status' => 'Se ha eliminado la información de las redes sociales', 'icon' => 'success']);
+            return redirect('/tenant-info')->with(['status' => 'Se ha eliminado la red social', 'icon' => 'success']);
         } catch (\Exception $th) {
             //throw $th;
             DB::rollBack();

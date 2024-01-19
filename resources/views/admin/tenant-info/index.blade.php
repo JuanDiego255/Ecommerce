@@ -75,7 +75,7 @@
                                 <div>
                                     <p class="text-muted text-uppercase text-lg">
                                         @foreach ($tenantsocial as $social)
-                                        @include('admin.tenant-info.social-modal-edit')
+                                            @include('admin.tenant-info.social-modal-edit')
                                             @php
                                                 $social_logo = null;
                                                 if (stripos($social->social_network, 'Facebook') !== false) {
@@ -87,10 +87,22 @@
                                                     $social_logo = 'fa fa-twitter';
                                                 }
                                             @endphp
-                                            <a data-bs-toggle="modal" data-bs-target="#edit-tenant-social-modal{{ $social->id }}" class="mr-5 text-muted" href="#">
-                                                <i class="{{$social_logo}}"> {{ $social->social_network }} <i
-                                                    class="fa fa-edit me-3"></i></i>
-                                            </a><br>
+                                            <a data-bs-toggle="modal"
+                                                data-bs-target="#edit-tenant-social-modal{{ $social->id }}"
+                                                class="mr-5 text-muted" href="#">
+                                                <i class="{{ $social_logo }}"> {{ $social->social_network }} <i
+                                                        class="fa fa-edit"></i></i>
+                                            </a>
+                                            <form id="deleteForm{{ $social->id }}" method="post"
+                                                action="{{ url('/delete/tenant-social/' . $social->id) }}"
+                                                style="display:inline">
+                                                {{ csrf_field() }}
+                                                {{ method_field('DELETE') }}
+                                                <a href="#" class="mr-5 text-muted"
+                                                    onclick="confirmAndSubmit({{$social->id}})"
+                                                    style="text-decoration: none;"><i class="fa fa-minus-circle me-3"></i>
+                                                </a>
+                                            </form><br>
                                         @endforeach
                                     </p>
                                 </div>
@@ -124,7 +136,7 @@
                                             <i class="fa fa-envelope"></i> Envíos por correos de C.R
                                         </a><br>
                                         <a href="#" class="text-muted">
-                                            <i class="fa fa-whatsapp"> {{$item->whatsapp}}</i>
+                                            <i class="fa fa-whatsapp"> {{ $item->whatsapp }}</i>
                                         </a>
                                     </p>
                                 </div>
@@ -150,4 +162,14 @@
 
         </center>
     </div>
+@endsection
+@section('script')
+    <script>
+        function confirmAndSubmit(id) {
+            
+            if (confirm('¿Deseas borrar esta red social?')) {
+                document.getElementById('deleteForm'+id).submit();
+            }
+        }
+    </script>
 @endsection
