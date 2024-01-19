@@ -22,7 +22,7 @@ class TenantInfoController extends Controller
         $tenantinfo = TenantInfo::get();
         $tenantsocial = TenantSocialNetwork::get();
         $tenantcarousel = TenantCarousel::get();
-        return view('admin.tenant-info.index', compact('tenantinfo','tenantsocial','tenantcarousel'));
+        return view('admin.tenant-info.index', compact('tenantinfo', 'tenantsocial', 'tenantcarousel'));
     }
 
     /**
@@ -51,6 +51,9 @@ class TenantInfoController extends Controller
             $tenantinfo =  new TenantInfo();
             if ($request->hasFile('logo')) {
                 $tenantinfo->logo = $request->file('logo')->store('uploads', 'public');
+            }
+            if ($request->hasFile('login_image')) {
+                $tenantinfo->login_image = $request->file('login_image')->store('uploads', 'public');
             }
 
             $tenantinfo->title = $request->title;
@@ -104,6 +107,11 @@ class TenantInfoController extends Controller
                 $logo = $request->file('logo')->store('uploads', 'public');
                 $tenantinfo->logo = $logo;
             }
+            if ($request->hasFile('login_image')) {
+                Storage::delete('public/' . $tenantinfo->login_image);
+                $login_image = $request->file('login_image')->store('uploads', 'public');
+                $tenantinfo->login_image = $login_image;
+            }
             $tenantinfo->title = $request->title;
             $tenantinfo->title_discount = $request->title_discount;
             $tenantinfo->title_instagram = $request->title_instagram;
@@ -138,6 +146,7 @@ class TenantInfoController extends Controller
             $tenantinfo = TenantInfo::findOrfail($id);
             if (
                 Storage::delete('public/' . $tenantinfo->logo)
+                && Storage::delete('public/' . $tenantinfo->login_image)
             ) {
                 TenantInfo::destroy($id);
             }

@@ -24,6 +24,7 @@ class CreateTenantInfosTable extends Migration
             $table->string('description_suscrib',100);
             $table->string('footer',100);
             $table->string('logo',100);
+            $table->string('login_image',191);
             $table->string('whatsapp',30);
             $table->string('sinpe',30);
             $table->timestamps();
