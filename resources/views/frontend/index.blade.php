@@ -53,7 +53,8 @@
     @if ($clothings_offer)
         <div class="container-fluid mb-5 offer">
             <div class="text-center">
-                <h3 class="text-center text-muted mt-5">¡Nuestros productos seleccionados con grandes descuentos!</h3>
+                <h3 class="text-center text-muted mt-5">
+                    {{ isset($tenantinfo->title_discount) ? $tenantinfo->title_discount : '' }}</h3>
             </div>
             <hr class="dark horizontal text-danger mb-3">
             <div class="row">
@@ -71,10 +72,10 @@
                                                 $cant_img++;
                                             @endphp
                                             <img class="pic-{{ $index + 1 }}"
-                                                src="{{tenant_asset('/') . '/'. $image}}">
+                                                src="{{ tenant_asset('/') . '/' . $image }}">
                                         @endforeach
                                         @if ($cant_img == 1)
-                                            <img class="pic-2" src="{{tenant_asset('/') . '/'. $image}}">
+                                            <img class="pic-2" src="{{ tenant_asset('/') . '/' . $image }}">
                                         @endif
                                     @endif
                                 </a>
@@ -117,9 +118,8 @@
 
     <hr class="text-dark">
     <div class="text-center">
-        <span class="text-muted text-center">¡Descubre Velvet Boutique en <a
-                href="https://www.instagram.com/velvetboutiquegrecia/">Instagram</a>! Compartimos lo que nos hace sentir
-            mejor: ¡outfits excepcionales! ¿Qué te parecen estos?</span>
+        <span class="text-muted text-center"><a href="{{ isset($instagram) ? $instagram : '' }}">Instagram</a> |
+            {{ isset($tenantinfo->title_instagram) ? $tenantinfo->title_instagram : '' }}</span>
     </div>
 
 
@@ -130,7 +130,7 @@
             <div class="col-md-6 mt-4">
                 <div class="card text-center">
                     <div class="overflow-hidden position-relative bg-cover p-3"
-                        style="background-image: url('{{tenant_asset('/') . '/'. $item->image}}'); height:700px;">
+                        style="background-image: url('{{ tenant_asset('/') . '/' . $item->image }}'); height:700px;">
                         <span class="mask bg-gradient-dark opacity-6"></span>
                         <div class="card-body position-relative z-index-1 d-flex flex-column mt-5">
                             <h3 class="text-white">{{ $item->description }}.</h3>
@@ -151,9 +151,8 @@
     </div>
 
     <div class="bg-footer p-3 mb-3 text-center">
-        <h3 class="text-center text-title mt-3">Velvet Boutique</h3>
-        <span class="text-center text-muted">Queremos envolverte con nuestra selección de atuendos y entregarlos hasta la
-            puerta de tu hogar.<br>Realizamos envios a nivel nacional.</span>
+        <h3 class="text-center text-title mt-3">{{ isset($tenantinfo->title) ? $tenantinfo->title : '' }}</h3>
+        <span class="text-center text-muted">{{ isset($tenantinfo->mision) ? $tenantinfo->mision : '' }}</span>
 
 
     </div>
@@ -167,18 +166,18 @@
         </div>
     </div> --}}
 
-    @if ($clothings)
-        <div class="text-center">
-            <h3 class="text-center text-muted mt-5">¡Explora nuestras últimas colecciones y descubre los artículos más
-                solicitados en tendencia!</h3>
-        </div>
-    @endif
 
 
     <hr class="dark horizontal text-danger my-0">
 
     <div class="mt-3 mb-5">
         <div class="container">
+            @if ($clothings)
+                <div class="text-center">
+                    <h3 class="text-center text-muted mt-5 mb-3">
+                        {{ isset($tenantinfo->title_trend) ? $tenantinfo->title_trend : '' }}</h3>
+                </div>
+            @endif
             <div class="row">
                 <div class="owl-carousel featured-carousel owl-theme">
                     @foreach ($clothings as $item)
@@ -186,12 +185,12 @@
                             <div class="item">
                                 <div class="product-grid product_data">
                                     <div class="product-image">
-                                        <img src="{{tenant_asset('/') . '/'. $item->image}}">
+                                        <img src="{{ tenant_asset('/') . '/' . $item->image }}">
                                         @if ($item->discount)
                                             <span class="product-discount-label">-{{ $item->discount }}%</span>
                                         @endif
                                         <ul class="product-links">
-                                            <li><a target="blank" href="{{tenant_asset('/') . '/'. $item->image}}"><i
+                                            <li><a target="blank" href="{{ tenant_asset('/') . '/' . $item->image }}"><i
                                                         class="fas fa-eye"></i></a></li>
                                         </ul>
                                         <a href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}"

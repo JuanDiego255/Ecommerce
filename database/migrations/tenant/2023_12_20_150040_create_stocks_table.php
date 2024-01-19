@@ -17,7 +17,7 @@ class CreateStocksTable extends Migration
             $table->id();
             $table->unsignedBigInteger('clothing_id');
             $table->unsignedBigInteger('size_id');            
-            $table->string('stock');
+            $table->string('stock',60);
             $table->foreign('clothing_id')->references('id')->on('clothing')->onDelete('cascade');
             $table->foreign('size_id')->references('id')->on('sizes')->onDelete('cascade');
             $table->timestamps();

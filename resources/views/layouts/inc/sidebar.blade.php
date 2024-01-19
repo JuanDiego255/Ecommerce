@@ -6,7 +6,7 @@
             aria-hidden="true" id="iconSidenav"></i>
         <a class="navbar-brand m-0" href="#" target="_blank">
             {{-- <img src="{{ url('images/carousel1.png') }}" class="navbar-brand-img h-100" alt="main_logo"> --}}
-            <h4 class="ms-1 font-weight-bold text-white">Velvet Boutique</h4>
+            <h4 class="ms-1 font-weight-bold text-white">{{isset($tenantinfo->title) ? $tenantinfo->title : ''}}</h4>
         </a>
     </div>
 
@@ -53,6 +53,15 @@
                         <i class="material-icons opacity-10">photo_library</i>
                     </div>
                     <span class="nav-link-text ms-1">Redes Sociales</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a @if ($view_name == 'admin_tenant-info_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-dark" @endif
+                    href="{{ url('tenant-info') }}">
+                    <div class="text-dark text-center me-2 d-flex align-items-center justify-content-center">
+                        <i class="material-icons opacity-10">locals</i>
+                    </div>
+                    <span class="nav-link-text ms-1">Mi Negocio</span>
                 </a>
             </li>
             <li class="nav-item">

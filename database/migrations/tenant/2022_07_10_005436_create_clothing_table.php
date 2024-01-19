@@ -16,13 +16,13 @@ class CreateClothingTable extends Migration
         Schema::create('clothing', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('category_id');
-            $table->string('name');
-            $table->string('description');
-            $table->string('price');
-            $table->string('image');
-            $table->string('status');
+            $table->string('name',50);
+            $table->text('description');
+            $table->string('price',50);
+            $table->string('image',191);
+            $table->tinyInteger('status',2);
             $table->string('discount',30)->nullable();
-            $table->tinyInteger('trending')->nullable();
+            $table->tinyInteger('trending',2)->nullable();
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
             $table->timestamps();
         });

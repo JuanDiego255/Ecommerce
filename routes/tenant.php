@@ -13,6 +13,9 @@ use App\Http\Controllers\Frontend\CheckOutController;
 use App\Http\Controllers\MetaTagsController;
 use App\Http\Controllers\SizeController;
 use App\Http\Controllers\SocialNetworkController;
+use App\Http\Controllers\TenantInfoController;
+use App\Http\Controllers\TenantSocialNetworkController;
+use App\Models\TenantSocialNetwork;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Laravel\Socialite\Facades\Socialite;
@@ -115,6 +118,15 @@ Route::middleware([
         Route::put('/social/update/{id}', [SocialNetworkController::class, 'update']);
         Route::get('/social-network', [SocialNetworkController::class, 'index']);
         Route::delete('/delete/social/{id}', [SocialNetworkController::class, 'destroy']);
+        //Rutas para información de la empresa
+        Route::post('tenant-info/store', [TenantInfoController::class, 'store']);
+        Route::put('/tenant-info/update/{id}', [TenantInfoController::class, 'update']);
+        Route::get('/tenant-info', [TenantInfoController::class, 'index']);
+        Route::delete('/delete/tenant-info/{id}', [TenantInfoController::class, 'destroy']);
+        //Rutas para información de las redes sociales de la empresa
+        Route::post('tenant-social/store', [TenantSocialNetworkController::class, 'store']);
+        Route::put('/tenant-social/update/{id}', [TenantSocialNetworkController::class, 'update']);
+        Route::delete('/delete/tenant-social/{id}', [TenantSocialNetworkController::class, 'destroy']);
 
     });
 

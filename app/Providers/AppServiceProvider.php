@@ -5,6 +5,8 @@ namespace App\Providers;
 use App\Models\Buy;
 use App\Models\Cart;
 use App\Models\Categories;
+use App\Models\TenantInfo;
+use App\Models\TenantSocialNetwork;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
@@ -48,12 +50,34 @@ class AppServiceProvider extends ServiceProvider
                     ->get());
             }
             $categories = Categories::get();
+            $social_network = TenantSocialNetwork::get();
+            $instagram = null;
+            $facebook = null;
+            $twitter = null;
+            foreach($social_network as $social){
+                
+                if (stripos($social->social_network, 'Facebook') !== false) {
+                    $facebook = $social->url;
+                } elseif (stripos($social->social_network, 'Instagram') !== false) {
+                    $instagram = $social->url;
+                }
+                if (stripos($social->social_network, 'Twitter') !== false) {
+                    $twitter = $social->url;
+                }
+            }
+            
+            $tenantinfo = TenantInfo::first();
 
             view()->share([
                 'view_name' => $view_name,
                 'cartNumber' => $cartNumber,
                 'categories' => $categories,
-                'buys' => $buys
+                'buys' => $buys,
+                'social_network' => $social_network,
+                'tenantinfo' => $tenantinfo,
+                'twitter' => $twitter,
+                'instagram' => $instagram,
+                'facebook' => $facebook,
             ]);
         });
     }

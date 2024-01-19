@@ -92,9 +92,7 @@ class TenantController extends Controller
     {
         DB::beginTransaction();
         try {            
-            foreach($tenant as $ten){
-                dd($ten);
-            }
+        
             $tenant->domains()->create([
                 'domain' => $tenant . '.' . 'velvetboutique.safeworsolutions.com'
             ]);

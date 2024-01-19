@@ -108,7 +108,7 @@
                                             <input required class="form-control" type="file" name="image">
                                         </div>
                                     </div>
-                                    <span class="text-muted">SINPE Móvil: 8739-5732</span>
+                                    <span class="text-muted">SINPE Móvil: {{isset($tenantinfo->sinpe) ? $tenantinfo->sinpe : ''}}</span>
 
                                     <button id="btnSinpe" type="submit" class="btn btn-add_to_cart d-block h8">Pagar
                                         ₡<span id="btnPay">{{ number_format($total_price) }}</span></button>
