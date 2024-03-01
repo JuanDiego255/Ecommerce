@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Buy;
 use App\Models\BuyDetail;
 use App\Models\MetaTags;
+use App\Models\TenantInfo;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -23,8 +24,9 @@ class BuyController extends Controller
             return redirect('/')->with(['status' => 'No hay compras registradas!', 'icon' => 'warning']);
         }
         $tags = MetaTags::where('section', 'Mis Compras')->get();
+        $tenantinfo = TenantInfo::first();
         foreach ($tags as $tag) {
-            SEOMeta::setTitle($tag->title);
+            SEOMeta::setTitle($tenantinfo->title . " - " .$tag->title);
             SEOMeta::setKeywords($tag->meta_keywords);
             SEOMeta::setDescription($tag->meta_description);
             //Opengraph

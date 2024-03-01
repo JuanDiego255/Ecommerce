@@ -9,6 +9,7 @@ use App\Models\MetaTags;
 use App\Models\ProductImage;
 use App\Models\SizeCloth;
 use App\Models\SocialNetwork;
+use App\Models\TenantInfo;
 use Artesaos\SEOTools\Facades\OpenGraph;
 use Artesaos\SEOTools\Facades\SEOMeta;
 use Illuminate\Http\Request;
@@ -61,8 +62,10 @@ class FrontendController extends Controller
             $clothing->image = $firstImage ? $firstImage->image : null;
         }
 
+        $tenantinfo = TenantInfo::first();
+
         foreach ($tags as $tag) {
-            SEOMeta::setTitle($tag->title);
+            SEOMeta::setTitle($tenantinfo->title . " - " .$tag->title);
             SEOMeta::setKeywords($tag->meta_keywords);
             SEOMeta::setDescription($tag->meta_description);
             //Opengraph
@@ -122,8 +125,9 @@ class FrontendController extends Controller
     {
         $category = Categories::where('status', 0)->simplePaginate(8);
         $tags = MetaTags::where('section', 'Categorías')->get();
+        $tenantinfo = TenantInfo::first();
         foreach ($tags as $tag) {
-            SEOMeta::setTitle($tag->title);
+            SEOMeta::setTitle($tenantinfo->title . " - " .$tag->title);
             SEOMeta::setKeywords($tag->meta_keywords);
             SEOMeta::setDescription($tag->meta_description);
             //Opengraph
@@ -168,8 +172,9 @@ class FrontendController extends Controller
             return redirect()->back()->with(['status' => 'No hay artículos en esta categoría', 'icon' => 'warning']);
         }
         $tags = MetaTags::where('section', 'Categoría Específica')->get();
+        $tenantinfo = TenantInfo::first();
         foreach ($tags as $tag) {
-            SEOMeta::setTitle($tag->title);
+            SEOMeta::setTitle($tenantinfo->title . " - " .$tag->title);
             SEOMeta::setKeywords($tag->meta_keywords);
             SEOMeta::setDescription($tag->meta_description);
             //Opengraph
@@ -219,8 +224,9 @@ class FrontendController extends Controller
             )
             ->get();
         $tags = MetaTags::where('section', 'Categoría Específica')->get();
+        $tenantinfo = TenantInfo::first();
         foreach ($tags as $tag) {
-            SEOMeta::setTitle($tag->title);
+            SEOMeta::setTitle($tenantinfo->title . " - " .$tag->title);
             SEOMeta::setKeywords($tag->meta_keywords);
             SEOMeta::setDescription($tag->meta_description);
             //Opengraph

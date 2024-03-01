@@ -7102,7 +7102,7 @@ fieldset:disabled .btn {
   color: var(--bs-popover-body-color);
 }
 
-.carousel {
+.carousel{
   position: relative;
 }
 

@@ -9,6 +9,7 @@ use App\Models\BuyDetail;
 use App\Models\Cart;
 use App\Models\MetaTags;
 use App\Models\Stock;
+use App\Models\TenantInfo;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -114,8 +115,9 @@ class CheckOutController extends Controller
         $paypal_amount = $total_price / 1;
         $paypal_amount = round($paypal_amount, 2);
         $tags = MetaTags::where('section', 'Checkout')->get();
+        $tenantinfo = TenantInfo::first();
         foreach ($tags as $tag) {
-            SEOMeta::setTitle($tag->title);
+            SEOMeta::setTitle($tenantinfo->title . " - " .$tag->title);
             SEOMeta::setKeywords($tag->meta_keywords);
             SEOMeta::setDescription($tag->meta_description);
             //Opengraph
