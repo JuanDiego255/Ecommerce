@@ -138,10 +138,11 @@ function menuToggle() {
     if (menuHolder.className === "drawMenu sticky-top") menuHolder.className = "bg-menu-velvet sticky-top"
     else menuHolder.className = "drawMenu sticky-top"
 }
-if (window.innerWidth < 426) siteBrand.innerHTML = "VB"
+
+if (window.innerWidth < 426) siteBrand.innerHTML = obtenerPrimerasDosLetras(window.companyName)
 window.onresize = function () {
-    if (window.innerWidth < 420) siteBrand.innerHTML = "VB"
-    else siteBrand.innerHTML = "VELVET BOUTIQUE"
+    if (window.innerWidth < 420) siteBrand.innerHTML = obtenerPrimerasDosLetras(window.companyName)
+    else siteBrand.innerHTML = window.companyName
 }
 $('#toggleCategories').click(function () {
     $('#categoriesDropdown').slideToggle('fast');
@@ -236,6 +237,14 @@ $(document).ready(function () {
         bigimage.data("owl.carousel").to(number, 300, true);
     });
 });
+
+function obtenerPrimerasDosLetras(nombreEmpresa) {
+    // Eliminar caracteres especiales y dejar solo letras
+    var nombreLimpio = nombreEmpresa.replace(/[^a-zA-Z]/g, '');
+    // Tomar las primeras dos letras
+    var primerasDosLetras = nombreLimpio.substring(0, 2);
+    return primerasDosLetras.toUpperCase(); // Convertir a mayúsculas si es necesario
+}
 
 
 

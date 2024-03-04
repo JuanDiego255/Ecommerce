@@ -68,6 +68,10 @@
    
     @yield('scripts')
 
+    <script>
+         window.companyName = "{{ isset($tenantinfo->title) ? $tenantinfo->title : '' }}";
+    </script>
+
 
 </body>
 
