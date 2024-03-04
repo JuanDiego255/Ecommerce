@@ -65,7 +65,7 @@ class FrontendController extends Controller
         $tenantinfo = TenantInfo::first();
 
         foreach ($tags as $tag) {
-            SEOMeta::setTitle($tenantinfo->title . " - " .$tag->title);
+            SEOMeta::setTitle($tag->title . " - " .$tenantinfo->title);
             SEOMeta::setKeywords($tag->meta_keywords);
             SEOMeta::setDescription($tag->meta_description);
             //Opengraph
@@ -127,7 +127,7 @@ class FrontendController extends Controller
         $tags = MetaTags::where('section', 'Categorías')->get();
         $tenantinfo = TenantInfo::first();
         foreach ($tags as $tag) {
-            SEOMeta::setTitle($tenantinfo->title . " - " .$tag->title);
+            SEOMeta::setTitle($tag->title . " - " .$tenantinfo->title);
             SEOMeta::setKeywords($tag->meta_keywords);
             SEOMeta::setDescription($tag->meta_description);
             //Opengraph
@@ -174,7 +174,7 @@ class FrontendController extends Controller
         $tags = MetaTags::where('section', 'Categoría Específica')->get();
         $tenantinfo = TenantInfo::first();
         foreach ($tags as $tag) {
-            SEOMeta::setTitle($tenantinfo->title . " - " .$tag->title);
+            SEOMeta::setTitle($tag->title . " - " .$tenantinfo->title);
             SEOMeta::setKeywords($tag->meta_keywords);
             SEOMeta::setDescription($tag->meta_description);
             //Opengraph
@@ -226,7 +226,7 @@ class FrontendController extends Controller
         $tags = MetaTags::where('section', 'Categoría Específica')->get();
         $tenantinfo = TenantInfo::first();
         foreach ($tags as $tag) {
-            SEOMeta::setTitle($tenantinfo->title . " - " .$tag->title);
+            SEOMeta::setTitle($tag->title . " - " .$tenantinfo->title);
             SEOMeta::setKeywords($tag->meta_keywords);
             SEOMeta::setDescription($tag->meta_description);
             //Opengraph

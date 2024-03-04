@@ -98,8 +98,9 @@ class BuyController extends Controller
             ->get();
 
         $tags = MetaTags::where('section', 'Mis Compras')->get();
+        $tenantinfo = TenantInfo::first();
         foreach ($tags as $tag) {
-            SEOMeta::setTitle($tag->title);
+            SEOMeta::setTitle($tag->title . " - " .$tenantinfo->title);
             SEOMeta::setKeywords($tag->meta_keywords);
             SEOMeta::setDescription($tag->meta_description);
             //Opengraph
