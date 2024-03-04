@@ -34,6 +34,8 @@
                                 <option value="Mis Compras">Mis Compras
                                 </option>
                                 <option value="Checkout">Checkout </option>
+                                <option value="Registrarse">Registrarse </option>
+                                <option value="Ingresar">Ingresar </option>
 
                             </select>
                             @error('section')
