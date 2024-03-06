@@ -21,10 +21,10 @@ class AdminMiddleware
             if (Auth::user()->role_as == '1') {
                 return $next($request);
             } else {
-                return redirect('/home')->with('status', 'Acceso Denegado! No eres un administrador');
+                return redirect('/')->with('status', 'Acceso Denegado! No eres un administrador');
             }
         } else {
-            return redirect('/home')->with('status', 'Primero debes loguearte');
+            return redirect('/')->with('status', 'Primero debes loguearte');
         }
     }
 }
