@@ -28,9 +28,9 @@ class CreateBuysTable extends Migration
             $table->string('postal_code',50)->nullable();           
             $table->string('total_iva',60); 
             $table->string('total_buy',60); 
-            $table->tinyInteger('delivered',2);  
-            $table->tinyInteger('approved',2);   
-            $table->tinyInteger('cancel_buy',2)->nullable();
+            $table->tinyInteger('delivered');  
+            $table->tinyInteger('approved');   
+            $table->tinyInteger('cancel_buy')->nullable();
             $table->string('total_delivery',60)->nullable();
             $table->string('image',191);                           
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');           

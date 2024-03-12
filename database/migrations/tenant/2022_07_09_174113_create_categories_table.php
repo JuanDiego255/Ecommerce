@@ -18,8 +18,8 @@ class CreateCategoriesTable extends Migration
             $table->string('name',50);
             $table->string('slug',50);
             $table->longText('description');
-            $table->tinyInteger('status')->default('0');
-            $table->tinyInteger('popular')->default('0');
+            $table->tinyInteger('status')->default(0);
+            $table->tinyInteger('popular')->default(0);
             $table->string('image',191);
             $table->string('meta_title')->nullable();
             $table->string('meta_descrip')->nullable();

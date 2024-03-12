@@ -20,9 +20,9 @@ class CreateClothingTable extends Migration
             $table->text('description');
             $table->string('price',50);
             $table->string('image',191);
-            $table->tinyInteger('status',2);
+            $table->tinyInteger('status');
             $table->string('discount',30)->nullable();
-            $table->tinyInteger('trending',2)->nullable();
+            $table->tinyInteger('trending')->nullable();
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
             $table->timestamps();
         });

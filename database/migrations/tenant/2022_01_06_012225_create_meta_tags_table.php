@@ -17,10 +17,10 @@ class CreateMetaTagsTable extends Migration
             $table->id();
             $table->string('section');
             $table->string('title');
-            $table->string('meta_keywords');
-            $table->string('meta_description');
-            $table->string('meta_og_title');
-            $table->string('meta_og_description');
+            $table->text('meta_keywords');
+            $table->text('meta_description');
+            $table->text('meta_og_title');
+            $table->text('meta_og_description');
             $table->string('url_canonical');
             $table->string('url_image_og');
             $table->string('meta_type')->nullable();

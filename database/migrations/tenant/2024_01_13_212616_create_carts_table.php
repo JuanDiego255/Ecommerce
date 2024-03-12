@@ -19,7 +19,7 @@ class CreateCartsTable extends Migration
             $table->unsignedBigInteger('clothing_id');
             $table->unsignedBigInteger('size_id');
             $table->string('quantity',60);
-            $table->tinyInteger('sold',2);
+            $table->tinyInteger('sold')->default(0);
             $table->string('session_id',191)->nullable();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('clothing_id')->references('id')->on('clothing')->onDelete('cascade');
