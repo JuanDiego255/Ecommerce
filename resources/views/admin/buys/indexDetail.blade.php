@@ -5,7 +5,7 @@
 @endsection
 @section('content')
     <h1 class="text-dark text-center">Detalles De La Compra</h1>
-    <div class="container">
+    <div class="container-fluid">
         <div class="row w-100">
             <div class="col-md-6">
                 <div class="input-group input-group-lg input-group-static my-3 w-100">
@@ -31,7 +31,7 @@
 
         <center>
             <div class="row row-cols-1 row-cols-md-2 g-4 align-content-center card-group">
-                <div class="col w-75 bg-transparent">
+                <div class="col-lg-8 bg-transparent">
                     <div class="card w-100 mb-4">
                         <div class="table-responsive">
                             <table id="buysDetails" class="table align-items-center mb-0">
@@ -153,17 +153,17 @@
                     </div>
                 </div>
 
-                <div class="col w-25 bg-transparent">
+                <div class="col-lg-4 bg-transparent">
                     <div class="card card-frame">
                         <h3 class="ps-3 mt-2">
                             Detalles Del Envío
                         </h3>
-                        <div class="card-body">
+                        <div class="card-body text-center">
                             <div class="row checkout-form">
                                 @foreach ($buysDetails as $item)
-                                    <div class="d-flex justify-content-lg-start justify-content-center p-2">
+                                    <div class="d-flex justify-content-center p-2">
 
-                                        <h4 class="ps-3 text-muted">
+                                        <h4 class="text-muted">
                                             <i class="material-icons my-auto">done</i>
                                             País: {{ isset($item->country) ? $item->country : $item->country_b }}<br>
                                             <i class="material-icons my-auto">done</i>
@@ -200,7 +200,7 @@
     </div>
     <center>
 
-        <div class="col-md-12">
+        <div class="col-md-12 mt-3">
             <a href="{{ url('buys-admin') }}" class="btn btn-outline-secondary">Volver</a>
         </div>
     </center>

@@ -349,7 +349,7 @@ class CheckOutController extends Controller
                 DB::commit();
             }
             if ($request->has('telephone')) {
-                return redirect('/')->with(['status' => 'Se ha realizado la compra con éxito.', 'icon' => 'success'])->with(['alert' => 'error']);
+                return redirect('/')->with(['status' => 'Se ha realizado la compra con 茅xito.', 'icon' => 'success']);
             }
             return true;
         } catch (Exception $th) {
@@ -409,13 +409,13 @@ class CheckOutController extends Controller
                     $postal_code = $data['purchase_units'][0]['shipping']['address']['postal_code'];
                     return [
                         'success' => $this->payment($name, $email, '', $address, $address_two, 'Costa Rica', $city, $province, $postal_code),
-                        'status' => 'Se realizó la transacción sin problemas.',
+                        'status' => 'Se realiz贸 la transacci贸n sin problemas.',
                         'icon' => 'success'
                     ];
                 }
                 return [
                     'success' => false,
-                    'status' => 'Ocurrió un problema al realizar el pago.',
+                    'status' => 'Ocurri贸 un problema al realizar el pago.',
                     'icon' => 'error'
                 ];
             } else {
