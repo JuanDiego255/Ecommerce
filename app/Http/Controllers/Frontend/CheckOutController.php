@@ -275,13 +275,13 @@ class CheckOutController extends Controller
                         $buy->image = $request->file('image')->store('uploads', 'public');
                     }
                     if ($request->has('name')) {
-                        $address = $request->name;
+                        $name = $request->name;
                     }
                     if ($request->has('email')) {
-                        $address = $request->email;
+                        $email = $request->email;
                     }
                     if ($request->has('telephone')) {
-                        $address = $request->telephone;
+                        $telephone = $request->telephone;
                     }
                     if ($request->has('address')) {
                         $address = $request->address;

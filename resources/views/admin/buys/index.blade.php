@@ -43,7 +43,7 @@
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                     E-mail</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                    Precio + IVA</th>
+                                    Precio (I.V.A) + Envio</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                     Envío</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
@@ -88,7 +88,7 @@
                                             {{ isset($buy->email) ? $buy->email : $buy->email_b }}</p>
                                     </td>
                                     <td class="align-middle text-xxs text-center">
-                                        <p class=" font-weight-bold mb-0">₡{{ number_format($buy->total_buy) }}</p>
+                                        <p class=" font-weight-bold mb-0">₡{{ number_format($buy->total_buy + $buy->total_delivery) }}</p>
                                     </td>
                                     <td class="align-middle text-xxs text-center">
                                         <p class=" font-weight-bold mb-0">₡{{ number_format($buy->total_delivery) }}</p>

@@ -116,7 +116,7 @@
             <div class="col-md-6 mt-4">
                 <div class="card text-center">
                     <div class="overflow-hidden position-relative bg-cover p-3"
-                        style="background-image: url('{{ tenant_asset('/') . '/' . $item->image }}'); height:700px;">
+                        style="background-image: url('{{ tenant_asset('/') . '/' . $item->image }}'); height:700px;  background-position: center;">
                         <span class="mask bg-gradient-dark opacity-6"></span>
                         <div class="card-body position-relative z-index-1 d-flex flex-column mt-5">
                             <h3 class="text-white">{{ $item->description }}.</h3>

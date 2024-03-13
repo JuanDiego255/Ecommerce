@@ -136,7 +136,7 @@
                         </div>
                     </div>
                 </div>
-                <div id="cardContent" class="container" style="display: none;">
+                <div id="cardContent" style="display: none;">
                     <div class="col col-12 ps-md-5 p-0">
                         <div class="box-left">
                             <p class="fw-bold h7">Nuestro método de pago por medio de tarjeta se encuentra deshabilitado.
@@ -154,7 +154,7 @@
             </div>
 
             <div class="col bg-transparent">
-                <div class="container">
+                <div>
                     <div class="col col-12 ps-md-5 p-0">
                         <div class="box-left">
                             <p class="fw-bold h7">Detalles de la compra</p>
@@ -206,7 +206,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="container mt-4">
+                <div class=" mt-4">
                     <div class="col col-12 ps-md-5 p-0">
                         <div class="box-left">
                             <p class="fw-bold h7">Métodos de pago</p>

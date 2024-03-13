@@ -4,7 +4,7 @@
     {!! OpenGraph::generate() !!}
 @endsection
 @section('content')
-    <div class="product_data mb-3 mt-4" style="margin-left: 100px; margin-right:80px;">
+    <div class="product_data container mb-3 mt-4">
         <div class="breadcrumb-nav bc3x">
 
             <li class="home"><a href="{{ url('/') }}"><i class="fas fa-home me-1"></i></a></li>
@@ -12,9 +12,9 @@
             <li class="bread-standard"><a href="#"><i class="fa fa-shopping-cart me-1"></i>Carrito</a></li>
         </div>
         <center>
-            <div class=" ml-5 row row-cols-1 row-cols-md-2 g-4 align-content-center card-group mt-2">
-                <div class="col-lg-8 ml-5 bg-transparent">
-                    <div class="card ml-5 w-100">
+            <div class="row row-cols-1 row-cols-md-2 g-4 align-content-center card-group mt-1">
+                <div class="col-lg-8 bg-transparent">
+                    <div class="card w-100">
 
                         <div class="table-responsive">
                             <table class="table align-items-center mb-0" id="cartTable">

@@ -160,7 +160,7 @@
                         </h3>
                         <div class="card-body">
                             <div class="row checkout-form">
-                                @foreach ($buysDetailsPerson as $item)
+                                @foreach ($buysDetails as $item)
                                     <div class="d-flex justify-content-lg-start justify-content-center p-2">
 
                                         <h4 class="ps-3 text-muted">
@@ -185,6 +185,7 @@
 
                                     </div>
                                     <hr class="dark horizontal my-0">
+                                    @break
                                 @endforeach
                                 <div class="card-footer d-flex">
 

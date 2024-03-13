@@ -38,7 +38,7 @@
                         <thead>
                             <tr>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                    Precio + IVA</th>
+                                    Precio (IVA) + Envío</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                     IVA</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
@@ -60,7 +60,7 @@
                             @foreach ($buys as $buy)
                                 <tr>
                                     <td class="align-middle text-xxs text-center">
-                                        <p class=" font-weight-bold mb-0">₡{{ number_format($buy->total_buy) }}</p>
+                                        <p class=" font-weight-bold mb-0">₡{{ number_format($buy->total_buy + $buy->total_delivery) }}</p>
                                     </td>
                                     <td class="align-middle text-xxs text-center">
                                         <p class=" font-weight-bold mb-0">₡{{ number_format($buy->total_iva) }}</p>

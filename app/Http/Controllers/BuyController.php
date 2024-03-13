@@ -26,7 +26,7 @@ class BuyController extends Controller
         $tags = MetaTags::where('section', 'Mis Compras')->get();
         $tenantinfo = TenantInfo::first();
         foreach ($tags as $tag) {
-            SEOMeta::setTitle($tenantinfo->title . " - " .$tag->title);
+            SEOMeta::setTitle($tenantinfo->title . " - " . $tag->title);
             SEOMeta::setKeywords($tag->meta_keywords);
             SEOMeta::setDescription($tag->meta_description);
             //Opengraph
@@ -53,7 +53,7 @@ class BuyController extends Controller
                 'users.name as name',
                 'users.telephone as telephone',
                 'users.email as email',
-                'buys.name as name_b',               
+                'buys.name as name_b',
                 'buys.telephone as telephone_b',
                 'buys.email as email_b',
                 'buys.cancel_buy as cancel_buy'
@@ -100,7 +100,7 @@ class BuyController extends Controller
         $tags = MetaTags::where('section', 'Mis Compras')->get();
         $tenantinfo = TenantInfo::first();
         foreach ($tags as $tag) {
-            SEOMeta::setTitle($tag->title . " - " .$tenantinfo->title);
+            SEOMeta::setTitle($tag->title . " - " . $tenantinfo->title);
             SEOMeta::setKeywords($tag->meta_keywords);
             SEOMeta::setDescription($tag->meta_description);
             //Opengraph
@@ -114,9 +114,9 @@ class BuyController extends Controller
     public function buyDetailsAdmin($id)
     {
         $buysDetails = BuyDetail::where('buy_details.buy_id', $id)
-            ->join('buys', 'buy_details.buy_id', 'buys.id')
-            ->join('clothing', 'buy_details.clothing_id', 'clothing.id')
-            ->join('sizes', 'buy_details.size_id', 'sizes.id')
+            ->join('buys', 'buy_details.buy_id', '=', 'buys.id')
+            ->join('clothing', 'buy_details.clothing_id', '=', 'clothing.id')
+            ->join('sizes', 'buy_details.size_id', '=', 'sizes.id')
             ->leftJoin('product_images', function ($join) {
                 $join->on('clothing.id', '=', 'product_images.clothing_id')
                     ->whereRaw('product_images.id = (
@@ -124,6 +124,7 @@ class BuyController extends Controller
                 WHERE product_images.clothing_id = clothing.id
             )');
             })
+            ->leftJoin('address_users', 'buys.user_id', '=', 'address_users.user_id') // Left join con address_user
             ->select(
                 'clothing.id as id',
                 'clothing.name as name',
@@ -136,14 +137,7 @@ class BuyController extends Controller
                 'buy_details.cancel_item as cancel_item',
                 'buy_details.id as item_id',
                 'buy_details.buy_id as buy',
-                DB::raw('IFNULL(product_images.image, "") as image') // Obtener la primera imagen del producto
-            )
-            ->get();
-
-        $buysDetailsPerson = Buy::where('buys.id', $id)
-            ->leftJoin('address_users', 'buys.user_id', 'address_users.user_id')
-            ->where('address_users.status', 1)
-            ->select(
+                DB::raw('IFNULL(product_images.image, "") as image'), // Obtener la primera imagen del producto
                 'address_users.user_id as user_id',
                 'address_users.address as address',
                 'address_users.address_two as address_two',
@@ -157,9 +151,10 @@ class BuyController extends Controller
                 'buys.country as country_b',
                 'buys.province as province_b',
                 'buys.postal_code as postal_code_b'
+            )
+            ->get();
 
-            )->get();
-        return view('admin.buys.indexDetail', compact('buysDetails', 'buysDetailsPerson'));
+        return view('admin.buys.indexDetail', compact('buysDetails'));
     }
 
     public function approve($id, $approved)
