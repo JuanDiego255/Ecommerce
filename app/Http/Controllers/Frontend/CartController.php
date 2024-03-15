@@ -12,10 +12,18 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Artesaos\SEOTools\Facades\OpenGraph;
 use Artesaos\SEOTools\Facades\SEOMeta;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\URL;
 
 class CartController extends Controller
 {
+    protected $expirationTime;
+
+    public function __construct()
+    {
+        // Define el tiempo de expiración en minutos
+        $this->expirationTime = 60; // Por ejemplo, 60 minutos
+    }
     public function store(Request $request)
     {
         DB::beginTransaction();
@@ -89,54 +97,57 @@ class CartController extends Controller
     }
     public function viewCart()
     {
-        if (Auth::check()) {
-            $userId = Auth::id();
-            $cart_items = Cart::where('carts.user_id', $userId)
-                ->where('carts.session_id', null)
-                ->where('carts.sold', 0)
-                ->join('users', 'carts.user_id', 'users.id')
-                ->join('stocks', function ($join) {
-                    $join->on('carts.clothing_id', '=', 'stocks.clothing_id')
-                        ->on('carts.size_id', '=', 'stocks.size_id');
-                })
-                ->join('clothing', 'carts.clothing_id', 'clothing.id')
-                ->join('sizes', 'carts.size_id', 'sizes.id')
-                ->leftJoin('product_images', function ($join) {
-                    $join->on('clothing.id', '=', 'product_images.clothing_id')
-                        ->whereRaw('product_images.id = (
-                        SELECT MIN(id) FROM product_images 
-                        WHERE product_images.clothing_id = clothing.id
-                    )');
-                })
-                ->select(
-                    'clothing.id as id',
-                    'clothing.name as name',
-                    'clothing.description as description',
-                    'clothing.price as price',
-                    'clothing.discount as discount',
-                    'clothing.status as status',
-                    'sizes.size as size',
-                    'sizes.id as size_id',
-                    'carts.quantity as quantity',
-                    'stocks.stock as stock',
-                    DB::raw('IFNULL(product_images.image, "") as image') // Obtener la primera imagen del producto
-                )
-                ->groupBy(
-                    'clothing.id',
-                    'clothing.name',
-                    'clothing.description',
-                    'clothing.price',
-                    'clothing.status',
-                    'clothing.discount',
-                    'sizes.size',
-                    'sizes.id',
-                    'carts.quantity',
-                    'stocks.stock',
-                    'product_images.image'
-                )
-                ->get();
-        } else {
-            $session_id = session()->get('session_id');
+        $cart_items = Cache::remember('cart_items', $this->expirationTime, function () {
+            if (Auth::check()) {
+                $userId = Auth::id();
+                $cart_items = Cart::where('carts.user_id', $userId)
+                    ->where('carts.session_id', null)
+                    ->where('carts.sold', 0)
+                    ->join('users', 'carts.user_id', 'users.id')
+                    ->join('stocks', function ($join) {
+                        $join->on('carts.clothing_id', '=', 'stocks.clothing_id')
+                            ->on('carts.size_id', '=', 'stocks.size_id');
+                    })
+                    ->join('clothing', 'carts.clothing_id', 'clothing.id')
+                    ->join('sizes', 'carts.size_id', 'sizes.id')
+                    ->leftJoin('product_images', function ($join) {
+                        $join->on('clothing.id', '=', 'product_images.clothing_id')
+                            ->whereRaw('product_images.id = (
+                            SELECT MIN(id) FROM product_images 
+                            WHERE product_images.clothing_id = clothing.id
+                        )');
+                    })
+                    ->select(
+                        'clothing.id as id',
+                        'clothing.name as name',
+                        'clothing.description as description',
+                        'clothing.price as price',
+                        'clothing.discount as discount',
+                        'clothing.status as status',
+                        'sizes.size as size',
+                        'sizes.id as size_id',
+                        'carts.quantity as quantity',
+                        'stocks.stock as stock',
+                        DB::raw('IFNULL(product_images.image, "") as image') // Obtener la primera imagen del producto
+                    )
+                    ->groupBy(
+                        'clothing.id',
+                        'clothing.name',
+                        'clothing.description',
+                        'clothing.price',
+                        'clothing.status',
+                        'clothing.discount',
+                        'sizes.size',
+                        'sizes.id',
+                        'carts.quantity',
+                        'stocks.stock',
+                        'product_images.image'
+                    )
+                    ->get();
+                // Resto del código para obtener los artículos del carrito para usuarios autenticados
+                return $cart_items;
+            } else {
+                $session_id = session()->get('session_id');
             $cart_items = Cart::where('carts.session_id', $session_id)
                 ->where('carts.user_id', null)
                 ->where('carts.sold', 0)
@@ -180,7 +191,9 @@ class CartController extends Controller
                     'product_images.image'
                 )
                 ->get();
-        }
+                return $cart_items;
+            }
+        });
 
         $tags = MetaTags::where('section', 'Carrito')->get();
         $tenantinfo = TenantInfo::first();

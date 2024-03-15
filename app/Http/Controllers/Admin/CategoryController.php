@@ -5,14 +5,25 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Categories;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class CategoryController extends Controller
 {
+    protected $expirationTime;
+
+    public function __construct()
+    {
+        // Define el tiempo de expiración en minutos
+        $this->expirationTime = 60; // Por ejemplo, 60 minutos
+    }
     public function index()
     {
-        $categories = Categories::simplePaginate(8);
+        $categories = Cache::remember('categories', $this->expirationTime, function () {
+            return Categories::simplePaginate(8);
+        });
+        
         return view('admin.categories.index', compact('categories'));
     }
     public function add()
@@ -21,7 +32,10 @@ class CategoryController extends Controller
     }
     public function edit($id)
     {
-        $categories = Categories::find($id);
+        $categories = Cache::remember('category_' . $id, $this->expirationTime, function () use ($id) {
+            return Categories::find($id);
+        });
+        
         return view('admin.categories.edit', compact('categories'));
     }
     public function store(Request $request)

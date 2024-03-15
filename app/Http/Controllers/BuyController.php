@@ -12,17 +12,28 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Artesaos\SEOTools\Facades\OpenGraph;
 use Artesaos\SEOTools\Facades\SEOMeta;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\URL;
 
 class BuyController extends Controller
 {
-    //
+    protected $expirationTime;
+
+    public function __construct()
+    {
+        // Define el tiempo de expiración en minutos
+        $this->expirationTime = 60; // Por ejemplo, 60 minutos
+    }
     public function index()
     {
-        $buys = Buy::where('user_id', Auth::user()->id)->get();
+        $buys = Cache::remember('user_buys_' . Auth::user()->id, $this->expirationTime, function () {
+            return Buy::where('user_id', Auth::user()->id)->get();
+        });
+
         if (count($buys) == 0) {
             return redirect('/')->with(['status' => 'No hay compras registradas!', 'icon' => 'warning']);
         }
+
         $tags = MetaTags::where('section', 'Mis Compras')->get();
         $tenantinfo = TenantInfo::first();
         foreach ($tags as $tag) {
@@ -34,68 +45,74 @@ class BuyController extends Controller
             OpenGraph::setTitle($tag->title);
             OpenGraph::setDescription($tag->meta_og_description);
         }
+
         return view('frontend.buys', compact('buys'));
     }
 
     public function indexAdmin()
     {
-        $buys = Buy::leftJoin('users', 'buys.user_id', 'users.id')
-            ->select(
-                'buys.id as id',
-                'buys.total_iva as total_iva',
-                'buys.total_buy as total_buy',
-                'buys.total_delivery as total_delivery',
-                'buys.delivered as delivered',
-                'buys.approved as approved',
-                'buys.created_at as created_at',
-                'buys.image as image',
-                'users.id as user_id',
-                'users.name as name',
-                'users.telephone as telephone',
-                'users.email as email',
-                'buys.name as name_b',
-                'buys.telephone as telephone_b',
-                'buys.email as email_b',
-                'buys.cancel_buy as cancel_buy'
-            )
-            ->get();
+        $buys = Cache::remember('buys_data', $this->expirationTime, function () {
+            return Buy::leftJoin('users', 'buys.user_id', 'users.id')
+                ->select(
+                    'buys.id as id',
+                    'buys.total_iva as total_iva',
+                    'buys.total_buy as total_buy',
+                    'buys.total_delivery as total_delivery',
+                    'buys.delivered as delivered',
+                    'buys.approved as approved',
+                    'buys.created_at as created_at',
+                    'buys.image as image',
+                    'users.id as user_id',
+                    'users.name as name',
+                    'users.telephone as telephone',
+                    'users.email as email',
+                    'buys.name as name_b',
+                    'buys.telephone as telephone_b',
+                    'buys.email as email_b',
+                    'buys.cancel_buy as cancel_buy'
+                )
+                ->get();
+        });
 
         if (count($buys) == 0) {
             return redirect()->back()->with(['status' => 'No hay compras registradas!', 'icon' => 'warning']);
         }
+
         return view('admin.buys.index', compact('buys'));
     }
 
     public function buyDetails($id)
     {
-        $buysDetails = BuyDetail::where('buys.user_id', Auth::user()->id)
-            ->where('buy_details.buy_id', $id)
-            ->join('buys', 'buy_details.buy_id', 'buys.id')
-            ->join('clothing', 'buy_details.clothing_id', 'clothing.id')
-            ->join('sizes', 'buy_details.size_id', 'sizes.id')
-            ->leftJoin('product_images', function ($join) {
-                $join->on('clothing.id', '=', 'product_images.clothing_id')
-                    ->whereRaw('product_images.id = (
-                SELECT MIN(id) FROM product_images 
-                WHERE product_images.clothing_id = clothing.id
-            )');
-            })
-            ->select(
-                'clothing.id as id',
-                'clothing.name as name',
-                'clothing.description as description',
-                'buy_details.total as total',
-                'buy_details.iva as iva',
-                'buy_details.id as buy_id',
-                'buy_details.buy_id as buy',
-                'buy_details.cancel_item as cancel_item',
-                'clothing.status as status',
-                'sizes.size as size',
-                'buy_details.quantity as quantity',
-                'buys.approved as approved',
-                DB::raw('IFNULL(product_images.image, "") as image') // Obtener la primera imagen del producto
-            )
-            ->get();
+        $buysDetails = Cache::remember('buys_details_' . Auth::user()->id . '_' . $id, $this->expirationTime, function () use ($id) {
+            return BuyDetail::where('buys.user_id', Auth::user()->id)
+                ->where('buy_details.buy_id', $id)
+                ->join('buys', 'buy_details.buy_id', 'buys.id')
+                ->join('clothing', 'buy_details.clothing_id', 'clothing.id')
+                ->join('sizes', 'buy_details.size_id', 'sizes.id')
+                ->leftJoin('product_images', function ($join) {
+                    $join->on('clothing.id', '=', 'product_images.clothing_id')
+                        ->whereRaw('product_images.id = (
+                        SELECT MIN(id) FROM product_images 
+                        WHERE product_images.clothing_id = clothing.id
+                    )');
+                })
+                ->select(
+                    'clothing.id as id',
+                    'clothing.name as name',
+                    'clothing.description as description',
+                    'buy_details.total as total',
+                    'buy_details.iva as iva',
+                    'buy_details.id as buy_id',
+                    'buy_details.buy_id as buy',
+                    'buy_details.cancel_item as cancel_item',
+                    'clothing.status as status',
+                    'sizes.size as size',
+                    'buy_details.quantity as quantity',
+                    'buys.approved as approved',
+                    DB::raw('IFNULL(product_images.image, "") as image') // Obtener la primera imagen del producto
+                )
+                ->get();
+        });
 
         $tags = MetaTags::where('section', 'Mis Compras')->get();
         $tenantinfo = TenantInfo::first();
@@ -108,51 +125,54 @@ class BuyController extends Controller
             OpenGraph::setTitle($tag->title);
             OpenGraph::setDescription($tag->meta_og_description);
         }
+
         return view('frontend.detail-buy', compact('buysDetails'));
     }
 
     public function buyDetailsAdmin($id)
     {
-        $buysDetails = BuyDetail::where('buy_details.buy_id', $id)
-            ->join('buys', 'buy_details.buy_id', '=', 'buys.id')
-            ->join('clothing', 'buy_details.clothing_id', '=', 'clothing.id')
-            ->join('sizes', 'buy_details.size_id', '=', 'sizes.id')
-            ->leftJoin('product_images', function ($join) {
-                $join->on('clothing.id', '=', 'product_images.clothing_id')
-                    ->whereRaw('product_images.id = (
-                SELECT MIN(id) FROM product_images 
-                WHERE product_images.clothing_id = clothing.id
-            )');
-            })
-            ->leftJoin('address_users', 'buys.user_id', '=', 'address_users.user_id') // Left join con address_user
-            ->select(
-                'clothing.id as id',
-                'clothing.name as name',
-                'clothing.description as description',
-                'buy_details.total as total',
-                'buy_details.iva as iva',
-                'clothing.status as status',
-                'sizes.size as size',
-                'buy_details.quantity as quantity',
-                'buy_details.cancel_item as cancel_item',
-                'buy_details.id as item_id',
-                'buy_details.buy_id as buy',
-                DB::raw('IFNULL(product_images.image, "") as image'), // Obtener la primera imagen del producto
-                'address_users.user_id as user_id',
-                'address_users.address as address',
-                'address_users.address_two as address_two',
-                'address_users.city as city',
-                'address_users.country as country',
-                'address_users.province as province',
-                'address_users.postal_code as postal_code',
-                'buys.address as address_b',
-                'buys.address_two as address_two_b',
-                'buys.city as city_b',
-                'buys.country as country_b',
-                'buys.province as province_b',
-                'buys.postal_code as postal_code_b'
-            )
-            ->get();
+        $buysDetails = Cache::remember('buy_details_' . $id, $this->expirationTime, function () use ($id) {
+            return BuyDetail::where('buy_details.buy_id', $id)
+                ->join('buys', 'buy_details.buy_id', '=', 'buys.id')
+                ->join('clothing', 'buy_details.clothing_id', '=', 'clothing.id')
+                ->join('sizes', 'buy_details.size_id', '=', 'sizes.id')
+                ->leftJoin('product_images', function ($join) {
+                    $join->on('clothing.id', '=', 'product_images.clothing_id')
+                        ->whereRaw('product_images.id = (
+                    SELECT MIN(id) FROM product_images 
+                    WHERE product_images.clothing_id = clothing.id
+                )');
+                })
+                ->leftJoin('address_users', 'buys.user_id', '=', 'address_users.user_id')
+                ->select(
+                    'clothing.id as id',
+                    'clothing.name as name',
+                    'clothing.description as description',
+                    'buy_details.total as total',
+                    'buy_details.iva as iva',
+                    'clothing.status as status',
+                    'sizes.size as size',
+                    'buy_details.quantity as quantity',
+                    'buy_details.cancel_item as cancel_item',
+                    'buy_details.id as item_id',
+                    'buy_details.buy_id as buy',
+                    DB::raw('IFNULL(product_images.image, "") as image'),
+                    'address_users.user_id as user_id',
+                    'address_users.address as address',
+                    'address_users.address_two as address_two',
+                    'address_users.city as city',
+                    'address_users.country as country',
+                    'address_users.province as province',
+                    'address_users.postal_code as postal_code',
+                    'buys.address as address_b',
+                    'buys.address_two as address_two_b',
+                    'buys.city as city_b',
+                    'buys.country as country_b',
+                    'buys.province as province_b',
+                    'buys.postal_code as postal_code_b'
+                )
+                ->get();
+        });
 
         return view('admin.buys.indexDetail', compact('buysDetails'));
     }

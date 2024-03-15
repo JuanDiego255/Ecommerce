@@ -16,46 +16,52 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Artesaos\SEOTools\Facades\OpenGraph;
 use Artesaos\SEOTools\Facades\SEOMeta;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\URL;
 
 class ClothingCategoryController extends Controller
 {
+    protected $expirationTime;
 
+    public function __construct()
+    {
+        // Define el tiempo de expiración en minutos
+        $this->expirationTime = 60; // Por ejemplo, 60 minutos
+    }
     public function indexById($id)
     {
-        $category = Categories::find($id);
-        $category_name = $category->name;
-        $category_id = $category->id;
-        $clothings = ClothingCategory::where('clothing.category_id', $id)
-            ->where('clothing.status', 1)
-            ->join('categories', 'clothing.category_id', 'categories.id')
-            ->join('stocks', 'clothing.id', 'stocks.clothing_id')
-            ->join('sizes', 'stocks.size_id', 'sizes.id')
-            ->leftJoin('product_images', function ($join) {
-                $join->on('clothing.id', '=', 'product_images.clothing_id')
-                    ->whereRaw('product_images.id = (
-                        SELECT MIN(id) FROM product_images 
-                        WHERE product_images.clothing_id = clothing.id
-                    )');
-            })
-            ->select(
-                'categories.name as category',
-                'clothing.id as id',
-                'clothing.trending as trending',
-                'clothing.name as name',
-                'clothing.discount as discount',
-                'clothing.description as description',
-                'clothing.price as price',
-                DB::raw('SUM(stocks.stock) as total_stock'),
-                DB::raw('GROUP_CONCAT(sizes.size) AS available_sizes'), // Obtener tallas dinámicas
-                DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'), // Obtener stock por talla
-                'product_images.image as image' // Obtener la imagen del producto
-            )
-            ->groupBy('clothing.id', 'clothing.discount', 'categories.name', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
-            ->simplePaginate(4);
-
+        $clothings = Cache::remember('clothings_' . $id, $this->expirationTime, function () use ($id) {
+            return ClothingCategory::where('clothing.category_id', $id)
+                ->where('clothing.status', 1)
+                ->join('categories', 'clothing.category_id', 'categories.id')
+                ->join('stocks', 'clothing.id', 'stocks.clothing_id')
+                ->join('sizes', 'stocks.size_id', 'sizes.id')
+                ->leftJoin('product_images', function ($join) {
+                    $join->on('clothing.id', '=', 'product_images.clothing_id')
+                        ->whereRaw('product_images.id = (
+                            SELECT MIN(id) FROM product_images 
+                            WHERE product_images.clothing_id = clothing.id
+                        )');
+                })
+                ->select(
+                    'categories.name as category',
+                    'clothing.id as id',
+                    'clothing.trending as trending',
+                    'clothing.name as name',
+                    'clothing.discount as discount',
+                    'clothing.description as description',
+                    'clothing.price as price',
+                    DB::raw('SUM(stocks.stock) as total_stock'),
+                    DB::raw('GROUP_CONCAT(sizes.size) AS available_sizes'),
+                    DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'),
+                    'product_images.image as image'
+                )
+                ->groupBy('clothing.id', 'clothing.discount', 'categories.name', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
+                ->simplePaginate(4);
+        });
+        
         return view('admin.clothing.index', compact('clothings', 'category_name', 'category_id'));
     }
 
@@ -68,38 +74,40 @@ class ClothingCategoryController extends Controller
     }
     public function edit($id, $category_id)
     {
+        $clothing = Cache::remember('clothing_' . $id, $this->expirationTime, function () use ($id) {
+            return ClothingCategory::join('stocks', 'clothing.id', 'stocks.clothing_id')
+                ->leftJoin('product_images', function ($join) {
+                    $join->on('clothing.id', '=', 'product_images.clothing_id')
+                        ->whereRaw('product_images.id = (
+                            SELECT MIN(id) FROM product_images 
+                            WHERE product_images.clothing_id = clothing.id
+                        )');
+                })
+                ->where('clothing.id', $id)
+                ->select(
+                    'clothing.id as id',
+                    'clothing.category_id as category_id',
+                    'clothing.name as name',
+                    'clothing.discount as discount',
+                    'clothing.trending as trending',
+                    'clothing.description as description',
+                    'clothing.price as price',
+                    DB::raw('SUM(stocks.stock) as total_stock'),
+                    'product_images.image as image' // Obtener la primera imagen del producto
+                )
+                ->groupBy(
+                    'clothing.id',
+                    'clothing.name',
+                    'clothing.category_id',
+                    'clothing.description',
+                    'clothing.trending',
+                    'clothing.price',
+                    'product_images.image',
+                    'clothing.discount'
+                )
+                ->first();
+        });
 
-        $clothing = ClothingCategory::join('stocks', 'clothing.id', 'stocks.clothing_id')
-            ->leftJoin('product_images', function ($join) {
-                $join->on('clothing.id', '=', 'product_images.clothing_id')
-                    ->whereRaw('product_images.id = (
-                    SELECT MIN(id) FROM product_images 
-                    WHERE product_images.clothing_id = clothing.id
-                )');
-            })
-            ->where('clothing.id', $id)
-            ->select(
-                'clothing.id as id',
-                'clothing.category_id as category_id',
-                'clothing.name as name',
-                'clothing.discount as discount',
-                'clothing.trending as trending',
-                'clothing.description as description',
-                'clothing.price as price',
-                DB::raw('SUM(stocks.stock) as total_stock'),
-                'product_images.image as image' // Obtener la primera imagen del producto
-            )
-            ->groupBy(
-                'clothing.id',
-                'clothing.name',
-                'clothing.category_id',
-                'clothing.description',
-                'clothing.trending',
-                'clothing.price',
-                'product_images.image',
-                'clothing.discount'
-            )
-            ->first();
         $size_active = SizeCloth::where('clothing_id', $id)->get();
         $sizes = Size::get();
         return view('admin.clothing.edit', compact('clothing', 'size_active', 'sizes', 'category_id'));

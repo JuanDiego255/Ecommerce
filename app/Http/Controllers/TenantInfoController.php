@@ -6,11 +6,19 @@ use App\Models\TenantCarousel;
 use App\Models\TenantInfo;
 use App\Models\TenantSocialNetwork;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class TenantInfoController extends Controller
 {
+    protected $expirationTime;
+
+    public function __construct()
+    {
+        // Define el tiempo de expiración en minutos
+        $this->expirationTime = 60; // Por ejemplo, 60 minutos
+    }
     /**
      * Display a listing of the resource.
      *
@@ -19,10 +27,14 @@ class TenantInfoController extends Controller
     public function index()
     {
         //
-        $tenantinfo = TenantInfo::get();
-        $tenantsocial = TenantSocialNetwork::get();
-        $tenantcarousel = TenantCarousel::get();
-        return view('admin.tenant-info.index', compact('tenantinfo', 'tenantsocial', 'tenantcarousel'));
+        $data = Cache::remember('tenant_info_data', $this->expirationTime, function () {
+            $tenantinfo = TenantInfo::get();
+            $tenantsocial = TenantSocialNetwork::get();
+            $tenantcarousel = TenantCarousel::get();
+            return compact('tenantinfo', 'tenantsocial', 'tenantcarousel');
+        });
+        
+        return view('admin.tenant-info.index', $data);
     }
 
     /**

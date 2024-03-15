@@ -4,11 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Models\SocialNetwork;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class SocialNetworkController extends Controller
 {
+    protected $expirationTime;
+
+    public function __construct()
+    {
+        // Define el tiempo de expiración en minutos
+        $this->expirationTime = 60; // Por ejemplo, 60 minutos
+    }
     /**
      * Display a listing of the resource.
      *
@@ -17,7 +25,10 @@ class SocialNetworkController extends Controller
     public function index()
     {
         //
-        $social = SocialNetwork::get();
+        $social = Cache::remember('social_networks', $this->expirationTime, function () {
+            return SocialNetwork::get();
+        });
+        
         return view('admin.social.index', compact('social'));
     }
 
