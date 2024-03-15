@@ -6,7 +6,8 @@
                     onclick="menuToggle()"><i class="fas fa-bars me-2"></i> MENU</button>
             </div>
             <div class="flex3 text-center" id="siteBrand">
-                <a class="velvet-title text-title text-uppercase" href="{{ url('/') }}">{{isset($tenantinfo->title) ? $tenantinfo->title : ''}}</a>
+                <a class="velvet-title text-title text-uppercase"
+                    href="{{ url('/') }}">{{ isset($tenantinfo->title) ? $tenantinfo->title : '' }}</a>
             </div>
 
             <div class="flex2 text-end d-block d-md-none">
@@ -51,15 +52,11 @@
             @guest
                 <a class="nav-menu-item" href="javascript:void(0);" onclick="menuToggle()"><i
                         class="fa fa-arrow-circle-left me-3"></i>CERRAR MENU</a>
+
                 <a href="{{ url('/') }}" class="nav-menu-item"><i class="fas fa-home me-3"></i>INICIO</a>
-                <a href="{{ url('view-cart') }}" class="nav-menu-item"><i class="fa fa-shopping-cart me-3"></i>CARRITO
-                    <span
-                        class="badge badge-sm text-dark badge-info border border-2 text-xxs">{{ $cartNumber }}</span></a>
-                <a href="{{ route('register') }}" class="nav-menu-item"><i class="fa fa-user-plus me-3"></i>REGISTRARSE</a>
-                <a href="{{ route('login') }}" class="nav-menu-item"><i class="fa fa-sign-in me-3"></i>INGRESAR</a>
                 <div class="nav-menu-item">
                     <i class="fas fa-tshirt me-3"></i><a class="color-menu" href="javascript:void(0);"
-                        id="toggleCategories">CATEGORIAS   <i class="fa fa-arrow-circle-down ml-3"></i></a>
+                        id="toggleCategories">CATEGORIAS <i class="fa fa-arrow-circle-down ml-3"></i></a>
                     <div class="subcategories" id="categoriesDropdown">
                         <ul>
                             <li class="item-submenu"><a href="{{ url('category/') }}" class="nav-submenu-item">
@@ -79,24 +76,24 @@
                         <!-- Agrega más subcategorías si es necesario -->
                     </div>
                 </div>
+                <a href="{{ url('view-cart') }}" class="nav-menu-item"><i class="fa fa-shopping-cart me-3"></i>CARRITO
+                    <span
+                        class="badge badge-sm text-dark badge-info border border-2 text-xxs">{{ $cartNumber }}</span></a>
+                <a href="{{ route('register') }}" class="nav-menu-item"><i class="fa fa-user-plus me-3"></i>REGISTRARSE</a>
+                <a href="{{ route('login') }}" class="nav-menu-item"><i class="fa fa-sign-in me-3"></i>INGRESAR</a>
             @else
                 <a class="nav-menu-item" href="javascript:void(0);" onclick="menuToggle()"><i
                         class="fa fa-arrow-circle-left me-3"></i>CERRAR MENU</a>
                 <a href="{{ url('/') }}" class="nav-menu-item"><i class="fas fa-home me-3"></i>INICIO</a>
-                <a href="{{ url('view-cart') }}" class="nav-menu-item"><i class="fa fa-shopping-cart me-3"></i>CARRITO
-                    <span
-                        class="badge badge-sm text-dark badge-info border border-2 text-xxs">{{ $cartNumber }}</span></a>
-                <a href="{{ url('buys') }}" class="nav-menu-item"><i class="fa fa-credit-card me-3"></i>MIS COMPRAS</a>
-                <a href="{{ url('/address') }}" class="nav-menu-item"><i class="fas fa-map-marker me-3"></i>DIRECCIONES</a>
                 <div class="nav-menu-item">
                     <i class="fas fa-tshirt me-3"></i><a class="color-menu" href="javascript:void(0);"
-                        id="toggleCategories">CATEGORIAS   <i class="fa fa-arrow-circle-down ml-3"></i></a>
+                        id="toggleCategories">CATEGORIAS <i class="fa fa-arrow-circle-down ml-3"></i></a>
                     <div class="subcategories" id="categoriesDropdown">
                         <ul>
                             <li class="item-submenu"><a href="{{ url('category/') }}" class="nav-submenu-item">
                                     <span class="alert-icon align-middle">
                                         <span class="material-icons text-md">label</span>
-                                    </span>Todas las categorías</a>
+                                    </span>TODAS LAS CATEGORIAS</a>
                             </li>
                             @foreach ($categories as $item)
                                 <li class="item-submenu"><a href="{{ url('clothes-category/' . $item->id) }}"
@@ -110,9 +107,18 @@
                         <!-- Agrega más subcategorías si es necesario -->
                     </div>
                 </div>
+                <a href="{{ url('view-cart') }}" class="nav-menu-item"><i class="fa fa-shopping-cart me-3"></i>CARRITO
+                    <span
+                        class="badge badge-sm text-dark badge-info border border-2 text-xxs">{{ $cartNumber }}</span></a>
+                <a href="{{ url('buys') }}" class="nav-menu-item"><i class="fa fa-credit-card me-3"></i>MIS
+                    COMPRAS</a>
+                <a href="{{ url('/address') }}" class="nav-menu-item"><i
+                        class="fas fa-map-marker me-3"></i>DIRECCIONES</a>
+
                 <div class="nav-menu-item">
                     <a class="color-menu" href="javascript:void(0);" id="toggleLogout"><i
-                            class="fas fa-user-minus me-3"></i>{{ Auth::user()->name }} {{ Auth::user()->last_name }}   <i class="fa fa-arrow-circle-down me-3"></i></a>
+                            class="fas fa-user-minus me-3"></i>{{ Auth::user()->name }} {{ Auth::user()->last_name }} <i
+                            class="fa fa-arrow-circle-down me-3"></i></a>
                     <div class="subLogout" id="logoutDropdown">
                         <ul>
                             <li class="item-submenu">

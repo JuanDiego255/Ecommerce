@@ -36,13 +36,73 @@
             </div>
         </div>
     @endif
+    {{-- Trending --}}
+    <div class="mt-3 mb-5">
+        <div class="container-fluid">
+            @if ($clothings)
+                <div class="text-center">
+                    <h3 class="text-center text-muted mt-5 mb-3">
+                        {{ isset($tenantinfo->title_trend) ? $tenantinfo->title_trend : '' }}</h3>
+                </div>
+            @endif
+            <div class="row">
+                <div class="owl-carousel featured-carousel owl-theme">
+                    @foreach ($clothings as $item)
+                        @if ($item->total_stock != 0)
+                            <div class="item">
+                                <div class="product-grid product_data">
+                                    <div class="product-image">
+                                        <img src="{{ tenant_asset('/') . '/' . $item->image }}">
+                                        @if ($item->discount)
+                                            <span class="product-discount-label">-{{ $item->discount }}%</span>
+                                        @endif
+                                        <ul class="product-links">
+                                            <li><a target="blank" href="{{ tenant_asset('/') . '/' . $item->image }}"><i
+                                                        class="fas fa-eye"></i></a></li>
+                                        </ul>
+                                        <a href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}"
+                                            class="add-to-cart">Detallar</a>
+                                    </div>
+                                    <div class="product-content">
+
+                                        <h3 class="title"><a
+                                                href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}">{{ $item->name }}</a>
+                                        </h3>
+                                        <h4 class="title">Stock: {{ $item->total_stock }}</h4>
+                                        @php
+                                            $precio = $item->price;
+                                            $descuentoPorcentaje = $item->discount;
+                                            // Calcular el descuento
+                                            $descuento = ($precio * $descuentoPorcentaje) / 100;
+                                            // Calcular el precio con el descuento aplicado
+                                            $precioConDescuento = $precio - $descuento;
+                                        @endphp
+                                        <div class="price">₡{{ number_format($precioConDescuento) }}
+                                            @if ($item->discount)
+                                                <s class="text-danger"><span
+                                                        class="text-danger">₡{{ number_format($item->price) }}
+                                                    </span></s>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+                    @endforeach
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr class="dark horizontal text-danger mb-3">
+    {{-- Offer --}}
     @if ($clothings_offer)
         <div class="container-fluid mb-5 offer">
             <div class="text-center">
-                <h3 class="text-center text-muted mt-5">
+                <h3 class="text-center text-muted mt-5 mb-4">
                     {{ isset($tenantinfo->title_discount) ? $tenantinfo->title_discount : '' }}</h3>
             </div>
-            <hr class="dark horizontal text-danger mb-3">
+            
             <div class="row">
                 @foreach ($clothings_offer as $item)
                     @php
@@ -101,16 +161,13 @@
             </div>
         </div>
     @endif
-
+    <hr class="dark horizontal text-danger mb-3">
+     {{-- Insta --}}
     <hr class="text-dark">
     <div class="text-center">
         <span class="text-muted text-center"><a href="{{ isset($instagram) ? $instagram : '' }}">Instagram</a> |
             {{ isset($tenantinfo->title_instagram) ? $tenantinfo->title_instagram : '' }}</span>
     </div>
-
-
-    <hr class="dark horizontal text-danger mb-3">
-
     <div class="row mb-5 container-fluid">
         @foreach ($social as $item)
             <div class="col-md-6 mt-4">
@@ -156,62 +213,6 @@
 
     <hr class="dark horizontal text-danger my-0">
 
-    <div class="mt-3 mb-5">
-        <div class="container">
-            @if ($clothings)
-                <div class="text-center">
-                    <h3 class="text-center text-muted mt-5 mb-3">
-                        {{ isset($tenantinfo->title_trend) ? $tenantinfo->title_trend : '' }}</h3>
-                </div>
-            @endif
-            <div class="row">
-                <div class="owl-carousel featured-carousel owl-theme">
-                    @foreach ($clothings as $item)
-                        @if ($item->total_stock != 0)
-                            <div class="item">
-                                <div class="product-grid product_data">
-                                    <div class="product-image">
-                                        <img src="{{ tenant_asset('/') . '/' . $item->image }}">
-                                        @if ($item->discount)
-                                            <span class="product-discount-label">-{{ $item->discount }}%</span>
-                                        @endif
-                                        <ul class="product-links">
-                                            <li><a target="blank" href="{{ tenant_asset('/') . '/' . $item->image }}"><i
-                                                        class="fas fa-eye"></i></a></li>
-                                        </ul>
-                                        <a href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}"
-                                            class="add-to-cart">Detallar</a>
-                                    </div>
-                                    <div class="product-content">
-
-                                        <h3 class="title"><a
-                                                href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}">{{ $item->name }}</a>
-                                        </h3>
-                                        <h4 class="title">Stock: {{ $item->total_stock }}</h4>
-                                        @php
-                                            $precio = $item->price;
-                                            $descuentoPorcentaje = $item->discount;
-                                            // Calcular el descuento
-                                            $descuento = ($precio * $descuentoPorcentaje) / 100;
-                                            // Calcular el precio con el descuento aplicado
-                                            $precioConDescuento = $precio - $descuento;
-                                        @endphp
-                                        <div class="price">₡{{ number_format($precioConDescuento) }}
-                                            @if ($item->discount)
-                                                <s class="text-danger"><span
-                                                        class="text-danger">₡{{ number_format($item->price) }}
-                                                    </span></s>
-                                            @endif
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        @endif
-                    @endforeach
-                </div>
-            </div>
-        </div>
-    </div>
 
     @include('layouts.inc.indexfooter')
 @endsection

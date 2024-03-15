@@ -61,6 +61,13 @@ class ClothingCategoryController extends Controller
                 ->groupBy('clothing.id', 'clothing.discount', 'categories.name', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
                 ->simplePaginate(4);
         });
+
+        $category = Cache::remember('category_' . $id, $this->expirationTime, function () use ($id) {
+            return Categories::find($id);
+        });
+        
+        $category_name = $category->name;
+        $category_id = $id;
         
         return view('admin.clothing.index', compact('clothings', 'category_name', 'category_id'));
     }
