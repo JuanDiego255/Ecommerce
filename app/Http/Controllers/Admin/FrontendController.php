@@ -75,7 +75,7 @@ class FrontendController extends Controller
         }
 
         //Promociones
-        $clothings_offer = ClothingCategory::where('clothing.category_id', 16)
+        $clothings_offer = ClothingCategory::where('categories.name', 'Sale')
             ->join('categories', 'clothing.category_id', 'categories.id')
             ->join('stocks', 'clothing.id', 'stocks.clothing_id')
             ->join('sizes', 'stocks.size_id', 'sizes.id')

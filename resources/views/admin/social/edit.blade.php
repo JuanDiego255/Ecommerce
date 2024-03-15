@@ -51,7 +51,7 @@
                     @endif
                     <div class="col-md-12 mb-3">
                         <div class="input-group input-group-static mb-4">
-                            <input required class="form-control" type="file" name="image">
+                            <input class="form-control" type="file" name="image">
                         </div>
                     </div>
 

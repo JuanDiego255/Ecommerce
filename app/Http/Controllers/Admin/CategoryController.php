@@ -52,26 +52,24 @@ class CategoryController extends Controller
     {
         DB::beginTransaction();
         try {
+            $category = Categories::findOrfail($id);
+            $category->name = $request->name;
+            $category->slug = $request->slug;
+            $category->description = $request->description;
+            $category->status = $request->status == TRUE ? '1' : '0';
+            $category->popular = $request->popular == TRUE ? '1' : '0';
+            $category->meta_title = $request->meta_title;
+            $category->meta_descrip = $request->meta_descrip;
+            $category->meta_keywords = $request->meta_keywords;
             if ($request->hasFile('image')) {
-                $category = Categories::findOrfail($id);
 
                 Storage::delete('public/' . $category->image);
-
                 $image = $request->file('image')->store('uploads', 'public');
-
-                $category->name = $request->name;
-                $category->slug = $request->slug;
-                $category->description = $request->description;
-                $category->status = $request->status == TRUE ? '1' : '0';
-                $category->popular = $request->popular == TRUE ? '1' : '0';
                 $category->image = $image;
-                $category->meta_title = $request->meta_title;
-                $category->meta_descrip = $request->meta_descrip;
-                $category->meta_keywords = $request->meta_keywords;
-                $category->update();
-                DB::commit();
-                return redirect('categories')->with(['status', 'Categoría Editada Exitosamente!', 'icon' => 'success']);
             }
+            $category->update();
+            DB::commit();
+            return redirect('categories')->with(['status', 'Categoría Editada Exitosamente!', 'icon' => 'success']);
         } catch (\Throwable $th) {
             DB::rollBack();
             return redirect('/categories')->with(['status' => 'Ocurrió un error al editar la categoría!', 'icon' => 'error']);

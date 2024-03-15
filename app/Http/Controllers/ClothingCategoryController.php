@@ -114,7 +114,7 @@ class ClothingCategoryController extends Controller
                     new FourImage,
                 ],
             ]);
-        
+
             if ($validator->fails()) {
                 return redirect('/new-item/' . $request->category_id)->with(['status' => 'No puede seleccionar más de 4 imágenes!', 'icon' => 'warning']);
             }
@@ -124,7 +124,7 @@ class ClothingCategoryController extends Controller
             $clothing->name = $request->name;
             $clothing->description = $request->description;
             $clothing->price = $request->price;
-            if($request->has('discount')){
+            if ($request->has('discount')) {
                 $clothing->discount = $request->discount;
             }
 
@@ -181,90 +181,86 @@ class ClothingCategoryController extends Controller
     {
         DB::beginTransaction();
         try {
+            $validator = Validator::make($request->all(), [
+                'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Validación básica de cada imagen
+                'images' => [ // Regla personalizada para validar la cantidad máxima de imágenes
+                    new FourImage,
+                ],
+            ]);
+
+            if ($validator->fails()) {
+                return redirect('/edit-clothing/' . $id . '/' . $request->category_id)->with(['status' => 'No puede seleccionar más de 4 imágenes!', 'icon' => 'warning']);
+            }
+            $clothing = ClothingCategory::findOrfail($id);
+
+            $clothing->category_id = $request->category_id;
+            $clothing->name = $request->name;
+            $clothing->description = $request->description;
+            $clothing->price = $request->price;
+            if ($request->has('discount')) {
+                $clothing->discount = $request->discount;
+            }
+
+            $clothing->status = 1;
+
+            if ($request->trending == 1) {
+                $clothing->trending = 1;
+            } else {
+                $clothing->trending = 0;
+            }
+
+            $sizes = $request->input('sizes_id');
+
+            if ($sizes == null) {
+                return redirect('/edit-clothing/' . $id . '/' . $request->category_id)->with(['status' => 'Debe seleccionar al menos una talla!', 'icon' => 'warning']);
+            }
+
+            $clothing->update();
+            SizeCloth::where('clothing_id', $id)->delete();
+
+            $imagesProduct =  ProductImage::where('clothing_id', $id)->get();
+
             if ($request->hasFile('images')) {
-
-                $validator = Validator::make($request->all(), [
-                    'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Validación básica de cada imagen
-                    'images' => [ // Regla personalizada para validar la cantidad máxima de imágenes
-                        new FourImage,
-                    ],
-                ]);
-            
-                if ($validator->fails()) {
-                    return redirect('/edit-clothing/' .$id.'/'. $request->category_id)->with(['status' => 'No puede seleccionar más de 4 imágenes!', 'icon' => 'warning']);
-                }
-                $clothing = ClothingCategory::findOrfail($id);            
-
-                $clothing->category_id = $request->category_id;
-                $clothing->name = $request->name;
-                $clothing->description = $request->description;
-                $clothing->price = $request->price; 
-                if($request->has('discount')){
-                    $clothing->discount = $request->discount;
-                }              
-
-                $clothing->status = 1;
-
-                if ($request->trending == 1) {
-                    $clothing->trending = 1;
-                } else {
-                    $clothing->trending = 0;
-                }
-
-                $sizes = $request->input('sizes_id');
-
-                if ($sizes == null) {
-                    return redirect('/edit-clothing/' .$id.'/'. $request->category_id)->with(['status' => 'Debe seleccionar al menos una talla!', 'icon' => 'warning']);
-                }
-
-                $clothing->update();
-                SizeCloth::where('clothing_id', $id)->delete();
-              
-                $imagesProduct =  ProductImage::where('clothing_id', $id)->get();
-
-                foreach($imagesProduct as $img){
+                foreach ($imagesProduct as $img) {
                     Storage::delete('public/' . $img->image);
                 }
 
                 ProductImage::where('clothing_id', $id)->delete();
+                $images = $request->file('images');
 
-                if ($request->hasFile('images')) {
-                    $images = $request->file('images');
-    
-                    foreach ($images as $image) {
-                        $imageObj = new ProductImage();
-                        $imageObj->clothing_id = $id;
-                        $imageObj->image = $image->store('uploads', 'public');
-                        $imageObj->save();
-                    }
+                foreach ($images as $image) {
+                    $imageObj = new ProductImage();
+                    $imageObj->clothing_id = $id;
+                    $imageObj->image = $image->store('uploads', 'public');
+                    $imageObj->save();
                 }
-
-               
-
-                foreach ($sizes as $size) {
-                    $size_cloth =  new SizeCloth();
-                    $size_cloth->size_id = $size;
-                    $size_cloth->clothing_id = $id;
-                    $size_cloth->save();
-
-                    $stock = Stock::where('clothing_id', $id)
-                        ->where('size_id', $size)->first();
-                    if ($stock === null) {
-                        $stock =  new Stock();
-                        $stock->size_id = $size;
-                        $stock->stock = $request->stock;
-                        $stock->clothing_id = $id;
-                        $stock->save();
-                    } else {
-                        if ($stock->stock == 0) {
-                            Stock::where('clothing_id', $id)
-                                ->where('size_id', $size)->update(['stock' => $request->stock]);
-                        }
-                    }
-                }
-                DB::commit();
-                return redirect('add-item/' . $request->category_id)->with(['status' => 'Prenda Editada Con Exito!', 'icon' => 'success']);
             }
+
+
+
+            foreach ($sizes as $size) {
+                $size_cloth =  new SizeCloth();
+                $size_cloth->size_id = $size;
+                $size_cloth->clothing_id = $id;
+                $size_cloth->save();
+
+                $stock = Stock::where('clothing_id', $id)
+                    ->where('size_id', $size)->first();
+                if ($stock === null) {
+                    $stock =  new Stock();
+                    $stock->size_id = $size;
+                    $stock->stock = $request->stock;
+                    $stock->clothing_id = $id;
+                    $stock->save();
+                } else {
+                    if ($stock->stock == 0) {
+                        Stock::where('clothing_id', $id)
+                            ->where('size_id', $size)->update(['stock' => $request->stock]);
+                    }
+                }
+            }
+            DB::commit();
+            return redirect('add-item/' . $request->category_id)->with(['status' => 'Prenda Editada Con Exito!', 'icon' => 'success']);
         } catch (Exception $th) {
             DB::rollback();
             return redirect()->back()->with(['status' => 'Ocurrió un error al editar la prenda!', 'icon' => 'warning']);

@@ -145,7 +145,7 @@
                         <div class="col-md-12 mb-3">
                             <label class="form-label">Logo</label>
                             <div class="input-group input-group-static mb-4">
-                                <input required class="form-control" type="file" name="logo">
+                                <input class="form-control" type="file" name="logo">
                             </div>
                         </div>
                         @if ($item->login_image)
@@ -155,7 +155,7 @@
                         <div class="col-md-12 mb-3">
                             <label class="form-label">Imagen Login</label>
                             <div class="input-group input-group-static mb-4">
-                                <input required class="form-control" type="file" name="login_image">
+                                <input class="form-control" type="file" name="login_image">
                             </div>
                         </div>
                         <div class="col-md-6">

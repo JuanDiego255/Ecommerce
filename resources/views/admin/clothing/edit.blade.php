@@ -83,7 +83,7 @@
                     @endif
                         <label>Imágenes (Máximo 4)</label>
                         <div class="input-group input-group-static mb-4">
-                            <input multiple required class="form-control form-control-lg" type="file" name="images[]">
+                            <input multiple class="form-control form-control-lg" type="file" name="images[]">
                         </div>
                     </div>
 
