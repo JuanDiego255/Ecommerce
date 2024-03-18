@@ -6,7 +6,7 @@
 @section('content')
     <div class="card">
         <div class="card-header">
-            <h4 class="text-dark">Editar Prenda</h4>
+            <h4 class="text-dark">Editar Producto</h4>
         </div>
         <div class="card-body">
             <form action="{{ url('update-clothing' . '/' . $clothing->id) }}" method="POST" enctype="multipart/form-data">
@@ -15,9 +15,15 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <div class="input-group input-group-static mb-4">
-                            <label>Prenda</label>
+                            <label>Producto</label>
                             <input required value="{{ $clothing->name }}" type="text"
                                 class="form-control form-control-lg" name="name">
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="input-group input-group-static mb-4">
+                            <label>Código</label>
+                            <input required value="{{ $clothing->code }}" type="text" class="form-control form-control-lg" name="code">
                         </div>
                     </div>
                     <input type="hidden" name="category_id" value="{{ $clothing->category_id }}">
@@ -70,6 +76,7 @@
                         @endforeach
                     </div>
                     <div class="col-md-12 mb-3">
+                        <label>Es Tendencia?</label>
                         <div class="form-check">
                             <input {{ $clothing->trending == 1 ? 'checked' : '' }} class="form-check-input" type="checkbox"
                                 value="1" id="trending" name="trending">
@@ -90,7 +97,7 @@
                 </div>
 
                 <div class="col-md-12 mt-3 text-center">
-                    <button type="submit" class="btn btn-velvet">Editar Prenda</button>
+                    <button type="submit" class="btn btn-velvet">Editar Producto</button>
                 </div>
 
             </form>

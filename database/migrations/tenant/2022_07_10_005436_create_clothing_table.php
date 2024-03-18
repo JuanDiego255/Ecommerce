@@ -17,6 +17,7 @@ class CreateClothingTable extends Migration
             $table->id();
             $table->unsignedBigInteger('category_id');
             $table->string('name',50);
+            $table->string('code',100);
             $table->text('description');
             $table->string('price',50);
             $table->string('image',191);
