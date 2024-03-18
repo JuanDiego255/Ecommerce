@@ -39,7 +39,7 @@
     {{-- Trending --}}
     <div class="mt-3 mb-5">
         <div class="container-fluid">
-            @if ($clothings)
+            @if (count($clothings) != 0)
                 <div class="text-center">
                     <h3 class="text-center text-muted mt-5 mb-3">
                         {{ isset($tenantinfo->title_trend) ? $tenantinfo->title_trend : '' }}</h3>
@@ -96,13 +96,13 @@
 
     <hr class="dark horizontal text-danger mb-3">
     {{-- Offer --}}
-    @if ($clothings_offer)
+    @if (count($clothings_offer) != 0)
         <div class="container-fluid mb-5 offer">
             <div class="text-center">
                 <h3 class="text-center text-muted mt-5 mb-4">
                     {{ isset($tenantinfo->title_discount) ? $tenantinfo->title_discount : '' }}</h3>
             </div>
-            
+
             <div class="row">
                 @foreach ($clothings_offer as $item)
                     @php
@@ -160,14 +160,16 @@
 
             </div>
         </div>
+        <hr class="dark horizontal text-danger mb-3">
     @endif
-    <hr class="dark horizontal text-danger mb-3">
-     {{-- Insta --}}
+    {{-- Insta --}}
     <hr class="text-dark">
-    <div class="text-center">
-        <span class="text-muted text-center"><a href="{{ isset($instagram) ? $instagram : '' }}">Instagram</a> |
-            {{ isset($tenantinfo->title_instagram) ? $tenantinfo->title_instagram : '' }}</span>
-    </div>
+    @if (count($social) != 0)
+        <div class="text-center">
+            <span class="text-muted text-center"><a href="{{ isset($instagram) ? $instagram : '' }}">Instagram</a> |
+                {{ isset($tenantinfo->title_instagram) ? $tenantinfo->title_instagram : '' }}</span>
+        </div>
+    @endif
     <div class="row mb-5 container-fluid">
         @foreach ($social as $item)
             <div class="col-md-6 mt-4">

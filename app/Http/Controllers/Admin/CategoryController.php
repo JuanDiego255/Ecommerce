@@ -47,10 +47,10 @@ class CategoryController extends Controller
                 $category->image = $request->file('image')->store('uploads', 'public');
             }
             $category->name = $request->name;
-            $category->slug = $request->slug;
+            $category->slug = $request->name;
             $category->description = $request->description;
-            $category->status = $request->status == 1 ? '1' : '0';
-            $category->popular = $request->popular == 1 ? '1' : '0';
+            $category->status = $request->status == "1" ? '1' : '0';
+            $category->popular = $request->popular == "1" ? '1' : '0';
             $category->meta_title = $request->meta_title;
             $category->meta_descrip = $request->meta_descrip;
             $category->meta_keywords = $request->meta_keywords;
@@ -68,10 +68,10 @@ class CategoryController extends Controller
         try {
             $category = Categories::findOrfail($id);
             $category->name = $request->name;
-            $category->slug = $request->slug;
+            $category->slug = $request->name;
             $category->description = $request->description;
-            $category->status = $request->status == TRUE ? '1' : '0';
-            $category->popular = $request->popular == TRUE ? '1' : '0';
+            $category->status = $request->status == "1" ? '1' : '0';
+            $category->popular = $request->popular == "1" ? '1' : '0';
             $category->meta_title = $request->meta_title;
             $category->meta_descrip = $request->meta_descrip;
             $category->meta_keywords = $request->meta_keywords;
