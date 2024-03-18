@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Models\Buy;
 use App\Models\Cart;
 use App\Models\Categories;
+use App\Models\Settings;
 use App\Models\TenantCarousel;
 use App\Models\TenantInfo;
 use App\Models\TenantSocialNetwork;
@@ -69,6 +70,7 @@ class AppServiceProvider extends ServiceProvider
             }
             
             $tenantinfo = TenantInfo::first();
+            $settings = Settings::first();
 
             view()->share([
                 'view_name' => $view_name,
@@ -80,7 +82,8 @@ class AppServiceProvider extends ServiceProvider
                 'twitter' => $twitter,
                 'instagram' => $instagram,
                 'facebook' => $facebook,
-                'tenantcarousel' => $tenantcarousel
+                'tenantcarousel' => $tenantcarousel,
+                'settings' => $settings
             ]);
         });
     }

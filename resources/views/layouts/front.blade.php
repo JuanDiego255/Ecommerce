@@ -31,6 +31,19 @@
 
 
 </head>
+<style>
+    :root {
+        --navbar: {{ $settings->navbar }};
+        --navbar_text: {{ $settings->navbar_text }};
+        --btn_cart: {{ $settings->btn_cart }};
+        --btn_cart_text: {{ $settings->btn_cart_text }};        
+        --footer: {{ $settings->footer }};        
+        --footer_text: {{ $settings->footer_text }};        
+        --sidebar: {{ $settings->sidebar }};        
+        --sidebar_text: {{ $settings->sidebar_text }};    
+        --hover: {{ $settings->hover }};      
+    }
+</style>
 
 <body class="g-sidenav-show  bg-gray-200">
 

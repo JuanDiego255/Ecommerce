@@ -1,5 +1,5 @@
 <aside
-    class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3   bg-gradient-velvet"
+    class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3 bg-gradient-velvet"
     id="sidenav-main">
     <div class="sidenav-header">
         <i class="fas fa-times p-3 cursor-pointer text-dark opacity-5 position-absolute end-0 top-0 d-none d-xl-none"
@@ -20,54 +20,54 @@
                         $view_name == 'admin_clothing_edit' ||
                         $view_name == 'admin_clothing_add'||
                         $view_name == 'admin_categories_add'||
-                        $view_name == 'admin_categories_edit') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-dark" @endif
+                        $view_name == 'admin_categories_edit') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
                     href="{{ url('categories') }}">
-                    <div class="text-dark text-center me-2 d-flex align-items-center justify-content-center">
+                    <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="material-icons opacity-10">dashboard</i>
                     </div>
                     <span class="nav-link-text ms-1">Categorías</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a @if ($view_name == 'admin_sizes_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-dark" @endif
+                <a @if ($view_name == 'admin_sizes_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
                     href="{{ url('sizes') }}">
-                    <div class="text-dark text-center me-2 d-flex align-items-center justify-content-center">
+                    <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="material-icons opacity-10">fullscreen</i>
                     </div>
                     <span class="nav-link-text ms-1">Tallas</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a @if ($view_name == 'admin_buys_index' || $view_name == 'admin_buys_indexDetail') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-dark" @endif
+                <a @if ($view_name == 'admin_buys_index' || $view_name == 'admin_buys_indexDetail') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
                     href="{{ url('buys-admin') }}">
-                    <div class="text-dark text-center me-2 d-flex align-items-center justify-content-center">
+                    <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="material-icons opacity-10">local_mall</i>
                     </div>
                     <span class="nav-link-text ms-1">Compras</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a @if ($view_name == 'admin_social_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-dark" @endif
+                <a @if ($view_name == 'admin_social_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
                     href="{{ url('social-network') }}">
-                    <div class="text-dark text-center me-2 d-flex align-items-center justify-content-center">
+                    <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="material-icons opacity-10">photo_library</i>
                     </div>
                     <span class="nav-link-text ms-1">Redes Sociales</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a @if ($view_name == 'admin_tenant-info_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-dark" @endif
+                <a @if ($view_name == 'admin_tenant-info_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
                     href="{{ url('tenant-info') }}">
-                    <div class="text-dark text-center me-2 d-flex align-items-center justify-content-center">
+                    <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="material-icons opacity-10">store</i>
                     </div>
                     <span class="nav-link-text ms-1">Mi Negocio</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a @if ($view_name == 'admin_metatags_index' || $view_name == 'admin_metatags_agregar' || $view_name == 'admin_metatags_edit') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-dark" @endif
+                <a @if ($view_name == 'admin_metatags_index' || $view_name == 'admin_metatags_agregar' || $view_name == 'admin_metatags_edit') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
                     href="{{ url('/meta-tags/indexadmin') }}">
-                    <div class="text-dark text-center me-2 d-flex align-items-center justify-content-center">
+                    <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="material-icons opacity-10">sports_score</i>
                     </div>
                     <span class="nav-link-text ms-1">Metatags</span>

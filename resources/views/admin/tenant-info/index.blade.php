@@ -36,7 +36,7 @@
                                 <div class="col-md-6">
                                     <a href="{{ tenant_asset('/') . '/' . $item->logo }}" target="_blank"
                                         rel="noopener noreferrer">
-                                        <img style="width: 100px; height:100px;" class="img-fluid img-thumbnail"
+                                        <img loading="lazy" style="width: 100px; height:100px;" class="img-fluid img-thumbnail"
                                             src="{{ tenant_asset('/') . '/' . $item->logo }}" alt="image">
                                     </a><br>
                                     <span class="text-s">Logo</span>
@@ -46,7 +46,7 @@
                                 <div class="col-md-6">
                                     <a href="{{ tenant_asset('/') . '/' . $item->login_image }}" target="_blank"
                                         rel="noopener noreferrer">
-                                        <img style="width: 100px; height:100px;" class="img-fluid img-thumbnail"
+                                        <img loading="lazy" style="width: 100px; height:100px;" class="img-fluid img-thumbnail"
                                             src="{{ tenant_asset('/') . '/' . $item->login_image }}" alt="image">
                                     </a><br>
                                     <span class="text-s">Imagen Login</span>
@@ -93,7 +93,7 @@
                             @foreach ($tenantcarousel as $key => $carousel)
                                 @include('admin.tenant-info.carousel-modal-edit')
                                 <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
-                                    <div class="page-header min-vh-75 m-3"
+                                    <div class="page-header min-vh-75 m-3 lazy-background" data-background="{{ tenant_asset('/') . '/' . $carousel->image }}"
                                         style="background-image: url('{{ tenant_asset('/') . '/' . $carousel->image }}');">
                                         <span class="mask bg-gradient-dark"></span>
                                         <div class="container">
@@ -256,6 +256,12 @@
             if (confirm('¿Deseas borrar esta imagen del carousel?')) {
                 document.getElementById('deleteFormCarousel' + id).submit();
             }
-        }
+            document.addEventListener("DOMContentLoaded", function() {
+        var lazyBackgrounds = document.querySelectorAll('.lazy-background');
+
+        lazyBackgrounds.forEach(function(background) {
+            var imageUrl = background.getAttribute('data-background');
+            background.style.backgroundImage = 'url(' + imageUrl + ')';
+        });
     </script>
 @endsection

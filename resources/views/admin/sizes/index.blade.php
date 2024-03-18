@@ -66,7 +66,7 @@
                                                 data-bs-target="#edit-size-modal{{ $size->id }}"
                                                 class="btn btn-velvet" style="text-decoration: none;">Editar</button>
 
-                                            <form method="post" action="{{ url('/delete/exercises/' . $size->id) }}"
+                                            <form method="post" action="{{ url('/delete/sizes/' . $size->id) }}"
                                                 style="display:inline">
                                                 {{ csrf_field() }}
                                                 {{ method_field('DELETE') }}

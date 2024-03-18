@@ -4,9 +4,9 @@
         <div class="row mt-5 pt-5">
 
             <div class="col-md-4">
-                <h5 class="text-uppercase text-muted-title">Redes Sociales</h5>
+                <h5 class="text-uppercase text-footer-title">Redes Sociales</h5>
                 <div>
-                    <p class="text-muted text-uppercase text-lg">
+                    <p class="text-footer text-uppercase text-lg">
                         @foreach ($social_network as $social)
                             @php
                                 $social_logo = null;
@@ -31,8 +31,8 @@
                 @guest
                     <h5 class="text-uppercase">Queremos conocerte <i class="fa fa-heart"></i></h5>
                     <div>
-                        <p class="text-muted text-uppercase text-lg">
-                            <a style="text-decoration: none;" class="mr-5 text-muted text-lg"
+                        <p class="text-footer text-uppercase text-lg">
+                            <a style="text-decoration: none;" class="mr-5 text-footer text-lg"
                                 href="{{ route('register') }}">
                                 <i class="fa fa-envelope"></i> {{isset($tenantinfo->title_suscrib_a) ? $tenantinfo->title_suscrib_a : ''}}
                             </a><br>
@@ -45,13 +45,13 @@
 
             </div>
             <div class="col-md-4">
-                <h5 class="text-uppercase text-muted-title">Más Información!</h5>
+                <h5 class="text-uppercase text-footer-title">Más Información!</h5>
                 <div>
-                    <p class="text-muted text-uppercase text-lg">
-                        <a style="text-decoration: none;" class="mr-5 text-muted" href="#">
+                    <p class="text-footer text-uppercase text-lg">
+                        <a style="text-decoration: none;" class="mr-5 text-footer" href="#">
                             <i class="fa fa-envelope"></i> Envíos por correos de C.R
                         </a><br>
-                        <a href="#" class="text-muted">
+                        <a href="#" class="text-footer">
                             <i class="fa fa-whatsapp"> {{isset($tenantinfo->whatsapp) ? $tenantinfo->whatsapp : ''}}</i>
                         </a>
                     </p>
@@ -60,12 +60,12 @@
 
         </div>
         <hr class="dark horizontal text-danger my-0 mt-2 mb-4">
-        <div class="copyright text-center text-lg text-muted mb-4 pb-4 text-uppercase">
+        <div class="copyright text-center text-lg text-footer mb-4 pb-4 text-uppercase">
             ©
             <script>
                 document.write(new Date().getFullYear())
             </script>,
-            <a href="#" class="font-weight-bold" target="_blank">{{isset($tenantinfo->title) ? $tenantinfo->title : ''}}</a>
+            <a href="#" class="font-weight-bold text-footer" target="_blank">{{isset($tenantinfo->title) ? $tenantinfo->title : ''}}</a>
             {{isset($tenantinfo->footer) ? $tenantinfo->footer : ''}}
 
         </div>
