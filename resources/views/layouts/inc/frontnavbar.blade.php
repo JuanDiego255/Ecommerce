@@ -2,7 +2,7 @@
     <div role="navigation" class="border-bottom bg-menu-velvet" id="mainNavigation">
         <div class="flexMain">
             <div class="flex2">
-                <button class="whiteLink siteLink" id="btnMenu" style="border-right:1px solid #eaeaea"
+                <button class="whiteLink siteLink" id="btnMenu" style="color: var(--navbar_text); border-right:1px solid #eaeaea"
                     onclick="menuToggle()"><i class="fas fa-bars me-2"></i> MENU</button>
             </div>
             <div class="flex3 text-center" id="siteBrand">
@@ -12,15 +12,14 @@
 
             <div class="flex2 text-end d-block d-md-none">
                 @guest
-                    <a href="{{ route('login') }}"><button id="btnIngresar" class="whiteLink siteLink"><i
+                    <a href="{{ route('login') }}"><button id="btnIngresar" class="whiteLink siteLink"><i style="color: var(--navbar_text);"
                                 class="fa fa-sign-in"></i></button></a>
                 @else
-                    <a href="{{ url('buys') }}"><button id="btnIngresar" class="whiteLink siteLink"><i
+                    <a href="{{ url('buys') }}"><button id="btnIngresar" class="whiteLink siteLink"><i style="color: var(--navbar_text);"
                                 class="fa fa-credit-card"></i></button></a>
                 @endguest
 
-                <a href="{{ url('view-cart') }}"><button class="whiteLink siteLink"><i class="fa fa-shopping-cart">
-                            {{ $cartNumber }}</i></button></a>
+                <a href="{{ url('view-cart') }}"><button class="whiteLink siteLink"><i style="color: var(--navbar_text);" class="fa fa-shopping-cart cartIcon"> {{ $cartNumber }}</i></button></a>
             </div>
 
             <div class="flex2 text-end d-none d-md-block">

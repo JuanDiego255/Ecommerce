@@ -8749,6 +8749,10 @@ fieldset:disabled .btn {
 .border-pill{
   border: 1px solid var(--btn_cart_text) !important;
 }
+
+.cartIcon{
+  color: var(--btn_cart_text) !important;
+}
 .text-pill{
   color: var(--btn_cart_text) !important;
 }

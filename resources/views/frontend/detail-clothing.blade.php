@@ -259,6 +259,7 @@
                     });
                     var newCartNumber = response.cartNumber
                     $('.badge').text(newCartNumber);
+                    $('.cartIcon').text(' '+newCartNumber);
 
                 }
             });
