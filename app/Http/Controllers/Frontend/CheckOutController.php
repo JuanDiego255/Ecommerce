@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Mail\Mail as MailMail;
+use App\Mail\SampleMail;
 use App\Models\AddressUser;
 use App\Models\Buy;
 use App\Models\BuyDetail;
@@ -17,6 +19,7 @@ use Illuminate\Support\Facades\DB;
 use Artesaos\SEOTools\Facades\OpenGraph;
 use Artesaos\SEOTools\Facades\SEOMeta;
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
 
 class CheckOutController extends Controller
@@ -117,7 +120,7 @@ class CheckOutController extends Controller
         $tags = MetaTags::where('section', 'Checkout')->get();
         $tenantinfo = TenantInfo::first();
         foreach ($tags as $tag) {
-            SEOMeta::setTitle($tag->title . " - " .$tenantinfo->title);
+            SEOMeta::setTitle($tag->title . " - " . $tenantinfo->title);
             SEOMeta::setKeywords($tag->meta_keywords);
             SEOMeta::setDescription($tag->meta_description);
             //Opengraph
@@ -150,6 +153,7 @@ class CheckOutController extends Controller
                     ->select(
                         'clothing.id as clothing_id',
                         'clothing.name as name',
+                        'clothing.code as code',
                         'clothing.description as description',
                         'clothing.price as price',
                         'clothing.discount as discount',
@@ -249,6 +253,7 @@ class CheckOutController extends Controller
                         'clothing.name as name',
                         'clothing.description as description',
                         'clothing.discount as discount',
+                        'clothing.code as code',
                         'clothing.price as price',
                         'clothing.status as status',
                         'sizes.size as size',
@@ -346,11 +351,15 @@ class CheckOutController extends Controller
                 }
 
                 Cart::where('session_id', $session_id)->where('sold', 0)->update(['sold' => 1]);
-                DB::commit();
+                DB::rollBack();
             }
+
+            //dd($request->has('telephone'));
             if ($request->has('telephone')) {
+                $this->sendEmail($cartItems,$total_price);
                 return redirect('/')->with(['status' => 'Se ha realizado la compra con 茅xito.', 'icon' => 'success']);
             }
+
             return true;
         } catch (Exception $th) {
             return false;
@@ -382,7 +391,37 @@ class CheckOutController extends Controller
             return null;
         }
     }
+    public function sendEmail($cartItems, $total_price)
+    {
+        try {
+            $details = [
+                'title' => 'Se realizó una venta por medio del sitio web.',
+                'body' => '---------------------------' . PHP_EOL
+            ];
 
+            foreach ($cartItems as $item) {
+
+                $details['body'] .= $item->name . ' - Código: ' . $item->code . ':' . PHP_EOL;
+                $details['body'] .= 'Cantidad = ' . $item->quantity . PHP_EOL;
+                $details['body'] .= 'Precio C/U = ' . $item->price . PHP_EOL;
+                if($item->discount != 0){
+                    $details['body'] .= 'Descuento = ' . $item->discount . PHP_EOL;
+                }
+                $details['body'] .= 'Talla = ' . $item->size . PHP_EOL;
+                $details['body'] .= '---------------------------' . PHP_EOL;
+            }
+            $details['body'] .= 'Precio (IVA + Envío) = ' . $total_price . PHP_EOL;
+
+            // Aquí enviamos el correo sin necesidad de especificar una vista
+            Mail::raw($details['body'], function ($message) use ($details) {
+                $message->to('jastorgalopez6@gmail.com')
+                    ->subject($details['title']);
+            });
+            return true;
+        } catch (Exception $th) {
+            dd($th->getMessage());
+        }
+    }
     public function process($orderId)
     {
         try {

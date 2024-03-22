@@ -35,15 +35,27 @@
                                 <tbody>
                                     @foreach ($cart_items as $item)
                                         <tr>
+                                            @php
+                                                $precio = $item->price;
+                                                $descuentoPorcentaje = $item->discount;
+                                                // Calcular el descuento
+                                                $descuento = ($precio * $descuentoPorcentaje) / 100;
+                                                // Calcular el precio con el descuento aplicado
+                                                $precioConDescuento = $precio - $descuento;
+                                            @endphp
                                             <input type="hidden" name="prod_id" value="{{ $item->id }}"
                                                 class="prod_id">
-
+                                            <input type="hidden" class="price"
+                                                value="{{ $item->discount > 0 ? $precioConDescuento : $item->price }}">
+                                            <input type="hidden" value="{{ $item->size_id }}" class="size_id"
+                                                name="size">
+                                            <input type="hidden" value="{{ $descuento }}" class="discount" name="discount">
                                             <td class="w-50">
                                                 <div class="d-flex px-2 py-1">
                                                     <div>
                                                         <a target="blank" data-fancybox="gallery"
-                                                            href="{{tenant_asset('/') . '/'. $item->image}}">
-                                                            <img src="{{tenant_asset('/') . '/'. $item->image}}"
+                                                            href="{{ tenant_asset('/') . '/' . $item->image }}">
+                                                            <img src="{{ tenant_asset('/') . '/' . $item->image }}"
                                                                 class="img-fluid shadow border-radius-lg w-25">
                                                         </a>
                                                     </div>
@@ -54,23 +66,16 @@
 
                                             </td>
                                             <td class="align-middle text-center text-sm">
-                                                @php
-                                                    $precio = $item->price;
-                                                    $descuentoPorcentaje = $item->discount;
-                                                    // Calcular el descuento
-                                                    $descuento = ($precio * $descuentoPorcentaje) / 100;
-                                                    // Calcular el precio con el descuento aplicado
-                                                    $precioConDescuento = $precio - $descuento;
-                                                @endphp
+
                                                 <p class="text-success mb-0">₡
                                                     {{ $item->discount > 0 ? $precioConDescuento : $item->price }}
                                                     @if ($item->discount > 0)
                                                         <s class="text-danger">{{ $item->price }}</s>
                                                     @endif
                                                 </p>
-                                                <input type="hidden" class="price"
-                                                    value="{{ $item->discount > 0 ? $precioConDescuento : $item->price }}">
+
                                             </td>
+
                                             <td>
                                                 <p class="text-center text-truncate para mb-0">{{ $item->size }}
                                                 </p>
@@ -125,7 +130,7 @@
                                 @if ($you_save > 0)
                                     <li class="list-group-item d-flex justify-content-between align-items-center px-0">
                                         Ahorraste
-                                        <span id="totalIvaElement">₡{{ number_format($you_save) }}</span>
+                                        <span id="totalDiscountElement">₡{{ number_format($you_save) }}</span>
                                     </li>
                                 @endif
 
@@ -159,6 +164,7 @@
                 e.preventDefault();
                 var cloth_id = $(this).closest('.product_data').find('.prod_id').val();
                 var quantity = $(this).closest('.product_data').find('.quantity').val();
+
                 $.ajaxSetup({
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -182,6 +188,7 @@
                 var cloth_id = $(this).closest('tr').find('.prod_id').val();
                 var quantity = $(this).val();
                 var price = $(this).closest('tr').find('.price').val();
+                var size_id = $(this).closest('tr').find('.size_id').val();
 
                 $.ajaxSetup({
                     headers: {
@@ -194,6 +201,7 @@
                     data: {
                         'clothing_id': cloth_id,
                         'quantity': quantity,
+                        'size': size_id,
                     },
                     success: function(response) {
                         calcularTotal();
@@ -207,14 +215,18 @@
             let total_cloth = 0;
             let iva = 0.13;
             let total_iva = 0;
+            let you_save = 0;
             // Obtener todas las filas de la tabla
             const filas = document.querySelectorAll('#cartTable tbody tr');
 
             filas.forEach((fila) => {
                 const precio = parseFloat(fila.querySelector('.price').value);
+                const discount = parseFloat(fila.querySelector('.discount').value);
                 const cantidad = parseInt(fila.querySelector('.quantity').value);
 
                 const subtotal = precio * cantidad;
+                const subtotal_discount = discount * cantidad;
+                you_save += subtotal_discount;
                 total += subtotal;
             });
 
@@ -225,10 +237,12 @@
             // Mostrar el total actualizado en el elemento correspondiente
             const totalElement = document.getElementById('totalPriceElement');
             const totalIvaElement = document.getElementById('totalIvaElement');
+            const totalDiscountElement = document.getElementById('totalDiscountElement');
             const totalCloth = document.getElementById('totalCloth');
             totalElement.textContent = `₡${total.toLocaleString()}`;
             totalIvaElement.textContent = `₡${total_iva.toLocaleString()}`;
             totalCloth.textContent = `₡${total_cloth.toLocaleString()}`;
+            totalDiscountElement.textContent = `₡${you_save.toLocaleString()}`;
         }
     </script>
 @endsection

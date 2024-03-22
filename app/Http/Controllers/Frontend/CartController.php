@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Artesaos\SEOTools\Facades\OpenGraph;
 use Artesaos\SEOTools\Facades\SEOMeta;
+use Exception;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\URL;
 
@@ -92,7 +93,7 @@ class CartController extends Controller
             }
         } catch (\Throwable $th) {
             DB::rollBack();
-            return response()->json(['status' => 'Ocurrió un error al agregar la prenda al carrito', 'icon' => 'success']);
+            return response()->json(['status' => 'Ocurrió un error al agregar la prenda al carrito '.$th->getMessage(), 'icon' => 'success']);
         }
     }
     public function viewCart()
@@ -219,8 +220,9 @@ class CartController extends Controller
             $precio = $item->price;
             $descuentoPorcentaje = $item->discount;
             // Calcular el descuento
-            $descuento = ($precio * $descuentoPorcentaje) / 100;
-            $you_save = $you_save + $descuento;
+            $descuento = ($precio * $descuentoPorcentaje) / 100;            
+            
+            $you_save += $descuento * $item->quantity;            
             // Calcular el precio con el descuento aplicado
             $precioConDescuento = $precio - $descuento;
             $cloth_price += $precioConDescuento * $item->quantity;
@@ -286,28 +288,38 @@ class CartController extends Controller
         try {
             $clothing_id = $request->clothing_id;
             $quantity = $request->quantity;
+            $size = $request->size;
             $session_id = session()->get('session_id');
 
             if (Auth::check()) {
 
-                if (Cart::where('clothing_id', $clothing_id)->where('user_id', Auth::id())->exists()) {
-                    $cartitem = Cart::where('clothing_id', $clothing_id)->where('user_id', Auth::id())->first();
+                if (Cart::where('clothing_id', $clothing_id)->where('user_id', Auth::id())->where('sold', 0)->exists()) {
+                    $cartitem = Cart::where('clothing_id', $clothing_id)
+                    ->where('user_id', Auth::user()->id)
+                    ->where('sold', 0)
+                    ->where('size_id', $size)
+                    ->first();
                     $cartitem->quantity = $quantity;
                     $cartitem->update();
                     DB::commit();
-                    return response()->json(['status' => 'Exito']);
+                    return response()->json(['status' => $clothing_id]);
                 }
             } else {
                 if (Cart::where('clothing_id', $clothing_id)->where('session_id', $session_id)->exists()) {
-                    $cartitem = Cart::where('clothing_id', $clothing_id)->where('session_id', $session_id)->first();
+                    $cartitem = Cart::where('clothing_id', $clothing_id)
+                    ->where('session_id', $session_id)
+                    ->where('sold', 0)
+                    ->where('size_id', $size)
+                    ->first();
                     $cartitem->quantity = $quantity;
                     $cartitem->update();
                     DB::commit();
                     return response()->json(['status' => 'Exito']);
                 }
             }
-        } catch (\Throwable $th) {
+        } catch (Exception $th) {
             DB::rollBack();
+            return response()->json(['error' => $th->getMessage()]);
         }
     }
 }

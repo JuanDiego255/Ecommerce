@@ -27,6 +27,7 @@ class CreateTenantInfosTable extends Migration
             $table->string('login_image',191);
             $table->string('whatsapp',30);
             $table->string('sinpe',30);
+            $table->string('email',30)->nullable();
             $table->timestamps();
         });
     }
