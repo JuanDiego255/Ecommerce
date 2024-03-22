@@ -307,7 +307,7 @@ class FrontendController extends Controller
             )
             ->groupBy('clothing.id', 'clothing.discount', 'categories.name', 'categories.id', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
             ->inRandomOrder()
-            ->take(5)
+            ->take(8)
             ->get();
 
         return view('frontend.detail-clothing', compact('clothes', 'category_id', 'size_active', 'clothings_trending'));
