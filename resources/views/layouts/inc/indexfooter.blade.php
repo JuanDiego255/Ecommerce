@@ -19,8 +19,8 @@
                                     $social_logo = 'fa fa-twitter';
                                 }
                             @endphp
-                            <a data-bs-toggle="modal" data-bs-target="#edit-tenant-social-modal{{ $social->id }}"
-                                class="mr-5 text-footer" href="{{$social->url}}">
+                            <a target="blank"
+                                class="mr-5 text-footer" href="{{url($social->url)}}">
                                 <i class="{{ $social_logo }}"> {{ $social->social_network }}</i>
                             </a><br>
                         @endforeach
