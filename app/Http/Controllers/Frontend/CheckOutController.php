@@ -351,12 +351,12 @@ class CheckOutController extends Controller
                 }
 
                 Cart::where('session_id', $session_id)->where('sold', 0)->update(['sold' => 1]);
-                DB::rollBack();
+                DB::commit();
             }
 
             //dd($request->has('telephone'));
             if ($request->has('telephone')) {
-                $this->sendEmail($cartItems,$total_price);
+                $this->sendEmail($cartItems, $total_price);
                 return redirect('/')->with(['status' => 'Se ha realizado la compra con 茅xito.', 'icon' => 'success']);
             }
 
@@ -394,29 +394,34 @@ class CheckOutController extends Controller
     public function sendEmail($cartItems, $total_price)
     {
         try {
-            $details = [
-                'title' => 'Se realizó una venta por medio del sitio web.',
-                'body' => '---------------------------' . PHP_EOL
-            ];
+            $tenantinfo = TenantInfo::first();
+            $email = $tenantinfo->email;
+            if ($email) {
+               
+                $details = [
+                    'title' => 'Se realizó una venta por medio del sitio web.',
+                    'body' => '---------------------------' . PHP_EOL
+                ];
 
-            foreach ($cartItems as $item) {
+                foreach ($cartItems as $item) {
 
-                $details['body'] .= $item->name . ' - Código: ' . $item->code . ':' . PHP_EOL;
-                $details['body'] .= 'Cantidad = ' . $item->quantity . PHP_EOL;
-                $details['body'] .= 'Precio C/U = ' . $item->price . PHP_EOL;
-                if($item->discount != 0){
-                    $details['body'] .= 'Descuento = ' . $item->discount . PHP_EOL;
+                    $details['body'] .= $item->name . ' - Código: ' . $item->code . ':' . PHP_EOL;
+                    $details['body'] .= 'Cantidad = ' . $item->quantity . PHP_EOL;
+                    $details['body'] .= 'Precio C/U = ' . $item->price . PHP_EOL;
+                    if ($item->discount != 0) {
+                        $details['body'] .= 'Descuento = ' . $item->discount . PHP_EOL;
+                    }
+                    $details['body'] .= 'Talla = ' . $item->size . PHP_EOL;
+                    $details['body'] .= '---------------------------' . PHP_EOL;
                 }
-                $details['body'] .= 'Talla = ' . $item->size . PHP_EOL;
-                $details['body'] .= '---------------------------' . PHP_EOL;
-            }
-            $details['body'] .= 'Precio (IVA + Envío) = ' . $total_price . PHP_EOL;
+                $details['body'] .= 'Precio (IVA + Envío) = ' . $total_price . PHP_EOL;
 
-            // Aquí enviamos el correo sin necesidad de especificar una vista
-            Mail::raw($details['body'], function ($message) use ($details) {
-                $message->to('jastorgalopez6@gmail.com')
-                    ->subject($details['title']);
-            });
+                // Aquí enviamos el correo sin necesidad de especificar una vista
+                Mail::raw($details['body'], function ($message) use ($details, $email) {
+                    $message->to($email)
+                        ->subject($details['title']);
+                });
+            }
             return true;
         } catch (Exception $th) {
             dd($th->getMessage());

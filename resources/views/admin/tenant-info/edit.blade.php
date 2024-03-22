@@ -187,6 +187,20 @@
                                 @enderror
                             </div>
                         </div>
+                        <div class="col-md-6">
+                            <div
+                                class="input-group input-group-lg input-group-outline {{ isset($item->email) ? 'is-filled' : '' }} my-3">
+                                <label class="form-label">E-mail</label>
+                                <input placeholder="Este E-mail es para recibir correos cuando se realiza una compra" value="{{ isset($item->email) ? $item->email : '' }}" type="email"
+                                    class="form-control form-control-lg @error('email') is-invalid @enderror"
+                                    name="email" id="email">
+                                @error('email')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>Campo Requerido</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
                     </div>
 
 

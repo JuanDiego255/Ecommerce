@@ -217,7 +217,12 @@
                                         <a href="#" class="text-muted">
                                             <i class="fa fa-whatsapp"> {{ $item->whatsapp }}</i>
                                         </a>
+                                        <a href="#" class="text-muted">
+                                            <i class="fa fa-envelope"> {{ $item->email }}</i>
+                                        </a>
+                                        
                                     </p>
+                                    <span class="text-s">Este correo es donde llegarán las notificaciones de las compras realizadas</span>
                                 </div>
                             </div>
 

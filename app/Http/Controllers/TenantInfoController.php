@@ -78,6 +78,7 @@ class TenantInfoController extends Controller
             $tenantinfo->footer = $request->footer;
             $tenantinfo->whatsapp = $request->whatsapp;
             $tenantinfo->sinpe = $request->sinpe;
+            $tenantinfo->email = $request->email;
 
             $tenantinfo->save();
             DB::commit();
@@ -134,6 +135,7 @@ class TenantInfoController extends Controller
             $tenantinfo->footer = $request->footer;
             $tenantinfo->whatsapp = $request->whatsapp;
             $tenantinfo->sinpe = $request->sinpe;
+            $tenantinfo->email = $request->email;
             $tenantinfo->update();
             DB::commit();
             return redirect('/tenant-info')->with(['status' => 'Se ha editado la información del negocio con éxito', 'icon' => 'success']);
