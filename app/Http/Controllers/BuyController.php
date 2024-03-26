@@ -45,12 +45,14 @@ class BuyController extends Controller
             OpenGraph::setTitle($tag->title);
             OpenGraph::setDescription($tag->meta_og_description);
         }
+        $iva = $tenantinfo->iva;
 
-        return view('frontend.buys', compact('buys'));
+        return view('frontend.buys', compact('buys','iva'));
     }
 
     public function indexAdmin()
     {
+        $tenantinfo = TenantInfo::first();
         $buys = Cache::remember('buys_data', $this->expirationTime, function () {
             return Buy::leftJoin('users', 'buys.user_id', 'users.id')
                 ->select(
@@ -73,16 +75,18 @@ class BuyController extends Controller
                 )
                 ->get();
         });
+        $iva = $tenantinfo->iva;
 
         if (count($buys) == 0) {
             return redirect()->back()->with(['status' => 'No hay compras registradas!', 'icon' => 'warning']);
         }
 
-        return view('admin.buys.index', compact('buys'));
+        return view('admin.buys.index', compact('buys','iva'));
     }
 
     public function buyDetails($id)
     {
+        $tenantinfo = TenantInfo::first();
         $buysDetails = Cache::remember('buys_details_' . Auth::user()->id . '_' . $id, $this->expirationTime, function () use ($id) {
             return BuyDetail::where('buys.user_id', Auth::user()->id)
                 ->where('buy_details.buy_id', $id)
@@ -112,7 +116,9 @@ class BuyController extends Controller
                     DB::raw('IFNULL(product_images.image, "") as image') // Obtener la primera imagen del producto
                 )
                 ->get();
+                
         });
+        $iva = $tenantinfo->iva;
 
         $tags = MetaTags::where('section', 'Mis Compras')->get();
         $tenantinfo = TenantInfo::first();
@@ -126,11 +132,12 @@ class BuyController extends Controller
             OpenGraph::setDescription($tag->meta_og_description);
         }
 
-        return view('frontend.detail-buy', compact('buysDetails'));
+        return view('frontend.detail-buy', compact('buysDetails','iva'));
     }
 
     public function buyDetailsAdmin($id)
     {
+        $tenantinfo = TenantInfo::first();
         $buysDetails = Cache::remember('buy_details_' . $id, $this->expirationTime, function () use ($id) {
             return BuyDetail::where('buy_details.buy_id', $id)
                 ->join('buys', 'buy_details.buy_id', '=', 'buys.id')
@@ -173,8 +180,10 @@ class BuyController extends Controller
                 )
                 ->get();
         });
+        $iva = $tenantinfo->iva;
+        $tenant = $tenantinfo->tenant;
 
-        return view('admin.buys.indexDetail', compact('buysDetails'));
+        return view('admin.buys.indexDetail', compact('buysDetails','iva','tenant'));
     }
 
     public function approve($id, $approved)

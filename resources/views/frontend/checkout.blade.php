@@ -21,11 +21,12 @@
                         <h3 class="ps-3 mt-2 text-center">
                             Detalles Básicos
                         </h3>
-                       
+
                         <div class="card-body">
                             <form action="{{ url('payment') }}" method="POST" enctype="multipart/form-data">
                                 @csrf
                                 <input type="hidden" value="0" name="delivery" id="delivery">
+                                <input type="hidden" value="{{ $delivery }}" name="total_delivery" id="total_delivery">
                                 <div class="row checkout-form">
                                     <div class="col-md-6">
                                         <div class="input-group input-group-static mb-4">
@@ -55,20 +56,29 @@
                                     </div>
                                     <div class="col-md-6 mt-2">
                                         <div class="input-group input-group-static mb-4">
-                                            <label>Dirección 1</label>
+                                            <label>
+                                                @if ($tenant == 'mandicr')
+                                                    Dirección Exacta
+                                                @else
+                                                    Dirección 1
+                                                @endif
+                                            </label>
                                             <input value="{{ isset($user_info->address) ? $user_info->address : '' }}"
                                                 required type="text" name="address"
                                                 class="form-control float-left w-100">
                                         </div>
                                     </div>
-                                    <div class="col-md-6 mt-2">
-                                        <div class="input-group input-group-static mb-4">
-                                            <label>Dirección 2</label>
-                                            <input
-                                                value="{{ isset($user_info->address_two) ? $user_info->address_two : '' }}"
-                                                type="text" name="address_two" class="form-control float-left w-100">
+                                    @if ($tenant != 'mandicr')
+                                        <div class="col-md-6 mt-2">
+                                            <div class="input-group input-group-static mb-4">
+                                                <label>Dirección 2</label>
+                                                <input
+                                                    value="{{ isset($user_info->address_two) ? $user_info->address_two : '' }}"
+                                                    type="text" name="address_two" class="form-control float-left w-100">
+                                            </div>
                                         </div>
-                                    </div>
+                                    @endif
+
                                     <div class="col-md-6 mt-2">
                                         <div class="input-group input-group-static mb-4">
                                             <label>Ciudad</label>
@@ -108,7 +118,8 @@
                                             <input required class="form-control" type="file" name="image">
                                         </div>
                                     </div>
-                                    <span class="text-muted">SINPE Móvil: {{isset($tenantinfo->sinpe) ? $tenantinfo->sinpe : ''}}</span>
+                                    <span class="text-muted">SINPE Móvil:
+                                        {{ isset($tenantinfo->sinpe) ? $tenantinfo->sinpe : '' }}</span>
 
                                     <button id="btnSinpe" type="submit" class="btn btn-add_to_cart d-block h8">Pagar
                                         ₡<span id="btnPay">{{ number_format($total_price) }}</span></button>
@@ -186,7 +197,7 @@
                                 <div class="d-flex h7">
                                     <p class="">Total + I.V.A</p>
                                     <p class="ms-auto"></span>₡<span
-                                        id="totalIva">{{ number_format($total_price) }}</span></p>
+                                            id="totalIva">{{ number_format($total_price) }}</span></p>
                                 </div>
                                 <p class="fw-bold h7">Tarifa de envío por correos de C.R ₡3000 (Grecia o alrededores no se
                                     cobra envío.)</p>
@@ -240,61 +251,61 @@
     </script>
     <script>
         /*  paypal.Buttons({
-                            locale: 'es',
-                            fundingSource: paypal.FUNDING.CARD,
-                            createOrder: function(data, actions) {
-                                return actions.order.create({
+                                    locale: 'es',
+                                    fundingSource: paypal.FUNDING.CARD,
+                                    createOrder: function(data, actions) {
+                                        return actions.order.create({
 
-                                    payer: {
-                                        email_address: '{{ isset(Auth::user()->email) ? Auth::user()->email : '' }}',
-                                        name: {
-                                            given_name: '{{ isset(Auth::user()->name) ? Auth::user()->name : '' }}',
-                                            surname: ''
-                                        },
-                                        address: {
-                                            country_code: "CR",
-                                        }
-                                    },
-                                    purchase_units: [{
-                                        amount: {
-                                            value: {{ $paypal_amount }}
-                                        }
-                                    }]
-                                });
-                            },
-
-                            onApprove(data) {
-                                return fetch("/paypal/process/" + data.orderID)
-                                    .then((response) => response.json())
-                                    .then((orderData) => {
-                                        if (!orderData.success) {
-                                            swal({
-                                                title: orderData.status,
-                                                icon: orderData.icon,
-                                            }).then((value) => {
-                                                // Esta función se ejecuta cuando el usuario hace clic en el botón "Ok"
-                                                if (value) {
-                                                    // Recargar la página
-                                                    window.location.href = '{{ url('/') }}';
+                                            payer: {
+                                                email_address: '{{ isset(Auth::user()->email) ? Auth::user()->email : '' }}',
+                                                name: {
+                                                    given_name: '{{ isset(Auth::user()->name) ? Auth::user()->name : '' }}',
+                                                    surname: ''
+                                                },
+                                                address: {
+                                                    country_code: "CR",
                                                 }
-                                            });
-                                        }
-                                        swal({
-                                            title: orderData.status,
-                                            icon: orderData.icon,
-                                        }).then((value) => {
-                                            // Esta función se ejecuta cuando el usuario hace clic en el botón "Ok"
-                                            if (value) {
-                                                // Recargar la página
-                                                window.location.href = '{{ url('/') }}';
-                                            }
+                                            },
+                                            purchase_units: [{
+                                                amount: {
+                                                    value: {{ $paypal_amount }}
+                                                }
+                                            }]
                                         });
-                                    });
-                            },
-                            onError: function(err) {
-                                alert(err);
-                            }
-                        }).render('#paypal-button-container'); */
+                                    },
+
+                                    onApprove(data) {
+                                        return fetch("/paypal/process/" + data.orderID)
+                                            .then((response) => response.json())
+                                            .then((orderData) => {
+                                                if (!orderData.success) {
+                                                    swal({
+                                                        title: orderData.status,
+                                                        icon: orderData.icon,
+                                                    }).then((value) => {
+                                                        // Esta función se ejecuta cuando el usuario hace clic en el botón "Ok"
+                                                        if (value) {
+                                                            // Recargar la página
+                                                            window.location.href = '{{ url('/') }}';
+                                                        }
+                                                    });
+                                                }
+                                                swal({
+                                                    title: orderData.status,
+                                                    icon: orderData.icon,
+                                                }).then((value) => {
+                                                    // Esta función se ejecuta cuando el usuario hace clic en el botón "Ok"
+                                                    if (value) {
+                                                        // Recargar la página
+                                                        window.location.href = '{{ url('/') }}';
+                                                    }
+                                                });
+                                            });
+                                    },
+                                    onError: function(err) {
+                                        alert(err);
+                                    }
+                                }).render('#paypal-button-container'); */
 
         function togglePaypalButton() {
             var checkBox = document.getElementById("sinpe");
@@ -314,7 +325,7 @@
         }
 
         function checkEnvio() {
-            var envio = 3000;
+            var envio = parseFloat(document.getElementById("total_delivery").value);
             var checkBox = document.getElementById("envio");
             var labelTotal = document.getElementById("totalIva");
             var labelBtnPay = document.getElementById("btnPay");
@@ -322,11 +333,11 @@
             var cardContent = document.getElementById("cardContent");
             var numericTotalIva = parseFloat(labelTotal.textContent.replace(',', ''));
 
-            if (checkBox.checked) {                
+            if (checkBox.checked) {
                 labelTotal.textContent = `${(numericTotalIva + envio).toLocaleString()}`;
                 labelBtnPay.textContent = `${(numericTotalIva + envio).toLocaleString()}`;
                 inputTotal.value = envio;
-            } else {             
+            } else {
                 labelTotal.textContent = `${(numericTotalIva - envio).toLocaleString()}`;
                 labelBtnPay.textContent = `${(numericTotalIva - envio).toLocaleString()}`;
                 inputTotal.value = 0;

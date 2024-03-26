@@ -40,6 +40,7 @@ class CheckOutController extends Controller
 
     public function index()
     {
+        $tenantinfo = TenantInfo::first();
         $user_info = null;
         if (Auth::check()) {
             $cartItems = Cart::where('user_id', Auth::id())
@@ -70,7 +71,7 @@ class CheckOutController extends Controller
             }
             $user_info = AddressUser::where('user_id', Auth::user()->id)
                 ->where('status', 1)->first();
-            $iva = $cloth_price * 0.13;
+            $iva = $cloth_price * $tenantinfo->iva;
             $total_price = $cloth_price + $iva;
         } else {
             $session_id = session()->get('session_id');
@@ -101,9 +102,12 @@ class CheckOutController extends Controller
                 $cloth_price += $precioConDescuento * $item->quantity;
             }
 
-            $iva = $cloth_price * 0.13;
+            $iva = $cloth_price * $tenantinfo->iva;
             $total_price = $cloth_price + $iva;
         }
+
+        $delivery = $tenantinfo->delivery;
+        $tenant = $tenantinfo->tenant;
 
         /* $response = file_get_contents(env('URL_TIPO_CAMBIO_CR'));
 
@@ -129,7 +133,7 @@ class CheckOutController extends Controller
             OpenGraph::setDescription($tag->meta_og_description);
         }
 
-        return view('frontend.checkout', compact('cartItems', 'iva', 'total_price', 'cloth_price', 'user_info', 'paypal_amount'));
+        return view('frontend.checkout', compact('cartItems', 'tenant', 'delivery', 'iva', 'total_price', 'cloth_price', 'user_info', 'paypal_amount'));
     }
 
     public function payment(
@@ -144,6 +148,8 @@ class CheckOutController extends Controller
         $postal_code = null
     ) {
         try {
+            $tenantinfo = TenantInfo::first();
+            $tenant = $tenantinfo->tenant;
             $request = request();
             DB::beginTransaction();
             if (Auth::check()) {
@@ -173,7 +179,7 @@ class CheckOutController extends Controller
                     $precioConDescuento = $precio - $descuento;
                     $cloth_price += $precioConDescuento * $cart->quantity;
                 }
-                $iva = $cloth_price * 0.13;
+                $iva = $cloth_price * $tenantinfo->iva;
                 $total_price = $cloth_price + $iva;
 
                 $buy = new Buy();
@@ -184,7 +190,7 @@ class CheckOutController extends Controller
                     if ($request->has('address')) {
                         $address = $request->address;
                     }
-                    if ($request->has('address_two')) {
+                    if ($request->has('address_two') && $tenant != "mandicr") {
                         $address_two = $request->address_two;
                     }
                     if ($request->has('city')) {
@@ -228,8 +234,8 @@ class CheckOutController extends Controller
                     $buy_detail->buy_id = $buy_id;
                     $buy_detail->clothing_id = $cart->clothing_id;
                     $buy_detail->size_id = $cart->size_id;
-                    $buy_detail->total = ($precioConDescuento * $cart->quantity) + ($precioConDescuento * 0.13);
-                    $buy_detail->iva = $precioConDescuento * 0.13;
+                    $buy_detail->total = ($precioConDescuento * $cart->quantity) + ($precioConDescuento * $tenantinfo->iva);
+                    $buy_detail->iva = $precioConDescuento * $tenantinfo->iva;
                     $buy_detail->quantity = $cart->quantity;
                     $buy_detail->cancel_item = 0;
                     $buy_detail->save();
@@ -271,7 +277,7 @@ class CheckOutController extends Controller
                     $precioConDescuento = $precio - $descuento;
                     $cloth_price += $precioConDescuento * $cart->quantity;
                 }
-                $iva = $cloth_price * 0.13;
+                $iva = $cloth_price * $tenantinfo->iva;
                 $total_price = $cloth_price + $iva;
 
                 $buy = new Buy();
@@ -291,7 +297,7 @@ class CheckOutController extends Controller
                     if ($request->has('address')) {
                         $address = $request->address;
                     }
-                    if ($request->has('address_two')) {
+                    if ($request->has('address_two') && $tenant != "mandicr") {
                         $address_two = $request->address_two;
                     }
                     if ($request->has('city')) {
@@ -337,8 +343,8 @@ class CheckOutController extends Controller
                     $buy_detail->buy_id = $buy_id;
                     $buy_detail->clothing_id = $cart->clothing_id;
                     $buy_detail->size_id = $cart->size_id;
-                    $buy_detail->total = ($precioConDescuento * $cart->quantity) + ($precioConDescuento * 0.13);
-                    $buy_detail->iva = $precioConDescuento * 0.13;
+                    $buy_detail->total = ($precioConDescuento * $cart->quantity) + ($precioConDescuento * $tenantinfo->iva);
+                    $buy_detail->iva = $precioConDescuento * $tenantinfo->iva;
                     $buy_detail->quantity = $cart->quantity;
                     $buy_detail->cancel_item = 0;
                     $buy_detail->save();
@@ -397,7 +403,7 @@ class CheckOutController extends Controller
             $tenantinfo = TenantInfo::first();
             $email = $tenantinfo->email;
             if ($email) {
-               
+
                 $details = [
                     'title' => 'Se realizó una venta por medio del sitio web.',
                     'body' => '---------------------------' . PHP_EOL

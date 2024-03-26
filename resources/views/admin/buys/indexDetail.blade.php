@@ -4,7 +4,8 @@
     {!! OpenGraph::generate() !!}
 @endsection
 @section('content')
-    <h1 class="text-dark text-center">Detalles De La Compra</h1>
+    <h1 class="text-dark text-center">
+        Detalles De La Compra</h1>
     <div class="container-fluid">
         <div class="row w-100">
             <div class="col-md-6">
@@ -46,10 +47,15 @@
                                             Talla</th>
                                         <th
                                             class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                            Precio + IVA</th>
-                                        <th
-                                            class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                            IVA</th>
+                                            Precio @if ($iva > 0)
+                                                I.V.A
+                                            @endif
+                                        </th>
+                                        @if ($iva > 0)
+                                            <th
+                                                class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
+                                                IVA</th>
+                                        @endif
                                         <th
                                             class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                             Estado</th>
@@ -69,8 +75,8 @@
                                                 <div class="d-flex px-2 py-1">
                                                     <div>
                                                         <a target="blank" data-fancybox="gallery"
-                                                            href="{{tenant_asset('/') . '/'. $buy->image}}">
-                                                            <img src="{{tenant_asset('/') . '/'. $buy->image}}"
+                                                            href="{{ tenant_asset('/') . '/' . $buy->image }}">
+                                                            <img src="{{ tenant_asset('/') . '/' . $buy->image }}"
                                                                 class="text-center img-fluid shadow border-radius-lg w-25"></a>
 
                                                     </div>
@@ -85,9 +91,12 @@
                                             <td class="align-middle text-xxs text-center">
                                                 <p class=" font-weight-bold mb-0">₡{{ number_format($buy->total) }}</p>
                                             </td>
-                                            <td class="align-middle text-xxs text-center">
-                                                <p class=" font-weight-bold mb-0">₡{{ number_format($buy->iva) }}</p>
-                                            </td>
+                                            @if ($iva > 0)
+                                                <td class="align-middle text-xxs text-center">
+                                                    <p class=" font-weight-bold mb-0">₡{{ number_format($buy->iva) }}</p>
+                                                </td>
+                                            @endif
+
                                             <td class="align-middle text-xxs text-center">
                                                 <p class=" font-weight-bold mb-0">
                                                     @switch($buy->cancel_item)
@@ -115,7 +124,7 @@
                                                         @csrf
 
                                                         <input type="hidden" name="action" value="1">
-                                                        <input type="hidden" name="buy" value="{{$buy->buy}}">
+                                                        <input type="hidden" name="buy" value="{{ $buy->buy }}">
                                                         <button class="btn btn-velvet text-white btn-tooltip"
                                                             data-bs-toggle="tooltip" data-bs-placement="top"
                                                             title="Aprobar Cancelación" data-container="body"
@@ -131,7 +140,7 @@
                                                         @csrf
 
                                                         <input type="hidden" name="action" value="0">
-                                                        <input type="hidden" name="buy" value="{{$buy->buy}}">
+                                                        <input type="hidden" name="buy" value="{{ $buy->buy }}">
                                                         <button class="btn btn-velvet text-white btn-tooltip"
                                                             data-bs-toggle="tooltip" data-bs-placement="top"
                                                             title="Desaprobar Cancelación" data-container="body"
@@ -171,11 +180,21 @@
                                             {{ isset($item->province) ? $item->province : $item->province_b }}<br>
                                             <i class="material-icons my-auto">done</i>
                                             Ciudad: {{ isset($item->city) ? $item->city : $item->city_b }}<br>
-                                            <i class="material-icons my-auto">done</i>
-                                            Dirección: {{ isset($item->address) ? $item->address : $item->address_b }}<br>
-                                            <i class="material-icons my-auto">done</i>
-                                            Dirección 2:
-                                            {{ isset($item->address_two) ? $item->address_two : $item->address_two_b }}<br>
+                                            @if ($tenant != 'mandicr')
+                                                <i class="material-icons my-auto">done</i>
+                                                Dirección:
+                                                {{ isset($item->address) ? $item->address : $item->address_b }}<br>
+                                            @else
+                                                <i class="material-icons my-auto">done</i>
+                                                Dirección Exacta:
+                                                {{ isset($item->address) ? $item->address : $item->address_b }}<br>
+                                            @endif
+                                            @if ($tenant != 'mandicr')
+                                                <i class="material-icons my-auto">done</i>
+                                                Dirección 2:
+                                                {{ isset($item->address_two) ? $item->address_two : $item->address_two_b }}<br>
+                                            @endif
+
                                             <i class="material-icons my-auto">done</i>
                                             Código Postal:
                                             {{ isset($item->postal_code) ? $item->postal_code : $item->postal_code_b }}
@@ -185,67 +204,67 @@
 
                                     </div>
                                     <hr class="dark horizontal my-0">
-                                    @break
-                                @endforeach
-                                <div class="card-footer d-flex">
+                                @break
+                            @endforeach
+                            <div class="card-footer d-flex">
 
-                                </div>
                             </div>
-
                         </div>
+
                     </div>
                 </div>
             </div>
-        </center>
-    </div>
-    <center>
-
-        <div class="col-md-12 mt-3">
-            <a href="{{ url('buys-admin') }}" class="btn btn-outline-secondary">Volver</a>
         </div>
     </center>
+</div>
+<center>
+
+    <div class="col-md-12 mt-3">
+        <a href="{{ url('buys-admin') }}" class="btn btn-outline-secondary">Volver</a>
+    </div>
+</center>
 @endsection
 @section('script')
-    <script>
-        var dataTable = $('#buysDetails').DataTable({
-            searching: true,
-            lengthChange: false,
+<script>
+    var dataTable = $('#buysDetails').DataTable({
+        searching: true,
+        lengthChange: false,
 
-            "language": {
-                "sProcessing": "Procesando...",
-                "sLengthMenu": "Mostrar _MENU_ registros",
-                "sZeroRecords": "No se encontraron resultados",
-                "sEmptyTable": "Ningún dato disponible en esta tabla",
-                "sInfo": "Mostrando _START_ a _END_ de _TOTAL_ registros",
-                "sInfoEmpty": "Mostrando 0 a 0 de 0 registros",
-                "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
-                "sInfoPostFix": "",
-                "sSearch": "Buscar:",
-                "sUrl": "",
-                "sInfoThousands": ",",
-                "sLoadingRecords": "Cargando...",
-                "oPaginate": {
-                    "sFirst": "<<",
-                    "sLast": "Último",
-                    "sNext": ">>",
-                    "sPrevious": "<<"
-                },
-                "oAria": {
-                    "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
-                    "sSortDescending": ": Activar para ordenar la columna de manera descendente"
-                }
+        "language": {
+            "sProcessing": "Procesando...",
+            "sLengthMenu": "Mostrar _MENU_ registros",
+            "sZeroRecords": "No se encontraron resultados",
+            "sEmptyTable": "Ningún dato disponible en esta tabla",
+            "sInfo": "Mostrando _START_ a _END_ de _TOTAL_ registros",
+            "sInfoEmpty": "Mostrando 0 a 0 de 0 registros",
+            "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+            "sInfoPostFix": "",
+            "sSearch": "Buscar:",
+            "sUrl": "",
+            "sInfoThousands": ",",
+            "sLoadingRecords": "Cargando...",
+            "oPaginate": {
+                "sFirst": "<<",
+                "sLast": "Último",
+                "sNext": ">>",
+                "sPrevious": "<<"
+            },
+            "oAria": {
+                "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
+                "sSortDescending": ": Activar para ordenar la columna de manera descendente"
             }
-        });
+        }
+    });
 
-        $('#recordsPerPage').on('change', function() {
-            var recordsPerPage = parseInt($(this).val(), 10);
-            dataTable.page.len(recordsPerPage).draw();
-        });
+    $('#recordsPerPage').on('change', function() {
+        var recordsPerPage = parseInt($(this).val(), 10);
+        dataTable.page.len(recordsPerPage).draw();
+    });
 
-        // Captura el evento input en el campo de búsqueda
-        $('#searchfor').on('input', function() {
-            var searchTerm = $(this).val();
-            dataTable.search(searchTerm).draw();
-        });
-    </script>
+    // Captura el evento input en el campo de búsqueda
+    $('#searchfor').on('input', function() {
+        var searchTerm = $(this).val();
+        dataTable.search(searchTerm).draw();
+    });
+</script>
 @endsection

@@ -98,6 +98,7 @@ class CartController extends Controller
     }
     public function viewCart()
     {
+        $tenantinfo = TenantInfo::first();
         $cart_items = Cache::remember('cart_items', $this->expirationTime, function () {
             if (Auth::check()) {
                 $userId = Auth::id();
@@ -228,7 +229,7 @@ class CartController extends Controller
             $cloth_price += $precioConDescuento * $item->quantity;
         }
 
-        $iva = $cloth_price * 0.13;
+        $iva = $cloth_price * $tenantinfo->iva;
         $total_price = $cloth_price + $iva;
 
         return view('frontend.view-cart', compact('cart_items', 'name', 'cloth_price', 'iva', 'total_price','you_save'));

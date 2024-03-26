@@ -38,9 +38,15 @@
                         <thead>
                             <tr>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                    Precio (IVA) + Envío</th>
-                                <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                    IVA</th>
+                                    Precio @if ($iva > 0)
+                                        (IVA)
+                                    @endif + Envío</th>
+                                @if ($iva)
+                                    <th
+                                        class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
+                                        IVA</th>
+                                @endif
+
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                     Envío</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
@@ -60,11 +66,15 @@
                             @foreach ($buys as $buy)
                                 <tr>
                                     <td class="align-middle text-xxs text-center">
-                                        <p class=" font-weight-bold mb-0">₡{{ number_format($buy->total_buy + $buy->total_delivery) }}</p>
+                                        <p class=" font-weight-bold mb-0">
+                                            ₡{{ number_format($buy->total_buy + $buy->total_delivery) }}</p>
                                     </td>
-                                    <td class="align-middle text-xxs text-center">
-                                        <p class=" font-weight-bold mb-0">₡{{ number_format($buy->total_iva) }}</p>
-                                    </td>
+                                    @if ($iva)
+                                        <td class="align-middle text-xxs text-center">
+                                            <p class=" font-weight-bold mb-0">₡{{ number_format($buy->total_iva) }}</p>
+                                        </td>
+                                    @endif
+
                                     <td class="align-middle text-xxs text-center">
                                         <p class=" font-weight-bold mb-0">₡{{ number_format($buy->total_delivery) }}</p>
                                     </td>

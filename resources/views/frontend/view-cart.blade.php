@@ -17,6 +17,7 @@
                     <div class="card w-100">
 
                         <div class="table-responsive">
+                            <input type="hidden" name="iva_tenant" id="iva_tenant" value="{{ $iva }}">
                             <table class="table align-items-center mb-0" id="cartTable">
                                 <thead>
                                     <tr>
@@ -49,7 +50,8 @@
                                                 value="{{ $item->discount > 0 ? $precioConDescuento : $item->price }}">
                                             <input type="hidden" value="{{ $item->size_id }}" class="size_id"
                                                 name="size">
-                                            <input type="hidden" value="{{ $descuento }}" class="discount" name="discount">
+                                            <input type="hidden" value="{{ $descuento }}" class="discount"
+                                                name="discount">
                                             <td class="w-50">
                                                 <div class="d-flex px-2 py-1">
                                                     <div>
@@ -123,10 +125,13 @@
                                     Productos
                                     <span id="totalCloth">₡{{ number_format($cloth_price) }}</span>
                                 </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                                    I.V.A
-                                    <span id="totalIvaElement">₡{{ number_format($iva) }}</span>
-                                </li>
+                                @if ($iva > 0)
+                                    <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                        I.V.A
+                                        <span id="totalIvaElement">₡{{ number_format($iva) }}</span>
+                                    </li>
+                                @endif
+
                                 @if ($you_save > 0)
                                     <li class="list-group-item d-flex justify-content-between align-items-center px-0">
                                         Ahorraste
@@ -213,7 +218,7 @@
         function calcularTotal() {
             let total = 0;
             let total_cloth = 0;
-            let iva = 0.13;
+            let iva = parseFloat(document.getElementById("iva_tenant").value);
             let total_iva = 0;
             let you_save = 0;
             // Obtener todas las filas de la tabla

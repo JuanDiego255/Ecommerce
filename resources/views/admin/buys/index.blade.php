@@ -43,7 +43,9 @@
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                     E-mail</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                    Precio (I.V.A) + Envio</th>
+                                    Precio @if ($iva > 0) (I.V.A)
+                                        
+                                    @endif + Envio</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                     Envío</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">

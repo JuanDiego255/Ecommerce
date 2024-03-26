@@ -46,9 +46,16 @@
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                     Talla</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                    Precio + IVA</th>
-                                <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                    IVA</th>
+                                    Precio @if ($iva > 0)
+                                        + IVA
+                                    @endif
+                                </th>
+                                @if ($iva > 0)
+                                    <th
+                                        class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
+                                        IVA</th>
+                                @endif
+
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                     Pedido</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
@@ -65,8 +72,8 @@
                                         <div class="d-flex px-2 py-1">
                                             <div>
                                                 <a target="blank" data-fancybox="gallery"
-                                                    href="{{tenant_asset('/') . '/'. $buy->image}}">
-                                                    <img src="{{tenant_asset('/') . '/'. $buy->image}}"
+                                                    href="{{ tenant_asset('/') . '/' . $buy->image }}">
+                                                    <img src="{{ tenant_asset('/') . '/' . $buy->image }}"
                                                         class="text-center img-fluid shadow border-radius-lg w-25">
                                                 </a>
                                             </div>
@@ -81,9 +88,12 @@
                                     <td class="align-middle text-xxs text-center">
                                         <p class=" font-weight-bold mb-0">₡{{ number_format($buy->total) }}</p>
                                     </td>
-                                    <td class="align-middle text-xxs text-center">
-                                        <p class=" font-weight-bold mb-0">₡{{ number_format($buy->iva) }}</p>
-                                    </td>
+                                    @if ($iva > 0)
+                                        <td class="align-middle text-xxs text-center">
+                                            <p class=" font-weight-bold mb-0">₡{{ number_format($buy->iva) }}</p>
+                                        </td>
+                                    @endif
+
                                     <td class="align-middle text-xxs text-center">
                                         <p class=" font-weight-bold mb-0">
                                             @switch($buy->cancel_item)

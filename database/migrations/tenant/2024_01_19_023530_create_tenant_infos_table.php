@@ -28,6 +28,9 @@ class CreateTenantInfosTable extends Migration
             $table->string('whatsapp',30);
             $table->string('sinpe',30);
             $table->string('email',30)->nullable();
+            $table->string('iva',30);
+            $table->string('delivery',30);
+            $table->string('tenant',30);
             $table->timestamps();
         });
     }
