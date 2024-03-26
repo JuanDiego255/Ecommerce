@@ -10801,7 +10801,7 @@ fieldset:disabled .btn {
   background-color: #1A73E8 !important;
 }
 .bg-footer {
-  background-color: var(--footer) !important;
+  background: var(--footer) !important;
 }
 .bg-mision {
   background-color: #ECECEC !important;
@@ -27891,6 +27891,14 @@ button.siteLink {
   color: var(--btn_cart_text);
   background:var(--btn_cart);
   transition: all 300ms linear;
+}
+.blackLink-mandi {
+  color: var(--btn_cart_text);
+  background:transparent;
+  transition: all 300ms linear;
+}
+.whiteLink-mandi {
+  background : transparent;
 }
 
 .blackLink:active {
