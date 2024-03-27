@@ -43,10 +43,10 @@
                                                     <div class="rounded-4 mb-3 d-flex">
                                                         <a data-fslightbox="mygallery" class="rounded-4" target="_blank"
                                                             data-type="image"
-                                                            href="{{tenant_asset('/') . '/'. $firstImage}}">
+                                                            href="{{ tenant_asset('/') . '/' . $firstImage }}">
                                                             <img style="max-width: 100%; max-height: 100vh; margin: auto;"
                                                                 class="rounded-4 fit"
-                                                                src="{{tenant_asset('/') . '/'. $firstImage}}" />
+                                                                src="{{ tenant_asset('/') . '/' . $firstImage }}" />
                                                         </a>
                                                     </div>
                                                 </div>
@@ -72,10 +72,10 @@
                                                 <div class="item">
                                                     <div class="rounded-4 mb-3 d-flex justify-content-center">
                                                         <a data-fslightbox="mygallery" class="rounded-4" target="_blank"
-                                                            data-type="image" href="{{tenant_asset('/') . '/'. $image}}">
+                                                            data-type="image" href="{{ tenant_asset('/') . '/' . $image }}">
                                                             <img style="max-width: 100%; max-height: 100vh; margin: auto;"
                                                                 class="rounded-4 fit"
-                                                                src="{{tenant_asset('/') . '/'. $image}}" />
+                                                                src="{{ tenant_asset('/') . '/' . $image }}" />
                                                         </a>
                                                     </div>
                                                 </div>
@@ -97,11 +97,19 @@
 
                                             </div>
                                         @endif
-                                        <span class="text-muted-normal"><i
-                                                class="fas fa-shopping-basket fa-sm mx-1"></i>{{ $item->total_stock }}
-                                            {{ $item->total_stock > 1 ? 'órdenes' : 'orden' }}</span>
+                                        @if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'mandicr')
+                                            <span class="text-muted-normal"><i
+                                                    class="fas fa-shopping-basket fa-sm mx-1"></i>{{ $item->total_stock }}
+                                                {{ $item->total_stock > 1 ? 'órdenes' : 'orden' }}</span>
+                                        @endif
+
                                         @if ($item->total_stock > 0)
-                                            <span class="text-success ms-2">In stock</span>
+                                            @if (isset($tenantinfo->tenant) && $tenantinfo->tenant === 'mandicr')
+                                                <span class="text-success"><i
+                                                        class="fas fa-shopping-basket fa-sm mx-1"></i>In Stock</span>
+                                            @else
+                                                <span class="text-success ms-2">In stock</span>
+                                            @endif
                                         @else
                                             <span class="text-success ms-2">Not stock</span>
                                         @endif
@@ -209,9 +217,9 @@
             <div class="col-md-3 col-sm-6 mb-2">
                 <div class="product-grid product_data">
                     <div class="product-image">
-                        <img src="{{tenant_asset('/') . '/'. $item->image}}">
+                        <img src="{{ tenant_asset('/') . '/' . $item->image }}">
                         <ul class="product-links">
-                            <li><a target="blank" href="{{tenant_asset('/') . '/'. $item->image}}"><i
+                            <li><a target="blank" href="{{ tenant_asset('/') . '/' . $item->image }}"><i
                                         class="fas fa-eye"></i></a></li>
                         </ul>
                         <a href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}"
@@ -219,7 +227,10 @@
                     </div>
                     <div class="product-content">
                         <h3 class="title"><a href="#">{{ $item->name }}</a></h3>
-                        <h4 class="title"><a href="#">Stock: {{ $item->total_stock }}</a></h4>
+                        @if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'mandicr')
+                            <h4 class="title"><a href="#">Stock: {{ $item->total_stock }}</a></h4>
+                        @endif
+
                         <div class="price">₡{{ number_format($item->price) }}</span></div>
                     </div>
                 </div>
@@ -259,7 +270,7 @@
                     });
                     var newCartNumber = response.cartNumber
                     $('.badge').text(newCartNumber);
-                    $('.cartIcon').text(' '+newCartNumber);
+                    $('.cartIcon').text(' ' + newCartNumber);
 
                 }
             });

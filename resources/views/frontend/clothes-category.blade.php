@@ -18,13 +18,13 @@
                     <div class="col-md-3 col-sm-6 mb-2">
                         <div class="product-grid product_data">
                             <div class="product-image">
-                                <img src="{{tenant_asset('/') . '/'. $item->image}}">
+                                <img src="{{ tenant_asset('/') . '/' . $item->image }}">
                                 @if ($item->discount)
                                     <span class="product-discount-label">-{{ $item->discount }}%</span>
                                 @endif
 
                                 <ul class="product-links">
-                                    <li><a target="blank" href="{{tenant_asset('/') . '/'. $item->image}}"><i
+                                    <li><a target="blank" href="{{ tenant_asset('/') . '/' . $item->image }}"><i
                                                 class="fas fa-eye"></i></a></li>
                                 </ul>
                                 <a href="{{ url('detail-clothing/' . $item->id . '/' . $category_id) }}"
@@ -34,7 +34,10 @@
                                 <h3 class="title"><a
                                         href="{{ url('detail-clothing/' . $item->id . '/' . $category_id) }}">{{ $item->name }}</a>
                                 </h3>
-                                <h4 class="title">Stock: {{ $item->total_stock }}</h4>
+                                @if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'mandicr')
+                                    <h4 class="title">Stock: {{ $item->total_stock }}</h4>
+                                @endif
+
                                 @php
                                     $precio = $item->price;
                                     $descuentoPorcentaje = $item->discount;

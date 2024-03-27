@@ -68,7 +68,10 @@
                                         <h3 class="title"><a
                                                 href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}">{{ $item->name }}</a>
                                         </h3>
-                                        <h4 class="title">Stock: {{ $item->total_stock }}</h4>
+                                        @if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'mandicr')
+                                            <h4 class="title">Stock: {{ $item->total_stock }}</h4>
+                                        @endif
+
                                         @php
                                             $precio = $item->price;
                                             $descuentoPorcentaje = $item->discount;

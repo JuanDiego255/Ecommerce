@@ -199,7 +199,7 @@
                                     <p class="ms-auto"></span>₡<span
                                             id="totalIva">{{ number_format($total_price) }}</span></p>
                                 </div>
-                                <p class="fw-bold h7">Tarifa de envío por correos de C.R ₡3000 (Grecia o alrededores no se
+                                <p class="fw-bold h7">Tarifa de envío por correos de C.R ₡{{$delivery}} (Grecia o alrededores no se
                                     cobra envío.)</p>
                                 <div class="h8">
                                     <label for="checkboxSubmit">
