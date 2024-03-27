@@ -41,7 +41,8 @@
         --footer_text: {{ $settings->footer_text }};        
         --sidebar: {{ $settings->sidebar }};        
         --sidebar_text: {{ $settings->sidebar_text }};    
-        --hover: {{ $settings->hover }};      
+        --hover: {{ $settings->hover }}; 
+        --cart_icon: {{ $settings->cart_icon }};      
     }
 </style>
 

@@ -15,16 +15,17 @@ class CreateSettingsTable extends Migration
     {
         Schema::create('settings', function (Blueprint $table) {
             $table->id();
-            $table->string('navbar', 20)->nullable();
-            $table->string('navbar_text', 20)->nullable();
-            $table->string('title_text', 20)->nullable();
-            $table->string('btn_cart', 20)->nullable();
-            $table->string('btn_cart_text', 20)->nullable();
-            $table->string('footer', 20)->nullable();
-            $table->string('footer_text', 20)->nullable();
-            $table->string('sidebar', 20)->nullable();
-            $table->string('sidebar_text', 20)->nullable();
-            $table->string('hover', 20)->nullable();
+            $table->string('navbar', 100)->nullable();
+            $table->string('navbar_text', 100)->nullable();
+            $table->string('title_text', 100)->nullable();
+            $table->string('btn_cart', 100)->nullable();
+            $table->string('btn_cart_text', 100)->nullable();
+            $table->string('footer', 100)->nullable();
+            $table->string('footer_text', 100)->nullable();
+            $table->string('sidebar', 100)->nullable();
+            $table->string('sidebar_text', 100)->nullable();
+            $table->string('hover', 100)->nullable();
+            $table->string('cart_icon', 100)->nullable();
             $table->timestamps();
         });
     }
