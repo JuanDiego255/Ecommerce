@@ -6,7 +6,7 @@
                     onclick="menuToggle()"><i class="fas fa-bars me-2"></i> MENU</button>
             </div>
             <div class="flex3 text-center" id="siteBrand">
-                <a class="velvet-title text-title text-uppercase"
+                <a class="{{ isset($tenantinfo->tenant) && $tenantinfo->tenant === 'mandicr' ? 'text-title-mandi' : 'text-title' }} text-uppercase"
                     href="{{ url('/') }}">{{ isset($tenantinfo->title) ? $tenantinfo->title : '' }}</a>
             </div>
 

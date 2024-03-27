@@ -8751,7 +8751,7 @@ fieldset:disabled .btn {
 }
 
 .cartIcon{
-  color: var(--cart_icon) !important;
+  color: var(--btn_cart_text) !important;
 }
 .text-pill{
   color: var(--btn_cart_text) !important;
@@ -10723,6 +10723,14 @@ fieldset:disabled .btn {
   color: #000 !important;
   font-size: 1.875rem;
   font-family:'Times New Roman', Times, serif;
+}
+
+.text-title-mandi {
+  color: #000 !important;
+  font-size: 1.875rem;
+  font-family: 'Raleway', sans-serif; /* Fallback a una fuente sans-serif en caso de que Raleway no esté disponible */
+  font-weight: 500; /* Para la variante Medium */
+  letter-spacing: 1px;
 }
 
 .text-black-50 {

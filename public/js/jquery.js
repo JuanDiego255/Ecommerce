@@ -134,6 +134,14 @@ window.addEventListener('load', mostrarSlider);
 
 var menuHolder = document.getElementById('menuHolder')
 var siteBrand = document.getElementById('siteBrand')
+var linkElement = document.createElement("a");
+var isMandicr = (typeof $tenantinfo !== 'undefined' && $tenantinfo.tenant === 'mandicr');
+var clase = isMandicr ? 'text-title-mandi' : 'text-title';
+linkElement.classList.add(clase);
+linkElement.classList.add('text-uppercase');
+linkElement.classList.add('text-sm');
+linkElement.href = "/";
+
 function menuToggle() {
     if (menuHolder.className === "drawMenu sticky-top") menuHolder.className = "bg-menu-velvet sticky-top"
     else menuHolder.className = "drawMenu sticky-top"
@@ -141,8 +149,8 @@ function menuToggle() {
 
 if (window.innerWidth < 426) siteBrand.innerHTML = obtenerPrimerasDosLetras(window.companyName)
 window.onresize = function () {
-    if (window.innerWidth < 420) siteBrand.innerHTML = obtenerPrimerasDosLetras(window.companyName)
-    else siteBrand.innerHTML = window.companyName
+    if (window.innerWidth < 420) linkElement.textContent = obtenerPrimerasDosLetras(window.companyName)
+    else linkElement.textContent = window.companyName
 }
 $('#toggleCategories').click(function () {
     $('#categoriesDropdown').slideToggle('fast');

@@ -56,7 +56,7 @@ class CartController extends Controller
                             'cartNumber' => $newCartNumber
                         ]);
                         DB::commit();
-                        return response()->json(['status' => 'Se ha agregado la prenda al carrito', 'icon' => 'success', 'cartNumber' => $newCartNumber]);
+                        return response()->json(['status' => 'Se ha agregado el artículo al carrito', 'icon' => 'success', 'cartNumber' => $newCartNumber]);
                     }
                 } else {
                 }
@@ -88,12 +88,12 @@ class CartController extends Controller
                     $newCartNumber = count(Cart::where('session_id', $session_id)->where('sold', 0)->get());
 
                     DB::commit();
-                    return response()->json(['status' => 'Se ha agregado la prenda al carrito', 'icon' => 'success', 'cartNumber' => $newCartNumber]);
+                    return response()->json(['status' => 'Se ha agregado el artículo al carrito', 'icon' => 'success', 'cartNumber' => $newCartNumber]);
                 }
             }
         } catch (\Throwable $th) {
             DB::rollBack();
-            return response()->json(['status' => 'Ocurrió un error al agregar la prenda al carrito '.$th->getMessage(), 'icon' => 'success']);
+            return response()->json(['status' => 'Ocurrió un error al agregar la artículo al carrito '.$th->getMessage(), 'icon' => 'success']);
         }
     }
     public function viewCart()

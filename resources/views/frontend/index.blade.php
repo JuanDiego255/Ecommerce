@@ -199,7 +199,7 @@
     </div>
 
     <div class="bg-footer p-3 mb-3 text-center">
-        <h3 class="text-center text-title mt-3">{{ isset($tenantinfo->title) ? $tenantinfo->title : '' }}</h3>
+        <h3 class="text-center {{ isset($tenantinfo->tenant) && $tenantinfo->tenant === 'mandicr' ? 'text-title-mandi' : 'text-title' }} mt-3">{{ isset($tenantinfo->title) ? $tenantinfo->title : '' }}</h3>
         <span class="text-center text-muted">{{ isset($tenantinfo->mision) ? $tenantinfo->mision : '' }}</span>
 
 
