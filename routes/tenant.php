@@ -99,6 +99,7 @@ Route::middleware([
         Route::delete('/delete-clothing/{id}', [ClothingCategoryController::class, 'delete']);
         //Routes for Buys
         Route::get('/buys-admin', [BuyController::class, 'indexAdmin']);
+        Route::get('/total-buys', [BuyController::class, 'indexTotalBuys']);
         Route::get('/buy/details/admin/{id}', [BuyController::class, 'buyDetailsAdmin']);
         Route::put('/approve/{id}/{approved}', [BuyController::class, 'approve']);
         Route::put('/delivery/{id}/{delivery}', [BuyController::class, 'delivery']);

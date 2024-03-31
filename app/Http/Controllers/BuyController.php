@@ -47,7 +47,7 @@ class BuyController extends Controller
         }
         $iva = $tenantinfo->iva;
 
-        return view('frontend.buys', compact('buys','iva'));
+        return view('frontend.buys', compact('buys', 'iva'));
     }
 
     public function indexAdmin()
@@ -81,7 +81,7 @@ class BuyController extends Controller
             return redirect()->back()->with(['status' => 'No hay compras registradas!', 'icon' => 'warning']);
         }
 
-        return view('admin.buys.index', compact('buys','iva'));
+        return view('admin.buys.index', compact('buys', 'iva'));
     }
 
     public function buyDetails($id)
@@ -116,7 +116,6 @@ class BuyController extends Controller
                     DB::raw('IFNULL(product_images.image, "") as image') // Obtener la primera imagen del producto
                 )
                 ->get();
-                
         });
         $iva = $tenantinfo->iva;
 
@@ -132,7 +131,7 @@ class BuyController extends Controller
             OpenGraph::setDescription($tag->meta_og_description);
         }
 
-        return view('frontend.detail-buy', compact('buysDetails','iva'));
+        return view('frontend.detail-buy', compact('buysDetails', 'iva'));
     }
 
     public function buyDetailsAdmin($id)
@@ -183,7 +182,7 @@ class BuyController extends Controller
         $iva = $tenantinfo->iva;
         $tenant = $tenantinfo->tenant;
 
-        return view('admin.buys.indexDetail', compact('buysDetails','iva','tenant'));
+        return view('admin.buys.indexDetail', compact('buysDetails', 'iva', 'tenant'));
     }
 
     public function approve($id, $approved)
@@ -308,5 +307,46 @@ class BuyController extends Controller
         } catch (Exception $th) {
             DB::rollBack();
         }
+    }
+    public function indexTotalBuys()
+    {
+        $tenantinfo = TenantInfo::first();
+        $buys = Cache::remember('buys_data', $this->expirationTime, function () {
+            return Buy::leftJoin('users', 'buys.user_id', 'users.id')
+                ->select(
+                    'buys.id as id',
+                    'buys.total_iva as total_iva',
+                    'buys.total_buy as total_buy',
+                    'buys.total_delivery as total_delivery',
+                    'buys.delivered as delivered',
+                    'buys.approved as approved',
+                    'buys.created_at as created_at',
+                    'buys.image as image',
+                    'users.id as user_id',
+                    'users.name as name',
+                    'users.telephone as telephone',
+                    'users.email as email',
+                    'buys.name as name_b',
+                    'buys.telephone as telephone_b',
+                    'buys.email as email_b',
+                    'buys.cancel_buy as cancel_buy'
+                )
+                ->get();
+        });
+        $iva = $tenantinfo->iva;
+        $totalEnvio = 0;
+        $totalPrecio = 0;
+        $totalVentas = 0;
+
+        if (count($buys) == 0) {
+            return redirect()->back()->with(['status' => 'No hay compras en ese rango de fechas!', 'icon' => 'warning']);
+        } else {
+            $totalPrecio = $buys->sum('total_buy');
+            $totalEnvio = $buys->sum('total_delivery');
+            $totalVentas = count($buys);
+        }
+
+        $totalEnvio = $buys->sum('total_delivery');
+        return view('admin.buys.index-total', compact('buys', 'iva', 'totalPrecio', 'totalEnvio', 'totalVentas'));
     }
 }

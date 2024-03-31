@@ -140,6 +140,7 @@ var clase = isMandicr ? 'text-title-mandi' : 'text-title';
 linkElement.classList.add(clase);
 linkElement.classList.add('text-uppercase');
 linkElement.classList.add('text-sm');
+linkElement.classList.add('text-center');
 linkElement.href = "/";
 
 function menuToggle() {
@@ -147,10 +148,10 @@ function menuToggle() {
     else menuHolder.className = "drawMenu sticky-top"
 }
 
-if (window.innerWidth < 426) siteBrand.innerHTML = obtenerPrimerasDosLetras(window.companyName)
+if (window.innerWidth < 426) linkElement.textContent = isMandicr ? window.companyName : obtenerPrimerasDosLetras(window.companyName);
 window.onresize = function () {
-    if (window.innerWidth < 420) linkElement.textContent = obtenerPrimerasDosLetras(window.companyName)
-    else linkElement.textContent = window.companyName
+    if (window.innerWidth < 420) linkElement.textContent = isMandicr ? window.companyName : obtenerPrimerasDosLetras(window.companyName);
+    else linkElement.textContent = isMandicr ? window.companyName : obtenerPrimerasDosLetras(window.companyName);
 }
 $('#toggleCategories').click(function () {
     $('#categoriesDropdown').slideToggle('fast');
