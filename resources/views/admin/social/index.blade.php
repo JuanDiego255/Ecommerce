@@ -62,8 +62,8 @@
                                     <td class="text-center">
 
                                         <a target="blank" data-fancybox="gallery"
-                                            href="{{tenant_asset('/') . '/'. $item->image}}">
-                                            <img src="{{tenant_asset('/') . '/'. $item->image}}"
+                                            href="{{ route('file',$item->image) }}">
+                                            <img src="{{ route('file',$item->image) }}"
                                                 class="text-center img-fluid shadow border-radius-lg w-25"></a>
 
 

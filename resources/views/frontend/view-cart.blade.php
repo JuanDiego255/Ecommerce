@@ -56,8 +56,8 @@
                                                 <div class="d-flex px-2 py-1">
                                                     <div>
                                                         <a target="blank" data-fancybox="gallery"
-                                                            href="{{ tenant_asset('/') . '/' . $item->image }}">
-                                                            <img src="{{ tenant_asset('/') . '/' . $item->image }}"
+                                                            href="{{ route('file',$item->image) }}">
+                                                            <img src="{{ route('file',$item->image) }}"
                                                                 class="img-fluid shadow border-radius-lg w-25">
                                                         </a>
                                                     </div>

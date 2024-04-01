@@ -46,7 +46,7 @@
                         </div>
                     </div>
                     @if ($item->image)
-                        <img class="img-fluid img-thumbnail w-50" src="{{tenant_asset('/') . '/'. $item->image}}"
+                        <img class="img-fluid img-thumbnail w-50" src="{{ route('file',$item->image) }}"
                              alt="image">
                     @endif
                     <div class="col-md-12 mb-3">

@@ -34,20 +34,20 @@
                         <div class="row w-25">
                             @if ($item->logo)
                                 <div class="col-md-6">
-                                    <a href="{{ tenant_asset('/') . '/' . $item->logo }}" target="_blank"
+                                    <a href="{{ route('file',$item->logo) }}" target="_blank"
                                         rel="noopener noreferrer">
                                         <img loading="lazy" style="width: 100px; height:100px;" class="img-fluid img-thumbnail"
-                                            src="{{ tenant_asset('/') . '/' . $item->logo }}" alt="image">
+                                            src="{{ route('file',$item->logo) }}" alt="image">
                                     </a><br>
                                     <span class="text-s">Logo</span>
                                 </div>
                             @endif
                             @if ($item->login_image)
                                 <div class="col-md-6">
-                                    <a href="{{ tenant_asset('/') . '/' . $item->login_image }}" target="_blank"
+                                    <a href="{{ route('file',$item->login_image) }}" target="_blank"
                                         rel="noopener noreferrer">
                                         <img loading="lazy" style="width: 100px; height:100px;" class="img-fluid img-thumbnail"
-                                            src="{{ tenant_asset('/') . '/' . $item->login_image }}" alt="image">
+                                            src="{{ route('file',$item->login_image) }}" alt="image">
                                     </a><br>
                                     <span class="text-s">Imagen Login</span>
                                 </div>

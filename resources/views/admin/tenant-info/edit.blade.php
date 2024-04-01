@@ -140,7 +140,7 @@
 
                         @if ($item->logo)
                             <img style="width: 100px; height:100px;" class="img-fluid img-thumbnail"
-                                src="{{ tenant_asset('/') . '/' . $item->logo }}" alt="image">
+                                src="{{ route('file',$item->logo) }}" alt="image">
                         @endif
                         <div class="col-md-12 mb-3">
                             <label class="form-label">Logo</label>
@@ -150,7 +150,7 @@
                         </div>
                         @if ($item->login_image)
                             <img class="img-fluid img-thumbnail" style="width: 100px; height:100px;"
-                                src="{{ tenant_asset('/') . '/' . $item->login_image }}" alt="image">
+                                src="{{ route('file',$item->login_image) }}" alt="image">
                         @endif
                         <div class="col-md-12 mb-3">
                             <label class="form-label">Imagen Login</label>

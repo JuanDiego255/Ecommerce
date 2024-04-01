@@ -134,12 +134,14 @@ Route::middleware([
         Route::post('tenant-carousel/store', [TenantCarouselController::class, 'store']);
         Route::put('/tenant-carousel/update/{id}', [TenantCarouselController::class, 'update']);
         Route::delete('/delete/tenant-carousel/{id}', [TenantCarouselController::class, 'destroy']);
-
     });
 
     //images Tenant
-    Route::get('/file/{path}',function($path){
-        return response()->file(storage_path());
-    })->where('path','.*')->name('file');
+    Route::get('/file/{path}', function ($path) {
+        $path = Storage::path($path);
+        $path = str_replace('app\\', 'app\\public\\', $path);
+
+        return response()->file($path);
+    })->where('path', '.*')->name('file');
     //images tenant
 });

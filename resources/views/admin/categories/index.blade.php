@@ -17,7 +17,7 @@
                 <div class="product-grid product_data">
                     <div class="product-image">
                     
-                        <img src="{{tenant_asset('/') . '/'. $item->image}}">
+                        <img src="{{ route('file',$item->image) }}">
                         <ul class="product-links">
                             <li><a data-bs-toggle="tooltip" data-bs-placement="bottom" title="Editar" target="blank"
                                     href="{{ url('/edit-category') . '/' . $item->id }}"><i class="fa fa-pencil"></i></a>
