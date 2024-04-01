@@ -16,8 +16,8 @@
             <div class="col-md-3 col-sm-6 mb-2">
                 <div class="product-grid product_data">
                     <div class="product-image">
-                    
-                        <img src="{{ route('file',$item->image) }}">
+
+                        <img src="{{ route('file', $item->image) }}">
                         <ul class="product-links">
                             <li><a data-bs-toggle="tooltip" data-bs-placement="bottom" title="Editar" target="blank"
                                     href="{{ url('/edit-category') . '/' . $item->id }}"><i class="fa fa-pencil"></i></a>
@@ -55,6 +55,7 @@
     </center>
 @endsection
 @section('script')
+    <script src="{{ asset('js/image-error-handler.js') }}"></script>
     <script>
         function submitForm(itemId) {
             var form = document.getElementById('delete-category' + itemId);

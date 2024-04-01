@@ -34,10 +34,9 @@
                         <div
                             class="input-group input-group-lg input-group-outline {{ isset($item->url) ? 'is-filled' : '' }} my-3">
                             <label class="form-label">URL</label>
-                            <input value="{{ isset($item->url) ? $item->url : '' }}" required
-                                type="text"
-                                class="form-control form-control-lg @error('url') is-invalid @enderror"
-                                name="url" id="url">
+                            <input value="{{ isset($item->url) ? $item->url : '' }}" required type="text"
+                                class="form-control form-control-lg @error('url') is-invalid @enderror" name="url"
+                                id="url">
                             @error('url')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>Campo Requerido</strong>
@@ -46,8 +45,7 @@
                         </div>
                     </div>
                     @if ($item->image)
-                        <img class="img-fluid img-thumbnail w-50" src="{{ route('file',$item->image) }}"
-                             alt="image">
+                        <img class="img-fluid img-thumbnail w-50" src="{{ route('file', $item->image) }}" alt="image">
                     @endif
                     <div class="col-md-12 mb-3">
                         <div class="input-group input-group-static mb-4">

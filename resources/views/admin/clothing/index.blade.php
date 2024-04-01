@@ -22,9 +22,9 @@
                 <div class="card" data-animation="true">
 
                     <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-                        <a target="blank" data-fancybox="gallery" href="{{ route('file',$clothing->image) }}"
+                        <a target="blank" data-fancybox="gallery" href="{{ route('file', $clothing->image) }}"
                             class="d-block blur-shadow-image">
-                            <img src="{{tenant_asset('/') . '/'. $clothing->image}}" alt="img-blur-shadow"
+                            <img src="{{ tenant_asset('/') . '/' . $clothing->image }}" alt="img-blur-shadow"
                                 class="img-fluid shadow border-radius-lg w-100">
                         </a>
                         <div class="colored-shadow"
@@ -96,4 +96,7 @@
             <a href="{{ url('categories') }}" class="btn btn-velvet w-25">Volver</a>
         </div>
     </center>
+@endsection
+@section('script')
+    <script src="{{ asset('js/image-error-handler.js') }}"></script>
 @endsection

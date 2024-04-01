@@ -23,7 +23,8 @@
                     <div class="col-md-6 mb-3">
                         <div class="input-group input-group-static mb-4">
                             <label>Código</label>
-                            <input required value="{{ $clothing->code }}" type="text" class="form-control form-control-lg" name="code">
+                            <input required value="{{ $clothing->code }}" type="text"
+                                class="form-control form-control-lg" name="code">
                         </div>
                     </div>
                     <input type="hidden" name="category_id" value="{{ $clothing->category_id }}">
@@ -59,7 +60,7 @@
                                 class="form-control form-control-lg" name="stock">
                         </div>
                     </div>
-                                     
+
                     <div class="col-md-12 mb-3">
                         <label
                             class="control-label control-label text-formulario {{ $errors->has('sizes_id[]') ? 'is-invalid' : '' }}"
@@ -85,9 +86,9 @@
                     </div>
                     <div class="col-md-12 mb-3">
                         @if ($clothing->image)
-                        <img class="img-fluid img-thumbnail" src="{{ route('file',$clothing->image) }}"
-                            style="width: 150px; height:150px;" alt="image">
-                    @endif
+                            <img class="img-fluid img-thumbnail" src="{{ route('file', $clothing->image) }}"
+                                style="width: 150px; height:150px;" alt="image">
+                        @endif
                         <label>Imágenes (Máximo 4)</label>
                         <div class="input-group input-group-static mb-4">
                             <input multiple class="form-control form-control-lg" type="file" name="images[]">

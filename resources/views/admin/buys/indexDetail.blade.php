@@ -75,8 +75,8 @@
                                                 <div class="d-flex px-2 py-1">
                                                     <div>
                                                         <a target="blank" data-fancybox="gallery"
-                                                            href="{{ route('file',$buy->image) }}">
-                                                            <img src="{{ route('file',$buy->image) }}"
+                                                            href="{{ route('file', $buy->image) }}">
+                                                            <img src="{{ route('file', $buy->image) }}"
                                                                 class="text-center img-fluid shadow border-radius-lg w-25"></a>
 
                                                     </div>
@@ -225,6 +225,7 @@
 </center>
 @endsection
 @section('script')
+<script src="{{ asset('js/image-error-handler.js') }}"></script>
 <script>
     var dataTable = $('#buysDetails').DataTable({
         searching: true,

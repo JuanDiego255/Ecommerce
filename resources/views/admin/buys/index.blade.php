@@ -43,8 +43,8 @@
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                     E-mail</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                    Precio @if ($iva > 0) (I.V.A)
-                                        
+                                    Precio @if ($iva > 0)
+                                        (I.V.A)
                                     @endif + Envio</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                     Envío</th>
@@ -69,8 +69,8 @@
                                         <div class="d-flex px-2 py-1">
                                             <div>
                                                 <a target="blank" data-fancybox="gallery"
-                                                    href="{{ route('file',$buy->image) }}">
-                                                    <img src="{{ route('file',$buy->image) }}"
+                                                    href="{{ route('file', $buy->image) }}">
+                                                    <img src="{{ route('file', $buy->image) }}"
                                                         class="img-fluid shadow border-radius-lg">
                                                 </a>
                                             </div>
@@ -90,7 +90,8 @@
                                             {{ isset($buy->email) ? $buy->email : $buy->email_b }}</p>
                                     </td>
                                     <td class="align-middle text-xxs text-center">
-                                        <p class=" font-weight-bold mb-0">₡{{ number_format($buy->total_buy + $buy->total_delivery) }}</p>
+                                        <p class=" font-weight-bold mb-0">
+                                            ₡{{ number_format($buy->total_buy + $buy->total_delivery) }}</p>
                                     </td>
                                     <td class="align-middle text-xxs text-center">
                                         <p class=" font-weight-bold mb-0">₡{{ number_format($buy->total_delivery) }}</p>
@@ -234,6 +235,7 @@
     </div>
 @endsection
 @section('script')
+    <script src="{{ asset('js/image-error-handler.js') }}"></script>
     <script>
         var dataTable = $('#buys').DataTable({
             searching: true,

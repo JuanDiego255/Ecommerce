@@ -49,11 +49,10 @@
                 <div class="owl-carousel featured-carousel owl-theme">
                     @foreach ($clothings as $item)
                         @if ($item->total_stock != 0)
-                    
                             <div class="item">
                                 <div class="product-grid product_data">
                                     <div class="product-image">
-                                        <img src="{{ route('file',$item->image) }}">
+                                        <img src="{{ route('file', $item->image) }}">
                                         @if ($item->discount)
                                             <span class="product-discount-label">-{{ $item->discount }}%</span>
                                         @endif
@@ -121,11 +120,10 @@
                                             @php
                                                 $cant_img++;
                                             @endphp
-                                            <img class="pic-{{ $index + 1 }}"
-                                                src="{{ route('file',$image) }}">
+                                            <img class="pic-{{ $index + 1 }}" src="{{ route('file', $image) }}">
                                         @endforeach
                                         @if ($cant_img == 1)
-                                            <img class="pic-2" src="{{ route('file',$image) }}">
+                                            <img class="pic-2" src="{{ route('file', $image) }}">
                                         @endif
                                     @endif
                                 </a>
@@ -179,7 +177,7 @@
             <div class="col-md-6 mt-4">
                 <div class="card text-center">
                     <div class="overflow-hidden position-relative bg-cover p-3"
-                        style="background-image: url('{{ route('file',$item->image) }}'); height:700px;  background-position: center;">
+                        style="background-image: url('{{ route('file', $item->image) }}'); height:700px;  background-position: center;">
                         <span class="mask bg-gradient-dark opacity-6"></span>
                         <div class="card-body position-relative z-index-1 d-flex flex-column mt-5">
                             <h3 class="text-white">{{ $item->description }}.</h3>
@@ -200,7 +198,9 @@
     </div>
 
     <div class="bg-footer p-3 mb-3 text-center">
-        <h3 class="text-center {{ isset($tenantinfo->tenant) && $tenantinfo->tenant === 'mandicr' ? 'text-title-mandi' : 'text-title' }} mt-3">{{ isset($tenantinfo->title) ? $tenantinfo->title : '' }}</h3>
+        <h3
+            class="text-center {{ isset($tenantinfo->tenant) && $tenantinfo->tenant === 'mandicr' ? 'text-title-mandi' : 'text-title' }} mt-3">
+            {{ isset($tenantinfo->title) ? $tenantinfo->title : '' }}</h3>
         <span class="text-center text-muted">{{ isset($tenantinfo->mision) ? $tenantinfo->mision : '' }}</span>
 
 
@@ -223,6 +223,7 @@
     @include('layouts.inc.indexfooter')
 @endsection
 @section('scripts')
+    <script src="{{ asset('js/image-error-handler.js') }}"></script>
     <script>
         $('.featured-carousel').owlCarousel({
             loop: true,

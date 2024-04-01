@@ -12,20 +12,19 @@
         </div>
         <div class="row row-cols-1 row-cols-md-3 g-4 align-content-center card-group mt-5 mb-5">
             @foreach ($category as $item)
-              
                 <div class="col-md-3 col-sm-6 mb-2">
                     <div class="product-grid product_data">
                         <div class="product-image">
-                            <img src="{{ route('file',$item->image) }}">
+                            <img src="{{ route('file', $item->image) }}">
                             <ul class="product-links">
-                                <li><a target="blank" href="{{tenant_asset('/') . '/'. $item->image}}"><i
+                                <li><a target="blank" href="{{ tenant_asset('/') . '/' . $item->image }}"><i
                                             class="fas fa-eye"></i></a></li>
                             </ul>
-                            <a href="{{ url('clothes-category/' . $item->id) }}"
-                                class="add-to-cart">Descubrir estilos</a>
+                            <a href="{{ url('clothes-category/' . $item->id) }}" class="add-to-cart">Descubrir estilos</a>
                         </div>
                         <div class="product-content">
-                            <h3 class="title"><a href="{{ url('clothes-category/' . $item->id) }}">{{ $item->name }}</a></h3>                          
+                            <h3 class="title"><a href="{{ url('clothes-category/' . $item->id) }}">{{ $item->name }}</a>
+                            </h3>
                         </div>
                     </div>
                 </div>
@@ -39,4 +38,7 @@
         </center>
     </div>
     @include('layouts.inc.indexfooter')
+@endsection
+@section('scripts')
+    <script src="{{ asset('js/image-error-handler.js') }}"></script>
 @endsection

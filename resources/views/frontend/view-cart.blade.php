@@ -56,8 +56,8 @@
                                                 <div class="d-flex px-2 py-1">
                                                     <div>
                                                         <a target="blank" data-fancybox="gallery"
-                                                            href="{{ route('file',$item->image) }}">
-                                                            <img src="{{ route('file',$item->image) }}"
+                                                            href="{{ route('file', $item->image) }}">
+                                                            <img src="{{ route('file', $item->image) }}"
                                                                 class="img-fluid shadow border-radius-lg w-25">
                                                         </a>
                                                     </div>
@@ -160,6 +160,7 @@
     @include('layouts.inc.indexfooter')
 @endsection
 @section('scripts')
+    <script src="{{ asset('js/image-error-handler.js') }}"></script>
     <script>
         $(document).ready(function() {
             function updateQuantity() {

@@ -61,9 +61,8 @@
                                 <tr>
                                     <td class="text-center">
 
-                                        <a target="blank" data-fancybox="gallery"
-                                            href="{{ route('file',$item->image) }}">
-                                            <img src="{{ route('file',$item->image) }}"
+                                        <a target="blank" data-fancybox="gallery" href="{{ route('file', $item->image) }}">
+                                            <img src="{{ route('file', $item->image) }}"
                                                 class="text-center img-fluid shadow border-radius-lg w-25"></a>
 
 
@@ -106,6 +105,7 @@
     </div>
 @endsection
 @section('script')
+    <script src="{{ asset('js/image-error-handler.js') }}"></script>
     <script>
         var dataTable = $('#social').DataTable({
             searching: true,

@@ -72,10 +72,9 @@
                                                 <div class="item">
                                                     <div class="rounded-4 mb-3 d-flex justify-content-center">
                                                         <a data-fslightbox="mygallery" class="rounded-4" target="_blank"
-                                                            data-type="image" href="{{ route('file',$image) }}">
+                                                            data-type="image" href="{{ route('file', $image) }}">
                                                             <img style="max-width: 100%; max-height: 100vh; margin: auto;"
-                                                                class="rounded-4 fit"
-                                                                src="{{ route('file',$image) }}" />
+                                                                class="rounded-4 fit" src="{{ route('file', $image) }}" />
                                                         </a>
                                                     </div>
                                                 </div>
@@ -217,9 +216,9 @@
             <div class="col-md-3 col-sm-6 mb-2">
                 <div class="product-grid product_data">
                     <div class="product-image">
-                        <img src="{{ route('file',$item->image) }}">
+                        <img src="{{ route('file', $item->image) }}">
                         <ul class="product-links">
-                            <li><a target="blank" href="{{ route('file',$item->image) }}"><i
+                            <li><a target="blank" href="{{ route('file', $item->image) }}"><i
                                         class="fas fa-eye"></i></a></li>
                         </ul>
                         <a href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}"
@@ -241,6 +240,7 @@
 @include('layouts.inc.indexfooter')
 @endsection
 @section('scripts')
+<script src="{{ asset('js/image-error-handler.js') }}"></script>
 <script>
     $(document).ready(function() {
 

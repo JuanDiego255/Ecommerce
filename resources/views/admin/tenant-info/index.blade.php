@@ -34,27 +34,28 @@
                         <div class="row w-25">
                             @if ($item->logo)
                                 <div class="col-md-6">
-                                    <a href="{{ route('file',$item->logo) }}" target="_blank"
-                                        rel="noopener noreferrer">
-                                        <img loading="lazy" style="width: 100px; height:100px;" class="img-fluid img-thumbnail"
-                                            src="{{ route('file',$item->logo) }}" alt="image">
+                                    <a href="{{ route('file', $item->logo) }}" target="_blank" rel="noopener noreferrer">
+                                        <img loading="lazy" style="width: 100px; height:100px;"
+                                            class="img-fluid img-thumbnail" src="{{ route('file', $item->logo) }}"
+                                            alt="image">
                                     </a><br>
                                     <span class="text-s">Logo</span>
                                 </div>
                             @endif
                             @if ($item->login_image)
                                 <div class="col-md-6">
-                                    <a href="{{ route('file',$item->login_image) }}" target="_blank"
+                                    <a href="{{ route('file', $item->login_image) }}" target="_blank"
                                         rel="noopener noreferrer">
-                                        <img loading="lazy" style="width: 100px; height:100px;" class="img-fluid img-thumbnail"
-                                            src="{{ route('file',$item->login_image) }}" alt="image">
+                                        <img loading="lazy" style="width: 100px; height:100px;"
+                                            class="img-fluid img-thumbnail" src="{{ route('file', $item->login_image) }}"
+                                            alt="image">
                                     </a><br>
                                     <span class="text-s">Imagen Login</span>
                                 </div>
                             @endif
                         </div>
                     </center>
-                   
+
                 </div>
 
                 <hr class="dark horizontal text-danger mb-3">
@@ -66,34 +67,40 @@
                 <div class="text-center">
                     <h3 class="text-center text-muted">{{ $item->title_discount }}</h3>
                 </div>
-                <span class="text-s">Sección: Productos en descuento, esta descripción se mostrará en la sección de descuentos del cliente en la página principal</span>
+                <span class="text-s">Sección: Productos en descuento, esta descripción se mostrará en la sección de
+                    descuentos del cliente en la página principal</span>
                 <hr class="dark horizontal text-danger">
                 <div class="text-center">
                     <span class="text-muted text-center"><a href="#">Instagram</a> |
                         {{ $item->title_instagram }}</span>
                 </div>
-                <span class="text-s">Sección: Instagram, esta descripción se mostrará en la sección de Instagram en la página principal</span>
+                <span class="text-s">Sección: Instagram, esta descripción se mostrará en la sección de Instagram en la
+                    página principal</span>
                 <hr class="dark horizontal text-danger">
                 <div class="bg-footer p-3 text-center">
                     <h3 class="text-center text-title">{{ $item->title }}</h3>
                     <span class="text-center text-muted">{{ $item->mision }}</span>
                 </div>
-                <span class="text-s">Sección: misión de la empresa, esta misión se mostrará en la sección de Misión en la página principal</span>
+                <span class="text-s">Sección: misión de la empresa, esta misión se mostrará en la sección de Misión en la
+                    página principal</span>
                 <hr class="dark horizontal text-danger">
                 <div class="text-center">
                     <h3 class="text-center text-muted">{{ $item->title_trend }}</h3>
                 </div>
-                <span class="text-s">Sección: Productos en tendencia, esta descripción se mostrará en la sección de artículos en tendencia en la página principal</span>
+                <span class="text-s">Sección: Productos en tendencia, esta descripción se mostrará en la sección de
+                    artículos en tendencia en la página principal</span>
                 <hr class="dark horizontal text-danger mb-3">
-                <span class="text-s">Sección: Carrusel, se mostrará al principio del Inicio de la página.<a href="#" data-bs-toggle="modal"
-                        data-bs-target="#add-tenant-carousel-modal"><i class="fa fa-plus me-3"></i></a></span>
+                <span class="text-s">Sección: Carrusel, se mostrará al principio del Inicio de la página.<a href="#"
+                        data-bs-toggle="modal" data-bs-target="#add-tenant-carousel-modal"><i
+                            class="fa fa-plus me-3"></i></a></span>
                 @if (count($tenantcarousel) != 0)
                     <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
                         <div class="carousel-inner mb-4">
                             @foreach ($tenantcarousel as $key => $carousel)
                                 @include('admin.tenant-info.carousel-modal-edit')
                                 <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
-                                    <div class="page-header min-vh-75 m-3 lazy-background" data-background="{{ tenant_asset('/') . '/' . $carousel->image }}"
+                                    <div class="page-header min-vh-75 m-3 lazy-background"
+                                        data-background="{{ tenant_asset('/') . '/' . $carousel->image }}"
                                         style="background-image: url('{{ tenant_asset('/') . '/' . $carousel->image }}');">
                                         <span class="mask bg-gradient-dark"></span>
                                         <div class="container">
@@ -220,9 +227,10 @@
                                         <a href="#" class="text-muted">
                                             <i class="fa fa-envelope"> {{ $item->email }}</i>
                                         </a>
-                                        
+
                                     </p>
-                                    <span class="text-s">Este correo es donde llegarán las notificaciones de las compras realizadas</span>
+                                    <span class="text-s">Este correo es donde llegarán las notificaciones de las compras
+                                        realizadas</span>
                                 </div>
                             </div>
 
@@ -248,6 +256,7 @@
     </div>
 @endsection
 @section('script')
+    <script src="{{ asset('js/image-error-handler.js') }}"></script>
     <script>
         function confirmAndSubmit(id) {
 
@@ -262,11 +271,11 @@
                 document.getElementById('deleteFormCarousel' + id).submit();
             }
             document.addEventListener("DOMContentLoaded", function() {
-        var lazyBackgrounds = document.querySelectorAll('.lazy-background');
+                        var lazyBackgrounds = document.querySelectorAll('.lazy-background');
 
-        lazyBackgrounds.forEach(function(background) {
-            var imageUrl = background.getAttribute('data-background');
-            background.style.backgroundImage = 'url(' + imageUrl + ')';
-        });
+                        lazyBackgrounds.forEach(function(background) {
+                            var imageUrl = background.getAttribute('data-background');
+                            background.style.backgroundImage = 'url(' + imageUrl + ')';
+                        });
     </script>
 @endsection
