@@ -50,12 +50,15 @@
                         <p class="card-text text-danger">
                             Ventas totales: <span id="totalVentas">{{ $totalVentas }}</span>
                         </p>
+                        <p class="card-text text-danger">
+                            Total de productos: <span id="totalProductos">{{ $totalDetails }}</span>
+                        </p>
                         <p class="card-text text-info">
                             Ventas: ₡<span id="totalPrecio">{{ number_format($totalPrecio, 2) }}</span>
                         </p>
                         <p class="card-text text-info">
                             Envíos: ₡<span id="totalEnvio">{{ number_format($totalEnvio, 2) }}</span>
-                        </p>
+                        </p>                        
                         <hr class="dark horizontal text-danger">
                         <p class="card-text text-success">
                             Total: ₡<span id="total">{{ number_format($totalPrecio + $totalEnvio, 2) }}</span>
@@ -83,6 +86,9 @@
                                             class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                             I.V.A</th>
                                     @endif
+                                    <th
+                                        class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
+                                        Productos</th>
 
 
                                 </tr>
@@ -107,6 +113,10 @@
                                                     ₡{{ number_format($buy->iva) }}</p>
                                             </td>
                                         @endif
+                                        <td class="align-middle text-xxs text-center">
+                                            <p class=" font-weight-bold mb-0">
+                                                {{ $buy->details_count }}</p>
+                                        </td>
 
 
                                     </tr>
@@ -228,25 +238,30 @@
             var totalPrecio = 0;
             var totalEnvio = 0;
             var totalVentas = 0;
+            var totalProductos = 0;
 
 
             $('#buys tbody tr').each(function() {
                 var precio = parseFloat($(this).find('td:eq(1)').text().replace(/[^0-9.-]+/g, ""));
                 var envio = parseFloat($(this).find('td:eq(2)').text().replace(/[^0-9.-]+/g, ""));
+                var productos = parseFloat($(this).find('td:eq(3)').text().replace(/[^0-9.-]+/g, ""));
                 if (!isNaN(precio)) {
                     totalVentas++;
                 }
                 precio = isNaN(precio) ? 0 : precio;
                 envio = isNaN(envio) ? 0 : envio;
+                productos = isNaN(productos) ? 0 : productos;
 
                 totalPrecio += precio;
                 totalEnvio += envio;
+                totalProductos += productos;
 
             });
 
             $('#totalPrecio').text(totalPrecio.toFixed(2));
             $('#totalEnvio').text(totalEnvio.toFixed(2));
             $('#totalVentas').text(totalVentas.toFixed(0));
+            $('#totalProductos').text(totalProductos.toFixed(0));
             $('#total').text((totalPrecio + totalEnvio).toFixed(2));
         }
     </script>

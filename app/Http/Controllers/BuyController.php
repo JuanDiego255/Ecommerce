@@ -313,40 +313,34 @@ class BuyController extends Controller
         $tenantinfo = TenantInfo::first();
         $buys = Cache::remember('buys_data', $this->expirationTime, function () {
             return Buy::leftJoin('users', 'buys.user_id', 'users.id')
+                ->leftJoin('buy_details', 'buys.id', 'buy_details.buy_id')
                 ->select(
                     'buys.id as id',
                     'buys.total_iva as total_iva',
                     'buys.total_buy as total_buy',
-                    'buys.total_delivery as total_delivery',
-                    'buys.delivered as delivered',
-                    'buys.approved as approved',
-                    'buys.created_at as created_at',
-                    'buys.image as image',
-                    'users.id as user_id',
-                    'users.name as name',
-                    'users.telephone as telephone',
-                    'users.email as email',
-                    'buys.name as name_b',
-                    'buys.telephone as telephone_b',
-                    'buys.email as email_b',
-                    'buys.cancel_buy as cancel_buy'
+                    'buys.total_delivery as total_delivery',                    
+                    'buys.created_at as created_at',                    
+                    DB::raw('COUNT(buy_details.id) as details_count')
                 )
+                ->groupBy('buys.id','buys.total_iva','buys.total_buy','buys.total_Delivery','buys.created_at')
                 ->get();
         });
         $iva = $tenantinfo->iva;
         $totalEnvio = 0;
         $totalPrecio = 0;
         $totalVentas = 0;
+        $totalDetails = 0;
 
         if (count($buys) == 0) {
             return redirect()->back()->with(['status' => 'No hay compras en ese rango de fechas!', 'icon' => 'warning']);
         } else {
             $totalPrecio = $buys->sum('total_buy');
             $totalEnvio = $buys->sum('total_delivery');
+            $totalDetails = $buys->sum('details_count');
             $totalVentas = count($buys);
         }
 
         $totalEnvio = $buys->sum('total_delivery');
-        return view('admin.buys.index-total', compact('buys', 'iva', 'totalPrecio', 'totalEnvio', 'totalVentas'));
+        return view('admin.buys.index-total', compact('buys', 'iva', 'totalPrecio', 'totalEnvio', 'totalVentas','totalDetails'));
     }
 }
