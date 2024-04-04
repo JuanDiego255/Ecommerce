@@ -17,9 +17,9 @@ class CreateClothingTable extends Migration
             $table->id();
             $table->unsignedBigInteger('category_id');
             $table->string('name');
+            $table->string('code');
             $table->string('description');
-            $table->string('price');
-            $table->string('image');
+            $table->string('price');            
             $table->string('status');
             $table->string('discount',30)->nullable();
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');

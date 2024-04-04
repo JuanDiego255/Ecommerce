@@ -68,11 +68,13 @@
                                     <td>
                                         <div class="d-flex px-2 py-1">
                                             <div>
-                                                <a target="blank" data-fancybox="gallery"
-                                                    href="{{ route('file', $buy->image) }}">
-                                                    <img src="{{ route('file', $buy->image) }}"
-                                                        class="img-fluid shadow border-radius-lg">
-                                                </a>
+                                                @if ($buy->image)
+                                                    <a target="blank" data-fancybox="gallery"
+                                                        href="{{ route('file', $buy->image) }}">
+                                                        <img src="{{ route('file', $buy->image) }}"
+                                                            class="img-fluid shadow border-radius-lg">
+                                                    </a>
+                                                @endif
                                             </div>
                                         </div>
                                     </td>

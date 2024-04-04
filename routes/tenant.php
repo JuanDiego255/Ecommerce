@@ -99,7 +99,9 @@ Route::middleware([
         Route::delete('/delete-clothing/{id}', [ClothingCategoryController::class, 'delete']);
         //Routes for Buys
         Route::get('/buys-admin', [BuyController::class, 'indexAdmin']);
+        Route::post('/size-by-cloth', [BuyController::class, 'sizeByCloth']);
         Route::get('/total-buys', [BuyController::class, 'indexTotalBuys']);
+        Route::get('/new-buy', [BuyController::class, 'indexBuy']);
         Route::get('/buy/details/admin/{id}', [BuyController::class, 'buyDetailsAdmin']);
         Route::put('/approve/{id}/{approved}', [BuyController::class, 'approve']);
         Route::put('/delivery/{id}/{delivery}', [BuyController::class, 'delivery']);

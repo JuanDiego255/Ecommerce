@@ -245,10 +245,16 @@
             const totalIvaElement = document.getElementById('totalIvaElement');
             const totalDiscountElement = document.getElementById('totalDiscountElement');
             const totalCloth = document.getElementById('totalCloth');
+            const btnPay = document.getElementById('btnPay');
+
             totalElement.textContent = `₡${total.toLocaleString()}`;
-            totalIvaElement.textContent = `₡${total_iva.toLocaleString()}`;
+            if (total_iva > 0) {
+                totalIvaElement.textContent = `₡${total_iva.toLocaleString()}`;
+            }
+            if (you_save > 0) {
+                totalDiscountElement.textContent = `₡${you_save.toLocaleString()}`;
+            }
             totalCloth.textContent = `₡${total_cloth.toLocaleString()}`;
-            totalDiscountElement.textContent = `₡${you_save.toLocaleString()}`;
         }
     </script>
 @endsection

@@ -30,9 +30,11 @@ class CreateBuysTable extends Migration
             $table->string('total_iva'); 
             $table->string('total_buy'); 
             $table->tinyInteger('delivered');  
-            $table->tinyInteger('approved');   
+            $table->tinyInteger('approved'); 
+            $table->string('kind_of_buy',2)->nullable();
+            $table->string('detail',191)->nullable();   
             $table->tinyInteger('cancel_buy')->nullable();
-            $table->string('image');                           
+            $table->string('image')->nullable();                           
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');           
            
             $table->timestamps();

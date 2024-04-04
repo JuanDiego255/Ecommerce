@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Buy;
 use App\Models\BuyDetail;
+use App\Models\Cart;
+use App\Models\ClothingCategory;
 use App\Models\MetaTags;
+use App\Models\SizeCloth;
 use App\Models\TenantInfo;
 use Exception;
 use Illuminate\Http\Request;
@@ -55,6 +58,7 @@ class BuyController extends Controller
         $tenantinfo = TenantInfo::first();
         $buys = Cache::remember('buys_data', $this->expirationTime, function () {
             return Buy::leftJoin('users', 'buys.user_id', 'users.id')
+                ->where('buys.kind_of_buy','!=','F')
                 ->select(
                     'buys.id as id',
                     'buys.total_iva as total_iva',
@@ -318,11 +322,12 @@ class BuyController extends Controller
                     'buys.id as id',
                     'buys.total_iva as total_iva',
                     'buys.total_buy as total_buy',
-                    'buys.total_delivery as total_delivery',                    
-                    'buys.created_at as created_at',                    
+                    'buys.kind_of_buy as kind_of',                    
+                    'buys.total_delivery as total_delivery',
+                    'buys.created_at as created_at',
                     DB::raw('COUNT(buy_details.id) as details_count')
                 )
-                ->groupBy('buys.id','buys.total_iva','buys.total_buy','buys.total_Delivery','buys.created_at')
+                ->groupBy('buys.id','buys.kind_of_buy', 'buys.total_iva', 'buys.total_buy', 'buys.total_Delivery', 'buys.created_at')
                 ->get();
         });
         $iva = $tenantinfo->iva;
@@ -341,6 +346,108 @@ class BuyController extends Controller
         }
 
         $totalEnvio = $buys->sum('total_delivery');
-        return view('admin.buys.index-total', compact('buys', 'iva', 'totalPrecio', 'totalEnvio', 'totalVentas','totalDetails'));
+        return view('admin.buys.index-total', compact('buys', 'iva', 'totalPrecio', 'totalEnvio', 'totalVentas', 'totalDetails'));
+    }
+    public function indexBuy()
+    {
+        $tenantinfo = TenantInfo::first();
+        $cart_items = Cache::remember('cart_items', $this->expirationTime, function () {
+
+                $cart_items = Cart::where('carts.user_id', null)
+                    ->where('carts.session_id', null)
+                    ->where('carts.sold', 0)                    
+                    ->join('stocks', function ($join) {
+                        $join->on('carts.clothing_id', '=', 'stocks.clothing_id')
+                            ->on('carts.size_id', '=', 'stocks.size_id');
+                    })
+                    ->join('clothing', 'carts.clothing_id', 'clothing.id')
+                    ->join('sizes', 'carts.size_id', 'sizes.id')
+                    ->leftJoin('product_images', function ($join) {
+                        $join->on('clothing.id', '=', 'product_images.clothing_id')
+                            ->whereRaw('product_images.id = (
+                            SELECT MIN(id) FROM product_images 
+                            WHERE product_images.clothing_id = clothing.id
+                        )');
+                    })
+                    ->select(
+                        'clothing.id as id',
+                        'clothing.name as name',
+                        'clothing.code as code',
+                        'clothing.description as description',
+                        'clothing.price as price',
+                        'clothing.discount as discount',
+                        'clothing.status as status',
+                        'sizes.size as size',
+                        'sizes.id as size_id',
+                        'carts.quantity as quantity',
+                        'stocks.stock as stock',
+                        DB::raw('IFNULL(product_images.image, "") as image') // Obtener la primera imagen del producto
+                    )
+                    ->groupBy(
+                        'clothing.id',
+                        'clothing.name',
+                        'clothing.code',
+                        'clothing.description',
+                        'clothing.price',
+                        'clothing.status',
+                        'clothing.discount',
+                        'sizes.size',
+                        'sizes.id',
+                        'carts.quantity',
+                        'stocks.stock',
+                        'product_images.image'
+                    )
+                    ->get();
+                // Resto del código para obtener los artículos del carrito para usuarios autenticados
+                return $cart_items;
+            
+        });
+
+        $tags = MetaTags::where('section', 'Carrito')->get();
+        $tenantinfo = TenantInfo::first();
+        foreach ($tags as $tag) {
+            SEOMeta::setTitle($tag->title . " - " . $tenantinfo->title);
+            SEOMeta::setKeywords($tag->meta_keywords);
+            SEOMeta::setDescription($tag->meta_description);
+            //Opengraph
+            OpenGraph::addImage(URL::to($tag->url_image_og));
+            OpenGraph::setTitle($tag->title);
+            OpenGraph::setDescription($tag->meta_og_description);
+        }
+
+        $name = Auth::user()->name ?? null;
+
+        $cloth_price = 0;
+        $you_save = 0;
+        foreach ($cart_items as $item) {
+            $precio = $item->price;
+            $descuentoPorcentaje = $item->discount;
+            // Calcular el descuento
+            $descuento = ($precio * $descuentoPorcentaje) / 100;
+
+            $you_save += $descuento * $item->quantity;
+            // Calcular el precio con el descuento aplicado
+            $precioConDescuento = $precio - $descuento;
+            $cloth_price += $precioConDescuento * $item->quantity;
+        }
+
+        $iva = $cloth_price * $tenantinfo->iva;
+        $total_price = $cloth_price + $iva;
+
+        return view('admin.buys.buys', compact('cart_items', 'name', 'cloth_price', 'iva', 'total_price', 'you_save'));
+    }
+    public function sizeByCloth(Request $request)
+    {
+        $code = $request->code;
+        $cloth_check = ClothingCategory::where('code', $code)->first();
+        if ($cloth_check) {
+            $sizes = SizeCloth::where('clothing_id', $cloth_check->id)
+                ->join('sizes', 'size_cloths.size_id', 'sizes.id')
+                ->select('sizes.id as id','sizes.size as size')
+                ->get();
+            return response()->json(['status' => 'success', 'sizes' => $sizes]);
+        } else {
+            return response()->json(['status' => 'No existe ningún producto con el código digitado', 'icon' => 'warning']);
+        }
     }
 }

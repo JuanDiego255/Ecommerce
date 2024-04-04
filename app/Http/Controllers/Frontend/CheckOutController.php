@@ -151,116 +151,233 @@ class CheckOutController extends Controller
             $tenantinfo = TenantInfo::first();
             $tenant = $tenantinfo->tenant;
             $request = request();
-            DB::beginTransaction();
-            if (Auth::check()) {
-                $cartItems = Cart::where('user_id', Auth::user()->id)->where('sold', 0)
-                    ->join('clothing', 'carts.clothing_id', 'clothing.id')
-                    ->join('sizes', 'carts.size_id', 'sizes.id')
-                    ->select(
-                        'clothing.id as clothing_id',
-                        'clothing.name as name',
-                        'clothing.code as code',
-                        'clothing.description as description',
-                        'clothing.price as price',
-                        'clothing.discount as discount',
-                        'clothing.status as status',
-                        'sizes.size as size',
-                        'carts.quantity as quantity',
-                        'carts.size_id as size_id'
-                    )->get();
-                $cloth_price = 0;
+            DB::beginTransaction();           
+            if ($request->kind_of == "V") {
+                if (Auth::check()) {
+                    $cartItems = Cart::where('user_id', Auth::user()->id)->where('sold', 0)
+                        ->join('clothing', 'carts.clothing_id', 'clothing.id')
+                        ->join('sizes', 'carts.size_id', 'sizes.id')
+                        ->select(
+                            'clothing.id as clothing_id',
+                            'clothing.name as name',
+                            'clothing.code as code',
+                            'clothing.description as description',
+                            'clothing.price as price',
+                            'clothing.discount as discount',
+                            'clothing.status as status',
+                            'sizes.size as size',
+                            'carts.quantity as quantity',
+                            'carts.size_id as size_id'
+                        )->get();
+                    $cloth_price = 0;
 
-                foreach ($cartItems as $cart) {
-                    $precio = $cart->price;
-                    $descuentoPorcentaje = $cart->discount;
-                    // Calcular el descuento
-                    $descuento = ($precio * $descuentoPorcentaje) / 100;
-                    // Calcular el precio con el descuento aplicado
-                    $precioConDescuento = $precio - $descuento;
-                    $cloth_price += $precioConDescuento * $cart->quantity;
+                    foreach ($cartItems as $cart) {
+                        $precio = $cart->price;
+                        $descuentoPorcentaje = $cart->discount;
+                        // Calcular el descuento
+                        $descuento = ($precio * $descuentoPorcentaje) / 100;
+                        // Calcular el precio con el descuento aplicado
+                        $precioConDescuento = $precio - $descuento;
+                        $cloth_price += $precioConDescuento * $cart->quantity;
+                    }
+                    $iva = $cloth_price * $tenantinfo->iva;
+                    $total_price = $cloth_price + $iva;
+
+                    $buy = new Buy();
+                    if ($request !== null) {
+                        if ($request->hasFile('image')) {
+                            $buy->image = $request->file('image')->store('uploads', 'public');
+                        }
+                        if ($request->has('address')) {
+                            $address = $request->address;
+                        }
+                        if ($request->has('address_two') && $tenant != "mandicr") {
+                            $address_two = $request->address_two;
+                        }
+                        if ($request->has('telephone')) {
+                            $telephone = $request->telephone;
+                        }
+                        if ($request->has('city')) {
+                            $city = $request->city;
+                        }
+                        if ($request->has('province')) {
+                            $province = $request->province;
+                        }
+                        if ($request->has('country')) {
+                            $country = $request->country;
+                        }
+                        if ($request->has('postal_code')) {
+                            $postal_code = $request->postal_code;
+                        }
+                    }
+
+                    $buy->user_id =  Auth::user()->id;
+                    $buy->address =  $address;
+                    $buy->address_two =  $address_two;
+                    $buy->city =  $city;
+                    $buy->province =  $province;
+                    $buy->country =  $country;
+                    $buy->postal_code =  $postal_code;
+                    $buy->total_iva =  $iva;
+                    $buy->total_buy =  $total_price;
+                    $buy->total_delivery =  $request->delivery;
+                    $buy->delivered = 0;
+                    $buy->approved = 0;
+                    $buy->cancel_buy = 0;
+                    $buy->kind_of_buy = $request->kind_of;
+                    $buy->save();
+                    $buy_id = $buy->id;
+
+                    foreach ($cartItems as $cart) {
+                        $precio = $cart->price;
+                        $descuentoPorcentaje = $cart->discount;
+                        // Calcular el descuento
+                        $descuento = ($precio * $descuentoPorcentaje) / 100;
+                        // Calcular el precio con el descuento aplicado
+                        $precioConDescuento = $precio - $descuento;
+                        $buy_detail = new BuyDetail();
+                        $buy_detail->buy_id = $buy_id;
+                        $buy_detail->clothing_id = $cart->clothing_id;
+                        $buy_detail->size_id = $cart->size_id;
+                        $buy_detail->total = ($precioConDescuento * $cart->quantity) + ($precioConDescuento * $tenantinfo->iva);
+                        $buy_detail->iva = $precioConDescuento * $tenantinfo->iva;
+                        $buy_detail->quantity = $cart->quantity;
+                        $buy_detail->cancel_item = 0;
+                        $buy_detail->save();
+                        $stock = Stock::where('clothing_id', $cart->clothing_id)
+                            ->where('size_id', $cart->size_id)
+                            ->first();
+                        Stock::where('clothing_id', $cart->clothing_id)
+                            ->where('size_id', $cart->size_id)
+                            ->update(['stock' => ($stock->stock - $cart->quantity)]);
+                    }
+
+                    Cart::where('user_id', Auth::user()->id)->where('sold', 0)->update(['sold' => 1]);
+                    DB::commit();
+                } else {
+                    $session_id = session()->get('session_id');
+                    $cartItems = Cart::where('session_id', $session_id)->where('sold', 0)
+                        ->join('clothing', 'carts.clothing_id', 'clothing.id')
+                        ->join('sizes', 'carts.size_id', 'sizes.id')
+                        ->select(
+                            'clothing.id as clothing_id',
+                            'clothing.name as name',
+                            'clothing.description as description',
+                            'clothing.discount as discount',
+                            'clothing.code as code',
+                            'clothing.price as price',
+                            'clothing.status as status',
+                            'sizes.size as size',
+                            'carts.quantity as quantity',
+                            'carts.size_id as size_id'
+                        )->get();
+                    $cloth_price = 0;
+
+                    foreach ($cartItems as $cart) {
+                        $precio = $cart->price;
+                        $descuentoPorcentaje = $cart->discount;
+                        // Calcular el descuento
+                        $descuento = ($precio * $descuentoPorcentaje) / 100;
+                        // Calcular el precio con el descuento aplicado
+                        $precioConDescuento = $precio - $descuento;
+                        $cloth_price += $precioConDescuento * $cart->quantity;
+                    }
+                    $iva = $cloth_price * $tenantinfo->iva;
+                    $total_price = $cloth_price + $iva;
+
+                    $buy = new Buy();
+                    if ($request !== null) {
+                        if ($request->hasFile('image')) {
+                            $buy->image = $request->file('image')->store('uploads', 'public');
+                        }
+                        if ($request->has('name')) {
+                            $name = $request->name;
+                        }
+                        if ($request->has('email')) {
+                            $email = $request->email;
+                        }
+                        if ($request->has('telephone')) {
+                            $telephone = $request->telephone;
+                        }
+                        if ($request->has('address')) {
+                            $address = $request->address;
+                        }
+                        if ($request->has('address_two') && $tenant != "mandicr") {
+                            $address_two = $request->address_two;
+                        }
+                        if ($request->has('city')) {
+                            $city = $request->city;
+                        }
+                        if ($request->has('province')) {
+                            $province = $request->province;
+                        }
+                        if ($request->has('country')) {
+                            $country = $request->country;
+                        }
+                        if ($request->has('postal_code')) {
+                            $postal_code = $request->postal_code;
+                        }
+                    }
+                    $buy->session_id =  $session_id;
+                    $buy->name =  $name;
+                    $buy->email =  $email;
+                    $buy->telephone =  $telephone;
+                    $buy->address =  $address;
+                    $buy->address_two =  $address_two;
+                    $buy->city =  $city;
+                    $buy->province =  $province;
+                    $buy->country =  $country;
+                    $buy->postal_code =  $postal_code;
+                    $buy->total_iva =  $iva;
+                    $buy->total_buy =  $total_price;
+                    $buy->total_delivery =  $request->delivery;
+                    $buy->delivered = 0;
+                    $buy->approved = 0;
+                    $buy->cancel_buy = 0;
+                    $buy->kind_of_buy = $request->kind_of;
+                    $buy->save();
+                    $buy_id = $buy->id;
+
+                    foreach ($cartItems as $cart) {
+                        $precio = $cart->price;
+                        $descuentoPorcentaje = $cart->discount;
+                        // Calcular el descuento
+                        $descuento = ($precio * $descuentoPorcentaje) / 100;
+                        // Calcular el precio con el descuento aplicado
+                        $precioConDescuento = $precio - $descuento;
+                        $buy_detail = new BuyDetail();
+                        $buy_detail->buy_id = $buy_id;
+                        $buy_detail->clothing_id = $cart->clothing_id;
+                        $buy_detail->size_id = $cart->size_id;
+                        $buy_detail->total = ($precioConDescuento * $cart->quantity) + ($precioConDescuento * $tenantinfo->iva);
+                        $buy_detail->iva = $precioConDescuento * $tenantinfo->iva;
+                        $buy_detail->quantity = $cart->quantity;
+                        $buy_detail->cancel_item = 0;
+                        $buy_detail->save();
+                        $stock = Stock::where('clothing_id', $cart->clothing_id)
+                            ->where('size_id', $cart->size_id)
+                            ->first();
+                        Stock::where('clothing_id', $cart->clothing_id)
+                            ->where('size_id', $cart->size_id)
+                            ->update(['stock' => ($stock->stock - $cart->quantity)]);
+                    }
+
+                    Cart::where('session_id', $session_id)->where('sold', 0)->update(['sold' => 1]);
+                    DB::commit();
                 }
-                $iva = $cloth_price * $tenantinfo->iva;
-                $total_price = $cloth_price + $iva;
-
-                $buy = new Buy();
-                if ($request !== null) {
-                    if ($request->hasFile('image')) {
-                        $buy->image = $request->file('image')->store('uploads', 'public');
-                    }
-                    if ($request->has('address')) {
-                        $address = $request->address;
-                    }
-                    if ($request->has('address_two') && $tenant != "mandicr") {
-                        $address_two = $request->address_two;
-                    }
-                    if ($request->has('city')) {
-                        $city = $request->city;
-                    }
-                    if ($request->has('province')) {
-                        $province = $request->province;
-                    }
-                    if ($request->has('country')) {
-                        $country = $request->country;
-                    }
-                    if ($request->has('postal_code')) {
-                        $postal_code = $request->postal_code;
-                    }
-                }
-
-                $buy->user_id =  Auth::user()->id;
-                $buy->address =  $address;
-                $buy->address_two =  $address_two;
-                $buy->city =  $city;
-                $buy->province =  $province;
-                $buy->country =  $country;
-                $buy->postal_code =  $postal_code;
-                $buy->total_iva =  $iva;
-                $buy->total_buy =  $total_price;
-                $buy->total_delivery =  $request->delivery;
-                $buy->delivered = 0;
-                $buy->approved = 0;
-                $buy->cancel_buy = 0;
-                $buy->save();
-                $buy_id = $buy->id;
-
-                foreach ($cartItems as $cart) {
-                    $precio = $cart->price;
-                    $descuentoPorcentaje = $cart->discount;
-                    // Calcular el descuento
-                    $descuento = ($precio * $descuentoPorcentaje) / 100;
-                    // Calcular el precio con el descuento aplicado
-                    $precioConDescuento = $precio - $descuento;
-                    $buy_detail = new BuyDetail();
-                    $buy_detail->buy_id = $buy_id;
-                    $buy_detail->clothing_id = $cart->clothing_id;
-                    $buy_detail->size_id = $cart->size_id;
-                    $buy_detail->total = ($precioConDescuento * $cart->quantity) + ($precioConDescuento * $tenantinfo->iva);
-                    $buy_detail->iva = $precioConDescuento * $tenantinfo->iva;
-                    $buy_detail->quantity = $cart->quantity;
-                    $buy_detail->cancel_item = 0;
-                    $buy_detail->save();
-                    $stock = Stock::where('clothing_id', $cart->clothing_id)
-                        ->where('size_id', $cart->size_id)
-                        ->first();
-                    Stock::where('clothing_id', $cart->clothing_id)
-                        ->where('size_id', $cart->size_id)
-                        ->update(['stock' => ($stock->stock - $cart->quantity)]);
-                }
-
-                Cart::where('user_id', Auth::user()->id)->where('sold', 0)->update(['sold' => 1]);
-                DB::commit();
             } else {
-                $session_id = session()->get('session_id');
-                $cartItems = Cart::where('session_id', $session_id)->where('sold', 0)
+                $cartItems = Cart::where('user_id', null)
+                    ->where('session_id', null)
+                    ->where('sold', 0)
                     ->join('clothing', 'carts.clothing_id', 'clothing.id')
                     ->join('sizes', 'carts.size_id', 'sizes.id')
                     ->select(
                         'clothing.id as clothing_id',
                         'clothing.name as name',
-                        'clothing.description as description',
-                        'clothing.discount as discount',
                         'clothing.code as code',
+                        'clothing.description as description',
                         'clothing.price as price',
+                        'clothing.discount as discount',
                         'clothing.status as status',
                         'sizes.size as size',
                         'carts.quantity as quantity',
@@ -281,54 +398,14 @@ class CheckOutController extends Controller
                 $total_price = $cloth_price + $iva;
 
                 $buy = new Buy();
-                if ($request !== null) {
-                    if ($request->hasFile('image')) {
-                        $buy->image = $request->file('image')->store('uploads', 'public');
-                    }
-                    if ($request->has('name')) {
-                        $name = $request->name;
-                    }
-                    if ($request->has('email')) {
-                        $email = $request->email;
-                    }
-                    if ($request->has('telephone')) {
-                        $telephone = $request->telephone;
-                    }
-                    if ($request->has('address')) {
-                        $address = $request->address;
-                    }
-                    if ($request->has('address_two') && $tenant != "mandicr") {
-                        $address_two = $request->address_two;
-                    }
-                    if ($request->has('city')) {
-                        $city = $request->city;
-                    }
-                    if ($request->has('province')) {
-                        $province = $request->province;
-                    }
-                    if ($request->has('country')) {
-                        $country = $request->country;
-                    }
-                    if ($request->has('postal_code')) {
-                        $postal_code = $request->postal_code;
-                    }
-                }
-                $buy->session_id =  $session_id;
-                $buy->name =  $name;
-                $buy->email =  $email;
-                $buy->telephone =  $telephone;
-                $buy->address =  $address;
-                $buy->address_two =  $address_two;
-                $buy->city =  $city;
-                $buy->province =  $province;
-                $buy->country =  $country;
-                $buy->postal_code =  $postal_code;
+                $buy->user_id = null;                
                 $buy->total_iva =  $iva;
-                $buy->total_buy =  $total_price;
-                $buy->total_delivery =  $request->delivery;
-                $buy->delivered = 0;
-                $buy->approved = 0;
+                $buy->total_buy =  $total_price;                
+                $buy->delivered = 1;
+                $buy->approved = 1;
                 $buy->cancel_buy = 0;
+                $buy->kind_of_buy = $request->kind_of;
+                $buy->detail = $request->detail;
                 $buy->save();
                 $buy_id = $buy->id;
 
@@ -356,14 +433,18 @@ class CheckOutController extends Controller
                         ->update(['stock' => ($stock->stock - $cart->quantity)]);
                 }
 
-                Cart::where('session_id', $session_id)->where('sold', 0)->update(['sold' => 1]);
+                Cart::where('user_id', null)
+                ->where('session_id',null)
+                ->where('sold', 0)->update(['sold' => 1]);
                 DB::commit();
+                return redirect()->back()->with(['status' => 'Se ha realizado la venta con éxito.', 'icon' => 'success']);
             }
+
 
             //dd($request->has('telephone'));
             if ($request->has('telephone')) {
                 $this->sendEmail($cartItems, $total_price);
-                return redirect('/')->with(['status' => 'Se ha realizado la compra con 茅xito.', 'icon' => 'success']);
+                return redirect('/')->with(['status' => 'Se ha realizado la compra con éxito.', 'icon' => 'success']);
             }
 
             return true;

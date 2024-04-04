@@ -58,7 +58,7 @@
                         </p>
                         <p class="card-text text-info">
                             Envíos: ₡<span id="totalEnvio">{{ number_format($totalEnvio, 2) }}</span>
-                        </p>                        
+                        </p>
                         <hr class="dark horizontal text-danger">
                         <p class="card-text text-success">
                             Total: ₡<span id="total">{{ number_format($totalPrecio + $totalEnvio, 2) }}</span>
@@ -81,6 +81,9 @@
                                     <th
                                         class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                         Envío</th>
+                                    <th
+                                        class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
+                                        Tipo</th>
                                     @if ($iva > 0)
                                         <th
                                             class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
@@ -106,6 +109,15 @@
                                         <td class="align-middle text-xxs text-center">
                                             <p class=" font-weight-bold mb-0">
                                                 ₡{{ number_format($buy->total_delivery) }}</p>
+                                        </td>
+                                        <td class="align-middle text-xxs text-center">
+                                            <p class=" font-weight-bold mb-0">
+                                                @if ($buy->kind_of == "F")
+                                                    Tienda Física
+                                                @else
+                                                    Sitio Web
+                                                @endif
+                                            </p>
                                         </td>
                                         @if ($iva > 0)
                                             <td class="align-middle text-xxs text-center">

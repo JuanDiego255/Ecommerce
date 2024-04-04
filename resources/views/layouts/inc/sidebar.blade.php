@@ -47,12 +47,21 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a @if ($view_name == 'admin_buys_index-total' || $view_name == 'admin_buys_indexDetail') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
-                    href="{{ url('total-buys') }}">
+                <a @if ($view_name == 'admin_buys_buys') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
+                    href="{{ url('new-buy') }}">
                     <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="material-icons opacity-10">payments</i>
                     </div>
                     <span class="nav-link-text ms-1">Ventas</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a @if ($view_name == 'admin_buys_index-total') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
+                    href="{{ url('total-buys') }}">
+                    <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                        <i class="material-icons opacity-10">savings</i>
+                    </div>
+                    <span class="nav-link-text ms-1">Registro de ventas</span>
                 </a>
             </li>
             <li class="nav-item">

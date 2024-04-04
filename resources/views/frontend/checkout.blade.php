@@ -27,6 +27,7 @@
                                 @csrf
                                 <input type="hidden" value="0" name="delivery" id="delivery">
                                 <input type="hidden" value="{{ $delivery }}" name="total_delivery" id="total_delivery">
+                                <input type="hidden" value="V" name="kind_of" id="kind_of">
                                 <div class="row checkout-form">
                                     <div class="col-md-6">
                                         <div class="input-group input-group-static mb-4">
