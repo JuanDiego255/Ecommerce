@@ -324,7 +324,7 @@ class BuyController extends Controller
                     'buys.kind_of_buy as kind_of',
                     'buys.total_delivery as total_delivery',
                     'buys.created_at as created_at',
-                    DB::raw('COUNT(buy_details.id) as details_count')
+                    DB::raw('sum(buy_details.quantity) as details_count')
                 )
                 ->groupBy('buys.id', 'buys.kind_of_buy', 'buys.total_iva', 'buys.total_buy', 'buys.total_Delivery', 'buys.created_at')
                 ->get();
