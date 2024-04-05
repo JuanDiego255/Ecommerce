@@ -82,7 +82,7 @@ class BuyController extends Controller
         $iva = $tenantinfo->iva;
 
         if (count($buys) == 0) {
-            return redirect()->back()->with(['status' => 'No hay compras registradas!', 'icon' => 'warning']);
+            return redirect()->back()->with(['status' => 'No hay pedidos registrados!', 'icon' => 'warning']);
         }
 
         return view('admin.buys.index', compact('buys', 'iva'));
@@ -204,7 +204,6 @@ class BuyController extends Controller
             DB::rollBack();
         }
     }
-
     public function delivery($id, $delivery)
     {
         DB::beginTransaction();
@@ -337,7 +336,7 @@ class BuyController extends Controller
         $totalDetails = 0;
 
         if (count($buys) == 0) {
-            return redirect()->back()->with(['status' => 'No hay compras en ese rango de fechas!', 'icon' => 'warning']);
+            return redirect()->back()->with(['status' => 'No hay ventas en ese rango de fechas!', 'icon' => 'warning']);
         } else {
             $totalPrecio = $buys->sum('total_buy');
             $totalEnvio = $buys->sum('total_delivery');

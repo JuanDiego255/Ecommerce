@@ -437,14 +437,14 @@ class CheckOutController extends Controller
                 ->where('session_id',null)
                 ->where('sold', 0)->update(['sold' => 1]);
                 DB::commit();
-                return redirect()->back()->with(['status' => 'Se ha realizado la venta con éxito.', 'icon' => 'success']);
+                return redirect()->back()->with(['status' => 'Venta exitosa!', 'icon' => 'success']);
             }
 
 
             //dd($request->has('telephone'));
             if ($request->has('telephone')) {
                 $this->sendEmail($cartItems, $total_price);
-                return redirect('/')->with(['status' => 'Se ha realizado la compra con éxito.', 'icon' => 'success']);
+                return redirect('/')->with(['status' => 'Compra exitosa!', 'icon' => 'success']);
             }
 
             return true;

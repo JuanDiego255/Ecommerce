@@ -33,8 +33,8 @@
                 <div class="col-md-4 mb-3 d-none d-flex" id="size_section">
                     <div class="input-group input-group-static w-75">
                         <label>Tallas</label>
-                        <select id="sizes" name="sizes"
-                            class="form-control form-control-lg @error('section') is-invalid @enderror" required
+                        <select required id="sizes" name="sizes"
+                            class="form-control form-control-lg @error('sizes') is-invalid @enderror" required
                             autocomplete="section" autofocus>
                         </select>
                     </div>
@@ -151,7 +151,7 @@
                             <li
                                 class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
                                 Productos
-                                <span><strong id="totalCloth">₡{{ number_format($cloth_price) }}</strong</span>
+                                <span><strong id="totalCloth">₡{{ number_format($cloth_price) }}</strong< /span>
                             </li>
                             @if ($iva > 0)
                                 <li class="list-group-item d-flex justify-content-between align-items-center px-0">
@@ -283,6 +283,13 @@
                 var code = input_code.value;
                 var input_size = document.getElementById('sizes');
                 var size_id = input_size.value;
+                if (size_id == null || size_id == "") {
+                    swal({
+                        title: "Por favor seleccione una talla...",
+                        icon: "warning",
+                    });
+                    return;
+                }
 
                 $.ajaxSetup({
                     headers: {
@@ -367,21 +374,21 @@
 
             // Mostrar el total actualizado en el elemento correspondiente
             const totalElement = document.getElementById('totalPriceElement');
-            const totalIvaElement = document.getElementById('totalIvaElement');   
+            const totalIvaElement = document.getElementById('totalIvaElement');
             const totalDiscountElement = document.getElementById('totalDiscountElement');
-            const totalCloth = document.getElementById('totalCloth');            
+            const totalCloth = document.getElementById('totalCloth');
             const btnPay = document.getElementById('btnPay');
 
             totalElement.textContent = `₡${total.toLocaleString()}`;
-            if(total_iva > 0){
+            if (total_iva > 0) {
                 totalIvaElement.textContent = `₡${total_iva.toLocaleString()}`;
             }
-            if(you_save > 0){
+            if (you_save > 0) {
                 totalDiscountElement.textContent = `₡${you_save.toLocaleString()}`;
-            }            
+            }
             totalCloth.textContent = `₡${total_cloth.toLocaleString()}`;
             btnPay.textContent = `${total_cloth.toLocaleString()}`;
-           
+
         }
     </script>
 @endsection
