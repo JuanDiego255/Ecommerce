@@ -48,7 +48,7 @@
             <div class="col-md-8">
                 <div class="card p-2">
                     <div class="table-responsive">
-                        <input type="hidden" name="iva_tenant" id="iva_tenant" value="{{ $iva }}">
+                        <input type="hidden" name="iva_tenant" id="iva_tenant" value="{{ $iva_tenant }}">
                         <table class="table align-items-center mb-0" id="cartTable">
                             <thead>
                                 <tr>
@@ -154,7 +154,7 @@
                                 <span><strong id="totalCloth">₡{{ number_format($cloth_price) }}</strong< /span>
                             </li>
                             @if ($iva > 0)
-                                <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0">
                                     I.V.A
                                     <span id="totalIvaElement">₡{{ number_format($iva) }}</span>
                                 </li>
@@ -387,7 +387,7 @@
                 totalDiscountElement.textContent = `₡${you_save.toLocaleString()}`;
             }
             totalCloth.textContent = `₡${total_cloth.toLocaleString()}`;
-            btnPay.textContent = `${total_cloth.toLocaleString()}`;
+            btnPay.textContent = `${total.toLocaleString()}`;
 
         }
     </script>

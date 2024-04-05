@@ -45,6 +45,7 @@
         <div class="row row-cols-1 row-cols-md-2 g-4 align-content-center card-group mt-1">
             <div class="col-md-4">
                 <div class="card">
+                    <input type="hidden" name="iva_tenant" id="iva_tenant" value="{{ $iva }}">
                     <div class="card-body" id="totalCard">
                         <h5 class="card-title">Total de Precio y Envío</h5>
                         <p class="card-text text-danger">
@@ -56,6 +57,10 @@
                         <p class="card-text text-info">
                             Ventas: ₡<span id="totalPrecio">{{ number_format($totalPrecio, 2) }}</span>
                         </p>
+                        @if ($iva > 0)
+                            <p class="card-text text-info">
+                                I.V.A: ₡<span id="totalIva">{{ number_format($totalIva, 2) }}</span>
+                        @endif
                         <p class="card-text text-info">
                             Envíos: ₡<span id="totalEnvio">{{ number_format($totalEnvio, 2) }}</span>
                         </p>
@@ -112,7 +117,7 @@
                                         </td>
                                         <td class="align-middle text-xxs text-center">
                                             <p class=" font-weight-bold mb-0">
-                                                @if ($buy->kind_of == "F")
+                                                @if ($buy->kind_of == 'F')
                                                     Tienda Física
                                                 @else
                                                     Sitio Web
@@ -122,7 +127,7 @@
                                         @if ($iva > 0)
                                             <td class="align-middle text-xxs text-center">
                                                 <p class=" font-weight-bold mb-0">
-                                                    ₡{{ number_format($buy->iva) }}</p>
+                                                    ₡{{ number_format($buy->total_iva) }}</p>
                                             </td>
                                         @endif
                                         <td class="align-middle text-xxs text-center">
@@ -251,22 +256,38 @@
             var totalEnvio = 0;
             var totalVentas = 0;
             var totalProductos = 0;
+            let iva = parseFloat(document.getElementById("iva_tenant").value);
+            var totalIva = 0;
 
 
             $('#buys tbody tr').each(function() {
                 var precio = parseFloat($(this).find('td:eq(1)').text().replace(/[^0-9.-]+/g, ""));
                 var envio = parseFloat($(this).find('td:eq(2)').text().replace(/[^0-9.-]+/g, ""));
-                var productos = parseFloat($(this).find('td:eq(3)').text().replace(/[^0-9.-]+/g, ""));
+                var productos;
+                var iva_table;
+                if (iva > 0) {
+                    iva_table = parseFloat($(this).find('td:eq(4)').text().replace(/[^0-9.-]+/g, ""));
+                    productos = parseFloat($(this).find('td:eq(5)').text().replace(/[^0-9.-]+/g, ""));
+                } else {
+                    productos = parseFloat($(this).find('td:eq(4)').text().replace(/[^0-9.-]+/g, ""));
+                }
                 if (!isNaN(precio)) {
                     totalVentas++;
                 }
                 precio = isNaN(precio) ? 0 : precio;
                 envio = isNaN(envio) ? 0 : envio;
                 productos = isNaN(productos) ? 0 : productos;
+                if (iva > 0) {
+                    iva_table = isNaN(iva_table) ? 0 : iva_table;
+                }
 
                 totalPrecio += precio;
                 totalEnvio += envio;
                 totalProductos += productos;
+                if (iva > 0) {
+                    totalIva += iva_table;
+                }
+
 
             });
 
@@ -275,6 +296,9 @@
             $('#totalVentas').text(totalVentas.toFixed(0));
             $('#totalProductos').text(totalProductos.toFixed(0));
             $('#total').text((totalPrecio + totalEnvio).toFixed(2));
+            if (iva > 0) {
+                $('#totalIva').text(totalIva.toFixed(2));
+            }
         }
     </script>
 @endsection
