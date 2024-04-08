@@ -10720,7 +10720,7 @@ fieldset:disabled .btn {
   font-family:"Metropolis", Arial, Helvetica, sans-serif;
 }
 .text-title {
-  color: #000 !important;
+  color: var(--title_text) !important;
   font-size: 1.875rem;
   font-family:'Times New Roman', Times, serif;
 }

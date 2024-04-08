@@ -38,6 +38,7 @@
         --btn_cart: {{ $settings->btn_cart }};
         --btn_cart_text: {{ $settings->btn_cart_text }};        
         --footer: {{ $settings->footer }};        
+        --title_text: {{ $settings->title_text }};        
         --footer_text: {{ $settings->footer_text }};        
         --sidebar: {{ $settings->sidebar }};        
         --sidebar_text: {{ $settings->sidebar_text }};    
