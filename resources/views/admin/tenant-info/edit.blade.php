@@ -160,9 +160,23 @@
                         </div>
                         <div class="col-md-6">
                             <div
+                                class="input-group input-group-lg input-group-outline {{ isset($item->delivery) ? 'is-filled' : '' }} my-3">
+                                <label class="form-label">Precio de envío</label>
+                                <input onkeypress="return (event.charCode >= 48 && event.charCode <= 57)" required value="{{ isset($item->delivery) ? $item->delivery : '' }}" type="text"
+                                    class="form-control form-control-lg @error('delivery') is-invalid @enderror"
+                                    name="delivery" id="delivery">
+                                @error('delivery')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>Campo Requerido</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div
                                 class="input-group input-group-lg input-group-outline {{ isset($item->whatsapp) ? 'is-filled' : '' }} my-3">
                                 <label class="form-label">WhatsApp</label>
-                                <input required value="{{ isset($item->whatsapp) ? $item->whatsapp : '' }}"
+                                <input onkeypress="return (event.charCode >= 48 && event.charCode <= 57)" required value="{{ isset($item->whatsapp) ? $item->whatsapp : '' }}"
                                     type="text"
                                     class="form-control form-control-lg @error('whatsapp') is-invalid @enderror"
                                     name="whatsapp" id="whatsapp">
@@ -177,7 +191,7 @@
                             <div
                                 class="input-group input-group-lg input-group-outline {{ isset($item->sinpe) ? 'is-filled' : '' }} my-3">
                                 <label class="form-label">SINPE Móvil</label>
-                                <input required value="{{ isset($item->sinpe) ? $item->sinpe : '' }}" type="text"
+                                <input onkeypress="return (event.charCode >= 48 && event.charCode <= 57)" required value="{{ isset($item->sinpe) ? $item->sinpe : '' }}" type="text"
                                     class="form-control form-control-lg @error('sinpe') is-invalid @enderror"
                                     name="sinpe" id="sinpe">
                                 @error('sinpe')
