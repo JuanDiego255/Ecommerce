@@ -11,7 +11,7 @@
     </center>
     <div class="row w-50">
         <div class="col-md-6">
-            <a href="{{ url('new-item/' . $category_id) }}" class="btn btn-velvet w-100">Agregar Nueva Prenda</a>
+            <a href="{{ url('new-item/' . $category_id) }}" class="btn btn-velvet w-100">Agregar Nuevo Producto</a>
         </div>
     </div>
 
