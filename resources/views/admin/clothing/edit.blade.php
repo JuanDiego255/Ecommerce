@@ -38,11 +38,20 @@
 
                     <div class="col-md-6 mb-3">
                         <div class="input-group input-group-static mb-4">
-                            <label>Price</label>
-                            <input required type="text" value="{{ $clothing->price }}"
+                            <label>Precio</label>
+                            <input required type="number" value="{{ $clothing->price }}"
                                 class="form-control form-control-lg" name="price">
                         </div>
                     </div>
+                    @if (isset($tenantinfo->tenant) && $tenantinfo->tenant === 'torres')
+                        <div class="col-md-6 mb-3">
+                            <div class="input-group input-group-static mb-4">
+                                <label>Precio al por mayor</label>
+                                <input required type="number" value="{{ $clothing->mayor_price }}"
+                                    class="form-control form-control-lg" name="mayor_price">
+                            </div>
+                        </div>
+                    @endif
                     <div class="col-md-6 mb-3">
                         <div class="input-group input-group-static mb-4">
                             <label>Descuento (%)</label>

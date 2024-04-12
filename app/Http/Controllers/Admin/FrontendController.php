@@ -48,6 +48,7 @@ class FrontendController extends Controller
                 'clothing.name as name',
                 'clothing.description as description',
                 'clothing.price as price',
+                'clothing.mayor_price as mayor_price',
                 DB::raw('SUM(stocks.stock) as total_stock'),
                 DB::raw('GROUP_CONCAT(sizes.size) AS available_sizes'), // Obtener tallas dinámicas
                 DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size')
@@ -60,7 +61,8 @@ class FrontendController extends Controller
                 'clothing.discount',
                 'clothing.trending',
                 'clothing.description',
-                'clothing.price'
+                'clothing.price',
+                'clothing.mayor_price',
             )
             ->take(15)
             ->get();
@@ -101,6 +103,7 @@ class FrontendController extends Controller
                 'clothing.name as name',
                 'clothing.description as description',
                 'clothing.price as price',
+                'clothing.mayor_price as mayor_price',
                 DB::raw('SUM(stocks.stock) as total_stock'),
                 DB::raw('GROUP_CONCAT(sizes.size) AS available_sizes'), // Obtener tallas dinámicas
                 DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size')
@@ -113,7 +116,8 @@ class FrontendController extends Controller
                 'clothing.discount',
                 'clothing.trending',
                 'clothing.description',
-                'clothing.price'
+                'clothing.price',
+                'clothing.mayor_price',
             )
             ->take(8)
             ->get();
@@ -194,12 +198,13 @@ class FrontendController extends Controller
                     'clothing.discount as discount',
                     'clothing.description as description',
                     'clothing.price as price',
+                    'clothing.mayor_price as mayor_price',
                     'product_images.image as image', // Obtener la primera imagen del producto
                     DB::raw('SUM(stocks.stock) as total_stock'),
                     DB::raw('GROUP_CONCAT(sizes.size) AS available_sizes'), // Obtener tallas dinámicas
                     DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size') // Obtener stock por talla
                 )
-                ->groupBy('clothing.id', 'categories.name', 'clothing.discount', 'clothing.name', 'clothing.description', 'clothing.price', 'product_images.image')
+                ->groupBy('clothing.id','clothing.mayor_price', 'categories.name', 'clothing.discount', 'clothing.name', 'clothing.description', 'clothing.price', 'product_images.image')
                 ->simplePaginate(3);
         });
         
@@ -244,13 +249,14 @@ class FrontendController extends Controller
                 'clothing.discount as discount',
                 'clothing.description as description',
                 'clothing.price as price',
+                'clothing.mayor_price as mayor_price',
                 'product_images.image as image', // columna de imagen
                 DB::raw('GROUP_CONCAT(product_images.image ORDER BY product_images.id ASC) AS images'),
                 DB::raw('SUM(stocks.stock) as total_stock'),
                 DB::raw('GROUP_CONCAT(sizes.id) AS available_sizes'), // Obtener tallas dinámicas
                 DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size') // Obtener stock por talla
             )
-            ->groupBy('clothing.id', 'clothing.discount', 'categories.name', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
+            ->groupBy('clothing.id','clothing.mayor_price', 'clothing.discount', 'categories.name', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
             ->get();
         //$clothes = ClothingCategory::where('id', $id)->get();
         $size_active = SizeCloth::where('clothing_id', $id)
@@ -300,12 +306,13 @@ class FrontendController extends Controller
                 'clothing.name as name',
                 'clothing.description as description',
                 'clothing.price as price',
+                'clothing.mayor_price as mayor_price',
                 DB::raw('IFNULL(product_images.image, "") as image'), // Obtener la primera imagen del producto
                 DB::raw('SUM(stocks.stock) as total_stock'),
                 DB::raw('GROUP_CONCAT(sizes.size) AS available_sizes'), // Obtener tallas dinámicas
                 DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size') // Obtener stock por talla
             )
-            ->groupBy('clothing.id', 'clothing.discount', 'categories.name', 'categories.id', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
+            ->groupBy('clothing.id','clothing.mayor_price', 'clothing.discount', 'categories.name', 'categories.id', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
             ->inRandomOrder()
             ->take(8)
             ->get();

@@ -38,6 +38,13 @@
                                         <tr>
                                             @php
                                                 $precio = $item->price;
+                                                if (
+                                                    Auth::check() &&
+                                                    Auth::user()->mayor == '1' &&
+                                                    $item->mayor_price > 0
+                                                ) {
+                                                    $precio = $item->mayor_price;
+                                                }
                                                 $descuentoPorcentaje = $item->discount;
                                                 // Calcular el descuento
                                                 $descuento = ($precio * $descuentoPorcentaje) / 100;
@@ -47,7 +54,7 @@
                                             <input type="hidden" name="prod_id" value="{{ $item->id }}"
                                                 class="prod_id">
                                             <input type="hidden" class="price"
-                                                value="{{ $item->discount > 0 ? $precioConDescuento : $item->price }}">
+                                                value="{{ $item->discount > 0 ? $precioConDescuento : (Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0 ? $item->mayor_price : $item->price) }}">
                                             <input type="hidden" value="{{ $item->size_id }}" class="size_id"
                                                 name="size">
                                             <input type="hidden" value="{{ $descuento }}" class="discount"
@@ -70,9 +77,9 @@
                                             <td class="align-middle text-center text-sm">
 
                                                 <p class="text-success mb-0">₡
-                                                    {{ $item->discount > 0 ? $precioConDescuento : $item->price }}
+                                                    {{ $item->discount > 0 ? $precioConDescuento : (Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0 ? $item->mayor_price : $item->price) }}
                                                     @if ($item->discount > 0)
-                                                        <s class="text-danger">{{ $item->price }}</s>
+                                                        <s class="text-danger">{{ Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0 ? $item->mayor_price : $item->price }}</s>
                                                     @endif
                                                 </p>
 

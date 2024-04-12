@@ -73,7 +73,11 @@
                                         @endif
 
                                         @php
+
                                             $precio = $item->price;
+                                            if (Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0) {
+                                                $precio = $item->mayor_price;
+                                            }
                                             $descuentoPorcentaje = $item->discount;
                                             // Calcular el descuento
                                             $descuento = ($precio * $descuentoPorcentaje) / 100;
@@ -83,7 +87,7 @@
                                         <div class="price">₡{{ number_format($precioConDescuento) }}
                                             @if ($item->discount)
                                                 <s class="text-danger"><span
-                                                        class="text-danger">₡{{ number_format($item->price) }}
+                                                        class="text-danger">₡{{ number_format(Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0 ? $item->mayor_price : $item->price) }}
                                                     </span></s>
                                             @endif
                                         </div>
@@ -143,6 +147,9 @@
                                 </h3>
                                 @php
                                     $precio = $item->price;
+                                    if (Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0) {
+                                        $precio = $item->mayor_price;
+                                    }
                                     $descuentoPorcentaje = $item->discount;
                                     // Calcular el descuento
                                     $descuento = ($precio * $descuentoPorcentaje) / 100;
@@ -151,7 +158,7 @@
                                 @endphp
                                 <div class="price">₡{{ number_format($precioConDescuento) }}
                                     @if ($item->discount)
-                                        <s class="text-danger"><span class="text-danger">₡{{ number_format($item->price) }}
+                                        <s class="text-danger"><span class="text-danger">₡{{ number_format(Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0 ? $item->mayor_price : $item->price) }}
                                             </span></s>
                                     @endif
                                 </div>

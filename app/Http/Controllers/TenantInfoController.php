@@ -78,6 +78,7 @@ class TenantInfoController extends Controller
             $tenantinfo->footer = $request->footer;
             $tenantinfo->whatsapp = $request->whatsapp;
             $tenantinfo->sinpe = $request->sinpe;
+            $tenantinfo->count = $request->count;
             $tenantinfo->email = $request->email;
             $tenantinfo->delivery = $request->delivery;
 
@@ -136,6 +137,7 @@ class TenantInfoController extends Controller
             $tenantinfo->footer = $request->footer;
             $tenantinfo->whatsapp = $request->whatsapp;
             $tenantinfo->sinpe = $request->sinpe;
+            $tenantinfo->count = $request->count;
             $tenantinfo->email = $request->email;
             $tenantinfo->delivery = $request->delivery;
             $tenantinfo->update();

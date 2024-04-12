@@ -120,7 +120,10 @@
                                         </div>
                                     </div>
                                     <span class="text-muted">SINPE Móvil:
-                                        {{ isset($tenantinfo->sinpe) ? $tenantinfo->sinpe : '' }}</span>
+                                        {{ isset($tenantinfo->sinpe) ? $tenantinfo->sinpe : '' }}
+                                        {{ isset($tenantinfo->count) ? '| Cuenta bancaria: ' . $tenantinfo->count : '' }}</span>
+                                    <h5 class="text-muted-normal mt-2">Realiza una transferencia bancaria, o cancela por medio de
+                                        SINPE Móvil, debes adjuntar el comprobante para que su compra sea aprobada</h5>
 
                                     <button id="btnSinpe" type="submit" class="btn btn-add_to_cart d-block h8">Pagar
                                         ₡<span id="btnPay">{{ number_format($total_price) }}</span></button>
@@ -200,7 +203,8 @@
                                     <p class="ms-auto"></span>₡<span
                                             id="totalIva">{{ number_format($total_price) }}</span></p>
                                 </div>
-                                <p class="fw-bold h7">Tarifa de envío por correos de C.R ₡{{$delivery}} (Grecia o alrededores no se
+                                <p class="fw-bold h7">Tarifa de envío por correos de C.R ₡{{ $delivery }} (Grecia o
+                                    alrededores no se
                                     cobra envío.)</p>
                                 <div class="h8">
                                     <label for="checkboxSubmit">
@@ -229,7 +233,7 @@
                                         <input id="sinpe" class="form-check-input" type="checkbox" value=""
                                             name="sinpe" checked onchange="togglePaypalButton();">
                                         <label class="form-check-label mb-2" for="sinpe">
-                                            Pagar Por SINPE
+                                            Pagar Por SINPE o Transferencia bancaria
                                         </label>
                                     </div>
 
@@ -252,34 +256,45 @@
     </script>
     <script>
         /*  paypal.Buttons({
-                                    locale: 'es',
-                                    fundingSource: paypal.FUNDING.CARD,
-                                    createOrder: function(data, actions) {
-                                        return actions.order.create({
+                                        locale: 'es',
+                                        fundingSource: paypal.FUNDING.CARD,
+                                        createOrder: function(data, actions) {
+                                            return actions.order.create({
 
-                                            payer: {
-                                                email_address: '{{ isset(Auth::user()->email) ? Auth::user()->email : '' }}',
-                                                name: {
-                                                    given_name: '{{ isset(Auth::user()->name) ? Auth::user()->name : '' }}',
-                                                    surname: ''
+                                                payer: {
+                                                    email_address: '{{ isset(Auth::user()->email) ? Auth::user()->email : '' }}',
+                                                    name: {
+                                                        given_name: '{{ isset(Auth::user()->name) ? Auth::user()->name : '' }}',
+                                                        surname: ''
+                                                    },
+                                                    address: {
+                                                        country_code: "CR",
+                                                    }
                                                 },
-                                                address: {
-                                                    country_code: "CR",
-                                                }
-                                            },
-                                            purchase_units: [{
-                                                amount: {
-                                                    value: {{ $paypal_amount }}
-                                                }
-                                            }]
-                                        });
-                                    },
+                                                purchase_units: [{
+                                                    amount: {
+                                                        value: {{ $paypal_amount }}
+                                                    }
+                                                }]
+                                            });
+                                        },
 
-                                    onApprove(data) {
-                                        return fetch("/paypal/process/" + data.orderID)
-                                            .then((response) => response.json())
-                                            .then((orderData) => {
-                                                if (!orderData.success) {
+                                        onApprove(data) {
+                                            return fetch("/paypal/process/" + data.orderID)
+                                                .then((response) => response.json())
+                                                .then((orderData) => {
+                                                    if (!orderData.success) {
+                                                        swal({
+                                                            title: orderData.status,
+                                                            icon: orderData.icon,
+                                                        }).then((value) => {
+                                                            // Esta función se ejecuta cuando el usuario hace clic en el botón "Ok"
+                                                            if (value) {
+                                                                // Recargar la página
+                                                                window.location.href = '{{ url('/') }}';
+                                                            }
+                                                        });
+                                                    }
                                                     swal({
                                                         title: orderData.status,
                                                         icon: orderData.icon,
@@ -290,23 +305,12 @@
                                                             window.location.href = '{{ url('/') }}';
                                                         }
                                                     });
-                                                }
-                                                swal({
-                                                    title: orderData.status,
-                                                    icon: orderData.icon,
-                                                }).then((value) => {
-                                                    // Esta función se ejecuta cuando el usuario hace clic en el botón "Ok"
-                                                    if (value) {
-                                                        // Recargar la página
-                                                        window.location.href = '{{ url('/') }}';
-                                                    }
                                                 });
-                                            });
-                                    },
-                                    onError: function(err) {
-                                        alert(err);
-                                    }
-                                }).render('#paypal-button-container'); */
+                                        },
+                                        onError: function(err) {
+                                            alert(err);
+                                        }
+                                    }).render('#paypal-button-container'); */
 
         function togglePaypalButton() {
             var checkBox = document.getElementById("sinpe");

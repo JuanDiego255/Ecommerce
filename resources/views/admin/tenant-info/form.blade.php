@@ -174,6 +174,20 @@
     </div>
     <div class="col-md-6">
         <div
+            class="input-group input-group-lg input-group-outline {{ isset($item->count) ? 'is-filled' : '' }} my-3">
+            <label class="form-label">Cuenta bancaria</label>
+            <input onkeypress="return (event.charCode >= 48 && event.charCode <= 57)" required value="{{ isset($item->count) ? $item->count : '' }}" type="text"
+                class="form-control form-control-lg @error('count') is-invalid @enderror"
+                name="count" id="count">
+            @error('count')
+                <span class="invalid-feedback" role="alert">
+                    <strong>Campo Requerido</strong>
+                </span>
+            @enderror
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div
             class="input-group input-group-lg input-group-outline {{ isset($item->email) ? 'is-filled' : '' }} my-3">
             <label class="form-label">E-mail</label>
             <input placeholder="Este E-mail es para recibir correos cuando se realiza una compra" value="{{ isset($item->email) ? $item->email : '' }}" type="email"

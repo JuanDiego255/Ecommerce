@@ -159,6 +159,7 @@ class CartController extends Controller
                         'clothing.name as name',
                         'clothing.description as description',
                         'clothing.price as price',
+                        'clothing.mayor_price as mayor_price',
                         'clothing.discount as discount',
                         'clothing.status as status',
                         'sizes.size as size',
@@ -172,6 +173,7 @@ class CartController extends Controller
                         'clothing.name',
                         'clothing.description',
                         'clothing.price',
+                        'clothing.mayor_price',
                         'clothing.status',
                         'clothing.discount',
                         'sizes.size',
@@ -206,6 +208,7 @@ class CartController extends Controller
                         'clothing.name as name',
                         'clothing.description as description',
                         'clothing.price as price',
+                        'clothing.mayor_price as mayor_price',
                         'clothing.discount as discount',
                         'clothing.status as status',
                         'sizes.size as size',
@@ -219,6 +222,7 @@ class CartController extends Controller
                         'clothing.name',
                         'clothing.description',
                         'clothing.price',
+                        'clothing.mayor_price',
                         'clothing.discount',
                         'clothing.status',
                         'sizes.size',
@@ -254,6 +258,9 @@ class CartController extends Controller
         $you_save = 0;
         foreach ($cart_items as $item) {
             $precio = $item->price;
+            if (Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0) {
+                $precio = $item->mayor_price;
+            }
             $descuentoPorcentaje = $item->discount;
             // Calcular el descuento
             $descuento = ($precio * $descuentoPorcentaje) / 100;

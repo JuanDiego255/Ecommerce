@@ -6,6 +6,7 @@ use App\Http\Controllers\AddressUserController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\FrontendController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\BuyController;
 use App\Http\Controllers\ClothingCategoryController;
 use App\Http\Controllers\Frontend\CartController;
@@ -16,12 +17,8 @@ use App\Http\Controllers\SocialNetworkController;
 use App\Http\Controllers\TenantCarouselController;
 use App\Http\Controllers\TenantInfoController;
 use App\Http\Controllers\TenantSocialNetworkController;
-use App\Models\TenantCarousel;
-use App\Models\TenantSocialNetwork;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use Laravel\Socialite\Facades\Socialite;
-use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
@@ -136,12 +133,15 @@ Route::middleware([
         Route::post('tenant-carousel/store', [TenantCarouselController::class, 'store']);
         Route::put('/tenant-carousel/update/{id}', [TenantCarouselController::class, 'update']);
         Route::delete('/delete/tenant-carousel/{id}', [TenantCarouselController::class, 'destroy']);
+        //Rutas para usuarios
+        Route::get('/users', [UserController::class, 'index']);
+        Route::post('user/mayor/{id}', [UserController::class, 'mayor']);
     });
 
     //images Tenant
     Route::get('/file/{path}', function ($path) {
         $path = Storage::path($path);
-        $path = str_replace('app\\', 'app\\public\\', $path);
+        $path = str_replace('app/', 'app/public/', $path);
 
         return response()->file($path);
     })->where('path', '.*')->name('file');

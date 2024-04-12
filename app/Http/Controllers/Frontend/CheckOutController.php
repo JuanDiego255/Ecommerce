@@ -54,6 +54,7 @@ class CheckOutController extends Controller
                     'clothing.description as description',
                     'clothing.discount as discount',
                     'clothing.price as price',
+                    'clothing.mayor_price as mayor_price',
                     'clothing.status as status',
                     'sizes.size as size',
                     'carts.quantity as quantity'
@@ -62,6 +63,9 @@ class CheckOutController extends Controller
             $cloth_price = 0;
             foreach ($cartItems as $item) {
                 $precio = $item->price;
+                if (Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0) {
+                    $precio = $item->mayor_price;
+                }
                 $descuentoPorcentaje = $item->discount;
                 // Calcular el descuento
                 $descuento = ($precio * $descuentoPorcentaje) / 100;
@@ -86,6 +90,7 @@ class CheckOutController extends Controller
                     'clothing.discount as discount',
                     'clothing.description as description',
                     'clothing.price as price',
+                    'clothing.mayor_price as mayor_price',
                     'clothing.status as status',
                     'sizes.size as size',
                     'carts.quantity as quantity'
@@ -94,6 +99,9 @@ class CheckOutController extends Controller
             $cloth_price = 0;
             foreach ($cartItems as $item) {
                 $precio = $item->price;
+                if (Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0) {
+                    $precio = $item->mayor_price;
+                }
                 $descuentoPorcentaje = $item->discount;
                 // Calcular el descuento
                 $descuento = ($precio * $descuentoPorcentaje) / 100;
@@ -163,6 +171,7 @@ class CheckOutController extends Controller
                             'clothing.code as code',
                             'clothing.description as description',
                             'clothing.price as price',
+                            'clothing.mayor_price as mayor_price',
                             'clothing.discount as discount',
                             'clothing.status as status',
                             'sizes.size as size',
@@ -173,6 +182,9 @@ class CheckOutController extends Controller
 
                     foreach ($cartItems as $cart) {
                         $precio = $cart->price;
+                        if (Auth::check() && Auth::user()->mayor == '1' && $cart->mayor_price > 0) {
+                            $precio = $cart->mayor_price;
+                        }
                         $descuentoPorcentaje = $cart->discount;
                         // Calcular el descuento
                         $descuento = ($precio * $descuentoPorcentaje) / 100;
@@ -230,6 +242,9 @@ class CheckOutController extends Controller
 
                     foreach ($cartItems as $cart) {
                         $precio = $cart->price;
+                        if (Auth::check() && Auth::user()->mayor == '1' && $cart->mayor_price > 0) {
+                            $precio = $cart->mayor_price;
+                        }
                         $descuentoPorcentaje = $cart->discount;
                         // Calcular el descuento
                         $descuento = ($precio * $descuentoPorcentaje) / 100;
@@ -266,6 +281,7 @@ class CheckOutController extends Controller
                             'clothing.discount as discount',
                             'clothing.code as code',
                             'clothing.price as price',
+                            'clothing.mayor_price as mayor_price',
                             'clothing.status as status',
                             'sizes.size as size',
                             'carts.quantity as quantity',
@@ -275,6 +291,9 @@ class CheckOutController extends Controller
 
                     foreach ($cartItems as $cart) {
                         $precio = $cart->price;
+                        if (Auth::check() && Auth::user()->mayor == '1' && $cart->mayor_price > 0) {
+                            $precio = $cart->mayor_price;
+                        }
                         $descuentoPorcentaje = $cart->discount;
                         // Calcular el descuento
                         $descuento = ($precio * $descuentoPorcentaje) / 100;
@@ -340,6 +359,9 @@ class CheckOutController extends Controller
 
                     foreach ($cartItems as $cart) {
                         $precio = $cart->price;
+                        if (Auth::check() && Auth::user()->mayor == '1' && $cart->mayor_price > 0) {
+                            $precio = $cart->mayor_price;
+                        }
                         $descuentoPorcentaje = $cart->discount;
                         // Calcular el descuento
                         $descuento = ($precio * $descuentoPorcentaje) / 100;
@@ -377,6 +399,7 @@ class CheckOutController extends Controller
                         'clothing.code as code',
                         'clothing.description as description',
                         'clothing.price as price',
+                        'clothing.mayor_price as mayor_price',
                         'clothing.discount as discount',
                         'clothing.status as status',
                         'sizes.size as size',
@@ -387,6 +410,9 @@ class CheckOutController extends Controller
 
                 foreach ($cartItems as $cart) {
                     $precio = $cart->price;
+                    if (Auth::check() && Auth::user()->mayor == '1' && $cart->mayor_price > 0) {
+                        $precio = $cart->mayor_price;
+                    }
                     $descuentoPorcentaje = $cart->discount;
                     // Calcular el descuento
                     $descuento = ($precio * $descuentoPorcentaje) / 100;
@@ -411,6 +437,9 @@ class CheckOutController extends Controller
 
                 foreach ($cartItems as $cart) {
                     $precio = $cart->price;
+                    if (Auth::check() && Auth::user()->mayor == '1' && $cart->mayor_price > 0) {
+                        $precio = $cart->mayor_price;
+                    }
                     $descuentoPorcentaje = $cart->discount;
                     // Calcular el descuento
                     $descuento = ($precio * $descuentoPorcentaje) / 100;
@@ -443,7 +472,7 @@ class CheckOutController extends Controller
 
             //dd($request->has('telephone'));
             if ($request->has('telephone')) {
-                $this->sendEmail($cartItems, $total_price);
+                $this->sendEmail($cartItems, $total_price, $request->delivery);
                 return redirect('/')->with(['status' => 'Compra exitosa!', 'icon' => 'success']);
             }
 
@@ -478,7 +507,7 @@ class CheckOutController extends Controller
             return null;
         }
     }
-    public function sendEmail($cartItems, $total_price)
+    public function sendEmail($cartItems, $total_price, $delivery)
     {
         try {
             $tenantinfo = TenantInfo::first();
@@ -489,12 +518,20 @@ class CheckOutController extends Controller
                     'title' => 'Se realizó una venta por medio del sitio web.',
                     'body' => '---------------------------' . PHP_EOL
                 ];
-
+                
+                if($delivery > 0){
+                    $total_price = $total_price + $delivery;
+                }
                 foreach ($cartItems as $item) {
+                    $precio = $item->price;
+                    if (Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0) {
+                        $precio = $item->mayor_price;
+                    }
+                    
 
                     $details['body'] .= $item->name . ' - Código: ' . $item->code . ':' . PHP_EOL;
                     $details['body'] .= 'Cantidad = ' . $item->quantity . PHP_EOL;
-                    $details['body'] .= 'Precio C/U = ' . $item->price . PHP_EOL;
+                    $details['body'] .= 'Precio C/U = ' . $precio . PHP_EOL;
                     if ($item->discount != 0) {
                         $details['body'] .= 'Descuento = ' . $item->discount . PHP_EOL;
                     }

@@ -18,6 +18,7 @@ class CreateUsersTable extends Migration
             $table->string('name', 50);
             $table->string('telephone', 30)->nullable();
             $table->string('email', 100)->unique();
+            $table->tinyInteger('mayor')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->nullable();
             $table->tinyInteger('role_as')->default(0); // Establecer el valor predeterminado apropiado

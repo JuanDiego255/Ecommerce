@@ -51,6 +51,15 @@
                             <input required type="number" class="form-control form-control-lg" name="price">
                         </div>
                     </div>
+                    @if (isset($tenantinfo->tenant) && $tenantinfo->tenant === 'torres')
+                        <div class="col-md-6 mb-3">
+                            <div class="input-group input-group-static mb-4">
+                                <label>Precio al por mayor</label>
+                                <input type="number" class="form-control form-control-lg" name="mayor_price">
+                            </div>
+                        </div>
+                    @endif
+
                     <div class="col-md-6 mb-3">
                         <div class="input-group input-group-static mb-4">
                             <label>Descuento (%)</label>
@@ -85,7 +94,7 @@
                             <label class="custom-control-label" for="customCheck1">Trending</label>
                         </div>
                     </div>
-                    
+
                 </div>
 
 

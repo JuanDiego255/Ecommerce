@@ -9,6 +9,7 @@ use App\Models\ProductImage;
 use App\Models\Size;
 use App\Models\SizeCloth;
 use App\Models\Stock;
+use App\Models\TenantInfo;
 use App\Rules\FourImage;
 use Exception;
 use Illuminate\Http\Request;
@@ -54,12 +55,13 @@ class ClothingCategoryController extends Controller
                     'clothing.discount as discount',
                     'clothing.description as description',
                     'clothing.price as price',
+                    'clothing.mayor_price as mayor_price',
                     DB::raw('SUM(stocks.stock) as total_stock'),
                     DB::raw('GROUP_CONCAT(sizes.size) AS available_sizes'),
                     DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'),
                     'product_images.image as image'
                 )
-                ->groupBy('clothing.id', 'clothing.discount', 'categories.name','clothing.code', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
+                ->groupBy('clothing.id','clothing.mayor_price', 'clothing.discount', 'categories.name','clothing.code', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
                 ->simplePaginate(4);
         });
 
@@ -101,6 +103,7 @@ class ClothingCategoryController extends Controller
                     'clothing.trending as trending',
                     'clothing.description as description',
                     'clothing.price as price',
+                    'clothing.mayor_price as mayor_price',
                     DB::raw('SUM(stocks.stock) as total_stock'),
                     'product_images.image as image' // Obtener la primera imagen del producto
                 )
@@ -112,6 +115,7 @@ class ClothingCategoryController extends Controller
                     'clothing.description',
                     'clothing.trending',
                     'clothing.price',
+                    'clothing.mayor_price',
                     'product_images.image',
                     'clothing.discount'
                 )
@@ -125,6 +129,7 @@ class ClothingCategoryController extends Controller
     public function store(Request $request)
     {
         DB::beginTransaction();
+        $tenantinfo = TenantInfo::first();
         try {
             $validator = Validator::make($request->all(), [
                 'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Validación básica de cada imagen
@@ -143,6 +148,11 @@ class ClothingCategoryController extends Controller
             $clothing->code = $request->code;
             $clothing->description = $request->description;
             $clothing->price = $request->price;
+
+            if($tenantinfo->tenant === "torres"){
+                $clothing->mayor_price = $request->mayor_price;
+            }
+
             if ($request->has('discount')) {
                 $clothing->discount = $request->discount;
             }
@@ -199,6 +209,7 @@ class ClothingCategoryController extends Controller
     public function update($id, Request $request)
     {
         DB::beginTransaction();
+        $tenantinfo = TenantInfo::first();
         try {
             $validator = Validator::make($request->all(), [
                 'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Validación básica de cada imagen
@@ -217,6 +228,11 @@ class ClothingCategoryController extends Controller
             $clothing->code = $request->code;
             $clothing->description = $request->description;
             $clothing->price = $request->price;
+
+            if($tenantinfo->tenant === "torres"){
+                $clothing->mayor_price = $request->mayor_price;
+            }
+
             if ($request->has('discount')) {
                 $clothing->discount = $request->discount;
             }
@@ -283,7 +299,7 @@ class ClothingCategoryController extends Controller
             return redirect('add-item/' . $request->category_id)->with(['status' => 'Prenda Editada Con Exito!', 'icon' => 'success']);
         } catch (Exception $th) {
             DB::rollback();
-            return redirect()->back()->with(['status' => 'Ocurrió un error al editar la prenda!', 'icon' => 'warning']);
+            return redirect()->back()->with(['status' => 'Ocurrió un error al editar la prenda!'.$th->getMessage(), 'icon' => 'warning']);
         }
     }
     public function delete($id)
