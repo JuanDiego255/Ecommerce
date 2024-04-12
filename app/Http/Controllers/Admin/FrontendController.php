@@ -205,7 +205,7 @@ class FrontendController extends Controller
                     DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size') // Obtener stock por talla
                 )
                 ->groupBy('clothing.id','clothing.mayor_price', 'categories.name', 'clothing.discount', 'clothing.name', 'clothing.description', 'clothing.price', 'product_images.image')
-                ->simplePaginate(3);
+                ->simplePaginate(20);
         });
         
         if (count($clothings) == 0) {

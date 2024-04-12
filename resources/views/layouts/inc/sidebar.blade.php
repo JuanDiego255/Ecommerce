@@ -86,7 +86,7 @@
                 <a @if ($view_name == 'admin_users_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
                     href="{{ url('users') }}">
                     <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
-                        <i class="material-icons opacity-10">store</i>
+                        <i class="material-icons opacity-10">group</i>
                     </div>
                     <span class="nav-link-text ms-1">Usuarios</span>
                 </a>
