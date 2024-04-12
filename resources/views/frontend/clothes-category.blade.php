@@ -12,10 +12,21 @@
             <li class="bread-standard"><a href="{{ url('category/') }}"><i class="fas fa-box me-1"></i>Categorías</a></li>
             <li class="bread-standard"><a href="#"><i class="fas fa-tshirt me-1"></i>{{ $category_name }}</a></li>
         </div>
-        <div class="row row-cols-1 row-cols-md-4 g-4 align-content-center card-group mt-5 mb-5">
+        <div class="row w-75">
+            <div class="col-md-6">
+                <div class="input-group input-group-lg input-group-static my-3 w-100">
+                    <label>Filtrar</label>
+                    <input value="" placeholder="Escribe para filtrar...." type="text"
+                        class="form-control form-control-lg" name="searchfor" id="searchfor">
+                </div>
+            </div>
+        </div>
+        <div class="row row-cols-1 row-cols-md-4 g-4 align-content-center card-group mt-2 mb-5">
             @foreach ($clothings as $item)
+                
                 @if ($item->total_stock != 0)
-                    <div class="col-md-3 col-sm-6 mb-2">
+                    <div class="col-md-3 col-sm-6 mb-2 card-container">
+                        <input type="hidden" class="code" name="code" value="{{ $item->code }}">
                         <div class="product-grid product_data">
                             <div class="product-image">
                                 <img src="{{ route('file', $item->image) }}">
@@ -31,7 +42,7 @@
                                     class="add-to-cart">Detallar</a>
                             </div>
                             <div class="product-content">
-                                <h3 class="title"><a
+                                <h3 class="title clothing-name"><a
                                         href="{{ url('detail-clothing/' . $item->id . '/' . $category_id) }}">{{ $item->name }}</a>
                                 </h3>
                                 @if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'mandicr')
@@ -51,7 +62,8 @@
                                 @endphp
                                 <div class="price">₡{{ number_format($precioConDescuento) }}
                                     @if ($item->discount)
-                                        <s class="text-danger"><span class="text-danger">₡{{ number_format(Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0 ? $item->mayor_price : $item->price) }}
+                                        <s class="text-danger"><span
+                                                class="text-danger">₡{{ number_format(Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0 ? $item->mayor_price : $item->price) }}
                                             </span></s>
                                     @endif
                                 </div>
@@ -72,4 +84,21 @@
 @endsection
 @section('scripts')
     <script src="{{ asset('js/image-error-handler.js') }}"></script>
+    <script>
+        $(document).ready(function() {
+            $('#searchfor').on('keyup', function() {
+                var searchTerm = $(this).val().toLowerCase();
+                $('.card-container').each(function() {
+                    var name = $(this).find('.clothing-name').text().toLowerCase();
+                    var code = $(this).find('.code').val().toLowerCase();
+                    if (name.includes(searchTerm) || code.includes(searchTerm)) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+            });
+
+        });
+    </script>
 @endsection

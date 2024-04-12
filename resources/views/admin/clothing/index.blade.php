@@ -15,10 +15,18 @@
         </div>
     </div>
 
-
+    <div class="row w-75">
+        <div class="col-md-6">
+            <div class="input-group input-group-lg input-group-static my-3 w-100">
+                <label>Filtrar</label>
+                <input value="" placeholder="Escribe para filtrar...." type="text"
+                    class="form-control form-control-lg" name="searchfor" id="searchfor">
+            </div>
+        </div>       
+    </div>
     <div class="row row-cols-1 row-cols-md-3 g-4 align-content-center card-group mt-5 mb-5">
         @foreach ($clothings as $clothing)
-            <div class="col bg-transparent mb-2">
+            <div class="col bg-transparent mb-2 card-container">
                 <div class="card" data-animation="true">
 
                     <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
@@ -32,6 +40,8 @@
                         </div>
                     </div>
                     <div class="card-body text-center">
+                        <h5 class="font-weight-normal mt-3 clothing-name">{{ $clothing->name }}</h5>
+                        <input type="hidden" class="code" name="code" value="{{$clothing->code}}">
                         <div class="d-flex mt-n6 mx-auto">
                             <form name="delete-clothing{{ $clothing->id }}" id="delete-clothing{{ $clothing->id }}"
                                 method="post" action="{{ url('/delete-clothing/' . $clothing->id) }}">
@@ -50,9 +60,6 @@
                                 <i class="material-icons text-lg">edit</i>
                             </a>
                         </div>
-                        <h5 class="font-weight-normal mt-3">
-                            <a href="javascript:;">{{ $clothing->name }}</a>
-                        </h5>
                         <p class="mb-0">
                             {{ $clothing->description }}
                         </p>
@@ -99,4 +106,21 @@
 @endsection
 @section('script')
     <script src="{{ asset('js/image-error-handler.js') }}"></script>
+    <script>
+        $(document).ready(function() {
+            $('#searchfor').on('keyup', function() {
+                var searchTerm = $(this).val().toLowerCase();
+                $('.card-container').each(function() {
+                    var name = $(this).find('.clothing-name').text().toLowerCase();
+                    var code = $(this).find('.code').val().toLowerCase();
+                    if (name.includes(searchTerm) || code.includes(searchTerm)) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+            });
+           
+        });
+    </script>
 @endsection

@@ -11,9 +11,18 @@
     <div class="col-md-12">
         <a href="{{ url('add-category') }}" class="btn btn-velvet">Nueva Categoría</a>
     </div>
-    <div class="row row-cols-1 row-cols-md-3 g-4 align-content-center card-group mt-5 mb-5">
+    <div class="row w-75">
+        <div class="col-md-6">
+            <div class="input-group input-group-lg input-group-static my-3 w-100">
+                <label>Filtrar</label>
+                <input value="" placeholder="Escribe para filtrar...." type="text"
+                    class="form-control form-control-lg" name="searchfor" id="searchfor">
+            </div>
+        </div>       
+    </div>
+    <div class="row row-cols-1 row-cols-md-3 g-4 align-content-center card-group mt-2 mb-5">
         @foreach ($categories as $item)
-            <div class="col-md-3 col-sm-6 mb-2">
+            <div class="col-md-3 col-sm-6 mb-2 card-container">
                 <div class="product-grid product_data">
                     <div class="product-image">
 
@@ -38,7 +47,7 @@
                         <a href="{{ url('/add-item') . '/' . $item->id }}" class="add-to-cart">Ver Colección</a>
                     </div>
                     <div class="product-content">
-                        <h3 class="text-muted"><a href="{{ url('/add-item') . '/' . $item->id }}">{{ $item->name }}</a>
+                        <h3 class="text-muted category"><a href="{{ url('/add-item') . '/' . $item->id }}">{{ $item->name }}</a>
                         </h3>
                         <h5 class="text-muted-normal">{{ $item->description }}
                         </h5>
@@ -65,5 +74,20 @@
                 form.submit();
             }
         }
+
+        $(document).ready(function() {
+            $('#searchfor').on('keyup', function() {
+                var searchTerm = $(this).val().toLowerCase();
+                $('.card-container').each(function() {
+                    var name = $(this).find('.category').text().toLowerCase();                    
+                    if (name.includes(searchTerm)) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+            });
+           
+        });
     </script>
 @endsection
