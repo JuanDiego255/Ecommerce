@@ -200,10 +200,10 @@ class ClothingCategoryController extends Controller
                 $stock->save();
             }
             DB::commit();
-            return redirect('/add-item/' . $request->category_id)->with(['status' => 'Prenda Agregada Exitosamente!', 'icon' => 'success']);
+            return redirect()->back()->with(['status' => 'Producto Agregado Exitosamente!', 'icon' => 'success']);
         } catch (Exception $th) {
             DB::rollback();
-            return redirect('/new-item/' . $request->category_id)->with(['status' => 'Ocurrió un error al agregar la prenda!', 'icon' => 'error']);
+            return redirect()->back()->with(['status' => 'Ocurrió un error al agregar el producto', 'icon' => 'error']);
         }
     }
     public function update($id, Request $request)
@@ -296,10 +296,10 @@ class ClothingCategoryController extends Controller
                 }
             }
             DB::commit();
-            return redirect('add-item/' . $request->category_id)->with(['status' => 'Prenda Editada Con Exito!', 'icon' => 'success']);
+            return redirect('add-item/' . $request->category_id)->with(['status' => 'Producto Editado Con Exito!', 'icon' => 'success']);
         } catch (Exception $th) {
             DB::rollback();
-            return redirect()->back()->with(['status' => 'Ocurrió un error al editar la prenda!'.$th->getMessage(), 'icon' => 'warning']);
+            return redirect()->back()->with(['status' => 'Ocurrió un error al editar el producto!'.$th->getMessage(), 'icon' => 'warning']);
         }
     }
     public function delete($id)
@@ -319,10 +319,10 @@ class ClothingCategoryController extends Controller
             SizeCloth::where('clothing_id', $id)->delete();
             ClothingCategory::destroy($id);
             DB::commit();
-            return redirect()->back()->with(['status' => $clothing_name . ' se ha borrado la prenda con éxito', 'icon' => 'success']);
+            return redirect()->back()->with(['status' => $clothing_name . ' se ha borrado el producto con éxito', 'icon' => 'success']);
         } catch (Exception $th) {
             DB::rollBack();
-            return redirect()->back()->with(['status' => 'Ocurrió un error al eliminar la prenda!', 'icon' => 'error']);
+            return redirect()->back()->with(['status' => 'Ocurrió un error al eliminar el producto!', 'icon' => 'error']);
         }
     }
 }

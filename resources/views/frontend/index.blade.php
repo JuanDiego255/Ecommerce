@@ -158,7 +158,8 @@
                                 @endphp
                                 <div class="price">₡{{ number_format($precioConDescuento) }}
                                     @if ($item->discount)
-                                        <s class="text-danger"><span class="text-danger">₡{{ number_format(Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0 ? $item->mayor_price : $item->price) }}
+                                        <s class="text-danger"><span
+                                                class="text-danger">₡{{ number_format(Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0 ? $item->mayor_price : $item->price) }}
                                             </span></s>
                                     @endif
                                 </div>
@@ -178,31 +179,60 @@
             <span class="text-muted text-center"><a href="{{ isset($instagram) ? $instagram : '' }}">Instagram</a> |
                 {{ isset($tenantinfo->title_instagram) ? $tenantinfo->title_instagram : '' }}</span>
         </div>
-    @endif
-    <div class="row mb-5 container-fluid">
-        @foreach ($social as $item)
-            <div class="col-md-6 mt-4">
-                <div class="card text-center">
-                    <div class="overflow-hidden position-relative bg-cover p-3"
-                        style="background-image: url('{{ route('file', $item->image) }}'); height:700px;  background-position: center;">
-                        <span class="mask bg-gradient-dark opacity-6"></span>
-                        <div class="card-body position-relative z-index-1 d-flex flex-column mt-5">
-                            <h3 class="text-white">{{ $item->description }}.</h3>
-                            <a target="blank" class="text-white text-sm mb-0 icon-move-right mt-4"
-                                href="{{ $item->url }}">
-                                <h3 class="text-white"> Ver fotografía
-                                    <i class="material-icons text-sm ms-1 position-relative"
-                                        aria-hidden="true">arrow_forward</i>
-                                </h3>
-
-                            </a>
+        <div class="row mb-5 container-fluid">
+            @foreach ($social as $item)
+                <div class="col-md-6 mt-4">
+                    <div class="card text-center">
+                        <div class="overflow-hidden position-relative bg-cover p-3"
+                            style="background-image: url('{{ route('file', $item->image) }}'); height:700px;  background-position: center;">
+                            <span class="mask bg-gradient-dark opacity-6"></span>
+                            <div class="card-body position-relative z-index-1 d-flex flex-column mt-5">
+                                <h3 class="text-white">{{ $item->description }}.</h3>
+                                <a target="blank" class="text-white text-sm mb-0 icon-move-right mt-4"
+                                    href="{{ $item->url }}">
+                                    <h3 class="text-white"> Ver fotografía
+                                        <i class="material-icons text-sm ms-1 position-relative"
+                                            aria-hidden="true">arrow_forward</i>
+                                    </h3>
+    
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        @endforeach
+            @endforeach
+    
+        </div>
+    @endif
+    {{-- Categories --}}
+    @if (count($categories) != 0)
+        <div class="text-center">
+            <span class="text-muted text-center">Explora nuestras secciones! Navega y encuentra todo lo que desees. <a href="{{url('category')}}">(Más secciones)</a></span>
+        </div>
+        <div class="row row-cols-1 row-cols-md-3 g-4 align-content-center card-group container-fluid mt-2 mb-5">
+            @foreach ($category as $item)
+                <div class="col-md-3 col-sm-6 mb-2">
+                    <div class="product-grid product_data">
+                        <div class="product-image">
+                            <img src="{{ route('file', $item->image) }}">
+                            <ul class="product-links">
+                                <li><a target="blank" href="{{ tenant_asset('/') . '/' . $item->image }}"><i
+                                            class="fas fa-eye"></i></a></li>
+                            </ul>
+                            <a href="{{ url('clothes-category/' . $item->id) }}" class="add-to-cart">Descubrir
+                                estilos</a>
+                        </div>
+                        <div class="product-content">
+                            <h3 class="title"><a
+                                    href="{{ url('clothes-category/' . $item->id) }}">{{ $item->name }}</a>
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>        
+    @endif
 
-    </div>
 
     <div class="bg-footer p-3 mb-3 text-center">
         <h3

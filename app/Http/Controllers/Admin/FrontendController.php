@@ -66,7 +66,11 @@ class FrontendController extends Controller
             )
             ->take(15)
             ->get();
-        });        
+        });   
+        
+        $category = Cache::remember('categories', $this->expirationTime, function () {
+            return Categories::where('status', 0)->take(8)->get();
+        });
 
         // Obtener las primeras imágenes de las prendas obtenidas
         foreach ($clothings as $clothing) {
@@ -137,7 +141,7 @@ class FrontendController extends Controller
             $offer->images = $imagePaths ?: [null];
         }
        
-        return view('frontend.index', compact('clothings', 'social','clothings_offer'));
+        return view('frontend.index', compact('clothings', 'social','clothings_offer','category'));
     }
     public function category()
     {

@@ -141,7 +141,7 @@ Route::middleware([
     //images Tenant
     Route::get('/file/{path}', function ($path) {
         $path = Storage::path($path);
-        $path = str_replace('app/', 'app/public/', $path);
+        $path = str_replace('app\\', 'app\\public\\', $path);
 
         return response()->file($path);
     })->where('path', '.*')->name('file');
