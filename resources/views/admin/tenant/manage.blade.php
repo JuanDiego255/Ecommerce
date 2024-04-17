@@ -6,14 +6,10 @@
 @section('content')
     <div class="container">
 
-        <h2 class="text-center font-title"><strong>Administra los inquilinos desde acá</strong>
+        <h2 class="text-center font-title"><strong>Administra los usuarios del inquilino {{ $tenant }}</strong>
         </h2>
 
         <hr class="hr-servicios">
-
-        <button type="button" data-bs-toggle="modal" data-bs-target="#add-tenant-modal" class="btn btn-velvet">Nuevo
-            Inquilino</button>
-
         <center>
             <div class="row w-100">
                 <div class="col-md-6">
@@ -40,34 +36,48 @@
 
             <div class="card w-100 mb-4">
                 <div class="table-responsive">
-                    <table id="tenants" class="table align-items-center mb-0">
+                    <table id="users" class="table align-items-center mb-0">
                         <thead>
                             <tr>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                    Inquilino</th>
+                                    Usuario</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                    Dominio</th>
+                                    E-mail</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                    Acciones</th>
+                                    Teléfono</th>
+                                <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
+                                    Es Admin</th>
 
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($tenants as $tenant)
+                            @foreach ($users as $user)
                                 <tr>
 
                                     <td class="align-middle text-xxs text-center">
-                                        <p class=" font-weight-bold mb-0">{{ $tenant->id }}</p>
+                                        <p class=" font-weight-bold mb-0">{{ $user->name }}</p>
                                     </td>
                                     <td class="align-middle text-xxs text-center">
-                                        <p class=" font-weight-bold mb-0">{{ $tenant->domains->first()->domain ?? '' }}</p>
+                                        <p class=" font-weight-bold mb-0">{{ $user->email }}</p>
+                                    </td>
+                                    <td class="align-middle text-xxs text-center">
+                                        <p class=" font-weight-bold mb-0">{{ $user->telephone }}</p>
                                     </td>
 
-                                    <td class="align-middle">
-                                        <center>
-                                            <a href="{{url('manage/tenant/'.$tenant->id)}}" class="btn btn-velvet" style="text-decoration: none;">Gestionar</a>
-                                        </center>
+                                    <td class="align-middle text-center">
+                                        <form method="post" action="{{ url('/user/admin/' . $tenant) }}"
+                                            style="display:inline">
+                                            {{ csrf_field() }}
+                                            <input type="hidden" name="id" value="{{ $user->id }}">
+                                            <label for="checkboxSubmit">
+                                                <div class="form-check">
+                                                    <input id="checkboxSubmit" class="form-check-input" type="checkbox"
+                                                        value="1" name="role_as" onchange="this.form.submit()"
+                                                        {{ $user->role_as == 1 ? 'checked' : '' }}>
+                                                </div>
+                                            </label>
 
+                                        </form>
                                     </td>
                                 </tr>
                             @endforeach
@@ -75,14 +85,16 @@
                     </table>
                 </div>
             </div>
-
+            <div class="col-md-12 mt-3">
+                <a href="{{ url('tenants') }}" class="btn btn-velvet w-25">Volver</a>
+            </div>
 
         </center>
     </div>
 @endsection
 @section('script')
     <script>
-        var dataTable = $('#tenants').DataTable({
+        var dataTable = $('#users').DataTable({
             searching: true,
             lengthChange: false,
 
