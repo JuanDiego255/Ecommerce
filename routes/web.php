@@ -22,5 +22,6 @@ Route::group(['middleware' => 'isAdmin'], function () {
     //Rutas para inquilinos   
     Route::get('/tenants', [TenantController::class, 'index']);
     Route::get('manage/tenant/{tenant}', [TenantController::class, 'manage']);
-    Route::post('user/admin/{id}', [TenantController::class, 'isAdmin']);   
+    Route::post('user/admin/{id}', [TenantController::class, 'isAdmin']); 
+    Route::post('license/{id}', [TenantController::class, 'isLicense']);   
 });

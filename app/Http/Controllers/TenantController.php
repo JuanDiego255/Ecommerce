@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Tenant;
+use App\Models\TenantInfo;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -17,6 +18,11 @@ class TenantController extends Controller
     public function index()
     {
         $tenants = Tenant::where('id','!=','main')->get();
+
+        $tenants = $tenants->map(function ($tenant) {
+            $tenant->license = $this->getLicense($tenant->id);
+            return $tenant;
+        });
         return view('admin.tenant.index', compact('tenants'));
     }
     /**
@@ -61,5 +67,35 @@ class TenantController extends Controller
     public function frontend()
     {       
         return view('frontend.central.index');
+    }
+    public function getLicense($tenant){
+        $tenants = Tenant::where('id', $tenant)->first();
+        tenancy()->initialize($tenants);
+        $tenant_info = TenantInfo::first();
+        $license = $tenant_info->license;
+        tenancy()->end();
+        return $license;
+    }
+
+    public function isLicense($tenant, Request $request)
+    {
+        //
+        DB::beginTransaction();      
+        try {
+            $tenants = Tenant::where('id', $tenant)->first();
+            tenancy()->initialize($tenants);
+            if ($request->license == "1") {
+                TenantInfo::where('tenant', $tenant)->update(['license' => 1]);
+            } else {
+                TenantInfo::where('tenant', $tenant)->update(['license' => 0]);
+            }
+
+            DB::commit();
+            tenancy()->end();
+            return redirect()->back()->with(['status' => 'Se cambio el estado de la licencia para este inquilino', 'icon' => 'success']);
+        } catch (\Exception $th) {
+            //throw $th;
+            DB::rollBack();
+        }
     }
 }

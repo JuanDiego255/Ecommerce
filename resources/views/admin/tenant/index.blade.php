@@ -48,6 +48,8 @@
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                     Dominio</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
+                                    Licencia</th>
+                                <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                     Acciones</th>
 
                             </tr>
@@ -62,10 +64,25 @@
                                     <td class="align-middle text-xxs text-center">
                                         <p class=" font-weight-bold mb-0">{{ $tenant->domains->first()->domain ?? '' }}</p>
                                     </td>
+                                    <td class="align-middle text-center">
+                                        <form method="post" action="{{ url('license/' . $tenant->id) }}"
+                                            style="display:inline">
+                                            {{ csrf_field() }}                                            
+                                            <label for="checkboxSubmit">
+                                                <div class="form-check">
+                                                    <input id="checkboxSubmit" class="form-check-input" type="checkbox"
+                                                        value="1" name="license" onchange="this.form.submit()"
+                                                        {{ $tenant->license == 1 ? 'checked' : '' }}>
+                                                </div>
+                                            </label>
+
+                                        </form>
+                                    </td>
 
                                     <td class="align-middle">
                                         <center>
-                                            <a href="{{url('manage/tenant/'.$tenant->id)}}" class="btn btn-velvet" style="text-decoration: none;">Gestionar</a>
+                                            <a href="{{ url('manage/tenant/' . $tenant->id) }}" class="btn btn-velvet"
+                                                style="text-decoration: none;">Gestionar</a>
                                         </center>
 
                                     </td>
