@@ -53,4 +53,13 @@ class TenantController extends Controller
             DB::rollBack();
         }
     }
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function frontend()
+    {       
+        return view('frontend.central.index');
+    }
 }

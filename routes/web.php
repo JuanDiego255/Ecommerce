@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', [FrontendController::class, 'index']);
+Route::get('/', [TenantController::class, 'frontend']);
 Auth::routes();
 
 Route::group(['middleware' => 'isAdmin'], function () {    

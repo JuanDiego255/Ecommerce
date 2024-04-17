@@ -4,7 +4,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" href="{{tenant_asset('/') . '/'. (isset($tenantinfo->logo) ? $tenantinfo->logo : '')}}" type="image/x-icon">
+    <link rel="icon" href="{{ tenant_asset('/') . '/' . (isset($tenantinfo->logo) ? $tenantinfo->logo : '') }}"
+        type="image/x-icon">
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -24,8 +25,8 @@
     <link href="{{ asset('css/material-dashboard.css') }}" rel="stylesheet">
     <link href="{{ asset('frontend/css/owl.carousel.min.css') }}" rel="stylesheet">
     <link href="{{ asset('frontend/css/owl.theme.default.min.css') }}" rel="stylesheet">
-    
-   {{--  <link href="{{ asset('css/material-dashboard.css.map') }}" rel="stylesheet">
+
+    {{--  <link href="{{ asset('css/material-dashboard.css.map') }}" rel="stylesheet">
 
     <link href="{{ asset('css/material-dashboard.min.css') }}" rel="stylesheet"> --}}
 
@@ -36,24 +37,29 @@
         --navbar: {{ $settings->navbar }};
         --navbar_text: {{ $settings->navbar_text }};
         --btn_cart: {{ $settings->btn_cart }};
-        --btn_cart_text: {{ $settings->btn_cart_text }};        
-        --footer: {{ $settings->footer }};        
-        --title_text: {{ $settings->title_text }};        
-        --footer_text: {{ $settings->footer_text }};        
-        --sidebar: {{ $settings->sidebar }};        
-        --sidebar_text: {{ $settings->sidebar_text }};    
-        --hover: {{ $settings->hover }}; 
-        --cart_icon: {{ $settings->cart_icon }};      
+        --btn_cart_text: {{ $settings->btn_cart_text }};
+        --footer: {{ $settings->footer }};
+        --title_text: {{ $settings->title_text }};
+        --footer_text: {{ $settings->footer_text }};
+        --sidebar: {{ $settings->sidebar }};
+        --sidebar_text: {{ $settings->sidebar_text }};
+        --hover: {{ $settings->hover }};
+        --cart_icon: {{ $settings->cart_icon }};
     }
 </style>
 
 <body class="g-sidenav-show  bg-gray-200">
 
-    
+
     <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
-       
+
         <div>
-            @include('layouts.inc.frontnavbar')            
+            @if (isset($tenantinfo->tenant) && $tenantinfo->tenant != 'main')
+                @include('layouts.inc.frontnavbar')
+            @else
+                @include('layouts.inc.centralnavbar')
+            @endif
+
             @yield('content')
         </div>
     </main>
@@ -64,7 +70,7 @@
     <script src="{{ asset('js/smooth-scrollbar.min.js') }}" defer></script>
     <script src="{{ asset('js/chartjs.min.js') }}" defer></script>
     <script async defer src="https://buttons.github.io/buttons.js"></script>
-   
+
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="{{ asset('frontend/js/jquery-3.6.0.min.js') }}"></script>
     <script src="{{ asset('frontend/js/owl.carousel.min.js') }}"></script>
@@ -80,11 +86,11 @@
             });
         </script>
     @endif
-   
+
     @yield('scripts')
 
     <script>
-         window.companyName = "{{ isset($tenantinfo->title) ? $tenantinfo->title : '' }}";
+        window.companyName = "{{ isset($tenantinfo->title) ? $tenantinfo->title : '' }}";
     </script>
 
 

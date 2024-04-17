@@ -24,7 +24,7 @@ class AdminMiddleware
                 return redirect('/')->with(['status' => 'Acceso denegado, no eres administrador', 'icon' => 'warning']);
             }
         } else {
-            return redirect('/')->with(['status' => 'Primero debes iniciar sesión', 'icon' => 'success']);
+            return redirect('/')->with(['status' => 'Primero debes iniciar sesión', 'icon' => 'warning']);
         }
     }
 }
