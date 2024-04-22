@@ -5,11 +5,14 @@ namespace App\Providers;
 use App\Models\Buy;
 use App\Models\Cart;
 use App\Models\Categories;
+use App\Models\ClothingCategory;
 use App\Models\Settings;
 use App\Models\TenantCarousel;
 use App\Models\TenantInfo;
 use App\Models\TenantSocialNetwork;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 
@@ -72,6 +75,38 @@ class AppServiceProvider extends ServiceProvider
             $tenantinfo = TenantInfo::first();
             $settings = Settings::first();
 
+            $clothings_offer = ClothingCategory::where('categories.name', 'Sale')
+                ->join('categories', 'clothing.category_id', 'categories.id')
+                ->join('stocks', 'clothing.id', 'stocks.clothing_id')
+                ->join('sizes', 'stocks.size_id', 'sizes.id')
+                ->select(
+                    'categories.name as category',
+                    'categories.id as category_id',
+                    'clothing.id as id',
+                    'clothing.trending as trending',
+                    'clothing.discount as discount',
+                    'clothing.name as name',
+                    'clothing.description as description',
+                    'clothing.price as price',
+                    'clothing.mayor_price as mayor_price',
+                    DB::raw('SUM(stocks.stock) as total_stock'),
+                    DB::raw('GROUP_CONCAT(sizes.size) AS available_sizes'), // Obtener tallas dinámicas
+                    DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size')
+                )
+                ->groupBy(
+                    'clothing.id',
+                    'categories.name',
+                    'categories.id',
+                    'clothing.name',
+                    'clothing.discount',
+                    'clothing.trending',
+                    'clothing.description',
+                    'clothing.price',
+                    'clothing.mayor_price',
+                )
+                ->take(8)
+                ->get();   
+
             view()->share([
                 'view_name' => $view_name,
                 'cartNumber' => $cartNumber,
@@ -83,7 +118,8 @@ class AppServiceProvider extends ServiceProvider
                 'instagram' => $instagram,
                 'facebook' => $facebook,
                 'tenantcarousel' => $tenantcarousel,
-                'settings' => $settings
+                'settings' => $settings,
+                'clothings_offer' => $clothings_offer
             ]);
         });
     }

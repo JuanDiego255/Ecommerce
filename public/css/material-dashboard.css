@@ -4752,6 +4752,19 @@ fieldset:disabled .btn {
   padding: var(--bs-navbar-padding-y) var(--bs-navbar-padding-x);
 }
 
+.navbar-cintillo {
+  --bs-navbar-padding-x: 1rem;
+  --bs-navbar-padding-y: 0.5rem;
+  --bs-navbar-nav-link-padding-x: 0.5rem;
+  --bs-navbar-toggler-padding-y: 0.25rem;
+  --bs-navbar-toggler-padding-x: 0.75rem;
+  position: relative;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--bs-navbar-padding-y) var(--bs-navbar-padding-x);
+}
+
 .navbar>.container,
 .navbar>.container-fluid,
 .navbar>.container-sm,
