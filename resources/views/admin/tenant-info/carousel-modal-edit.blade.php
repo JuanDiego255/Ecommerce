@@ -40,10 +40,7 @@
                             @enderror
                         </div>
                     </div>
-                    @if ($carousel->image)
-                        <img class="img-fluid img-thumbnail w-50" src="{{ route('file',$carousel->image) }}}"
-                            alt="image">
-                    @endif
+                   
                     <div class="col-md-12 mb-3">
                         <label class="form-label">Imagen</label>
                         <div class="input-group input-group-static mb-4">

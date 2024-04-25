@@ -33,7 +33,6 @@ class TenantInfoController extends Controller
             $tenantcarousel = TenantCarousel::get();
             return compact('tenant_info', 'tenantsocial', 'tenantcarousel');
         });
-        
         return view('admin.tenant-info.index', $data);
     }
 

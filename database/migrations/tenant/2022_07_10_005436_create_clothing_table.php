@@ -20,8 +20,7 @@ class CreateClothingTable extends Migration
             $table->string('code',100);
             $table->text('description');
             $table->string('price',50);
-            $table->string('mayor_price',50)->nullable();
-            $table->string('image',191);
+            $table->string('mayor_price',50)->nullable();           
             $table->tinyInteger('status');
             $table->string('discount',30)->nullable();
             $table->tinyInteger('trending')->nullable();

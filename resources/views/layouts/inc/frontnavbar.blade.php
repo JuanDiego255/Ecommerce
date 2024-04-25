@@ -55,11 +55,11 @@
             @guest
                 <a href="{{ route('login') }}"><button id="btnIngresar"
                         class="{{ isset($tenantinfo->tenant) && $tenantinfo->tenant === 'mandicr' ? 'whiteLink-mandi' : 'whiteLink' }} siteLink"><i
-                            style="color: var(--navbar_text);" class="fa fa-sign-in"></i></button></a>
+                            style="color: var(--navbar_text);" class="fa fa-sign-in cartIcon"></i></button></a>
             @else
                 <a href="{{ url('buys') }}"><button id="btnIngresar"
                         class="{{ isset($tenantinfo->tenant) && $tenantinfo->tenant === 'mandicr' ? 'whiteLink-mandi' : 'whiteLink' }} siteLink"><i
-                            style="color: var(--navbar_text);" class="fa fa-credit-card"></i></button></a>
+                            style="color: var(--navbar_text);" class="fa fa-credit-card cartIcon"></i></button></a>
             @endguest
 
             <a href="{{ url('view-cart') }}"><button

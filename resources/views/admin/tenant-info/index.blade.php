@@ -259,23 +259,23 @@
     <script src="{{ asset('js/image-error-handler.js') }}"></script>
     <script>
         function confirmAndSubmit(id) {
-
             if (confirm('¿Deseas borrar esta red social?')) {
                 document.getElementById('deleteForm' + id).submit();
             }
         }
 
         function confirmAndSubmitCar(id) {
-
             if (confirm('¿Deseas borrar esta imagen del carousel?')) {
                 document.getElementById('deleteFormCarousel' + id).submit();
             }
-            document.addEventListener("DOMContentLoaded", function() {
-                        var lazyBackgrounds = document.querySelectorAll('.lazy-background');
+        }
 
-                        lazyBackgrounds.forEach(function(background) {
-                            var imageUrl = background.getAttribute('data-background');
-                            background.style.backgroundImage = 'url(' + imageUrl + ')';
-                        });
+        document.addEventListener("DOMContentLoaded", function() {
+            var lazyBackgrounds = document.querySelectorAll('.lazy-background');
+            lazyBackgrounds.forEach(function(background) {
+                var imageUrl = background.getAttribute('data-background');
+                background.style.backgroundImage = 'url(' + imageUrl + ')';
+            });
+        });
     </script>
 @endsection
