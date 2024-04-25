@@ -5,11 +5,16 @@
 @endsection
 @section('content')
     <center>
-        <h2 class="text-center font-title"><strong>Administra las categorías desde acá</strong></h2>
+        @if (isset($tenantinfo->tenant) && $tenantinfo->tenant != 'marylu')
+            <h2 class="text-center font-title"><strong>Administra las categorías desde acá</strong></h2>
+        @else
+            <h2 class="text-center font-title"><strong>Categorías del departamento de {{ $department_name }}.</strong></h2>
+        @endif
+
     </center>
 
     <div class="col-md-12">
-        <a href="{{ url('add-category') }}" class="btn btn-velvet">Nueva Categoría</a>
+        <a href="{{ url('add-category/'.$department_id) }}" class="btn btn-velvet">Nueva Categoría</a>
     </div>
     <div class="row w-75">
         <div class="col-md-6">
@@ -18,7 +23,7 @@
                 <input value="" placeholder="Escribe para filtrar...." type="text"
                     class="form-control form-control-lg" name="searchfor" id="searchfor">
             </div>
-        </div>       
+        </div>
     </div>
     <div class="row row-cols-1 row-cols-md-3 g-4 align-content-center card-group mt-2 mb-5">
         @foreach ($categories as $item)
@@ -47,7 +52,8 @@
                         <a href="{{ url('/add-item') . '/' . $item->id }}" class="add-to-cart">Ver Colección</a>
                     </div>
                     <div class="product-content">
-                        <h3 class="text-muted category"><a href="{{ url('/add-item') . '/' . $item->id }}">{{ $item->name }}</a>
+                        <h3 class="text-muted category"><a
+                                href="{{ url('/add-item') . '/' . $item->id }}">{{ $item->name }}</a>
                         </h3>
                         <h5 class="text-muted-normal">{{ $item->description }}
                         </h5>
@@ -79,7 +85,7 @@
             $('#searchfor').on('keyup', function() {
                 var searchTerm = $(this).val().toLowerCase();
                 $('.card-container').each(function() {
-                    var name = $(this).find('.category').text().toLowerCase();                    
+                    var name = $(this).find('.category').text().toLowerCase();
                     if (name.includes(searchTerm)) {
                         $(this).show();
                     } else {
@@ -87,7 +93,7 @@
                     }
                 });
             });
-           
+
         });
     </script>
 @endsection

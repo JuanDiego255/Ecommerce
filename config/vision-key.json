@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "visionlaravel",
+  "private_key_id": "ce21bc7f540d24839bd1920d8c68bbca7fd52372",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDs2kCe4rBA3pwc\nIex7z42ZHeR1JiVXCGQms+w3b47Cwz6s0oZjbybVPruv6PfKdGFI8aOlGipK3t1N\nuHkXv9PZ+qj5Uy3zqocbpaR0rdILb+t277sp2wL3g1RcpydKIjzr8shKByDmkhHL\nGuRvRUaYbwk5jAoorinPv6xkSDHHyrn3JVFqyS/3H7fOPI0BqAEeErnE5rOkLmvV\nXVdzC/qWzFOSOTflVG4D8rBs0N0TLbHIMXnqRtr/gPD+fZoaXZVtB4AOE8l5IZ57\nVn/Re+Cnd1PUOiz60ADkXyLiMDGLuz6e2yShyeGMAkaIMUEVnanmAMrM9AOHV6fL\nnyu67iblAgMBAAECggEAKWwUEBV6GKY17A+cwZxvWZ9qNHi64Ak2JrShs6I9d99Y\nhzX8TciDJJknjuCx8UTAPNcRtQ6p5dUrI+wGtXoVbVJSmeQLrckdft7Nr6A0k058\nAh10AKJuVuYva1LKYsMxH1yi3Zt4jApwtTIbUEBv07nbhaZxomKvKkeNuS4NErER\n/DF2lIOlBFdPLx5HLfcd2MmWHY5cZjXFwaYFZPxJHqH3DtWMyvUz/2mI4e7Cmdkt\nSksB5XcyCw+ixYDQtmCj9HfrN+ZQFtXfkLFyWVpusrwf8K9nPnikS7oI1U8YECLq\n8DkrJUU+HWfOSGJ88BLrG9BMEe2McQMWuy9xqkeRIwKBgQD/Xde67m1mAYU5eTTk\nvPvsjM8qnG43gBxirVouk+N+3d34AxbZDCq0DCliat40Txt03KA3CziQwhPOcCdI\nu6QXJWEQUgJfUwYMcoZZuxjCoaIpss5IbZRGQQQ5VdDycl0nAY5KrW2bMrF0DuLz\nmSrniowPBpcCASPcUpOxjnaTOwKBgQDtcKdCZH/Cf+YFWk1N6kXxkdLjo7VFusx4\n3qrD79EGlb1IL/tkV7pfgYeQd9Ixkb4p232DJIo69OYCENHw2nej73MSTCpuSe9W\nQGf/KTAAQb2nA22dPJ2H59cKkzg05dE7F2r/C1Lw6Wecikk8iDBZ6/g/lWl+l2C0\n1Fw2eChMXwKBgQDhPBgnHF0Jd5XWF337smRRQ/EFmGvuL+TZdCTyqCYjo/U/5xmj\n3wNbQs7Nq4zJfmytKlt1sUP3CfcGQg2kLTyR3bo69tp40XWoTOsLAebY5E9vj/I6\nF8yMGpRrLbHZ5d0bplemrkjadl/mCatLSHF7P8xBBIL0laTXk04JcapMOQKBgBqs\nJv3cUEXHHE3JoRl5kbXbTbdosnpMy59gVAqCrBZzR7oOOc1B1ZvY7yOZcjFDT/tf\nvq+2sRiCXjwpK4xE3l+6DFEn4TRWdd5YidYuCEhfGjDiv7OEFaYosw1rEEtQ7boX\nnVtdKEoLzinVlviHy/at/UsXO6yO0Lw/hsRPpyc9AoGALSnfJxOXBY60TZaI21d6\n3qMrjmgCEWelFGNci4rlD+Luev7B9Cxx8G6f/6DSUi4az+cdP+Va/p9s0p9AjXKr\nHnlvEdty8ZeSjxDJJ/GcgIPRuyMXI46iPgoEBguacGckpxp7qLyXKGndosVjtCDw\nw0ocjFrZTBrmdsd7FbPnomg=\n-----END PRIVATE KEY-----\n",
+  "client_email": "procesador-de-imagenes@visionlaravel.iam.gserviceaccount.com",
+  "client_id": "117782412690330523833",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/procesador-de-imagenes%40visionlaravel.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

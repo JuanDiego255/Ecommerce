@@ -17,16 +17,19 @@
                 <li class="nav-item">
                     <a @if (
                         $view_name == 'admin_categories_index' ||
+                        $view_name == 'admin_departments_index' ||
+                        $view_name == 'admin_departments_edit' ||
+                        $view_name == 'admin_departments_add' ||
                             $view_name == 'admin_clothing_index' ||
                             $view_name == 'admin_clothing_edit' ||
                             $view_name == 'admin_clothing_add' ||
                             $view_name == 'admin_categories_add' ||
                             $view_name == 'admin_categories_edit') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
-                        href="{{ url('categories') }}">
+                        href="{{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'marylu' ? url('categories') : url('departments') }}">
                         <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
                             <i class="material-icons opacity-10">dashboard</i>
                         </div>
-                        <span class="nav-link-text ms-1">Categorías</span>
+                        <span class="nav-link-text ms-1">{{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'marylu' ? 'Categorías' : 'Departamentos' }}</span>
                     </a>
                 </li>
                 <li class="nav-item">

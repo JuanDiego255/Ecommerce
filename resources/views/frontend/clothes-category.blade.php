@@ -7,10 +7,18 @@
     <div class="container mt-4">
 
         <div class="breadcrumb-nav bc3x">
+            @if (isset($tenantinfo->tenant) && $tenantinfo->tenant != 'marylu')
+                <li class="home"><a href="{{ url('/') }}"><i class="fas fa-home me-1"></i></a></li>
+                <li class="bread-standard"><a href="{{ url('category/') }}"><i class="fas fa-box me-1"></i>Categorías</a></li>
+                <li class="bread-standard"><a href="#"><i class="fas fa-tshirt me-1"></i>{{ $category_name }}</a></li>
+            @else
+                <li class="home"><a href="{{ url('/') }}"><i class="fas fa-home me-1"></i></a></li>
+                </li>
+                <li class="bread-standard"><a href="{{url('departments/index')}}"><i class="fas fa-shapes me-1"></i>Departamentos</a></li>            
+                <li class="bread-standard"><a href="{{url('category/'.$department_id)}}"><i class="fas fa-box me-1"></i>{{ $department_name }}</a></li>
+                <li class="bread-standard"><a href="#"><i class="fas fa-tshirt me-1"></i>{{ $category_name }}</a></li>
+            @endif
 
-            <li class="home"><a href="{{ url('/') }}"><i class="fas fa-home me-1"></i></a></li>
-            <li class="bread-standard"><a href="{{ url('category/') }}"><i class="fas fa-box me-1"></i>Categorías</a></li>
-            <li class="bread-standard"><a href="#"><i class="fas fa-tshirt me-1"></i>{{ $category_name }}</a></li>
         </div>
         <div class="row w-75">
             <div class="col-md-6">
@@ -23,7 +31,6 @@
         </div>
         <div class="row row-cols-1 row-cols-md-4 g-4 align-content-center card-group mt-2 mb-5">
             @foreach ($clothings as $item)
-                
                 @if ($item->total_stock != 0)
                     <div class="col-md-3 col-sm-6 mb-2 card-container">
                         <input type="hidden" class="code" name="code" value="{{ $item->code }}">

@@ -9,6 +9,7 @@
         "artesaos/seotools": "^1.2",
         "ensensis/laravel-bac": "dev-master",
         "fruitcake/laravel-cors": "^2.0",
+        "google/cloud-vision": "^1.7",
         "guzzlehttp/guzzle": "^7.5",
         "laravel/framework": "^8.75",
         "laravel/sanctum": "^2.11",

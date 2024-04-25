@@ -25,10 +25,18 @@
         @endforeach
     @else
         <nav class="navbar-cintillo navbar-expand-lg bg-dark d-none d-lg-block" id="templatemo_nav_top">
-            <div class="container text-light text-center">
-                Explora nuestras <a class="text-light text-decoration-underline"
-                href="{{ url('category') }}">categorías </a> y encuentra lo que más te gusta!
-            </div>
+            @if (isset($tenantinfo->tenant) && $tenantinfo->tenant != 'marylu')
+                <div class="container text-light text-center">
+                    Explora nuestras <a class="text-light text-decoration-underline"
+                        href="{{ url('category') }}">categorías </a> y encuentra lo que más te gusta!
+                </div>
+            @else
+                <div class="container text-light text-center">
+                    Explora nuestros <a class="text-light text-decoration-underline"
+                        href="{{ url('departments/index') }}">departamentos </a> y encuentra lo que más te gusta!
+                </div>
+            @endif
+
         </nav>
     @endif
     <div class="flexMain">
@@ -96,59 +104,139 @@
                     class="fa fa-arrow-circle-left me-3"></i>CERRAR MENU</a>
 
             <a href="{{ url('/') }}" class="nav-menu-item"><i class="fas fa-home me-3"></i>INICIO</a>
-            <div class="nav-menu-item">
-                <i class="fas fa-tshirt me-3"></i><a class="color-menu" href="javascript:void(0);"
-                    id="toggleCategories">CATEGORIAS <i class="fa fa-arrow-circle-down ml-3"></i></a>
-                <div class="subcategories" id="categoriesDropdown">
-                    <ul>
-                        <li class="item-submenu"><a href="{{ url('category/') }}" class="nav-submenu-item">
-                                <span class="alert-icon align-middle">
-                                    <span class="material-icons text-md">label</span>
-                                </span>TODAS LAS CATEGORIAS</a>
-                        </li>
-                        @foreach ($categories as $item)
-                            <li class="item-submenu"><a href="{{ url('clothes-category/' . $item->id) }}"
-                                    class="nav-submenu-item">
+            @if (isset($tenantinfo->tenant) && $tenantinfo->tenant != 'marylu')
+                <div class="nav-menu-item">
+                    <i class="fas fa-tshirt me-3"></i><a class="color-menu" href="javascript:void(0);"
+                        id="toggleCategories">CATEGORIAS <i class="fa fa-arrow-circle-down ml-3"></i></a>
+                    <div class="subcategories" id="categoriesDropdown">
+                        <ul>
+                            <li class="item-submenu"><a href="{{ url('category/') }}" class="nav-submenu-item">
                                     <span class="alert-icon align-middle">
                                         <span class="material-icons text-md">label</span>
-                                    </span>{{ $item->name }}</a>
+                                    </span>TODAS LAS CATEGORIAS</a>
                             </li>
-                        @endforeach
-                    </ul>
-                    <!-- Agrega más subcategorías si es necesario -->
+                            @foreach ($categories as $item)
+                                <li class="item-submenu"><a href="{{ url('clothes-category/' . $item->id . '/' .$item->department_id) }}"
+                                        class="nav-submenu-item">
+                                        <span class="alert-icon align-middle">
+                                            <span class="material-icons text-md">label</span>
+                                        </span>{{ $item->name }}</a>
+                                </li>
+                            @endforeach
+                        </ul>
+                        <!-- Agrega más subcategorías si es necesario -->
+                    </div>
                 </div>
-            </div>
+            @else
+                <div class="nav-menu-item">
+                    <i class="fas fa-tshirt me-3"></i><a class="color-menu" href="javascript:void(0);"
+                        id="toggleCategories">DEPARTAMENTOS <i class="fa fa-arrow-circle-down ml-3"></i></a>
+                    <div class="subcategories" id="categoriesDropdown">
+                        <ul>
+                            <li class="item-submenu"><a href="{{ url('departments/index') }}" class="nav-submenu-item">
+                                    <span class="alert-icon align-middle">
+                                        <span class="material-icons text-md">label</span>
+                                    </span>TODOS LOS DEPARTAMENTOS</a>
+                            </li>
+                            @foreach ($departments as $department)
+                                <li class="item-submenu">
+                                    <a href="#" class="nav-submenu-item">
+                                        <span class="alert-icon align-middle">
+                                            <span class="material-icons text-md">label</span>
+                                        </span>{{ $department->department }}
+                                    </a>
+                                    <ul>
+                                        @foreach ($department->categories as $categoria)
+                                            <li class="item-submenu">
+                                                <a href="{{ url('clothes-category/' . $categoria->id . '/' . $department->id) }}"
+                                                    class="nav-submenu-item">
+                                                    <span class="alert-icon align-middle">
+                                                        <span class="material-icons text-md">label</span>
+                                                    </span>{{ $categoria->name }}
+                                                </a>
+
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </li>
+                            @endforeach
+                        </ul>
+                        <!-- Agrega más subcategorías si es necesario -->
+                    </div>
+                </div>
+            @endif
             <a href="{{ url('view-cart') }}" class="nav-menu-item"><i class="fa fa-shopping-cart me-3"></i>CARRITO
                 <span
                     class="badge badge-sm text-pill-menu badge-info border-pill-menu border-2 text-xxs">{{ $cartNumber }}</span></a>
-            <a href="{{ route('register') }}" class="nav-menu-item"><i class="fa fa-user-plus me-3"></i>REGISTRARSE</a>
+            <a href="{{ route('register') }}" class="nav-menu-item"><i
+                    class="fa fa-user-plus me-3"></i>REGISTRARSE</a>
             <a href="{{ route('login') }}" class="nav-menu-item"><i class="fa fa-sign-in me-3"></i>INGRESAR</a>
         @else
             <a class="nav-menu-item" href="javascript:void(0);" onclick="menuToggle()"><i
                     class="fa fa-arrow-circle-left me-3"></i>CERRAR MENU</a>
             <a href="{{ url('/') }}" class="nav-menu-item"><i class="fas fa-home me-3"></i>INICIO</a>
-            <div class="nav-menu-item">
-                <i class="fas fa-tshirt me-3"></i><a class="color-menu" href="javascript:void(0);"
-                    id="toggleCategories">CATEGORIAS <i class="fa fa-arrow-circle-down ml-3"></i></a>
-                <div class="subcategories" id="categoriesDropdown">
-                    <ul>
-                        <li class="item-submenu"><a href="{{ url('category/') }}" class="nav-submenu-item">
-                                <span class="alert-icon align-middle">
-                                    <span class="material-icons text-md">label</span>
-                                </span>TODAS LAS CATEGORIAS</a>
-                        </li>
-                        @foreach ($categories as $item)
-                            <li class="item-submenu"><a href="{{ url('clothes-category/' . $item->id) }}"
+            @if (isset($tenantinfo->tenant) && $tenantinfo->tenant != 'marylu')
+                <div class="nav-menu-item">
+                    <i class="fas fa-tshirt me-3"></i><a class="color-menu" href="javascript:void(0);"
+                        id="toggleCategories">CATEGORIAS <i class="fa fa-arrow-circle-down ml-3"></i></a>
+                    <div class="subcategories" id="categoriesDropdown">
+                        <ul>
+                            <li class="item-submenu"><a href="{{ url('category/') }}" class="nav-submenu-item">
+                                    <span class="alert-icon align-middle">
+                                        <span class="material-icons text-md">label</span>
+                                    </span>TODAS LAS CATEGORIAS</a>
+                            </li>
+                            @foreach ($categories as $item)
+                                <li class="item-submenu"><a href="{{ url('clothes-category/' . $item->category_id . '/' .$item->department_id) }}"
+                                        class="nav-submenu-item">
+                                        <span class="alert-icon align-middle">
+                                            <span class="material-icons text-md">label</span>
+                                        </span>{{ $item->name }}</a>
+                                </li>
+                            @endforeach
+                        </ul>
+                        <!-- Agrega más subcategorías si es necesario -->
+                    </div>
+                </div>
+            @else
+                <div class="nav-menu-item">
+                    <i class="fas fa-tshirt me-3"></i><a class="color-menu" href="javascript:void(0);"
+                        id="toggleCategories">DEPARTAMENTOS <i class="fa fa-arrow-circle-down ml-3"></i></a>
+                    <div class="subcategories" id="categoriesDropdown">
+                        <ul>
+                            <li class="item-submenu"><a href="{{ url('departments/index') }}"
                                     class="nav-submenu-item">
                                     <span class="alert-icon align-middle">
                                         <span class="material-icons text-md">label</span>
-                                    </span>{{ $item->name }}</a>
+                                    </span>TODOS LOS DEPARTAMENTOS</a>
                             </li>
-                        @endforeach
-                    </ul>
-                    <!-- Agrega más subcategorías si es necesario -->
+                            @foreach ($departments as $department)
+                                <li class="item-submenu">
+                                    <a href="#" class="nav-submenu-item">
+                                        <span class="alert-icon align-middle">
+                                            <span class="material-icons text-md">label</span>
+                                        </span>{{ $department->department }}
+                                    </a>
+                                    <ul>
+                                        @foreach ($department->categories as $categoria)
+                                            <li class="item-submenu">
+                                                <a href="{{ url('clothes-category/' . $categoria->id . '/' . $department->id) }}"
+                                                    class="nav-submenu-item">
+                                                    <span class="alert-icon align-middle">
+                                                        <span class="material-icons text-md">label</span>
+                                                    </span>{{ $categoria->name }}
+                                                </a>
+
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </li>
+                            @endforeach
+                        </ul>
+                        <!-- Agrega más subcategorías si es necesario -->
+                    </div>
                 </div>
-            </div>
+            @endif
             <a href="{{ url('view-cart') }}" class="nav-menu-item"><i class="fa fa-shopping-cart me-3"></i>CARRITO
                 <span
                     class="badge badge-sm text-pill-menu badge-info border-pill-menu border-2 text-xxs">{{ $cartNumber }}</span></a>

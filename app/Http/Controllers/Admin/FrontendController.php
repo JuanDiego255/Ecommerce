@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Categories;
 use App\Models\ClothingCategory;
+use App\Models\Department;
 use App\Models\MetaTags;
 use App\Models\ProductImage;
 use App\Models\SizeCloth;
@@ -69,7 +70,16 @@ class FrontendController extends Controller
         });   
         
         $category = Cache::remember('categories', $this->expirationTime, function () {
-            return Categories::where('status', 0)->take(8)->get();
+            return Categories::where('departments.department', 'Default')
+            ->where('categories.status',0)
+            ->join('departments', 'categories.department_id', 'departments.id')
+            ->select(
+                'departments.id as department_id',
+                'categories.id as category_id',
+                'categories.image as image',
+                'categories.name as name',
+            )
+            ->get();
         });
 
         // Obtener las primeras imágenes de las prendas obtenidas
@@ -143,11 +153,17 @@ class FrontendController extends Controller
        
         return view('frontend.index', compact('clothings', 'social','clothings_offer','category'));
     }
-    public function category()
+    public function category($id = null)
     {
-        $category = Cache::remember('categories', $this->expirationTime, function () {
-            return Categories::where('status', 0)->simplePaginate(8);
-        });
+        if ($id == null) {
+            $department = Department::where('department', 'Default')->first();
+            $department_id = $department->id;
+        } else {
+            $department = Department::where('id', $id)->first();
+            $department_id = $department->id;
+        }
+        $category = Categories::where('department_id', $department_id)->simplePaginate(8);
+        $department_name = $department->department;
         
         $tags = Cache::remember('meta_tags', $this->expirationTime, function () {
             return MetaTags::where('section', 'Categorías')->get();
@@ -171,16 +187,25 @@ class FrontendController extends Controller
             return SocialNetwork::get();
         });
         
-        return view('frontend.category', compact('category'));
+        return view('frontend.category', compact('category','department_name','department_id'));
     }
-    public function clothesByCategory($id)
+    public function clothesByCategory($id,$department_id)
     {
         $category = Cache::remember('category_' . $id, $this->expirationTime, function () use ($id) {
             return Categories::find($id);
         });
-        
+       
         $category_name = $category->name;
         $category_id = $category->id;
+
+        if ($department_id == null) {
+            $department = Department::where('department', 'Default')->first();
+            $department_id = $department->id;
+        } else {
+            $department = Department::where('id', $department_id)->first();
+            $department_id = $department->id;
+        }
+        $department_name = $department->department;
         
         $clothings = Cache::remember('clothings_' . $id, $this->expirationTime, function () use ($id) {
             return ClothingCategory::where('clothing.category_id', $id)
@@ -234,7 +259,7 @@ class FrontendController extends Controller
             OpenGraph::setDescription($tag->meta_og_description);
         }
         
-        return view('frontend.clothes-category', compact('clothings', 'category_name', 'category_id'));
+        return view('frontend.clothes-category', compact('clothings', 'category_name', 'category_id','department_id','department_name'));
         
     }
     public function DetailClothingById($id, $category_id)
@@ -242,6 +267,7 @@ class FrontendController extends Controller
         $clothes = ClothingCategory::where('clothing.id', $id)
             ->where('clothing.status', 1)
             ->join('categories', 'clothing.category_id', 'categories.id')
+            ->join('departments', 'categories.department_id', 'departments.id')
             ->join('stocks', 'clothing.id', 'stocks.clothing_id')
             ->join('sizes', 'stocks.size_id', 'sizes.id')
             ->leftJoin('product_images', 'clothing.id', '=', 'product_images.clothing_id')
@@ -250,6 +276,8 @@ class FrontendController extends Controller
                 'clothing.id as id',
                 'clothing.trending as trending',
                 'clothing.name as name',
+                'departments.id as department_id',
+                'departments.department as department_name',
                 'clothing.discount as discount',
                 'clothing.description as description',
                 'clothing.price as price',
@@ -260,7 +288,7 @@ class FrontendController extends Controller
                 DB::raw('GROUP_CONCAT(sizes.id) AS available_sizes'), // Obtener tallas dinámicas
                 DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size') // Obtener stock por talla
             )
-            ->groupBy('clothing.id','clothing.mayor_price', 'clothing.discount', 'categories.name', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
+            ->groupBy('clothing.id','departments.id','departments.department','clothing.mayor_price', 'clothing.discount', 'categories.name', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
             ->get();
         //$clothes = ClothingCategory::where('id', $id)->get();
         $size_active = SizeCloth::where('clothing_id', $id)
@@ -322,5 +350,14 @@ class FrontendController extends Controller
             ->get();
 
         return view('frontend.detail-clothing', compact('clothes', 'category_id', 'size_active', 'clothings_trending'));
+    }
+
+    public function departments()
+    {
+        $departments = Cache::remember('departments', $this->expirationTime, function () {
+            return Department::where('department','!=','Default')->simplePaginate(8);
+        });
+
+        return view('frontend.departments', compact('departments'));
     }
 }

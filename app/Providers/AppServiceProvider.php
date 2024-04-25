@@ -6,6 +6,7 @@ use App\Models\Buy;
 use App\Models\Cart;
 use App\Models\Categories;
 use App\Models\ClothingCategory;
+use App\Models\Department;
 use App\Models\Settings;
 use App\Models\TenantCarousel;
 use App\Models\TenantInfo;
@@ -54,14 +55,21 @@ class AppServiceProvider extends ServiceProvider
                     ->where('session_id', $session_id)
                     ->get());
             }
-            $categories = Categories::get();
+            $categories = Categories::where('departments.department', 'Default')
+                ->join('departments', 'categories.department_id', 'departments.id')
+                ->select(
+                    'departments.id as department_id',
+                    'categories.id as category_id',
+                    'categories.name as name',
+                )
+                ->get();
             $social_network = TenantSocialNetwork::get();
             $tenantcarousel = TenantCarousel::get();
             $instagram = null;
             $facebook = null;
             $twitter = null;
-            foreach($social_network as $social){
-                
+            foreach ($social_network as $social) {
+
                 if (stripos($social->social_network, 'Facebook') !== false) {
                     $facebook = $social->url;
                 } elseif (stripos($social->social_network, 'Instagram') !== false) {
@@ -71,9 +79,10 @@ class AppServiceProvider extends ServiceProvider
                     $twitter = $social->url;
                 }
             }
-            
+
             $tenantinfo = TenantInfo::first();
             $settings = Settings::first();
+            $departments = Department::where('department', '!=', 'Default')->with('categories')->get();
 
             $clothings_offer = ClothingCategory::where('categories.name', 'Sale')
                 ->join('categories', 'clothing.category_id', 'categories.id')
@@ -105,7 +114,7 @@ class AppServiceProvider extends ServiceProvider
                     'clothing.mayor_price',
                 )
                 ->take(8)
-                ->get();   
+                ->get();
 
             view()->share([
                 'view_name' => $view_name,
@@ -119,7 +128,8 @@ class AppServiceProvider extends ServiceProvider
                 'facebook' => $facebook,
                 'tenantcarousel' => $tenantcarousel,
                 'settings' => $settings,
-                'clothings_offer' => $clothings_offer
+                'clothings_offer' => $clothings_offer,
+                'departments' => $departments
             ]);
         });
     }

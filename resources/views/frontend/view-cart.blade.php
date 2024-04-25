@@ -6,10 +6,16 @@
 @section('content')
     <div class="product_data container mb-3 mt-4">
         <div class="breadcrumb-nav bc3x">
+            @if (isset($tenantinfo->tenant) && $tenantinfo->tenant != 'marylu')
+                <li class="home"><a href="{{ url('/') }}"><i class="fas fa-home me-1"></i></a></li>
+                <li class="bread-standard"><a href="{{ url('category/') }}"><i class="fas fa-box me-1"></i>Categorías</a></li>
+                <li class="bread-standard"><a href="#"><i class="fa fa-shopping-cart me-1"></i>Carrito</a></li>
+            @else
+                <li class="home"><a href="{{ url('/') }}"><i class="fas fa-home me-1"></i></a></li>
+                <li class="bread-standard"><a href="{{url('departments/index')}}"><i class="fas fa-shapes me-1"></i>Departamentos</a></li> 
+                <li class="bread-standard"><a href="#"><i class="fa fa-shopping-cart me-1"></i>Carrito</a></li>
+            @endif
 
-            <li class="home"><a href="{{ url('/') }}"><i class="fas fa-home me-1"></i></a></li>
-            <li class="bread-standard"><a href="{{ url('category/') }}"><i class="fas fa-box me-1"></i>Categorías</a></li>
-            <li class="bread-standard"><a href="#"><i class="fa fa-shopping-cart me-1"></i>Carrito</a></li>
         </div>
         <center>
             <div class="row row-cols-1 row-cols-md-2 g-4 align-content-center card-group mt-1">
@@ -79,7 +85,8 @@
                                                 <p class="text-success mb-0">₡
                                                     {{ $item->discount > 0 ? $precioConDescuento : (Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0 ? $item->mayor_price : $item->price) }}
                                                     @if ($item->discount > 0)
-                                                        <s class="text-danger">{{ Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0 ? $item->mayor_price : $item->price }}</s>
+                                                        <s
+                                                            class="text-danger">{{ Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0 ? $item->mayor_price : $item->price }}</s>
                                                     @endif
                                                 </p>
 

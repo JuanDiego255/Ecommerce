@@ -8,15 +8,28 @@
         <div>
             @foreach ($clothes as $item)
                 <div class="breadcrumb-nav bc3x mt-4">
+                    @if (isset($tenantinfo->tenant) && $tenantinfo->tenant != 'marylu')
+                        <li class="home"><a href="{{ url('/') }}"><i class="fas fa-home me-1"></i></a></li>
+                        <li class="bread-standard"><a href="{{ url('category/') }}"><i
+                                    class="fas fa-box me-1"></i>Categorías</a>
+                        </li>
+                        <li class="bread-standard"><a href="{{ url('clothes-category/' . $category_id) }}"><i
+                                    class="fas fa-tshirt me-1"></i>{{ $item->category }}</a></li>
+                        <li class="bread-standard"><a class="location" href="#"><i
+                                    class="fas fa-socks me-1"></i>Detalles</a>
+                        </li>
+                    @else
+                        <li class="home"><a href="{{ url('/') }}"><i class="fas fa-home me-1"></i></a></li>
+                        <li class="bread-standard"><a href="{{url('departments/index')}}"><i class="fas fa-shapes me-1"></i>Departamentos</a></li> 
+                        <li class="bread-standard"><a href="{{url('category/'.$item->department_id)}}"><i class="fas fa-box me-1"></i>{{ $item->department_name }}</a></li>
+                        <li class="bread-standard"><a href="{{ url('clothes-category/' . $category_id) }}"><i
+                                    class="fas fa-tshirt me-1"></i>{{ $item->category }}</a></li>
+                        <li class="bread-standard"><a class="location" href="#"><i
+                                    class="fas fa-socks me-1"></i>Detalles</a>
+                        </li>
+                    @endif
 
-                    <li class="home"><a href="{{ url('/') }}"><i class="fas fa-home me-1"></i></a></li>
-                    <li class="bread-standard"><a href="{{ url('category/') }}"><i class="fas fa-box me-1"></i>Categorías</a>
-                    </li>
-                    <li class="bread-standard"><a href="{{ url('clothes-category/' . $category_id) }}"><i
-                                class="fas fa-tshirt me-1"></i>{{ $item->category }}</a></li>
-                    <li class="bread-standard"><a class="location" href="#"><i
-                                class="fas fa-socks me-1"></i>Detalles</a>
-                    </li>
+
                 </div>
 
                 @php
@@ -132,7 +145,8 @@
                                         <div class="price">₡{{ number_format($precioConDescuento) }}
                                             @if ($item->discount)
                                                 <s class="text-danger"><span
-                                                        class="text-danger">₡{{ number_format(Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0 ? $item->mayor_price : $item->price) }} </span></s>
+                                                        class="text-danger">₡{{ number_format(Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0 ? $item->mayor_price : $item->price) }}
+                                                    </span></s>
                                                 / por unidad
                                             @endif
 
@@ -233,7 +247,9 @@
                             <h4 class="title"><a href="#">Stock: {{ $item->total_stock }}</a></h4>
                         @endif
 
-                        <div class="price">₡{{ number_format(Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0 ? $item->mayor_price : $item->price) }}</span></div>
+                        <div class="price">
+                            ₡{{ number_format(Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0 ? $item->mayor_price : $item->price) }}</span>
+                        </div>
                     </div>
                 </div>
             </div>

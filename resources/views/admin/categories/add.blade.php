@@ -11,6 +11,7 @@
         <div class="card-body">
             <form action="{{ url('insert-category') }}" method="POST" enctype="multipart/form-data">
                 @csrf
+                <input type="hidden" name="department_id" value="{{$id}}">
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <div class="input-group input-group-lg input-group-outline my-3">

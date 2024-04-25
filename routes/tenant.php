@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\FrontendController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\BuyController;
 use App\Http\Controllers\ClothingCategoryController;
+use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\Frontend\CartController;
 use App\Http\Controllers\Frontend\CheckOutController;
 use App\Http\Controllers\MetaTagsController;
@@ -53,9 +54,11 @@ Route::middleware([
         Route::get('/facebook-auth/callback', [AuthController::class, 'callbackFacebook']);
         //Facebook authentication <------
 
-       
+
         Route::get('category', [FrontendController::class, 'category']);
-        Route::get('clothes-category/{id}', [FrontendController::class, 'clothesByCategory']);
+        Route::get('departments/index', [FrontendController::class, 'departments']);
+        Route::get('category/{id}', [FrontendController::class, 'category']);
+        Route::get('clothes-category/{id}/{department_id}', [FrontendController::class, 'clothesByCategory']);
         Route::get('detail-clothing/{id}/{cat_id}', [FrontendController::class, 'DetailClothingById']);
         Route::post('/add-to-cart', [CartController::class, 'store']);
         Route::post('/edit-quantity', [CartController::class, 'updateQuantity']);
@@ -83,10 +86,12 @@ Route::middleware([
         Route::group(['middleware' => 'isAdmin'], function () {
             //Routes for Categories
             Route::get('/dashboard', [FrontendController::class, 'index']);
+            Route::get('/categories/{id}', [CategoryController::class, 'index']);
             Route::get('/categories', [CategoryController::class, 'index']);
-            Route::get('/add-category', [CategoryController::class, 'add']);
+            Route::get('/add-category/{id}', [CategoryController::class, 'add']);
             Route::get('/edit-category/{id}', [CategoryController::class, 'edit']);
             Route::post('/insert-category', [CategoryController::class, 'store']);
+            Route::post('/process-image', [CategoryController::class, 'processImage']);
             Route::put('/update-category/{id}', [CategoryController::class, 'update']);
             Route::delete('/delete-category/{id}', [CategoryController::class, 'delete']);
             //Routes for ArticleCategory
@@ -138,6 +143,11 @@ Route::middleware([
             //Rutas para usuarios
             Route::get('/users', [UserController::class, 'index']);
             Route::post('user/mayor/{id}', [UserController::class, 'mayor']);
+            //Rutas para departamentos
+            Route::get('/departments', [DepartmentController::class, 'index']);
+            Route::post('department/store', [DepartmentController::class, 'store']);
+            Route::put('/department/update/{id}', [DepartmentController::class, 'update']);
+            Route::delete('/delete/department/{id}', [DepartmentController::class, 'delete']);
         });
     });
 
