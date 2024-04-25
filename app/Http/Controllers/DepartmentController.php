@@ -20,7 +20,9 @@ class DepartmentController extends Controller
     public function index()
     {
         $departments = Cache::remember('departments', $this->expirationTime, function () {
-            return Department::where('department','!=','Default')->get();
+            return Department::where('department','!=','Default')
+            ->orderBy('departments.department','asc')
+            ->get();
         });
 
         return view('admin.departments.index', compact('departments'));

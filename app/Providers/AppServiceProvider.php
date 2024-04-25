@@ -62,6 +62,7 @@ class AppServiceProvider extends ServiceProvider
                     'categories.id as category_id',
                     'categories.name as name',
                 )
+                ->orderBy('categories.name','asc')
                 ->get();
             $social_network = TenantSocialNetwork::get();
             $tenantcarousel = TenantCarousel::get();
@@ -82,7 +83,9 @@ class AppServiceProvider extends ServiceProvider
 
             $tenantinfo = TenantInfo::first();
             $settings = Settings::first();
-            $departments = Department::where('department', '!=', 'Default')->with('categories')->get();
+            $departments = Department::where('department', '!=', 'Default')->with('categories')
+            ->orderBy('departments.department','asc')
+            ->get();
 
             $clothings_offer = ClothingCategory::where('categories.name', 'Sale')
                 ->join('categories', 'clothing.category_id', 'categories.id')
@@ -113,6 +116,7 @@ class AppServiceProvider extends ServiceProvider
                     'clothing.price',
                     'clothing.mayor_price',
                 )
+                ->orderBy('clothing.name','asc')
                 ->take(8)
                 ->get();
 

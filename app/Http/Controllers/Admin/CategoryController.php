@@ -31,7 +31,9 @@ class CategoryController extends Controller
             $department = Department::where('id', $id)->first();
             $department_id = $department->id;
         }
-        $categories = Categories::where('department_id', $department_id)->simplePaginate(8);
+        $categories = Categories::where('department_id', $department_id)
+        ->orderBy('categories.name','asc')
+        ->simplePaginate(8);
         $department_name = $department->department;
 
         return view('admin.categories.index', compact('categories', 'department_name', 'department_id'));

@@ -64,7 +64,7 @@ class FrontendController extends Controller
                 'clothing.description',
                 'clothing.price',
                 'clothing.mayor_price',
-            )
+            )->orderBy('clothing.name','asc')
             ->take(15)
             ->get();
         });   
@@ -78,7 +78,7 @@ class FrontendController extends Controller
                 'categories.id as category_id',
                 'categories.image as image',
                 'categories.name as name',
-            )
+            )->orderBy('categories.name','asc')
             ->get();
         });
 
@@ -133,6 +133,7 @@ class FrontendController extends Controller
                 'clothing.price',
                 'clothing.mayor_price',
             )
+            ->orderBy('clothing.name','asc')
             ->take(8)
             ->get();
         });     
@@ -162,7 +163,9 @@ class FrontendController extends Controller
             $department = Department::where('id', $id)->first();
             $department_id = $department->id;
         }
-        $category = Categories::where('department_id', $department_id)->simplePaginate(8);
+        $category = Categories::where('department_id', $department_id)
+        ->orderBy('categories.name','asc')
+        ->simplePaginate(8);
         $department_name = $department->department;
         
         $tags = Cache::remember('meta_tags', $this->expirationTime, function () {
@@ -234,6 +237,7 @@ class FrontendController extends Controller
                     DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size') // Obtener stock por talla
                 )
                 ->groupBy('clothing.id','clothing.mayor_price', 'categories.name', 'clothing.discount', 'clothing.name', 'clothing.description', 'clothing.price', 'product_images.image')
+                ->orderBy('clothing.name','asc')
                 ->simplePaginate(20);
         });
         
@@ -289,6 +293,7 @@ class FrontendController extends Controller
                 DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size') // Obtener stock por talla
             )
             ->groupBy('clothing.id','departments.id','departments.department','clothing.mayor_price', 'clothing.discount', 'categories.name', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
+            ->orderBy('clothing.name','asc')
             ->get();
         //$clothes = ClothingCategory::where('id', $id)->get();
         $size_active = SizeCloth::where('clothing_id', $id)
@@ -345,6 +350,7 @@ class FrontendController extends Controller
                 DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size') // Obtener stock por talla
             )
             ->groupBy('clothing.id','clothing.mayor_price', 'clothing.discount', 'categories.name', 'categories.id', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
+            ->orderBy('clothing.name','asc')
             ->inRandomOrder()
             ->take(8)
             ->get();
@@ -355,7 +361,9 @@ class FrontendController extends Controller
     public function departments()
     {
         $departments = Cache::remember('departments', $this->expirationTime, function () {
-            return Department::where('department','!=','Default')->simplePaginate(8);
+            return Department::where('department','!=','Default')
+            ->orderBy('departments.department','asc')
+            ->simplePaginate(8);
         });
 
         return view('frontend.departments', compact('departments'));
