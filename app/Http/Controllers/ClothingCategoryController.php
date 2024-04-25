@@ -61,17 +61,17 @@ class ClothingCategoryController extends Controller
                     DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'),
                     'product_images.image as image'
                 )
-                ->groupBy('clothing.id','clothing.mayor_price', 'clothing.discount', 'categories.name','clothing.code', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
+                ->groupBy('clothing.id', 'clothing.mayor_price', 'clothing.discount', 'categories.name', 'clothing.code', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
                 ->simplePaginate(15);
         });
 
         $category = Cache::remember('category_' . $id, $this->expirationTime, function () use ($id) {
             return Categories::find($id);
         });
-        
+
         $category_name = $category->name;
         $category_id = $id;
-        
+
         return view('admin.clothing.index', compact('clothings', 'category_name', 'category_id'));
     }
 
@@ -138,69 +138,13 @@ class ClothingCategoryController extends Controller
                 ],
             ]);
 
-            if ($validator->fails()) {
+            if ($validator->fails() && isset($tenantinfo->tenant) && $tenantinfo->tenant != 'marylu') {
                 return redirect('/new-item/' . $request->category_id)->with(['status' => 'No puede seleccionar más de 4 imágenes!', 'icon' => 'warning']);
             }
-            $clothing =  new ClothingCategory();
 
-            $clothing->category_id = $request->category_id;
-            $clothing->name = $request->name;
-            $clothing->code = $request->code;
-            $clothing->description = $request->description;
-            $clothing->price = $request->price;
-
-            if($tenantinfo->tenant === "torres"){
-                $clothing->mayor_price = $request->mayor_price;
-            }
-
-            if ($request->has('discount')) {
-                $clothing->discount = $request->discount;
-            }
-
-            $sizes = $request->input('sizes_id');
-
-            if ($sizes == null) {
-                return redirect('/new-item/' . $request->category_id)->with(['status' => 'Debe seleccionar al menos una talla!', 'icon' => 'warning']);
-            }
-
-            $clothing->status = 1;
-
-            if ($request->trending == 1) {
-                $clothing->trending = 1;
-            } else {
-                $clothing->trending = 0;
-            }
-
-            $clothing->save();
-            $clothingId = $clothing->id;
-
-
-
-            if ($request->hasFile('images')) {
-                $images = $request->file('images');
-
-                foreach ($images as $image) {
-                    $imageObj = new ProductImage();
-                    $imageObj->clothing_id = $clothingId;
-                    $imageObj->image = $image->store('uploads', 'public');
-                    $imageObj->save();
-                }
-            }
-
-            foreach ($sizes as $size) {
-                $size_cloth =  new SizeCloth();
-                $size_cloth->size_id = $size;
-                $size_cloth->clothing_id = $clothingId;
-                $size_cloth->save();
-
-                $stock =  new Stock();
-                $stock->size_id = $size;
-                $stock->stock = $request->stock;
-                $stock->clothing_id = $clothingId;
-                $stock->save();
-            }
+            $msg = $this->createClothing($request, $tenantinfo);
             DB::commit();
-            return redirect()->back()->with(['status' => 'Producto Agregado Exitosamente!', 'icon' => 'success']);
+            return redirect()->back()->with(['status' => $msg, 'icon' => 'success']);
         } catch (Exception $th) {
             DB::rollback();
             return redirect()->back()->with(['status' => 'Ocurrió un error al agregar el producto', 'icon' => 'error']);
@@ -229,7 +173,7 @@ class ClothingCategoryController extends Controller
             $clothing->description = $request->description;
             $clothing->price = $request->price;
 
-            if($tenantinfo->tenant === "torres"){
+            if ($tenantinfo->tenant === "torres") {
                 $clothing->mayor_price = $request->mayor_price;
             }
 
@@ -299,7 +243,7 @@ class ClothingCategoryController extends Controller
             return redirect('add-item/' . $request->category_id)->with(['status' => 'Producto Editado Con Exito!', 'icon' => 'success']);
         } catch (Exception $th) {
             DB::rollback();
-            return redirect()->back()->with(['status' => 'Ocurrió un error al editar el producto!'.$th->getMessage(), 'icon' => 'warning']);
+            return redirect()->back()->with(['status' => 'Ocurrió un error al editar el producto!' . $th->getMessage(), 'icon' => 'warning']);
         }
     }
     public function delete($id)
@@ -324,5 +268,90 @@ class ClothingCategoryController extends Controller
             DB::rollBack();
             return redirect()->back()->with(['status' => 'Ocurrió un error al eliminar el producto!', 'icon' => 'error']);
         }
+    }
+
+    function createClothing($request, $tenantinfo)
+    {
+        $msg = "Producto Agregado Exitosamente!";
+        $break = false;
+        $code = 0;
+        $latestCode = ClothingCategory::latest('code')->value('code');
+        if($latestCode){
+            $code = $latestCode;
+        }
+        if ($request->hasFile('images')) {
+            $images = $request->file('images');
+
+            foreach ($images as $image) {
+                $code = $code + 1;
+
+                $clothing = new ClothingCategory();
+
+                $clothing->category_id = $request->category_id;
+                $clothing->name = $request->name;
+                $clothing->code = $code;
+                $clothing->description = $request->description;
+                $clothing->price = $request->price;
+
+                if ($tenantinfo->tenant === "torres") {
+                    $clothing->mayor_price = $request->mayor_price;
+                }
+
+                if ($request->has('discount')) {
+                    $clothing->discount = $request->discount;
+                }
+
+                $sizes = $request->input('sizes_id');
+
+                if ($sizes == null) {
+                    return redirect('/new-item/' . $request->category_id)->with(['status' => 'Debe seleccionar al menos una talla!', 'icon' => 'warning']);
+                }
+
+                $clothing->status = 1;
+
+                $clothing->trending = $request->filled('trending') ? 1 : 0;
+
+                $clothing->save();
+                $clothingId = $clothing->id;
+                $masive = $request->filled('masive') ? 1 : 0;
+                if ($masive == 1 && isset($tenantinfo->tenant) && $tenantinfo->tenant === 'marylu') {
+                    $imageObj = new ProductImage();
+                    $imageObj->clothing_id = $clothingId;
+                    $imageObj->image = $image->store('uploads', 'public');
+                    $imageObj->save();
+                    $msg = "Productos agregados exitósamente";
+                } else {
+                    if ($request->hasFile('images')) {
+                        $images = $request->file('images');
+
+                        foreach ($images as $image) {
+                            $imageObj = new ProductImage();
+                            $imageObj->clothing_id = $clothingId;
+                            $imageObj->image = $image->store('uploads', 'public');
+                            $imageObj->save();
+                        }
+                    }
+
+                    $break = true;
+                }
+
+                foreach ($sizes as $size) {
+                    $size_cloth = new SizeCloth();
+                    $size_cloth->size_id = $size;
+                    $size_cloth->clothing_id = $clothingId;
+                    $size_cloth->save();
+
+                    $stock = new Stock();
+                    $stock->size_id = $size;
+                    $stock->stock = $request->stock;
+                    $stock->clothing_id = $clothingId;
+                    $stock->save();
+                }
+                if ($break) {
+                    break;
+                }
+            }
+        }
+        return $msg;
     }
 }

@@ -89,6 +89,7 @@
                     <span class="nav-link-text ms-1">Mi Negocio</span>
                 </a>
             </li>
+            
             @if (isset($tenantinfo->tenant) && $tenantinfo->tenant != 'main')
                 <li class="nav-item">
                     <a @if ($view_name == 'admin_users_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif

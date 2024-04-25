@@ -140,7 +140,7 @@
                             </li>
                             @foreach ($departments as $department)
                                 <li class="item-submenu">
-                                    <a href="#" class="nav-submenu-item">
+                                    <a href="{{url('category/'.$department->id)}}" class="nav-submenu-item">
                                         <span class="alert-icon align-middle">
                                             <span class="material-icons text-md">label</span>
                                         </span>{{ $department->department }}
@@ -212,7 +212,7 @@
                             </li>
                             @foreach ($departments as $department)
                                 <li class="item-submenu">
-                                    <a href="#" class="nav-submenu-item">
+                                    <a href="{{url('category/'.$department->id)}}" class="nav-submenu-item">
                                         <span class="alert-icon align-middle">
                                             <span class="material-icons text-md">label</span>
                                         </span>{{ $department->department }}

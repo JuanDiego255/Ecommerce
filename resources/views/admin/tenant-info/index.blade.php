@@ -14,11 +14,11 @@
 
         <hr class="hr-servicios">
 
-        @if ($tenantinfo->isEmpty())
+        @if ($tenant_info->isEmpty())
             <button type="button" data-bs-toggle="modal" data-bs-target="#add-tenant-info-modal" class="btn btn-velvet">Agregar
                 Información</button>
         @else
-            @foreach ($tenantinfo as $item)
+            @foreach ($tenant_info as $item)
                 @include('admin.tenant-info.edit')
                 <button type="button" data-bs-toggle="modal" data-bs-target="#edit-tenant-info-modal{{ $item->id }}"
                     class="btn btn-velvet">Editar
@@ -27,7 +27,7 @@
         @endif
 
         <center>
-            @foreach ($tenantinfo as $item)
+            @foreach ($tenant_info as $item)
                 <hr class="dark horizontal text-danger mb-3">
                 <div class="text-center">
                     <center>
@@ -100,8 +100,8 @@
                                 @include('admin.tenant-info.carousel-modal-edit')
                                 <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
                                     <div class="page-header min-vh-75 m-3 lazy-background"
-                                        data-background="{{ tenant_asset('/') . '/' . $carousel->image }}"
-                                        style="background-image: url('{{ tenant_asset('/') . '/' . $carousel->image }}');">
+                                        data-background="{{ route('file', $carousel->image) }}"
+                                        style="background-image: url('{{ route('file', $carousel->image) }}');">
                                         <span class="mask bg-gradient-dark"></span>
                                         <div class="container">
                                             <div class="row">
