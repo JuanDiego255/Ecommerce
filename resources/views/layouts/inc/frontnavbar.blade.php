@@ -13,57 +13,62 @@
 <div id="menuHolder" class="bg-menu-velvet sticky-top">
 
     <div role="navigation" class="border-bottom bg-menu-velvet" id="mainNavigation">
-        @if (count($clothings_offer) != 0)
-            @foreach ($clothings_offer as $item)
-                <nav class="navbar-cintillo navbar-expand-lg bg-dark d-none d-lg-block" id="templatemo_nav_top">
-                    <div class="container text-light text-center">
-                        Hasta {{ $descuento_mas_alto }}% de descuento en <a class="text-light text-decoration-underline"
-                            href="{{ url('clothes-category/' . $item->category_id) }}">productos</a> seleccionados!
+        @if (isset($tenantinfo->tenant) && $tenantinfo->tenant != 'marylu')
+            @if (count($clothings_offer) != 0)
+                @foreach ($clothings_offer as $item)
+                    <nav class="navbar-cintillo navbar-expand-lg bg-dark d-none d-lg-block" id="templatemo_nav_top">
+                        <div class="container text-light text-center">
+                            Hasta {{ $descuento_mas_alto }}% de descuento en <a
+                                class="text-light text-decoration-underline"
+                                href="{{ url('clothes-category/' . $item->category_id) }}">productos</a> seleccionados!
+                        </div>
+                    </nav>
+                @break
+            @endforeach
+        @else
+            <nav class="navbar-cintillo navbar-expand-lg bg-dark d-none d-lg-block" id="templatemo_nav_top">
+                @if (isset($tenantinfo->tenant) && $tenantinfo->tenant != 'marylu')
+                    <div class="container text-dark text-center">
+                        Explora nuestras <a class="text-light text-decoration-underline"
+                            href="{{ url('category') }}">categorías </a> y encuentra lo que más te gusta!
                     </div>
-                </nav>
-            @break
-        @endforeach
-    @else
-        <nav class="navbar-cintillo navbar-expand-lg bg-dark d-none d-lg-block" id="templatemo_nav_top">
-            @if (isset($tenantinfo->tenant) && $tenantinfo->tenant != 'marylu')
-                <div class="container text-light text-center">
-                    Explora nuestras <a class="text-light text-decoration-underline"
-                        href="{{ url('category') }}">categorías </a> y encuentra lo que más te gusta!
-                </div>
-            @else
-                <div class="container text-light text-center">
-                    Explora nuestros <a class="text-light text-decoration-underline"
-                        href="{{ url('departments/index') }}">departamentos </a> y encuentra lo que más te gusta!
-                </div>
-            @endif
+                @else
+                    <div class="container text-light text-center">
+                        Explora nuestros <a class="text-light text-decoration-underline"
+                            href="{{ url('departments/index') }}">departamentos </a> y encuentra lo que más te
+                        gusta!
+                    </div>
+                @endif
 
-        </nav>
+            </nav>
+        @endif
     @endif
+
     <div class="flexMain">
         <div class="flex2">
             <button
-                class="{{ isset($tenantinfo->tenant) && $tenantinfo->tenant === 'mandicr' ? 'whiteLink-mandi' : 'whiteLink' }} siteLink"
+                class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'whiteLink-mandi' : 'whiteLink' }} siteLink"
                 id="btnMenu" style="color: var(--navbar_text); border-right:1px solid #eaeaea"
                 onclick="menuToggle()"><i class="fas fa-bars me-2"></i> MENU</button>
         </div>
         <div class="flex3 text-center" id="siteBrand">
-            <a class="{{ isset($tenantinfo->tenant) && $tenantinfo->tenant === 'mandicr' ? 'text-title-mandi' : 'text-title' }} text-uppercase"
+            <a class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'text-title-mandi' : 'text-title' }} text-uppercase"
                 href="{{ url('/') }}">{{ isset($tenantinfo->title) ? $tenantinfo->title : '' }}</a>
         </div>
 
         <div class="flex2 text-end d-block d-md-none">
             @guest
                 <a href="{{ route('login') }}"><button id="btnIngresar"
-                        class="{{ isset($tenantinfo->tenant) && $tenantinfo->tenant === 'mandicr' ? 'whiteLink-mandi' : 'whiteLink' }} siteLink"><i
+                        class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'text-title-mandi' : 'text-title' }} siteLink"><i
                             style="color: var(--navbar_text);" class="fa fa-sign-in cartIcon"></i></button></a>
             @else
                 <a href="{{ url('buys') }}"><button id="btnIngresar"
-                        class="{{ isset($tenantinfo->tenant) && $tenantinfo->tenant === 'mandicr' ? 'whiteLink-mandi' : 'whiteLink' }} siteLink"><i
+                        class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'whiteLink-mandi' : 'whiteLink' }} siteLink"><i
                             style="color: var(--navbar_text);" class="fa fa-credit-card cartIcon"></i></button></a>
             @endguest
 
             <a href="{{ url('view-cart') }}"><button
-                    class="{{ isset($tenantinfo->tenant) && $tenantinfo->tenant === 'mandicr' ? 'whiteLink-mandi' : 'whiteLink' }} siteLink"><i
+                    class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'whiteLink-mandi' : 'whiteLink' }} siteLink"><i
                         style="color: var(--navbar_text);" class="fa fa-shopping-cart cartIcon">
                         {{ $cartNumber }}</i></button></a>
         </div>
@@ -72,19 +77,19 @@
             @guest
                 <a href="{{ route('login') }}">
                     <button id="btnIngresarLogo"
-                        class="{{ isset($tenantinfo->tenant) && $tenantinfo->tenant === 'mandicr' ? 'whiteLink-mandi' : 'whiteLink' }} siteLink"
+                        class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'whiteLink-mandi' : 'whiteLink' }} siteLink"
                         style="border-right:1px solid #eaeaea"><i class="fa fa-sign-in"></i> INGRESAR</button>
                 </a>
             @else
                 <a href="{{ url('buys') }}">
                     <button id="btnIngresarLogo"
-                        class="{{ isset($tenantinfo->tenant) && $tenantinfo->tenant === 'mandicr' ? 'whiteLink-mandi' : 'whiteLink' }} siteLink"
+                        class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'whiteLink-mandi' : 'whiteLink' }} siteLink"
                         style="border-right:1px solid #eaeaea"><i class="fa fa-credit-card"></i> MIS COMPRAS</button>
                 </a>
             @endguest
 
             <a href="{{ url('view-cart') }}"><button
-                    class="{{ isset($tenantinfo->tenant) && $tenantinfo->tenant === 'mandicr' ? 'blackLink-mandi' : 'blackLink' }} siteLink"><i
+                    class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'blackLink-mandi' : 'blackLink' }} siteLink"><i
                         class="fa fa-shopping-cart"></i>
                     CARRITO <span
                         class="badge badge-sm badge-info text-pill border-pill text-xxs">{{ $cartNumber }}</span>
@@ -116,7 +121,8 @@
                                     </span>TODAS LAS CATEGORIAS</a>
                             </li>
                             @foreach ($categories as $item)
-                                <li class="item-submenu"><a href="{{ url('clothes-category/' . $item->id . '/' .$item->department_id) }}"
+                                <li class="item-submenu"><a
+                                        href="{{ url('clothes-category/' . $item->id . '/' . $item->department_id) }}"
                                         class="nav-submenu-item">
                                         <span class="alert-icon align-middle">
                                             <span class="material-icons text-md">label</span>
@@ -140,7 +146,7 @@
                             </li>
                             @foreach ($departments as $department)
                                 <li class="item-submenu">
-                                    <a href="{{url('category/'.$department->id)}}" class="nav-submenu-item">
+                                    <a href="{{ url('category/' . $department->id) }}" class="nav-submenu-item">
                                         <span class="alert-icon align-middle">
                                             <span class="material-icons text-md">label</span>
                                         </span>{{ $department->department }}
@@ -187,7 +193,8 @@
                                     </span>TODAS LAS CATEGORIAS</a>
                             </li>
                             @foreach ($categories as $item)
-                                <li class="item-submenu"><a href="{{ url('clothes-category/' . $item->category_id . '/' .$item->department_id) }}"
+                                <li class="item-submenu"><a
+                                        href="{{ url('clothes-category/' . $item->category_id . '/' . $item->department_id) }}"
                                         class="nav-submenu-item">
                                         <span class="alert-icon align-middle">
                                             <span class="material-icons text-md">label</span>
@@ -212,7 +219,7 @@
                             </li>
                             @foreach ($departments as $department)
                                 <li class="item-submenu">
-                                    <a href="{{url('category/'.$department->id)}}" class="nav-submenu-item">
+                                    <a href="{{ url('category/' . $department->id) }}" class="nav-submenu-item">
                                         <span class="alert-icon align-middle">
                                             <span class="material-icons text-md">label</span>
                                         </span>{{ $department->department }}

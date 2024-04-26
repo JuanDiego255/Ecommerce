@@ -28213,16 +28213,6 @@ background: #eee;
   color: #777;
   transition: all 0.3s ease 0s;
 }
-.product-grid .title-frags{
-  font-size: 16px;
-  font-weight: 600;
-  text-transform: capitalize;
-  margin: 0 0 7px;
-}
-.product-grid .title-frags{
-  color: #000;
-  transition: all 0.3s ease 0s;
-}
 .product-grid .title a:hover{ color: #a5ba8d; }
 .product-grid .price{
   color: #0d0d0d;
@@ -28502,15 +28492,7 @@ input.card {
   margin: 0 0 10px;
   transition: all 0.3s ease 0s;
 }
-.product-grid-offer .title-frags{
-  font-size: 16px;
-  font-weight: 500;
-  text-transform: capitalize;
-  margin: 0 0 10px;
-  transition: all 0.3s ease 0s;
-}
 .product-grid-offer .title a{ color: #444; }
-.product-grid-offer .title-frags{ color: #000; }
 .product-grid-offer:hover .title{ opacity: 0; }
 .product-grid-offer .rating{
   color: #1c1a19;
