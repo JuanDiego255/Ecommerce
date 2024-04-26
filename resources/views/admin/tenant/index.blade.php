@@ -50,6 +50,10 @@
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                     Licencia</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
+                                    Maneja Tallas</th>
+                                <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
+                                    Maneja Departamentos</th>
+                                <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                     Acciones</th>
 
                             </tr>
@@ -65,14 +69,43 @@
                                         <p class=" font-weight-bold mb-0">{{ $tenant->domains->first()->domain ?? '' }}</p>
                                     </td>
                                     <td class="align-middle text-center">
-                                        <form method="post" action="{{ url('license/' . $tenant->id) }}"
+                                        <form name="formLicense" id="formLicense" method="post" action="{{ url('license/' . $tenant->id) }}"
                                             style="display:inline">
-                                            {{ csrf_field() }}                                            
-                                            <label for="checkboxSubmit">
+                                            {{ csrf_field() }}
+                                            <label for="checkLicense">
                                                 <div class="form-check">
-                                                    <input id="checkboxSubmit" class="form-check-input" type="checkbox"
-                                                        value="1" name="license" onchange="this.form.submit()"
+                                                    <input id="checkLicense" class="form-check-input" type="checkbox"
+                                                        value="1" name="license" onchange="submitForm('formLicense')"
                                                         {{ $tenant->license == 1 ? 'checked' : '' }}>
+                                                </div>
+                                            </label>
+
+                                        </form>
+                                    </td>
+                                    <td class="align-middle text-center">
+                                        <form name="formSize" id="formSize" method="post" action="{{ url('manage/size/' . $tenant->id) }}"
+                                            style="display:inline">
+                                            {{ csrf_field() }}
+                                            <label for="checkboxSize">
+                                                <div class="form-check">
+                                                    <input id="checkboxSize" class="form-check-input" type="checkbox"
+                                                        value="1" name="manage_size" onchange="submitForm('formSize')"
+                                                        {{ $tenant->manage_size == 1 ? 'checked' : '' }}>
+                                                </div>
+                                            </label>
+
+                                        </form>
+                                    </td>
+                                    <td class="align-middle text-center">
+                                        <form name="formDepartment" id="formDepartment" method="post" action="{{ url('manage/department/' . $tenant->id) }}"
+                                            style="display:inline">
+                                            {{ csrf_field() }}
+                                            <label for="checkboxDepartment">
+                                                <div class="form-check">
+                                                    <input id="checkboxDepartment" class="form-check-input" type="checkbox"
+                                                        value="1" name="manage_department"
+                                                        onchange="submitForm('formDepartment')"
+                                                        {{ $tenant->manage_department == 1 ? 'checked' : '' }}>
                                                 </div>
                                             </label>
 
@@ -128,6 +161,11 @@
                 }
             }
         });
+
+        function submitForm(alias) {
+            var form = document.querySelector('form[name="' + alias + '"]');
+            form.submit();
+        }
 
         $('#recordsPerPage').on('change', function() {
             var recordsPerPage = parseInt($(this).val(), 10);

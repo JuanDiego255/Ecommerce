@@ -13,7 +13,7 @@
                         <li class="bread-standard"><a href="{{ url('category/') }}"><i
                                     class="fas fa-box me-1"></i>Categorías</a>
                         </li>
-                        <li class="bread-standard"><a href="{{ url('clothes-category/' . $category_id) }}"><i
+                        <li class="bread-standard"><a href="{{ url('clothes-category/' . $category_id .'/' .$item->department_id) }}"><i
                                     class="fas fa-tshirt me-1"></i>{{ $item->category }}</a></li>
                         <li class="bread-standard"><a class="location" href="#"><i
                                     class="fas fa-socks me-1"></i>Detalles</a>
@@ -22,7 +22,7 @@
                         <li class="home"><a href="{{ url('/') }}"><i class="fas fa-home me-1"></i></a></li>
                         <li class="bread-standard"><a href="{{url('departments/index')}}"><i class="fas fa-shapes me-1"></i>Departamentos</a></li> 
                         <li class="bread-standard"><a href="{{url('category/'.$item->department_id)}}"><i class="fas fa-box me-1"></i>{{ $item->department_name }}</a></li>
-                        <li class="bread-standard"><a href="{{ url('clothes-category/' . $category_id) }}"><i
+                        <li class="bread-standard"><a href="{{ url('clothes-category/' . $category_id .'/' .$item->department_id) }}"><i
                                     class="fas fa-tshirt me-1"></i>{{ $item->category }}</a></li>
                         <li class="bread-standard"><a class="location" href="#"><i
                                     class="fas fa-socks me-1"></i>Detalles</a>
@@ -181,7 +181,7 @@
                                                     class="form-control float-left w-100 quantity">
                                             </div>
                                         </div>
-                                        <div class="col-md-12 col-12">
+                                        <div class="col-md-12 col-12 {{isset($tenantinfo->tenant) && $tenantinfo->manage_size == 0 ? 'd-none' : ''}}">
                                             <label class="">Tallas</label><br>
                                             @foreach ($size_active as $key => $size)
                                                 <div class="form-check form-check-inline">

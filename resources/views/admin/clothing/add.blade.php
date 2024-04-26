@@ -29,7 +29,8 @@
                     <div class="col-md-6 mb-3">
                         <div class="input-group input-group-static mb-4">
                             <label>Código</label>
-                            <input readonly type="text" placeholder="Se completa automáticamente" class="form-control form-control-lg" name="code">
+                            <input readonly type="text" placeholder="Se completa automáticamente"
+                                class="form-control form-control-lg" name="code">
                         </div>
                     </div>
                     <div class="col-md-6 mb-3">
@@ -83,28 +84,31 @@
                             </div>
                         </div>
                     @endif
-                    <div class="col-md-12 mb-3">
-                        <label
-                            class="control-label control-label text-formulario {{ $errors->has('sizes_id[]') ? 'is-invalid' : '' }}"
-                            for="sizes_id[]">Tallas (Debe identificar si la talla es adecuada para el tipo de
-                            prenda.)</label><br>
-                        @foreach ($sizes as $size)
-                            <div class="form-check form-check-inline">
-                                <input name="sizes_id[]" class="form-check-input mb-2" type="checkbox"
-                                    value="{{ $size->id }}" id="sizes_id[]">
-                                <label class="form-check-label table-text mb-2" for="sizes_id[]">
-                                    {{ $size->size }}
-                                </label>
-                            </div>
-                        @endforeach
-                    </div>
+                    @if (isset($tenantinfo->tenant) && $tenantinfo->manage_size == 1)
+                        <div class="col-md-12 mb-3">
+                            <label
+                                class="control-label control-label text-formulario {{ $errors->has('sizes_id[]') ? 'is-invalid' : '' }}"
+                                for="sizes_id[]">Tallas (Debe identificar si la talla es adecuada para el tipo de
+                                prenda.)</label><br>
+                            @foreach ($sizes as $size)
+                                <div class="form-check form-check-inline">
+                                    <input name="sizes_id[]" class="form-check-input mb-2" type="checkbox"
+                                        value="{{ $size->id }}" id="sizes_id[]">
+                                    <label class="form-check-label table-text mb-2" for="sizes_id[]">
+                                        {{ $size->size }}
+                                    </label>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+
                     <div class="col-md-12 mb-3">
                         <label>Es Tendencia?</label>
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" value="1" id="trending" name="trending">
                             <label class="custom-control-label" for="customCheck1">Trending</label>
                         </div>
-                    </div>                   
+                    </div>
 
                 </div>
 

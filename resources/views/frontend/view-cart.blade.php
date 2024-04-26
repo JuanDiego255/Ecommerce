@@ -32,7 +32,7 @@
                                         </th>
                                         <th class="text-center text-secondary font-weight-bolder opacity-7">
                                             Precio</th>
-                                        <th class="text-center text-secondary font-weight-bolder opacity-7">
+                                        <th class="text-center text-secondary font-weight-bolder opacity-7 {{isset($tenantinfo->tenant) && $tenantinfo->manage_size == 0 ? 'd-none' : ''}}">
                                             Talla</th>
                                         <th class="text-center text-secondary font-weight-bolder opacity-7">
                                             Cant</th>
@@ -92,7 +92,7 @@
 
                                             </td>
 
-                                            <td>
+                                            <td class="{{isset($tenantinfo->tenant) && $tenantinfo->manage_size == 0 ? 'd-none' : ''}}">
                                                 <p class="text-center text-truncate para mb-0">{{ $item->size }}
                                                 </p>
                                             </td>

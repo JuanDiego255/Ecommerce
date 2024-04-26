@@ -22,7 +22,7 @@
                 <input value="" placeholder="Escribe para filtrar...." type="text"
                     class="form-control form-control-lg" name="searchfor" id="searchfor">
             </div>
-        </div>       
+        </div>
     </div>
     <div class="row row-cols-1 row-cols-md-3 g-4 align-content-center card-group mt-5 mb-5">
         @foreach ($clothings as $clothing)
@@ -41,7 +41,7 @@
                     </div>
                     <div class="card-body text-center">
                         <h5 class="font-weight-normal mt-3 clothing-name">{{ $clothing->name }}</h5>
-                        <input type="hidden" class="code" name="code" value="{{$clothing->code}}">
+                        <input type="hidden" class="code" name="code" value="{{ $clothing->code }}">
                         <div class="d-flex mt-n6 mx-auto">
                             <form name="delete-clothing{{ $clothing->id }}" id="delete-clothing{{ $clothing->id }}"
                                 method="post" action="{{ url('/delete-clothing/' . $clothing->id) }}">
@@ -63,13 +63,16 @@
                         <p class="mb-0">
                             {{ $clothing->description }}
                         </p>
-                        @php
-                            $sizes = explode(',', $clothing->available_sizes);
-                            $stockPerSize = explode(',', $clothing->stock_per_size);
-                        @endphp
-                        @for ($i = 0; $i < count($sizes); $i++)
-                            <p class="mb-0">Talla {{ $sizes[$i] }}: {{ $stockPerSize[$i] }}</p>
-                        @endfor
+                        @if (isset($tenantinfo->tenant) && $tenantinfo->manage_size == 1)
+                            @php
+                                $sizes = explode(',', $clothing->available_sizes);
+                                $stockPerSize = explode(',', $clothing->stock_per_size);
+                            @endphp
+                            @for ($i = 0; $i < count($sizes); $i++)
+                                <p class="mb-0">Talla {{ $sizes[$i] }}: {{ $stockPerSize[$i] }}</p>
+                            @endfor
+                        @endif
+
                         @if ($clothing->discount)
                             <p class="mb-0">
                                 Descuento: {{ $clothing->discount }}%
@@ -120,7 +123,7 @@
                     }
                 });
             });
-           
+
         });
     </script>
 @endsection

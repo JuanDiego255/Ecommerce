@@ -20,7 +20,10 @@ class TenantController extends Controller
         $tenants = Tenant::where('id','!=','main')->get();
 
         $tenants = $tenants->map(function ($tenant) {
-            $tenant->license = $this->getLicense($tenant->id);
+            $tenant_info = $this->getData($tenant->id);
+            $tenant->license = $tenant_info->license;
+            $tenant->manage_size = $tenant_info->manage_size;
+            $tenant->manage_department = $tenant_info->manage_department;
             return $tenant;
         });
         return view('admin.tenant.index', compact('tenants'));
@@ -68,13 +71,12 @@ class TenantController extends Controller
     {       
         return view('frontend.central.index');
     }
-    public function getLicense($tenant){
+    public function getData($tenant){
         $tenants = Tenant::where('id', $tenant)->first();
         tenancy()->initialize($tenants);
-        $tenant_info = TenantInfo::first();
-        $license = $tenant_info->license;
+        $tenant_info = TenantInfo::first();       
         tenancy()->end();
-        return $license;
+        return $tenant_info;
     }
 
     public function isLicense($tenant, Request $request)
@@ -82,6 +84,7 @@ class TenantController extends Controller
         //
         DB::beginTransaction();      
         try {
+            dd($request);
             $tenants = Tenant::where('id', $tenant)->first();
             tenancy()->initialize($tenants);
             if ($request->license == "1") {
@@ -93,6 +96,48 @@ class TenantController extends Controller
             DB::commit();
             tenancy()->end();
             return redirect()->back()->with(['status' => 'Se cambio el estado de la licencia para este inquilino', 'icon' => 'success']);
+        } catch (\Exception $th) {
+            //throw $th;
+            DB::rollBack();
+        }
+    }
+    public function manageSize($tenant, Request $request)
+    {
+        //
+        DB::beginTransaction();      
+        try {
+            $tenants = Tenant::where('id', $tenant)->first();
+            tenancy()->initialize($tenants);
+            if ($request->manage_size == "1") {
+                TenantInfo::where('tenant', $tenant)->update(['manage_size' => 1]);
+            } else {
+                TenantInfo::where('tenant', $tenant)->update(['manage_size' => 0]);
+            }
+
+            DB::commit();
+            tenancy()->end();
+            return redirect()->back()->with(['status' => 'Se cambio el estado del manejo de tallas para este inquilino', 'icon' => 'success']);
+        } catch (\Exception $th) {
+            //throw $th;
+            DB::rollBack();
+        }
+    }
+    public function manageDepartment($tenant, Request $request)
+    {
+        //
+        DB::beginTransaction();      
+        try {
+            $tenants = Tenant::where('id', $tenant)->first();
+            tenancy()->initialize($tenants);
+            if ($request->manage_department == "1") {
+                TenantInfo::where('tenant', $tenant)->update(['manage_department' => 1]);
+            } else {
+                TenantInfo::where('tenant', $tenant)->update(['manage_department' => 0]);
+            }
+
+            DB::commit();
+            tenancy()->end();
+            return redirect()->back()->with(['status' => 'Se cambio el estado del manejo de departamentos para este inquilino', 'icon' => 'success']);
         } catch (\Exception $th) {
             //throw $th;
             DB::rollBack();

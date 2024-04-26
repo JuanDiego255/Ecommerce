@@ -202,8 +202,8 @@
 
                                             <span class="ps-3 textmuted"><i
                                                     class="material-icons my-auto textmuted">done</i>
-                                                {{ $item->name }} | Cant: {{ $item->quantity }} | Talla:
-                                                {{ $item->size }}
+                                                {{ $item->name }} | Cant: {{ $item->quantity }}  {{isset($tenantinfo->tenant) && $tenantinfo->manage_size == 1 ? '| Talla: '.
+                                                    $item->size : ''}}
                                                 |
                                                 Precio:
                                                 ₡{{ $item->discount > 0 ? $precioConDescuento * $item->quantity : $item->price * $item->quantity }}

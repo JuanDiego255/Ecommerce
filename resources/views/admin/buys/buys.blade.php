@@ -29,9 +29,10 @@
                             class="form-control form-control-lg" name="code" id="code">
                     </div>
                 </div>
+                <input type="hidden" value="{{$tenantinfo->manage_size}}" id="manage_size">
 
                 <div class="col-md-4 mb-3 d-none d-flex" id="size_section">
-                    <div class="input-group input-group-static w-75">
+                    <div class="input-group input-group-static w-75 {{isset($tenantinfo->tenant) && $tenantinfo->manage_size == 0 ? 'd-none' : ''}}">
                         <label>Tallas</label>
                         <select required id="sizes" name="sizes"
                             class="form-control form-control-lg @error('sizes') is-invalid @enderror" required
@@ -57,7 +58,7 @@
                                     </th>
                                     <th class="text-center text-secondary font-weight-bolder opacity-7">
                                         Precio</th>
-                                    <th class="text-center text-secondary font-weight-bolder opacity-7">
+                                    <th class="text-center text-secondary font-weight-bolder opacity-7 {{isset($tenantinfo->manage_size) && $tenantinfo->manage_size == 0 ? 'd-none' : ''}}">
                                         Talla</th>
                                     <th class="text-center text-secondary font-weight-bolder opacity-7">
                                         Cant</th>
@@ -78,7 +79,7 @@
                                         <input type="hidden" name="prod_id" value="{{ $item->id }}" class="prod_id">
                                         <input type="hidden" class="price"
                                             value="{{ $item->discount > 0 ? $precioConDescuento : $item->price }}">
-                                        <input type="hidden" value="{{ $item->size_id }}" class="size_id" name="size">
+                                        <input type="hidden" value="{{ $item->size_id }}" class="size_id" name="size">                                        
                                         <input type="hidden" value="{{ $descuento }}" class="discount" name="discount">
                                         <td class="w-50">
                                             <div class="d-flex px-2 py-1">
@@ -106,7 +107,7 @@
 
                                         </td>
 
-                                        <td>
+                                        <td class="{{isset($tenantinfo->tenant) && $tenantinfo->manage_size == 0 ? 'd-none' : ''}}">
                                             <p class="text-center text-truncate para mb-0">{{ $item->size }}
                                             </p>
                                         </td>
@@ -283,7 +284,10 @@
                 var code = input_code.value;
                 var input_size = document.getElementById('sizes');
                 var size_id = input_size.value;
-                if (size_id == null || size_id == "") {
+                var input_manage_size = document.getElementById('manage_size');
+                var manage_size = input_manage_size.value;
+                
+                if ((size_id == null || size_id == "") && manage_size == 1) {
                     swal({
                         title: "Por favor seleccione una talla...",
                         icon: "warning",

@@ -69,22 +69,24 @@
                                 class="form-control form-control-lg" name="stock">
                         </div>
                     </div>
+                    @if (isset($tenantinfo->tenant) && $tenantinfo->manage_size == 1)
+                        <div class="col-md-12 mb-3">
+                            <label
+                                class="control-label control-label text-formulario {{ $errors->has('sizes_id[]') ? 'is-invalid' : '' }}"
+                                for="sizes_id[]">Tallas</label><br>
+                            @foreach ($sizes as $size)
+                                <div class="form-check form-check-inline">
+                                    <input name="sizes_id[]" class="form-check-input mb-2"
+                                        {{ $size_active->contains('size_id', $size->id) ? 'checked' : '' }} type="checkbox"
+                                        value="{{ $size->id }}" id="size_{{ $size->id }}">
+                                    <label class="form-check-label table-text mb-2" for="size_{{ $size->id }}">
+                                        {{ $size->size }}
+                                    </label>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
 
-                    <div class="col-md-12 mb-3">
-                        <label
-                            class="control-label control-label text-formulario {{ $errors->has('sizes_id[]') ? 'is-invalid' : '' }}"
-                            for="sizes_id[]">Tallas</label><br>
-                        @foreach ($sizes as $size)
-                            <div class="form-check form-check-inline">
-                                <input name="sizes_id[]" class="form-check-input mb-2"
-                                    {{ $size_active->contains('size_id', $size->id) ? 'checked' : '' }} type="checkbox"
-                                    value="{{ $size->id }}" id="size_{{ $size->id }}">
-                                <label class="form-check-label table-text mb-2" for="size_{{ $size->id }}">
-                                    {{ $size->size }}
-                                </label>
-                            </div>
-                        @endforeach
-                    </div>
                     <div class="col-md-12 mb-3">
                         <label>Es Tendencia?</label>
                         <div class="form-check">

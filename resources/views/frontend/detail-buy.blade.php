@@ -43,7 +43,7 @@
                                 <th class="text-uppercase text-secondary font-weight-bolder opacity-7">Imagen</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                     Artículo</th>
-                                <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
+                                <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7 {{isset($tenantinfo->manage_size) && $tenantinfo->manage_size == 0 ? 'd-none' : ''}}">
                                     Talla</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                     Precio @if ($iva > 0)
@@ -82,7 +82,7 @@
                                     <td class="align-middle text-xxs text-center">
                                         <p class=" font-weight-bold mb-0">{{ $buy->name }}</p>
                                     </td>
-                                    <td class="align-middle text-xxs text-center">
+                                    <td class="align-middle text-xxs text-center {{isset($tenantinfo->manage_size) && $tenantinfo->manage_size == 0 ? 'd-none' : ''}}">
                                         <p class=" font-weight-bold mb-0">{{ $buy->size }}</p>
                                     </td>
                                     <td class="align-middle text-xxs text-center">

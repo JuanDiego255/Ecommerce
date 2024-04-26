@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Cart;
 use App\Models\ClothingCategory;
 use App\Models\MetaTags;
+use App\Models\Size;
 use App\Models\Stock;
 use App\Models\TenantInfo;
 use Illuminate\Http\Request;
@@ -30,12 +31,18 @@ class CartController extends Controller
     {
         DB::beginTransaction();
         try {
+            $tenantinfo = TenantInfo::first();
             if ($request->code) {
                 $code = $request->code;
                 $cloth_check = ClothingCategory::where('code', $code)->first();
+                $size_id = $request->size_id;
+                if(isset($tenantinfo->manage_size) && $tenantinfo->manage_size == 0){
+                    $size = Size::where('size','N/A')->first();
+                    $size_id = $size->id;
+                }
                 if ($cloth_check) {
                     $stock = Stock::where('clothing_id', $cloth_check->id)
-                        ->where('size_id', $request->size_id)
+                        ->where('size_id', $size_id)
                         ->first();
                     if ($stock->stock == 0) {
                         return response()->json(['status' => 'El producto no cuenta con inventario', 'icon' => 'warning']);
@@ -48,12 +55,13 @@ class CartController extends Controller
                         ->where('sold', 0)->first()
                     ) {
                         return response()->json(['status' => 'El producto ya existe en la tabla', 'icon' => 'warning']);
-                    } else {
+                    } else {                      
+
                         $cart_item = new Cart();
                         $cart_item->user_id = null;
                         $cart_item->clothing_id = $cloth_check->id;
                         $cart_item->quantity = 1;
-                        $cart_item->size_id = $request->size_id;
+                        $cart_item->size_id = $size_id;
                         $cart_item->sold = 0;
                         $cart_item->save();
 
