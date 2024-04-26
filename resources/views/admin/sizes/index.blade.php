@@ -6,13 +6,13 @@
 @section('content')
     <div class="container">
 
-        <h2 class="text-center font-title"><strong>Administra las tallas desde acá</strong>
+        <h2 class="text-center font-title"><strong>Administra {{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'las tallas' : 'los tamaños'}} desde acá</strong>
         </h2>
 
         <hr class="hr-servicios">
 
-        <button type="button" data-bs-toggle="modal" data-bs-target="#add-size-modal" class="btn btn-velvet">Nueva
-            Talla</button>
+        <button type="button" data-bs-toggle="modal" data-bs-target="#add-size-modal" class="btn btn-velvet">
+            {{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'Nueva Talla' : 'Nuevo Tamaño'}}</button>
 
         <center>
 
@@ -46,7 +46,7 @@
                         <thead>
                             <tr>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                    Talla</th>
+                                    {{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'Talla' : 'Tamaño'}}</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                     Acciones</th>
 

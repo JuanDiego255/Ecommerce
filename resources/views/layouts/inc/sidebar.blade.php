@@ -38,7 +38,7 @@
                         <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
                             <i class="material-icons opacity-10">fullscreen</i>
                         </div>
-                        <span class="nav-link-text ms-1">Tallas</span>
+                        <span class="nav-link-text ms-1">{{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'Tallas' : 'Tamaño'}}</span>
                     </a>
                 </li>
                 <li class="nav-item">

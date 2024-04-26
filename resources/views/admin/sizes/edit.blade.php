@@ -3,7 +3,7 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title font-weight-normal" id="exampleModalLabel">Editar Talla</h5>
+                <h5 class="modal-title font-weight-normal" id="exampleModalLabel">Editar</h5>
                 <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -18,7 +18,7 @@
                     <div class="col-md-12 mb-3">
                         <div
                             class="input-group input-group-lg input-group-outline {{ isset($size->size) ? 'is-filled' : '' }} my-3">
-                            <label class="form-label">Talla</label>
+                            <label class="form-label">Escriba aqui...</label>
                             <input value="{{ isset($size->size) ? $size->size : '' }}" required type="text"
                                 class="form-control form-control-lg @error('size') is-invalid @enderror"
                                 name="size" id="size">

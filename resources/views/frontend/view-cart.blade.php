@@ -33,7 +33,7 @@
                                         <th class="text-center text-secondary font-weight-bolder opacity-7">
                                             Precio</th>
                                         <th class="text-center text-secondary font-weight-bolder opacity-7 {{isset($tenantinfo->tenant) && $tenantinfo->manage_size == 0 ? 'd-none' : ''}}">
-                                            Talla</th>
+                                            {{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'Talla' : 'Tamaño'}}</th>
                                         <th class="text-center text-secondary font-weight-bolder opacity-7">
                                             Cant</th>
                                         <th class="text-secondary opacity-7"></th>

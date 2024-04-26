@@ -191,7 +191,7 @@
                                         </div>
                                         <div
                                             class="col-md-12 col-12 {{ isset($tenantinfo->tenant) && $tenantinfo->manage_size == 0 ? 'd-none' : '' }}">
-                                            <label class="">Tallas</label><br>
+                                            <label class="">{{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'Tallas' : 'Tamaños'}}</label><br>
                                             @foreach ($size_active as $key => $size)
                                                 <div class="form-check form-check-inline">
                                                     <input required name="size_id" class="size_id form-check-input mb-2"

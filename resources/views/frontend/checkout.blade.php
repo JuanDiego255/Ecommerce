@@ -202,7 +202,7 @@
 
                                             <span class="ps-3 textmuted"><i
                                                     class="material-icons my-auto textmuted">done</i>
-                                                {{ $item->name }} | Cant: {{ $item->quantity }}  {{isset($tenantinfo->tenant) && $tenantinfo->manage_size == 1 ? '| Talla: '.
+                                                {{ $item->name }} | Cant: {{ $item->quantity }}  {{isset($tenantinfo->tenant) && $tenantinfo->manage_size == 1 ? isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'Talla:' : 'Tamaño:'.
                                                     $item->size : ''}}
                                                 |
                                                 Precio:
