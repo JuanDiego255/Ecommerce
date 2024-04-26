@@ -107,6 +107,7 @@ class BuyController extends Controller
                 ->select(
                     'clothing.id as id',
                     'clothing.name as name',
+                    'clothing.casa as casa',
                     'clothing.description as description',
                     'buy_details.total as total',
                     'buy_details.iva as iva',
@@ -157,6 +158,7 @@ class BuyController extends Controller
                 ->select(
                     'clothing.id as id',
                     'clothing.name as name',
+                    'clothing.casa as casa',
                     'clothing.description as description',
                     'buy_details.total as total',
                     'buy_details.iva as iva',
@@ -373,6 +375,7 @@ class BuyController extends Controller
                 ->select(
                     'clothing.id as id',
                     'clothing.name as name',
+                    'clothing.casa as casa',
                     'clothing.code as code',
                     'clothing.description as description',
                     'clothing.price as price',
@@ -388,6 +391,7 @@ class BuyController extends Controller
                 ->groupBy(
                     'clothing.id',
                     'clothing.name',
+                    'clothing.casa',
                     'clothing.code',
                     'clothing.description',
                     'clothing.price',

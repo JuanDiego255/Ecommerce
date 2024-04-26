@@ -64,11 +64,16 @@
                                             class="add-to-cart">Detallar</a>
                                     </div>
                                     <div class="product-content">
-
-                                        <h3 class="title"><a
+                                        <h3
+                                            class="text-muted text-uppercase {{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'd-none' : '' }}">
+                                            {{ $item->casa }}
+                                        </h3>
+                                        <h3
+                                            class="{{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'title' : 'title-frags' }}">
+                                            <a
                                                 href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}">{{ $item->name }}</a>
                                         </h3>
-                                        @if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'mandicr')
+                                        @if (isset($tenantinfo->tenant) && ($tenantinfo->tenant != 'mandicr' && $tenantinfo->tenant != 'fragsperfumecr'))
                                             <h4 class="title">Stock: {{ $item->total_stock }}</h4>
                                         @endif
 
@@ -142,6 +147,10 @@
                                 <a class="add-to-cart" href="{{ url('clothes-category/' . $item->category_id) }}">
                                     <i class="fas fa-plus"></i>Más ofertas
                                 </a>
+                                <h3
+                                    class="text-muted text-uppercase {{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'd-none' : '' }}">
+                                    {{ $item->casa }}
+                                </h3>
                                 <h3 class="title"><a
                                         href="{{ url('clothes-category/' . $item->category_id) }}">{{ $item->name }}</a>
                                 </h3>
@@ -221,12 +230,13 @@
                                     <li><a target="blank" href="{{ tenant_asset('/') . '/' . $item->image }}"><i
                                                 class="fas fa-eye"></i></a></li>
                                 </ul>
-                                <a href="{{ url('clothes-category/' . $item->category_id . '/' .$item->department_id) }}" class="add-to-cart">Descubrir
+                                <a href="{{ url('clothes-category/' . $item->category_id . '/' . $item->department_id) }}"
+                                    class="add-to-cart">Descubrir
                                     estilos</a>
                             </div>
                             <div class="product-content">
                                 <h3 class="title"><a
-                                        href="{{ url('clothes-category/' . $item->category_id . '/' .$item->department_id) }}">{{ $item->name }}</a>
+                                        href="{{ url('clothes-category/' . $item->category_id . '/' . $item->department_id) }}">{{ $item->name }}</a>
                                 </h3>
                             </div>
                         </div>

@@ -98,6 +98,7 @@ class AppServiceProvider extends ServiceProvider
                     'clothing.trending as trending',
                     'clothing.discount as discount',
                     'clothing.name as name',
+                    'clothing.casa as casa',
                     'clothing.description as description',
                     'clothing.price as price',
                     'clothing.mayor_price as mayor_price',
@@ -108,6 +109,7 @@ class AppServiceProvider extends ServiceProvider
                 ->groupBy(
                     'clothing.id',
                     'categories.name',
+                    'clothing.casa',
                     'categories.id',
                     'clothing.name',
                     'clothing.discount',

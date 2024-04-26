@@ -14,8 +14,10 @@
             @else
                 <li class="home"><a href="{{ url('/') }}"><i class="fas fa-home me-1"></i></a></li>
                 </li>
-                <li class="bread-standard"><a href="{{url('departments/index')}}"><i class="fas fa-shapes me-1"></i>Departamentos</a></li>            
-                <li class="bread-standard"><a href="{{url('category/'.$department_id)}}"><i class="fas fa-box me-1"></i>{{ $department_name }}</a></li>
+                <li class="bread-standard"><a href="{{ url('departments/index') }}"><i
+                            class="fas fa-shapes me-1"></i>Departamentos</a></li>
+                <li class="bread-standard"><a href="{{ url('category/' . $department_id) }}"><i
+                            class="fas fa-box me-1"></i>{{ $department_name }}</a></li>
                 <li class="bread-standard"><a href="#"><i class="fas fa-tshirt me-1"></i>{{ $category_name }}</a></li>
             @endif
 
@@ -49,10 +51,14 @@
                                     class="add-to-cart">Detallar</a>
                             </div>
                             <div class="product-content">
+                                <h3
+                                    class="text-muted text-uppercase {{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'd-none' : '' }}">
+                                    {{ $item->casa }}
+                                </h3>
                                 <h3 class="title clothing-name"><a
                                         href="{{ url('detail-clothing/' . $item->id . '/' . $category_id) }}">{{ $item->name }}</a>
                                 </h3>
-                                @if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'mandicr')
+                                @if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'mandicr' && $tenantinfo->tenant !== 'fragsperfumecr')
                                     <h4 class="title">Stock: {{ $item->total_stock }}</h4>
                                 @endif
 

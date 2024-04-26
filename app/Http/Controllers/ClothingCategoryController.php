@@ -51,6 +51,7 @@ class ClothingCategoryController extends Controller
                     'clothing.id as id',
                     'clothing.trending as trending',
                     'clothing.name as name',
+                    'clothing.casa as casa',
                     'clothing.code as code',
                     'clothing.discount as discount',
                     'clothing.description as description',
@@ -61,7 +62,7 @@ class ClothingCategoryController extends Controller
                     DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'),
                     'product_images.image as image'
                 )
-                ->groupBy('clothing.id', 'clothing.mayor_price', 'clothing.discount', 'categories.name', 'clothing.code', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
+                ->groupBy('clothing.id','clothing.casa', 'clothing.mayor_price', 'clothing.discount', 'categories.name', 'clothing.code', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
                 ->simplePaginate(15);
         });
 
@@ -98,6 +99,7 @@ class ClothingCategoryController extends Controller
                     'clothing.id as id',
                     'clothing.category_id as category_id',
                     'clothing.name as name',
+                    'clothing.casa as casa',
                     'clothing.code as code',
                     'clothing.discount as discount',
                     'clothing.trending as trending',
@@ -109,6 +111,7 @@ class ClothingCategoryController extends Controller
                 )
                 ->groupBy(
                     'clothing.id',
+                    'clothing.casa',
                     'clothing.name',
                     'clothing.code',
                     'clothing.category_id',
@@ -175,6 +178,9 @@ class ClothingCategoryController extends Controller
 
             if ($tenantinfo->tenant === "torres") {
                 $clothing->mayor_price = $request->mayor_price;
+            }
+            if ($tenantinfo->tenant === "fragsperfumecr") {
+                $clothing->casa = $request->casa;
             }
 
             if ($request->has('discount')) {
@@ -295,6 +301,9 @@ class ClothingCategoryController extends Controller
 
                 if ($tenantinfo->tenant === "torres") {
                     $clothing->mayor_price = $request->mayor_price;
+                }
+                if ($tenantinfo->tenant === "fragsperfumecr") {
+                    $clothing->casa = $request->casa;
                 }
 
                 if ($request->has('discount')) {

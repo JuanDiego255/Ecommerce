@@ -20,6 +20,15 @@
                                 class="form-control form-control-lg" name="name">
                         </div>
                     </div>
+                    @if (isset($tenantinfo->tenant) && $tenantinfo->tenant === 'fragsperfumecr')
+                        <div class="col-md-6 mb-3">
+                            <div class="input-group input-group-static mb-4">
+                                <label>Casa</label>
+                                <input type="text" value="{{ $clothing->casa }}"
+                                    class="form-control form-control-lg" name="casa">
+                            </div>
+                        </div>
+                    @endif
                     <div class="col-md-6 mb-3">
                         <div class="input-group input-group-static mb-4">
                             <label>Código</label>

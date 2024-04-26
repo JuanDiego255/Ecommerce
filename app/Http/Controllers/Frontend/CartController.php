@@ -165,6 +165,7 @@ class CartController extends Controller
                     ->select(
                         'clothing.id as id',
                         'clothing.name as name',
+                        'clothing.casa as casa',
                         'clothing.description as description',
                         'clothing.price as price',
                         'clothing.mayor_price as mayor_price',
@@ -179,6 +180,7 @@ class CartController extends Controller
                     ->groupBy(
                         'clothing.id',
                         'clothing.name',
+                        'clothing.casa',
                         'clothing.description',
                         'clothing.price',
                         'clothing.mayor_price',
@@ -214,6 +216,7 @@ class CartController extends Controller
                     ->select(
                         'clothing.id as id',
                         'clothing.name as name',
+                        'clothing.casa as casa',
                         'clothing.description as description',
                         'clothing.price as price',
                         'clothing.mayor_price as mayor_price',
@@ -228,6 +231,7 @@ class CartController extends Controller
                     ->groupBy(
                         'clothing.id',
                         'clothing.name',
+                        'clothing.casa',
                         'clothing.description',
                         'clothing.price',
                         'clothing.mayor_price',

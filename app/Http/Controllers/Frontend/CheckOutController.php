@@ -51,6 +51,7 @@ class CheckOutController extends Controller
 
                     'clothing.id as id',
                     'clothing.name as name',
+                    'clothing.casa as casa',
                     'clothing.description as description',
                     'clothing.discount as discount',
                     'clothing.price as price',
@@ -87,6 +88,7 @@ class CheckOutController extends Controller
 
                     'clothing.id as id',
                     'clothing.name as name',
+                    'clothing.casa as casa',
                     'clothing.discount as discount',
                     'clothing.description as description',
                     'clothing.price as price',
@@ -168,6 +170,7 @@ class CheckOutController extends Controller
                         ->select(
                             'clothing.id as clothing_id',
                             'clothing.name as name',
+                            'clothing.casa as casa',
                             'clothing.code as code',
                             'clothing.description as description',
                             'clothing.price as price',
@@ -277,6 +280,7 @@ class CheckOutController extends Controller
                         ->select(
                             'clothing.id as clothing_id',
                             'clothing.name as name',
+                            'clothing.casa as casa',
                             'clothing.description as description',
                             'clothing.discount as discount',
                             'clothing.code as code',
@@ -396,6 +400,7 @@ class CheckOutController extends Controller
                     ->select(
                         'clothing.id as clothing_id',
                         'clothing.name as name',
+                        'clothing.casa as casa',
                         'clothing.code as code',
                         'clothing.description as description',
                         'clothing.price as price',
