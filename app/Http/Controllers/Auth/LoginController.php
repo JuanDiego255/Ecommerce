@@ -32,7 +32,7 @@ class LoginController extends Controller
     {
         $tenantinfo = TenantInfo::first();
         if (Auth::user()->role_as == '1') {
-            if(isset($tenantinfo->tenant) && $tenantinfo->tenant == 'marylu'){
+            if(isset($tenantinfo->manage_department) && $tenantinfo->manage_department == 1){
                 return redirect('departments')->with(['status' => 'Hola '.Auth::user()->name.' '.Auth::user()->last_name, 'icon' => 'success']);
             }
             return redirect('categories')->with(['status' => 'Hola '.Auth::user()->name.' '.Auth::user()->last_name, 'icon' => 'success']);

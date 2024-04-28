@@ -5,7 +5,7 @@
 @endsection
 @section('content')
     <center>
-        @if (isset($tenantinfo->tenant) && $tenantinfo->tenant != 'marylu')
+        @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
             <h2 class="text-center font-title"><strong>Administra las categorías desde acá</strong></h2>
         @else
             <h2 class="text-center font-title"><strong>Categorías del departamento de {{ $department_name }}.</strong></h2>

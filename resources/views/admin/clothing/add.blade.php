@@ -4,6 +4,7 @@
     {!! OpenGraph::generate() !!}
 @endsection
 @section('content')
+
     <div class="card">
         <div class="card-header">
             <h4 class="text-dark">Agregar Nuevo Producto</h4>
@@ -100,14 +101,15 @@
                                 prenda.)</label><br>
                             @foreach ($sizes as $size)
                                 <div class="form-check form-check-inline">
-                                    <input name="sizes_id[]" class="form-check-input mb-2" type="checkbox"
+                                    <input name="sizes_id[]" class="form-check-input mb-2 size-checkbox" type="checkbox"
                                         value="{{ $size->id }}" id="sizes_id[]">
                                     <label class="form-check-label table-text mb-2" for="sizes_id[]">
                                         {{ $size->size }}
                                     </label>
                                 </div>
                             @endforeach
-                        </div>
+
+                        </div>                        
                     @endif
 
                     <div class="col-md-12 mb-3">
@@ -125,7 +127,7 @@
                     <button type="submit" class="btn btn-velvet">Agregar Producto</button>
                 </div>
 
-            </form>
+            </form>            
         </div>
     </div>
     <center>
@@ -133,4 +135,35 @@
             <a href="{{ url('add-item/' . $id) }}" class="btn btn-velvet w-25">Volver</a>
         </div>
     </center>
+@endsection
+@section('script')
+    <script>
+        $(document).ready(function() {
+
+            $('.btnGestionar').click(function(e) {
+                var tallasSeleccionadas = [];
+                var checkboxes = document.getElementsByClassName("size-checkbox");
+
+                for (var i = 0; i < checkboxes.length; i++) {
+                    if (checkboxes[i].checked) {
+                        tallasSeleccionadas.push(checkboxes[i].value);
+                    }
+                }
+
+                var html = "";
+                tallasSeleccionadas.forEach(function(talla) {
+                    html += `
+                        <div>
+                            <label for="precio_${talla}">Talla ${talla}:</label>
+                            <input type="text" id="precio_${talla}" name="precios[${talla}]" placeholder="Precio">
+                            <input type="text" id="cantidad_${talla}" name="cantidades[${talla}]" placeholder="Cantidad">
+                        </div>
+                    `;
+                });
+
+                document.getElementById("tallasSeleccionadas").innerHTML = html;
+                document.getElementById("sizeModal").style.display = "block";
+            });
+        });
+    </script>
 @endsection

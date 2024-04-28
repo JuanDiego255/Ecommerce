@@ -130,7 +130,9 @@ Route::middleware([
             //Rutas para información de la empresa
             Route::post('tenant-info/store', [TenantInfoController::class, 'store']);
             Route::put('/tenant-info/update/{id}', [TenantInfoController::class, 'update']);
+            Route::put('/tenant-components/save/', [TenantInfoController::class, 'updateComp']);
             Route::get('/tenant-info', [TenantInfoController::class, 'index']);
+            Route::get('/tenant-components', [TenantInfoController::class, 'indexComponents']);
             Route::delete('/delete/tenant-info/{id}', [TenantInfoController::class, 'destroy']);
             //Rutas para información de las redes sociales de la empresa
             Route::post('tenant-social/store', [TenantSocialNetworkController::class, 'store']);

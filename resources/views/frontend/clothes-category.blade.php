@@ -7,7 +7,7 @@
     <div class="container mt-4">
 
         <div class="breadcrumb-nav bc3x">
-            @if (isset($tenantinfo->tenant) && $tenantinfo->tenant != 'marylu')
+            @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
                 <li class="home"><a href="{{ url('/') }}"><i class="fas fa-home me-1"></i></a></li>
                 <li class="bread-standard"><a href="{{ url('category/') }}"><i class="fas fa-box me-1"></i>Categorías</a></li>
                 <li class="bread-standard"><a href="#"><i class="fas fa-tshirt me-1"></i>{{ $category_name }}</a></li>
@@ -58,7 +58,7 @@
                                 <h3 class="title clothing-name"><a
                                         href="{{ url('detail-clothing/' . $item->id . '/' . $category_id) }}">{{ $item->name }}</a>
                                 </h3>
-                                @if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'mandicr' && $tenantinfo->tenant !== 'fragsperfumecr')
+                                @if (isset($tenantinfo->show_stock) && $tenantinfo->show_stock != 0)
                                     <h4 class="title">Stock: {{ $item->total_stock }}</h4>
                                 @endif
 

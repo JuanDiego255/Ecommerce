@@ -17,19 +17,20 @@
                 <li class="nav-item">
                     <a @if (
                         $view_name == 'admin_categories_index' ||
-                        $view_name == 'admin_departments_index' ||
-                        $view_name == 'admin_departments_edit' ||
-                        $view_name == 'admin_departments_add' ||
+                            $view_name == 'admin_departments_index' ||
+                            $view_name == 'admin_departments_edit' ||
+                            $view_name == 'admin_departments_add' ||
                             $view_name == 'admin_clothing_index' ||
                             $view_name == 'admin_clothing_edit' ||
                             $view_name == 'admin_clothing_add' ||
                             $view_name == 'admin_categories_add' ||
                             $view_name == 'admin_categories_edit') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
-                        href="{{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'marylu' ? url('categories') : url('departments') }}">
+                        href="{{ isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1 ? url('categories') : url('departments') }}">
                         <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
                             <i class="material-icons opacity-10">dashboard</i>
                         </div>
-                        <span class="nav-link-text ms-1">{{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'marylu' ? 'Categorías' : 'Departamentos' }}</span>
+                        <span
+                            class="nav-link-text ms-1">{{ isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1 ? 'Categorías' : 'Departamentos' }}</span>
                     </a>
                 </li>
                 <li class="nav-item">
@@ -38,7 +39,8 @@
                         <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
                             <i class="material-icons opacity-10">fullscreen</i>
                         </div>
-                        <span class="nav-link-text ms-1">{{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'Tallas' : 'Tamaño'}}</span>
+                        <span
+                            class="nav-link-text ms-1">{{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'Tallas' : 'Tamaño' }}</span>
                     </a>
                 </li>
                 <li class="nav-item">
@@ -78,18 +80,36 @@
                     </a>
                 </li>
             @endif
-
-
             <li class="nav-item">
-                <a @if ($view_name == 'admin_tenant-info_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
-                    href="{{ url('tenant-info') }}">
+                <a class="nav-link text-sidebar" href="javascript:void(0);">
                     <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="material-icons opacity-10">store</i>
                     </div>
                     <span class="nav-link-text ms-1">Mi Negocio</span>
                 </a>
+
+                <!-- Lista desplegable de "Mi Negocio" -->
+                <ul class="submenu">
+                    <li>
+                        <a href="{{ url('tenant-info') }}" class="nav-link">
+                            <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                                <i class="material-icons opacity-10">arrow_right_alt</i>
+                            </div>
+                            Información Principal
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url('tenant-components') }}" class="nav-link">
+                            <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                                <i class="material-icons opacity-10">arrow_right_alt</i>
+                            </div>
+                            Componentes
+                        </a>
+                    </li>
+                </ul>
             </li>
-            
+
+
             @if (isset($tenantinfo->tenant) && $tenantinfo->tenant != 'main')
                 <li class="nav-item">
                     <a @if ($view_name == 'admin_users_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif

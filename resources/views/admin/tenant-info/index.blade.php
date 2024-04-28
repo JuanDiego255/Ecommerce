@@ -4,255 +4,327 @@
     {!! OpenGraph::generate() !!}
 @endsection
 @section('content')
-    @include('admin.tenant-info.add')
-    @include('admin.tenant-info.social-modal')
-    @include('admin.tenant-info.carousel-modal')
     <div class="container">
-
-        <h2 class="text-center font-title"><strong>Administra la información de tu negocio.</strong>
-        </h2>
-
+        @include('admin.tenant-info.social-modal')
         <hr class="hr-servicios">
+        @foreach ($tenant_info as $item)
+            <form class="form-horizontal" action="{{ url('tenant-info/update/' . $item->id) }}" method="post"
+                enctype="multipart/form-data">
+                {{ csrf_field() }}
+                {{ method_field('PUT') }}
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="text-dark">Página Principal, Pie De Página, y Redes Sociales.</h4>
+                    </div>
+                    <div class="card-body">
 
-        @if ($tenant_info->isEmpty())
-            <button type="button" data-bs-toggle="modal" data-bs-target="#add-tenant-info-modal" class="btn btn-velvet">Agregar
-                Información</button>
-        @else
-            @foreach ($tenant_info as $item)
-                @include('admin.tenant-info.edit')
-                <button type="button" data-bs-toggle="modal" data-bs-target="#edit-tenant-info-modal{{ $item->id }}"
-                    class="btn btn-velvet">Editar
-                    Información</button>
-            @endforeach
-        @endif
-
-        <center>
-            @foreach ($tenant_info as $item)
-                <hr class="dark horizontal text-danger mb-3">
-                <div class="text-center">
-                    <center>
-                        <div class="row w-25">
-                            @if ($item->logo)
-                                <div class="col-md-6">
-                                    <a href="{{ route('file', $item->logo) }}" target="_blank" rel="noopener noreferrer">
-                                        <img loading="lazy" style="width: 100px; height:100px;"
-                                            class="img-fluid img-thumbnail" src="{{ route('file', $item->logo) }}"
-                                            alt="image">
-                                    </a><br>
-                                    <span class="text-s">Logo</span>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div
+                                    class="input-group input-group-lg input-group-outline {{ isset($item->title) ? 'is-filled' : '' }}">
+                                    <label class="form-label">Empresa</label>
+                                    <input value="{{ isset($item->title) ? $item->title : '' }}" required type="text"
+                                        class="form-control form-control-lg @error('title') is-invalid @enderror"
+                                        name="title" id="title">
+                                    @error('title')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>Campo Requerido</strong>
+                                        </span>
+                                    @enderror
                                 </div>
-                            @endif
-                            @if ($item->login_image)
-                                <div class="col-md-6">
-                                    <a href="{{ route('file', $item->login_image) }}" target="_blank"
-                                        rel="noopener noreferrer">
-                                        <img loading="lazy" style="width: 100px; height:100px;"
-                                            class="img-fluid img-thumbnail" src="{{ route('file', $item->login_image) }}"
-                                            alt="image">
-                                    </a><br>
-                                    <span class="text-s">Imagen Login</span>
-                                </div>
-                            @endif
-                        </div>
-                    </center>
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label">Instagram (Esta descripción se mostrará en la sección de
+                                    descuentos en la página de inicio)</label>
+                                <div
+                                    class="input-group input-group-lg input-group-outline {{ isset($item->title_discount) ? 'is-filled' : '' }} my-3">
 
-                </div>
-
-                <hr class="dark horizontal text-danger mb-3">
-                <div class="flex3 text-center" id="siteBrand">
-                    {{ $item->title }}
-                </div>
-                <span class="text-s">Sección: Negocio, con este nombre te verán tus clientes</span>
-                <hr class="dark horizontal text-danger">
-                <div class="text-center">
-                    <h3 class="text-center text-muted">{{ $item->title_discount }}</h3>
-                </div>
-                <span class="text-s">Sección: Productos en descuento, esta descripción se mostrará en la sección de
-                    descuentos del cliente en la página principal</span>
-                <hr class="dark horizontal text-danger">
-                <div class="text-center">
-                    <span class="text-muted text-center"><a href="#">Instagram</a> |
-                        {{ $item->title_instagram }}</span>
-                </div>
-                <span class="text-s">Sección: Instagram, esta descripción se mostrará en la sección de Instagram en la
-                    página principal</span>
-                <hr class="dark horizontal text-danger">
-                <div class="bg-footer p-3 text-center">
-                    <h3 class="text-center text-title">{{ $item->title }}</h3>
-                    <span class="text-center text-muted">{{ $item->mision }}</span>
-                </div>
-                <span class="text-s">Sección: misión de la empresa, esta misión se mostrará en la sección de Misión en la
-                    página principal</span>
-                <hr class="dark horizontal text-danger">
-                <div class="text-center">
-                    <h3 class="text-center text-muted">{{ $item->title_trend }}</h3>
-                </div>
-                <span class="text-s">Sección: Productos en tendencia, esta descripción se mostrará en la sección de
-                    artículos en tendencia en la página principal</span>
-                <hr class="dark horizontal text-danger mb-3">
-                <span class="text-s">Sección: Carrusel, se mostrará al principio del Inicio de la página.<a href="#"
-                        data-bs-toggle="modal" data-bs-target="#add-tenant-carousel-modal"><i
-                            class="fa fa-plus me-3"></i></a></span>
-                @if (count($tenantcarousel) != 0)
-                    <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
-                        <div class="carousel-inner mb-4">
-                            @foreach ($tenantcarousel as $key => $carousel)
-                                @include('admin.tenant-info.carousel-modal-edit')
-                                <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
-                                    <div class="page-header min-vh-75 m-3 lazy-background"
-                                        data-background="{{ route('file', $carousel->image) }}"
-                                        style="background-image: url('{{ route('file', $carousel->image) }}');">
-                                        <span class="mask bg-gradient-dark"></span>
-                                        <div class="container">
-                                            <div class="row">
-                                                <div class="col-lg-6 my-auto">
-                                                    <h4 class="text-white mb-0 fadeIn1 fadeInBottom">{{ $carousel->text1 }}
-                                                    </h4>
-                                                    <h1 class="text-white fadeIn2 fadeInBottom">{{ $carousel->text2 }}</h1>
-                                                    <a data-bs-toggle="modal"
-                                                        data-bs-target="#edit-tenant-carousel-modal{{ $carousel->id }}"
-                                                        class="mr-5 text-white" href="#">
-                                                        <i class="fa fa-edit"></i>
-                                                    </a>
-                                                    <form id="deleteFormCarousel{{ $carousel->id }}" method="post"
-                                                        action="{{ url('/delete/tenant-carousel/' . $carousel->id) }}"
-                                                        style="display:inline">
-                                                        {{ csrf_field() }}
-                                                        {{ method_field('DELETE') }}
-                                                        <a href="#" class="mr-5 text-white"
-                                                            onclick="confirmAndSubmitCar({{ $carousel->id }})"
-                                                            style="text-decoration: none;"><i
-                                                                class="fa fa-minus-circle me-3"></i>
-                                                        </a>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <textarea placeholder="Descripción descuento: Esta descripción se mostrará en la sección de descuentos del cliente"
+                                        type="text" class="form-control form-control-lg @error('title_discount') is-invalid @enderror"
+                                        name="title_discount" id="title_discount">{{ isset($item->title_discount) ? $item->title_discount : '' }}</textarea>
+                                    @error('title_discount')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>Campo Requerido</strong>
+                                        </span>
+                                    @enderror
                                 </div>
-                            @endforeach
-                        </div>
-                        <div class="min-vh-75 position-absolute w-100 top-0">
-                            <a class="carousel-control-prev" href="#carouselExampleControls" role="button"
-                                data-bs-slide="prev">
-                                <span class="carousel-control-prev-icon position-absolute bottom-50"
-                                    aria-hidden="true"></span>
-                                <span class="visually-hidden">Previous</span>
-                            </a>
-                            <a class="carousel-control-next" href="#carouselExampleControls" role="button"
-                                data-bs-slide="next">
-                                <span class="carousel-control-next-icon position-absolute bottom-50"
-                                    aria-hidden="true"></span>
-                                <span class="visually-hidden">Next</span>
-                            </a>
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label">Instagram (Esta descripción se mostrará en la sección de Instagram
+                                    en la página de inicio)</label>
+                                <div
+                                    class="input-group input-group-lg input-group-outline {{ isset($item->title_instagram) ? 'is-filled' : '' }} my-3">
+
+                                    <textarea
+                                        placeholder="Descripción instagram: Esta descripción se mostrará en la sección de Instagram en la página principal"
+                                        type="text" class="form-control form-control-lg @error('title_instagram') is-invalid @enderror"
+                                        name="title_instagram" id="title_instagram">{{ isset($item->title_instagram) ? $item->title_instagram : '' }}</textarea>
+                                    @error('title_instagram')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>Campo Requerido</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label">Instagram (Esta descripción se mostrará en la sección Misión en la
+                                    página de inicio)</label>
+                                <div
+                                    class="input-group input-group-lg input-group-outline {{ isset($item->mision) ? 'is-filled' : '' }} my-3">
+
+                                    <textarea placeholder="Misión: Esta misión se mostrará en la sección de Misión en la página principal" required
+                                        type="text" class="form-control form-control-lg @error('mision') is-invalid @enderror" name="mision"
+                                        id="mision">{{ isset($item->mision) ? $item->mision : '' }}</textarea>
+                                    @error('mision')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>Campo Requerido</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label">Instagram (Esta descripción se mostrará en la sección de productos
+                                    en tendencia en la página de inicio)</label>
+                                <div
+                                    class="input-group input-group-lg input-group-outline {{ isset($item->title_trend) ? 'is-filled' : '' }} my-3">
+
+                                    <textarea
+                                        placeholder="Descripción Tendencia: Esta descripción se mostrará en la sección de artículos en tendencia en la página principal"
+                                        type="text" class="form-control form-control-lg @error('title_trend') is-invalid @enderror" name="title_trend"
+                                        id="title_trend">{{ isset($item->title_trend) ? $item->title_trend : '' }}</textarea>
+                                    @error('title_trend')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>Campo Requerido</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div
+                                    class="input-group input-group-lg input-group-outline {{ isset($item->title_suscrib_a) ? 'is-filled' : '' }} my-3">
+                                    <label class="form-label">Título suscripción: este título es el enlace directo para ir a
+                                        suscribirse</label>
+                                    <input value="{{ isset($item->title_suscrib_a) ? $item->title_suscrib_a : '' }}"
+                                        type="text"
+                                        class="form-control form-control-lg @error('title_suscrib_a') is-invalid @enderror"
+                                        name="title_suscrib_a" id="title_suscrib_a">
+                                    @error('title_suscrib_a')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>Campo Requerido</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div
+                                    class="input-group input-group-lg input-group-outline {{ isset($item->description_suscrib) ? 'is-filled' : '' }} my-3">
+                                    <label class="form-label">Descripción suscripción: esta descripción es el cuerpo del
+                                        mensaje
+                                        que incita al
+                                        usuario a suscribirse</label>
+                                    <input
+                                        value="{{ isset($item->description_suscrib) ? $item->description_suscrib : '' }}"
+                                        type="text"
+                                        class="form-control form-control-lg @error('description_suscrib') is-invalid @enderror"
+                                        name="description_suscrib" id="description_suscrib">
+                                    @error('description_suscrib')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>Campo Requerido</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div
+                                    class="input-group input-group-lg input-group-outline {{ isset($item->footer) ? 'is-filled' : '' }} my-3">
+                                    <label class="form-label">Pie de página: esta descripción es el pie de página,
+                                        normalmente
+                                        es una frase llamativa</label>
+                                    <input value="{{ isset($item->footer) ? $item->footer : '' }}" type="text"
+                                        class="form-control form-control-lg @error('footer') is-invalid @enderror"
+                                        name="footer" id="footer">
+                                    @error('footer')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>Campo Requerido</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
                         </div>
                     </div>
-                @endif
-                <hr class="dark horizontal text-danger">
-                <center>
-                    <div class="container-fluid bg-footer">
-
-                        <div class="row mt-5 pt-5">
-
-                            <div class="col-md-4">
-                                <h5 class="text-uppercase text-muted-title">Redes Sociales <a href="#"
-                                        data-bs-toggle="modal" data-bs-target="#add-tenant-social-modal"><i
-                                            class="fa fa-plus me-3"></i></a></h5>
-                                <div>
-                                    <p class="text-muted text-uppercase text-lg">
-                                        @foreach ($tenantsocial as $social)
-                                            @include('admin.tenant-info.social-modal-edit')
-                                            @php
-                                                $social_logo = null;
-                                                if (stripos($social->social_network, 'Facebook') !== false) {
-                                                    $social_logo = 'fa fa-facebook';
-                                                } elseif (stripos($social->social_network, 'Instagram') !== false) {
-                                                    $social_logo = 'fa fa-instagram';
-                                                }
-                                                if (stripos($social->social_network, 'Twitter') !== false) {
-                                                    $social_logo = 'fa fa-twitter';
-                                                }
-                                            @endphp
-                                            <a data-bs-toggle="modal"
-                                                data-bs-target="#edit-tenant-social-modal{{ $social->id }}"
-                                                class="mr-5 text-muted" href="#">
-                                                <i class="{{ $social_logo }}"> {{ $social->social_network }} <i
-                                                        class="fa fa-edit"></i></i>
-                                            </a>
-                                            <form id="deleteForm{{ $social->id }}" method="post"
-                                                action="{{ url('/delete/tenant-social/' . $social->id) }}"
-                                                style="display:inline">
-                                                {{ csrf_field() }}
-                                                {{ method_field('DELETE') }}
-                                                <a href="#" class="mr-5 text-muted"
-                                                    onclick="confirmAndSubmit({{ $social->id }})"
-                                                    style="text-decoration: none;"><i class="fa fa-minus-circle me-3"></i>
-                                                </a>
-                                            </form><br>
-                                        @endforeach
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="col-md-4 mt-5">
-
-                                <h5 class="text-uppercase">Queremos conocerte <i class="fa fa-heart"></i></h5>
-                                <div>
-                                    <p class="text-muted text-uppercase text-lg">
-                                        <a style="text-decoration: none;" class="mr-5 text-muted text-lg"
-                                            href="{{ route('register') }}">
-                                            <i class="fa fa-envelope"></i>{{ $item->title_suscrib_a }}
-                                        </a>
-                                    </p>
-                                    <span class="text-s">Sección: Título suscripción</span>
-                                    <p class="text-muted text-uppercase text-lg">
-                                        <i class="fas fa-percentage"></i>{{ $item->description_suscrib }}
-                                    </p>
-                                    <span class="text-s">Sección: Descripción suscripción</span>
-
-
-                                </div>
-
-
-                            </div>
-                            <div class="col-md-4">
-                                <h5 class="text-uppercase text-muted-title">Más Información!</h5>
-                                <div>
-                                    <p class="text-muted text-uppercase text-lg">
-                                        <a style="text-decoration: none;" class="mr-5 text-muted" href="#">
-                                            <i class="fa fa-envelope"></i> Envíos por correos de C.R
-                                        </a><br>
-                                        <a href="#" class="text-muted">
-                                            <i class="fa fa-whatsapp"> {{ $item->whatsapp }}</i>
-                                        </a>
-                                        <a href="#" class="text-muted">
-                                            <i class="fa fa-envelope"> {{ $item->email }}</i>
-                                        </a>
-
-                                    </p>
-                                    <span class="text-s">Este correo es donde llegarán las notificaciones de las compras
-                                        realizadas</span>
-                                </div>
-                            </div>
-
-                        </div>
-                        <hr class="dark horizontal text-danger my-0 mt-2">
-                        <div class="copyright text-center text-lg text-muted pb-4 text-uppercase">
-                            ©
-                            <script>
-                                document.write(new Date().getFullYear())
-                            </script>,
-                            <a href="#" class="font-weight-bold" target="_blank">{{ $item->title }}</a>
-                            {{ $item->footer }}
-
-                        </div>
-                        <span class="text-s">Sección: Pie de página</span>
+                </div>
+                <div class="card mt-4 col-md-12">
+                    <div class="card-header">
+                        <h4 class="text-dark">Información Del Negocio</h4>
                     </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div
+                                    class="input-group input-group-lg input-group-outline {{ isset($item->delivery) ? 'is-filled' : '' }}">
+                                    <label class="form-label">Precio de envío</label>
+                                    <input onkeypress="return (event.charCode >= 48 && event.charCode <= 57)" required
+                                        value="{{ isset($item->delivery) ? $item->delivery : '' }}" type="text"
+                                        class="form-control form-control-lg @error('delivery')
+is-invalid
+@enderror"
+                                        name="delivery" id="delivery">
+                                    @error('delivery')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>Campo Requerido</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div
+                                    class="input-group input-group-lg input-group-outline {{ isset($item->whatsapp) ? 'is-filled' : '' }}">
+                                    <label class="form-label">WhatsApp</label>
+                                    <input onkeypress="return (event.charCode >= 48 && event.charCode <= 57)" required
+                                        value="{{ isset($item->whatsapp) ? $item->whatsapp : '' }}" type="text"
+                                        class="form-control form-control-lg @error('whatsapp')
+is-invalid
+@enderror"
+                                        name="whatsapp" id="whatsapp">
+                                    @error('whatsapp')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>Campo Requerido</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div
+                                    class="input-group input-group-lg input-group-outline {{ isset($item->sinpe) ? 'is-filled' : '' }}">
+                                    <label class="form-label">SINPE Móvil</label>
+                                    <input onkeypress="return (event.charCode >= 48 && event.charCode <= 57)" required
+                                        value="{{ isset($item->sinpe) ? $item->sinpe : '' }}" type="text"
+                                        class="form-control form-control-lg @error('sinpe')
+is-invalid
+@enderror"
+                                        name="sinpe" id="sinpe">
+                                    @error('sinpe')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>Campo Requerido</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div
+                                    class="input-group input-group-lg input-group-outline {{ isset($item->count) ? 'is-filled' : '' }}">
+                                    <label class="form-label">Cuenta bancaria</label>
+                                    <input onkeypress="return (event.charCode >= 48 && event.charCode <= 57)"
+                                        value="{{ isset($item->count) ? $item->count : '' }}" type="text"
+                                        class="form-control form-control-lg @error('count')
+is-invalid
+@enderror"
+                                        name="count" id="count">
+                                    @error('count')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>Campo Requerido</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-3 mt-4">
+                                <div
+                                    class="input-group input-group-lg input-group-outline {{ isset($item->email) ? 'is-filled' : '' }}">
+                                    <label class="form-label">E-mail</label>
+                                    <input placeholder="Este E-mail es para recibir correos cuando se realiza una compra"
+                                        value="{{ isset($item->email) ? $item->email : '' }}" type="email"
+                                        class="form-control form-control-lg @error('email') is-invalid @enderror"
+                                        name="email" id="email">
+                                    @error('email')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>Campo Requerido</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="card mt-4 col-md-12">
+                    <div class="card-header">
+                        <h4 class="text-dark">Logo, Imagen de Inicio De Sesión</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+
+                            <div class="col-md-6 mb-3">
+                                @if ($item->logo)
+                                    <img style="width: 100px; height:100px;" class="img-fluid img-thumbnail"
+                                        src="{{ route('file', $item->logo) }}" alt="image">
+                                @endif
+                                <label class="form-label">Logo</label>
+                                <div class="input-group input-group-static mb-4">
+                                    <input class="form-control" type="file" name="logo">
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                @if ($item->login_image)
+                                    <img class="img-fluid img-thumbnail" style="width: 100px; height:100px;"
+                                        src="{{ route('file', $item->login_image) }}" alt="image">
+                                @endif
+                                <label class="form-label">Imagen Login</label>
+                                <div class="input-group input-group-static mb-4">
+                                    <input class="form-control" type="file" name="login_image">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <input class="btn btn-velvet mt-4" type="submit" value="Guardar Cambios">
+                <hr class="dark horizontal text-danger">
+                <div class="card w-50">
+                    <div class="card-body text-center">
+                        <h5 class="text-uppercase text-muted-title">Redes Sociales <a href="#"
+                                data-bs-toggle="modal" data-bs-target="#add-tenant-social-modal"><i
+                                    class="fa fa-plus me-3"></i></a></h5>
+                        <div>
+                            <p class="text-muted text-uppercase text-lg">
+                                @foreach ($tenantsocial as $social)
+                                    @include('admin.tenant-info.social-modal-edit')
+                                    @php
+                                        $social_logo = null;
+                                        if (stripos($social->social_network, 'Facebook') !== false) {
+                                            $social_logo = 'fa fa-facebook';
+                                        } elseif (stripos($social->social_network, 'Instagram') !== false) {
+                                            $social_logo = 'fa fa-instagram';
+                                        }
+                                        if (stripos($social->social_network, 'Twitter') !== false) {
+                                            $social_logo = 'fa fa-twitter';
+                                        }
+                                    @endphp
+                                    <a data-bs-toggle="modal"
+                                        data-bs-target="#edit-tenant-social-modal{{ $social->id }}"
+                                        class="mr-5 text-muted" href="#">
+                                        <i class="{{ $social_logo }}"> {{ $social->social_network }} <i
+                                                class="fa fa-edit"></i></i>
+                                    </a>
+                                    <form id="deleteForm{{ $social->id }}" method="post"
+                                        action="{{ url('/delete/tenant-social/' . $social->id) }}"
+                                        style="display:inline">
+                                        {{ csrf_field() }}
+                                        {{ method_field('DELETE') }}
+                                        <a href="#" class="mr-5 text-muted"
+                                            onclick="confirmAndSubmit({{ $social->id }})"
+                                            style="text-decoration: none;"><i class="fa fa-minus-circle me-3"></i>
+                                        </a>
+                                    </form><br>
+                                @endforeach
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        @endforeach
 
 
-                </center>
-            @endforeach
-
-        </center>
     </div>
 @endsection
 @section('script')

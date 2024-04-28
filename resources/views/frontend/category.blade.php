@@ -6,7 +6,7 @@
 @section('content')
     <div class="container mt-4">
         <div class="breadcrumb-nav bc3x">
-            @if (isset($tenantinfo->tenant) && $tenantinfo->tenant != 'marylu')
+            @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
                 <li class="home"><a href="{{ url('/') }}"><i class="fas fa-home me-1"></i></a></li>
                 <li class="bread-standard"><a href="#"><i class="fas fa-box me-1"></i>Categorías</a></li>
             @else

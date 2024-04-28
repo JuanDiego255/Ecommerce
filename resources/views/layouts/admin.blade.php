@@ -67,6 +67,7 @@
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
     <script src="{{ asset('js/material-dashboard.min.js') }}" defer></script>
+    <script src="{{ asset('js/jquery.js') }}" defer></script>
 
     @if (session('status'))
         <script>

@@ -28131,6 +28131,13 @@ background: #eee;
 .icon-hover:hover i {
   color: #3b71ca !important;
 }
+.submenu {
+  display: none;
+}
+
+.nav-item:hover .submenu {
+  display: block;
+}
 .product-grid{
   font-family: 'Poppins', sans-serif;
   text-align: center;

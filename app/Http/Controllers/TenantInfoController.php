@@ -35,6 +35,20 @@ class TenantInfoController extends Controller
         });
         return view('admin.tenant-info.index', $data);
     }
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function indexComponents()
+    {
+        //
+        $data = Cache::remember('tenant_info_data', $this->expirationTime, function () {
+            $tenant_info = TenantInfo::get();
+            return compact('tenant_info');
+        });
+        return view('admin.tenant-info.components', $data);
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -115,7 +129,10 @@ class TenantInfoController extends Controller
 
             $mensaje = ["required" => 'El :attribute es requerido ' . $id . ' update'];
             $this->validate($request, $campos, $mensaje);
-            $tenantinfo = TenantInfo::findOrfail($id);
+            $tenantinfo = TenantInfo::first();
+            if (!isset($tenantinfo)) {
+                $this->store($request);
+            }
             if ($request->hasFile('logo')) {
                 Storage::delete('public/' . $tenantinfo->logo);
                 $logo = $request->file('logo')->store('uploads', 'public');
@@ -173,6 +190,35 @@ class TenantInfoController extends Controller
         } catch (\Exception $th) {
             //throw $th;
             DB::rollBack();
+        }
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function updateComp(Request $request)
+    {
+        //
+        DB::beginTransaction();
+        try {
+            $tenantinfo = TenantInfo::first();            
+            $tenantinfo->manage_size = $request->manage_size ? 1 : 0;
+            $tenantinfo->manage_department = $request->manage_department ? 1 : 0;
+            $tenantinfo->show_stock = $request->show_stock ? 1 : 0;
+            $tenantinfo->show_trending = $request->show_trending ? 1 : 0;
+            $tenantinfo->show_insta = $request->show_insta ? 1 : 0;
+            $tenantinfo->show_mision = $request->show_mision ? 1 : 0;
+            $tenantinfo->show_cintillo = $request->show_cintillo ? 1 : 0;
+            $tenantinfo->update();
+            DB::commit();
+            return redirect()->back()->with(['status' => 'Se ha editado la visualización de componentes', 'icon' => 'success']);
+        } catch (\Exception $th) {
+            DB::rollBack();
+            return redirect()->back()->with(['status' => 'No se pudo guardar la información del negocio', 'icon' => 'error']);
         }
     }
 }

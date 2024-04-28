@@ -27,8 +27,8 @@
             @endforeach
         @else
             <nav class="navbar-cintillo navbar-expand-lg bg-dark d-none d-lg-block" id="templatemo_nav_top">
-                @if (isset($tenantinfo->tenant) && $tenantinfo->tenant != 'marylu')
-                    <div class="container text-dark text-center">
+                @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
+                    <div class="container text-light text-center">
                         Explora nuestras <a class="text-light text-decoration-underline"
                             href="{{ url('category') }}">categorías </a> y encuentra lo que más te gusta!
                     </div>
@@ -109,7 +109,7 @@
                     class="fa fa-arrow-circle-left me-3"></i>CERRAR MENU</a>
 
             <a href="{{ url('/') }}" class="nav-menu-item"><i class="fas fa-home me-3"></i>INICIO</a>
-            @if (isset($tenantinfo->tenant) && $tenantinfo->tenant != 'marylu')
+            @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
                 <div class="nav-menu-item">
                     <i class="fas fa-tshirt me-3"></i><a class="color-menu" href="javascript:void(0);"
                         id="toggleCategories">CATEGORIAS <i class="fa fa-arrow-circle-down ml-3"></i></a>
@@ -181,7 +181,7 @@
             <a class="nav-menu-item" href="javascript:void(0);" onclick="menuToggle()"><i
                     class="fa fa-arrow-circle-left me-3"></i>CERRAR MENU</a>
             <a href="{{ url('/') }}" class="nav-menu-item"><i class="fas fa-home me-3"></i>INICIO</a>
-            @if (isset($tenantinfo->tenant) && $tenantinfo->tenant != 'marylu')
+            @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
                 <div class="nav-menu-item">
                     <i class="fas fa-tshirt me-3"></i><a class="color-menu" href="javascript:void(0);"
                         id="toggleCategories">CATEGORIAS <i class="fa fa-arrow-circle-down ml-3"></i></a>
