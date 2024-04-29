@@ -45,6 +45,8 @@
         --sidebar_text: {{ $settings->sidebar_text }};
         --hover: {{ $settings->hover }};
         --cart_icon: {{ $settings->cart_icon }};
+        --cintillo: {{ $settings->cintillo }}; 
+        --cintillo_text: {{ $settings->cintillo_text }}; 
     }
 </style>
 

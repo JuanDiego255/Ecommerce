@@ -267,6 +267,12 @@ sub {
 .badge-info{
   color:var(--btn_cart_text);
 }
+.bg-cintillo{
+  background-color:var(--cintillo) !important;
+}
+.text-cintillo{
+  color:var(--cintillo_text) !important;
+}
 sup {
   top: -.5em;
 }
@@ -28133,10 +28139,12 @@ background: #eee;
 }
 .submenu {
   display: none;
+  list-style-type: none;
 }
 
 .nav-item:hover .submenu {
   display: block;
+  text-decoration: none;
 }
 .product-grid{
   font-family: 'Poppins', sans-serif;

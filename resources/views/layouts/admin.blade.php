@@ -26,6 +26,7 @@
     <link href="{{ asset('css/material-dashboard.min.css') }}" rel="stylesheet"> --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ asset('css/dataTables.bootstrap5.min.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-colorpicker/2.5.3/css/bootstrap-colorpicker.min.css" rel="stylesheet">
     <link href="{{ asset('css/material-dashboard.css') }}" rel="stylesheet">
 
 
@@ -40,7 +41,9 @@
         --footer_text: {{ $settings->footer_text }};        
         --sidebar: {{ $settings->sidebar }};        
         --sidebar_text: {{ $settings->sidebar_text }};  
-        --hover: {{ $settings->hover }};        
+        --hover: {{ $settings->hover }};  
+        --cintillo: {{ $settings->cintillo }};  
+        --cintillo_text: {{ $settings->cintillo_text }};        
     }
 </style>
 <body class="g-sidenav-show  bg-gray-200">
@@ -67,7 +70,7 @@
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
     <script src="{{ asset('js/material-dashboard.min.js') }}" defer></script>
-    <script src="{{ asset('js/jquery.js') }}" defer></script>
+    <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
 
     @if (session('status'))
         <script>

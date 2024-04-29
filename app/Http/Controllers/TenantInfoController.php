@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Settings;
 use App\Models\TenantCarousel;
 use App\Models\TenantInfo;
 use App\Models\TenantSocialNetwork;
@@ -205,7 +206,7 @@ class TenantInfoController extends Controller
         //
         DB::beginTransaction();
         try {
-            $tenantinfo = TenantInfo::first();            
+            $tenantinfo = TenantInfo::first();
             $tenantinfo->manage_size = $request->manage_size ? 1 : 0;
             $tenantinfo->manage_department = $request->manage_department ? 1 : 0;
             $tenantinfo->show_stock = $request->show_stock ? 1 : 0;
@@ -219,6 +220,39 @@ class TenantInfoController extends Controller
         } catch (\Exception $th) {
             DB::rollBack();
             return redirect()->back()->with(['status' => 'No se pudo guardar la información del negocio', 'icon' => 'error']);
+        }
+    }
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function updateColor(Request $request)
+    {
+        //
+        DB::beginTransaction();
+        try {
+            $settings = Settings::first();
+            $settings->navbar = $request->navbar;
+            $settings->navbar_text = $request->navbar_text;
+            $settings->title_text = $request->title_text;
+            $settings->btn_cart = $request->btn_cart;
+            $settings->btn_cart_text = $request->btn_cart_text;
+            $settings->footer = $request->footer;
+            $settings->footer_text = $request->footer_text;
+            $settings->sidebar = $request->sidebar;
+            $settings->sidebar_text = $request->sidebar_text;
+            $settings->hover = $request->hover;
+            $settings->cintillo = $request->cintillo;
+            $settings->cintillo_text = $request->cintillo_text;
+            $settings->update();
+            DB::commit();
+            return redirect()->back()->with(['status' => 'Se ha editado los colores de los componentes', 'icon' => 'success']);
+        } catch (\Exception $th) {
+            DB::rollBack();
+            return redirect()->back()->with(['status' => 'No se pudo guardar los colores de los componentes', 'icon' => 'error']);
         }
     }
 }

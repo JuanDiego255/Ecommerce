@@ -90,7 +90,7 @@
 
                 <!-- Lista desplegable de "Mi Negocio" -->
                 <ul class="submenu">
-                    <li>
+                    <li class="nav-item">
                         <a href="{{ url('tenant-info') }}" class="nav-link">
                             <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
                                 <i class="material-icons opacity-10">arrow_right_alt</i>
@@ -98,7 +98,7 @@
                             Información Principal
                         </a>
                     </li>
-                    <li>
+                    <li class="nav-item">
                         <a href="{{ url('tenant-components') }}" class="nav-link">
                             <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
                                 <i class="material-icons opacity-10">arrow_right_alt</i>

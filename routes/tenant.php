@@ -131,6 +131,7 @@ Route::middleware([
             Route::post('tenant-info/store', [TenantInfoController::class, 'store']);
             Route::put('/tenant-info/update/{id}', [TenantInfoController::class, 'update']);
             Route::put('/tenant-components/save/', [TenantInfoController::class, 'updateComp']);
+            Route::put('/tenant-components/color-save/', [TenantInfoController::class, 'updateColor']);
             Route::get('/tenant-info', [TenantInfoController::class, 'index']);
             Route::get('/tenant-components', [TenantInfoController::class, 'indexComponents']);
             Route::delete('/delete/tenant-info/{id}', [TenantInfoController::class, 'destroy']);

@@ -16,6 +16,7 @@ class AddCintilloToSettings extends Migration
         Schema::table('settings', function (Blueprint $table) {
             //
             $table->string('cintillo')->nullable();
+            $table->string('cintillo_text')->nullable();
         });
     }
 

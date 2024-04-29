@@ -159,7 +159,7 @@
                     </div>
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-md-3">
+                            <div class="col-md-3 mb-3">
                                 <div
                                     class="input-group input-group-lg input-group-outline {{ isset($item->delivery) ? 'is-filled' : '' }}">
                                     <label class="form-label">Precio de envío</label>
@@ -176,7 +176,7 @@ is-invalid
                                     @enderror
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-3 mb-3">
                                 <div
                                     class="input-group input-group-lg input-group-outline {{ isset($item->whatsapp) ? 'is-filled' : '' }}">
                                     <label class="form-label">WhatsApp</label>
@@ -193,7 +193,7 @@ is-invalid
                                     @enderror
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-3 mb-3">
                                 <div
                                     class="input-group input-group-lg input-group-outline {{ isset($item->sinpe) ? 'is-filled' : '' }}">
                                     <label class="form-label">SINPE Móvil</label>
@@ -280,7 +280,7 @@ is-invalid
                 </div>
                 <input class="btn btn-velvet mt-4" type="submit" value="Guardar Cambios">
                 <hr class="dark horizontal text-danger">
-                <div class="card w-50">
+                <div class="card col-md-6">
                     <div class="card-body text-center">
                         <h5 class="text-uppercase text-muted-title">Redes Sociales <a href="#"
                                 data-bs-toggle="modal" data-bs-target="#add-tenant-social-modal"><i

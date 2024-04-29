@@ -17,24 +17,24 @@
             @if (count($clothings_offer) != 0)
                 @foreach ($clothings_offer as $item)
                     <nav class="navbar-cintillo navbar-expand-lg bg-dark d-none d-lg-block" id="templatemo_nav_top">
-                        <div class="container text-light text-center">
+                        <div class="container text-cintillo text-center">
                             Hasta {{ $descuento_mas_alto }}% de descuento en <a
-                                class="text-light text-decoration-underline"
+                                class="text-cintillo text-decoration-underline"
                                 href="{{ url('clothes-category/' . $item->category_id) }}">productos</a> seleccionados!
                         </div>
                     </nav>
                 @break
             @endforeach
         @else
-            <nav class="navbar-cintillo navbar-expand-lg bg-dark d-none d-lg-block" id="templatemo_nav_top">
+            <nav class="navbar-cintillo navbar-expand-lg bg-cintillo d-none d-lg-block" id="templatemo_nav_top">
                 @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
-                    <div class="container text-light text-center">
-                        Explora nuestras <a class="text-light text-decoration-underline"
+                    <div class="container text-cintillo text-center">
+                        Explora nuestras <a class="text-cintillo text-decoration-underline"
                             href="{{ url('category') }}">categorías </a> y encuentra lo que más te gusta!
                     </div>
                 @else
-                    <div class="container text-light text-center">
-                        Explora nuestros <a class="text-light text-decoration-underline"
+                    <div class="container text-cintillpo text-center">
+                        Explora nuestros <a class="text-cintillo text-decoration-underline"
                             href="{{ url('departments/index') }}">departamentos </a> y encuentra lo que más te
                         gusta!
                     </div>
