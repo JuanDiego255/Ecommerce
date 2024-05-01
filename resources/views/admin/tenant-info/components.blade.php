@@ -54,12 +54,22 @@
                                     id="show_mision" @if ($item->show_mision == 1) checked @endif>
                                 <label class="form-check-label" for="show_mision">Mostrar Misión</label>
                             </div>
-                            <div class="col-md-12">
+                        </div>
+                        <div class="row">
+                            <h4 class="text-dark mb-3">Gestión de productos</h4>
+                            <div class="form-check form-switch col-md-6">
+                                <input @if ($item->manage_size == 0) disabled @endif value="1"
+                                    class="form-check-input" type="checkbox" name="custom_size" id="custom_size"
+                                    @if ($item->custom_size == 1) checked @endif>
+                                <label class="form-check-label" for="custom_size">Gestión de tallas (Permite gestionar la
+                                    cantidad y precio de cada talla, debe tener el manejo de talla activo para habilitar este control)</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
                                 <input class="btn btn-velvet mt-4" type="submit" value="Guardar Cambios">
                             </div>
-
                         </div>
-
                     </div>
                 </div>
             </form>
@@ -214,7 +224,6 @@
 
 
                     </div>
-
                 </div>
             </form>
         </div>

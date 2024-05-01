@@ -7,6 +7,7 @@
     <div class="container">
         <div>
             @foreach ($clothes as $item)
+                <input type="hidden" name="porcDescuento" value="{{ $item->discount }}" id="porcDescuento">
                 <div class="breadcrumb-nav bc3x mt-4">
                     @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
                         <li class="home"><a href="{{ url('/') }}"><i class="fas fa-home me-1"></i></a></li>
@@ -39,6 +40,7 @@
                 @php
                     $sizes = explode(',', $item->available_sizes);
                     $stockPerSize = explode(',', $item->stock_per_size);
+                    $pricePerSize = explode(',', $item->price_per_size);
                 @endphp
                 <section class="pt-4">
                     <div class="container product_data">
@@ -122,6 +124,8 @@
                                                     class="fas fa-shopping-basket fa-sm mx-1"></i>{{ $item->total_stock }}
                                                 {{ $item->total_stock > 1 ? 'órdenes' : 'orden' }}</span>
                                         @endif
+                                        <input type="hidden" name="custom_size" id="custom_size"
+                                            value="{{ $tenantinfo->custom_size }}">
 
                                         @if ($item->total_stock > 0)
                                             @if (isset($tenantinfo->tenant) && $tenantinfo->tenant === 'mandicr')
@@ -140,6 +144,9 @@
 
                                         @php
                                             $precio = $item->price;
+                                            if (isset($tenantinfo->custom_size) && $tenantinfo->custom_size == 1) {
+                                                $precio = $item->first_price;
+                                            }
                                             if (Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0) {
                                                 $precio = $item->mayor_price;
                                             }
@@ -150,14 +157,14 @@
                                             $precioConDescuento = $precio - $descuento;
                                         @endphp
 
-                                        <div class="price">₡{{ number_format($precioConDescuento) }}
+                                        <div class="price"><strong
+                                                id="text_price">₡{{ number_format($precioConDescuento) }}</strong>
                                             @if ($item->discount)
-                                                <s class="text-danger"><span
-                                                        class="text-danger">₡{{ number_format(Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0 ? $item->mayor_price : $item->price) }}
+                                                <s class="text-danger"><span class="text-danger"><strong
+                                                            id="text_price_discount">₡{{ number_format(Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0 ? $item->mayor_price : $item->price) }}</strong>
                                                     </span></s>
                                                 / por unidad
                                             @endif
-
                                         </div>
 
                                     </div>
@@ -191,7 +198,8 @@
                                         </div>
                                         <div
                                             class="col-md-12 col-12 {{ isset($tenantinfo->tenant) && $tenantinfo->manage_size == 0 ? 'd-none' : '' }}">
-                                            <label class="">{{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'Tallas' : 'Tamaños'}}</label><br>
+                                            <label
+                                                class="">{{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'Tallas' : 'Tamaños' }}</label><br>
                                             @foreach ($size_active as $key => $size)
                                                 <div class="form-check form-check-inline">
                                                     <input required name="size_id" class="size_id form-check-input mb-2"
@@ -255,9 +263,27 @@
                         @if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'mandicr')
                             <h4 class="title"><a href="#">Stock: {{ $item->total_stock }}</a></h4>
                         @endif
-
+                        @php
+                            $precio = $item->price;
+                            if (isset($tenantinfo->custom_size) && $tenantinfo->custom_size == 1 && $item->first_price > 0) {
+                                $precio = $item->first_price;
+                            }
+                            if (Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0) {
+                                $precio = $item->mayor_price;
+                            }
+                            $descuentoPorcentaje = $item->discount;
+                            // Calcular el descuento
+                            $descuento = ($precio * $descuentoPorcentaje) / 100;
+                            // Calcular el precio con el descuento aplicado
+                            $precioConDescuento = $precio - $descuento;
+                        @endphp
                         <div class="price">
-                            ₡{{ number_format(Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0 ? $item->mayor_price : $item->price) }}</span>
+                            ₡{{ number_format($precioConDescuento) }}
+                            @if ($item->discount)
+                                <s class="text-danger"><span
+                                        class="text-danger">₡{{ number_format(Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0 ? $item->mayor_price : $item->price) }}
+                                    </span></s>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -306,6 +332,7 @@
 
         var size_id = $('input[name="size_id"]:checked').val();
         var stockPerSize = <?php echo json_encode($stockPerSize); ?>;
+        var pricePerSize = <?php echo json_encode($pricePerSize); ?>;
         const sizes = {!! json_encode($sizes) !!};
         var index = sizes.indexOf(size_id.toString());
         var maxStock = stockPerSize[index];
@@ -323,10 +350,30 @@
             if (index !== -1) {
 
                 maxStock = stockPerSize[index];
+
                 // Actualizar el atributo 'max' del input quantity
                 $('input[name="quantity"]').attr('max', maxStock);
                 $('input[name="quantity"]').val(1);
+                custom_size = document.getElementById("custom_size").value
+                porcDescuento = document.getElementById("porcDescuento").value
+
+                if (custom_size == 1) {
+                    perPrice = pricePerSize[index];
+                    const price = document.getElementById('text_price');
+                    const price_discount = document.getElementById('text_price_discount');
+                    if (porcDescuento > 0) {
+                        var descuento = (perPrice * porcDescuento) / 100;
+                        var precioConDescuento = perPrice - descuento;
+                        price.textContent = `₡${precioConDescuento.toLocaleString()}`;
+                        price_discount.textContent = `₡${perPrice.toLocaleString()}`;
+                    }else{
+                        price.textContent = `₡${perPrice.toLocaleString()}`;
+                    }
+                    
+                    
+                }
             }
+
         });
 
         const quantityInput = document.getElementById('quantityInput');

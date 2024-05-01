@@ -64,6 +64,9 @@
 
                                 @php
                                     $precio = $item->price;
+                                    if (isset($tenantinfo->custom_size) && $tenantinfo->custom_size == 1 && $item->first_price > 0) {
+                                        $precio = $item->first_price;
+                                    }
                                     if (Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0) {
                                         $precio = $item->mayor_price;
                                     }

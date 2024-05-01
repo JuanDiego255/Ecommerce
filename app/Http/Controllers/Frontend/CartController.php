@@ -36,8 +36,8 @@ class CartController extends Controller
                 $code = $request->code;
                 $cloth_check = ClothingCategory::where('code', $code)->first();
                 $size_id = $request->size_id;
-                if(isset($tenantinfo->manage_size) && $tenantinfo->manage_size == 0){
-                    $size = Size::where('size','N/A')->first();
+                if (isset($tenantinfo->manage_size) && $tenantinfo->manage_size == 0) {
+                    $size = Size::where('size', 'N/A')->first();
                     $size_id = $size->id;
                 }
                 if ($cloth_check) {
@@ -55,7 +55,7 @@ class CartController extends Controller
                         ->where('sold', 0)->first()
                     ) {
                         return response()->json(['status' => 'El producto ya existe en la tabla', 'icon' => 'warning']);
-                    } else {                      
+                    } else {
 
                         $cart_item = new Cart();
                         $cart_item->user_id = null;
@@ -173,9 +173,11 @@ class CartController extends Controller
                         'clothing.status as status',
                         'sizes.size as size',
                         'sizes.id as size_id',
+                        'stocks.price as stock_price',
                         'carts.quantity as quantity',
                         'stocks.stock as stock',
-                        DB::raw('IFNULL(product_images.image, "") as image') // Obtener la primera imagen del producto
+                        DB::raw('IFNULL(product_images.image, "") as image'), // Obtener la primera imagen del producto
+                        
                     )
                     ->groupBy(
                         'clothing.id',
@@ -188,6 +190,7 @@ class CartController extends Controller
                         'clothing.discount',
                         'sizes.size',
                         'sizes.id',
+                        'stocks.price',
                         'carts.quantity',
                         'stocks.stock',
                         'product_images.image'
@@ -219,6 +222,7 @@ class CartController extends Controller
                         'clothing.casa as casa',
                         'clothing.description as description',
                         'clothing.price as price',
+                        'stocks.price as stock_price',
                         'clothing.mayor_price as mayor_price',
                         'clothing.discount as discount',
                         'clothing.status as status',
@@ -226,7 +230,8 @@ class CartController extends Controller
                         'sizes.id as size_id',
                         'carts.quantity as quantity',
                         'stocks.stock as stock',
-                        DB::raw('IFNULL(product_images.image, "") as image') // Obtener la primera imagen del producto
+                        DB::raw('IFNULL(product_images.image, "") as image'), // Obtener la primera imagen del producto
+                        DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id AND sizes.id = stocks.size_id ORDER BY id ASC LIMIT 1) AS first_price')
                     )
                     ->groupBy(
                         'clothing.id',
@@ -238,6 +243,7 @@ class CartController extends Controller
                         'clothing.discount',
                         'clothing.status',
                         'sizes.size',
+                        'stocks.price',
                         'sizes.id',
                         'carts.quantity',
                         'stocks.stock',
@@ -270,6 +276,21 @@ class CartController extends Controller
         $you_save = 0;
         foreach ($cart_items as $item) {
             $precio = $item->price;
+            if (isset($tenantinfo->custom_size) && $tenantinfo->custom_size == 1 && $item->stock_price > 0) {
+                $precio = $item->stock_price;
+            }
+            if (
+                Auth::check() &&
+                Auth::user()->mayor == '1' &&
+                $item->mayor_price > 0
+            ) {
+                $precio = $item->mayor_price;
+            }
+            $descuentoPorcentaje = $item->discount;
+            // Calcular el descuento
+            $descuento = ($precio * $descuentoPorcentaje) / 100;
+            // Calcular el precio con el descuento aplicado
+            $precioConDescuento = $precio - $descuento;
             if (Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0) {
                 $precio = $item->mayor_price;
             }

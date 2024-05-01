@@ -62,7 +62,7 @@ class ClothingCategoryController extends Controller
                     DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'),
                     'product_images.image as image'
                 )
-                ->groupBy('clothing.id','clothing.casa', 'clothing.mayor_price', 'clothing.discount', 'categories.name', 'clothing.code', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
+                ->groupBy('clothing.id', 'clothing.casa', 'clothing.mayor_price', 'clothing.discount', 'categories.name', 'clothing.code', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
                 ->simplePaginate(15);
         });
 
@@ -125,9 +125,11 @@ class ClothingCategoryController extends Controller
                 ->first();
         });
 
+        $stocks = Stock::where('clothing_id', $id)->get();
+
         $size_active = SizeCloth::where('clothing_id', $id)->get();
         $sizes = Size::get();
-        return view('admin.clothing.edit', compact('clothing', 'size_active', 'sizes', 'category_id'));
+        return view('admin.clothing.edit', compact('clothing', 'size_active', 'sizes', 'category_id', 'stocks'));
     }
     public function store(Request $request)
     {
@@ -150,13 +152,14 @@ class ClothingCategoryController extends Controller
             return redirect()->back()->with(['status' => $msg, 'icon' => 'success']);
         } catch (Exception $th) {
             DB::rollback();
-            return redirect()->back()->with(['status' => 'Ocurrió un error al agregar el producto', 'icon' => 'error']);
+            return redirect()->back()->with(['status' => $th->getMessage(), 'icon' => 'error']);
         }
     }
     public function update($id, Request $request)
     {
         DB::beginTransaction();
         $tenantinfo = TenantInfo::first();
+        $size_continue = false;
         try {
             $validator = Validator::make($request->all(), [
                 'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Validación básica de cada imagen
@@ -217,30 +220,31 @@ class ClothingCategoryController extends Controller
             }
             if (isset($tenantinfo->manage_size) && $tenantinfo->manage_size == 1) {
                 $sizes = $request->input('sizes_id');
+                $prices = $request->input('precios');
+                $quantities = $request->input('cantidades');
+
+                $validator = Validator::make($request->all(), [
+                    'precios' => 'required|array|min:1', // Verifica que precios sea un array y que contenga al menos un elemento
+                    'cantidades' => 'required|array|min:1', // Verifica que cantidades sea un array y que contenga al menos un elemento
+                ]);
+
+                // Si la validación falla, redirecciona de vuelta al formulario con los errores
+                if (!$validator->fails()) {
+                    foreach ($prices as $tallaId => $precio) {
+                        $cantidad = $quantities[$tallaId];
+
+                        $this->updateSizeStock($tallaId, $id, $cantidad, $precio, $tenantinfo->custom_size);
+                    }
+                    $size_continue = true;
+                }
 
                 if ($sizes == null) {
                     DB::rollback();
                     return redirect('/edit-clothing/' . $id . '/' . $request->category_id)->with(['status' => 'Debe seleccionar al menos una talla!', 'icon' => 'warning']);
                 }
-                foreach ($sizes as $size) {
-                    $size_cloth =  new SizeCloth();
-                    $size_cloth->size_id = $size;
-                    $size_cloth->clothing_id = $id;
-                    $size_cloth->save();
-
-                    $stock = Stock::where('clothing_id', $id)
-                        ->where('size_id', $size)->first();
-                    if ($stock === null) {
-                        $stock =  new Stock();
-                        $stock->size_id = $size;
-                        $stock->stock = $request->stock;
-                        $stock->clothing_id = $id;
-                        $stock->save();
-                    } else {
-                        if ($stock->stock == 0) {
-                            Stock::where('clothing_id', $id)
-                                ->where('size_id', $size)->update(['stock' => $request->stock]);
-                        }
+                if (!$size_continue) {
+                    foreach ($sizes as $size) {
+                        $this->updateSizeStock($size, $id, $request->stock);
                     }
                 }
             }
@@ -281,7 +285,11 @@ class ClothingCategoryController extends Controller
         $msg = "Producto Agregado Exitosamente!";
         $break = false;
         $code = 0;
+        $size_continue = false;
         $latestCode = ClothingCategory::max('code');
+        $prices = $request->input('precios');
+        $quantities = $request->input('cantidades');
+
         if ($latestCode) {
             $code = $latestCode;
         }
@@ -298,22 +306,17 @@ class ClothingCategoryController extends Controller
                 $clothing->code = $code;
                 $clothing->description = $request->description;
                 $clothing->price = $request->price;
-
                 if ($tenantinfo->tenant === "torres") {
                     $clothing->mayor_price = $request->mayor_price;
                 }
                 if ($tenantinfo->tenant === "fragsperfumecr") {
                     $clothing->casa = $request->casa;
                 }
-
                 if ($request->has('discount')) {
                     $clothing->discount = $request->discount;
                 }
-
                 $clothing->status = 1;
-
                 $clothing->trending = $request->filled('trending') ? 1 : 0;
-
                 $clothing->save();
                 $clothingId = $clothing->id;
                 $masive = $request->filled('masive') ? 1 : 0;
@@ -340,16 +343,33 @@ class ClothingCategoryController extends Controller
                 if (isset($tenantinfo->manage_size) && $tenantinfo->manage_size == 1) {
                     $sizes = $request->input('sizes_id');
 
+                    $validator = Validator::make($request->all(), [
+                        'precios' => 'required|array|min:1', // Verifica que precios sea un array y que contenga al menos un elemento
+                        'cantidades' => 'required|array|min:1', // Verifica que cantidades sea un array y que contenga al menos un elemento
+                    ]);
+
+                    // Si la validación falla, redirecciona de vuelta al formulario con los errores
+                    if (!$validator->fails()) {
+                        foreach ($prices as $tallaId => $precio) {
+                            $cantidad = $quantities[$tallaId];
+
+                            $this->processSize($tallaId, $clothingId, $cantidad, $precio);
+                        }
+                        $size_continue = true;
+                    }
+
                     if ($sizes == null) {
                         DB::rollback();
                         return redirect('/new-item/' . $request->category_id)->with(['status' => 'Debe seleccionar al menos una talla!', 'icon' => 'warning']);
                     }
-                    foreach ($sizes as $size) {
-                        $this->processSize($size, $clothingId, $request);
+                    if (!$size_continue) {
+                        foreach ($sizes as $size) {
+                            $this->processSize($size, $clothingId, $request->stock);
+                        }
                     }
                 } else {
                     $size = Size::where('size', 'N/A')->first();
-                    $this->processSize($size->id, $clothingId, $request);
+                    $this->processSize($size->id, $clothingId, $request->stock);
                 }
 
                 if ($break) {
@@ -360,17 +380,47 @@ class ClothingCategoryController extends Controller
         return $msg;
     }
 
-    public function processSize($size, $clothingId, $request)
+    public function processSize($size, $clothingId, $stock, $price = null)
     {
         $size_cloth = new SizeCloth();
         $size_cloth->size_id = $size;
         $size_cloth->clothing_id = $clothingId;
         $size_cloth->save();
 
-        $stock = new Stock();
-        $stock->size_id = $size;
-        $stock->stock = $request->stock;
-        $stock->clothing_id = $clothingId;
-        $stock->save();
+        $stock_size = new Stock();
+        $stock_size->clothing_id = $clothingId;
+        $stock_size->size_id = $size;
+        $stock_size->stock = $stock;
+        $stock_size->price = $price;
+        $stock_size->save();
+    }
+
+    public function updateSizeStock($size, $id, $stock, $price = null, $custom_size = null)
+    {
+        $size_cloth =  new SizeCloth();
+        $size_cloth->size_id = $size;
+        $size_cloth->clothing_id = $id;
+        $size_cloth->save();
+
+        $stock_size = Stock::where('clothing_id', $id)
+            ->where('size_id', $size)->first();
+        if ($stock_size === null) {
+            $stock_size =  new Stock();
+            $stock_size->size_id = $size;
+            $stock_size->stock = $stock;
+            $stock_size->price = $price;
+            $stock_size->clothing_id = $id;
+            $stock_size->save();
+        } else {
+            if (isset($custom_size) && $custom_size == 1) {
+                Stock::where('clothing_id', $id)
+                    ->where('size_id', $size)->update(['stock' => $stock, 'price' => $price]);
+            } else {
+                if ($stock_size->stock == 0) {
+                    Stock::where('clothing_id', $id)
+                        ->where('size_id', $size)->update(['stock' => $stock]);
+                }
+            }
+        }
     }
 }

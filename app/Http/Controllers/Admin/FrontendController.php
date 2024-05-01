@@ -53,7 +53,8 @@ class FrontendController extends Controller
                 'clothing.mayor_price as mayor_price',
                 DB::raw('SUM(stocks.stock) as total_stock'),
                 DB::raw('GROUP_CONCAT(sizes.size) AS available_sizes'), // Obtener tallas dinámicas
-                DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size')
+                DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'),
+                DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
             )
             ->groupBy(
                 'clothing.id',
@@ -123,7 +124,8 @@ class FrontendController extends Controller
                 'clothing.mayor_price as mayor_price',
                 DB::raw('SUM(stocks.stock) as total_stock'),
                 DB::raw('GROUP_CONCAT(sizes.size) AS available_sizes'), // Obtener tallas dinámicas
-                DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size')
+                DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'),
+                DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
             )
             ->groupBy(
                 'clothing.id',
@@ -239,7 +241,8 @@ class FrontendController extends Controller
                     'product_images.image as image', // Obtener la primera imagen del producto
                     DB::raw('SUM(stocks.stock) as total_stock'),
                     DB::raw('GROUP_CONCAT(sizes.size) AS available_sizes'), // Obtener tallas dinámicas
-                    DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size') // Obtener stock por talla
+                    DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'), // Obtener stock por talla
+                    DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
                 )
                 ->groupBy('clothing.id','clothing.casa','clothing.mayor_price', 'categories.name', 'clothing.discount', 'clothing.name', 'clothing.description', 'clothing.price', 'product_images.image')
                 ->orderBy('clothing.name','asc')
@@ -296,7 +299,9 @@ class FrontendController extends Controller
                 DB::raw('GROUP_CONCAT(product_images.image ORDER BY product_images.id ASC) AS images'),
                 DB::raw('SUM(stocks.stock) as total_stock'),
                 DB::raw('GROUP_CONCAT(sizes.id) AS available_sizes'), // Obtener tallas dinámicas
-                DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size') // Obtener stock por talla
+                DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'), // Obtener stock por talla
+                DB::raw('GROUP_CONCAT(stocks.price) AS price_per_size'),
+                DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
             )
             ->groupBy('clothing.id','clothing.casa','departments.id','departments.department','clothing.mayor_price', 'clothing.discount', 'categories.name', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
             ->orderBy('clothing.name','asc')
@@ -354,7 +359,9 @@ class FrontendController extends Controller
                 DB::raw('IFNULL(product_images.image, "") as image'), // Obtener la primera imagen del producto
                 DB::raw('SUM(stocks.stock) as total_stock'),
                 DB::raw('GROUP_CONCAT(sizes.size) AS available_sizes'), // Obtener tallas dinámicas
-                DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size') // Obtener stock por talla
+                DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'), // Obtener stock por talla
+                DB::raw('GROUP_CONCAT(stocks.price) AS price_per_size'),
+                DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
             )
             ->groupBy('clothing.id','clothing.casa','clothing.mayor_price', 'clothing.discount', 'categories.name', 'categories.id', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
             ->orderBy('clothing.name','asc')

@@ -214,6 +214,10 @@ class TenantInfoController extends Controller
             $tenantinfo->show_insta = $request->show_insta ? 1 : 0;
             $tenantinfo->show_mision = $request->show_mision ? 1 : 0;
             $tenantinfo->show_cintillo = $request->show_cintillo ? 1 : 0;
+            $tenantinfo->custom_size = $request->custom_size ? 1 : 0;
+            if (!$request->manage_size) {
+                $tenantinfo->custom_size = 0;
+            }
             $tenantinfo->update();
             DB::commit();
             return redirect()->back()->with(['status' => 'Se ha editado la visualización de componentes', 'icon' => 'success']);

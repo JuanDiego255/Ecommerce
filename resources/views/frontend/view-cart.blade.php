@@ -12,7 +12,8 @@
                 <li class="bread-standard"><a href="#"><i class="fa fa-shopping-cart me-1"></i>Carrito</a></li>
             @else
                 <li class="home"><a href="{{ url('/') }}"><i class="fas fa-home me-1"></i></a></li>
-                <li class="bread-standard"><a href="{{url('departments/index')}}"><i class="fas fa-shapes me-1"></i>Departamentos</a></li> 
+                <li class="bread-standard"><a href="{{ url('departments/index') }}"><i
+                            class="fas fa-shapes me-1"></i>Departamentos</a></li>
                 <li class="bread-standard"><a href="#"><i class="fa fa-shopping-cart me-1"></i>Carrito</a></li>
             @endif
 
@@ -32,8 +33,10 @@
                                         </th>
                                         <th class="text-center text-secondary font-weight-bolder opacity-7">
                                             Precio</th>
-                                        <th class="text-center text-secondary font-weight-bolder opacity-7 {{isset($tenantinfo->tenant) && $tenantinfo->manage_size == 0 ? 'd-none' : ''}}">
-                                            {{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'Talla' : 'Tamaño'}}</th>
+                                        <th
+                                            class="text-center text-secondary font-weight-bolder opacity-7 {{ isset($tenantinfo->tenant) && $tenantinfo->manage_size == 0 ? 'd-none' : '' }}">
+                                            {{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'Talla' : 'Tamaño' }}
+                                        </th>
                                         <th class="text-center text-secondary font-weight-bolder opacity-7">
                                             Cant</th>
                                         <th class="text-secondary opacity-7"></th>
@@ -44,6 +47,25 @@
                                         <tr>
                                             @php
                                                 $precio = $item->price;
+                                                if (
+                                                    isset($tenantinfo->custom_size) &&
+                                                    $tenantinfo->custom_size == 1 &&
+                                                    $item->stock_price > 0
+                                                ) {
+                                                    $precio = $item->stock_price;
+                                                }
+                                                if (
+                                                    Auth::check() &&
+                                                    Auth::user()->mayor == '1' &&
+                                                    $item->mayor_price > 0
+                                                ) {
+                                                    $precio = $item->mayor_price;
+                                                }
+                                                $descuentoPorcentaje = $item->discount;
+                                                // Calcular el descuento
+                                                $descuento = ($precio * $descuentoPorcentaje) / 100;
+                                                // Calcular el precio con el descuento aplicado
+                                                $precioConDescuento = $precio - $descuento;
                                                 if (
                                                     Auth::check() &&
                                                     Auth::user()->mayor == '1' &&
@@ -60,7 +82,14 @@
                                             <input type="hidden" name="prod_id" value="{{ $item->id }}"
                                                 class="prod_id">
                                             <input type="hidden" class="price"
-                                                value="{{ $item->discount > 0 ? $precioConDescuento : (Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0 ? $item->mayor_price : $item->price) }}">
+                                                value="{{ $item->discount > 0
+                                                    ? $precioConDescuento
+                                                    : (Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0
+                                                        ? $item->mayor_price
+                                                        : ($tenantinfo->custom_size == 1
+                                                            ? $item->stock_price
+                                                            : $item->price)) }}
+                                                ">
                                             <input type="hidden" value="{{ $item->size_id }}" class="size_id"
                                                 name="size">
                                             <input type="hidden" value="{{ $descuento }}" class="discount"
@@ -83,16 +112,24 @@
                                             <td class="align-middle text-center text-sm">
 
                                                 <p class="text-success mb-0">₡
-                                                    {{ $item->discount > 0 ? $precioConDescuento : (Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0 ? $item->mayor_price : $item->price) }}
+                                                    {{ $item->discount > 0
+                                                        ? $precioConDescuento
+                                                        : (Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0
+                                                            ? $item->mayor_price
+                                                            : ($tenantinfo->custom_size == 1
+                                                                ? $item->stock_price
+                                                                : $item->price)) }}
+
                                                     @if ($item->discount > 0)
                                                         <s
-                                                            class="text-danger">{{ Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0 ? $item->mayor_price : $item->price }}</s>
+                                                            class="text-danger">{{ Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0 ? $item->mayor_price : ($tenantinfo->custom_size == 1 ? $item->stock_price : $item->price) }}</s>
                                                     @endif
                                                 </p>
 
                                             </td>
 
-                                            <td class="{{isset($tenantinfo->tenant) && $tenantinfo->manage_size == 0 ? 'd-none' : ''}}">
+                                            <td
+                                                class="{{ isset($tenantinfo->tenant) && $tenantinfo->manage_size == 0 ? 'd-none' : '' }}">
                                                 <p class="text-center text-truncate para mb-0">{{ $item->size }}
                                                 </p>
                                             </td>

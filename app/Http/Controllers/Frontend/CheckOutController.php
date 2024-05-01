@@ -47,6 +47,10 @@ class CheckOutController extends Controller
                 ->where('carts.sold', 0)
                 ->join('clothing', 'carts.clothing_id', 'clothing.id')
                 ->join('sizes', 'carts.size_id', 'sizes.id')
+                ->join('stocks', function ($join) {
+                    $join->on('carts.clothing_id', '=', 'stocks.clothing_id')
+                        ->on('carts.size_id', '=', 'stocks.size_id');
+                })
                 ->select(
 
                     'clothing.id as id',
@@ -55,6 +59,7 @@ class CheckOutController extends Controller
                     'clothing.description as description',
                     'clothing.discount as discount',
                     'clothing.price as price',
+                    'stocks.price as stock_price',
                     'clothing.mayor_price as mayor_price',
                     'clothing.status as status',
                     'sizes.size as size',
@@ -64,6 +69,9 @@ class CheckOutController extends Controller
             $cloth_price = 0;
             foreach ($cartItems as $item) {
                 $precio = $item->price;
+                if (isset($tenantinfo->custom_size) && $tenantinfo->custom_size == 1 && $item->stock_price > 0) {
+                    $precio = $item->stock_price;
+                }
                 if (Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0) {
                     $precio = $item->mayor_price;
                 }
@@ -84,6 +92,10 @@ class CheckOutController extends Controller
                 ->where('carts.sold', 0)
                 ->join('clothing', 'carts.clothing_id', 'clothing.id')
                 ->join('sizes', 'carts.size_id', 'sizes.id')
+                ->join('stocks', function ($join) {
+                    $join->on('carts.clothing_id', '=', 'stocks.clothing_id')
+                        ->on('carts.size_id', '=', 'stocks.size_id');
+                })
                 ->select(
 
                     'clothing.id as id',
@@ -92,6 +104,7 @@ class CheckOutController extends Controller
                     'clothing.discount as discount',
                     'clothing.description as description',
                     'clothing.price as price',
+                    'stocks.price as stock_price',
                     'clothing.mayor_price as mayor_price',
                     'clothing.status as status',
                     'sizes.size as size',
@@ -101,6 +114,9 @@ class CheckOutController extends Controller
             $cloth_price = 0;
             foreach ($cartItems as $item) {
                 $precio = $item->price;
+                if (isset($tenantinfo->custom_size) && $tenantinfo->custom_size == 1 && $item->stock_price > 0) {
+                    $precio = $item->stock_price;
+                }
                 if (Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0) {
                     $precio = $item->mayor_price;
                 }
@@ -161,12 +177,16 @@ class CheckOutController extends Controller
             $tenantinfo = TenantInfo::first();
             $tenant = $tenantinfo->tenant;
             $request = request();
-            DB::beginTransaction();           
+            DB::beginTransaction();
             if ($request->kind_of == "V") {
                 if (Auth::check()) {
                     $cartItems = Cart::where('user_id', Auth::user()->id)->where('sold', 0)
                         ->join('clothing', 'carts.clothing_id', 'clothing.id')
                         ->join('sizes', 'carts.size_id', 'sizes.id')
+                        ->join('stocks', function ($join) {
+                            $join->on('carts.clothing_id', '=', 'stocks.clothing_id')
+                                ->on('carts.size_id', '=', 'stocks.size_id');
+                        })
                         ->select(
                             'clothing.id as clothing_id',
                             'clothing.name as name',
@@ -174,6 +194,7 @@ class CheckOutController extends Controller
                             'clothing.code as code',
                             'clothing.description as description',
                             'clothing.price as price',
+                            'stocks.price as stock_price',
                             'clothing.mayor_price as mayor_price',
                             'clothing.discount as discount',
                             'clothing.status as status',
@@ -185,6 +206,9 @@ class CheckOutController extends Controller
 
                     foreach ($cartItems as $cart) {
                         $precio = $cart->price;
+                        if (isset($tenantinfo->custom_size) && $tenantinfo->custom_size == 1 && $cart->stock_price > 0) {
+                            $precio = $cart->stock_price;
+                        }
                         if (Auth::check() && Auth::user()->mayor == '1' && $cart->mayor_price > 0) {
                             $precio = $cart->mayor_price;
                         }
@@ -245,6 +269,9 @@ class CheckOutController extends Controller
 
                     foreach ($cartItems as $cart) {
                         $precio = $cart->price;
+                        if (isset($tenantinfo->custom_size) && $tenantinfo->custom_size == 1 && $cart->stock_price > 0) {
+                            $precio = $cart->stock_price;
+                        }
                         if (Auth::check() && Auth::user()->mayor == '1' && $cart->mayor_price > 0) {
                             $precio = $cart->mayor_price;
                         }
@@ -277,6 +304,10 @@ class CheckOutController extends Controller
                     $cartItems = Cart::where('session_id', $session_id)->where('sold', 0)
                         ->join('clothing', 'carts.clothing_id', 'clothing.id')
                         ->join('sizes', 'carts.size_id', 'sizes.id')
+                        ->join('stocks', function ($join) {
+                            $join->on('carts.clothing_id', '=', 'stocks.clothing_id')
+                                ->on('carts.size_id', '=', 'stocks.size_id');
+                        })
                         ->select(
                             'clothing.id as clothing_id',
                             'clothing.name as name',
@@ -285,6 +316,7 @@ class CheckOutController extends Controller
                             'clothing.discount as discount',
                             'clothing.code as code',
                             'clothing.price as price',
+                            'stocks.price as stock_price',
                             'clothing.mayor_price as mayor_price',
                             'clothing.status as status',
                             'sizes.size as size',
@@ -295,6 +327,9 @@ class CheckOutController extends Controller
 
                     foreach ($cartItems as $cart) {
                         $precio = $cart->price;
+                        if (isset($tenantinfo->custom_size) && $tenantinfo->custom_size == 1 && $cart->stock_price > 0) {
+                            $precio = $cart->stock_price;
+                        }
                         if (Auth::check() && Auth::user()->mayor == '1' && $cart->mayor_price > 0) {
                             $precio = $cart->mayor_price;
                         }
@@ -363,6 +398,9 @@ class CheckOutController extends Controller
 
                     foreach ($cartItems as $cart) {
                         $precio = $cart->price;
+                        if (isset($tenantinfo->custom_size) && $tenantinfo->custom_size == 1 && $cart->stock_price > 0) {
+                            $precio = $cart->stock_price;
+                        }
                         if (Auth::check() && Auth::user()->mayor == '1' && $cart->mayor_price > 0) {
                             $precio = $cart->mayor_price;
                         }
@@ -397,6 +435,10 @@ class CheckOutController extends Controller
                     ->where('sold', 0)
                     ->join('clothing', 'carts.clothing_id', 'clothing.id')
                     ->join('sizes', 'carts.size_id', 'sizes.id')
+                    ->join('stocks', function ($join) {
+                        $join->on('carts.clothing_id', '=', 'stocks.clothing_id')
+                            ->on('carts.size_id', '=', 'stocks.size_id');
+                    })
                     ->select(
                         'clothing.id as clothing_id',
                         'clothing.name as name',
@@ -404,6 +446,7 @@ class CheckOutController extends Controller
                         'clothing.code as code',
                         'clothing.description as description',
                         'clothing.price as price',
+                        'stocks.price as stock_price',
                         'clothing.mayor_price as mayor_price',
                         'clothing.discount as discount',
                         'clothing.status as status',
@@ -415,6 +458,9 @@ class CheckOutController extends Controller
 
                 foreach ($cartItems as $cart) {
                     $precio = $cart->price;
+                    if (isset($tenantinfo->custom_size) && $tenantinfo->custom_size == 1 && $cart->stock_price > 0) {
+                        $precio = $cart->stock_price;
+                    }
                     if (Auth::check() && Auth::user()->mayor == '1' && $cart->mayor_price > 0) {
                         $precio = $cart->mayor_price;
                     }
@@ -429,9 +475,9 @@ class CheckOutController extends Controller
                 $total_price = $cloth_price + $iva;
 
                 $buy = new Buy();
-                $buy->user_id = null;                
+                $buy->user_id = null;
                 $buy->total_iva =  $iva;
-                $buy->total_buy =  $total_price;                
+                $buy->total_buy =  $total_price;
                 $buy->delivered = 1;
                 $buy->approved = 1;
                 $buy->cancel_buy = 0;
@@ -442,6 +488,9 @@ class CheckOutController extends Controller
 
                 foreach ($cartItems as $cart) {
                     $precio = $cart->price;
+                    if (isset($tenantinfo->custom_size) && $tenantinfo->custom_size == 1 && $cart->stock_price > 0) {
+                        $precio = $cart->stock_price;
+                    }
                     if (Auth::check() && Auth::user()->mayor == '1' && $cart->mayor_price > 0) {
                         $precio = $cart->mayor_price;
                     }
@@ -468,8 +517,8 @@ class CheckOutController extends Controller
                 }
 
                 Cart::where('user_id', null)
-                ->where('session_id',null)
-                ->where('sold', 0)->update(['sold' => 1]);
+                    ->where('session_id', null)
+                    ->where('sold', 0)->update(['sold' => 1]);
                 DB::commit();
                 return redirect()->back()->with(['status' => 'Venta exitosa!', 'icon' => 'success']);
             }
@@ -483,8 +532,8 @@ class CheckOutController extends Controller
 
             return true;
         } catch (Exception $th) {
-            return false;
             DB::rollBack();
+            return redirect()->back()->with(['status' => $th->getMessage(), 'icon' => 'success']);
         }
     }
     public function getAccessToken()
@@ -523,8 +572,8 @@ class CheckOutController extends Controller
                     'title' => 'Se realizó una venta por medio del sitio web.',
                     'body' => '---------------------------' . PHP_EOL
                 ];
-                
-                if($delivery > 0){
+
+                if ($delivery > 0) {
                     $total_price = $total_price + $delivery;
                 }
                 foreach ($cartItems as $item) {
@@ -532,7 +581,7 @@ class CheckOutController extends Controller
                     if (Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0) {
                         $precio = $item->mayor_price;
                     }
-                    
+
 
                     $details['body'] .= $item->name . ' - Código: ' . $item->code . ':' . PHP_EOL;
                     $details['body'] .= 'Cantidad = ' . $item->quantity . PHP_EOL;
