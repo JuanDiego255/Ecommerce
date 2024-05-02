@@ -16,7 +16,7 @@
     <link href="{{ asset('css/nucleo-svg.css') }}" rel="stylesheet">
     <link href="{{ asset('css/nucleo-icons.css') }}" rel="stylesheet">
     <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://kit.fontawesome.com/82a78dd1a0.js" crossorigin="anonymous"></script>
     <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <!-- CSS Files -->
