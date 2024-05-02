@@ -12,36 +12,30 @@
                     @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
                         <li class="home"><a href="{{ url('/') }}"><i class="fas fa-home me-1"></i></a></li>
                         <li class="bread-standard"><a href="{{ url('category/') }}"><i
-                                    class="fas fa-box me-1"></i>Categorías</a>
+                                    class="{{isset($tenantinfo->kind_business) && $tenantinfo->kind_business != 1 ? 'fas fa-box' : 'fas fa-car'}} me-1"></i>Categorías</a>
                         </li>
                         <li class="bread-standard"><a
                                 href="{{ url('clothes-category/' . $category_id . '/' . $item->department_id) }}"><i
-                                    class="fas fa-tshirt me-1"></i>{{ $item->category }}</a></li>
+                                    class="{{isset($tenantinfo->kind_business) && $tenantinfo->kind_business != 1 ? 'fas fa-tshirt' : 'fas fa-truck-monster'}} me-1"></i>{{ $item->category }}</a></li>
                         <li class="bread-standard"><a class="location" href="#"><i
-                                    class="fas fa-socks me-1"></i>Detalles</a>
+                                    class="{{isset($tenantinfo->kind_business) && $tenantinfo->kind_business != 1 ? 'fas fa-socks' : 'fas fa-car-side'}} me-1"></i>Detalles</a>
                         </li>
                     @else
                         <li class="home"><a href="{{ url('/') }}"><i class="fas fa-home me-1"></i></a></li>
                         <li class="bread-standard"><a href="{{ url('departments/index') }}"><i
                                     class="fas fa-shapes me-1"></i>Departamentos</a></li>
                         <li class="bread-standard"><a href="{{ url('category/' . $item->department_id) }}"><i
-                                    class="fas fa-box me-1"></i>{{ $item->department_name }}</a></li>
+                                    class="{{isset($tenantinfo->kind_business) && $tenantinfo->kind_business != 1 ? 'fas fa-box' : 'fas fa-car'}} me-1"></i>{{ $item->department_name }}</a></li>
                         <li class="bread-standard"><a
                                 href="{{ url('clothes-category/' . $category_id . '/' . $item->department_id) }}"><i
-                                    class="fas fa-tshirt me-1"></i>{{ $item->category }}</a></li>
+                                    class="{{isset($tenantinfo->kind_business) && $tenantinfo->kind_business != 1 ? 'fas fa-tshirt' : 'fas fa-truck-monster'}} me-1"></i>{{ $item->category }}</a></li>
                         <li class="bread-standard"><a class="location" href="#"><i
-                                    class="fas fa-socks me-1"></i>Detalles</a>
+                                    class="{{isset($tenantinfo->kind_business) && $tenantinfo->kind_business != 1 ? 'fas fa-socks' : 'fas fa-car-side'}} me-1"></i>Detalles</a>
                         </li>
                     @endif
 
 
                 </div>
-
-                @php
-                    $sizes = explode(',', $item->available_sizes);
-                    $stockPerSize = explode(',', $item->stock_per_size);
-                    $pricePerSize = explode(',', $item->price_per_size);
-                @endphp
                 <section class="pt-4">
                     <div class="container product_data">
                         <div class="row gx-5">
@@ -119,23 +113,17 @@
 
                                             </div>
                                         @endif
-                                        @if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'mandicr')
-                                            <span class="text-muted-normal"><i
-                                                    class="fas fa-shopping-basket fa-sm mx-1"></i>{{ $item->total_stock }}
-                                                {{ $item->total_stock > 1 ? 'órdenes' : 'orden' }}</span>
-                                        @endif
-                                        <input type="hidden" name="custom_size" id="custom_size"
-                                            value="{{ $tenantinfo->custom_size }}">
+
 
                                         @if ($item->total_stock > 0)
                                             @if (isset($tenantinfo->tenant) && $tenantinfo->tenant === 'mandicr')
                                                 <span class="text-success"><i
                                                         class="fas fa-shopping-basket fa-sm mx-1"></i>In Stock</span>
                                             @else
-                                                <span class="text-success ms-2">In stock</span>
+                                                <span class="text-success ms-2">Disponible</span>
                                             @endif
                                         @else
-                                            <span class="text-success ms-2">Not stock</span>
+                                            <span class="text-success ms-2">Vendido</span>
                                         @endif
 
                                     </div>
@@ -171,44 +159,13 @@
 
                                     <p>
                                         {!! $item->description !!}
-                                    </p>
-
-                                    <div class="row mb-3">
-                                        <div class="col-md-6 col-12">
-                                            <div class="input-group input-group-static w-25">
-                                                <label>Cantidad</label>
-                                                <input min="1" max="{{ $item->stock }}" id="quantityInput"
-                                                    value="1" type="number" name="quantity"
-                                                    class="form-control float-left w-100 quantity">
-                                            </div>
-                                        </div>
-                                        <div
-                                            class="col-md-12 col-12 {{ isset($tenantinfo->tenant) && $tenantinfo->manage_size == 0 ? 'd-none' : '' }}">
-                                            <label
-                                                class="">{{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'Tallas' : 'Tamaños' }}</label><br>
-                                            @foreach ($size_active as $key => $size)
-                                                <div class="form-check form-check-inline">
-                                                    <input required name="size_id" class="size_id form-check-input mb-2"
-                                                        type="radio" value="{{ $size->id }}"
-                                                        id="size_{{ $size->id }}" {{ $key === 0 ? 'checked' : '' }}>
-                                                    <label class="form-check-label table-text text-dark mb-2"
-                                                        for="size_{{ $size->id }}">
-                                                        {{ $size->size }}
-                                                    </label>
-                                                </div>
-                                            @endforeach
-                                        </div>
-                                        <!-- col.// -->
-                                        <input type="hidden" class="cloth_id" value="{{ $item->id }}">
-
-
-                                    </div>
+                                    </p>                                    
 
                                     <button @if ($item->total_stock > 0) @else disabled @endif
                                         class="btn btn-add_to_cart shadow-0 btnAddToCart"> <i
-                                            class="me-1 fa fa-shopping-basket"></i>
+                                            class="me-1 fa fa-user"></i>
                                         @if ($item->total_stock > 0)
-                                            Agregar Al Carrito
+                                            Contactar al vendedor
                                         @else
                                             Vendido!
                                         @endif
@@ -223,10 +180,8 @@
         @endforeach
     </div>
 
-
-
     <div class="text-center">
-        <h3 class="text-center text-muted-title mt-5">Potencia tu outfit con estas opciones</h3>
+        <h3 class="text-center text-muted-title mt-5">Descubre más autos!</h3>
     </div>
     <hr class="dark horizontal text-danger mb-3">
     <div class="row mt-4">
@@ -241,7 +196,7 @@
                             <li><a target="blank" href="{{ route('file', $item->image) }}"><i
                                         class="fas fa-eye"></i></a></li>
                         </ul>
-                        <a href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}"
+                        <a href="{{ url('detail-car/' . $item->id . '/' . $item->category_id) }}"
                             class="add-to-cart">Detallar</a>
                     </div>
                     <div class="product-content">
@@ -285,98 +240,4 @@
 @endsection
 @section('scripts')
 <script src="{{ asset('js/image-error-handler.js') }}"></script>
-<script>
-    $(document).ready(function() {
-
-        $('.btnAddToCart').click(function(e) {
-            e.preventDefault();
-            var cloth_id = $(this).closest('.product_data').find('.cloth_id').val();
-            var quantity = $(this).closest('.product_data').find('.quantity').val();
-            var size_id = $('input[name="size_id"]:checked').val();
-
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-            $.ajax({
-                method: "POST",
-                url: "/add-to-cart",
-                data: {
-                    'clothing_id': cloth_id,
-                    'quantity': quantity,
-                    'size_id': size_id,
-                },
-                success: function(response) {
-                    swal({
-                        title: response.status,
-                        icon: response.icon,
-                    });
-                    var newCartNumber = response.cartNumber
-                    $('.badge').text(newCartNumber);
-                    $('.cartIcon').text(' ' + newCartNumber);
-
-                }
-            });
-        });
-
-        var size_id = $('input[name="size_id"]:checked').val();
-        var stockPerSize = <?php echo json_encode($stockPerSize); ?>;
-        var pricePerSize = <?php echo json_encode($pricePerSize); ?>;
-        const sizes = {!! json_encode($sizes) !!};
-        var index = sizes.indexOf(size_id.toString());
-        var maxStock = stockPerSize[index];
-        $('input[name="quantity"]').attr('max', maxStock);
-
-
-        $('input[name="size_id"]').on('change', function() {
-            // Obtener el ID de la talla seleccionada
-            if (custom_size == 1) {
-                var selectedSizeId = $(this).val();
-
-                // Buscar el índice correspondiente al ID de la talla seleccionada
-                index = sizes.indexOf(selectedSizeId.toString());
-
-                // Verificar si se encontró el índice y actualizar el valor máximo del input quantity
-                if (index !== -1) {
-
-                    maxStock = stockPerSize[index];
-
-                    // Actualizar el atributo 'max' del input quantity
-                    $('input[name="quantity"]').attr('max', maxStock);
-                    $('input[name="quantity"]').val(1);
-                    custom_size = document.getElementById("custom_size").value
-                    porcDescuento = document.getElementById("porcDescuento").value
-
-
-                    perPrice = pricePerSize[index];
-                    const price = document.getElementById('text_price');
-                    const price_discount = document.getElementById('text_price_discount');
-                    if (porcDescuento > 0) {
-                        var descuento = (perPrice * porcDescuento) / 100;
-                        var precioConDescuento = perPrice - descuento;
-                        price.textContent = `₡${precioConDescuento.toLocaleString()}`;
-                        price_discount.textContent = `₡${perPrice.toLocaleString()}`;
-                    } else {
-                        price.textContent = `₡${perPrice.toLocaleString()}`;
-                    }
-
-
-                }
-            }
-
-        });
-
-        const quantityInput = document.getElementById('quantityInput');
-
-        quantityInput.addEventListener('keydown', function(event) {
-            if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
-                return true;
-            } else {
-                event.preventDefault();
-                return false;
-            }
-        });
-    });
-</script>
 @endsection

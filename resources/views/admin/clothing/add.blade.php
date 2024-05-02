@@ -52,8 +52,8 @@
                             </div>
                             <div class="col-md-12 mb-3">
                                 <div class="input-group input-group-static mb-4">
-                                    <label>Descripción</label><br>
-                                    <input required type="text" class="form-control form-control-lg" name="description">
+                                    <textarea id="editor" type="text" class="form-control form-control-lg" name="description"
+                                        placeholder="Descripción del producto"></textarea>
                                 </div>
                             </div>
 
@@ -104,9 +104,10 @@
                                         prenda.)</label><br>
                                     @foreach ($sizes as $size)
                                         <div class="form-check form-check-inline">
-                                            <input name="sizes_id[]" class="form-check-input mb-2 {{isset($tenantinfo->custom_size) && $tenantinfo->custom_size == 1 ? 'size-checkbox' : ''}}"
+                                            <input name="sizes_id[]"
+                                                class="form-check-input mb-2 {{ isset($tenantinfo->custom_size) && $tenantinfo->custom_size == 1 ? 'size-checkbox' : '' }}"
                                                 type="checkbox" value="{{ $size->id }}" id="sizes_id[]">
-                                            <label class="form-check-label table-text mb-2" for="size_{{$size->id}}">
+                                            <label class="form-check-label table-text mb-2" for="size_{{ $size->id }}">
                                                 {{ $size->size }}
                                             </label>
                                         </div>
@@ -135,7 +136,11 @@
             <div class="col-md-4">
                 <div class="card">
                     <div class="card-header">
-                        <h4 class="text-dark">Gestionar {{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'tallas' : 'tamaños'}} (Opcional)  {{isset($tenantinfo->custom_size) && $tenantinfo->custom_size == 0 ? 'Para gestionar las tallas debes activar este modo en la sección componentes' : ''}}</h4>
+                        <h4 class="text-dark">Gestionar
+                            {{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'tallas' : 'tamaños' }}
+                            (Opcional)
+                            {{ isset($tenantinfo->custom_size) && $tenantinfo->custom_size == 0 ? 'Para gestionar las tallas debes activar este modo en la sección componentes' : '' }}
+                        </h4>
                     </div>
                     <div class="card-body">
                         <form action="{{ url('custom/size') }}" method="POST" enctype="multipart/form-data">
@@ -173,7 +178,7 @@
                 tallasSeleccionadas.forEach(function(talla) {
                     var sizeName = $("label[for='size_" + talla + "']").text();
                     html += `
-                        <label for="precio_${talla}">{{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'Tallas' : 'Tamaños'}} ${sizeName}:</label><br>                       
+                        <label for="precio_${talla}">{{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'Tallas' : 'Tamaños' }} ${sizeName}:</label><br>                       
                         <div class="col-md-6">
                             <div class="input-group input-group-static">                           
                                 <input required type="text" value="" class="form-control form-control-lg" id="precio_${talla}" name="precios[${talla}]" placeholder="Precio">                            
@@ -190,6 +195,11 @@
                 });
                 document.getElementById("tallasSeleccionadas").innerHTML = html;
             });
+            ClassicEditor
+                .create(document.querySelector('#editor'))
+                .catch(error => {
+                    console.error(error);
+                });
         });
     </script>
 @endsection

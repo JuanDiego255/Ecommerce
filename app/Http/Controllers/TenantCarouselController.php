@@ -30,10 +30,10 @@ class TenantCarouselController extends Controller
 
             $tenant_carousel->save();
             DB::commit();
-            return redirect('/tenant-info')->with(['status' => 'Se ha guardado la imagen del carrusel', 'icon' => 'success']);
+            return redirect('/tenant-components')->with(['status' => 'Se ha guardado la imagen del carrusel', 'icon' => 'success']);
         } catch (\Exception $th) {
             DB::rollBack();
-            return redirect('/tenant-info')->with(['status' => 'No se pudo guardar la imagen del carrusel', 'icon' => 'error']);
+            return redirect('/tenant-components')->with(['status' => 'No se pudo guardar la imagen del carrusel', 'icon' => 'error']);
         }
     }
 
@@ -61,10 +61,10 @@ class TenantCarouselController extends Controller
             
             $tenantcarousel->update();
             DB::commit();
-            return redirect('/tenant-info')->with(['status' => 'Se ha editado la imagen del carrusel con éxito', 'icon' => 'success']);
+            return redirect('/tenant-components')->with(['status' => 'Se ha editado la imagen del carrusel con éxito', 'icon' => 'success']);
         } catch (\Exception $th) {
             DB::rollBack();
-            return redirect('/tenant-info')->with(['status' => 'No se pudo editar la imagen del carrusel', 'icon' => 'error']);
+            return redirect('/tenant-components')->with(['status' => 'No se pudo editar la imagen del carrusel', 'icon' => 'error']);
         }
     }
 

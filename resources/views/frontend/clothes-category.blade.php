@@ -9,16 +9,16 @@
         <div class="breadcrumb-nav bc3x">
             @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
                 <li class="home"><a href="{{ url('/') }}"><i class="fas fa-home me-1"></i></a></li>
-                <li class="bread-standard"><a href="{{ url('category/') }}"><i class="fas fa-box me-1"></i>Categorías</a></li>
-                <li class="bread-standard"><a href="#"><i class="fas fa-tshirt me-1"></i>{{ $category_name }}</a></li>
+                <li class="bread-standard"><a href="{{ url('category/') }}"><i class="{{isset($tenantinfo->kind_business) && $tenantinfo->kind_business != 1 ? 'fas fa-box' : 'fas fa-car'}} me-1"></i>Categorías</a></li>
+                <li class="bread-standard"><a href="#"><i class="{{isset($tenantinfo->kind_business) && $tenantinfo->kind_business != 1 ? 'fas fa-tshirt' : 'fas fa-car-side'}} me-1"></i>{{ $category_name }}</a></li>
             @else
                 <li class="home"><a href="{{ url('/') }}"><i class="fas fa-home me-1"></i></a></li>
                 </li>
                 <li class="bread-standard"><a href="{{ url('departments/index') }}"><i
                             class="fas fa-shapes me-1"></i>Departamentos</a></li>
                 <li class="bread-standard"><a href="{{ url('category/' . $department_id) }}"><i
-                            class="fas fa-box me-1"></i>{{ $department_name }}</a></li>
-                <li class="bread-standard"><a href="#"><i class="fas fa-tshirt me-1"></i>{{ $category_name }}</a></li>
+                            class="{{isset($tenantinfo->kind_business) && $tenantinfo->kind_business != 1 ? 'fas fa-box' : 'fas fa-car'}} me-1"></i>{{ $department_name }}</a></li>
+                <li class="bread-standard"><a href="#"><i class="{{isset($tenantinfo->kind_business) && $tenantinfo->kind_business != 1 ? 'fas fa-tshirt' : 'fas fa-car-side'}} me-1"></i>{{ $category_name }}</a></li>
             @endif
 
         </div>
@@ -47,7 +47,7 @@
                                     <li><a target="blank" href="{{ route('file', $item->image) }}"><i
                                                 class="fas fa-eye"></i></a></li>
                                 </ul>
-                                <a href="{{ url('detail-clothing/' . $item->id . '/' . $category_id) }}"
+                                <a href="{{isset($tenantinfo->kind_business) && $tenantinfo->kind_business != 1 ? url('detail-clothing/' . $item->id . '/' . $category_id) : url('detail-car/' . $item->id . '/' . $category_id)}}"
                                     class="add-to-cart">Detallar</a>
                             </div>
                             <div class="product-content">
@@ -56,7 +56,7 @@
                                     {{ $item->casa }}
                                 </h3>
                                 <h3 class="title clothing-name"><a
-                                        href="{{ url('detail-clothing/' . $item->id . '/' . $category_id) }}">{{ $item->name }}</a>
+                                        href="{{isset($tenantinfo->kind_business) && $tenantinfo->kind_business != 1 ? url('detail-clothing/' . $item->id . '/' . $category_id) : url('detail-car/' . $item->id . '/' . $category_id)}}">{{ $item->name }}</a>
                                 </h3>
                                 @if (isset($tenantinfo->show_stock) && $tenantinfo->show_stock != 0)
                                     <h4 class="title">Stock: {{ $item->total_stock }}</h4>

@@ -5,6 +5,7 @@
 @endsection
 @section('content')
     <div class="container">
+        @include('admin.tenant-info.carousel-modal')
         @include('admin.tenant-info.social-modal')
         <hr class="hr-servicios">
         @foreach ($tenant_info as $item)
@@ -62,7 +63,8 @@
                                     class="form-check-input" type="checkbox" name="custom_size" id="custom_size"
                                     @if ($item->custom_size == 1) checked @endif>
                                 <label class="form-check-label" for="custom_size">Gestión de tallas (Permite gestionar la
-                                    cantidad y precio de cada talla, debe tener el manejo de talla activo para habilitar este control)</label>
+                                    cantidad y precio de cada talla, debe tener el manejo de talla activo para habilitar
+                                    este control)</label>
                             </div>
                         </div>
                         <div class="row">
@@ -227,11 +229,67 @@
                 </div>
             </form>
         </div>
+
+        <div class="card mt-3">
+            <div class="card-header">
+                <h4 class="text-dark">Gestiona el carrusel de la página principal</h4>
+                <a data-bs-toggle="modal"
+                    data-bs-target="#add-tenant-carousel-modal">Nueva Imagen<i
+                        class="fa fa-plus me-3 text-dark cursor-pointer"></i></a>
+            </div>
+            <div class="card-body">
+                @if (count($tenantcarousel) != 0)
+                    <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner mb-4">
+                            @foreach ($tenantcarousel as $key => $carousel)
+                                <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
+                                    <div class="page-header min-vh-75 m-3"
+                                        style="background-image: url('{{ route('file', $carousel->image) }}');">
+                                        <span class="mask bg-gradient-dark"></span>
+                                        <div class="container">
+                                            <div class="row">
+                                                <div class="col-lg-6 my-auto">
+                                                    <h4 class="text-white mb-0 fadeIn1 fadeInBottom">
+                                                        {{ $carousel->text1 }}</h4>
+                                                    <h1 class="text-white fadeIn2 fadeInBottom">{{ $carousel->text2 }}
+                                                    </h1>
+                                                </div>
+                                                <div class="text-center">
+                                                    <a data-bs-toggle="modal"
+                                                        data-bs-target="#edit-tenant-carousel-modal{{ $carousel->id }}"><i
+                                                            class="fa fa-pencil me-3 text-white cursor-pointer"></i></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                @include('admin.tenant-info.carousel-modal-edit')
+                            @endforeach
+                        </div>
+                        <div class="min-vh-75 position-absolute w-100 top-0">
+                            <a class="carousel-control-prev" href="#carouselExampleControls" role="button"
+                                data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon position-absolute bottom-50"
+                                    aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </a>
+                            <a class="carousel-control-next" href="#carouselExampleControls" role="button"
+                                data-bs-slide="next">
+                                <span class="carousel-control-next-icon position-absolute bottom-50"
+                                    aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </a>
+                        </div>
+                    </div>
+                @endif
+            </div>
+        </div>
     </div>
 @endsection
 @section('script')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-colorpicker/2.5.3/js/bootstrap-colorpicker.min.js">
     </script>
+    <script src="{{ asset('js/image-error-handler.js') }}"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             // Obtener todos los controles de color
@@ -270,6 +328,12 @@
                         colorPicker.value = enteredColor;
                     }
                 });
+            });
+
+            var lazyBackgrounds = document.querySelectorAll('.lazy-background');
+            lazyBackgrounds.forEach(function(background) {
+                var imageUrl = background.getAttribute('data-background');
+                background.style.backgroundImage = 'url(' + imageUrl + ')';
             });
         });
     </script>

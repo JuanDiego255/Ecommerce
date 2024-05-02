@@ -39,7 +39,7 @@
                             style="background-image: url(&quot;https://demos.creative-tim.com/test/material-dashboard-pro/assets/img/products/product-1-min.jpg&quot;);">
                         </div>
                     </div>
-                    <div class="card-body text-center">
+                    <div class="card-body">
                         <h5 class="font-weight-normal mt-3 clothing-name">{{ $clothing->name }}</h5>
                         <input type="hidden" class="code" name="code" value="{{ $clothing->code }}">
                         <div class="d-flex mt-n6 mx-auto">
@@ -60,8 +60,8 @@
                                 <i class="material-icons text-lg">edit</i>
                             </a>
                         </div>
-                        <p class="mb-0">
-                            {{ $clothing->description }}
+                        <p class="mt-3">
+                            {!! $clothing->description !!}
                         </p>
                         @if (isset($tenantinfo->tenant) && $tenantinfo->manage_size == 1)
                             @php

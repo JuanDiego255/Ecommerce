@@ -44,6 +44,7 @@ Route::middleware([
 ])->group(function () {
     Route::get('/', [FrontendController::class, 'index']);
     Route::group(['middleware' => 'isLicense'], function () {
+
         //Google authentication ----->
         Route::get('/google-auth/redirect', [AuthController::class, 'redirectGoogle']);
         Route::get('/google-auth/callback', [AuthController::class, 'callbackGoogle']);
@@ -152,6 +153,12 @@ Route::middleware([
             Route::put('/department/update/{id}', [DepartmentController::class, 'update']);
             Route::delete('/delete/department/{id}', [DepartmentController::class, 'delete']);
         });
+    });
+
+    //Rutas para las ventas de autos
+    Route::group(['middleware' => 'isKindBusiness'], function () {
+        Route::get('index/carsale', [FrontendController::class, 'indexCarSale']);
+        Route::get('detail-car/{id}/{cat_id}', [FrontendController::class, 'DetailCarById']);
     });
 
 

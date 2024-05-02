@@ -71,6 +71,7 @@
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
     <script src="{{ asset('js/material-dashboard.min.js') }}" defer></script>
     <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
 
     @if (session('status'))
         <script>

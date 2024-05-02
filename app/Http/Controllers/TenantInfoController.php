@@ -30,9 +30,8 @@ class TenantInfoController extends Controller
         //
         $data = Cache::remember('tenant_info_data', $this->expirationTime, function () {
             $tenant_info = TenantInfo::get();
-            $tenantsocial = TenantSocialNetwork::get();
-            $tenantcarousel = TenantCarousel::get();
-            return compact('tenant_info', 'tenantsocial', 'tenantcarousel');
+            $tenantsocial = TenantSocialNetwork::get();            
+            return compact('tenant_info', 'tenantsocial');
         });
         return view('admin.tenant-info.index', $data);
     }
@@ -46,7 +45,8 @@ class TenantInfoController extends Controller
         //
         $data = Cache::remember('tenant_info_data', $this->expirationTime, function () {
             $tenant_info = TenantInfo::get();
-            return compact('tenant_info');
+            $tenantcarousel = TenantCarousel::get();
+            return compact('tenant_info','tenantcarousel');
         });
         return view('admin.tenant-info.components', $data);
     }

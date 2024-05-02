@@ -45,8 +45,8 @@
         --sidebar_text: {{ $settings->sidebar_text }};
         --hover: {{ $settings->hover }};
         --cart_icon: {{ $settings->cart_icon }};
-        --cintillo: {{ $settings->cintillo }}; 
-        --cintillo_text: {{ $settings->cintillo_text }}; 
+        --cintillo: {{ $settings->cintillo }};
+        --cintillo_text: {{ $settings->cintillo_text }};
     }
 </style>
 
@@ -57,7 +57,11 @@
 
         <div>
             @if (isset($tenantinfo->tenant) && $tenantinfo->tenant != 'main')
-                @include('layouts.inc.frontnavbar')
+                @if (isset($tenantinfo->kind_business) && $tenantinfo->kind_business != 1)
+                    @include('layouts.inc.frontnavbar')
+                @else
+                    @include('layouts.inc.frontcar')
+                @endif
             @else
                 @include('layouts.inc.centralnavbar')
             @endif

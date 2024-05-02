@@ -34,7 +34,7 @@
                                 </div>
                             </div>
                             <div class="col-md-12">
-                                <label class="form-label">Instagram (Esta descripción se mostrará en la sección de
+                                <label class="form-label">Descuento (Esta descripción se mostrará en la sección de
                                     descuentos en la página de inicio)</label>
                                 <div
                                     class="input-group input-group-lg input-group-outline {{ isset($item->title_discount) ? 'is-filled' : '' }} my-3">
@@ -67,7 +67,7 @@
                                 </div>
                             </div>
                             <div class="col-md-12">
-                                <label class="form-label">Instagram (Esta descripción se mostrará en la sección Misión en la
+                                <label class="form-label">Misión (Esta descripción se mostrará en la sección Misión en la
                                     página de inicio)</label>
                                 <div
                                     class="input-group input-group-lg input-group-outline {{ isset($item->mision) ? 'is-filled' : '' }} my-3">
@@ -83,7 +83,7 @@
                                 </div>
                             </div>
                             <div class="col-md-12">
-                                <label class="form-label">Instagram (Esta descripción se mostrará en la sección de productos
+                                <label class="form-label">Tendencia (Esta descripción se mostrará en la sección de productos
                                     en tendencia en la página de inicio)</label>
                                 <div
                                     class="input-group input-group-lg input-group-outline {{ isset($item->title_trend) ? 'is-filled' : '' }} my-3">

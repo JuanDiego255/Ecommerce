@@ -32,7 +32,7 @@
                                     </div>
                                 </div>
                             @endif
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-12 mb-3">
                                 <div class="input-group input-group-static mb-4">
                                     <label>Código</label>
                                     <input required value="{{ $clothing->code }}" type="text"
@@ -40,13 +40,12 @@
                                 </div>
                             </div>
                             <input type="hidden" name="category_id" value="{{ $clothing->category_id }}">
-                            <div class="col-md-6 mb-3">
-                                <div class="input-group input-group-static mb-4">
-                                    <label>Descripción</label><br>
-                                    <input required value="{{ $clothing->description }}" type="text"
-                                        class="form-control form-control-lg" name="description">
-                                </div>
+                            <div class="col-md-12 mb-3">
+
+                                <label>Descripción</label><br>
+                                <textarea id="editor" type="text" class="form-control form-control-lg" name="description">{!! $clothing->description !!}</textarea>
                             </div>
+
                             <input type="hidden" name="clothing_id" id="clothing_id" value="{{ $clothing->id }}">
                             <div class="col-md-6 mb-3">
                                 <div class="input-group input-group-static mb-4">
@@ -223,7 +222,44 @@
                     price: precioParaTalla
                 };
             }
+            $(document).ready(function() {
+                $('.size-checkbox').change(function(e) {
+                    var tallasSeleccionadas = [];
+                    var checkboxes = document.getElementsByClassName("size-checkbox");
 
+                    for (var i = 0; i < checkboxes.length; i++) {
+                        if (checkboxes[i].checked) {
+                            tallasSeleccionadas.push(checkboxes[i].value);
+                        }
+                    }
+
+                    var html = "";
+                    tallasSeleccionadas.forEach(function(talla) {
+                        var sizeName = $("label[for='size_" + talla + "']").text();
+                        html += `
+                        <label for="precio_${talla}">{{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'Tallas' : 'Tamaños' }} ${sizeName}:</label><br>                       
+                        <div class="col-md-6">
+                            <div class="input-group input-group-static">                           
+                                <input required type="text" value="" class="form-control form-control-lg" id="precio_${talla}" name="precios[${talla}]" placeholder="Precio">                            
+                            </div>
+                        </div>
+                       
+                        <div class="col-md-6">
+                            <div class="input-group input-group-static">                           
+                                <input required type="text" value="" class="form-control form-control-lg" id="cantidad_${talla}" name="cantidades[${talla}]" placeholder="Cantidad">
+                            </div>
+                        </div>
+                        
+                    `;
+                    });
+                    document.getElementById("tallasSeleccionadas").innerHTML = html;
+                });
+                ClassicEditor
+                    .create(document.querySelector('#editor'))
+                    .catch(error => {
+                        console.error(error);
+                    });
+            });
         });
     </script>
 @endsection
