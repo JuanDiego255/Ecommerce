@@ -63,7 +63,7 @@ class ClothingCategoryController extends Controller
                     'product_images.image as image'
                 )
                 ->groupBy('clothing.id', 'clothing.casa', 'clothing.mayor_price', 'clothing.discount', 'categories.name', 'clothing.code', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
-                ->simplePaginate(15);
+                ->get();
         });
 
         $category = Cache::remember('category_' . $id, $this->expirationTime, function () use ($id) {

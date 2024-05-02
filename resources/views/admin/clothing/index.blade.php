@@ -15,93 +15,120 @@
         </div>
     </div>
 
-    <div class="row w-75">
-        <div class="col-md-6">
-            <div class="input-group input-group-lg input-group-static my-3 w-100">
-                <label>Filtrar</label>
-                <input value="" placeholder="Escribe para filtrar...." type="text"
-                    class="form-control form-control-lg" name="searchfor" id="searchfor">
-            </div>
-        </div>
-    </div>
-    <div class="row row-cols-1 row-cols-md-3 g-4 align-content-center card-group mt-5 mb-5">
-        @foreach ($clothings as $clothing)
-            <div class="col bg-transparent mb-2 card-container">
-                <div class="card" data-animation="true">
-
-                    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-                        <a target="blank" data-fancybox="gallery" href="{{ route('file', $clothing->image) }}"
-                            class="d-block blur-shadow-image">
-                            <img src="{{ tenant_asset('/') . '/' . $clothing->image }}" alt="img-blur-shadow"
-                                class="img-fluid shadow border-radius-lg w-100">
-                        </a>
-                        <div class="colored-shadow"
-                            style="background-image: url(&quot;https://demos.creative-tim.com/test/material-dashboard-pro/assets/img/products/product-1-min.jpg&quot;);">
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <h5 class="font-weight-normal mt-3 clothing-name">{{ $clothing->name }}</h5>
-                        <input type="hidden" class="code" name="code" value="{{ $clothing->code }}">
-                        <div class="d-flex mt-n6 mx-auto">
-                            <form name="delete-clothing{{ $clothing->id }}" id="delete-clothing{{ $clothing->id }}"
-                                method="post" action="{{ url('/delete-clothing/' . $clothing->id) }}">
-                                {{ csrf_field() }}
-                                {{ method_field('DELETE') }}
-                            </form>
-                            <button form="delete-clothing{{ $clothing->id }}" type="submit"
-                                onclick="return confirm('Deseas borrar esta prenda?')"
-                                class="btn btn-link text-velvet ms-auto border-0" data-bs-toggle="tooltip"
-                                data-bs-placement="bottom" title="Eliminar">
-                                <i class="material-icons text-lg">delete</i>
-                            </button>
-                            <a class="btn btn-link text-velvet me-auto border-0"
-                                href="{{ url('/edit-clothing') . '/' . $clothing->id . '/' . $category_id }}"
-                                data-bs-toggle="tooltip" data-bs-placement="bottom" title="Editar">
-                                <i class="material-icons text-lg">edit</i>
-                            </a>
-                        </div>
-                        <p class="mt-3">
-                            {!! $clothing->description !!}
-                        </p>
-                        @if (isset($tenantinfo->tenant) && $tenantinfo->manage_size == 1)
-                            @php
-                                $sizes = explode(',', $clothing->available_sizes);
-                                $stockPerSize = explode(',', $clothing->stock_per_size);
-                            @endphp
-                            @for ($i = 0; $i < count($sizes); $i++)
-                                <p class="mb-0">Talla {{ $sizes[$i] }}: {{ $stockPerSize[$i] }}</p>
-                            @endfor
-                        @endif
-
-                        @if ($clothing->discount)
-                            <p class="mb-0">
-                                Descuento: {{ $clothing->discount }}%
-                            </p>
-                        @endif
-
-                    </div>
-                    <hr class="dark horizontal my-0">
-                    <div class="card-footer d-flex">
-                        <p class="font-weight-normal my-auto">Precio: ₡{{ number_format($clothing->price) }}</p>
-                        <i class="material-icons position-relative ms-auto text-lg me-1 my-auto">electric_bolt</i>
-                        <p class="text-sm my-auto"> Estado: @if ($clothing->total_stock > 0)
-                                Disponible
-                            @else
-                                Agotado
-                            @endif
-                        </p>
-                        <i class="material-icons position-relative ms-auto text-lg me-1 my-auto">inventory</i>
-                        <p class="text-sm my-auto"> Stock: {{ $clothing->total_stock }}</p>
-                    </div>
+    <div class="row row-cols-1 row-cols-md-2 g-4 align-content-center card-group mt-1">
+        <div class="row w-100">
+            <div class="col-md-6">
+                <div class="input-group input-group-lg input-group-static my-3 w-100">
+                    <label>Filtrar</label>
+                    <input value="" placeholder="Escribe para filtrar...." type="text"
+                        class="form-control form-control-lg" name="searchfor" id="searchfor">
                 </div>
             </div>
-        @endforeach
+            <div class="col-md-6">
+                <div class="input-group input-group-lg input-group-static my-3 w-100">
+                    <label>Mostrar</label>
+                    <select id="recordsPerPage" name="recordsPerPage" class="form-control form-control-lg"
+                        autocomplete="recordsPerPage">
+                        <option value="5">5 Registros</option>
+                        <option selected value="10">10 Registros</option>
+                        <option value="25">25 Registros</option>
+                        <option value="50">50 Registros</option>
+                    </select>
 
+                </div>
+            </div>
+
+        </div>
+        <div class="col-md-12">
+            <div class="card p-2">
+                <div class="table-responsive">
+
+                    <table class="table align-items-center mb-0" id="clothings">
+                        <thead>
+                            <tr>
+
+                                <th class="text-secondary font-weight-bolder opacity-7 ps-2">Producto
+                                </th>
+                                <th class="text-center text-secondary font-weight-bolder opacity-7">
+                                    Precio</th>
+                                <th
+                                    class="text-center text-secondary font-weight-bolder opacity-7 {{ isset($tenantinfo->manage_size) && $tenantinfo->manage_size == 0 ? 'd-none' : '' }}">
+                                    Tallas</th>
+                                <th class="text-center text-secondary font-weight-bolder opacity-7">
+                                    Stock</th>
+                                <th class="text-center text-secondary font-weight-bolder opacity-7">
+                                    Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($clothings as $item)
+                                <tr>
+
+                                    <td class="w-50">
+                                        <div class="d-flex px-2 py-1">
+                                            <div>
+                                                <a target="blank" data-fancybox="gallery"
+                                                    href="{{ route('file', $item->image) }}">
+                                                    <img src="{{ route('file', $item->image) }}"
+                                                        class="avatar avatar-md me-3">
+                                                </a>
+                                            </div>
+                                            <div class="d-flex flex-column justify-content-center">
+                                                <h4 class="mb-0 text-lg">{{ $item->name }}</h4>
+                                                
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="align-middle text-center text-sm">
+                                        <p class="text-success mb-0">₡{{ $item->price }}
+                                        </p>
+                                    </td>
+                                    <td class="align-middle text-center text-sm {{ isset($tenantinfo->manage_size) && $tenantinfo->manage_size == 0 ? 'd-none' : '' }}">
+                                        @if (isset($tenantinfo->tenant) && $tenantinfo->manage_size == 1)
+                                            @php
+                                                $sizes = explode(',', $item->available_sizes);
+                                                $stockPerSize = explode(',', $item->stock_per_size);
+                                            @endphp
+                                            @for ($i = 0; $i < count($sizes); $i++)
+                                                <p class="mb-0">Talla {{ $sizes[$i] }}: {{ $stockPerSize[$i] }}</p>
+                                            @endfor
+                                        @endif
+                                    </td>
+                                    <td class="align-middle text-center text-sm">
+                                        <p class="text-success mb-0">{{ $item->total_stock }}
+                                        </p>
+                                    </td>
+
+                                    <td class="align-middle text-center">
+                                        <form name="delete-clothing{{ $item->id }}"
+                                            id="delete-clothing{{ $item->id }}" method="post"
+                                            action="{{ url('/delete-clothing/' . $item->id) }}">
+                                            {{ csrf_field() }}
+                                            {{ method_field('DELETE') }}
+                                        </form>
+                                        <button form="delete-clothing{{ $item->id }}" type="submit"
+                                            onclick="return confirm('Deseas borrar este producto?')"
+                                            class="btn btn-link text-velvet ms-auto border-0" data-bs-toggle="tooltip"
+                                            data-bs-placement="bottom" title="Eliminar">
+                                            <i class="material-icons text-lg">delete</i>
+                                        </button>
+                                        <a class="btn btn-link text-velvet me-auto border-0"
+                                            href="{{ url('/edit-clothing') . '/' . $item->id . '/' . $category_id }}"
+                                            data-bs-toggle="tooltip" data-bs-placement="bottom" title="Editar">
+                                            <i class="material-icons text-lg">edit</i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
     </div>
     <center>
-        <div class="container">
-            {{ $clothings ?? ('')->links('pagination::simple-bootstrap-4') }}
-        </div>
+
         <div class="col-md-12 mt-3">
             <a href="{{ url('categories') }}" class="btn btn-velvet w-25">Volver</a>
         </div>
@@ -111,17 +138,45 @@
     <script src="{{ asset('js/image-error-handler.js') }}"></script>
     <script>
         $(document).ready(function() {
-            $('#searchfor').on('keyup', function() {
-                var searchTerm = $(this).val().toLowerCase();
-                $('.card-container').each(function() {
-                    var name = $(this).find('.clothing-name').text().toLowerCase();
-                    var code = $(this).find('.code').val().toLowerCase();
-                    if (name.includes(searchTerm) || code.includes(searchTerm)) {
-                        $(this).show();
-                    } else {
-                        $(this).hide();
+            var dataTable = $('#clothings').DataTable({
+                searching: true,
+                lengthChange: false,
+
+                "language": {
+                    "sProcessing": "Procesando...",
+                    "sLengthMenu": "Mostrar _MENU_ registros",
+                    "sZeroRecords": "No se encontraron resultados",
+                    "sEmptyTable": "Ningún dato disponible en esta tabla",
+                    "sInfo": "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                    "sInfoEmpty": "Mostrando 0 a 0 de 0 registros",
+                    "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+                    "sInfoPostFix": "",
+                    "sSearch": "Buscar:",
+                    "sUrl": "",
+                    "sInfoThousands": ",",
+                    "sLoadingRecords": "Cargando...",
+                    "oPaginate": {
+                        "sFirst": "<<",
+                        "sLast": "Último",
+                        "sNext": ">>",
+                        "sPrevious": "<<"
+                    },
+                    "oAria": {
+                        "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
+                        "sSortDescending": ": Activar para ordenar la columna de manera descendente"
                     }
-                });
+                }
+            });
+
+            $('#recordsPerPage').on('change', function() {
+                var recordsPerPage = parseInt($(this).val(), 10);
+                dataTable.page.len(recordsPerPage).draw();
+            });
+
+            // Captura el evento input en el campo de búsqueda
+            $('#searchfor').on('input', function() {
+                var searchTerm = $(this).val();
+                dataTable.search(searchTerm).draw();
             });
 
         });
