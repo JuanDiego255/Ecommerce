@@ -11,31 +11,33 @@
 
         <hr class="hr-servicios">
         <a href="{{ url('metatag/agregar') }}" class="btn btn-velvet">Nueva Sección</a>
+        <div class="card mt-3 mb-3">
+            <div class="card-body">
+                <div class="row w-100">
+                    <div class="col-md-6">
+                        <div class="input-group input-group-lg input-group-static my-3 w-100">
+                            <label>Filtrar</label>
+                            <input value="" placeholder="Escribe para filtrar...." type="text"
+                                class="form-control form-control-lg" name="searchfor" id="searchfor">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="input-group input-group-lg input-group-static my-3 w-100">
+                            <label>Mostrar</label>
+                            <select id="recordsPerPage" name="recordsPerPage" class="form-control form-control-lg"
+                                autocomplete="recordsPerPage">
+                                <option value="5">5 Registros</option>
+                                <option selected value="10">10 Registros</option>
+                                <option value="25">25 Registros</option>
+                                <option value="50">50 Registros</option>
+                            </select>
 
-        <div class="row w-100">
-            <div class="col-md-6">
-                <div class="input-group input-group-lg input-group-static my-3 w-100">
-                    <label>Filtrar</label>
-                    <input value="" placeholder="Escribe para filtrar...." type="text"
-                        class="form-control form-control-lg" name="searchfor" id="searchfor">
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="input-group input-group-lg input-group-static my-3 w-100">
-                    <label>Mostrar</label>
-                    <select id="recordsPerPage" name="recordsPerPage" class="form-control form-control-lg"
-                        autocomplete="recordsPerPage">
-                        <option value="5">5 Registros</option>
-                        <option selected value="10">10 Registros</option>
-                        <option value="25">25 Registros</option>
-                        <option value="50">50 Registros</option>
-                    </select>
+                        </div>
+                    </div>
 
                 </div>
             </div>
         </div>
-
-
         <center>
             <div class="card w-100 mb-4">
                 <div class="table-responsive">
@@ -88,7 +90,7 @@
                                                 style="display:inline">
                                                 {{ csrf_field() }}
                                                 {{ method_field('DELETE') }}
-                                                <button class="btn btn-velvet text-white btn-tooltip"
+                                                <button class="btn btn-admin-delete text-white btn-tooltip"
                                                     data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar"
                                                     data-container="body" data-animation="true" type="submit"> <i
                                                         class="material-icons opacity-10">

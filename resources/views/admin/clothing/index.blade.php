@@ -14,31 +14,35 @@
             <a href="{{ url('new-item/' . $category_id) }}" class="btn btn-velvet w-100">Agregar Nuevo Producto</a>
         </div>
     </div>
-
-    <div class="row row-cols-1 row-cols-md-2 g-4 align-content-center card-group mt-1">
-        <div class="row w-100">
-            <div class="col-md-6">
-                <div class="input-group input-group-lg input-group-static my-3 w-100">
-                    <label>Filtrar</label>
-                    <input value="" placeholder="Escribe para filtrar...." type="text"
-                        class="form-control form-control-lg" name="searchfor" id="searchfor">
+    <div class="card mt-3">
+        <div class="card-body">
+            <div class="row w-100">
+                <div class="col-md-6">
+                    <div class="input-group input-group-lg input-group-static my-3 w-100">
+                        <label>Filtrar</label>
+                        <input value="" placeholder="Escribe para filtrar...." type="text"
+                            class="form-control form-control-lg" name="searchfor" id="searchfor">
+                    </div>
                 </div>
-            </div>
-            <div class="col-md-6">
-                <div class="input-group input-group-lg input-group-static my-3 w-100">
-                    <label>Mostrar</label>
-                    <select id="recordsPerPage" name="recordsPerPage" class="form-control form-control-lg"
-                        autocomplete="recordsPerPage">
-                        <option value="5">5 Registros</option>
-                        <option selected value="10">10 Registros</option>
-                        <option value="25">25 Registros</option>
-                        <option value="50">50 Registros</option>
-                    </select>
+                <div class="col-md-6">
+                    <div class="input-group input-group-lg input-group-static my-3 w-100">
+                        <label>Mostrar</label>
+                        <select id="recordsPerPage" name="recordsPerPage" class="form-control form-control-lg"
+                            autocomplete="recordsPerPage">
+                            <option value="5">5 Registros</option>
+                            <option selected value="10">10 Registros</option>
+                            <option value="25">25 Registros</option>
+                            <option value="50">50 Registros</option>
+                        </select>
 
+                    </div>
                 </div>
-            </div>
 
+            </div>
         </div>
+    </div>
+    <div class="row row-cols-1 row-cols-md-2 g-4 align-content-center card-group mt-1">
+
         <div class="col-md-12">
             <div class="card p-2">
                 <div class="table-responsive">
@@ -75,7 +79,7 @@
                                             </div>
                                             <div class="d-flex flex-column justify-content-center">
                                                 <h4 class="mb-0 text-lg">{{ $item->name }}</h4>
-                                                
+
                                             </div>
                                         </div>
                                     </td>
@@ -83,7 +87,8 @@
                                         <p class="text-success mb-0">₡{{ $item->price }}
                                         </p>
                                     </td>
-                                    <td class="align-middle text-center text-sm {{ isset($tenantinfo->manage_size) && $tenantinfo->manage_size == 0 ? 'd-none' : '' }}">
+                                    <td
+                                        class="align-middle text-center text-sm {{ isset($tenantinfo->manage_size) && $tenantinfo->manage_size == 0 ? 'd-none' : '' }}">
                                         @if (isset($tenantinfo->tenant) && $tenantinfo->manage_size == 1)
                                             @php
                                                 $sizes = explode(',', $item->available_sizes);

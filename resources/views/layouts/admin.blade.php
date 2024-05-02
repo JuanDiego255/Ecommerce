@@ -47,16 +47,17 @@
     }
 </style>
 <body class="g-sidenav-show  bg-gray-200">
-
-    @include('layouts.inc.sidebar')
-    <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
-        @include('layouts.inc.adminnav')
-        <div class="container-fluid py-4">
-            @yield('content')
-        </div>
-        @include('layouts.inc.adminfooter')
-
-    </main>
+    <div class="main-container">
+        @include('layouts.inc.sidebar')
+        <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
+            @include('layouts.inc.adminnav')
+            <div class="container-fluid py-4">
+                @yield('content')
+            </div>
+            @include('layouts.inc.adminfooter')
+    
+        </main>
+    </div>
 
     <script src="{{ asset('js/popper.min.js') }}" defer></script>
     <script src="{{ asset('js/bootstrap.min.js') }}" defer></script>

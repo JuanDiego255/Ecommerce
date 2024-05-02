@@ -15,7 +15,7 @@
                 {{ method_field('PUT') }}
                 <div class="card">
                     <div class="card-header">
-                        <h4 class="text-dark">Mostrar u ocultar componentes</h4>
+                        <h4 class="text-dark">Mostrar y ocultar componentes</h4>
                     </div>
                     <div class="card-body">
                         <div class="row">

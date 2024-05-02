@@ -4,44 +4,49 @@
     {!! OpenGraph::generate() !!}
 @endsection
 @section('content')
-    <h1 class="text-dark text-center">Registro de ventas</h1>
+    <h1 class="font-title text-center">Registro de ventas</h1>
     <div class="container">
-        <div class="row w-100">
-            <div class="col-md-3">
-                <div class="input-group input-group-lg input-group-static my-3 w-100">
-                    <label>Filtrar</label>
-                    <input value="" placeholder="Escribe para filtrar por alguna columna...." type="text"
-                        class="form-control form-control-lg" name="searchfor" id="searchfor">
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="input-group input-group-lg input-group-static my-3 w-100">
-                    <label>Fecha Inicial</label>
-                    <input value="" type="date" class="form-control form-control-lg" name="searchfordateini"
-                        id="searchfordateini">
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="input-group input-group-lg input-group-static my-3 w-100">
-                    <label>Fecha Final</label>
-                    <input value="" type="date" class="form-control form-control-lg" name="searchfordatefin"
-                        id="searchfordatefin">
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="input-group input-group-lg input-group-static my-3 w-100">
-                    <label>Mostrar</label>
-                    <select id="recordsPerPage" name="recordsPerPage" class="form-control form-control-lg"
-                        autocomplete="recordsPerPage">
-                        <option value="5">5 Registros</option>
-                        <option selected value="10">10 Registros</option>
-                        <option value="25">25 Registros</option>
-                        <option value="50">50 Registros</option>
-                    </select>
-
+        <div class="card mt-3 mb-3">
+            <div class="card-body">
+                <div class="row w-100">
+                    <div class="col-md-3">
+                        <div class="input-group input-group-lg input-group-static my-3 w-100">
+                            <label>Filtrar</label>
+                            <input value="" placeholder="Escribe para filtrar por alguna columna...." type="text"
+                                class="form-control form-control-lg" name="searchfor" id="searchfor">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="input-group input-group-lg input-group-static my-3 w-100">
+                            <label>Fecha Inicial</label>
+                            <input value="" type="date" class="form-control form-control-lg" name="searchfordateini"
+                                id="searchfordateini">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="input-group input-group-lg input-group-static my-3 w-100">
+                            <label>Fecha Final</label>
+                            <input value="" type="date" class="form-control form-control-lg" name="searchfordatefin"
+                                id="searchfordatefin">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="input-group input-group-lg input-group-static my-3 w-100">
+                            <label>Mostrar</label>
+                            <select id="recordsPerPage" name="recordsPerPage" class="form-control form-control-lg"
+                                autocomplete="recordsPerPage">
+                                <option value="5">5 Registros</option>
+                                <option selected value="10">10 Registros</option>
+                                <option value="25">25 Registros</option>
+                                <option value="50">50 Registros</option>
+                            </select>
+        
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+       
         <div class="row row-cols-1 row-cols-md-2 g-4 align-content-center card-group mt-1">
             <div class="col-md-4">
                 <div class="card">

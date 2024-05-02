@@ -129,7 +129,7 @@
                         <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
                             <i class="material-icons opacity-10">sports_score</i>
                         </div>
-                        <span class="nav-link-text ms-1">Metatags</span>
+                        <span class="nav-link-text ms-1">SEO Tools</span>
                     </a>
                 </li>
             @endif

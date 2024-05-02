@@ -4,47 +4,54 @@
     {!! OpenGraph::generate() !!}
 @endsection
 @section('content')
-    <h1 class="text-dark text-center">Ventas</h1>
+    <h1 class="font-title text-center">Ventas</h1>
     <div class="container">
 
         <div class="row row-cols-1 row-cols-md-2 g-4 align-content-center card-group mt-1">
             <div class="row w-100">
-                <div class="col-md-4">
-                    <div class="input-group input-group-lg input-group-static my-3 w-100">
-                        <label>Mostrar</label>
-                        <select id="recordsPerPage" name="recordsPerPage" class="form-control form-control-lg"
-                            autocomplete="recordsPerPage">
-                            <option value="5">5 Registros</option>
-                            <option selected value="10">10 Registros</option>
-                            <option value="25">25 Registros</option>
-                            <option value="50">50 Registros</option>
-                        </select>
+                <div class="card mt-3 mb-3">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="input-group input-group-lg input-group-static my-3 w-100">
+                                    <label>Mostrar</label>
+                                    <select id="recordsPerPage" name="recordsPerPage" class="form-control form-control-lg"
+                                        autocomplete="recordsPerPage">
+                                        <option value="5">5 Registros</option>
+                                        <option selected value="10">10 Registros</option>
+                                        <option value="25">25 Registros</option>
+                                        <option value="50">50 Registros</option>
+                                    </select>
 
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="input-group input-group-lg input-group-static my-3 w-100">
+                                    <label>Código</label>
+                                    <input value="" placeholder="Código del producto...." type="text"
+                                        class="form-control form-control-lg" name="code" id="code">
+                                </div>
+                            </div>
+                            <input type="hidden" value="{{ $tenantinfo->manage_size }}" id="manage_size">
+
+                            <div class="col-md-4 mb-3 d-none d-flex" id="size_section">
+                                <div
+                                    class="input-group input-group-static w-75 {{ isset($tenantinfo->tenant) && $tenantinfo->manage_size == 0 ? 'd-none' : '' }}">
+                                    <label>Tallas</label>
+                                    <select required id="sizes" name="sizes"
+                                        class="form-control form-control-lg @error('sizes') is-invalid @enderror" required
+                                        autocomplete="section" autofocus>
+                                    </select>
+                                </div>
+                                <div class="div">
+                                    <button class="btn btn-add_to_cart shadow-0 btnAdd"> <i
+                                            class="me-1 fa fa-shopping-basket"></i></button>
+                                </div>
+                            </div>
+
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="input-group input-group-lg input-group-static my-3 w-100">
-                        <label>Código</label>
-                        <input value="" placeholder="Código del producto...." type="text"
-                            class="form-control form-control-lg" name="code" id="code">
-                    </div>
-                </div>
-                <input type="hidden" value="{{$tenantinfo->manage_size}}" id="manage_size">
-
-                <div class="col-md-4 mb-3 d-none d-flex" id="size_section">
-                    <div class="input-group input-group-static w-75 {{isset($tenantinfo->tenant) && $tenantinfo->manage_size == 0 ? 'd-none' : ''}}">
-                        <label>Tallas</label>
-                        <select required id="sizes" name="sizes"
-                            class="form-control form-control-lg @error('sizes') is-invalid @enderror" required
-                            autocomplete="section" autofocus>
-                        </select>
-                    </div>
-                    <div class="div">
-                        <button class="btn btn-add_to_cart shadow-0 btnAdd"> <i
-                                class="me-1 fa fa-shopping-basket"></i></button>
-                    </div>
-                </div>
-
             </div>
             <div class="col-md-8">
                 <div class="card p-2">
@@ -58,7 +65,8 @@
                                     </th>
                                     <th class="text-center text-secondary font-weight-bolder opacity-7">
                                         Precio</th>
-                                    <th class="text-center text-secondary font-weight-bolder opacity-7 {{isset($tenantinfo->manage_size) && $tenantinfo->manage_size == 0 ? 'd-none' : ''}}">
+                                    <th
+                                        class="text-center text-secondary font-weight-bolder opacity-7 {{ isset($tenantinfo->manage_size) && $tenantinfo->manage_size == 0 ? 'd-none' : '' }}">
                                         Talla</th>
                                     <th class="text-center text-secondary font-weight-bolder opacity-7">
                                         Cant</th>
@@ -79,7 +87,7 @@
                                         <input type="hidden" name="prod_id" value="{{ $item->id }}" class="prod_id">
                                         <input type="hidden" class="price"
                                             value="{{ $item->discount > 0 ? $precioConDescuento : $item->price }}">
-                                        <input type="hidden" value="{{ $item->size_id }}" class="size_id" name="size">                                        
+                                        <input type="hidden" value="{{ $item->size_id }}" class="size_id" name="size">
                                         <input type="hidden" value="{{ $descuento }}" class="discount" name="discount">
                                         <td class="w-50">
                                             <div class="d-flex px-2 py-1">
@@ -107,7 +115,8 @@
 
                                         </td>
 
-                                        <td class="{{isset($tenantinfo->tenant) && $tenantinfo->manage_size == 0 ? 'd-none' : ''}}">
+                                        <td
+                                            class="{{ isset($tenantinfo->tenant) && $tenantinfo->manage_size == 0 ? 'd-none' : '' }}">
                                             <p class="text-center text-truncate para mb-0">{{ $item->size }}
                                             </p>
                                         </td>
@@ -155,7 +164,8 @@
                                 <span><strong id="totalCloth">₡{{ number_format($cloth_price) }}</strong< /span>
                             </li>
                             @if ($iva > 0)
-                                <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0">
+                                <li
+                                    class="list-group-item d-flex justify-content-between align-items-center border-0 px-0">
                                     I.V.A
                                     <span id="totalIvaElement">₡{{ number_format($iva) }}</span>
                                 </li>
@@ -286,7 +296,7 @@
                 var size_id = input_size.value;
                 var input_manage_size = document.getElementById('manage_size');
                 var manage_size = input_manage_size.value;
-                
+
                 if ((size_id == null || size_id == "") && manage_size == 1) {
                     swal({
                         title: "Por favor seleccione una talla...",
