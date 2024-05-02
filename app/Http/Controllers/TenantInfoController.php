@@ -243,6 +243,7 @@ class TenantInfoController extends Controller
             $settings->navbar_text = $request->navbar_text;
             $settings->title_text = $request->title_text;
             $settings->btn_cart = $request->btn_cart;
+            $settings->cart_icon = $request->cart_icon;
             $settings->btn_cart_text = $request->btn_cart_text;
             $settings->footer = $request->footer;
             $settings->footer_text = $request->footer_text;

@@ -59,7 +59,7 @@
         <div class="flex2 text-end d-block d-md-none">
             @guest
                 <a href="{{ route('login') }}"><button id="btnIngresar"
-                        class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'text-title-mandi' : 'text-title' }} siteLink"><i
+                        class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'whiteLink-mandi' : 'whiteLink' }} siteLink"><i
                             style="color: var(--navbar_text);" class="fa fa-sign-in cartIcon"></i></button></a>
             @else
                 <a href="{{ url('buys') }}"><button id="btnIngresar"

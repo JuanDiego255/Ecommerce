@@ -121,6 +121,17 @@
                             </div>
                         </div>
                         <div class="col-md-3 mb-3">
+                            <label class="form-label">Botón carrito del menú (Móvil)</label>
+                            <div class="input-group input-group-lg input-group-outline">
+                                <!-- Input para seleccionar el color -->
+                                <input type="color" value="{{ $settings->cart_icon }}"
+                                    class="form-control form-control-color color-picker"
+                                    data-color-code="color-code-btn-cart">
+                                <input type="text" name="cart_icon" value="{{ $settings->cart_icon }}"
+                                    id="color-code-cart-icon" class="form-control color-code">
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
                             <label class="form-label">Botón carrito del menú</label>
                             <div class="input-group input-group-lg input-group-outline">
                                 <!-- Input para seleccionar el color -->

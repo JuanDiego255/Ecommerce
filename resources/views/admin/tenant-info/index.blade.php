@@ -255,8 +255,10 @@ is-invalid
 
                             <div class="col-md-6 mb-3">
                                 @if ($item->logo)
-                                    <img style="width: 100px; height:100px;" class="img-fluid img-thumbnail"
-                                        src="{{ route('file', $item->logo) }}" alt="image">
+                                    <a href="{{ route('file', $item->logo) }}">
+                                        <img style="width: 100px; height:100px;" class="img-fluid img-thumbnail"
+                                            src="{{ route('file', $item->logo) }}" alt="image">
+                                    </a>
                                 @endif
                                 <label class="form-label">Logo</label>
                                 <div class="input-group input-group-static mb-4">
