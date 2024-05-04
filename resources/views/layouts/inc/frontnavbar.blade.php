@@ -10,7 +10,7 @@
     }
 
 @endphp
-@if ($view_name != 'frontend_view-cart')
+@if ($view_name != 'frontend_view-cart' && $view_name != 'frontend_checkout')
     <input type="hidden" name="iva_tenant" id="iva_tenant" value="{{ $iva }}">
     <input type="hidden" name="view_name" value="{{$view_name}}" id="view_name">
     <div class="modal px-modal-right fade" data-image-base-url="{{ route('file', '') }}" id="modalMiniCart" tabindex="-1"
@@ -19,7 +19,7 @@
             <div class="modal-content">
                 <div class="modal-header border-bottom">
                     <h5>
-                        Carrito de compras
+                        Carrito de compras{{$view_name}}
                     </h5>
                     <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
@@ -238,7 +238,7 @@
                         style="border-right:1px solid #eaeaea"><i class="fa fa-credit-card"></i> MIS COMPRAS</button>
                 </a>
             @endguest
-            @if ($view_name != 'frontend_view-cart')
+            @if ($view_name != 'frontend_view-cart' && $view_name != 'frontend_checkout')
                 <button type="button" data-bs-toggle="modal" data-bs-target="#modalMiniCart"
                     class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'blackLink-mandi' : 'blackLink' }} siteLink"><i
                         class="fa fa-shopping-cart"></i>
@@ -249,8 +249,8 @@
                 <a href="{{ url('checkout') }}">
                     <button
                         class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'blackLink-mandi' : 'blackLink' }} siteLink"><i
-                            class="fa fa-shopping-cart"></i>
-                        {{ 'IR A PAGAR' }}
+                            class="fa fa-dollar"></i>
+                        {{ $view_name == 'frontend_checkout' ? 'FINALIZAR PAGO' : 'IR A PAGAR' }}
                     </button>
                 </a>
             @endif
