@@ -19,7 +19,7 @@
             <div class="modal-content">
                 <div class="modal-header border-bottom">
                     <h5>
-                        Carrito de compras{{$view_name}}
+                        Carrito de compras
                     </h5>
                     <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
