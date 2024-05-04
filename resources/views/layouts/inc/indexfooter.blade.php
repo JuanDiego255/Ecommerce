@@ -21,7 +21,7 @@
                             @endphp
                             <a target="blank"
                                 class="mr-5 text-footer" href="{{url($social->url)}}">
-                                <i class="{{ $social_logo }}"> {{ $social->social_network }}</i>
+                                <i class="{{ $social_logo }}"></i> {{ $social->social_network }}
                             </a><br>
                         @endforeach
                     </p>
@@ -52,7 +52,7 @@
                             <i class="fa fa-envelope"></i> Envíos por correos de C.R
                         </a><br>
                         <a href="#" class="text-footer">
-                            <i class="fa fa-whatsapp"> {{isset($tenantinfo->whatsapp) ? $tenantinfo->whatsapp : ''}}</i>
+                            <i class="fa fa-whatsapp"></i> {{isset($tenantinfo->whatsapp) ? $tenantinfo->whatsapp : ''}}
                         </a>
                     </p>
                 </div>

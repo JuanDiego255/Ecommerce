@@ -144,20 +144,16 @@
                                             </td>
 
                                             <td class="align-middle">
-                                                <form name="delete-item-cart{{ $item->id }}"
-                                                    id="delete-item-cart{{ $item->id }}" method="post"
-                                                    action="{{ url('/delete-item-cart/' . $item->id . '/' . $item->size_id) }}">
+                                                <form name="delete-item-cart" id="delete-item-cart" class="delete-form">
                                                     {{ csrf_field() }}
                                                     {{ method_field('DELETE') }}
-                                                    <button onclick="return confirm('Deseas borrar este artículo?')"
-                                                        type="submit" form="delete-item-cart{{ $item->id }}"
-                                                        class="btn btn-icon btn-3 btn-danger">
+                                                    <button data-item-id="{{ $item->id }}"
+                                                        data-size-id="{{ $item->size_id }}"
+                                                        class="btn btn-icon btn-3 btn-danger btnDeleteCart">
                                                         <span class="btn-inner--icon"><i
                                                                 class="material-icons">delete</i></span>
-
                                                     </button>
                                                 </form>
-
                                             </td>
                                         </tr>
                                     @endforeach
@@ -214,9 +210,6 @@
     <script src="{{ asset('js/image-error-handler.js') }}"></script>
     <script>
         $(document).ready(function() {
-            function updateQuantity() {
-
-            };
             $('.btnAddToCart').click(function(e) {
                 e.preventDefault();
                 var cloth_id = $(this).closest('.product_data').find('.prod_id').val();
@@ -265,6 +258,38 @@
                     }
                 });
             });
+        });
+
+        $('.btnDeleteCart').click(function(e) {
+            e.preventDefault();
+
+            var itemId = $(this).data('item-id');
+            var sizeId = $(this).data('size-id');
+            // Confirmar la eliminación
+            var confirmDelete = confirm('¿Deseas borrar este artículo?');
+
+            if (confirmDelete) {
+                $.ajax({
+                    method: "POST",
+                    url: "/delete-item-cart/" + itemId,
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        _method: 'DELETE',
+                        size_id: sizeId
+                    },
+                    success: function(response) {
+                        if (response.refresh == true) {
+                            window.location.href = "{{ url('/') }}";
+                        }else{
+                            location.reload();
+                        }                        
+                    },
+                    error: function(xhr, status, error) {
+                        // Manejar errores si es necesario
+                        console.error(xhr.responseText);
+                    }
+                });
+            }
         });
 
         function calcularTotal() {

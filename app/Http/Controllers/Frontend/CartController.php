@@ -142,6 +142,203 @@ class CartController extends Controller
     public function viewCart()
     {
         $tenantinfo = TenantInfo::first();
+        $cart_items = $this->getCartItems();
+
+        $tags = MetaTags::where('section', 'Carrito')->get();
+        $tenantinfo = TenantInfo::first();
+        foreach ($tags as $tag) {
+            SEOMeta::setTitle($tag->title . " - " . $tenantinfo->title);
+            SEOMeta::setKeywords($tag->meta_keywords);
+            SEOMeta::setDescription($tag->meta_description);
+            //Opengraph
+            OpenGraph::addImage(URL::to($tag->url_image_og));
+            OpenGraph::setTitle($tag->title);
+            OpenGraph::setDescription($tag->meta_og_description);
+        }
+
+        if (count($cart_items) == 0) {
+            return redirect()->back()->with(['status' => 'NO HAY PRODUCTOS EN EL CARRITO :(', 'icon' => 'warning']);
+        }
+
+        $name = Auth::user()->name ?? null;
+
+        $cloth_price = 0;
+        $you_save = 0;
+        foreach ($cart_items as $item) {
+            $precio = $item->price;
+            if (isset($tenantinfo->custom_size) && $tenantinfo->custom_size == 1 && $item->stock_price > 0) {
+                $precio = $item->stock_price;
+            }
+            if (
+                Auth::check() &&
+                Auth::user()->mayor == '1' &&
+                $item->mayor_price > 0
+            ) {
+                $precio = $item->mayor_price;
+            }
+            $descuentoPorcentaje = $item->discount;
+            // Calcular el descuento
+            $descuento = ($precio * $descuentoPorcentaje) / 100;
+            // Calcular el precio con el descuento aplicado
+            $precioConDescuento = $precio - $descuento;
+            if (Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0) {
+                $precio = $item->mayor_price;
+            }
+            $descuentoPorcentaje = $item->discount;
+            // Calcular el descuento
+            $descuento = ($precio * $descuentoPorcentaje) / 100;
+
+            $you_save += $descuento * $item->quantity;
+            // Calcular el precio con el descuento aplicado
+            $precioConDescuento = $precio - $descuento;
+            $cloth_price += $precioConDescuento * $item->quantity;
+        }
+
+        $iva = $cloth_price * $tenantinfo->iva;
+        $total_price = $cloth_price + $iva;
+
+        return view('frontend.view-cart', compact('cart_items', 'name', 'cloth_price', 'iva', 'total_price', 'you_save'));
+    }
+    public function delete($id, Request $request)
+    {
+        DB::beginTransaction();
+
+        try {
+            $no_cart = $request->no_cart;
+            $size_id = $request->size_id;
+
+            if ($no_cart != 1) {
+                $session_id = session()->get('session_id');
+                if (Auth::check()) {
+
+                    if (Cart::where('clothing_id', $id)
+                        ->where('user_id', Auth::id())
+                        ->where('sold', 0)
+                        ->where('size_id', $size_id)->exists()
+                    ) {
+                        $cartitem = Cart::where('clothing_id', $id)
+                            ->where('user_id', Auth::id())
+                            ->where('sold', 0)
+                            ->where('size_id', $size_id)->first();
+                        $cartitem->delete();
+                        DB::commit();
+                        $newCartNumber = count(Cart::where('user_id', Auth::id())->where('sold', 0)->get());
+                        if (count(Cart::where('user_id', Auth::id())
+                            ->where('sold', 0)->get()) == 0) {
+                            return response()->json(['status' => 'Se ha eliminado el último artículo del carrito', 'icon' => 'success','cartNumber' => $newCartNumber,'refresh' => true]);
+                        }
+                        return response()->json(['status' => 'Se ha eliminado el artículo del carrito', 'icon' => 'success','cartNumber' => $newCartNumber,'refresh' => false]);
+                    }
+                } else {
+                    if (Cart::where('clothing_id', $id)
+                        ->where('session_id', $session_id)
+                        ->where('sold', 0)
+                        ->where('size_id', $size_id)->exists()
+                    ) {
+                        $cartitem = Cart::where('clothing_id', $id)
+                            ->where('session_id', $session_id)
+                            ->where('sold', 0)
+                            ->where('size_id', $size_id)->first();
+                        $cartitem->delete();
+                        DB::commit();
+                        $newCartNumber = count(Cart::where('user_id', Auth::id())->where('sold', 0)->get());
+                        if (count(Cart::where('session_id', $session_id)
+                            ->where('sold', 0)->get()) == 0) {
+                            return response()->json(['status' => 'Se ha eliminado el último artículo del carrito', 'icon' => 'success','cartNumber' => $newCartNumber,'refresh' => true]);
+                        }
+                        return response()->json(['status' => 'Se ha eliminado el artículo del carrito', 'icon' => 'success','cartNumber' => $newCartNumber,'refresh' => false]);
+                    }
+                }
+            } else {
+                if (Cart::where('clothing_id', $id)
+                    ->where('user_id', null)
+                    ->where('session_id', null)
+                    ->where('sold', 0)
+                    ->where('size_id', $size_id)->exists()
+                ) {
+                    $cartitem = Cart::where('clothing_id', $id)
+                        ->where('user_id', null)
+                        ->where('session_id', null)
+                        ->where('sold', 0)
+                        ->where('size_id', $size_id)->first();
+                    $cartitem->delete();
+                    DB::commit();
+                    $newCartNumber = count(Cart::where('user_id', Auth::id())->where('sold', 0)->get());
+                    if (count(Cart::where('user_id', Auth::id())
+                        ->where('sold', 0)->get()) == 0) {
+                        return response()->json(['status' => 'Se ha eliminado el último artículo del carrito', 'icon' => 'success','cartNumber' => $newCartNumber,'refresh' => true]);
+                    }
+                    return response()->json(['status' => 'Se ha eliminado el último artículo del carrito', 'icon' => 'success','cartNumber' => $newCartNumber,'refresh' => false]);
+                }
+            }
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return response()->json(['status' => 'Ocurrió un error al eliminar la prenda al carrito', 'icon' => 'success']);
+        }
+    }
+    public function updateQuantity(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $clothing_id = $request->clothing_id;
+            $quantity = $request->quantity;
+            $size = $request->size;
+            $kind_of = $request->kind_of;
+            $session_id = session()->get('session_id');
+            if ($kind_of != "F") {
+                if (Auth::check()) {
+
+                    if (Cart::where('clothing_id', $clothing_id)->where('user_id', Auth::id())->where('sold', 0)->exists()) {
+                        $cartitem = Cart::where('clothing_id', $clothing_id)
+                            ->where('user_id', Auth::user()->id)
+                            ->where('sold', 0)
+                            ->where('size_id', $size)
+                            ->first();
+                        $cartitem->quantity = $quantity;
+                        $cartitem->update();
+                        DB::commit();
+                        return response()->json(['status' => $kind_of]);
+                    }
+                } else {
+                    if (Cart::where('clothing_id', $clothing_id)->where('session_id', $session_id)->exists()) {
+                        $cartitem = Cart::where('clothing_id', $clothing_id)
+                            ->where('session_id', $session_id)
+                            ->where('sold', 0)
+                            ->where('size_id', $size)
+                            ->first();
+                        $cartitem->quantity = $quantity;
+                        $cartitem->update();
+                        DB::commit();
+                        return response()->json(['status' => 'Exito']);
+                    }
+                }
+            } else {
+                if (Cart::where('clothing_id', $clothing_id)
+                    ->where('user_id', null)
+                    ->where('session_id', null)
+                    ->where('size_id', $size)
+                    ->where('sold', 0)->exists()
+                ) {
+                    $cartitem = Cart::where('clothing_id', $clothing_id)
+                        ->where('user_id', null)
+                        ->where('session_id', null)
+                        ->where('size_id', $size)
+                        ->where('sold', 0)
+                        ->first();
+                    $cartitem->quantity = $quantity;
+                    $cartitem->update();
+                    DB::commit();
+                    return response()->json(['status' => $clothing_id]);
+                }
+            }
+        } catch (Exception $th) {
+            DB::rollBack();
+            return response()->json(['error' => $th->getMessage()]);
+        }
+    }
+
+    public function getCartItems()
+    {
         $cart_items = Cache::remember('cart_items', $this->expirationTime, function () {
             if (Auth::check()) {
                 $userId = Auth::id();
@@ -177,7 +374,7 @@ class CartController extends Controller
                         'carts.quantity as quantity',
                         'stocks.stock as stock',
                         DB::raw('IFNULL(product_images.image, "") as image'), // Obtener la primera imagen del producto
-                        
+
                     )
                     ->groupBy(
                         'clothing.id',
@@ -253,193 +450,11 @@ class CartController extends Controller
                 return $cart_items;
             }
         });
-
-        $tags = MetaTags::where('section', 'Carrito')->get();
-        $tenantinfo = TenantInfo::first();
-        foreach ($tags as $tag) {
-            SEOMeta::setTitle($tag->title . " - " . $tenantinfo->title);
-            SEOMeta::setKeywords($tag->meta_keywords);
-            SEOMeta::setDescription($tag->meta_description);
-            //Opengraph
-            OpenGraph::addImage(URL::to($tag->url_image_og));
-            OpenGraph::setTitle($tag->title);
-            OpenGraph::setDescription($tag->meta_og_description);
-        }
-
-        if (count($cart_items) == 0) {
-            return redirect()->back()->with(['status' => 'NO HAY PRODUCTOS EN EL CARRITO :(', 'icon' => 'warning']);
-        }
-
-        $name = Auth::user()->name ?? null;
-
-        $cloth_price = 0;
-        $you_save = 0;
-        foreach ($cart_items as $item) {
-            $precio = $item->price;
-            if (isset($tenantinfo->custom_size) && $tenantinfo->custom_size == 1 && $item->stock_price > 0) {
-                $precio = $item->stock_price;
-            }
-            if (
-                Auth::check() &&
-                Auth::user()->mayor == '1' &&
-                $item->mayor_price > 0
-            ) {
-                $precio = $item->mayor_price;
-            }
-            $descuentoPorcentaje = $item->discount;
-            // Calcular el descuento
-            $descuento = ($precio * $descuentoPorcentaje) / 100;
-            // Calcular el precio con el descuento aplicado
-            $precioConDescuento = $precio - $descuento;
-            if (Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0) {
-                $precio = $item->mayor_price;
-            }
-            $descuentoPorcentaje = $item->discount;
-            // Calcular el descuento
-            $descuento = ($precio * $descuentoPorcentaje) / 100;
-
-            $you_save += $descuento * $item->quantity;
-            // Calcular el precio con el descuento aplicado
-            $precioConDescuento = $precio - $descuento;
-            $cloth_price += $precioConDescuento * $item->quantity;
-        }
-
-        $iva = $cloth_price * $tenantinfo->iva;
-        $total_price = $cloth_price + $iva;
-
-        return view('frontend.view-cart', compact('cart_items', 'name', 'cloth_price', 'iva', 'total_price', 'you_save'));
+        return $cart_items;
     }
-    public function delete($id, $size_id, Request $request)
-    {
-        DB::beginTransaction();
 
-        try {
-            $no_cart = $request->no_cart;
-
-            if ($no_cart != 1) {
-                $session_id = session()->get('session_id');
-                if (Auth::check()) {
-
-                    if (Cart::where('clothing_id', $id)
-                        ->where('user_id', Auth::id())
-                        ->where('sold', 0)
-                        ->where('size_id', $size_id)->exists()
-                    ) {
-                        $cartitem = Cart::where('clothing_id', $id)
-                            ->where('user_id', Auth::id())
-                            ->where('sold', 0)
-                            ->where('size_id', $size_id)->first();
-                        $cartitem->delete();
-                        DB::commit();
-                        if (count(Cart::where('user_id', Auth::id())
-                            ->where('sold', 0)->get()) == 0) {
-                            return redirect('/')->with(['status' => 'Se ha eliminado el último artículo del carrito', 'icon' => 'success'])->with(['alert' => 'error']);
-                        }
-                        return redirect()->back()->with(['status' => 'Se ha eliminado el artículo del carrito', 'icon' => 'success'])->with(['alert' => 'error']);
-                    }
-                } else {
-                    if (Cart::where('clothing_id', $id)
-                        ->where('session_id', $session_id)
-                        ->where('sold', 0)
-                        ->where('size_id', $size_id)->exists()
-                    ) {
-                        $cartitem = Cart::where('clothing_id', $id)
-                            ->where('session_id', $session_id)
-                            ->where('sold', 0)
-                            ->where('size_id', $size_id)->first();
-                        $cartitem->delete();
-                        DB::commit();
-                        if (count(Cart::where('session_id', $session_id)
-                            ->where('sold', 0)->get()) == 0) {
-                            return redirect('/')->with(['status' => 'Se ha eliminado el último artículo del carrito', 'icon' => 'success'])->with(['alert' => 'error']);
-                        }
-                        return redirect()->back()->with(['status' => 'Se ha eliminado el artículo del carrito', 'icon' => 'success'])->with(['alert' => 'error']);
-                    }
-                }
-            } else {
-                if (Cart::where('clothing_id', $id)
-                    ->where('user_id', null)
-                    ->where('session_id', null)
-                    ->where('sold', 0)
-                    ->where('size_id', $size_id)->exists()
-                ) {
-                    $cartitem = Cart::where('clothing_id', $id)
-                        ->where('user_id', null)
-                        ->where('session_id', null)
-                        ->where('sold', 0)
-                        ->where('size_id', $size_id)->first();
-                    $cartitem->delete();
-                    DB::commit();
-                    if (count(Cart::where('user_id', Auth::id())
-                        ->where('sold', 0)->get()) == 0) {
-                        return redirect()->back();
-                    }
-                    return redirect()->back();
-                }
-            }
-        } catch (\Throwable $th) {
-            DB::rollBack();
-            return response()->json(['status' => 'Ocurrió un error al eliminar la prenda al carrito', 'icon' => 'success']);
-        }
-    }
-    public function updateQuantity(Request $request)
-    {
-        DB::beginTransaction();
-        try {
-            $clothing_id = $request->clothing_id;
-            $quantity = $request->quantity;
-            $size = $request->size;
-            $kind_of = $request->kind_of;
-            $session_id = session()->get('session_id');
-            if ($kind_of != "F") {
-                if (Auth::check()) {
-
-                    if (Cart::where('clothing_id', $clothing_id)->where('user_id', Auth::id())->where('sold', 0)->exists()) {
-                        $cartitem = Cart::where('clothing_id', $clothing_id)
-                            ->where('user_id', Auth::user()->id)
-                            ->where('sold', 0)
-                            ->where('size_id', $size)
-                            ->first();
-                        $cartitem->quantity = $quantity;
-                        $cartitem->update();
-                        DB::commit();
-                        return response()->json(['status' => $kind_of]);
-                    }
-                } else {
-                    if (Cart::where('clothing_id', $clothing_id)->where('session_id', $session_id)->exists()) {
-                        $cartitem = Cart::where('clothing_id', $clothing_id)
-                            ->where('session_id', $session_id)
-                            ->where('sold', 0)
-                            ->where('size_id', $size)
-                            ->first();
-                        $cartitem->quantity = $quantity;
-                        $cartitem->update();
-                        DB::commit();
-                        return response()->json(['status' => 'Exito']);
-                    }
-                }
-            } else {
-                if (Cart::where('clothing_id', $clothing_id)
-                    ->where('user_id', null)
-                    ->where('session_id', null)
-                    ->where('size_id', $size)
-                    ->where('sold', 0)->exists()
-                ) {
-                    $cartitem = Cart::where('clothing_id', $clothing_id)
-                        ->where('user_id', null)
-                        ->where('session_id', null)
-                        ->where('size_id', $size)
-                        ->where('sold', 0)
-                        ->first();
-                    $cartitem->quantity = $quantity;
-                    $cartitem->update();
-                    DB::commit();
-                    return response()->json(['status' => $clothing_id]);
-                }
-            }
-        } catch (Exception $th) {
-            DB::rollBack();
-            return response()->json(['error' => $th->getMessage()]);
-        }
+    public function getCart(){
+        $cart_items = $this->getCartItems();
+        return response()->json($cart_items);
     }
 }

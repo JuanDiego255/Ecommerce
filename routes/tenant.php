@@ -64,7 +64,8 @@ Route::middleware([
         Route::post('/add-to-cart', [CartController::class, 'store']);
         Route::post('/edit-quantity', [CartController::class, 'updateQuantity']);
         Route::get('/view-cart', [CartController::class, 'viewCart']);
-        Route::delete('/delete-item-cart/{id}/{size_id}', [CartController::class, 'delete']);
+        Route::get('/get-cart-items', [CartController::class, 'getCart']);
+        Route::delete('/delete-item-cart/{id}', [CartController::class, 'delete']);
         Route::post('/payment', [CheckOutController::class, 'payment']);
         Route::get('/paypal/process/{orderId}', [CheckOutController::class, 'process']);
         Auth::routes();

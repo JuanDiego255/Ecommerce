@@ -10,8 +10,158 @@
     }
 
 @endphp
-<div id="menuHolder" class="bg-menu-velvet sticky-top">
+@if ($view_name != 'frontend_view-cart')
+    <input type="hidden" name="iva_tenant" id="iva_tenant" value="{{ $iva }}">
+    <input type="hidden" name="view_name" value="{{$view_name}}" id="view_name">
+    <div class="modal px-modal-right fade" data-image-base-url="{{ route('file', '') }}" id="modalMiniCart" tabindex="-1"
+        role="dialog" aria-hidden="true">
+        <div class="modal-dialog px-modal-vertical">
+            <div class="modal-content">
+                <div class="modal-header border-bottom">
+                    <h5>
+                        Carrito de compras
+                    </h5>
+                    <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <ul class="list-unstyled m-0 p-0 productsList">
+                        @foreach ($cart_items as $item)
+                            @php
+                                $precio = $item->price;
+                                if (
+                                    isset($tenantinfo->custom_size) &&
+                                    $tenantinfo->custom_size == 1 &&
+                                    $item->stock_price > 0
+                                ) {
+                                    $precio = $item->stock_price;
+                                }
+                                if (Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0) {
+                                    $precio = $item->mayor_price;
+                                }
+                                $descuentoPorcentaje = $item->discount;
+                                // Calcular el descuento
+                                $descuento = ($precio * $descuentoPorcentaje) / 100;
+                                // Calcular el precio con el descuento aplicado
+                                $precioConDescuento = $precio - $descuento;
+                            @endphp
 
+                            <li class="py-3 border-bottom">
+                                <input type="hidden" name="prod_id" value="{{ $item->id }}" class="prod_id">
+                                <input type="hidden" class="price"
+                                    value="{{ $item->discount > 0
+                                        ? $precioConDescuento
+                                        : (Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0
+                                            ? $item->mayor_price
+                                            : ($tenantinfo->custom_size == 1
+                                                ? $item->stock_price
+                                                : $item->price)) }}
+                        ">
+                                <input type="hidden" value="{{ $item->size_id }}" class="size_id" name="size">
+                                <input type="hidden" value="{{ $descuento }}" class="discount" name="discount">
+                                <div class="row align-items-center">
+                                    <div class="col-4">
+                                        <a href="{{ route('file', $item->image) }}">
+                                            <img class="img-fluid border" src="{{ route('file', $item->image) }}"
+                                                alt="...">
+                                        </a>
+                                    </div>
+                                    <div class="col-8">
+                                        <p class="mb-2">
+                                            <a class="text-muted fw-500" href="#">{{ $item->name }}</a>
+                                            <span
+                                                class="m-0 text-dark w-100 d-block {{ isset($tenantinfo->tenant) && $tenantinfo->manage_size == 0 ? 'd-none' : '' }}">{{ isset($tenantinfo->tenant) && $tenantinfo->manage_size == 0 ? 'd-none' : '' }}
+                                                {{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'Talla: ' : 'Tamaño: ' }}{{ $item->size }}</span>
+                                            <span class="m-0 text-muted w-100 d-block">
+                                                ₡{{ $item->discount > 0 ? $precioConDescuento : (Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0 ? $item->mayor_price : ($tenantinfo->custom_size == 1 ? $item->stock_price : $item->price)) }}
+                                            </span>
+                                        </p>
+                                        <div class="d-flex align-items-center">
+                                            <div class="input-group text-center input-group-static w-100">
+                                                <input min="1" max="{{ $item->stock }}"
+                                                    value="{{ $item->quantity }}" type="number" name="quantity"
+                                                    data-cloth-id="{{ $item->id }}"
+                                                    class="form-control btnQuantity text-center w-100 quantity">
+                                            </div>
+                                            <form name="delete-item-cart"
+                                                id="delete-item-cart" class="delete-form">
+                                                {{ csrf_field() }}
+                                                {{ method_field('DELETE') }}
+                                                <button data-item-id="{{ $item->id }}"
+                                                    data-size-id="{{ $item->size_id }}"
+                                                    class="btn btn-icon btn-3 btn-danger btnDelete">
+                                                    <span class="btn-inner--icon"><i
+                                                            class="material-icons">delete</i></span>
+                                                </button>
+                                            </form>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        @endforeach
+
+                    </ul>
+                </div>
+                <div class="mt-auto p-3 pt-0">
+
+                    <div class="row g-0 py-2 subtotal">
+                        <div class="col-8">
+                            <span class="text-dark">Productos</span>
+                        </div>
+                        <div class="col-4 text-end">
+                            <span id="totalPriceElement"
+                                class="ml-auto subtotalValue">₡{{ number_format($cloth_price) }}</span>
+                        </div>
+                        @if ($iva > 0)
+                            <div class="col-8">
+                                <span class="text-dark">I.V.A</span>
+                            </div>
+                            <div class="col-4 text-end">
+                                <span id="totalIvaElement"
+                                    class="ml-auto subtotalValue">₡{{ number_format($iva) }}</span>
+                            </div>
+                        @endif
+                    </div>
+
+
+                    @if ($you_save > 0)
+                        <div class="row g-0 py-2 descuento">
+                            <div class="col-8">
+                                <span class="text-dark">Descuento:</span>
+                            </div>
+                            <div class="col-4 text-end">
+                                <span id="totalDiscountElement"
+                                    class="ml-auto descuentoValue">₡{{ number_format($you_save) }}</span>
+                            </div>
+                        </div>
+                    @endif
+
+                    <div class="row g-0 pt-2 mt-2 border-top fw-bold text-dark total">
+                        <div class="col-8">
+                            <span class="text-dark">Total:</span>
+                        </div>
+                        <div class="col-4 text-end">
+                            <span id="totalCloth" class="ml-auto totalValue">₡{{ number_format($total_price) }}</span>
+                        </div>
+                    </div>
+
+
+                    <div class="pt-4">
+                        <a class="btn btn-block btn-velvet w-100" href="{{ url('view-cart') }}">
+                            Ver carrito de compras
+                        </a>
+                        <a class="btn btn-block btn-add_to_cart w-100" href="{{ url('checkout') }}">
+                            Finalizar pedido
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+@endif
+
+<div id="menuHolder" class="bg-menu-velvet sticky-top">
     <div role="navigation" class="border-bottom bg-menu-velvet" id="mainNavigation">
         @if (isset($tenantinfo->tenant) && $tenantinfo->tenant != 'marylu')
             @if (count($clothings_offer) != 0)
@@ -20,7 +170,8 @@
                         <div class="container text-cintillo text-center">
                             Hasta {{ $descuento_mas_alto }}% de descuento en <a
                                 class="text-cintillo text-decoration-underline"
-                                href="{{ url('clothes-category/' . $item->category_id) }}">productos</a> seleccionados!
+                                href="{{ url('clothes-category/' . $item->category_id) }}">productos</a>
+                            seleccionados!
                         </div>
                     </nav>
                 @break
@@ -67,10 +218,10 @@
                             style="color: var(--navbar_text);" class="fa fa-credit-card cartIcon"></i></button></a>
             @endguest
 
-            <a href="{{ url('view-cart') }}"><button
-                    class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'whiteLink-mandi' : 'whiteLink' }} siteLink"><i
-                        style="color: var(--navbar_text);" class="fa fa-shopping-cart cartIcon">
-                        {{ $cartNumber }}</i></button></a>
+            <button type="button" data-bs-toggle="modal" data-bs-target="#modalMiniCart"
+                class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'whiteLink-mandi' : 'whiteLink' }} siteLink"><i
+                    style="color: var(--navbar_text);" class="fa fa-shopping-cart cartIcon">
+                    {{ $cartNumber }}</i></button>
         </div>
 
         <div class="flex2 text-end d-none d-md-block">
@@ -87,14 +238,24 @@
                         style="border-right:1px solid #eaeaea"><i class="fa fa-credit-card"></i> MIS COMPRAS</button>
                 </a>
             @endguest
-
-            <a href="{{ url('view-cart') }}"><button
+            @if ($view_name != 'frontend_view-cart')
+                <button type="button" data-bs-toggle="modal" data-bs-target="#modalMiniCart"
                     class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'blackLink-mandi' : 'blackLink' }} siteLink"><i
                         class="fa fa-shopping-cart"></i>
-                    CARRITO <span
+                    {{ 'CARRITO' }} <span
                         class="badge badge-sm badge-info text-pill border-pill text-xxs">{{ $cartNumber }}</span>
                 </button>
-            </a>
+            @else
+                <a href="{{ url('checkout') }}">
+                    <button
+                        class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'blackLink-mandi' : 'blackLink' }} siteLink"><i
+                            class="fa fa-shopping-cart"></i>
+                        {{ 'IR A PAGAR' }}
+                    </button>
+                </a>
+            @endif
+
+
 
 
         </div>
@@ -139,7 +300,8 @@
                         id="toggleCategories">DEPARTAMENTOS <i class="fa fa-arrow-circle-down ml-3"></i></a>
                     <div class="subcategories" id="categoriesDropdown">
                         <ul>
-                            <li class="item-submenu"><a href="{{ url('departments/index') }}" class="nav-submenu-item">
+                            <li class="item-submenu"><a href="{{ url('departments/index') }}"
+                                    class="nav-submenu-item">
                                     <span class="alert-icon align-middle">
                                         <span class="material-icons text-md">label</span>
                                     </span>TODOS LOS DEPARTAMENTOS</a>
@@ -280,5 +442,4 @@
         @endguest
 
     </div>
-</div>
 </div>

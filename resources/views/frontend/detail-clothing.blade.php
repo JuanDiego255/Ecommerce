@@ -316,8 +316,9 @@
                     $('.badge').text(newCartNumber);
                     $('.cartIcon').text(' ' + newCartNumber);
 
+                    getCart();                    
                 }
-            });
+            });            
         });
 
         var size_id = $('input[name="size_id"]:checked').val();
@@ -327,8 +328,7 @@
         var index = sizes.indexOf(size_id.toString());
         var maxStock = stockPerSize[index];
         $('input[name="quantity"]').attr('max', maxStock);
-
-
+        custom_size = document.getElementById("custom_size").value
         $('input[name="size_id"]').on('change', function() {
             // Obtener el ID de la talla seleccionada
             if (custom_size == 1) {
@@ -344,8 +344,7 @@
 
                     // Actualizar el atributo 'max' del input quantity
                     $('input[name="quantity"]').attr('max', maxStock);
-                    $('input[name="quantity"]').val(1);
-                    custom_size = document.getElementById("custom_size").value
+                    $('input[name="quantity"]').val(1);                    
                     porcDescuento = document.getElementById("porcDescuento").value
 
 
@@ -364,7 +363,6 @@
 
                 }
             }
-
         });
 
         const quantityInput = document.getElementById('quantityInput');

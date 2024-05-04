@@ -70,7 +70,7 @@
                                                 {{ $item->casa }}
                                             </h3>
                                             <h3
-                                                class="{{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'title' : 'title-frags' }}">
+                                                class="{{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'text-muted' : 'title-frags' }}">
                                                 <a
                                                     href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}">{{ $item->name }}</a>
                                             </h3>

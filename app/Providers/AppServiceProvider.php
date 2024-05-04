@@ -62,7 +62,7 @@ class AppServiceProvider extends ServiceProvider
                     'categories.id as category_id',
                     'categories.name as name',
                 )
-                ->orderBy('categories.name','asc')
+                ->orderBy('categories.name', 'asc')
                 ->get();
             $social_network = TenantSocialNetwork::get();
             $tenantcarousel = TenantCarousel::get();
@@ -84,8 +84,8 @@ class AppServiceProvider extends ServiceProvider
             $tenantinfo = TenantInfo::first();
             $settings = Settings::first();
             $departments = Department::where('department', '!=', 'Default')->with('categories')
-            ->orderBy('departments.department','asc')
-            ->get();
+                ->orderBy('departments.department', 'asc')
+                ->get();
 
             $clothings_offer = ClothingCategory::where('categories.name', 'Sale')
                 ->join('categories', 'clothing.category_id', 'categories.id')
@@ -118,9 +118,155 @@ class AppServiceProvider extends ServiceProvider
                     'clothing.price',
                     'clothing.mayor_price',
                 )
-                ->orderBy('clothing.name','asc')
+                ->orderBy('clothing.name', 'asc')
                 ->take(8)
                 ->get();
+
+            $cart_items = Cache::remember('cart_items', 60, function () {
+                if (Auth::check()) {
+                    $userId = Auth::id();
+                    $cart_items = Cart::where('carts.user_id', $userId)
+                        ->where('carts.session_id', null)
+                        ->where('carts.sold', 0)
+                        ->join('users', 'carts.user_id', 'users.id')
+                        ->join('stocks', function ($join) {
+                            $join->on('carts.clothing_id', '=', 'stocks.clothing_id')
+                                ->on('carts.size_id', '=', 'stocks.size_id');
+                        })
+                        ->join('clothing', 'carts.clothing_id', 'clothing.id')
+                        ->join('sizes', 'carts.size_id', 'sizes.id')
+                        ->leftJoin('product_images', function ($join) {
+                            $join->on('clothing.id', '=', 'product_images.clothing_id')
+                                ->whereRaw('product_images.id = (
+                                    SELECT MIN(id) FROM product_images 
+                                    WHERE product_images.clothing_id = clothing.id
+                                )');
+                        })
+                        ->select(
+                            'clothing.id as id',
+                            'clothing.name as name',
+                            'clothing.casa as casa',
+                            'clothing.description as description',
+                            'clothing.price as price',
+                            'clothing.mayor_price as mayor_price',
+                            'clothing.discount as discount',
+                            'clothing.status as status',
+                            'sizes.size as size',
+                            'sizes.id as size_id',
+                            'stocks.price as stock_price',
+                            'carts.quantity as quantity',
+                            'stocks.stock as stock',
+                            DB::raw('IFNULL(product_images.image, "") as image'), // Obtener la primera imagen del producto
+
+                        )
+                        ->groupBy(
+                            'clothing.id',
+                            'clothing.name',
+                            'clothing.casa',
+                            'clothing.description',
+                            'clothing.price',
+                            'clothing.mayor_price',
+                            'clothing.status',
+                            'clothing.discount',
+                            'sizes.size',
+                            'sizes.id',
+                            'stocks.price',
+                            'carts.quantity',
+                            'stocks.stock',
+                            'product_images.image'
+                        )
+                        ->get();
+                    // Resto del código para obtener los artículos del carrito para usuarios autenticados
+                    return $cart_items;
+                } else {
+                    $session_id = session()->get('session_id');
+                    $cart_items = Cart::where('carts.session_id', $session_id)
+                        ->where('carts.user_id', null)
+                        ->where('carts.sold', 0)
+                        ->join('stocks', function ($join) {
+                            $join->on('carts.clothing_id', '=', 'stocks.clothing_id')
+                                ->on('carts.size_id', '=', 'stocks.size_id');
+                        })
+                        ->join('clothing', 'carts.clothing_id', 'clothing.id')
+                        ->join('sizes', 'carts.size_id', 'sizes.id')
+                        ->leftJoin('product_images', function ($join) {
+                            $join->on('clothing.id', '=', 'product_images.clothing_id')
+                                ->whereRaw('product_images.id = (
+                        SELECT MIN(id) FROM product_images 
+                        WHERE product_images.clothing_id = clothing.id
+                    )');
+                        })
+                        ->select(
+                            'clothing.id as id',
+                            'clothing.name as name',
+                            'clothing.casa as casa',
+                            'clothing.description as description',
+                            'clothing.price as price',
+                            'stocks.price as stock_price',
+                            'clothing.mayor_price as mayor_price',
+                            'clothing.discount as discount',
+                            'clothing.status as status',
+                            'sizes.size as size',
+                            'sizes.id as size_id',
+                            'carts.quantity as quantity',
+                            'stocks.stock as stock',
+                            DB::raw('IFNULL(product_images.image, "") as image'), // Obtener la primera imagen del producto
+                            DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id AND sizes.id = stocks.size_id ORDER BY id ASC LIMIT 1) AS first_price')
+                        )
+                        ->groupBy(
+                            'clothing.id',
+                            'clothing.name',
+                            'clothing.casa',
+                            'clothing.description',
+                            'clothing.price',
+                            'clothing.mayor_price',
+                            'clothing.discount',
+                            'clothing.status',
+                            'sizes.size',
+                            'stocks.price',
+                            'sizes.id',
+                            'carts.quantity',
+                            'stocks.stock',
+                            'product_images.image'
+                        )
+                        ->get();
+                    return $cart_items;
+                }
+            });
+            $cloth_price = 0;
+            $you_save = 0;
+            foreach ($cart_items as $item) {
+                $precio = $item->price;
+                if (isset($tenantinfo->custom_size) && $tenantinfo->custom_size == 1 && $item->stock_price > 0) {
+                    $precio = $item->stock_price;
+                }
+                if (
+                    Auth::check() &&
+                    Auth::user()->mayor == '1' &&
+                    $item->mayor_price > 0
+                ) {
+                    $precio = $item->mayor_price;
+                }
+                $descuentoPorcentaje = $item->discount;
+                // Calcular el descuento
+                $descuento = ($precio * $descuentoPorcentaje) / 100;
+                // Calcular el precio con el descuento aplicado
+                $precioConDescuento = $precio - $descuento;
+                if (Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0) {
+                    $precio = $item->mayor_price;
+                }
+                $descuentoPorcentaje = $item->discount;
+                // Calcular el descuento
+                $descuento = ($precio * $descuentoPorcentaje) / 100;
+
+                $you_save += $descuento * $item->quantity;
+                // Calcular el precio con el descuento aplicado
+                $precioConDescuento = $precio - $descuento;
+                $cloth_price += $precioConDescuento * $item->quantity;
+            }
+
+            $iva = $cloth_price * $tenantinfo->iva;
+            $total_price = $cloth_price + $iva;
 
             view()->share([
                 'view_name' => $view_name,
@@ -135,7 +281,12 @@ class AppServiceProvider extends ServiceProvider
                 'tenantcarousel' => $tenantcarousel,
                 'settings' => $settings,
                 'clothings_offer' => $clothings_offer,
-                'departments' => $departments
+                'departments' => $departments,
+                'cart_items' => $cart_items,
+                'cloth_price' => $cloth_price,
+                'iva' => $iva,
+                'total_price' => $total_price,
+                'you_save' => $you_save
             ]);
         });
     }
