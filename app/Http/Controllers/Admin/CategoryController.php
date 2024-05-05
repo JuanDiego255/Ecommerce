@@ -125,30 +125,4 @@ class CategoryController extends Controller
             return redirect('/categories')->with(['status' => 'Ocurrió un error al eliminar la categoría!', 'icon' => 'error']);
         }
     }
-
-    public function processImage(Request $request)
-    {
-        if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $rutaCredenciales = base_path('config/vision-key.json');
-
-            // Abre el cliente de Vision API con las credenciales
-            $imageAnnotator = new ImageAnnotatorClient([
-                'credentials' => $rutaCredenciales,
-            ]);
-
-            $contenidoImagen = file_get_contents($image->getPathName());
-
-            // Envía la imagen a Vision API para análisis de objetos
-            $resultado = $imageAnnotator->objectLocalization($contenidoImagen);
-
-            // Analiza los resultados de la detección de objetos
-            $objetos = $resultado->getLocalizedObjectAnnotations();
-
-            $resultado = $imageAnnotator->textDetection($contenidoImagen);
-
-            // Obtiene las detecciones de texto en la imagen
-            $deteccionesTexto = $resultado->getTextAnnotations();
-        }
-    }
 }
