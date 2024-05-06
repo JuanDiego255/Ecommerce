@@ -33,43 +33,47 @@
                             class="nav-link-text ms-1">{{ isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1 ? 'Categorías' : 'Departamentos' }}</span>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a @if ($view_name == 'admin_sizes_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
-                        href="{{ url('sizes') }}">
-                        <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
-                            <i class="material-icons opacity-10">fullscreen</i>
-                        </div>
-                        <span
-                            class="nav-link-text ms-1">{{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'Tallas' : 'Tamaño' }}</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a @if ($view_name == 'admin_buys_index' || $view_name == 'admin_buys_indexDetail') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
-                        href="{{ url('buys-admin') }}">
-                        <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
-                            <i class="material-icons opacity-10">local_mall</i>
-                        </div>
-                        <span class="nav-link-text ms-1">Pedidos</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a @if ($view_name == 'admin_buys_buys') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
-                        href="{{ url('new-buy') }}">
-                        <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
-                            <i class="material-icons opacity-10">payments</i>
-                        </div>
-                        <span class="nav-link-text ms-1">Ventas</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a @if ($view_name == 'admin_buys_index-total') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
-                        href="{{ url('total-buys') }}">
-                        <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
-                            <i class="material-icons opacity-10">savings</i>
-                        </div>
-                        <span class="nav-link-text ms-1">Registro de ventas</span>
-                    </a>
-                </li>
+                @if (isset($tenantinfo->kind_business) && $tenantinfo->kind_business != 1)
+                    <li class="nav-item">
+                        <a @if ($view_name == 'admin_sizes_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
+                            href="{{ url('sizes') }}">
+                            <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                                <i class="material-icons opacity-10">fullscreen</i>
+                            </div>
+                            <span
+                                class="nav-link-text ms-1">{{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'Tallas' : 'Tamaño' }}</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a @if ($view_name == 'admin_buys_index' || $view_name == 'admin_buys_indexDetail') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
+                            href="{{ url('buys-admin') }}">
+                            <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                                <i class="material-icons opacity-10">local_mall</i>
+                            </div>
+                            <span class="nav-link-text ms-1">Pedidos</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a @if ($view_name == 'admin_buys_buys') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
+                            href="{{ url('new-buy') }}">
+                            <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                                <i class="material-icons opacity-10">payments</i>
+                            </div>
+                            <span class="nav-link-text ms-1">Ventas</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a @if ($view_name == 'admin_buys_index-total') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
+                            href="{{ url('total-buys') }}">
+                            <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                                <i class="material-icons opacity-10">savings</i>
+                            </div>
+                            <span class="nav-link-text ms-1">Registro de ventas</span>
+                        </a>
+                    </li>
+                @endif
+
+
                 <li class="nav-item">
                     <a @if ($view_name == 'admin_social_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
                         href="{{ url('social-network') }}">

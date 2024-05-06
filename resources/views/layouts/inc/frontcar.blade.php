@@ -91,7 +91,7 @@
             <a href="{{ url('#best-car') }}"><button
                     class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'blackLink-mandi' : 'blackLink' }} siteLink"><i
                         class="fas fa-car-side"></i>
-                    EL MEJOR
+                    OFERTA DEL MES
                 </button>
             </a>
 

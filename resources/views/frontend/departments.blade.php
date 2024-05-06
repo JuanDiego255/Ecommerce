@@ -38,7 +38,9 @@
             </div>
         </center>
     </div>
-    @include('layouts.inc.indexfooter')
+    @if (isset($tenantinfo->kind_business) && $tenantinfo->kind_business != 1)
+        @include('layouts.inc.indexfooter')
+    @endif
 @endsection
 @section('scripts')
     <script src="{{ asset('js/image-error-handler.js') }}"></script>

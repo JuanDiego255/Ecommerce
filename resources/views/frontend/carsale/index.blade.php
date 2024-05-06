@@ -47,127 +47,6 @@
             </div>
         </div>
     @endif
-    {{-- Trending --}}
-    @if (isset($tenantinfo->show_trending) && $tenantinfo->show_trending == 1)
-        <div class="mt-3 mb-5">
-            <div class="container-fluid">
-                @if (count($clothings) != 0)
-                    <div class="text-center">
-                        <h3 class="text-center text-muted mt-5 mb-3">
-                            {{ isset($tenantinfo->title_trend) ? $tenantinfo->title_trend : '' }}</h3>
-                    </div>
-                @endif
-                <div class="row">
-                    <div class="owl-carousel featured-carousel owl-theme">
-                        @foreach ($clothings as $item)
-                            @if ($item->total_stock != 0)
-                                <div class="item">
-                                    <div class="product-grid product_data">
-                                        <div class="product-image">
-                                            <img src="{{ route('file', $item->image) }}">
-                                            @if ($item->discount)
-                                                <span class="product-discount-label">-{{ $item->discount }}%</span>
-                                            @endif
-                                            <ul class="product-links">
-                                                <li><a target="blank" href="{{ tenant_asset('/') . '/' . $item->image }}"><i
-                                                            class="fas fa-eye"></i></a></li>
-                                            </ul>
-                                            <a href="{{ url('detail-car/' . $item->id . '/' . $item->category_id) }}"
-                                                class="add-to-cart">Detallar</a>
-                                        </div>
-                                        <div class="product-content">
-                                            <h3
-                                                class="text-muted text-uppercase {{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'd-none' : '' }}">
-                                                {{ $item->casa }}
-                                            </h3>
-                                            <h3
-                                                class="{{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'title' : 'title-frags' }}">
-                                                <a
-                                                    href="{{ url('detail-car/' . $item->id . '/' . $item->category_id) }}">{{ $item->name }}</a>
-                                            </h3>
-                                            @if (isset($tenantinfo->show_stock) && $tenantinfo->show_stock != 0)
-                                                <h4 class="title">Stock: {{ $item->total_stock }}</h4>
-                                            @endif
-
-                                            @php
-
-                                                $precio = $item->price;
-                                                if (isset($tenantinfo->custom_size) && $tenantinfo->custom_size == 1) {
-                                                    $precio = $item->first_price;
-                                                }
-                                                if (
-                                                    Auth::check() &&
-                                                    Auth::user()->mayor == '1' &&
-                                                    $item->mayor_price > 0
-                                                ) {
-                                                    $precio = $item->mayor_price;
-                                                }
-                                                $descuentoPorcentaje = $item->discount;
-                                                // Calcular el descuento
-                                                $descuento = ($precio * $descuentoPorcentaje) / 100;
-                                                // Calcular el precio con el descuento aplicado
-                                                $precioConDescuento = $precio - $descuento;
-                                            @endphp
-                                            <div class="price">₡{{ number_format($precioConDescuento) }}
-                                                @if ($item->discount)
-                                                    <s class="text-danger"><span
-                                                            class="text-danger">₡{{ number_format(Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0 ? $item->mayor_price : $item->price) }}
-                                                        </span></s>
-                                                @endif
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endif
-                        @endforeach
-                    </div>
-                </div>
-            </div>
-        </div>
-    @endif
-    {{-- Insta --}}
-    <hr class="text-dark">
-    @if (isset($tenantinfo->show_insta) && $tenantinfo->show_insta == 1)
-        <div class="text-center">
-            <span class="text-muted text-center"><a href="{{ isset($instagram) ? $instagram : '' }}">Instagram</a> |
-                {{ isset($tenantinfo->title_instagram) ? $tenantinfo->title_instagram : '' }}</span>
-        </div>
-        <div class="row mb-5 container-fluid">
-            @foreach ($social as $item)
-                <div class="col-md-6 mt-4">
-                    <div class="card text-center">
-                        <div class="overflow-hidden position-relative bg-cover p-3"
-                            style="background-image: url('{{ route('file', $item->image) }}'); height:700px;  background-position: center;">
-                            <span class="mask bg-gradient-dark opacity-6"></span>
-                            <div class="card-body position-relative z-index-1 d-flex flex-column mt-5">
-                                <h3 class="text-white">{{ $item->description }}.</h3>
-                                <a target="blank" class="text-white text-sm mb-0 icon-move-right mt-4"
-                                    href="{{ $item->url }}">
-                                    <h3 class="text-white"> Ver fotografía
-                                        <i class="material-icons text-sm ms-1 position-relative"
-                                            aria-hidden="true">arrow_forward</i>
-                                    </h3>
-
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            @endforeach
-
-        </div>
-    @endif
-
-    @if (isset($tenantinfo->show_mision) && $tenantinfo->show_mision == 1)
-        <div class="bg-footer p-3 mb-3 text-center">
-            <h3
-                class="text-center {{ isset($tenantinfo->tenant) && $tenantinfo->tenant === 'mandicr' ? 'text-title-mandi' : 'text-title' }} mt-3">
-                {{ isset($tenantinfo->title) ? $tenantinfo->title : '' }}</h3>
-            <span class="text-center text-muted">{{ isset($tenantinfo->mision) ? $tenantinfo->mision : '' }}</span>
-
-
-        </div>
-    @endif
 
     {{-- Categories --}}
     @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
@@ -228,6 +107,38 @@
                 @endforeach
             </div>
         @endif
+    @endif
+    {{-- Insta --}}
+    <hr class="text-dark">
+    @if (isset($tenantinfo->show_insta) && $tenantinfo->show_insta == 1)
+        <div class="text-center">
+            <span class="text-muted text-center"><a href="{{ isset($instagram) ? $instagram : '' }}">Instagram</a> |
+                {{ isset($tenantinfo->title_instagram) ? $tenantinfo->title_instagram : '' }}</span>
+        </div>
+        <div class="row mb-5 container-fluid">
+            @foreach ($social as $item)
+                <div class="col-md-6 mt-4">
+                    <div class="card text-center">
+                        <div class="overflow-hidden position-relative bg-cover p-3"
+                            style="background-image: url('{{ route('file', $item->image) }}'); height:700px;  background-position: center;">
+                            <span class="mask bg-gradient-dark opacity-6"></span>
+                            <div class="card-body position-relative z-index-1 d-flex flex-column mt-5">
+                                <h3 class="text-white">{{ $item->description }}.</h3>
+                                <a target="blank" class="text-white text-sm mb-0 icon-move-right mt-4"
+                                    href="{{ $item->url }}">
+                                    <h3 class="text-white"> Ver fotografía
+                                        <i class="material-icons text-sm ms-1 position-relative"
+                                            aria-hidden="true">arrow_forward</i>
+                                    </h3>
+
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+
+        </div>
     @endif
 
     @if (isset($tenantinfo->show_trending) && $tenantinfo->show_trending == 1)
@@ -307,12 +218,19 @@
             @endforeach
         </div>
     </div>
+    @if (isset($tenantinfo->show_mision) && $tenantinfo->show_mision == 1)
+    <div class="bg-footer p-3 mb-3 text-center">
+        <h3
+            class="text-center {{ isset($tenantinfo->tenant) && $tenantinfo->tenant === 'mandicr' ? 'text-title-mandi' : 'text-title' }} mt-3">
+            {{ isset($tenantinfo->title) ? $tenantinfo->title : '' }}</h3>
+        <span class="text-center text-muted">{{ isset($tenantinfo->mision) ? $tenantinfo->mision : '' }}</span>
+
+
+    </div>
+@endif
 @endif
 
 <hr class="dark horizontal text-danger my-0">
-
-
-@include('layouts.inc.indexfooter')
 @endsection
 @section('scripts')
 <script src="{{ asset('js/image-error-handler.js') }}"></script>
