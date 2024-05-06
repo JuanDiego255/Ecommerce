@@ -1,17 +1,18 @@
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
     var images = document.querySelectorAll("img");
 
-    images.forEach(function(image) {
-        image.onerror = function() {
-            handleImageError(this);
-        };
+    images.forEach(function (image) {
+        var isLoaded = image.complete && image.naturalHeight !== 0;
+        if(!isLoaded){
+            handleImageError(image);
+        }
     });
 
     function handleImageError(image) {
-        var error = "Error al cargar la imagen: " + image.src;
+        var error = "Imagen cargada correctamente " + image.src;
         console.error(error);
-        setTimeout(function() {
+        setTimeout(function () {
             image.src = image.src;
-        }, 5);
+        }, 1);
     }
 });
