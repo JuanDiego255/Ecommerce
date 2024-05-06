@@ -6,7 +6,7 @@
 @section('content')
     @if (count($tenantcarousel) != 0)
         <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
-            <div class="carousel-inner mb-4 foto">
+            <div class="carousel-inner mb-1 foto">
                 @foreach ($tenantcarousel as $key => $carousel)
                     <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
                         <div class="page-header min-vh-75 m-3"
@@ -36,6 +36,58 @@
             </div>
         </div>
     @endif
+
+    {{-- Categories --}}
+    @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
+        @if (count($categories) != 0)
+            <div class="row g-4 align-content-center card-group container-fluid mt-2 mb-5">
+                @foreach ($category as $key => $item)
+                    <div class="{{$key+1 > 3 ? 'col-md-3' : 'col-md-4'}} col-sm-6 mb-2">
+                        <div class="product-grid product_data">
+                            <div class="product-image">
+                                <img src="{{ route('file', $item->image) }}">
+                                <ul class="product-links">
+                                    <li><a target="blank" href="{{ tenant_asset('/') . '/' . $item->image }}"><i
+                                                class="fas fa-eye"></i></a></li>
+                                </ul>
+                                <a href="{{ url('clothes-category/' . $item->category_id . '/' . $item->department_id) }}"
+                                    class="add-to-cart">{{ $item->name }}</a>
+                            </div>
+                            
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        @endif
+    @else
+        @if (count($departments) != 0)
+            <div class="text-center">
+                <span class="text-muted text-center">Explora nuestros departamentos! Navega y encuentra todo lo que
+                    desees.</span>
+            </div>
+            <div class="row row-cols-1 row-cols-md-3 g-4 align-content-center card-group container-fluid mt-2 mb-5">
+                @foreach ($departments as $item)
+                    <div class="col-md-4 col-sm-6 mb-2">
+                        <div class="product-grid product_data">
+                            <div class="product-image">
+                                <img src="{{ route('file', $item->image) }}">
+                                <ul class="product-links">
+                                    <li><a target="blank" href="{{ tenant_asset('/') . '/' . $item->image }}"><i
+                                                class="fas fa-eye"></i></a></li>
+                                </ul>
+                                <a href="{{ url('category/' . $item->id) }}" class="add-to-cart">Categorías</a>
+                            </div>
+                            <div class="product-content">
+                                <h3 class="title"><a
+                                        href="{{ url('category/' . $item->id) }}">{{ $item->department }}</a>
+                                </h3>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        @endif
+    @endif
     {{-- Trending --}}
     @if (isset($tenantinfo->show_trending) && $tenantinfo->show_trending == 1)
         <div class="mt-3 mb-5">
@@ -58,7 +110,8 @@
                                                 <span class="product-discount-label">-{{ $item->discount }}%</span>
                                             @endif
                                             <ul class="product-links">
-                                                <li><a target="blank" href="{{ tenant_asset('/') . '/' . $item->image }}"><i
+                                                <li><a target="blank"
+                                                        href="{{ tenant_asset('/') . '/' . $item->image }}"><i
                                                             class="fas fa-eye"></i></a></li>
                                             </ul>
                                             <a href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}"
@@ -224,66 +277,6 @@
             @endforeach
 
         </div>
-    @endif
-    {{-- Categories --}}
-    @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
-        @if (count($categories) != 0)
-            <div class="text-center">
-                <span class="text-muted text-center">Explora nuestras secciones! Navega y encuentra todo lo que desees. <a
-                        href="{{ url('category') }}">(Más secciones)</a></span>
-            </div>
-            <div class="row row-cols-1 row-cols-md-3 g-4 align-content-center card-group container-fluid mt-2 mb-5">
-                @foreach ($category as $item)
-                    <div class="col-md-3 col-sm-6 mb-2">
-                        <div class="product-grid product_data">
-                            <div class="product-image">
-                                <img src="{{ route('file', $item->image) }}">
-                                <ul class="product-links">
-                                    <li><a target="blank" href="{{ tenant_asset('/') . '/' . $item->image }}"><i
-                                                class="fas fa-eye"></i></a></li>
-                                </ul>
-                                <a href="{{ url('clothes-category/' . $item->category_id . '/' . $item->department_id) }}"
-                                    class="add-to-cart">Descubrir
-                                    estilos</a>
-                            </div>
-                            <div class="product-content">
-                                <h3 class="title"><a
-                                        href="{{ url('clothes-category/' . $item->category_id . '/' . $item->department_id) }}">{{ $item->name }}</a>
-                                </h3>
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
-            </div>
-        @endif
-    @else
-        @if (count($departments) != 0)
-            <div class="text-center">
-                <span class="text-muted text-center">Explora nuestros departamentos! Navega y encuentra todo lo que
-                    desees.</span>
-            </div>
-            <div class="row row-cols-1 row-cols-md-3 g-4 align-content-center card-group container-fluid mt-2 mb-5">
-                @foreach ($departments as $item)
-                    <div class="col-md-3 col-sm-6 mb-2">
-                        <div class="product-grid product_data">
-                            <div class="product-image">
-                                <img src="{{ route('file', $item->image) }}">
-                                <ul class="product-links">
-                                    <li><a target="blank" href="{{ tenant_asset('/') . '/' . $item->image }}"><i
-                                                class="fas fa-eye"></i></a></li>
-                                </ul>
-                                <a href="{{ url('category/' . $item->id) }}" class="add-to-cart">Categorías</a>
-                            </div>
-                            <div class="product-content">
-                                <h3 class="title"><a
-                                        href="{{ url('category/' . $item->id) }}">{{ $item->department }}</a>
-                                </h3>
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
-            </div>
-        @endif
     @endif
 
     @if (isset($tenantinfo->show_mision) && $tenantinfo->show_mision == 1)
