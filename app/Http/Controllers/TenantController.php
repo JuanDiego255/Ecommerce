@@ -84,7 +84,6 @@ class TenantController extends Controller
         //
         DB::beginTransaction();      
         try {
-            dd($request);
             $tenants = Tenant::where('id', $tenant)->first();
             tenancy()->initialize($tenants);
             if ($request->license == "1") {
@@ -96,48 +95,6 @@ class TenantController extends Controller
             DB::commit();
             tenancy()->end();
             return redirect()->back()->with(['status' => 'Se cambio el estado de la licencia para este inquilino', 'icon' => 'success']);
-        } catch (\Exception $th) {
-            //throw $th;
-            DB::rollBack();
-        }
-    }
-    public function manageSize($tenant, Request $request)
-    {
-        //
-        DB::beginTransaction();      
-        try {
-            $tenants = Tenant::where('id', $tenant)->first();
-            tenancy()->initialize($tenants);
-            if ($request->manage_size == "1") {
-                TenantInfo::where('tenant', $tenant)->update(['manage_size' => 1]);
-            } else {
-                TenantInfo::where('tenant', $tenant)->update(['manage_size' => 0]);
-            }
-
-            DB::commit();
-            tenancy()->end();
-            return redirect()->back()->with(['status' => 'Se cambio el estado del manejo de tallas para este inquilino', 'icon' => 'success']);
-        } catch (\Exception $th) {
-            //throw $th;
-            DB::rollBack();
-        }
-    }
-    public function manageDepartment($tenant, Request $request)
-    {
-        //
-        DB::beginTransaction();      
-        try {
-            $tenants = Tenant::where('id', $tenant)->first();
-            tenancy()->initialize($tenants);
-            if ($request->manage_department == "1") {
-                TenantInfo::where('tenant', $tenant)->update(['manage_department' => 1]);
-            } else {
-                TenantInfo::where('tenant', $tenant)->update(['manage_department' => 0]);
-            }
-
-            DB::commit();
-            tenancy()->end();
-            return redirect()->back()->with(['status' => 'Se cambio el estado del manejo de departamentos para este inquilino', 'icon' => 'success']);
         } catch (\Exception $th) {
             //throw $th;
             DB::rollBack();

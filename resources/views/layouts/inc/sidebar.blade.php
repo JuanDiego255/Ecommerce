@@ -147,6 +147,15 @@
                         <span class="nav-link-text ms-1">Administrar Inquilinos</span>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a @if ($view_name == 'admin_users_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
+                        href="{{ url('/tenants/payments') }}">
+                        <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                            <i class="material-icons opacity-10">payments</i>
+                        </div>
+                        <span class="nav-link-text ms-1">Pagos</span>
+                    </a>
+                </li>
             @endif
 
         </ul>
