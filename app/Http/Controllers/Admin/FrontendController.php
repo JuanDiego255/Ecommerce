@@ -8,6 +8,7 @@ use App\Models\ClothingCategory;
 use App\Models\Department;
 use App\Models\MetaTags;
 use App\Models\ProductImage;
+use App\Models\Seller;
 use App\Models\SizeCloth;
 use App\Models\SocialNetwork;
 use App\Models\TenantInfo;
@@ -390,6 +391,9 @@ class FrontendController extends Controller
         $social = Cache::remember('social_networks', $this->expirationTime, function () {
             return SocialNetwork::get();
         });
+        $sellers = Cache::remember('sellers', $this->expirationTime, function () {
+            return Seller::get();
+        });
         $tags = Cache::remember('meta_tags_inicio', $this->expirationTime, function () {
             return MetaTags::where('section', 'Inicio')->get();
         });
@@ -464,7 +468,7 @@ class FrontendController extends Controller
             OpenGraph::setDescription($tag->meta_og_description);
         }     
        
-        return view('frontend.carsale.index', compact('clothings', 'social','category'));
+        return view('frontend.carsale.index', compact('clothings', 'social','category','sellers'));
     }
     public function DetailCarById($id, $category_id)
     {

@@ -73,7 +73,6 @@
                     </li>
                 @endif
 
-
                 <li class="nav-item">
                     <a @if ($view_name == 'admin_social_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
                         href="{{ url('social-network') }}">
@@ -113,7 +112,6 @@
                 </ul>
             </li>
 
-
             @if (isset($tenantinfo->tenant) && $tenantinfo->tenant != 'main')
                 <li class="nav-item">
                     <a @if ($view_name == 'admin_users_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
@@ -134,6 +132,18 @@
                             <i class="material-icons opacity-10">sports_score</i>
                         </div>
                         <span class="nav-link-text ms-1">SEO Tools</span>
+                    </a>
+                </li>
+            @endif
+            @if (isset($tenantinfo->kind_business) && $tenantinfo->kind_business == 1)
+                <li class="nav-item">
+                    <a @if ($view_name == 'admin_sellers_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
+                        href="{{ url('sellers') }}">
+                        <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                            <i class="material-icons opacity-10">record_voice_over</i>
+                        </div>
+                        <span
+                            class="nav-link-text ms-1">Vendedores</span>
                     </a>
                 </li>
             @endif

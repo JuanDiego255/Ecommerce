@@ -111,11 +111,11 @@
     {{-- Insta --}}
     <hr class="text-dark">
     @if (isset($tenantinfo->show_insta) && $tenantinfo->show_insta == 1)
-        <div class="text-center">
-            <span class="text-muted text-center"><a href="{{ isset($instagram) ? $instagram : '' }}">Instagram</a> |
-                {{ isset($tenantinfo->title_instagram) ? $tenantinfo->title_instagram : '' }}</span>
-        </div>
         <div class="row mb-5 container-fluid">
+            <div class="text-center">
+                <span
+                    class="text-muted text-center">{{ isset($tenantinfo->title_instagram) ? $tenantinfo->title_instagram : '' }}</span>
+            </div>
             @foreach ($social as $item)
                 <div class="col-md-6 mt-4">
                     <div class="card text-center">
@@ -219,18 +219,56 @@
         </div>
     </div>
     @if (isset($tenantinfo->show_mision) && $tenantinfo->show_mision == 1)
-    <div class="bg-footer p-3 mb-3 text-center">
-        <h3
-            class="text-center {{ isset($tenantinfo->tenant) && $tenantinfo->tenant === 'mandicr' ? 'text-title-mandi' : 'text-title' }} mt-3">
-            {{ isset($tenantinfo->title) ? $tenantinfo->title : '' }}</h3>
-        <span class="text-center text-muted">{{ isset($tenantinfo->mision) ? $tenantinfo->mision : '' }}</span>
+        <div class="bg-footer p-3 mb-3 text-center">
+            <h3
+                class="text-center {{ isset($tenantinfo->tenant) && $tenantinfo->tenant === 'mandicr' ? 'text-title-mandi' : 'text-title' }} mt-3">
+                {{ isset($tenantinfo->title) ? $tenantinfo->title : '' }}</h3>
+            <span class="text-center text-muted">{{ isset($tenantinfo->mision) ? $tenantinfo->mision : '' }}</span>
 
 
+        </div>
+    @endif
+@endif
+<hr class="dark horizontal text-danger my-0">
+{{-- Personal --}}
+@if (count($sellers) != 0)
+    <div class="container">
+        <div class="text-center">
+            <h1 class="text-center text-title mt-5 mb-3">Nuestros personal especializado en todo tipo de autos. </h1>
+        </div>
+        <div class="row text-center">
+
+            <!-- Team item -->
+            @foreach ($sellers as $item)
+                <div class="col-xl-3 col-sm-6 mb-5">
+                    <div class="bg-white rounded shadow-sm py-5 px-4"><img src="{{ route('file', $item->image) }}"
+                            alt="" width="100"
+                            class="img-fluid rounded-circle mb-3 img-thumbnail shadow-sm">
+                        <h5 class="mb-0">{{ $item->name }}</h5><span
+                            class="small text-uppercase text-muted">{{ $item->position }}</span>
+                        <ul class="social mb-0 list-inline mt-3">
+                            <li class="list-inline-item"><a
+                                    href="{{ $item->url_face != '' ? $item->url_facebook : '#' }}"
+                                    class="social-link"><i class="fa fa-facebook-f"></i></a></li>
+                            <li class="list-inline-item"><a
+                                    href="{{ $item->url_insta != '' ? $item->url_insta : '#' }}"
+                                    class="social-link"><i class="fa fa-instagram"></i></a></li>
+                            <li class="list-inline-item"><a
+                                    href="{{ $item->url_linkedin != '' ? $item->url_linkedin : '#' }}"
+                                    class="social-link"><i class="fa fa-linkedin"></i></a></li>
+                        </ul>
+                    </div>
+                </div>
+            @endforeach
+
+            <!-- End -->
+        </div>
     </div>
 @endif
-@endif
+
 
 <hr class="dark horizontal text-danger my-0">
+@include('layouts.inc.indexfooter-car')
 @endsection
 @section('scripts')
 <script src="{{ asset('js/image-error-handler.js') }}"></script>

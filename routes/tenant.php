@@ -13,6 +13,7 @@ use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\Frontend\CartController;
 use App\Http\Controllers\Frontend\CheckOutController;
 use App\Http\Controllers\MetaTagsController;
+use App\Http\Controllers\SellerController;
 use App\Http\Controllers\SizeController;
 use App\Http\Controllers\SocialNetworkController;
 use App\Http\Controllers\TenantCarouselController;
@@ -153,6 +154,11 @@ Route::middleware([
             Route::post('department/store', [DepartmentController::class, 'store']);
             Route::put('/department/update/{id}', [DepartmentController::class, 'update']);
             Route::delete('/delete/department/{id}', [DepartmentController::class, 'delete']);
+            //Rutas para vendedores
+            Route::get('/sellers', [SellerController::class, 'index']);
+            Route::post('seller/store', [SellerController::class, 'store']);
+            Route::put('/seller/update/{id}', [SellerController::class, 'update']);
+            Route::delete('/delete/seller/{id}', [SellerController::class, 'destroy']);
         });
     });
 
