@@ -47,28 +47,28 @@
     <div class="flexMain">
         <div class="flex2">
             <button
-                class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'whiteLink-mandi' : 'whiteLink' }} siteLink"
+                class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'whiteLink-mandi' : 'whiteLink' }} siteLink-car"
                 id="btnMenu" style="color: var(--navbar_text); border-right:1px solid #eaeaea"
                 onclick="menuToggle()"><i class="fas fa-bars me-2"></i> MENU</button>
         </div>
         <div class="flex3 text-center" id="siteBrand">
             <a class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'text-title-mandi' : 'text-title' }} text-uppercase"
-                href="{{ url('/') }}">{{ isset($tenantinfo->title) ? $tenantinfo->title : '' }}</a>
+                href="{{ url('/') }}"><img class="logo" src="{{ route('file', $tenantinfo->logo) }}" alt=""></a>
         </div>
 
         <div class="flex2 text-end d-block d-md-none">
             @guest
                 <a href="{{ route('login') }}"><button id="btnIngresar"
-                        class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'whiteLink-mandi' : 'whiteLink' }} siteLink"><i
+                        class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'whiteLink-mandi' : 'whiteLink' }} siteLink-car"><i
                             style="color: var(--navbar_text);" class="fa fa-sign-in cartIcon"></i></button></a>
             @else
                 <a href="{{ url('/category') }}"><button id="btnIngresar"
-                        class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'whiteLink-mandi' : 'whiteLink' }} siteLink"><i
+                        class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'whiteLink-mandi' : 'whiteLink' }} siteLink-car"><i
                             style="color: var(--navbar_text);" class="fas fa-car cartIcon"></i></button></a>
             @endguest
 
             <a href="{{ url('#best-car') }}"><button
-                    class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'whiteLink-mandi' : 'whiteLink' }} siteLink"><i
+                    class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'whiteLink-mandi' : 'whiteLink' }} siteLink-car"><i
                         style="color: var(--navbar_text);" class="fas fa-car-side cartIcon">
                         </i></button></a>
         </div>
@@ -77,19 +77,19 @@
             @guest
                 <a href="{{ route('login') }}">
                     <button id="btnIngresarLogo"
-                        class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'whiteLink-mandi' : 'whiteLink' }} siteLink"
+                        class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'whiteLink-mandi' : 'whiteLink' }} siteLink-car"
                         style="border-right:1px solid #eaeaea"><i class="fa fa-sign-in"></i> INGRESAR</button>
                 </a>
             @else
                 <a href="{{ url('/category') }}">
                     <button id="btnIngresarLogo"
-                        class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'whiteLink-mandi' : 'whiteLink' }} siteLink"
+                        class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'whiteLink-mandi' : 'whiteLink' }} siteLink-car"
                         style="border-right:1px solid #eaeaea"><i class="fas fa-car"></i> CATEGORIAS</button>
                 </a>
             @endguest
 
             <a href="{{ url('#best-car') }}"><button
-                    class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'blackLink-mandi' : 'blackLink' }} siteLink"><i
+                    class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'blackLink-mandi' : 'blackLink' }} siteLink-car"><i
                         class="fas fa-car-side"></i>
                     OFERTA DEL MES
                 </button>
