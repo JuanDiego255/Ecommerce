@@ -165,7 +165,7 @@ Route::middleware([
     //Rutas para las ventas de autos
     Route::group(['middleware' => 'isKindBusiness'], function () {
         Route::get('index/carsale', [FrontendController::class, 'indexCarSale']);
-        Route::get('detail-car/{id}/{cat_id}', [FrontendController::class, 'DetailCarById']);
+        Route::get('spa/index', [FrontendController::class, 'indexSpa']);
     });
 
 

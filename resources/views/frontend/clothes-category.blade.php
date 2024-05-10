@@ -54,7 +54,7 @@
                                     <li><a target="blank" href="{{ route('file', $item->image) }}"><i
                                                 class="fas fa-eye"></i></a></li>
                                 </ul>
-                                <a href="{{ isset($tenantinfo->kind_business) && $tenantinfo->kind_business != 1 ? url('detail-clothing/' . $item->id . '/' . $category_id) : url('detail-car/' . $item->id . '/' . $category_id) }}"
+                                <a href="{{ url('detail-clothing/' . $item->id . '/' . $category_id) }}"
                                     class="add-to-cart">Detallar</a>
                             </div>
                             <div class="product-content">
@@ -63,7 +63,7 @@
                                     {{ $item->casa }}
                                 </h3>
                                 <h3 class="title clothing-name"><a
-                                        href="{{ isset($tenantinfo->kind_business) && $tenantinfo->kind_business != 1 ? url('detail-clothing/' . $item->id . '/' . $category_id) : url('detail-car/' . $item->id . '/' . $category_id) }}">{{ $item->name }}</a>
+                                        href="{{ url('detail-clothing/' . $item->id . '/' . $category_id)}}">{{ $item->name }}</a>
                                 </h3>
                                 @if (isset($tenantinfo->show_stock) && $tenantinfo->show_stock != 0)
                                     <h4 class="title">Stock: {{ $item->total_stock }}</h4>

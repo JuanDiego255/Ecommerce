@@ -10748,6 +10748,13 @@ fieldset:disabled .btn {
   font-weight: 300 !important;
 }
 
+.text-single {
+  color: #60676C !important;
+  font-size: 18px;
+  font-family: 'Montserrat', sans-serif !important;
+  font-weight: 100 !important;
+}
+
 .text-footer {
   color: var(--footer_text) !important;
   font-size: 18px;
@@ -28780,6 +28787,13 @@ input.card {
   width: 100%;
   position: fixed;
   background-color: #FAAA0B;
+}
+.service-container::before {
+  content: "";
+  height: 235px;
+  width: 100%;
+  position: fixed;
+  background-color: #000;
 }
 
 .font-title {

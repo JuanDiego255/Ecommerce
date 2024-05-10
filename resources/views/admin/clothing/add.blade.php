@@ -96,6 +96,16 @@
                                     </div>
                                 </div>
                             @endif
+                            @if (isset($tenantinfo->kind_business) && $tenantinfo->kind_business == 2)
+                                <div class="col-md-12 mb-3">
+                                    <label>Se puede comprar?</label>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="1" id="can_buy"
+                                            name="can_buy">
+                                        <label class="custom-control-label" for="customCheck1">Producto de compra</label>
+                                    </div>
+                                </div>
+                            @endif
                             @if (isset($tenantinfo->tenant) && $tenantinfo->manage_size == 1)
                                 <div class="col-md-12 mb-3">
                                     <label

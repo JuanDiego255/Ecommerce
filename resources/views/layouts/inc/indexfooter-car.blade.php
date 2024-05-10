@@ -28,7 +28,7 @@
             </div>
             <div class="col-md-4 mt-5">
 
-                <h5 class="text-uppercase">Te ayudamos a encontrar tu vehículo! <i class="fa fa-heart"></i></h5>
+                <h5 class="text-uppercase text-footer">Te ayudamos a encontrar tu vehículo! <i class="fa fa-heart"></i></h5>
                 <div>
                     <p class="text-footer text-uppercase text-lg">
                         En nuestro concesionario cumplimos tus sueños.

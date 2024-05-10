@@ -64,7 +64,7 @@ class SocialNetworkController extends Controller
             return redirect('/social-network')->with(['status' => 'Se ha guardado la fotografía con éxito', 'icon' => 'success']);
         } catch (\Exception $th) {
             DB::rollBack();
-            return redirect('/social-network')->with(['status' => 'No se pudo guardar la imagen', 'icon' => 'error']);
+            return redirect('/social-network')->with(['status' => $th->getMessage(), 'icon' => 'error']);
         }
     }
 

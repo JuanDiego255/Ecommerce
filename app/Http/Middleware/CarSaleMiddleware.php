@@ -18,7 +18,7 @@ class CarSaleMiddleware
     public function handle(Request $request, Closure $next)
     {
         $tenant = TenantInfo::first();
-        if ($tenant->kind_business == 1) {
+        if ($tenant->kind_business != 0) {
             return $next($request);
         } else {
             abort(404);

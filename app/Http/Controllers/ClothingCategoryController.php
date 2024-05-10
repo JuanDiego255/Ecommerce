@@ -100,6 +100,7 @@ class ClothingCategoryController extends Controller
                     'clothing.category_id as category_id',
                     'clothing.name as name',
                     'clothing.casa as casa',
+                    'clothing.can_buy as can_buy',
                     'clothing.code as code',
                     'clothing.discount as discount',
                     'clothing.trending as trending',
@@ -114,6 +115,7 @@ class ClothingCategoryController extends Controller
                     'clothing.casa',
                     'clothing.name',
                     'clothing.code',
+                    'clothing.can_buy',
                     'clothing.category_id',
                     'clothing.description',
                     'clothing.trending',
@@ -188,6 +190,9 @@ class ClothingCategoryController extends Controller
 
             if ($request->has('discount')) {
                 $clothing->discount = $request->discount;
+            }
+            if ($tenantinfo->kind_business == 2) {
+                $clothing->can_buy = $request->filled('can_buy') ? 1 : 0;
             }
 
             $clothing->status = 1;
@@ -314,6 +319,9 @@ class ClothingCategoryController extends Controller
                 }
                 if ($request->has('discount')) {
                     $clothing->discount = $request->discount;
+                }
+                if ($tenantinfo->kind_business == 2) {
+                    $clothing->can_buy = $request->filled('can_buy') ? 1 : 0;
                 }
                 $clothing->status = 1;
                 $clothing->trending = $request->filled('trending') ? 1 : 0;

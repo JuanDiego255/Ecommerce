@@ -30,7 +30,7 @@
                             <i class="material-icons opacity-10">dashboard</i>
                         </div>
                         <span
-                            class="nav-link-text ms-1">{{ isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1 ? 'Categorías' : 'Departamentos' }}</span>
+                            class="nav-link-text ms-1">{{ (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1 ? 'Categorías' : 'Departamentos') }}</span>
                     </a>
                 </li>
                 @if (isset($tenantinfo->kind_business) && $tenantinfo->kind_business != 1)

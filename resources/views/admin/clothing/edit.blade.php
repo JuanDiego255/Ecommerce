@@ -99,6 +99,16 @@
                                     @endforeach
                                 </div>
                             @endif
+                            @if (isset($tenantinfo->kind_business) && $tenantinfo->kind_business == 2)
+                                <div class="col-md-12 mb-3">
+                                    <label>Se puede comprar?</label>
+                                    <div class="form-check">
+                                        <input {{ $clothing->can_buy == 1 ? 'checked' : '' }} class="form-check-input" type="checkbox" value="1" id="can_buy"
+                                            name="can_buy">
+                                        <label class="custom-control-label" for="customCheck1">Producto de compra</label>
+                                    </div>
+                                </div>
+                            @endif
 
                             <div class="col-md-12 mb-3">
                                 <label>Es Tendencia?</label>

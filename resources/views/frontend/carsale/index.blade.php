@@ -198,8 +198,8 @@
                                                 {!! $item->description !!}
                                             </p>
 
-                                            <a href="{{ url('detail-car/' . $item->id . '/' . $item->category_id) }}"
-                                                class="btn btn-add_to_cart shadow-0 btnAddToCart"> <i
+                                            <a href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}"
+                                                class="btn btn-add_to_cart shadow-0"> <i
                                                     class="me-1 fas fa-eye"></i>Detallar
                                             </a>
                                         </div>
@@ -219,11 +219,11 @@
         </div>
     </div>
     @if (isset($tenantinfo->show_mision) && $tenantinfo->show_mision == 1)
-        <div class="bg-footer p-3 mb-3 text-center">
+        <div class="bg-white p-3 mb-3 text-center">
             <h3
                 class="text-center {{ isset($tenantinfo->tenant) && $tenantinfo->tenant === 'mandicr' ? 'text-title-mandi' : 'text-title' }} mt-3">
                 {{ isset($tenantinfo->title) ? $tenantinfo->title : '' }}</h3>
-            <span class="text-center text-muted">{{ isset($tenantinfo->mision) ? $tenantinfo->mision : '' }}</span>
+            <span class="text-center text-dark">{{ isset($tenantinfo->mision) ? $tenantinfo->mision : '' }}</span>
 
 
         </div>

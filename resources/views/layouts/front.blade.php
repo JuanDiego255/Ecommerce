@@ -57,11 +57,16 @@
 
         <div>
             @if (isset($tenantinfo->tenant) && $tenantinfo->tenant != 'main')
-                @if (isset($tenantinfo->kind_business) && $tenantinfo->kind_business != 1)
-                    @include('layouts.inc.frontnavbar')
-                @else
-                    @include('layouts.inc.frontcar')
-                @endif
+                @switch($tenantinfo->kind_business)
+                    @case(1)
+                        @include('layouts.inc.frontcar')
+                    @break
+                    @case(2)
+                        @include('layouts.inc.websites.frontnavbar')
+                    @break
+                    @default
+                        @include('layouts.inc.frontnavbar')
+                @endswitch
             @else
                 @include('layouts.inc.centralnavbar')
             @endif
