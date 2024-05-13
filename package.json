@@ -16,6 +16,8 @@
         "postcss": "^8.1.14"
     },
     "dependencies": {
+        "@ckeditor/ckeditor5-image": "^41.3.1",
+        "@ckeditor/ckeditor5-style": "^41.3.1",
         "datatables.net-bs4": "^1.13.8",
         "jscolor": "^0.3.0"
     }

@@ -27984,7 +27984,8 @@ pre[class*="language-"] {
 .flex3 {
   flex: 3
 }
-.logo{
+
+.logo {
   height: 119px;
   width: 119px;
 }
@@ -27996,6 +27997,7 @@ button.siteLink {
   display: inline-block;
   min-width: 115px;
 }
+
 button.siteLink-car {
   margin-left: -5px;
   border: none;
@@ -28788,6 +28790,7 @@ input.card {
   position: fixed;
   background-color: #FAAA0B;
 }
+
 .service-container::before {
   content: "";
   height: 235px;
@@ -28945,6 +28948,7 @@ input.card {
     overflow-y: auto;
   }
 }
+
 /*Personal*/
 .social-link {
   width: 30px;
@@ -28959,8 +28963,40 @@ input.card {
   font-size: 0.9rem;
 }
 
-.social-link:hover, .social-link:focus {
+.social-link:hover,
+.social-link:focus {
   background: #ddd;
   text-decoration: none;
   color: #555;
 }
+
+/*Estilos ckeditor*/
+.ck-heading_heading1 {
+  color: var(--title_text) !important;
+  font-size: 1.875rem;
+  font-family: 'Montserrat', sans-serif !important;
+  font-weight: 300 !important;
+}
+
+.ck-heading_paragraph {
+  color: #60676C !important;
+  font-size: 28px;
+  font-family: 'Montserrat', sans-serif !important;
+  font-weight: 300 !important;
+}
+.ck-content .text-tiny {
+  font-size: 0.7em;
+}
+
+.ck-content .text-small {
+  font-size: 0.85em;
+}
+
+.ck-content .text-big {
+  font-size: 1.4em;
+}
+
+.ck-content .text-huge {
+  font-size: 1.8em;
+}
+

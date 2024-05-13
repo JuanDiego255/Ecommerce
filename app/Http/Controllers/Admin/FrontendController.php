@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Blog;
 use App\Models\Categories;
 use App\Models\ClothingCategory;
 use App\Models\Department;
@@ -171,7 +172,9 @@ class FrontendController extends Controller
             $offer->images = $imagePaths ?: [null];
         }
 
-        return view('frontend.index', compact('clothings', 'social', 'clothings_offer', 'category'));
+        $blogs = Blog::take(4)->get();
+
+        return view('frontend.index', compact('clothings','blogs', 'social', 'clothings_offer', 'category'));
     }
     public function category($id = null)
     {
@@ -549,7 +552,9 @@ class FrontendController extends Controller
             OpenGraph::setDescription($tag->meta_og_description);
         }
 
-        return view('frontend.carsale.index', compact('clothings', 'social', 'category', 'sellers'));
+        $blogs = Blog::take(4)->get();
+
+        return view('frontend.carsale.index', compact('clothings','blogs', 'social', 'category', 'sellers'));
     }  
     public function indexSpa()
     {
@@ -633,6 +638,8 @@ class FrontendController extends Controller
             OpenGraph::setDescription($tag->meta_og_description);
         }
 
-        return view('frontend.website.index', compact('clothings', 'social', 'category', 'sellers'));
+        $blogs = Blog::take(4)->get();
+
+        return view('frontend.website.index', compact('clothings','blogs', 'social', 'category', 'sellers'));
     }
 }

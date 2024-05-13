@@ -175,7 +175,8 @@
                                     </ul>
                                 </div>
                                 <div class="product-content-offer">
-                                    <a class="add-to-cart" href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}">
+                                    <a class="add-to-cart"
+                                        href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}">
                                         <i class="fas fa-plus"></i>Detallar
                                     </a>
 
@@ -194,7 +195,8 @@
                                         // Calcular el precio con el descuento aplicado
                                         $precioConDescuento = $precio - $descuento;
                                     @endphp
-                                    <h3 class="title"><a href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}">
+                                    <h3 class="title"><a
+                                            href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}">
                                             ₡{{ number_format($precioConDescuento) }}
                                             @if ($item->discount)
                                                 <s class="text-danger"><span
@@ -255,7 +257,61 @@
 
 
     <hr class="dark horizontal text-danger my-0">
-    @include('layouts.inc.indexfooter')
+    {{-- Trending --}}
+    @if (count($blogs) != 0)
+        <div class="mt-3 mb-5">
+            <div class="container-fluid">
+                <div class="text-center">
+                    <h3 class="text-center text-muted mt-5 mb-3">Blog de
+                        {{ isset($tenantinfo->title) ? $tenantinfo->title : '' }}, explora nuestras secciones, y aclara las
+                        dudas acerca de nuestros servicios.</h3>
+                </div>
+
+                <div class="row">
+                    <div class="row row-cols-1 row-cols-md-4 g-4 align-content-center card-group mt-2 mb-5">
+                        @foreach ($blogs as $item)
+                            <div class="item">
+                                <div class="product-grid product_data">
+                                    <div class="product-image">
+                                        <img src="{{ route('file', $item->image) }}">
+
+                                        <ul class="product-links">
+                                            <li><a target="blank" href="{{ route('file', $item->image) }}"><i
+                                                        class="fas fa-eye"></i></a></li>
+                                        </ul>
+                                        <a href="{{ url('/blog/' . $item->id . '/show-index') }}" class="add-to-cart">Ver
+                                            información</a>
+                                    </div>
+                                    <div class="product-content">
+
+                                        <h3
+                                            class="{{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'text-muted' : 'title-frags' }}">
+                                            <a
+                                                href="{{ url('/blog/' . $item->id . '/show-index') }}">{{ $item->title }}</a>
+                                        </h3>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    @endif
+    @switch($tenantinfo->kind_business)
+        @case(1)
+            @include('layouts.inc.indexfooter')
+        @break
+
+        @case(2)
+            @include('layouts.inc.websites.indexfooter')
+        @break
+
+        @default
+            @include('layouts.inc.indexfooter')
+    @endswitch
+
 @endsection
 @section('scripts')
     <script src="{{ asset('js/image-error-handler.js') }}"></script>

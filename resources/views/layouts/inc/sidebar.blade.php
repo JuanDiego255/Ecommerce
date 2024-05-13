@@ -30,7 +30,7 @@
                             <i class="material-icons opacity-10">dashboard</i>
                         </div>
                         <span
-                            class="nav-link-text ms-1">{{ (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1 ? 'Categorías' : 'Departamentos') }}</span>
+                            class="nav-link-text ms-1">{{ isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1 ? 'Categorías' : 'Departamentos' }}</span>
                     </a>
                 </li>
                 @if (isset($tenantinfo->kind_business) && $tenantinfo->kind_business != 1)
@@ -113,6 +113,15 @@
             </li>
 
             @if (isset($tenantinfo->tenant) && $tenantinfo->tenant != 'main')
+                <li class="nav-item {{isset($tenantinfo->kind_business) && $tenantinfo->kind_business == 2 ? 'd-block' : 'd-none'}}">
+                    <a @if ($view_name == 'admin_blog_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
+                        href="{{ url('blog/indexadmin') }}">
+                        <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                            <i class="material-icons opacity-10">menu_book</i>
+                        </div>
+                        <span class="nav-link-text ms-1">Blog</span>
+                    </a>
+                </li>
                 <li class="nav-item">
                     <a @if ($view_name == 'admin_users_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
                         href="{{ url('users') }}">
@@ -142,8 +151,7 @@
                         <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
                             <i class="material-icons opacity-10">record_voice_over</i>
                         </div>
-                        <span
-                            class="nav-link-text ms-1">Vendedores</span>
+                        <span class="nav-link-text ms-1">Vendedores</span>
                     </a>
                 </li>
             @endif

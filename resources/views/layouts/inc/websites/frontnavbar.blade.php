@@ -12,7 +12,7 @@
 @endphp
 @if ($view_name != 'frontend_view-cart' && $view_name != 'frontend_checkout')
     <input type="hidden" name="iva_tenant" id="iva_tenant" value="{{ $iva }}">
-    <input type="hidden" name="view_name" value="{{$view_name}}" id="view_name">
+    <input type="hidden" name="view_name" value="{{ $view_name }}" id="view_name">
     <div class="modal px-modal-right fade" data-image-base-url="{{ route('file', '') }}" id="modalMiniCart" tabindex="-1"
         role="dialog" aria-hidden="true">
         <div class="modal-dialog px-modal-vertical">
@@ -83,8 +83,7 @@
                                                     data-cloth-id="{{ $item->id }}"
                                                     class="form-control btnQuantity text-center w-100 quantity">
                                             </div>
-                                            <form name="delete-item-cart"
-                                                id="delete-item-cart" class="delete-form">
+                                            <form name="delete-item-cart" id="delete-item-cart" class="delete-form">
                                                 {{ csrf_field() }}
                                                 {{ method_field('DELETE') }}
                                                 <button data-item-id="{{ $item->id }}"
@@ -170,14 +169,15 @@
                         <div class="container text-cintillo text-center">
                             Hasta {{ $descuento_mas_alto }}% de descuento en <a
                                 class="text-cintillo text-decoration-underline"
-                                href="{{ url('clothes-category/' . $item->category_id) }}">productos</a> seleccionados!
+                                href="{{ url('clothes-category/' . $item->category_id) }}">productos</a>
+                            seleccionados!
                         </div>
                     </nav>
                 @break
             @endforeach
         @else
             <nav class="navbar-cintillo navbar-expand-lg bg-cintillo d-none d-lg-block" id="templatemo_nav_top">
-                <div class="container text-cintillpo text-center">
+                <div class="container text-cintillo text-center">
                     Lo mejor en salud y belleza!
                 </div>
             </nav>
@@ -400,6 +400,7 @@
                     class="badge badge-sm text-pill-menu badge-info border-pill-menu border-2 text-xxs">{{ $cartNumber }}</span></a>
             <a href="{{ url('buys') }}" class="nav-menu-item"><i class="fa fa-credit-card me-3"></i>MIS
                 COMPRAS</a>
+            <a href="{{ url('blog/index') }}" class="nav-menu-item"><i class="fa fa-book me-3"></i>BLOG</a>
             <a href="{{ url('/address') }}" class="nav-menu-item"><i
                     class="fas fa-map-marker me-3"></i>DIRECCIONES</a>
 

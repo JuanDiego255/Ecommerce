@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\FrontendController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\BlogController;
 use App\Http\Controllers\BuyController;
 use App\Http\Controllers\ClothingCategoryController;
 use App\Http\Controllers\DepartmentController;
@@ -58,6 +59,9 @@ Route::middleware([
 
 
         Route::get('category', [FrontendController::class, 'category']);
+        Route::get('/blog/index',  [BlogController::class, 'index']);
+        Route::get('blog/{blog}/show-index', [BlogController::class, 'showArticles']);
+        Route::post('send-email/blog', [BlogController::class, 'sendEmail']);
         Route::get('departments/index', [FrontendController::class, 'departments']);
         Route::get('category/{id}', [FrontendController::class, 'category']);
         Route::get('clothes-category/{id}/{department_id}', [FrontendController::class, 'clothesByCategory']);
@@ -159,6 +163,21 @@ Route::middleware([
             Route::post('seller/store', [SellerController::class, 'store']);
             Route::put('/seller/update/{id}', [SellerController::class, 'update']);
             Route::delete('/delete/seller/{id}', [SellerController::class, 'destroy']);
+            //Rutas para el blog
+            //Rutas del controlador de Blog
+            Route::get('/blog/indexadmin',  [BlogController::class, 'indexadmin']);
+            Route::post('/blog', [BlogController::class, 'store']);
+            Route::post('/blog/more-info/{id}', [BlogController::class, 'storeMoreInfo']);
+            Route::get('/blog/agregar', [BlogController::class, 'agregar']);
+            Route::get('blog/{blog}/edit', [BlogController::class, 'edit']);
+            Route::get('blog/{blog}/{id}/edit-info', [BlogController::class, 'editArticle']);
+            Route::get('blog/{id}/show', [BlogController::class, 'indexArticles']);
+            Route::put('blog/{blog}', [BlogController::class, 'update']);
+            Route::put('tag/{id}/{blog_id}', [BlogController::class, 'updateArticle']);
+            Route::delete('blog/{id}', [BlogController::class, 'destroy']);
+            Route::delete('delete-article/{id}', [BlogController::class, 'destroyArticle']);
+            Route::get('blog/{id}/agregar-info', [BlogController::class, 'agregarInfo']);
+            Route::post('upload/', [BlogController::class, 'upload'])->name('upload');
         });
     });
 
