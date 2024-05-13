@@ -74,6 +74,7 @@ class BlogController extends Controller
     public function showArticles(Request $request, $id)
     {
         $blog = Blog::findOrfail($id);
+        $another_blogs = Blog::where('id','!=',$id)->take(4)->get();
         $fecha_post = $blog->fecha_post;
 
         $tags = DB::table('article_blogs')
@@ -109,7 +110,7 @@ class BlogController extends Controller
         }
         $fecha_letter = $dia_event . ' de ' . $name_month_event . ' del ' . $anio_event;
 
-        return view('frontend.blog.show-articles', compact('tags', 'id', 'fecha_letter', 'blog'));
+        return view('frontend.blog.show-articles', compact('tags','another_blogs', 'id', 'fecha_letter', 'blog'));
     }
     /**
 

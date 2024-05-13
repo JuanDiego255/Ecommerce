@@ -161,15 +161,15 @@
                                         {!! $item->description !!}
                                     </p>                                    
 
-                                    <button @if ($item->total_stock > 0) @else disabled @endif
-                                        class="btn btn-add_to_cart shadow-0 btnAddToCart"> <i
+                                    <a target="blank" href="{{url('https://wa.me/506'.$tenantinfo->whatsapp)}}"
+                                        class="btn btn-add_to_cart shadow-0"> <i
                                             class="me-1 fa fa-user"></i>
                                         @if ($item->total_stock > 0)
                                             Contactar al vendedor
                                         @else
                                             Vendido!
                                         @endif
-                                    </button>
+                                    </a>
                                 </div>
                             </main>
                         </div>

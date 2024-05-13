@@ -40,7 +40,7 @@
             </div>
         </div>
     </div>
-    <div class="mt-5 bg-white mb-5">
+    <div class="mt-5 bg-white mb-4">
         <div class="container">
             <div class="row gx-5">
                 <div class="col-md-8">
@@ -106,12 +106,51 @@
 
         </div>
     </div>
-    <center>
-        <div class="container mb-5">
-            <a href="{{ url('blog/index') }}" class="btn-velvet btn">Regresar</a>
+    <hr class="dark horizontal text-danger my-0">
+    {{-- Trending --}}
+    @if (count($another_blogs) != 0)
+        <div class="mt-3 mb-2">
+            <div class="container">
+                <div class="text-center">
+                    <h3 class="text-center text-muted mb-1">Otros servicios que pueden interesarte.</h3>
+                </div>
+
+                <div class="row">
+                    <div class="row row-cols-1 row-cols-md-4 g-4 align-content-center card-group mt-2 mb-5">
+                        @foreach ($another_blogs as $item)
+                            <div class="item">
+                                <div class="product-grid product_data">
+                                    <div class="product-image">
+                                        <img src="{{ route('file', $item->image) }}">
+
+                                        <ul class="product-links">
+                                            <li><a target="blank" href="{{ route('file', $item->image) }}"><i
+                                                        class="fas fa-eye"></i></a></li>
+                                        </ul>
+                                        <a href="{{ url('/blog/' . $item->id . '/show-index') }}" class="add-to-cart">Ver
+                                            información</a>
+                                    </div>
+                                    <div class="product-content">
+
+                                        <h3
+                                            class="{{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'text-muted' : 'title-frags' }}">
+                                            <a
+                                                href="{{ url('/blog/' . $item->id . '/show-index') }}">{{ $item->title }}</a>
+                                        </h3>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+
+                </div>
+            </div>
         </div>
-    </center>
+    @endif
     @if (isset($tenantinfo->kind_business) && $tenantinfo->kind_business != 1)
         @include('layouts.inc.indexfooter')
     @endif
+@endsection
+@section('scripts')
+    <script src="{{ asset('js/image-error-handler.js') }}"></script>
 @endsection
