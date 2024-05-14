@@ -10,6 +10,8 @@
         </h2>
 
         <hr class="hr-servicios">
+        <button type="button" data-bs-toggle="modal" data-bs-target="#add-tenant-modal" class="btn btn-velvet">Nuevo Inquilino</button>
+        @include('admin.tenant.add-tenant')
         <center>
             <div class="card mt-3 mb-4">
                 <div class="card-body">
@@ -66,13 +68,14 @@
                                         <p class=" font-weight-bold mb-0">{{ $tenant->domains->first()->domain ?? '' }}</p>
                                     </td>
                                     <td class="align-middle text-center">
-                                        <form name="formLicense" id="formLicense" method="post"
+                                        <form name="formLicense{{$tenant->id}}" id="formLicense" method="post"
                                             action="{{ url('license/' . $tenant->id) }}" style="display:inline">
                                             {{ csrf_field() }}
                                             <label for="checkLicense">
                                                 <div class="form-check">
+                                                    <input type="hidden" name="tenant" value="{{$tenant->id}}">
                                                     <input id="checkLicense" class="form-check-input" type="checkbox"
-                                                        value="1" name="license" onchange="submitForm('formLicense')"
+                                                        value="1" name="license" onchange="submitForm('formLicense{{$tenant->id}}')"
                                                         {{ $tenant->license == 1 ? 'checked' : '' }}>
                                                 </div>
                                             </label>

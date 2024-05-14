@@ -22,6 +22,7 @@ Auth::routes();
 Route::group(['middleware' => 'isAdmin'], function () {    
     //Rutas para inquilinos y pagos de inquilinos
     Route::get('/tenants', [TenantController::class, 'index']);
+    Route::post('tenant/store/', [TenantController::class, 'store']);
     Route::get('manage/tenant/{tenant}', [TenantController::class, 'manage']);
     Route::get('tenants/payments', [TenantPaymentController::class, 'index']);
     Route::get('tenant/manage-pay/{id}', [TenantPaymentController::class, 'indexPayment']);

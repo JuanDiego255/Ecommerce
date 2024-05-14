@@ -6,7 +6,9 @@ use App\Models\Tenant;
 use App\Models\TenantInfo;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
+use Stancl\Tenancy\Database\Models\Domain;
 
 class TenantController extends Controller
 {
@@ -98,6 +100,39 @@ class TenantController extends Controller
         } catch (\Exception $th) {
             //throw $th;
             DB::rollBack();
+        }
+    }
+    public function store(Request $request)
+    {
+        //
+        DB::beginTransaction();      
+        try {
+            $datos = [
+                "tenancy_db_name" => "safewors_".$request->tenant,
+                "tenancy_db_password" => "UYHkOYFXReJ4aDcJ",
+                "tenancy_db_username" => "safewors"
+            ];
+            $new_tenant = new Tenant();
+            $new_tenant->id = $request->tenant;
+            $new_tenant->data = $datos;
+            $new_tenant->save();
+            $id = $new_tenant->id;
+            $new_domain = new Domain();
+            $new_domain->domain = $id.".safeworsolutions.com";
+            $new_domain->tenant_id = $id;
+            $new_domain->save();
+            
+            Artisan::call('tenants:migrate');
+            $tenants = Tenant::where('id', $id)->first();           
+            tenancy()->initialize($tenants);
+            Artisan::call('db:seed');
+            tenancy()->end();
+            DB::commit();
+            return redirect()->back()->with(['status' => 'Se agregó un nuevo inquilino', 'icon' => 'success']);
+        } catch (\Exception $th) {
+            dd($th->getMessage());
+            DB::rollBack();
+            return redirect()->back()->with(['status' => $th->getMessage(), 'icon' => 'error']);
         }
     }
 }
