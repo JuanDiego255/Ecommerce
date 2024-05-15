@@ -10,6 +10,7 @@ use App\Models\Department;
 use App\Models\MetaTags;
 use App\Models\ProductImage;
 use App\Models\Seller;
+use App\Models\Size;
 use App\Models\SizeCloth;
 use App\Models\SocialNetwork;
 use App\Models\TenantInfo;
@@ -411,6 +412,9 @@ class FrontendController extends Controller
             OpenGraph::setTitle($tag->title);
             OpenGraph::setDescription($tag->meta_og_description);
         }
+        //Talla por defecto en caso de que no maneje tallas
+        $size = Size::where('size', 'N/A')->first();
+        $default_size = $size->id;
 
         $clothings_trending = ClothingCategory::where('clothing.trending', 1)
             ->where('clothing.id', '!=', $id)
@@ -455,10 +459,10 @@ class FrontendController extends Controller
                 break;
             case (2):
             case (3):
-                return view('frontend.website.detail-clothing', compact('clothes', 'category_id', 'size_active', 'clothings_trending'));
+                return view('frontend.website.detail-clothing', compact('clothes','default_size', 'category_id', 'size_active', 'clothings_trending'));
                 break;
             default:
-                return view('frontend.detail-clothing', compact('clothes', 'category_id', 'size_active', 'clothings_trending'));
+                return view('frontend.detail-clothing', compact('clothes','default_size', 'category_id', 'size_active', 'clothings_trending'));
         }
     }
 

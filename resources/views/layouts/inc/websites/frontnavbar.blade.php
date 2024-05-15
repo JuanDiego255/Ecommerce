@@ -84,7 +84,7 @@
                                         <p class="mb-2">
                                             <a class="text-muted fw-500" href="#">{{ $item->name }}</a>
                                             <span
-                                                class="m-0 text-dark w-100 d-block {{ isset($tenantinfo->tenant) && $tenantinfo->manage_size == 0 ? 'd-none' : '' }}">{{ isset($tenantinfo->tenant) && $tenantinfo->manage_size == 0 ? 'd-none' : '' }}
+                                                class="m-0 text-dark w-100 {{ isset($tenantinfo->tenant) && $tenantinfo->manage_size == 0 ? 'd-none' : 'd-block' }}">
                                                 {{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'Talla: ' : 'Tamaño: ' }}{{ $item->size }}</span>
                                             <span class="m-0 text-muted w-100 d-block">
                                                 ₡{{ $item->discount > 0 ? $precioConDescuento : (Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0 ? $item->mayor_price : ($tenantinfo->custom_size == 1 ? $item->stock_price : $item->price)) }}

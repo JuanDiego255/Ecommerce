@@ -101,30 +101,6 @@
     @if ($view_name != 'frontend_view-cart')
         <script>
             $(document).ready(function() {
-
-                $('.btnAddToCart').click(function(e) {
-                    e.preventDefault();
-                    var cloth_id = $(this).closest('.product_data').find('.prod_id').val();
-                    var quantity = $(this).closest('.product_data').find('.quantity').val();
-
-                    $.ajaxSetup({
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        }
-                    });
-                    $.ajax({
-                        method: "POST",
-                        url: "/add-to-cart",
-                        data: {
-                            'clothing_id': cloth_id,
-                            'quantity': quantity,
-                        },
-                        success: function(response) {
-                            swal(response.status);
-                        }
-                    });
-                });
-
                 $(document).on('click', '.btnQuantity', function(e) {
                     e.preventDefault();
 

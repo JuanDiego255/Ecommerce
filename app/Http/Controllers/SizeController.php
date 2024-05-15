@@ -16,7 +16,7 @@ class SizeController extends Controller
     public function index()
     {
         //
-        $sizes = Size::get();
+        $sizes = Size::where('size','!=','N/A')->get();
         return view('admin.sizes.index', compact('sizes'));
     }
 

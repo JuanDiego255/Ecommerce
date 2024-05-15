@@ -32,14 +32,15 @@ class CartController extends Controller
         DB::beginTransaction();
         try {
             $tenantinfo = TenantInfo::first();
+            $size_id = $request->size_id;
+            if (isset($tenantinfo->manage_size) && $tenantinfo->manage_size == 0) {
+                $size = Size::where('size', 'N/A')->first();
+                $size_id = $size->id;
+            }
             if ($request->code) {
                 $code = $request->code;
                 $cloth_check = ClothingCategory::where('code', $code)->first();
-                $size_id = $request->size_id;
-                if (isset($tenantinfo->manage_size) && $tenantinfo->manage_size == 0) {
-                    $size = Size::where('size', 'N/A')->first();
-                    $size_id = $size->id;
-                }
+
                 if ($cloth_check) {
                     $stock = Stock::where('clothing_id', $cloth_check->id)
                         ->where('size_id', $size_id)
@@ -73,8 +74,6 @@ class CartController extends Controller
             } else {
                 $clothing_id = $request->clothing_id;
                 $quantity = $request->quantity;
-                $size_id = $request->size_id;
-
                 if (Auth::check()) {
                     $cloth_check = ClothingCategory::where('id', $clothing_id)->exists();
                     if ($cloth_check) {
@@ -134,7 +133,7 @@ class CartController extends Controller
                     }
                 }
             }
-        } catch (\Throwable $th) {
+        } catch (\Exception $th) {
             DB::rollBack();
             return response()->json(['status' => 'Ocurrió un error al agregar la artículo al carrito ' . $th->getMessage(), 'icon' => 'success']);
         }
@@ -225,9 +224,9 @@ class CartController extends Controller
                         $newCartNumber = count(Cart::where('user_id', Auth::id())->where('sold', 0)->get());
                         if (count(Cart::where('user_id', Auth::id())
                             ->where('sold', 0)->get()) == 0) {
-                            return response()->json(['status' => 'Se ha eliminado el último artículo del carrito', 'icon' => 'success','cartNumber' => $newCartNumber,'refresh' => true]);
+                            return response()->json(['status' => 'Se ha eliminado el último artículo del carrito', 'icon' => 'success', 'cartNumber' => $newCartNumber, 'refresh' => true]);
                         }
-                        return response()->json(['status' => 'Se ha eliminado el artículo del carrito', 'icon' => 'success','cartNumber' => $newCartNumber,'refresh' => false]);
+                        return response()->json(['status' => 'Se ha eliminado el artículo del carrito', 'icon' => 'success', 'cartNumber' => $newCartNumber, 'refresh' => false]);
                     }
                 } else {
                     if (Cart::where('clothing_id', $id)
@@ -244,9 +243,9 @@ class CartController extends Controller
                         $newCartNumber = count(Cart::where('user_id', Auth::id())->where('sold', 0)->get());
                         if (count(Cart::where('session_id', $session_id)
                             ->where('sold', 0)->get()) == 0) {
-                            return response()->json(['status' => 'Se ha eliminado el último artículo del carrito', 'icon' => 'success','cartNumber' => $newCartNumber,'refresh' => true]);
+                            return response()->json(['status' => 'Se ha eliminado el último artículo del carrito', 'icon' => 'success', 'cartNumber' => $newCartNumber, 'refresh' => true]);
                         }
-                        return response()->json(['status' => 'Se ha eliminado el artículo del carrito', 'icon' => 'success','cartNumber' => $newCartNumber,'refresh' => false]);
+                        return response()->json(['status' => 'Se ha eliminado el artículo del carrito', 'icon' => 'success', 'cartNumber' => $newCartNumber, 'refresh' => false]);
                     }
                 }
             } else {
@@ -266,9 +265,9 @@ class CartController extends Controller
                     $newCartNumber = count(Cart::where('user_id', Auth::id())->where('sold', 0)->get());
                     if (count(Cart::where('user_id', Auth::id())
                         ->where('sold', 0)->get()) == 0) {
-                        return response()->json(['status' => 'Se ha eliminado el último artículo del carrito', 'icon' => 'success','cartNumber' => $newCartNumber,'refresh' => true]);
+                        return response()->json(['status' => 'Se ha eliminado el último artículo del carrito', 'icon' => 'success', 'cartNumber' => $newCartNumber, 'refresh' => true]);
                     }
-                    return response()->json(['status' => 'Se ha eliminado el último artículo del carrito', 'icon' => 'success','cartNumber' => $newCartNumber,'refresh' => false]);
+                    return response()->json(['status' => 'Se ha eliminado el último artículo del carrito', 'icon' => 'success', 'cartNumber' => $newCartNumber, 'refresh' => false]);
                 }
             }
         } catch (\Throwable $th) {
@@ -453,7 +452,8 @@ class CartController extends Controller
         return $cart_items;
     }
 
-    public function getCart(){
+    public function getCart()
+    {
         $cart_items = $this->getCartItems();
         return response()->json($cart_items);
     }

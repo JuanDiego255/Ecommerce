@@ -32,6 +32,8 @@
     }
 @endphp
 @section('content')
+    <input type="hidden" name="manage_size" value="{{ $tenantinfo->manage_size }}" id="manage_size">
+    <input type="hidden" name="default_size" value="{{ $default_size }}" id="default_size">
     <div class="container">
         <div>
             @foreach ($clothes as $item)
@@ -327,7 +329,12 @@
             e.preventDefault();
             var cloth_id = $(this).closest('.product_data').find('.cloth_id').val();
             var quantity = $(this).closest('.product_data').find('.quantity').val();
-            var size_id = $('input[name="size_id"]:checked').val();
+            var size_id = 0;
+            if (manage_size != 0) {
+                size_id = $('input[name="size_id"]:checked').val();
+            } else {
+                size_id = document.getElementById("default_size").value;
+            }
 
             $.ajaxSetup({
                 headers: {
@@ -355,8 +362,14 @@
                 }
             });
         });
+        var size_id = 0;
+        manage_size = document.getElementById("manage_size").value
+        if (manage_size != 0) {
+            size_id = $('input[name="size_id"]:checked').val();
+        } else {
+            size_id = document.getElementById("default_size").value;
+        }
 
-        var size_id = $('input[name="size_id"]:checked').val();
         var stockPerSize = <?php echo json_encode($stockPerSize); ?>;
         var pricePerSize = <?php echo json_encode($pricePerSize); ?>;
         const sizes = {!! json_encode($sizes) !!};
