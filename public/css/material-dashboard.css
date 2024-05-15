@@ -287,7 +287,7 @@ a {
 }
 
 a:hover {
-  color: var(--hover) !important;
+  
   text-decoration: none;
   transition: .2s;
 }
@@ -3826,36 +3826,36 @@ fieldset:disabled .btn {
 
 .btn-add_to_cart {
   --bs-btn-color: #fff;
-  --bs-btn-bg: #A5BA8D;
-  --bs-btn-border-color: #A5BA8D;
+  --bs-btn-bg: var(--btn_cart);
+  --bs-btn-border-color: var(--btn_cart);
   --bs-btn-hover-color: #fff;
-  --bs-btn-hover-bg: #A5BA8D;
-  --bs-btn-hover-border-color: #A5BA8D;
+  --bs-btn-hover-bg: var(--btn_cart);
+  --bs-btn-hover-border-color: var(--btn_cart);
   --bs-btn-focus-shadow-rgb: 213, 119, 0;
   --bs-btn-active-color: #fff;
-  --bs-btn-active-bg: #A5BA8D;
-  --bs-btn-active-border-color: #A5BA8D;
+  --bs-btn-active-bg: var(--btn_cart);
+  --bs-btn-active-border-color: var(--btn_cart);
   --bs-btn-active-shadow: none;
   --bs-btn-disabled-color: #fff;
-  --bs-btn-disabled-bg: #A5BA8D;
-  --bs-btn-disabled-border-color: #A5BA8D;
+  --bs-btn-disabled-bg: var(--btn_cart);
+  --bs-btn-disabled-border-color: var(--btn_cart);
 }
 
 .btn-add_to_cart:hover {
   --bs-btn-color: #fff;
-  --bs-btn-bg: #889677;
-  --bs-btn-border-color: #889677;
+  --bs-btn-bg: var(--hover);
+  --bs-btn-border-color: var(--hover);
   --bs-btn-hover-color: #fff;
-  --bs-btn-hover-bg: #889677;
-  --bs-btn-hover-border-color: #889677;
+  --bs-btn-hover-bg: var(--hover);
+  --bs-btn-hover-border-color: var(--hover);
   --bs-btn-focus-shadow-rgb: 213, 119, 0;
   --bs-btn-active-color: #fff;
-  --bs-btn-active-bg: #889677;
-  --bs-btn-active-border-color: #889677;
+  --bs-btn-active-bg: var(--hover);;
+  --bs-btn-active-border-color: var(--hover);
   --bs-btn-active-shadow: none;
   --bs-btn-disabled-color: #fff;
-  --bs-btn-disabled-bg: #889677;
-  --bs-btn-disabled-border-color: #889677;
+  --bs-btn-disabled-bg: var(--hover);
+  --bs-btn-disabled-border-color: var(--hover);
 }
 
 .btn-danger {
@@ -28343,11 +28343,11 @@ select.noStyle {
 
 .product-grid .product-links li a:hover {
   color: #fff;
-  background: #333;
+  background: var(--hover);
 }
 
 .product-grid .add-to-cart {
-  background: #A5BA8D;
+  background: var(--btn_cart);
   color: #fff;
   font-size: 16px;
   text-transform: uppercase;
@@ -28640,8 +28640,8 @@ input.card {
 }
 
 .product-grid-offer .product-hot-label {
-  color: #fff;
-  background: #222;
+  color: var(--btn_cart_text);
+  background: var(--btn_cart);
   font-size: 14px;
   font-weight: 500;
   text-transform: capitalize;
@@ -28652,7 +28652,7 @@ input.card {
 }
 
 .product-grid-offer .product-links-offer {
-  background: #f1f1f1;
+  background: var(--btn_cart);
   width: 100%;
   padding: 0;
   margin: 0;
@@ -28689,7 +28689,7 @@ input.card {
 
 .product-grid-offer .product-links-offer li a:hover {
   color: #fff;
-  background-color: #A5BA8D;
+  background-color: var(--hover);
 }
 
 .product-grid-offer .product-links-offer li a:before,
@@ -28730,7 +28730,7 @@ input.card {
 }
 
 .product-grid-offer .add-to-cart {
-  color: #A5BA8D;
+  color: var(--btn_cart);
   font-size: 15px;
   font-weight: 600;
   transform: translateX(-50%);

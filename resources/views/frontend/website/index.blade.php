@@ -47,11 +47,10 @@
             </div>
         </div>
     @endif
-
     {{-- Categories --}}
     @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
         @if (count($categories) != 0)
-            <div class="row g-4 align-content-center card-group container-fluid mt-2 mb-5">
+            <div class="row g-4 align-content-center card-group container-fluid mt-2">
                 @foreach ($category as $key => $item)
                     <div class="{{ $key + 1 > 3 ? 'col-md-3' : 'col-md-4' }} col-sm-6 mb-2">
                         <div class="product-grid product_data">
@@ -99,18 +98,6 @@
             </div>
         @endif
     @endif
-    {{-- Mision --}}
-    @if (isset($tenantinfo->show_mision) && $tenantinfo->show_mision == 1)
-        <hr class="text-dark">
-        <div class="bg-footer p-3 mb-3 text-justify">
-            <h3
-                class="text-center {{ isset($tenantinfo->tenant) && $tenantinfo->tenant === 'mandicr' ? 'text-title-mandi' : 'text-title' }} mt-3">
-                {{ isset($tenantinfo->title) ? $tenantinfo->title : '' }}</h3>
-            <span class="text-center text-muted">{{ isset($tenantinfo->mision) ? $tenantinfo->mision : '' }}</span>
-
-
-        </div>
-    @endif
     {{-- Insta --}}
     <hr class="text-dark">
     @if (isset($tenantinfo->show_insta) && $tenantinfo->show_insta == 1)
@@ -148,7 +135,7 @@
         @if (count($clothings) != 0)
             <div class="container-fluid mb-5 offer">
                 <div class="text-center">
-                    <h3 class="text-center text-muted mt-5 mb-4">
+                    <h3 class="text-justify text-muted mt-5 mb-4">
                         {{ isset($tenantinfo->title_trend) ? $tenantinfo->title_trend : '' }}</h3>
                 </div>
 
@@ -218,9 +205,9 @@
         @endif
         </div>
     @endif
-    <hr class="dark horizontal text-danger my-0">
     {{-- Personal --}}
     @if (count($sellers) != 0)
+        <hr class="dark horizontal text-danger my-0">
         <div class="container">
             <div class="text-center">
                 <h1 class="text-center text-title mt-5 mb-3">Nuestros personal especializado en todo tipo de autos. </h1>
@@ -254,11 +241,21 @@
             </div>
         </div>
     @endif
+    {{-- Mision --}}
+    @if (isset($tenantinfo->show_mision) && $tenantinfo->show_mision == 1)
+        <hr class="text-dark">
+        <div class="bg-footer p-3 mb-3 text-justify">
+            <h3
+                class="text-center {{ isset($tenantinfo->tenant) && $tenantinfo->tenant === 'mandicr' ? 'text-title-mandi' : 'text-title' }} mt-3">
+                {{ isset($tenantinfo->title) ? $tenantinfo->title : '' }}</h3>
+            <span class="text-center text-muted">{{ isset($tenantinfo->mision) ? $tenantinfo->mision : '' }}</span>
 
 
-    <hr class="dark horizontal text-danger my-0">
-    {{-- Trending --}}
+        </div>
+    @endif
+    {{-- blogs --}}
     @if (count($blogs) != 0)
+        <hr class="dark horizontal text-danger my-0">
         <div class="mt-3 mb-5">
             <div class="container-fluid">
                 <div class="text-center">
