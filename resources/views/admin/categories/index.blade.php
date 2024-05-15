@@ -65,7 +65,7 @@
                                     <h3 class="text-muted category"><a
                                             href="{{ url('/add-item') . '/' . $item->id }}">{{ $item->name }}</a>
                                     </h3>
-                                    <h5 class="text-muted-normal {{(isset($tenantinfo->kind_business) && $tenantinfo->kind_business != 2 ? 'd-block' : 'd-none')}}">{{ $item->description }}
+                                    <h5 class="text-muted-normal {{(isset($tenantinfo->kind_business) && ($tenantinfo->kind_business != 2 && $tenantinfo->kind_business != 3) ? 'd-block' : 'd-none')}}">{{ $item->description }}
                                     </h5>
                                 </div>
                             </div>

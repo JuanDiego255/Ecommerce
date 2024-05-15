@@ -191,7 +191,7 @@ class ClothingCategoryController extends Controller
             if ($request->has('discount')) {
                 $clothing->discount = $request->discount;
             }
-            if ($tenantinfo->kind_business == 2) {
+            if ($tenantinfo->kind_business == 2 || $tenantinfo->kind_business == 3) {
                 $clothing->can_buy = $request->filled('can_buy') ? 1 : 0;
             }
 
@@ -320,7 +320,7 @@ class ClothingCategoryController extends Controller
                 if ($request->has('discount')) {
                     $clothing->discount = $request->discount;
                 }
-                if ($tenantinfo->kind_business == 2) {
+                if ($tenantinfo->kind_business == 2 || $tenantinfo->kind_business == 3) {
                     $clothing->can_buy = $request->filled('can_buy') ? 1 : 0;
                 }
                 $clothing->status = 1;

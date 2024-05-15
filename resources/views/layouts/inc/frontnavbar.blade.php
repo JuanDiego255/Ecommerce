@@ -8,11 +8,25 @@
         // Luego, encontramos el descuento más alto usando la función max()
         $descuento_mas_alto = max($descuentos);
     }
-
+    $font_icon = '';
+    switch ($tenantinfo->kind_business) {
+        case 1:
+            $font_icon = 'fas fa-car';
+            break;
+        case 2:
+            $font_icon = 'fas fa-spa';
+            break;
+        case 3:
+            $font_icon = 'fas fa-heart';
+            break;
+        default:
+            $font_icon = 'fas fa-tshirt';
+            break;
+    }
 @endphp
 @if ($view_name != 'frontend_view-cart' && $view_name != 'frontend_checkout')
     <input type="hidden" name="iva_tenant" id="iva_tenant" value="{{ $iva }}">
-    <input type="hidden" name="view_name" value="{{$view_name}}" id="view_name">
+    <input type="hidden" name="view_name" value="{{ $view_name }}" id="view_name">
     <div class="modal px-modal-right fade" data-image-base-url="{{ route('file', '') }}" id="modalMiniCart" tabindex="-1"
         role="dialog" aria-hidden="true">
         <div class="modal-dialog px-modal-vertical">
@@ -83,8 +97,7 @@
                                                     data-cloth-id="{{ $item->id }}"
                                                     class="form-control btnQuantity text-center w-100 quantity">
                                             </div>
-                                            <form name="delete-item-cart"
-                                                id="delete-item-cart" class="delete-form">
+                                            <form name="delete-item-cart" id="delete-item-cart" class="delete-form">
                                                 {{ csrf_field() }}
                                                 {{ method_field('DELETE') }}
                                                 <button data-item-id="{{ $item->id }}"
@@ -272,7 +285,7 @@
             <a href="{{ url('/') }}" class="nav-menu-item"><i class="fas fa-home me-3"></i>INICIO</a>
             @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
                 <div class="nav-menu-item">
-                    <i class="fas fa-tshirt me-3"></i><a class="color-menu" href="javascript:void(0);"
+                    <i class="{{$font_icon}} me-3"></i><a class="color-menu" href="javascript:void(0);"
                         id="toggleCategories">CATEGORIAS <i class="fa fa-arrow-circle-down ml-3"></i></a>
                     <div class="subcategories" id="categoriesDropdown">
                         <ul>
@@ -296,7 +309,7 @@
                 </div>
             @else
                 <div class="nav-menu-item">
-                    <i class="fas fa-tshirt me-3"></i><a class="color-menu" href="javascript:void(0);"
+                    <i class="{{$font_icon}} me-3"></i><a class="color-menu" href="javascript:void(0);"
                         id="toggleCategories">DEPARTAMENTOS <i class="fa fa-arrow-circle-down ml-3"></i></a>
                     <div class="subcategories" id="categoriesDropdown">
                         <ul>
@@ -345,7 +358,7 @@
             <a href="{{ url('/') }}" class="nav-menu-item"><i class="fas fa-home me-3"></i>INICIO</a>
             @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
                 <div class="nav-menu-item">
-                    <i class="fas fa-tshirt me-3"></i><a class="color-menu" href="javascript:void(0);"
+                    <i class="{{$font_icon}} me-3"></i><a class="color-menu" href="javascript:void(0);"
                         id="toggleCategories">CATEGORIAS <i class="fa fa-arrow-circle-down ml-3"></i></a>
                     <div class="subcategories" id="categoriesDropdown">
                         <ul>
@@ -369,7 +382,7 @@
                 </div>
             @else
                 <div class="nav-menu-item">
-                    <i class="fas fa-tshirt me-3"></i><a class="color-menu" href="javascript:void(0);"
+                    <i class="{{$font_icon}} me-3"></i><a class="color-menu" href="javascript:void(0);"
                         id="toggleCategories">DEPARTAMENTOS <i class="fa fa-arrow-circle-down ml-3"></i></a>
                     <div class="subcategories" id="categoriesDropdown">
                         <ul>

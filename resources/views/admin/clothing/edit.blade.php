@@ -99,7 +99,7 @@
                                     @endforeach
                                 </div>
                             @endif
-                            @if (isset($tenantinfo->kind_business) && $tenantinfo->kind_business == 2)
+                            @if (isset($tenantinfo->kind_business) && ($tenantinfo->kind_business == 2 || $tenantinfo->kind_business == 3))
                                 <div class="col-md-12 mb-3">
                                     <label>Se puede comprar?</label>
                                     <div class="form-check">

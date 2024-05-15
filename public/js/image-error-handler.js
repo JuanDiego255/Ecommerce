@@ -14,9 +14,5 @@ document.addEventListener("DOMContentLoaded", function () {
         setTimeout(function () {
             image.src = image.src;
         }, 1);
-        var isLoaded = image.complete && image.naturalHeight !== 0;
-        if(!isLoaded){
-            handleImageError(image);
-        }
     }
 });

@@ -3,16 +3,44 @@
     {!! SEOMeta::generate() !!}
     {!! OpenGraph::generate() !!}
 @endsection
+@php
+    $font_icon = '';
+    $title_service = 'Categorías';
+    $btn = 'Descubrir Estilos';
+    switch ($tenantinfo->kind_business) {
+        case 1:
+            $font_icon = 'fas fa-car'; 
+            $btn = 'Ver Vehículos';          
+            break;
+        case 2:
+            $font_icon = 'fas fa-spa';
+            $title_service = 'Servicios'; 
+            break;
+        case 3:
+            $font_icon = 'fas fa-heart';
+            $title_service = 'Servicios';
+            $btn = 'tratamientos'; 
+            break;
+        default:
+            $font_icon = 'fas fa-box';            
+            break;
+    }
+@endphp
 @section('content')
     <div class="container mt-4">
         <div class="breadcrumb-nav bc3x">
             @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
                 <li class="home"><a href="{{ url('/') }}"><i class="fas fa-home me-1"></i></a></li>
-                <li class="bread-standard"><a href="#"><i class="{{isset($tenantinfo->kind_business) && $tenantinfo->kind_business != 1 ? 'fas fa-box' : 'fas fa-car'}} me-1"></i>Categorías</a></li>
+                <li class="bread-standard"><a href="#"><i
+                            class="{{$font_icon}} me-1"></i>{{$title_service}}</a>
+                </li>
             @else
-                <li class="home"><a href="{{ url('/') }}"><i class="fas fa-home me-1"></i></a></li>   
-                <li class="bread-standard"><a href="{{url('departments/index')}}"><i class="fas fa-shapes me-1"></i>Departamentos</a></li>            
-                <li class="bread-standard"><a href="#"><i class="{{isset($tenantinfo->kind_business) && $tenantinfo->kind_business != 1 ? 'fas fa-box' : 'fas fa-car'}} me-1"></i>{{ $department_name }}</a></li>
+                <li class="home"><a href="{{ url('/') }}"><i class="fas fa-home me-1"></i></a></li>
+                <li class="bread-standard"><a href="{{ url('departments/index') }}"><i
+                            class="fas fa-shapes me-1"></i>Departamentos</a></li>
+                <li class="bread-standard"><a href="#"><i
+                            class="{{$font_icon}} me-1"></i>{{ $department_name }}</a>
+                </li>
             @endif
 
         </div>
@@ -26,10 +54,12 @@
                                 <li><a target="blank" href="{{ tenant_asset('/') . '/' . $item->image }}"><i
                                             class="fas fa-eye"></i></a></li>
                             </ul>
-                            <a href="{{ url('clothes-category/' . $item->id . '/' .$department_id) }}" class="add-to-cart">{{isset($tenantinfo->kind_business) && $tenantinfo->kind_business != 1 ? 'Descubrio estilos' : 'Descubrir autos'}}</a>
+                            <a href="{{ url('clothes-category/' . $item->id . '/' . $department_id) }}"
+                                class="add-to-cart">{{$btn}}</a>
                         </div>
                         <div class="product-content">
-                            <h3 class="title"><a href="{{ url('clothes-category/' . $item->id . '/' .$department_id) }}">{{ $item->name }}</a>
+                            <h3 class="title"><a
+                                    href="{{ url('clothes-category/' . $item->id . '/' . $department_id) }}">{{ $item->name }}</a>
                             </h3>
                         </div>
                     </div>

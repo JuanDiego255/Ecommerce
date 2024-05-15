@@ -3,15 +3,42 @@
     {!! SEOMeta::generate() !!}
     {!! OpenGraph::generate() !!}
 @endsection
+@php
+    $font_icon_cat = '';
+    $font_icon_cloth = '';
+    $title_service = 'Categorías';
+    $btn = 'Descubrir Estilos';
+    switch ($tenantinfo->kind_business) {
+        case 1:
+            $font_icon_cat = 'fas fa-car'; 
+            $font_icon_cloth = 'fas fa-car-side';
+            $btn = 'Ver Vehículos';          
+            break;
+        case 2:
+            $font_icon_cat = 'fas fa-spa';
+            $font_icon_cloth = 'fas fa-cut';
+            $title_service = 'Servicios'; 
+            break;
+        case 3:
+            $font_icon_cat = 'fas fa-heart';
+            $font_icon_cloth = 'fas fa-cut';
+            $title_service = 'Servicios';
+            $btn = 'tratamientos'; 
+            break;
+        default:
+            $font_icon_cat = 'fas fa-box';            
+            break;
+    }
+@endphp
 @section('content')
     <div class="container mt-4 mb-5">
 
         <div class="breadcrumb-nav bc3x">
             @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
                 <li class="home"><a href="{{ url('/') }}"><i class="fas fa-home me-1"></i></a></li>
-                <li class="bread-standard"><a href="{{ url('category/') }}"><i class="fas fa-spa me-1"></i>Servicios</a>
+                <li class="bread-standard"><a href="{{ url('category/') }}"><i class="{{$font_icon_cat}} me-1"></i>{{$title_service}}</a>
                 </li>
-                <li class="bread-standard"><a href="#"><i class="fas fa-cut me-1"></i>{{ $category_name }}</a>
+                <li class="bread-standard"><a href="#"><i class="{{$font_icon_cloth}} me-1"></i>{{ $category_name }}</a>
                 </li>
             @else
                 <li class="home"><a href="{{ url('/') }}"><i class="fas fa-home me-1"></i></a></li>
@@ -19,9 +46,9 @@
                 <li class="bread-standard"><a href="{{ url('departments/index') }}"><i
                             class="fas fa-shapes me-1"></i>Departamentos</a></li>
                 <li class="bread-standard"><a href="{{ url('category/' . $department_id) }}"><i
-                            class="fas fa-box me-1"></i>{{ $department_name }}</a>
+                            class="{{$font_icon_cat}} me-1"></i>{{ $department_name }}</a>
                 </li>
-                <li class="bread-standard"><a href="#"><i class="fas fa-cut me-1"></i>{{ $category_name }}</a>
+                <li class="bread-standard"><a href="#"><i class="{{$font_icon_cloth}} me-1"></i>{{ $category_name }}</a>
                 </li>
             @endif
 

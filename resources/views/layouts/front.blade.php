@@ -62,6 +62,7 @@
                         @include('layouts.inc.frontcar')
                     @break
                     @case(2)
+                    @case(3)
                         @include('layouts.inc.websites.frontnavbar')
                     @break
                     @default

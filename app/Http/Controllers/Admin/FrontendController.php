@@ -37,6 +37,7 @@ class FrontendController extends Controller
                 return redirect('index/carsale');
                 break;
             case (2):
+            case (3):
                 return redirect('spa/index/');
                 break;
             default:
@@ -174,7 +175,7 @@ class FrontendController extends Controller
 
         $blogs = Blog::take(4)->get();
 
-        return view('frontend.index', compact('clothings','blogs', 'social', 'clothings_offer', 'category'));
+        return view('frontend.index', compact('clothings', 'blogs', 'social', 'clothings_offer', 'category'));
     }
     public function category($id = null)
     {
@@ -284,11 +285,12 @@ class FrontendController extends Controller
             OpenGraph::setDescription($tag->meta_og_description);
         }
 
-        if (count($clothings) == 0 && $tenantinfo->kind_business != 2) {
+        if (count($clothings) == 0 && ($tenantinfo->kind_business != 2 && $tenantinfo->kind_business != 3)) {
             return redirect()->back()->with(['status' => 'No hay artículos en esta categoría', 'icon' => 'warning']);
         }
         switch ($tenantinfo->kind_business) {
             case (2):
+            case (3):
                 return view('frontend.website.clothes-category', compact('clothings', 'category_name', 'category_id', 'department_id', 'department_name', 'category'));
                 break;
             default:
@@ -380,7 +382,7 @@ class FrontendController extends Controller
                 DB::raw('GROUP_CONCAT(stocks.price) AS price_per_size'),
                 DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
             )
-            ->groupBy('clothing.id','clothing.can_buy', 'clothing.casa', 'departments.id', 'departments.department', 'clothing.mayor_price', 'clothing.discount', 'categories.name', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
+            ->groupBy('clothing.id', 'clothing.can_buy', 'clothing.casa', 'departments.id', 'departments.department', 'clothing.mayor_price', 'clothing.discount', 'categories.name', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
             ->orderBy('clothing.name', 'asc')
             ->get();
         //$clothes = ClothingCategory::where('id', $id)->get();
@@ -452,6 +454,7 @@ class FrontendController extends Controller
                 return view('frontend.carsale.detail-car', compact('clothes', 'category_id', 'clothings_trending'));
                 break;
             case (2):
+            case (3):
                 return view('frontend.website.detail-clothing', compact('clothes', 'category_id', 'size_active', 'clothings_trending'));
                 break;
             default:
@@ -554,8 +557,8 @@ class FrontendController extends Controller
 
         $blogs = Blog::take(4)->get();
 
-        return view('frontend.carsale.index', compact('clothings','blogs', 'social', 'category', 'sellers'));
-    }  
+        return view('frontend.carsale.index', compact('clothings', 'blogs', 'social', 'category', 'sellers'));
+    }
     public function indexSpa()
     {
         $social = Cache::remember('social_networks', $this->expirationTime, function () {
@@ -640,6 +643,6 @@ class FrontendController extends Controller
 
         $blogs = Blog::take(4)->get();
 
-        return view('frontend.website.index', compact('clothings','blogs', 'social', 'category', 'sellers'));
+        return view('frontend.website.index', compact('clothings', 'blogs', 'social', 'category', 'sellers'));
     }
 }

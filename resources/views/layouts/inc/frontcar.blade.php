@@ -110,7 +110,7 @@
             <a href="{{ url('/') }}" class="nav-menu-item"><i class="fas fa-home me-3"></i>INICIO</a>
             @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
                 <div class="nav-menu-item">
-                    <i class="fas fa-tshirt me-3"></i><a class="color-menu" href="javascript:void(0);"
+                    <i class="fas fa-car me-3"></i><a class="color-menu" href="javascript:void(0);"
                         id="toggleCategories">CATEGORIAS <i class="fa fa-arrow-circle-down ml-3"></i></a>
                     <div class="subcategories" id="categoriesDropdown">
                         <ul>
@@ -134,7 +134,7 @@
                 </div>
             @else
                 <div class="nav-menu-item">
-                    <i class="fas fa-tshirt me-3"></i><a class="color-menu" href="javascript:void(0);"
+                    <i class="fas fa-car me-3"></i><a class="color-menu" href="javascript:void(0);"
                         id="toggleCategories">DEPARTAMENTOS <i class="fa fa-arrow-circle-down ml-3"></i></a>
                     <div class="subcategories" id="categoriesDropdown">
                         <ul>
@@ -180,7 +180,7 @@
             <a href="{{ url('/') }}" class="nav-menu-item"><i class="fas fa-home me-3"></i>INICIO</a>
             @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
                 <div class="nav-menu-item">
-                    <i class="fas fa-tshirt me-3"></i><a class="color-menu" href="javascript:void(0);"
+                    <i class="fas fa-car me-3"></i><a class="color-menu" href="javascript:void(0);"
                         id="toggleCategories">CATEGORIAS <i class="fa fa-arrow-circle-down ml-3"></i></a>
                     <div class="subcategories" id="categoriesDropdown">
                         <ul>
@@ -204,7 +204,7 @@
                 </div>
             @else
                 <div class="nav-menu-item">
-                    <i class="fas fa-tshirt me-3"></i><a class="color-menu" href="javascript:void(0);"
+                    <i class="fas fa-car me-3"></i><a class="color-menu" href="javascript:void(0);"
                         id="toggleCategories">DEPARTAMENTOS <i class="fa fa-arrow-circle-down ml-3"></i></a>
                     <div class="subcategories" id="categoriesDropdown">
                         <ul>
