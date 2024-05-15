@@ -48,7 +48,7 @@
                                 </div>
                             </div>
                             <div class="col-md-12 mt-3 text-center">
-                                <button type="submit" class="btn btn-velvet">Editar Producto</button>
+                                <button type="submit" class="btn btn-velvet">Editar artículo</button>
                             </div>
 
 
@@ -61,7 +61,7 @@
     </form>
     <center>
         <div class="col-md-12 mt-3">
-            <a href="{{ url('blog/indexadmin') }}" class="btn btn-velvet w-25">Volver</a>
+            <a href="{{ url('blog/' . $tag->blog_id . '/show') }}" class="btn btn-velvet w-25">Volver</a>
         </div>
     </center>
 @endsection

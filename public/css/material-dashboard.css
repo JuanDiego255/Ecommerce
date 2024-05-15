@@ -10918,6 +10918,9 @@ fieldset:disabled .btn {
 .bg-white {
   background-color: #fff !important;
 }
+.bg-gray-light {
+  background-color: #F4F4F3 !important;
+}
 
 .bg-body {
   background-color: #fff !important;
@@ -28789,6 +28792,14 @@ input.card {
   width: 100%;
   position: fixed;
   background-color: #FAAA0B;
+}
+
+.main-container-front::before {
+  content: "";
+  height: 550px;
+  width: 100%;
+  position: fixed;
+  background-image: url('images/car1.jpg');
 }
 
 .service-container::before {

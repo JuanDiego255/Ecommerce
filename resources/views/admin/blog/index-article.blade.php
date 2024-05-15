@@ -98,6 +98,11 @@
 
         </div>
     </div>
+    <center>
+        <div class="col-md-12 mt-3">
+            <a href="{{ url('blog/indexadmin') }}" class="btn btn-velvet w-25">Ir a blogs</a>
+        </div>
+    </center>
 @endsection
 @section('script')
     <script src="{{ asset('js/image-error-handler.js') }}"></script>

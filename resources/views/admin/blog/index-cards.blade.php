@@ -6,12 +6,12 @@
 @section('content')
     <center>
         <h2 class="text-center font-title">
-            <strong>Administra los blogs informativos desde acá</strong>
+            <strong>Tarjetas relacionadas con este post</strong>
         </h2>
     </center>
     <div class="row w-50">
         <div class="col-md-6">
-            <a href="{{ url('blog/agregar') }}" class="btn btn-velvet w-100">Agregar Nuevo Blog</a>
+            <a href="{{ url('blog/' . $id . '/add-card') }}" class="btn btn-velvet w-100">Nueva tarjeta</a>
         </div>
     </div>
     <div class="card mt-3">
@@ -47,21 +47,20 @@
             <div class="card p-2">
                 <div class="table-responsive">
 
-                    <table class="table align-items-center mb-0" id="blogs">
+                    <table class="table align-items-center mb-0" id="cards">
                         <thead>
                             <tr>
-                                <th class="text-secondary font-weight-bolder opacity-7 ps-2">Blog
-                                </th>
+                                <th class="text-secondary font-weight-bolder opacity-7">
+                                    Tarjeta</th>
                                 <th class="text-center text-secondary font-weight-bolder opacity-7">
-                                    Fecha Post</th>                                
+                                    Descripción</th>
                                 <th class="text-center text-secondary font-weight-bolder opacity-7">
                                     Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($blogs as $item)
+                            @foreach ($cards as $item)
                                 <tr>
-
                                     <td class="w-50">
                                         <div class="d-flex px-2 py-1">
                                             <div>
@@ -72,43 +71,33 @@
                                                 </a>
                                             </div>
                                             <div class="d-flex flex-column justify-content-center">
-                                                <h4 class="mb-0 text-lg">{!! $item->title !!}</h4>
-                                                <p>{!! $item->autor !!}</p>
+                                                <h4 class="mb-0 text-lg">{{ $item->title }}</h4>
+                                                
                                             </div>
                                         </div>
-                                    </td>       
+                                    </td>
                                     <td class="align-middle text-center text-sm">
-                                        <p class="text-success mb-0">{{ $item->fecha_post }}
+                                        <p class="text-muted mb-0">{{ $item->description }}
                                         </p>
-                                    </td>                             
-                                   
+                                    </td>
+
                                     <td class="align-middle text-center">
-                                        <form name="delete-blog{{ $item->id }}"
-                                            id="delete-blog{{ $item->id }}" method="post"
-                                            action="{{ url('/blog/' . $item->id) }}">
+                                        <form name="delete-card{{ $item->id }}"
+                                            id="delete-card{{ $item->id }}" method="post"
+                                            action="{{ url('/delete-card/' . $item->id) }}">
                                             {{ csrf_field() }}
                                             {{ method_field('DELETE') }}
                                         </form>
-                                        <button form="delete-blog{{ $item->id }}" type="submit"
-                                            onclick="return confirm('Deseas borrar este blog?')"
+                                        <button form="delete-card{{ $item->id }}" type="submit"
+                                            onclick="return confirm('Deseas borrar esta tarjeta?')"
                                             class="btn btn-link text-velvet ms-auto border-0" data-bs-toggle="tooltip"
                                             data-bs-placement="bottom" title="Eliminar">
                                             <i class="material-icons text-lg">delete</i>
                                         </button>
                                         <a class="btn btn-link text-velvet me-auto border-0"
-                                            href="{{ url('/blog/' . $item->id . '/edit') }}"
+                                            href="{{ url('blog/' . $item->id . '/' . $id . '/edit-card') }}"
                                             data-bs-toggle="tooltip" data-bs-placement="bottom" title="Editar">
                                             <i class="material-icons text-lg">edit</i>
-                                        </a>
-                                        <a class="btn btn-link text-velvet me-auto border-0"
-                                            href="{{ url('/blog/' . $item->id . '/show') }}"
-                                            data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ver artículos">
-                                            <i class="material-icons text-lg">visibility</i>
-                                        </a>
-                                        <a class="btn btn-link text-velvet me-auto border-0"
-                                            href="{{ url('/blog/' . $item->id . '/view-cards') }}"
-                                            data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ver tarjetas">
-                                            <i class="material-icons text-lg">book</i>
                                         </a>
                                     </td>
                                 </tr>
@@ -120,12 +109,17 @@
 
         </div>
     </div>
+    <center>
+        <div class="col-md-12 mt-3">
+            <a href="{{ url('blog/indexadmin') }}" class="btn btn-velvet w-25">Ir a blogs</a>
+        </div>
+    </center>
 @endsection
 @section('script')
     <script src="{{ asset('js/image-error-handler.js') }}"></script>
     <script>
         $(document).ready(function() {
-            var dataTable = $('#blogs').DataTable({
+            var dataTable = $('#cards').DataTable({
                 searching: true,
                 lengthChange: false,
 

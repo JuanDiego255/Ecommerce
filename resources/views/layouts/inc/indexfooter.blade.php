@@ -1,7 +1,7 @@
 <center>
     <div class="container-fluid bg-footer">
 
-        <div class="row mt-5 pt-5">
+        <div class="row pt-5">
 
             <div class="col-md-4">
                 <h5 class="text-uppercase text-footer-title">Redes Sociales</h5>

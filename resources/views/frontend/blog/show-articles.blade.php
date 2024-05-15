@@ -3,45 +3,68 @@
 {!! OpenGraph::generate() !!}
 
 @section('content')
-    <div class="container mt-4 mb-5">
-
+    <div class="container mt-5 {{ $tenantinfo->kind_business != 3 ? 'd-block' : 'd-none' }}">
         <div class="breadcrumb-nav bc3x">
             <li class="home"><a href="{{ url('/') }}"><i class="fas fa-home me-1"></i></a></li>
             <li class="bread-standard"><a href="{{ url('blog/index') }}"><i class="fas fa-book me-1"></i>Blog</a></li>
             <li class="bread-standard"><a href="#"><i class="fas fa-tag me-1"></i>Artículo</a></li>
         </div>
-
-        <div class="row mt-5">
-            <div class="col-md-8 mb-2">
-                <h1 class="text-title">{{ $blog->title }}</h1>
-                {!!$blog->body!!}
-                <div class="text-justify">
-                    <h5 class="text-muted">Publicado por: {{ $blog->autor }}</h5>
-                    <h5 class="text-muted">Fecha de publicación: {{ $fecha_letter }}</h5>
+    </div>
+    <div class="{{ $tenantinfo->kind_business == 3 ? 'd-block' : 'd-none' }}" style="height: 240px;"></div>
+    <div class="text-center container mt-5 {{ $tenantinfo->kind_business == 3 ? 'd-block' : 'd-none' }}">
+        <div class="row text-center">
+            <!-- Team item -->
+            @foreach ($cards as $item)
+                <div class="col-xl-3 col-sm-6 mb-5">
+                    <div class="bg-white rounded shadow-sm py-5 px-4"><img src="{{ route('file', $item->image) }}"
+                            alt="" width="100"
+                            class="img-fluid rounded-circle border-0 mb-3 img-thumbnail shadow-sm">
+                        <h5 class="mb-0">{{ $item->title }}</h5><span
+                            class="small text-uppercase text-muted">{{ $item->description }}</span>                        
+                    </div>
                 </div>
-                
-                <a class="btn btn-icon btn-3 mt-2 btn-add_to_cart" href="#">
-                    <span class="btn-inner--icon"><i class="material-icons">calendar_month</i></span>
-                    <span class="btn-inner--text">Solicitar una cita</span>
-                </a>
-            </div>
-            <div class="col-md-4">
-                <div class="product-grid product_data">
-                    <div class="product-image">
-                        <img src="{{ route('file', $blog->image) }}">
-                        <ul class="product-links">
-                            <li><a target="blank" href="{{ route('file', $blog->image) }}"><i class="fas fa-eye"></i></a>
-                            </li>
-                        </ul>
+            @endforeach
 
+            <!-- End -->
+        </div>
+    </div>
+    <div class="mt-5 bg-white">
+
+        <div class="container pt-3 pb-5">
+            <div class="row mt-5">
+                <div class="col-md-8 mb-2">
+                    <h1 class="text-title">{{ $blog->title }}</h1>
+                    {!! $blog->body !!}
+                    <div class="text-justify">
+                        <h5 class="text-muted">Publicado por: {{ $blog->autor }}</h5>
+                        <h5 class="text-muted">Fecha de publicación: {{ $fecha_letter }}</h5>
                     </div>
 
+                    <a class="btn btn-icon btn-3 mt-2 btn-add_to_cart" href="#">
+                        <span class="btn-inner--icon"><i class="material-icons">calendar_month</i></span>
+                        <span class="btn-inner--text">Solicitar una cita</span>
+                    </a>
+                </div>
+                <div class="col-md-4">
+                    <div class="product-grid product_data">
+                        <div class="product-image">
+                            <img src="{{ route('file', $blog->image) }}">
+                            <ul class="product-links">
+                                <li><a target="blank" href="{{ route('file', $blog->image) }}"><i
+                                            class="fas fa-eye"></i></a>
+                                </li>
+                            </ul>
+
+                        </div>
+
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="mt-5 bg-white mb-4">
-        <div class="container">
+    <div class="bg-gray-light">
+
+        <div class="container pt-3 pb-5">
             <div class="row gx-5">
                 <div class="col-md-8">
                     <hr class="hr-servicios">
@@ -67,7 +90,7 @@
                                                 name="name">
                                         </div>
                                     </div>
-                                    <input type="hidden" name="title" value="{{$blog->title}}">
+                                    <input type="hidden" name="title" value="{{ $blog->title }}">
                                     <div class="col-md-12 mb-3">
                                         <label class="form-label">Teléfono</label>
                                         <div class="input-group input-group-static">
@@ -103,16 +126,17 @@
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
-    <hr class="dark horizontal text-danger my-0">
+    <div class="{{ $tenantinfo->kind_business == 3 ? 'd-block' : 'd-none' }}" style="height: 200px;">
+
+    </div>
     {{-- Trending --}}
     @if (count($another_blogs) != 0)
-        <div class="mt-3 mb-2">
-            <div class="container">
+        <div class="bg-white">
+            <div class="container pt-3">
                 <div class="text-center">
-                    <h3 class="text-center text-muted mb-1">Otros servicios que pueden interesarte.</h3>
+                    <h1 class="text-center text-title mb-1">Otros servicios que pueden interesarte.</h1>
                 </div>
 
                 <div class="row">

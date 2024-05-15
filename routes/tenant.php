@@ -172,11 +172,17 @@ Route::middleware([
             Route::get('blog/{blog}/edit', [BlogController::class, 'edit']);
             Route::get('blog/{blog}/{id}/edit-info', [BlogController::class, 'editArticle']);
             Route::get('blog/{id}/show', [BlogController::class, 'indexArticles']);
+            Route::get('blog/{id}/view-cards', [BlogController::class, 'indexCards']);
             Route::put('blog/{blog}', [BlogController::class, 'update']);
             Route::put('tag/{id}/{blog_id}', [BlogController::class, 'updateArticle']);
             Route::delete('blog/{id}', [BlogController::class, 'destroy']);
             Route::delete('delete-article/{id}', [BlogController::class, 'destroyArticle']);
             Route::get('blog/{id}/agregar-info', [BlogController::class, 'agregarInfo']);
+            Route::get('blog/{id}/add-card', [BlogController::class, 'addCard']);
+            Route::get('blog/{blog}/{id}/edit-card', [BlogController::class, 'editCard']);
+            Route::post('/blog/add-card/{id}', [BlogController::class, 'storeCard']);
+            Route::put('card/{id}/{blog_id}', [BlogController::class, 'updateCard']);
+            Route::delete('delete-card/{id}', [BlogController::class, 'destroyCard']);
             Route::post('upload/', [BlogController::class, 'upload'])->name('upload');
         });
     });

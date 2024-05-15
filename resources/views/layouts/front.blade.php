@@ -50,31 +50,36 @@
     }
 </style>
 
+
 <body class="g-sidenav-show  bg-gray-200">
 
+    <div class="{{ $view_name == 'frontend_blog_show-articles' && $tenantinfo->kind_business == 3 ? 'main-container-front' : '' }}">
+        <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
 
-    <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
+            <div>
+                @if (isset($tenantinfo->tenant) && $tenantinfo->tenant != 'main')
+                    @switch($tenantinfo->kind_business)
+                        @case(1)
+                            @include('layouts.inc.frontcar')
+                        @break
 
-        <div>
-            @if (isset($tenantinfo->tenant) && $tenantinfo->tenant != 'main')
-                @switch($tenantinfo->kind_business)
-                    @case(1)
-                        @include('layouts.inc.frontcar')
-                    @break
-                    @case(2)
-                    @case(3)
-                        @include('layouts.inc.websites.frontnavbar')
-                    @break
-                    @default
-                        @include('layouts.inc.frontnavbar')
-                @endswitch
-            @else
-                @include('layouts.inc.centralnavbar')
-            @endif
+                        @case(2)
+                        @case(3)
+                            @include('layouts.inc.websites.frontnavbar')
+                        @break
 
-            @yield('content')
-        </div>
-    </main>
+                        @default
+                            @include('layouts.inc.frontnavbar')
+                    @endswitch
+                @else
+                    @include('layouts.inc.centralnavbar')
+                @endif
+
+                @yield('content')
+            </div>
+        </main>
+    </div>
+
 
     <script src="{{ asset('js/popper.min.js') }}" defer></script>
     <script src="{{ asset('js/bootstrap.min.js') }}" defer></script>
@@ -160,6 +165,8 @@
                     });
                 });
             });
+
+            
 
             function calcularTotal() {
                 let total = 0;

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ArticleBlog;
 use App\Models\Blog;
+use App\Models\CardBlog;
 use App\Models\MetaTags;
 use App\Models\TenantInfo;
 use Artesaos\SEOTools\Facades\OpenGraph;
@@ -74,8 +75,9 @@ class BlogController extends Controller
     public function showArticles(Request $request, $id)
     {
         $blog = Blog::findOrfail($id);
-        $another_blogs = Blog::where('id','!=',$id)->take(4)->get();
+        $another_blogs = Blog::where('id', '!=', $id)->take(4)->get();
         $fecha_post = $blog->fecha_post;
+        $cards = CardBlog::where('blog_id',$id)->take(4)->get();
 
         $tags = DB::table('article_blogs')
             ->where('blog_id', $id)->join('blogs', 'article_blogs.blog_id', 'blogs.id')
@@ -110,7 +112,7 @@ class BlogController extends Controller
         }
         $fecha_letter = $dia_event . ' de ' . $name_month_event . ' del ' . $anio_event;
 
-        return view('frontend.blog.show-articles', compact('tags','another_blogs', 'id', 'fecha_letter', 'blog'));
+        return view('frontend.blog.show-articles', compact('tags','cards', 'another_blogs', 'id', 'fecha_letter', 'blog'));
     }
     /**
 
@@ -433,4 +435,143 @@ class BlogController extends Controller
             dd($th->getMessage());
         }
     }
+    //Metodos para las tarjetas
+    /**
+
+     * Get all the articles of the blog.
+
+     *
+
+     * @param Request $request
+
+
+     */
+    public function indexCards($id)
+    {
+        $cards = DB::table('card_blogs')
+            ->where('blog_id', $id)->join('blogs', 'card_blogs.blog_id', 'blogs.id')
+            ->select(
+                'blogs.title as blog_title',
+                'card_blogs.title as title',
+                'card_blogs.id as id',
+                'card_blogs.description as description',
+                'card_blogs.opcional_description as opcional_description',
+                'card_blogs.image as image',
+            )
+            ->get();
+
+        return view('admin.blog.index-cards', compact('cards', 'id'));
+    }
+    /**
+
+     *redirects to add blog view.
+
+     */
+    public function addCard($blog_id)
+    {
+        return view('admin.blog.add-card', compact('blog_id'));
+    }
+
+    /**
+
+     *Insert the form data into the respective table
+
+     *
+
+     * @param Request $request
+
+
+     */
+    public function storeCard(Request $request, $id)
+    {
+        $campos = [
+            'title' => 'required|string|max:100',
+            'description' => 'required|string|max:10000',
+            'image' => 'required|max:10000|mimes:jpeg,png,jpg,ico'
+        ];
+        $mensaje = ["required" => 'El :attribute es requerido'];
+        $this->validate($request, $campos, $mensaje);
+        $card_blog = new CardBlog();
+        $card_blog->blog_id = $id;
+        $card_blog->title = $request->title;
+        if ($request->hasFile('image')) {
+            $card_blog->image = $request->file('image')->store('uploads', 'public');
+        }
+        $card_blog->description = $request->description;
+        $card_blog->save();
+
+        return redirect('blog/'.$id.'/view-cards')->with(['status' => 'Tarjeta creada con éxito!', 'icon' => 'success']);
+    }
+    /**
+
+     * Redirects to edit blog view.
+
+     *
+
+     * @param $id
+
+
+     */
+    public function editCard($id, $blog_id)
+    {
+        $card = CardBlog::findOrfail($id);
+        return view('admin.blog.edit-card', compact('card', 'blog_id'));
+    }
+    /**
+
+     *Update the form data into the respective table
+
+     *
+
+     * @param Request $request
+
+     * @param $id
+
+
+     */
+    public function updateCard(Request $request, $id, $blog_id)
+    {
+        $campos = [
+            'title' => 'required|string|max:100',
+            'description' => 'required|string|max:10000'
+        ];
+        $mensaje = ["required" => 'El :attribute es requerido'];
+        $this->validate($request, $campos, $mensaje);
+        $card_blog =  request()->except(['_token', '_method']);
+        $card_blog = CardBlog::findOrfail($id);
+        if ($request->hasFile('image')) {
+            Storage::delete('public/' . $card_blog->image);
+            $image = $request->file('image')->store('uploads', 'public');
+            $card_blog->image = $image;
+        }
+
+        $card_blog->title = $request->title;
+        $card_blog->description = $request->description;
+        $card_blog->opcional_description = $request->opcional_description;
+        $card_blog->update();
+        return redirect('blog/'.$blog_id.'/view-cards')->with(['status' => 'Tarjeta actualizada con éxito!', 'icon' => 'success']);
+    }
+    /**
+
+     * delete the data from the respective table.
+
+     *
+
+     * @param $id
+
+
+     */
+    public function destroyCard($id)
+    {
+        $card = CardBlog::findOrfail($id);
+        if (
+            Storage::delete('public/' . $card->image)
+        ) {
+            CardBlog::destroy($id);
+        }
+
+        CardBlog::destroy($id);
+        return redirect()->back()->with(['status' => 'Tarjeta eliminada con éxito!', 'icon' => 'success']);
+    }
+    
 }
