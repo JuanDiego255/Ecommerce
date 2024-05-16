@@ -107,7 +107,6 @@ class PersonalUserController extends Controller
             ];
             $mensaje = ["required" => 'El :attribute es requerido'];
             $this->validate($request, $campos, $mensaje);
-            $blog =  request()->except(['_token', '_method']);
             $user = PersonalUser::findOrfail($id);
             if ($request->hasFile('image')) {
                 Storage::delete('public/' . $user->image);
@@ -117,7 +116,8 @@ class PersonalUserController extends Controller
 
             $user->name = $request->name;
             $user->body = $request->body;
-            $user->update();
+            $user->update();            
+            db::commit();
             return redirect('user-info')->with(['status' => 'Profesional actualizado con éxito!', 'icon' => 'success']);
         } catch (\Exception $th) {
             DB::rollBack();
@@ -147,6 +147,7 @@ class PersonalUserController extends Controller
             }
 
             PersonalUser::destroy($id);
+            db::commit();
             return redirect()->back()->with(['status' => 'Profesional  eliminado con éxito!', 'icon' => 'success']);
         } catch (\Exception $th) {
             DB::rollBack();

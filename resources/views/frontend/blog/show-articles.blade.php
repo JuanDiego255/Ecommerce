@@ -141,37 +141,37 @@
     @if ($blog->personal_id != null)
         {{-- salto de pagina --}}
         <div class="{{ $tenantinfo->kind_business == 3 ? 'd-block' : 'd-none' }}" style="height: 75px;"></div>
-            <div class="mt-5 bg-white">
+        <div class="mt-5 bg-white">
 
-                <div class="container pt-3 pb-5">
-                    <div class="row mt-5">
-                        <div class="col-md-4">
-                            <div class="product-grid product_data">
-                                <div class="product-image">
-                                    <img src="{{ route('file', $blog->image_personal) }}">
-                                    <ul class="product-links">
-                                        <li><a target="blank" href="{{ route('file', $blog->image_personal) }}"><i
-                                                    class="fas fa-eye"></i></a>
-                                        </li>
-                                    </ul>
-
-                                </div>
+            <div class="container pt-3 pb-5">
+                <div class="row mt-5">
+                    <div class="col-md-4">
+                        <div class="product-grid product_data">
+                            <div class="product-image">
+                                <img src="{{ route('file', $blog->image_personal) }}">
+                                <ul class="product-links">
+                                    <li><a target="blank" href="{{ route('file', $blog->image_personal) }}"><i
+                                                class="fas fa-eye"></i></a>
+                                    </li>
+                                </ul>
 
                             </div>
-                        </div>
-                        <div class="col-md-8 mb-2">
-                            <h1 class="text-title">{{ $blog->name }}</h1>
-                            {!! $blog->personal_body !!}
 
-                            <a class="btn btn-icon btn-3 mt-2 btn-add_to_cart" href="#">
-                                <span class="btn-inner--icon"><i class="material-icons">calendar_month</i></span>
-                                <span class="btn-inner--text">{{ __('Contactar') }}</span>
-                            </a>
                         </div>
-
                     </div>
+                    <div class="col-md-8 mb-2">
+                        <h1 class="text-title">{{ $blog->name }}</h1>
+                        {!! $blog->personal_body !!}
+
+                        <a class="btn btn-icon btn-3 mt-2 btn-add_to_cart" href="#">
+                            <span class="btn-inner--icon"><i class="material-icons">calendar_month</i></span>
+                            <span class="btn-inner--text">{{ __('Contactar') }}</span>
+                        </a>
+                    </div>
+
                 </div>
             </div>
+        </div>
     @endif
 
     {{-- salto de pagina --}}
@@ -219,6 +219,7 @@
             </div>
         </div>
     @endif
+
     @if (isset($tenantinfo->kind_business) && $tenantinfo->kind_business != 1)
         @include('layouts.inc.indexfooter')
     @endif
