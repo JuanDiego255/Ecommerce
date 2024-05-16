@@ -231,11 +231,11 @@ class BlogController extends Controller
             $article['slug'] = $slug;
             ArticleBlog::insert($article);
             DB::commit();
-            return redirect('blog/' . $id . '/show')->with(['status' => 'Artículo creado con éxito!', 'icon' => 'success']);
+            return redirect('blog-show/' . $id . '/show')->with(['status' => 'Artículo creado con éxito!', 'icon' => 'success']);
         } catch (\Exception $th) {
             //throw $th;
             DB::rollBack();
-            return redirect('blog/' . $id . '/show')->with(['status' => $th->getMessage(), 'icon' => 'success']);
+            return redirect('blog-show/' . $id . '/show')->with(['status' => $th->getMessage(), 'icon' => 'success']);
         }
     }
     /**
@@ -339,7 +339,7 @@ class BlogController extends Controller
             'meta_description' => $meta_description,
             'slug' => $slug
         ]);
-        return redirect('blog/' . $blog_id . '/show')->with(['status' => 'Artículo editado con éxito!', 'icon' => 'success']);
+        return redirect('blog-show/' . $blog_id . '/show')->with(['status' => 'Artículo editado con éxito!', 'icon' => 'success']);
     }
     /**
 
@@ -503,7 +503,7 @@ class BlogController extends Controller
         $card_blog->description = $request->description;
         $card_blog->save();
 
-        return redirect('blog/'.$id.'/view-cards')->with(['status' => 'Tarjeta creada con éxito!', 'icon' => 'success']);
+        return redirect('blog-cards/'.$id.'/view-cards')->with(['status' => 'Tarjeta creada con éxito!', 'icon' => 'success']);
     }
     /**
 
@@ -552,7 +552,7 @@ class BlogController extends Controller
         $card_blog->description = $request->description;
         $card_blog->opcional_description = $request->opcional_description;
         $card_blog->update();
-        return redirect('blog/'.$blog_id.'/view-cards')->with(['status' => 'Tarjeta actualizada con éxito!', 'icon' => 'success']);
+        return redirect('blog-cards/'.$blog_id.'/view-cards')->with(['status' => 'Tarjeta actualizada con éxito!', 'icon' => 'success']);
     }
     /**
 

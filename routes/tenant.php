@@ -177,8 +177,8 @@ Route::middleware([
             Route::put('tag/{id}/{blog_id}', [BlogController::class, 'updateArticle']);
             Route::delete('blog/{id}', [BlogController::class, 'destroy']);
             Route::delete('delete-article/{id}', [BlogController::class, 'destroyArticle']);
-            Route::get('blog/{id}/agregar-info', [BlogController::class, 'agregarInfo']);
-            Route::get('blog/{id}/add-card', [BlogController::class, 'addCard']);
+            Route::get('blog-add/{id}/agregar-info', [BlogController::class, 'agregarInfo']);
+            Route::get('blog-add/{id}/add-card', [BlogController::class, 'addCard']);
             Route::get('blog/{blog}/{id}/edit-card', [BlogController::class, 'editCard']);
             Route::post('/blog/add-card/{id}', [BlogController::class, 'storeCard']);
             Route::put('card/{id}/{blog_id}', [BlogController::class, 'updateCard']);

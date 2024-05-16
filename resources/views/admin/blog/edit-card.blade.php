@@ -64,7 +64,7 @@
     </form>
     <center>
         <div class="col-md-12 mt-3">
-            <a href="{{ url('blog/' . $card->blog_id . '/view-cards') }}" class="btn btn-velvet w-25">Volver</a>
+            <a href="{{ url('blog-cards/' . $card->blog_id . '/view-cards') }}" class="btn btn-velvet w-25">Volver</a>
         </div>
     </center>
 @endsection

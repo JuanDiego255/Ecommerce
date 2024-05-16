@@ -11,7 +11,7 @@
     </center>
     <div class="row w-50">
         <div class="col-md-6">
-            <a href="{{ url('blog/' . $id . '/agregar-info') }}" class="btn btn-velvet w-100">Nuevo artículo</a>
+            <a href="{{ url('blog-add/' . $id . '/agregar-info') }}" class="btn btn-velvet w-100">Nuevo artículo</a>
         </div>
     </div>
     <div class="card mt-3">

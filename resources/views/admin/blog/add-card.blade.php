@@ -57,7 +57,7 @@
 
     <center>
         <div class="col-md-12 mt-3">
-            <a href="{{ url('blog/'.$blog_id.'/view-cards') }}" class="btn btn-velvet w-25">Volver</a>
+            <a href="{{ url('blog-cards/'.$blog_id.'/view-cards') }}" class="btn btn-velvet w-25">Volver</a>
         </div>
     </center>
 @endsection
