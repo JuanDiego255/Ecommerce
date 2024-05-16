@@ -186,6 +186,8 @@ class BlogController extends Controller
         if ($request->hasFile('image')) {
             $blog['image'] = $request->file('image')->store('uploads', 'public');
         }
+        $title_optional = $request->title_optional;
+        $blog['title_optional'] = $title_optional;
         $blog['autor'] = $auth;
         $blog['name_url'] = $name_url;
         $blog['fecha_post'] = $datetoday;
@@ -224,10 +226,11 @@ class BlogController extends Controller
             $article =  request()->except('_token');
             $meta_keywords = $request->meta_keywords;
             $meta_description = $request->meta_description;
+            $title_optional = $request->title_optional;
 
             $article['blog_id'] = $id;
             $article['meta_keywords'] = $meta_keywords;
-            $article['meta_description'] = $meta_description;
+            $article['meta_description'] = $meta_description;            
             $article['slug'] = $slug;
             ArticleBlog::insert($article);
             DB::commit();
@@ -298,6 +301,7 @@ class BlogController extends Controller
         $name_url_mod = str_replace(" ", "-", $request->name_url);
         $blog->name_url = $name_url_mod;
         $blog->title = $request->title;
+        $blog->title_optional = $request->title_optional;
         $blog->body = $request->body;
         $blog->update();
         return redirect('blog/indexadmin')->with(['status' => 'Blog actualizado con éxito!', 'icon' => 'success']);

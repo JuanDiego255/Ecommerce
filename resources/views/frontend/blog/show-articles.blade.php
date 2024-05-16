@@ -3,6 +3,7 @@
 {!! OpenGraph::generate() !!}
 
 @section('content')
+
     <div class="container mt-5 {{ $tenantinfo->kind_business != 3 ? 'd-block' : 'd-none' }}">
         <div class="breadcrumb-nav bc3x">
             <li class="home"><a href="{{ url('/') }}"><i class="fas fa-home me-1"></i></a></li>
@@ -10,8 +11,12 @@
             <li class="bread-standard"><a href="#"><i class="fas fa-tag me-1"></i>Artículo</a></li>
         </div>
     </div>
-    <div class="{{ $tenantinfo->kind_business == 3 ? 'd-block' : 'd-none' }}" style="height: 240px;"></div>
-    <div class="text-center container mt-5 {{ $tenantinfo->kind_business == 3 ? 'd-block' : 'd-none' }}">
+    <div class="bg-transparent mt-5">
+        <h1 class="text-title-blog text-center">{{ $blog->title }}</h1>
+    </div>
+    
+    <div class="{{ $tenantinfo->kind_business == 3 ? 'd-block' : 'd-none' }}" style="height: 200px;"></div>
+    <div class="text-center container {{ $tenantinfo->kind_business == 3 ? 'd-block' : 'd-none' }}">
         <div class="row text-center">
             <!-- Team item -->
             @foreach ($cards as $item)
@@ -32,8 +37,8 @@
 
         <div class="container pt-3 pb-5">
             <div class="row mt-5">
-                <div class="col-md-8 mb-2">
-                    <h1 class="text-title">{{ $blog->title }}</h1>
+                <div class="col-md-8 mb-2">  
+                    <h1 class="text-title">{{ $blog->title_optional }}</h1>                  
                     {!! $blog->body !!}
                     <div class="text-justify">
                         <h5 class="text-muted">Publicado por: {{ $blog->autor }}</h5>

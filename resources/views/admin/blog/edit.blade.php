@@ -18,14 +18,20 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <div class="input-group input-group-static mb-4">
-                                    <label>Título</label>
+                                    <label>{{ __('Título (Se muestra al inicio del blog)') }}</label>
                                     <input required value="{{ $blog->title }}" type="text"
                                         class="form-control form-control-lg" name="title">
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <div class="input-group input-group-static mb-4">
-                                    <label>Nombre URL (Este nombre se mostrará en la url del blog)</label>
+                                    <label>{{ __('Título 2 Opcional(Se muestra cerca del inicio de la redacción del blog)') }}</label>
+                                    <input type="text" value="{{ $blog->title_optional }}" class="form-control form-control-lg" name="title_optional">
+                                </div>
+                            </div>  
+                            <div class="col-md-6 mb-3">
+                                <div class="input-group input-group-static mb-4">
+                                    <label>{{ __('Nombre URL (Este nombre se mostrará en la url del blog)') }}</label>
                                     <input required value="{{ $blog->name_url }}" type="text" class="form-control form-control-lg" name="name_url">
                                 </div>
                             </div>  
@@ -46,7 +52,7 @@
                             </div>
                         </div>
                         <div class="col-md-12 mt-3 text-center">
-                            <button type="submit" class="btn btn-velvet">Editar Producto</button>
+                            <button type="submit" class="btn btn-velvet">{{ __('Editar Blog') }}</button>
                         </div>
 
 
@@ -59,7 +65,7 @@
     </form>
     <center>
         <div class="col-md-12 mt-3">
-            <a href="{{ url('blog/indexadmin') }}" class="btn btn-velvet w-25">Volver</a>
+            <a href="{{ url('blog/indexadmin') }}" class="btn btn-velvet w-25">{{ __('Volver') }}</a>
         </div>
     </center>
 @endsection
