@@ -47,7 +47,7 @@
 
                     <a class="btn btn-icon btn-3 mt-2 btn-add_to_cart" href="#">
                         <span class="btn-inner--icon"><i class="material-icons">calendar_month</i></span>
-                        <span class="btn-inner--text">Solicitar una cita</span>
+                        <span class="btn-inner--text">{{ __('Solicitar una cita') }}</span>
                     </a>
                 </div>
                 <div class="col-md-4">
