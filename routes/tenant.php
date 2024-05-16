@@ -60,7 +60,7 @@ Route::middleware([
 
         Route::get('category', [FrontendController::class, 'category']);
         Route::get('/blog/index',  [BlogController::class, 'index']);
-        Route::get('blog/{blog}/show-index', [BlogController::class, 'showArticles']);
+        Route::get('blog/{blog}/{name_url}', [BlogController::class, 'showArticles']);
         Route::post('send-email/blog', [BlogController::class, 'sendEmail']);
         Route::get('departments/index', [FrontendController::class, 'departments']);
         Route::get('category/{id}', [FrontendController::class, 'category']);
@@ -169,10 +169,10 @@ Route::middleware([
             Route::post('/blog', [BlogController::class, 'store']);
             Route::post('/blog/more-info/{id}', [BlogController::class, 'storeMoreInfo']);
             Route::get('/blog/agregar', [BlogController::class, 'agregar']);
-            Route::get('blog/{blog}/edit', [BlogController::class, 'edit']);
+            Route::get('blog-edit/{blog}/edit', [BlogController::class, 'edit']);
             Route::get('blog/{blog}/{id}/edit-info', [BlogController::class, 'editArticle']);
-            Route::get('blog/{id}/show', [BlogController::class, 'indexArticles']);
-            Route::get('blog/{id}/view-cards', [BlogController::class, 'indexCards']);
+            Route::get('blog-show/{id}/show', [BlogController::class, 'indexArticles']);
+            Route::get('blog-cards/{id}/view-cards', [BlogController::class, 'indexCards']);
             Route::put('blog/{blog}', [BlogController::class, 'update']);
             Route::put('tag/{id}/{blog_id}', [BlogController::class, 'updateArticle']);
             Route::delete('blog/{id}', [BlogController::class, 'destroy']);

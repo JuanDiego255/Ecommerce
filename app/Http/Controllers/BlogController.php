@@ -30,9 +30,7 @@ class BlogController extends Controller
 
      */
     public function index(Request $request)
-    {
-        SEOMeta::setTitle('Encuentra todo tipo de información referente a Batsë Eventos.');
-        SEOMeta::setDescription('Por qué debe escoger nuestra compañía?');
+    {        
         $blogs = Blog::simplePaginate(8);
         $tags = MetaTags::where('section', 'Blog')->get();
         foreach ($tags as $tag) {
@@ -72,10 +70,10 @@ class BlogController extends Controller
 
 
      */
-    public function showArticles(Request $request, $id)
+    public function showArticles(Request $request, $id,$name_url)
     {
         $blog = Blog::findOrfail($id);
-        $another_blogs = Blog::where('id', '!=', $id)->take(4)->get();
+        $another_blogs = Blog::where('id', '!=', $id)->inRandomOrder()->take(4)->get();
         $fecha_post = $blog->fecha_post;
         $cards = CardBlog::where('blog_id',$id)->take(4)->get();
 
@@ -84,6 +82,7 @@ class BlogController extends Controller
             ->select(
                 'blogs.title as blog_title',
                 'blogs.autor as autor',
+                'blogs.name_url as name_url',
                 'blogs.fecha_post as fecha_post',
                 'article_blogs.title as title',
                 'article_blogs.id as id',
@@ -174,18 +173,21 @@ class BlogController extends Controller
         $campos = [
             'title' => 'required|string|max:100',
             'body' => 'required|string|max:10000',
+            'name_url' => 'required|string|max:200',
             'image' => 'required|max:10000|mimes:jpeg,png,jpg,ico'
         ];
         $mensaje = ["required" => 'El :attribute es requerido'];
         $this->validate($request, $campos, $mensaje);
         $auth = auth()->user()->name;
         date_default_timezone_set('America/Chihuahua');
+        $name_url = str_replace(" ", "-", $request->name_url);
         $datetoday = date("Y-m-d", time());
         $blog =  request()->except('_token');
         if ($request->hasFile('image')) {
             $blog['image'] = $request->file('image')->store('uploads', 'public');
         }
         $blog['autor'] = $auth;
+        $blog['name_url'] = $name_url;
         $blog['fecha_post'] = $datetoday;
 
         Blog::insert($blog);
@@ -293,7 +295,8 @@ class BlogController extends Controller
             $image = $request->file('image')->store('uploads', 'public');
             $blog->image = $image;
         }
-
+        $name_url_mod = str_replace(" ", "-", $request->name_url);
+        $blog->name_url = $name_url_mod;
         $blog->title = $request->title;
         $blog->body = $request->body;
         $blog->update();

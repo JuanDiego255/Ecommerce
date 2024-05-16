@@ -275,7 +275,7 @@
             <a href="{{ url('/') }}" class="nav-menu-item"><i class="fas fa-home me-3"></i>INICIO</a>
             @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
                 <div class="nav-menu-item">
-                    <i class="{{$font_icon}} me-3"></i><a class="color-menu" href="javascript:void(0);"
+                    <i class="{{ $font_icon }} me-3"></i><a class="color-menu" href="javascript:void(0);"
                         id="toggleCategories">CATEGORIAS <i class="fa fa-arrow-circle-down ml-3"></i></a>
                     <div class="subcategories" id="categoriesDropdown">
                         <ul>
@@ -299,7 +299,7 @@
                 </div>
             @else
                 <div class="nav-menu-item">
-                    <i class="{{$font_icon}} me-3"></i><a class="color-menu" href="javascript:void(0);"
+                    <i class="{{ $font_icon }} me-3"></i><a class="color-menu" href="javascript:void(0);"
                         id="toggleCategories">DEPARTAMENTOS <i class="fa fa-arrow-circle-down ml-3"></i></a>
                     <div class="subcategories" id="categoriesDropdown">
                         <ul>
@@ -339,6 +339,7 @@
             <a href="{{ url('view-cart') }}" class="nav-menu-item"><i class="fa fa-shopping-cart me-3"></i>CARRITO
                 <span
                     class="badge badge-sm text-pill-menu badge-info border-pill-menu border-2 text-xxs">{{ $cartNumber }}</span></a>
+            <a href="{{ url('blog/index') }}" class="nav-menu-item"><i class="fa fa-book me-3"></i>BLOG</a>
             <a href="{{ route('register') }}" class="nav-menu-item"><i
                     class="fa fa-user-plus me-3"></i>REGISTRARSE</a>
             <a href="{{ route('login') }}" class="nav-menu-item"><i class="fa fa-sign-in me-3"></i>INGRESAR</a>
@@ -348,7 +349,7 @@
             <a href="{{ url('/') }}" class="nav-menu-item"><i class="fas fa-home me-3"></i>INICIO</a>
             @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
                 <div class="nav-menu-item">
-                    <i class="{{$font_icon}} me-3"></i><a class="color-menu" href="javascript:void(0);"
+                    <i class="{{ $font_icon }} me-3"></i><a class="color-menu" href="javascript:void(0);"
                         id="toggleCategories">CATEGORIAS <i class="fa fa-arrow-circle-down ml-3"></i></a>
                     <div class="subcategories" id="categoriesDropdown">
                         <ul>
@@ -372,7 +373,7 @@
                 </div>
             @else
                 <div class="nav-menu-item">
-                    <i class="{{$font_icon}} me-3"></i><a class="color-menu" href="javascript:void(0);"
+                    <i class="{{ $font_icon }} me-3"></i><a class="color-menu" href="javascript:void(0);"
                         id="toggleCategories">DEPARTAMENTOS <i class="fa fa-arrow-circle-down ml-3"></i></a>
                     <div class="subcategories" id="categoriesDropdown">
                         <ul>

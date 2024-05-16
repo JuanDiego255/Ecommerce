@@ -28792,6 +28792,7 @@ input.card {
   width: 100%;
   position: fixed;
   background-color: #FAAA0B;
+  background-position: center;
 }
 
 .main-container-front::before {
@@ -28800,6 +28801,7 @@ input.card {
   width: 100%;
   position: fixed;
   background-image: url('images/car1.jpg');
+  background-position: center;
 }
 
 .service-container::before {

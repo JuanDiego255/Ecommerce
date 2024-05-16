@@ -559,7 +559,8 @@ class FrontendController extends Controller
             OpenGraph::setDescription($tag->meta_og_description);
         }
 
-        $blogs = Blog::take(4)->get();
+        $blogs = Blog::inRandomOrder()
+        ->take(4)->get();
 
         return view('frontend.carsale.index', compact('clothings', 'blogs', 'social', 'category', 'sellers'));
     }
@@ -645,7 +646,8 @@ class FrontendController extends Controller
             OpenGraph::setDescription($tag->meta_og_description);
         }
 
-        $blogs = Blog::take(4)->get();
+        $blogs = Blog::inRandomOrder()
+        ->take(4)->get();
 
         return view('frontend.website.index', compact('clothings', 'blogs', 'social', 'category', 'sellers'));
     }

@@ -151,7 +151,7 @@
                                             <li><a target="blank" href="{{ route('file', $item->image) }}"><i
                                                         class="fas fa-eye"></i></a></li>
                                         </ul>
-                                        <a href="{{ url('/blog/' . $item->id . '/show-index') }}" class="add-to-cart">Ver
+                                        <a href="{{ url('/blog/' . $item->id . '/'.$item->name_url) }}" class="add-to-cart">Ver
                                             información</a>
                                     </div>
                                     <div class="product-content">
@@ -159,7 +159,7 @@
                                         <h3
                                             class="{{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'text-muted' : 'title-frags' }}">
                                             <a
-                                                href="{{ url('/blog/' . $item->id . '/show-index') }}">{{ $item->title }}</a>
+                                                href="{{ url('/blog/' . $item->id . '/'.$item->name_url) }}">{{ $item->title }}</a>
                                         </h3>
                                     </div>
                                 </div>

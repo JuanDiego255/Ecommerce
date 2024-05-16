@@ -96,17 +96,17 @@
                                             <i class="material-icons text-lg">delete</i>
                                         </button>
                                         <a class="btn btn-link text-velvet me-auto border-0"
-                                            href="{{ url('/blog/' . $item->id . '/edit') }}"
+                                            href="{{ url('/blog-edit/' . $item->id . '/edit') }}"
                                             data-bs-toggle="tooltip" data-bs-placement="bottom" title="Editar">
                                             <i class="material-icons text-lg">edit</i>
                                         </a>
                                         <a class="btn btn-link text-velvet me-auto border-0"
-                                            href="{{ url('/blog/' . $item->id . '/show') }}"
+                                            href="{{ url('/blog-show/' . $item->id . '/show') }}"
                                             data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ver artículos">
                                             <i class="material-icons text-lg">visibility</i>
                                         </a>
                                         <a class="btn btn-link text-velvet me-auto border-0"
-                                            href="{{ url('/blog/' . $item->id . '/view-cards') }}"
+                                            href="{{ url('/blog-cards/' . $item->id . '/view-cards') }}"
                                             data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ver tarjetas">
                                             <i class="material-icons text-lg">book</i>
                                         </a>

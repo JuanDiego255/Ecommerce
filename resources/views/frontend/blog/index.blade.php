@@ -19,12 +19,12 @@
                                 <li><a target="blank" href="{{ tenant_asset('/') . '/' . $item->image }}"><i
                                             class="fas fa-eye"></i></a></li>
                             </ul>
-                            <a href="{{ url('/blog/' . $item->id . '/show-index') }}"
+                            <a href="{{ url('/blog/' . $item->id . '/'.$item->name_url) }}"
                                 class="add-to-cart">Ver información</a>
                         </div>
                         <div class="product-content">
                             <h3 class="title"><a
-                                    href="{{ url('/blog/' . $item->id . '/show-index') }}">{{ $item->title }}</a>
+                                    href="{{ url('/blog/' . $item->id . '/'.$item->name_url) }}">{{ $item->title }}</a>
                             </h3>
                         </div>
                     </div>
@@ -33,7 +33,7 @@
 
         </div>
         <center>
-            <div class="container">
+            <div class="container mb-3">
                 {{ $blogs ?? ('')->links('pagination::simple-bootstrap-4') }}
             </div>
         </center>

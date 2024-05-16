@@ -23,6 +23,12 @@
                                         class="form-control form-control-lg" name="title">
                                 </div>
                             </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="input-group input-group-static mb-4">
+                                    <label>Nombre URL (Este nombre se mostrará en la url del blog)</label>
+                                    <input required value="{{ $blog->name_url }}" type="text" class="form-control form-control-lg" name="name_url">
+                                </div>
+                            </div>  
                         </div>
                         @if ($blog->image)
                             <img class="img-fluid img-thumbnail" src="{{ route('file', $blog->image) }}"

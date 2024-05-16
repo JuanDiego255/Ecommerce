@@ -21,6 +21,12 @@
                                     <input required type="text" class="form-control form-control-lg" name="title">
                                 </div>
                             </div>  
+                            <div class="col-md-6 mb-3">
+                                <div class="input-group input-group-static mb-4">
+                                    <label>Nombre URL (Este nombre se mostrará en la url del blog)</label>
+                                    <input required type="text" class="form-control form-control-lg" name="name_url">
+                                </div>
+                            </div>  
                             <div class="col-md-12 mb-3">
                                 <label>Imagen</label>
                                 <div class="input-group input-group-lg input-group-outline my-3">
