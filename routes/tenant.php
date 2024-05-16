@@ -14,12 +14,14 @@ use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\Frontend\CartController;
 use App\Http\Controllers\Frontend\CheckOutController;
 use App\Http\Controllers\MetaTagsController;
+use App\Http\Controllers\PersonalUserController;
 use App\Http\Controllers\SellerController;
 use App\Http\Controllers\SizeController;
 use App\Http\Controllers\SocialNetworkController;
 use App\Http\Controllers\TenantCarouselController;
 use App\Http\Controllers\TenantInfoController;
 use App\Http\Controllers\TenantSocialNetworkController;
+use App\Models\PersonalUser;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
@@ -163,8 +165,7 @@ Route::middleware([
             Route::post('seller/store', [SellerController::class, 'store']);
             Route::put('/seller/update/{id}', [SellerController::class, 'update']);
             Route::delete('/delete/seller/{id}', [SellerController::class, 'destroy']);
-            //Rutas para el blog
-            //Rutas del controlador de Blog
+            //Rutas para el blog           
             Route::get('/blog/indexadmin',  [BlogController::class, 'indexadmin']);
             Route::post('/blog', [BlogController::class, 'store']);
             Route::post('/blog/more-info/{id}', [BlogController::class, 'storeMoreInfo']);
@@ -184,6 +185,13 @@ Route::middleware([
             Route::put('card/{id}/{blog_id}', [BlogController::class, 'updateCard']);
             Route::delete('delete-card/{id}', [BlogController::class, 'destroyCard']);
             Route::post('upload/', [BlogController::class, 'upload'])->name('upload');
+            //Rutas para información profesional
+            Route::get('/user-info/', [PersonalUserController::class, 'indexAdmin']);
+            Route::get('/new-user-info/', [PersonalUserController::class, 'add']);
+            Route::post('/insert-user-info', [PersonalUserController::class, 'store']);
+            Route::get('/edit-user-info/{id}', [PersonalUserController::class, 'edit']);
+            Route::put('/update-user-info/{id}', [PersonalUserController::class, 'update']);
+            Route::delete('/delete-user-info/{id}', [PersonalUserController::class, 'destroy']);
         });
     });
 

@@ -6,6 +6,7 @@ use App\Models\ArticleBlog;
 use App\Models\Blog;
 use App\Models\CardBlog;
 use App\Models\MetaTags;
+use App\Models\PersonalUser;
 use App\Models\TenantInfo;
 use Artesaos\SEOTools\Facades\OpenGraph;
 use Artesaos\SEOTools\Facades\SEOMeta;
@@ -30,7 +31,7 @@ class BlogController extends Controller
 
      */
     public function index(Request $request)
-    {        
+    {
         $blogs = Blog::simplePaginate(8);
         $tags = MetaTags::where('section', 'Blog')->get();
         foreach ($tags as $tag) {
@@ -70,12 +71,28 @@ class BlogController extends Controller
 
 
      */
-    public function showArticles(Request $request, $id,$name_url)
+    public function showArticles(Request $request, $id, $name_url)
     {
-        $blog = Blog::findOrfail($id);
+        $blog = Blog::leftJoin('personal_users', 'blogs.personal_id', 'personal_users.id')
+            ->select(
+                'blogs.id as id',
+                'blogs.body as body',
+                'blogs.image as image',
+                'blogs.title as title',
+                'blogs.image as image',
+                'blogs.autor as autor',
+                'blogs.fecha_post as fecha_post',
+                'blogs.name_url as name_url',
+                'blogs.title_optional as title_optional',
+                'personal_users.id as personal_id',
+                'personal_users.name as name',
+                'personal_users.body as personal_body',
+                'personal_users.image as image_personal'
+            )
+            ->findOrfail($id);
         $another_blogs = Blog::where('id', '!=', $id)->inRandomOrder()->take(4)->get();
         $fecha_post = $blog->fecha_post;
-        $cards = CardBlog::where('blog_id',$id)->take(4)->get();
+        $cards = CardBlog::where('blog_id', $id)->take(4)->get();
 
         $tags = DB::table('article_blogs')
             ->where('blog_id', $id)->join('blogs', 'article_blogs.blog_id', 'blogs.id')
@@ -111,7 +128,7 @@ class BlogController extends Controller
         }
         $fecha_letter = $dia_event . ' de ' . $name_month_event . ' del ' . $anio_event;
 
-        return view('frontend.blog.show-articles', compact('tags','cards', 'another_blogs', 'id', 'fecha_letter', 'blog'));
+        return view('frontend.blog.show-articles', compact('tags', 'cards', 'another_blogs', 'id', 'fecha_letter', 'blog'));
     }
     /**
 
@@ -147,7 +164,8 @@ class BlogController extends Controller
      */
     public function agregar()
     {
-        return view('admin.blog.add');
+        $profesionals = PersonalUser::get();
+        return view('admin.blog.add', compact('profesionals'));
     }
     /**
 
@@ -188,6 +206,7 @@ class BlogController extends Controller
         }
         $title_optional = $request->title_optional;
         $blog['title_optional'] = $title_optional;
+        $blog['personal_id'] = $request->personal_id == "0" ? null : $request->personal_id;
         $blog['autor'] = $auth;
         $blog['name_url'] = $name_url;
         $blog['fecha_post'] = $datetoday;
@@ -230,7 +249,7 @@ class BlogController extends Controller
 
             $article['blog_id'] = $id;
             $article['meta_keywords'] = $meta_keywords;
-            $article['meta_description'] = $meta_description;            
+            $article['meta_description'] = $meta_description;
             $article['slug'] = $slug;
             ArticleBlog::insert($article);
             DB::commit();
@@ -253,8 +272,23 @@ class BlogController extends Controller
      */
     public function edit($id)
     {
-        $blog = Blog::findOrfail($id);
-        return view('admin.blog.edit', compact('blog'));
+        $profesionals = PersonalUser::get();
+        $blog = Blog::leftJoin('personal_users', 'blogs.personal_id', 'personal_users.id')
+            ->select(
+                'blogs.id as id',
+                'blogs.body as body',
+                'blogs.image as image',
+                'blogs.title as title',
+                'blogs.image as image',
+                'blogs.autor as autor',
+                'blogs.fecha_post as fecha_post',
+                'blogs.name_url as name_url',
+                'blogs.title_optional as title_optional',
+                'personal_users.id as personal_id',
+                'personal_users.name as name'
+            )
+            ->findOrfail($id);
+        return view('admin.blog.edit', compact('blog','profesionals'));
     }
     /**
 
@@ -302,6 +336,7 @@ class BlogController extends Controller
         $blog->name_url = $name_url_mod;
         $blog->title = $request->title;
         $blog->title_optional = $request->title_optional;
+        $blog->personal_id = $request->personal_id == "0" ? null : $request->personal_id;
         $blog->body = $request->body;
         $blog->update();
         return redirect('blog/indexadmin')->with(['status' => 'Blog actualizado con éxito!', 'icon' => 'success']);
@@ -507,7 +542,7 @@ class BlogController extends Controller
         $card_blog->description = $request->description;
         $card_blog->save();
 
-        return redirect('blog-cards/'.$id.'/view-cards')->with(['status' => 'Tarjeta creada con éxito!', 'icon' => 'success']);
+        return redirect('blog-cards/' . $id . '/view-cards')->with(['status' => 'Tarjeta creada con éxito!', 'icon' => 'success']);
     }
     /**
 
@@ -556,7 +591,7 @@ class BlogController extends Controller
         $card_blog->description = $request->description;
         $card_blog->opcional_description = $request->opcional_description;
         $card_blog->update();
-        return redirect('blog-cards/'.$blog_id.'/view-cards')->with(['status' => 'Tarjeta actualizada con éxito!', 'icon' => 'success']);
+        return redirect('blog-cards/' . $blog_id . '/view-cards')->with(['status' => 'Tarjeta actualizada con éxito!', 'icon' => 'success']);
     }
     /**
 
@@ -580,5 +615,4 @@ class BlogController extends Controller
         CardBlog::destroy($id);
         return redirect()->back()->with(['status' => 'Tarjeta eliminada con éxito!', 'icon' => 'success']);
     }
-    
 }

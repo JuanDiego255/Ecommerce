@@ -14,8 +14,9 @@
     <div class="bg-transparent mt-5">
         <h1 class="text-title-blog text-center">{{ $blog->title }}</h1>
     </div>
-    
+    {{-- salto de pagina --}}
     <div class="{{ $tenantinfo->kind_business == 3 ? 'd-block' : 'd-none' }}" style="height: 200px;"></div>
+    {{-- cards info --}}
     <div class="text-center container {{ $tenantinfo->kind_business == 3 ? 'd-block' : 'd-none' }}">
         <div class="row text-center">
             <!-- Team item -->
@@ -25,7 +26,7 @@
                             alt="" width="100"
                             class="img-fluid rounded-circle border-0 mb-3 img-thumbnail shadow-sm">
                         <h5 class="mb-0">{{ $item->title }}</h5><span
-                            class="small text-uppercase text-muted">{{ $item->description }}</span>                        
+                            class="small text-uppercase text-muted">{{ $item->description }}</span>
                     </div>
                 </div>
             @endforeach
@@ -33,12 +34,13 @@
             <!-- End -->
         </div>
     </div>
+    {{-- blog principal --}}
     <div class="mt-5 bg-white">
 
         <div class="container pt-3 pb-5">
             <div class="row mt-5">
-                <div class="col-md-8 mb-2">  
-                    <h1 class="text-title">{{ $blog->title_optional }}</h1>                  
+                <div class="col-md-8 mb-2">
+                    <h1 class="text-title">{{ $blog->title_optional }}</h1>
                     {!! $blog->body !!}
                     <div class="text-justify">
                         <h5 class="text-muted">Publicado por: {{ $blog->autor }}</h5>
@@ -67,6 +69,7 @@
             </div>
         </div>
     </div>
+    {{-- articulo --}}
     <div class="bg-gray-light">
 
         <div class="container pt-3 pb-5">
@@ -133,10 +136,49 @@
             </div>
         </div>
     </div>
-    <div class="{{ $tenantinfo->kind_business == 3 ? 'd-block' : 'd-none' }}" style="height: 200px;">
+    </div>
+    {{-- profesional info --}}
+    @if ($blog->personal_id != null)
+        {{-- salto de pagina --}}
+        <div class="{{ $tenantinfo->kind_business == 3 ? 'd-block' : 'd-none' }}" style="height: 75px;"></div>
+            <div class="mt-5 bg-white">
+
+                <div class="container pt-3 pb-5">
+                    <div class="row mt-5">
+                        <div class="col-md-4">
+                            <div class="product-grid product_data">
+                                <div class="product-image">
+                                    <img src="{{ route('file', $blog->image_personal) }}">
+                                    <ul class="product-links">
+                                        <li><a target="blank" href="{{ route('file', $blog->image_personal) }}"><i
+                                                    class="fas fa-eye"></i></a>
+                                        </li>
+                                    </ul>
+
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="col-md-8 mb-2">
+                            <h1 class="text-title">{{ $blog->name }}</h1>
+                            {!! $blog->personal_body !!}
+
+                            <a class="btn btn-icon btn-3 mt-2 btn-add_to_cart" href="#">
+                                <span class="btn-inner--icon"><i class="material-icons">calendar_month</i></span>
+                                <span class="btn-inner--text">{{ __('Contactar') }}</span>
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+    @endif
+
+    {{-- salto de pagina --}}
+    <div class="{{ $tenantinfo->kind_business == 3 ? 'd-block' : 'd-none' }}" style="height: 75px;">
 
     </div>
-    {{-- Trending --}}
+    {{-- antoher blogs --}}
     @if (count($another_blogs) != 0)
         <div class="bg-white">
             <div class="container pt-3">
@@ -156,7 +198,8 @@
                                             <li><a target="blank" href="{{ route('file', $item->image) }}"><i
                                                         class="fas fa-eye"></i></a></li>
                                         </ul>
-                                        <a href="{{ url('/blog/' . $item->id . '/'.$item->name_url) }}" class="add-to-cart">Ver
+                                        <a href="{{ url('/blog/' . $item->id . '/' . $item->name_url) }}"
+                                            class="add-to-cart">Ver
                                             información</a>
                                     </div>
                                     <div class="product-content">
@@ -164,7 +207,7 @@
                                         <h3
                                             class="{{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'text-muted' : 'title-frags' }}">
                                             <a
-                                                href="{{ url('/blog/' . $item->id . '/'.$item->name_url) }}">{{ $item->title }}</a>
+                                                href="{{ url('/blog/' . $item->id . '/' . $item->name_url) }}">{{ $item->title }}</a>
                                         </h3>
                                     </div>
                                 </div>

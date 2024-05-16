@@ -109,11 +109,23 @@
                             Componentes
                         </a>
                     </li>
+                    @if (isset($tenantinfo->kind_business) && $tenantinfo->kind_business == 3)
+                        <li class="nav-item">
+                            <a href="{{ url('user-info') }}" class="nav-link">
+                                <div
+                                    class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                                    <i class="material-icons opacity-10">arrow_right_alt</i>
+                                </div>
+                                Profesionales
+                            </a>
+                        </li>
+                    @endif
                 </ul>
             </li>
 
             @if (isset($tenantinfo->tenant) && $tenantinfo->tenant != 'main')
-                <li class="nav-item {{isset($tenantinfo->kind_business) && ($tenantinfo->kind_business == 2 || $tenantinfo->kind_business == 3) ? 'd-block' : 'd-none'}}">
+                <li
+                    class="nav-item {{ isset($tenantinfo->kind_business) && ($tenantinfo->kind_business == 2 || $tenantinfo->kind_business == 3) ? 'd-block' : 'd-none' }}">
                     <a @if ($view_name == 'admin_blog_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
                         href="{{ url('blog/indexadmin') }}">
                         <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">

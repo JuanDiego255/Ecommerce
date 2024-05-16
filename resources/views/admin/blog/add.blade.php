@@ -14,33 +14,57 @@
                     </div>
                     <div class="card-body">
 
-                        <div class="row">                            
+                        <div class="row">
                             <div class="col-md-6 mb-3">
                                 <div class="input-group input-group-static mb-4">
                                     <label>{{ __('Título (Se muestra al inicio del blog)') }}</label>
                                     <input required type="text" class="form-control form-control-lg" name="title">
                                 </div>
-                            </div>  
+                            </div>
                             <div class="col-md-6 mb-3">
                                 <div class="input-group input-group-static mb-4">
                                     <label>{{ __('Título 2 Opcional(Se muestra cerca del inicio de la redacción del blog)') }}</label>
                                     <input type="text" class="form-control form-control-lg" name="title_optional">
                                 </div>
-                            </div>  
+                            </div>
                             <div class="col-md-6 mb-3">
                                 <div class="input-group input-group-static mb-4">
                                     <label>{{ __('Nombre URL (Este nombre se mostrará en la url del blog)') }}</label>
                                     <input required type="text" class="form-control form-control-lg" name="name_url">
                                 </div>
-                            </div>  
+                            </div>
+                            <div class="col-md-6 mb-3">
+
+                                <div class="input-group input-group-static">
+                                    <label>Profesionales</label>
+                                    <select id="personal_id" name="personal_id"
+                                        class="form-control form-control-lg @error('personal_id') is-invalid @enderror"
+                                        autocomplete="personal_id" autofocus>
+                                        <option selected value="0">
+                                            Sin profesional
+                                        </option>
+                                        @foreach ($profesionals as $item)
+                                            <option value="{{ $item->id }}">
+                                                {{ $item->name }}
+                                            </option>
+                                        @endforeach
+
+                                    </select>
+                                    @error('personal_id')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
                             <div class="col-md-12 mb-3">
                                 <label>{{ __('Imagen') }}</label>
                                 <div class="input-group input-group-lg input-group-outline my-3">
                                     <input required class="form-control" type="file" name="image">
                                 </div>
-                            </div>                        
-                  
-                            
+                            </div>
+
+
                             <div class="col-md-12 mb-3">
                                 <div class="input-group input-group-static mb-4">
                                     <textarea id="editor" type="text" class="form-control form-control-lg" name="body"
@@ -55,7 +79,7 @@
                         </div>
                     </div>
                 </div>
-            </div>          
+            </div>
         </div>
     </form>
 
@@ -67,9 +91,9 @@
 @endsection
 @section('script')
     <script>
-        $(document).ready(function() {         
+        $(document).ready(function() {
             ClassicEditor
-                .create(document.querySelector('#editor'), {                    
+                .create(document.querySelector('#editor'), {
                     heading: {
                         options: [{
                                 model: 'paragraph',
@@ -81,9 +105,9 @@
                                 view: 'h1',
                                 title: 'Título',
                                 class: 'ck-heading_heading1'
-                            }                            
+                            }
                         ]
-                    }                    
+                    }
                 })
                 .catch(error => {
                     console.log(error);
