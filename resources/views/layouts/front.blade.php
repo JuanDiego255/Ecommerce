@@ -50,10 +50,18 @@
     }
 </style>
 
+@if ($view_name == 'frontend_blog_show-articles' && $tenantinfo->kind_business == 3)
+    <style>
+        :root {
+            --url_image: url('{{ route('file', $blog->horizontal_images) }}');
+        }        
+    </style>
+@endif
+
 
 <body class="g-sidenav-show  bg-gray-200">
-
-    <div class="{{ $view_name == 'frontend_blog_show-articles' && $tenantinfo->kind_business == 3 ? 'main-container-front' : '' }}">
+    <div
+        class="{{ $view_name == 'frontend_blog_show-articles' && $tenantinfo->kind_business == 3 ? 'main-container-front' : '' }}">
         <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
 
             <div>
@@ -166,7 +174,7 @@
                 });
             });
 
-            
+
 
             function calcularTotal() {
                 let total = 0;

@@ -286,7 +286,7 @@
                             </li>
                             @foreach ($categories as $item)
                                 <li class="item-submenu"><a
-                                        href="{{ url('clothes-category/' . $item->id . '/' . $item->department_id) }}"
+                                        href="{{ url('clothes-category/' . $item->category_id . '/' . $item->department_id) }}"
                                         class="nav-submenu-item">
                                         <span class="alert-icon align-middle">
                                             <span class="material-icons text-md">label</span>

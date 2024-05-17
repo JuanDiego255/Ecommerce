@@ -13,6 +13,7 @@ use App\Http\Controllers\ClothingCategoryController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\Frontend\CartController;
 use App\Http\Controllers\Frontend\CheckOutController;
+use App\Http\Controllers\MedicineResultController;
 use App\Http\Controllers\MetaTagsController;
 use App\Http\Controllers\PersonalUserController;
 use App\Http\Controllers\SellerController;
@@ -21,6 +22,7 @@ use App\Http\Controllers\SocialNetworkController;
 use App\Http\Controllers\TenantCarouselController;
 use App\Http\Controllers\TenantInfoController;
 use App\Http\Controllers\TenantSocialNetworkController;
+use App\Models\MedicineResult;
 use App\Models\PersonalUser;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -192,6 +194,13 @@ Route::middleware([
             Route::get('/edit-user-info/{id}', [PersonalUserController::class, 'edit']);
             Route::put('/update-user-info/{id}', [PersonalUserController::class, 'update']);
             Route::delete('/delete-user-info/{id}', [PersonalUserController::class, 'destroy']);
+            //Rutas para resultados medicos
+            Route::get('/results/{id}', [MedicineResultController::class, 'indexAdmin']);
+            Route::put('result/{id}/{blog_id}', [MedicineResultController::class, 'updateResult']);
+            Route::delete('delete-result/{id}', [MedicineResultController::class, 'destroy']);
+            Route::post('/blog/result/{id}', [MedicineResultController::class, 'storeResult']);
+            Route::get('blog/{blog}/{id}/edit-result', [MedicineResultController::class, 'editResult']);
+            Route::get('blog-result/{id}/add', [MedicineResultController::class, 'addResult']);
         });
     });
 

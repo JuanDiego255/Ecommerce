@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ArticleBlog;
 use App\Models\Blog;
 use App\Models\CardBlog;
+use App\Models\MedicineResult;
 use App\Models\MetaTags;
 use App\Models\PersonalUser;
 use App\Models\TenantInfo;
@@ -80,6 +81,7 @@ class BlogController extends Controller
                 'blogs.image as image',
                 'blogs.title as title',
                 'blogs.image as image',
+                'blogs.horizontal_images as horizontal_images',
                 'blogs.autor as autor',
                 'blogs.fecha_post as fecha_post',
                 'blogs.name_url as name_url',
@@ -93,6 +95,7 @@ class BlogController extends Controller
         $another_blogs = Blog::where('id', '!=', $id)->inRandomOrder()->take(4)->get();
         $fecha_post = $blog->fecha_post;
         $cards = CardBlog::where('blog_id', $id)->take(4)->get();
+        $results = MedicineResult::where('blog_id', $id)->take(4)->get();
 
         $tags = DB::table('article_blogs')
             ->where('blog_id', $id)->join('blogs', 'article_blogs.blog_id', 'blogs.id')
@@ -128,7 +131,7 @@ class BlogController extends Controller
         }
         $fecha_letter = $dia_event . ' de ' . $name_month_event . ' del ' . $anio_event;
 
-        return view('frontend.blog.show-articles', compact('tags', 'cards', 'another_blogs', 'id', 'fecha_letter', 'blog'));
+        return view('frontend.blog.show-articles', compact('tags', 'cards','results', 'another_blogs', 'id', 'fecha_letter', 'blog'));
     }
     /**
 
@@ -192,7 +195,8 @@ class BlogController extends Controller
             'title' => 'required|string|max:100',
             'body' => 'required|string|max:10000',
             'name_url' => 'required|string|max:200',
-            'image' => 'required|max:10000|mimes:jpeg,png,jpg,ico'
+            'image' => 'required|max:10000|mimes:jpeg,png,jpg,ico',
+            'horizontal_image' => 'required|max:10000|mimes:jpeg,png,jpg,ico'
         ];
         $mensaje = ["required" => 'El :attribute es requerido'];
         $this->validate($request, $campos, $mensaje);
@@ -203,6 +207,9 @@ class BlogController extends Controller
         $blog =  request()->except('_token');
         if ($request->hasFile('image')) {
             $blog['image'] = $request->file('image')->store('uploads', 'public');
+        }
+        if ($request->hasFile('horizontal_images')) {
+            $blog['horizontal_images'] = $request->file('horizontal_images')->store('uploads', 'public');
         }
         $title_optional = $request->title_optional;
         $blog['title_optional'] = $title_optional;
@@ -279,7 +286,7 @@ class BlogController extends Controller
                 'blogs.body as body',
                 'blogs.image as image',
                 'blogs.title as title',
-                'blogs.image as image',
+                'blogs.horizontal_images as horizontal_images',
                 'blogs.autor as autor',
                 'blogs.fecha_post as fecha_post',
                 'blogs.name_url as name_url',
@@ -331,6 +338,11 @@ class BlogController extends Controller
             Storage::delete('public/' . $blog->image);
             $image = $request->file('image')->store('uploads', 'public');
             $blog->image = $image;
+        }
+        if ($request->hasFile('horizontal_images')) {
+            Storage::delete('public/' . $blog->horizontal_images);
+            $image_h = $request->file('horizontal_images')->store('uploads', 'public');
+            $blog->horizontal_images = $image_h;
         }
         $name_url_mod = str_replace(" ", "-", $request->name_url);
         $blog->name_url = $name_url_mod;

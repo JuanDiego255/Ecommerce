@@ -6,12 +6,13 @@
 @section('content')
     <center>
         <h2 class="text-center font-title">
-            <strong>Administra los blogs informativos desde acá</strong>
+            <strong>{{ __('Administra los resultados médicos desde acá') }}</strong>
         </h2>
     </center>
     <div class="row w-50">
         <div class="col-md-6">
-            <a href="{{ url('blog/agregar') }}" class="btn btn-velvet w-100">Agregar Nuevo Blog</a>
+            <a href="{{ url('blog-result/' . $blog_id . '/add') }}"
+                class="btn btn-velvet w-100">{{ __('Agregar nuevo resultado') }}</a>
         </div>
     </div>
     <div class="card mt-3">
@@ -50,71 +51,58 @@
                     <table class="table align-items-center mb-0" id="blogs">
                         <thead>
                             <tr>
-                                <th class="text-secondary font-weight-bolder opacity-7 ps-2">Blog
+                                <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Antes') }}
                                 </th>
+                                <th class="text-secondary font-weight-bolder opacity-7">
+                                    {{ __('Despues') }}</th>
                                 <th class="text-center text-secondary font-weight-bolder opacity-7">
-                                    Fecha Post</th>                                
-                                <th class="text-center text-secondary font-weight-bolder opacity-7">
-                                    Acciones</th>
+                                    {{ __('Acciones') }}</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($blogs as $item)
+                            @foreach ($results as $item)
                                 <tr>
 
                                     <td class="w-50">
                                         <div class="d-flex px-2 py-1">
                                             <div>
                                                 <a target="blank" data-fancybox="gallery"
-                                                    href="{{ route('file', $item->image) }}">
-                                                    <img src="{{ route('file', $item->image) }}"
+                                                    href="{{ route('file', $item->before_image) }}">
+                                                    <img src="{{ route('file', $item->before_image) }}"
                                                         class="avatar avatar-md me-3">
                                                 </a>
                                             </div>
-                                            <div class="d-flex flex-column justify-content-center">
-                                                <h4 class="mb-0 text-lg">{!! $item->title !!}</h4>
-                                                <p>{!! $item->autor !!}</p>
+                                        </div>
+                                    </td>
+                                    <td class="w-50">
+                                        <div class="d-flex px-2 py-1">
+                                            <div>
+                                                <a target="blank" data-fancybox="gallery"
+                                                    href="{{ route('file', $item->after_image) }}">
+                                                    <img src="{{ route('file', $item->after_image) }}"
+                                                        class="avatar avatar-md me-3">
+                                                </a>
                                             </div>
                                         </div>
-                                    </td>       
-                                    <td class="align-middle text-center text-sm">
-                                        <p class="text-success mb-0">{{ $item->fecha_post }}
-                                        </p>
-                                    </td>                             
-                                   
+                                    </td>
+
                                     <td class="align-middle text-center">
-                                        <form name="delete-blog{{ $item->id }}"
-                                            id="delete-blog{{ $item->id }}" method="post"
-                                            action="{{ url('/blog/' . $item->id) }}">
+                                        <form name="delete-result{{ $item->id }}" id="delete-result{{ $item->id }}"
+                                            method="post" action="{{ url('/delete-result/' . $item->id) }}">
                                             {{ csrf_field() }}
                                             {{ method_field('DELETE') }}
                                         </form>
-                                        <button form="delete-blog{{ $item->id }}" type="submit"
-                                            onclick="return confirm('Deseas borrar este blog?')"
+                                        <button form="delete-result{{ $item->id }}" type="submit"
+                                            onclick="return confirm('Deseas borrar este resultado?')"
                                             class="btn btn-link text-velvet ms-auto border-0" data-bs-toggle="tooltip"
                                             data-bs-placement="bottom" title="Eliminar">
                                             <i class="material-icons text-lg">delete</i>
                                         </button>
                                         <a class="btn btn-link text-velvet me-auto border-0"
-                                            href="{{ url('/blog-edit/' . $item->id . '/edit') }}"
+                                            href="{{ url('/blog/' . $item->id . '/' . $blog_id . '/edit-result') }}"
                                             data-bs-toggle="tooltip" data-bs-placement="bottom" title="Editar">
                                             <i class="material-icons text-lg">edit</i>
-                                        </a>
-                                        <a class="btn btn-link text-velvet me-auto border-0"
-                                            href="{{ url('/blog-show/' . $item->id . '/show') }}"
-                                            data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ver artículos">
-                                            <i class="material-icons text-lg">visibility</i>
-                                        </a>
-                                        <a class="btn btn-link text-velvet me-auto border-0"
-                                            href="{{ url('/blog-cards/' . $item->id . '/view-cards') }}"
-                                            data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ver tarjetas">
-                                            <i class="material-icons text-lg">book</i>
-                                        </a>
-                                        <a class="btn btn-link text-velvet me-auto border-0"
-                                            href="{{ url('/results/' . $item->id) }}"
-                                            data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ver resultados">
-                                            <i class="material-icons text-lg">medical_services</i>
-                                        </a>
+                                        </a>                                        
                                     </td>
                                 </tr>
                             @endforeach

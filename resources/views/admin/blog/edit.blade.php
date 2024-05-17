@@ -44,16 +44,16 @@
                                     <select id="personal_id" name="personal_id"
                                         class="form-control form-control-lg @error('personal_id') is-invalid @enderror"
                                         autocomplete="personal_id" autofocus>
-                                        <option selected value="{{$blog->personal_id}}">
-                                            {{$blog->name}}
+                                        <option selected value="{{ $blog->personal_id }}">
+                                            {{ $blog->name }}
                                         </option>
                                         @foreach ($profesionals as $item)
-                                        <option value="0">Sin profesional</option>
+                                            <option value="0">Sin profesional</option>
                                             <option value="{{ $item->id }}">
                                                 {{ $item->name }}
                                             </option>
                                         @endforeach
-    
+
                                     </select>
                                     @error('personal_id')
                                         <span class="invalid-feedback" role="alert">
@@ -63,14 +63,25 @@
                                 </div>
                             </div>
                         </div>
-                     
-                        @if ($blog->image)
-                            <img class="img-fluid img-thumbnail" src="{{ route('file', $blog->image) }}"
-                                style="width: 150px; height:150px;" alt="image">
-                        @endif
+
+
                         <div class="col-md-12 mb-3">
+                            @if ($blog->image)
+                                <img class="img-fluid img-thumbnail" src="{{ route('file', $blog->image) }}"
+                                    style="width: 150px; height:150px;" alt="image">
+                            @endif
                             <div class="input-group input-group-static mb-4">
                                 <input class="form-control" type="file" name="image">
+                            </div>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            @if ($blog->horizontal_images)
+                                <img class="img-fluid img-thumbnail" src="{{ route('file', $blog->horizontal_images) }}"
+                                    style="width: 150px; height:150px;" alt="image">
+                            @endif
+                            <label>{{ __('Imagen Horizontal') }}</label>
+                            <div class="input-group input-group-static mb-4">
+                                <input class="form-control" type="file" name="horizontal_images">
                             </div>
                         </div>
                         <div class="col-md-12 mb-3">

@@ -63,6 +63,12 @@
                                     <input required class="form-control" type="file" name="image">
                                 </div>
                             </div>
+                            <div class="col-md-12 mb-3">
+                                <label>{{ __('Imagen Horizontal') }}</label>
+                                <div class="input-group input-group-lg input-group-outline my-3">
+                                    <input required class="form-control" type="file" name="horizontal_images">
+                                </div>
+                            </div>
 
 
                             <div class="col-md-12 mb-3">

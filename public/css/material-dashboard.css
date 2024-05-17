@@ -28806,7 +28806,7 @@ input.card {
   height: 550px;
   width: 100%;
   position: fixed;
-  background-image: url('images/car1.jpg');
+  background-image: var(--url_image);
   background-position: center;
   background-size: cover;
 }
