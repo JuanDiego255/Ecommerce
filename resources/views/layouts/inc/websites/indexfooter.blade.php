@@ -62,7 +62,7 @@
             <script>
                 document.write(new Date().getFullYear())
             </script>,
-            <a href="#" class="font-weight-bold text-footer" target="_blank">{{isset($tenantinfo->title) ? $tenantinfo->title : ''}}</a>
+            <a target="blank" href="{{url('https://wa.me/506'.$tenantinfo->whatsapp)}}" class="font-weight-bold text-footer" target="_blank">{{isset($tenantinfo->title) ? $tenantinfo->title : ''}}</a>
             {{isset($tenantinfo->footer) ? $tenantinfo->footer : ''}}
 
         </div>

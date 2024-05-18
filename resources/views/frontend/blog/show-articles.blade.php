@@ -47,7 +47,8 @@
                         <h5 class="text-muted">Fecha de publicación: {{ $fecha_letter }}</h5>
                     </div>
 
-                    <a class="btn btn-icon btn-3 mt-2 btn-add_to_cart" href="#">
+                    <a target="blank" href="{{ url('https://wa.me/506' . $tenantinfo->whatsapp) }}"
+                        class="btn btn-icon btn-3 mt-2 btn-add_to_cart">
                         <span class="btn-inner--icon"><i class="material-icons">calendar_month</i></span>
                         <span class="btn-inner--text">{{ __('Solicitar una cita') }}</span>
                     </a>
@@ -178,6 +179,73 @@
     <div class="{{ $tenantinfo->kind_business == 3 ? 'd-block' : 'd-none' }}" style="height: 75px;">
 
     </div>
+    {{-- Carousel de resultados --}}
+    @if (count($results) != 0)
+        <div class="mt-5 bg-white">
+            <div class="container pt-3 pb-5">
+                <div class="text-center">
+                    <h1 class="text-center text-title mb-1 pt-3">Resultados acerca de este tratamiento</h1>
+                </div>
+                <div class="row">
+                    @foreach ($results as $result)
+                        <div id="carouselExampleControls{{ $result->id }}" class="carousel slide col-md-4"
+                            data-bs-ride="carousel">
+                            <div class="carousel-inner mb-1 foto">
+                                <div class="carousel-item active">
+                                    <div class="item">
+                                        <div class="product-grid product_data">
+                                            <div class="product-image">
+                                                <img src="{{ route('file', $result->before_image) }}">
+                                                <a href="{{ route('file', $result->before_image) }}"
+                                                    class="add-to-cart">{{ __('Detallar') }}</a>
+                                            </div>
+                                            <div class="product-content">
+                                                <h3
+                                                    class="text-muted text-uppercase">
+                                                    {{ __('Antes') }}
+                                                </h3>                                              
+                                            </div>
+                                        </div>
+                                    </div>                                   
+                                </div>
+                                <div class="carousel-item">
+                                    <div class="item">
+                                        <div class="product-grid product_data">
+                                            <div class="product-image">
+                                                <img src="{{ route('file', $result->after_image) }}">
+                                                <a href="{{ route('file', $result->after_image) }}"
+                                                    class="add-to-cart">{{ __('Detallar') }}</a>
+                                            </div>
+                                            <div class="product-content">
+                                                <h3
+                                                    class="text-muted text-uppercase">
+                                                    {{ __('Después') }}
+                                                </h3>                                              
+                                            </div>
+                                        </div>
+                                    </div>           
+                                </div>
+                            </div>
+
+                            <div class="min-vh-75 position-absolute w-100 top-0">
+                                <a class="carousel-control-prev" href="#carouselExampleControls{{ $result->id }}"
+                                    role="button" data-bs-slide="prev">
+                                </a>
+                                <a class="carousel-control-next" href="#carouselExampleControls{{ $result->id }}"
+                                    role="button" data-bs-slide="next">
+                                </a>
+                            </div>
+
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+        {{-- salto de pagina --}}
+        <div class="{{ $tenantinfo->kind_business == 3 ? 'd-block' : 'd-none' }}" style="height: 75px;">
+
+        </div>
+    @endif
     {{-- antoher blogs --}}
     @if (count($another_blogs) != 0)
         <div class="bg-white">

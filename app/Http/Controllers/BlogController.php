@@ -95,7 +95,7 @@ class BlogController extends Controller
         $another_blogs = Blog::where('id', '!=', $id)->inRandomOrder()->take(4)->get();
         $fecha_post = $blog->fecha_post;
         $cards = CardBlog::where('blog_id', $id)->take(4)->get();
-        $results = MedicineResult::where('blog_id', $id)->take(4)->get();
+        $results = MedicineResult::where('blog_id', $id)->take(9)->get();
 
         $tags = DB::table('article_blogs')
             ->where('blog_id', $id)->join('blogs', 'article_blogs.blog_id', 'blogs.id')

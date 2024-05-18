@@ -42,7 +42,7 @@
                 <h5 class="text-uppercase text-footer-title">Más Información!</h5>
                 <div>
                     <p class="text-footer text-uppercase text-lg">
-                        <a href="#" class="text-footer">
+                        <a target="blank" href="{{url('https://wa.me/506'.$tenantinfo->whatsapp)}}" class="text-footer">
                             <i class="fa fa-whatsapp"></i>
                             {{ isset($tenantinfo->whatsapp) ? $tenantinfo->whatsapp : '' }}
                         </a>

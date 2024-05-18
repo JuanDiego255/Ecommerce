@@ -51,7 +51,7 @@
                         <a style="text-decoration: none;" class="mr-5 text-footer" href="#">
                             <i class="fa fa-envelope"></i> Envíos por correos de C.R
                         </a><br>
-                        <a href="#" class="text-footer">
+                        <a target="blank" href="{{url('https://wa.me/506'.$tenantinfo->whatsapp)}}" class="text-footer">
                             <i class="fa fa-whatsapp"></i> {{isset($tenantinfo->whatsapp) ? $tenantinfo->whatsapp : ''}}
                         </a>
                     </p>
