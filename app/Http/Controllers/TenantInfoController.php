@@ -209,6 +209,7 @@ class TenantInfoController extends Controller
             $tenantinfo = TenantInfo::first();
             $tenantinfo->manage_size = $request->manage_size ? 1 : 0;
             $tenantinfo->manage_department = $request->manage_department ? 1 : 0;
+            $tenantinfo->show_logo = $request->show_logo ? 1 : 0;
             $tenantinfo->show_stock = $request->show_stock ? 1 : 0;
             $tenantinfo->show_trending = $request->show_trending ? 1 : 0;
             $tenantinfo->show_insta = $request->show_insta ? 1 : 0;

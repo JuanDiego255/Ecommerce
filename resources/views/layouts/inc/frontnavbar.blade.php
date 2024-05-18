@@ -216,8 +216,14 @@
                 onclick="menuToggle()"><i class="fas fa-bars me-2"></i> MENU</button>
         </div>
         <div class="flex3 text-center" id="siteBrand">
-            <a class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'text-title-mandi' : 'text-title' }} text-uppercase"
-                href="{{ url('/') }}">{{ isset($tenantinfo->title) ? $tenantinfo->title : '' }}</a>
+            @if (isset($tenantinfo->show_logo) && $tenantinfo->show_logo != 0)
+                <a class="text-uppercase"
+                    href="{{ url('/') }}"><img class="logo" src="{{ route('file', $tenantinfo->logo) }}"
+                        alt=""></a>
+            @else
+                <a class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'text-title-mandi' : 'text-title' }} text-uppercase"
+                    href="{{ url('/') }}">{{ isset($tenantinfo->title) ? $tenantinfo->title : '' }}</a>
+            @endif
         </div>
 
         <div class="flex2 text-end d-block d-md-none">
@@ -285,7 +291,7 @@
             <a href="{{ url('/') }}" class="nav-menu-item"><i class="fas fa-home me-3"></i>INICIO</a>
             @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
                 <div class="nav-menu-item">
-                    <i class="{{$font_icon}} me-3"></i><a class="color-menu" href="javascript:void(0);"
+                    <i class="{{ $font_icon }} me-3"></i><a class="color-menu" href="javascript:void(0);"
                         id="toggleCategories">CATEGORIAS <i class="fa fa-arrow-circle-down ml-3"></i></a>
                     <div class="subcategories" id="categoriesDropdown">
                         <ul>
@@ -309,7 +315,7 @@
                 </div>
             @else
                 <div class="nav-menu-item">
-                    <i class="{{$font_icon}} me-3"></i><a class="color-menu" href="javascript:void(0);"
+                    <i class="{{ $font_icon }} me-3"></i><a class="color-menu" href="javascript:void(0);"
                         id="toggleCategories">DEPARTAMENTOS <i class="fa fa-arrow-circle-down ml-3"></i></a>
                     <div class="subcategories" id="categoriesDropdown">
                         <ul>
@@ -358,7 +364,7 @@
             <a href="{{ url('/') }}" class="nav-menu-item"><i class="fas fa-home me-3"></i>INICIO</a>
             @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
                 <div class="nav-menu-item">
-                    <i class="{{$font_icon}} me-3"></i><a class="color-menu" href="javascript:void(0);"
+                    <i class="{{ $font_icon }} me-3"></i><a class="color-menu" href="javascript:void(0);"
                         id="toggleCategories">CATEGORIAS <i class="fa fa-arrow-circle-down ml-3"></i></a>
                     <div class="subcategories" id="categoriesDropdown">
                         <ul>
@@ -382,7 +388,7 @@
                 </div>
             @else
                 <div class="nav-menu-item">
-                    <i class="{{$font_icon}} me-3"></i><a class="color-menu" href="javascript:void(0);"
+                    <i class="{{ $font_icon }} me-3"></i><a class="color-menu" href="javascript:void(0);"
                         id="toggleCategories">DEPARTAMENTOS <i class="fa fa-arrow-circle-down ml-3"></i></a>
                     <div class="subcategories" id="categoriesDropdown">
                         <ul>

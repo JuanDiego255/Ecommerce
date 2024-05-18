@@ -1,6 +1,5 @@
 <center>
-    <div class="container-fluid bg-footer">
-
+    <div class="container-fluid bg-footer">        
         <div class="row pt-5">
 
             <div class="col-md-4">
@@ -60,7 +59,7 @@
 
         </div>
         <hr class="dark horizontal text-danger my-0 mt-2 mb-4">
-        <div class="copyright text-center text-lg text-footer mb-4 pb-4 text-uppercase">
+        <div class="copyright text-center text-lg text-footer pb-4 text-uppercase">
             ©
             <script>
                 document.write(new Date().getFullYear())
@@ -69,6 +68,7 @@
             {{isset($tenantinfo->footer) ? $tenantinfo->footer : ''}}
 
         </div>
+       
     </div>
 
 

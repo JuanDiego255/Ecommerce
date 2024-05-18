@@ -15,56 +15,61 @@
                 {{ method_field('PUT') }}
                 <div class="card">
                     <div class="card-header">
-                        <h4 class="text-dark">Mostrar y ocultar componentes</h4>
+                        <h4 class="text-dark">{{ __('Mostrar y ocultar componentes') }}</h4>
                     </div>
                     <div class="card-body">
                         <div class="row">
                             <div class="form-check form-switch col-md-6">
                                 <input value="1" class="form-check-input" type="checkbox" name="manage_size"
                                     id="manage_size" @if ($item->manage_size == 1) checked @endif>
-                                <label class="form-check-label" for="manage_size">Manejar Tallas</label>
+                                <label class="form-check-label" for="manage_size">{{ __('Habilitar tallas') }}</label>
                             </div>
                             <div class="form-check form-switch col-md-6">
                                 <input value="1" class="form-check-input" type="checkbox" name="manage_department"
                                     id="manage_department" @if ($item->manage_department == 1) checked @endif>
-                                <label class="form-check-label" for="manage_department">Manejar Departamentos</label>
+                                <label class="form-check-label" for="manage_department">{{ __('Habilitar departamentos') }}</label>
+                            </div>
+                            <div class="form-check form-switch col-md-6">
+                                <input value="1" class="form-check-input" type="checkbox" name="show_logo"
+                                    id="show_logo" @if ($item->show_logo == 1) checked @endif>
+                                <label class="form-check-label" for="show_logo">{{ __('Mostrar logo en página principal (Al deshabilitarse se mostrará el nombre del negocio)') }}</label>
                             </div>
                             <div class="form-check form-switch col-md-6">
                                 <input value="1" class="form-check-input" type="checkbox" name="show_stock"
                                     id="show_stock" @if ($item->show_stock == 1) checked @endif>
-                                <label class="form-check-label" for="show_stock">Mostrar Stock</label>
+                                <label class="form-check-label" for="show_stock">{{ __('Mostrar stock') }}</label>
                             </div>
                             <div class="form-check form-switch col-md-6">
                                 <input value="1" class="form-check-input" type="checkbox" name="show_insta"
                                     id="show_insta" @if ($item->show_insta == 1) checked @endif>
-                                <label class="form-check-label" for="show_insta">Mostrar Seccion Instagram</label>
+                                <label class="form-check-label" for="show_insta">{{ __('Mostrar Sección Instagram') }}</label>
                             </div>
                             <div class="form-check form-switch col-md-6">
                                 <input value="1" class="form-check-input" type="checkbox" name="show_trending"
                                     id="show_trending" @if ($item->show_trending == 1) checked @endif>
-                                <label class="form-check-label" for="show_trending">Mostrar Productos En Tendencia</label>
+                                <label class="form-check-label" for="show_trending">{{ __('Mostrar productos en tendencia') }}</label>
                             </div>
                             <div class="form-check form-switch col-md-6">
                                 <input value="1" class="form-check-input" type="checkbox" name="show_cintillo"
                                     id="show_cintillo" @if ($item->show_cintillo == 1) checked @endif>
-                                <label class="form-check-label" for="show_cintillo">Mostrar Cintillo (Cinta arriba del menu
-                                    principal)</label>
+                                <label class="form-check-label" for="show_cintillo">{{ __('Mostrar Cintillo (Cinta arriba del menu
+                                    principal)') }}</label>
                             </div>
                             <div class="form-check form-switch col-md-6">
                                 <input value="1" class="form-check-input" type="checkbox" name="show_mision"
                                     id="show_mision" @if ($item->show_mision == 1) checked @endif>
-                                <label class="form-check-label" for="show_mision">Mostrar Misión</label>
+                                <label class="form-check-label" for="show_mision">{{ __('Mostrar Misión') }}</label>
                             </div>
                         </div>
                         <div class="row">
-                            <h4 class="text-dark mb-3">Gestión de productos</h4>
+                            <h4 class="text-dark mb-3">{{ __('Gestión de productos') }}</h4>
                             <div class="form-check form-switch col-md-6">
                                 <input @if ($item->manage_size == 0) disabled @endif value="1"
                                     class="form-check-input" type="checkbox" name="custom_size" id="custom_size"
                                     @if ($item->custom_size == 1) checked @endif>
-                                <label class="form-check-label" for="custom_size">Gestión de tallas (Permite gestionar la
+                                <label class="form-check-label" for="custom_size">{{ __('Gestión de tallas (Permite gestionar la
                                     cantidad y precio de cada talla, debe tener el manejo de talla activo para habilitar
-                                    este control)</label>
+                                    este control)') }}</label>
                             </div>
                         </div>
                         <div class="row">

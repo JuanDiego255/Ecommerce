@@ -54,7 +54,7 @@
     <style>
         :root {
             --url_image: url('{{ route('file', $blog->horizontal_images) }}');
-        }        
+        }
     </style>
 @endif
 
@@ -84,6 +84,9 @@
                 @endif
 
                 @yield('content')
+                @if ($tenantinfo->kind_business == 3)
+                    @include('layouts.inc.social-footer')
+                @endif
             </div>
         </main>
     </div>
