@@ -287,7 +287,7 @@ a {
 }
 
 a:hover {
-  
+
   text-decoration: none;
   transition: .2s;
 }
@@ -3850,7 +3850,8 @@ fieldset:disabled .btn {
   --bs-btn-hover-border-color: var(--hover);
   --bs-btn-focus-shadow-rgb: 213, 119, 0;
   --bs-btn-active-color: #fff;
-  --bs-btn-active-bg: var(--hover);;
+  --bs-btn-active-bg: var(--hover);
+  ;
   --bs-btn-active-border-color: var(--hover);
   --bs-btn-active-shadow: none;
   --bs-btn-disabled-color: #fff;
@@ -10794,6 +10795,7 @@ fieldset:disabled .btn {
   font-family: 'Montserrat', sans-serif !important;
   font-weight: 300 !important;
 }
+
 .text-title-blog {
   color: #fff !important;
   font-size: 50px;
@@ -10924,6 +10926,7 @@ fieldset:disabled .btn {
 .bg-white {
   background-color: #fff !important;
 }
+
 .bg-gray-light {
   background-color: #F4F4F3 !important;
 }
@@ -29019,6 +29022,7 @@ input.card {
   font-family: 'Montserrat', sans-serif !important;
   font-weight: 300 !important;
 }
+
 .ck-content .text-tiny {
   font-size: 0.7em;
 }
@@ -29034,6 +29038,7 @@ input.card {
 .ck-content .text-huge {
   font-size: 1.8em;
 }
+
 .social-sharing {
   display: block;
   position: sticky;
@@ -29060,14 +29065,16 @@ input.card {
   flex: 0 1 100%;
   height: 40px;
 }
+
 .social-sharing ul.menu-social li.newsletter {
   flex: 0 1 100%;
   height: 40px;
   position: relative;
   color: var(--btn_cart_text);
   background-color: var(--btn_cart) !important;
-/*   background-image: repeating-linear-gradient(135deg, #f9c1bb 0px, #f9c1bb 5px, transparent 5px, transparent 10px, #9fc6e6 10px, #9fc6e6 15px, transparent 15px, transparent 20px); */
+  /*   background-image: repeating-linear-gradient(135deg, #f9c1bb 0px, #f9c1bb 5px, transparent 5px, transparent 10px, #9fc6e6 10px, #9fc6e6 15px, transparent 15px, transparent 20px); */
 }
+
 .social-sharing ul.menu-social li.next {
   flex: 1 1 auto;
 }
@@ -29084,20 +29091,25 @@ input.card {
 ul.menu-social li a[href*="facebook.com"] {
   background-color: #42c0f9;
 }
+
 ul.menu-social li a[href*="twitter.com"] {
   background-color: #43d2e4;
 }
+
 ul.menu-social li a[href*="instagram.com"] {
   background-color: #ff7e56;
 }
+
 ul.menu-social li a[href*="wa.me"] {
   background-color: #a8d673;
 }
+
 .social-sharing ul.menu-social li.newsletter span {
   color: var(--btn_cart_text);
   display: inline-block;
   cursor: pointer;
 }
+
 .social-sharing ul.menu-social li.next a {
   color: #807F7F;
   background-color: #ffecb8;
@@ -29113,15 +29125,19 @@ ul.menu-social li a::before {
   -moz-osx-font-smoothing: grayscale;
   line-height: 40px;
 }
+
 ul.menu-social li a[href*="facebook.com"]::before {
   content: "\f09a";
 }
+
 ul.menu-social li a[href*="instagram.com"]::before {
   content: "\f16d";
 }
+
 ul.menu-social li a[href*="wa.me"]::before {
   content: "\f232";
 }
+
 ul.menu-social li a[href*="blog/index"]::before {
   content: "\f02d";
 }
@@ -29138,44 +29154,171 @@ ul.menu-social li a[href*="blog/index"]::before {
 
 /* demo stuff */
 * {
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
 }
+
 body {
   background-color: #f1f1f1;
   margin-bottom: 50px;
 }
-html, button, input, select, textarea {
-    font-family: 'Work Sans', Helvetica, sans-serif;
-    color: #92a4ad;
+
+html,
+button,
+input,
+select,
+textarea {
+  font-family: 'Work Sans', Helvetica, sans-serif;
+  color: #92a4ad;
 }
+
 h1 {
   text-align: center;
   margin: 30px 15px;
 }
-.zoom-area { 
+
+.zoom-area {
   max-width: 490px;
   margin: 30px auto 30px;
   font-size: 19px;
   text-align: center;
 }
+
 .link-container {
   text-align: center;
 }
+
 a.more-link {
   text-transform: uppercase;
   font-size: 13px;
-    background-color: transparent;
-    padding: 10px 15px;
-    border-radius: 0;
-    color: #416475;
-    display: inline-block;
-    margin-right: 5px;
-    margin-bottom: 5px;
-    line-height: 1.5;
-    text-decoration: none;
+  background-color: transparent;
+  padding: 10px 15px;
+  border-radius: 0;
+  color: #416475;
+  display: inline-block;
+  margin-right: 5px;
+  margin-bottom: 5px;
+  line-height: 1.5;
+  text-decoration: none;
   margin-top: 50px;
   letter-spacing: 1px;
   border: 1px solid #ccc;
 }
+
+/*Estrellas testimonios*/
+.rate {
+  float: left;
+  height: 46px;
+  padding: 0 10px;
+}
+
+.rate:not(:checked)>input {
+  position: absolute;
+  display: none;
+}
+
+.rate:not(:checked)>label {
+  float: right;
+  width: 1em;
+  overflow: hidden;
+  white-space: nowrap;
+  cursor: pointer;
+  font-size: 30px;
+  color: #ccc;
+}
+
+.rated:not(:checked)>label {
+  width: 1em;
+  overflow: hidden;
+  white-space: nowrap;
+  cursor: pointer;
+  font-size: 30px;
+  color: #ccc;
+}
+
+.rate:not(:checked)>label:before {
+  content: '★ ';
+}
+
+.rate>input:checked~label {
+  color: #ffc700;
+}
+
+.rate:not(:checked)>label:hover,
+.rate:not(:checked)>label:hover~label {
+  color: #deb217;
+}
+
+.rate>input:checked+label:hover,
+.rate>input:checked+label:hover~label,
+.rate>input:checked~label:hover,
+.rate>input:checked~label:hover~label,
+.rate>label:hover~input:checked~label {
+  color: #c59b08;
+}
+
+.star-rating-complete {
+  color: #c59b08;
+}
+
+.rating-container .form-control:hover,
+.rating-container .form-control:focus {
+  background: #fff;
+  border: 1px solid #ced4da;
+}
+
+.rating-container textarea:focus,
+.rating-container input:focus {
+  color: #000;
+}
+
+.rated {
+  height: 46px;
+  padding: 0 10px;
+}
+
+.rated:not(:checked)>input {
+  position: absolute;
+  display: none;
+}
+
+.rated:not(:checked)>label {
+  width: 1em;
+  overflow: hidden;
+  white-space: nowrap;
+  cursor: pointer;
+  font-size: 30px;
+  color: #ffc700;
+}
+
+.rated:not(:checked)>label:before {
+  content: '★ ';
+}
+
+.rated>input:checked~label {
+  color: #ffc700;
+}
+
+.rated:not(:checked)>label:hover,
+.rated:not(:checked)>label:hover~label {
+  color: #deb217;
+}
+
+.rated>input:checked+label:hover,
+.rated>input:checked+label:hover~label,
+.rated>input:checked~label:hover,
+.rated>input:checked~label:hover~label,
+.rated>label:hover~input:checked~label {
+  color: #c59b08;
+}
+/*Cards Testimonial*/
+.card-img-top {
+  max-width: 100px;
+  border-radius: 50%;
+  margin: 15px auto 0;
+  box-shadow: 0 8px 20px -4px #95abbb;
+  width: 100px;
+  height: 100px;
+}
+

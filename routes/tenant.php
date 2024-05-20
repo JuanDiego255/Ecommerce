@@ -22,6 +22,7 @@ use App\Http\Controllers\SocialNetworkController;
 use App\Http\Controllers\TenantCarouselController;
 use App\Http\Controllers\TenantInfoController;
 use App\Http\Controllers\TenantSocialNetworkController;
+use App\Http\Controllers\TestimonialController;
 use App\Models\MedicineResult;
 use App\Models\PersonalUser;
 use Illuminate\Support\Facades\Auth;
@@ -77,6 +78,7 @@ Route::middleware([
         Route::delete('/delete-item-cart/{id}', [CartController::class, 'delete']);
         Route::post('/payment', [CheckOutController::class, 'payment']);
         Route::get('/paypal/process/{orderId}', [CheckOutController::class, 'process']);
+        Route::post('/comments/store/', [TestimonialController::class, 'store']);
         Auth::routes();
 
         Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
@@ -201,6 +203,12 @@ Route::middleware([
             Route::post('/blog/result/{id}', [MedicineResultController::class, 'storeResult']);
             Route::get('blog/{blog}/{id}/edit-result', [MedicineResultController::class, 'editResult']);
             Route::get('blog-result/{id}/add', [MedicineResultController::class, 'addResult']);
+            //Rutas para testimonios de los clientes
+            Route::get('/comments/', [TestimonialController::class, 'indexAdmin']);
+            Route::put('comments/{id}', [TestimonialController::class, 'update']);
+            Route::delete('delete-comments/{id}', [TestimonialController::class, 'destroy']);            
+            Route::get('comments/{id}/edit', [TestimonialController::class, 'edit']);
+            Route::get('comments/add', [TestimonialController::class, 'add']);
         });
     });
 

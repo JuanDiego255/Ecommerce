@@ -14,6 +14,7 @@ use App\Models\Size;
 use App\Models\SizeCloth;
 use App\Models\SocialNetwork;
 use App\Models\TenantInfo;
+use App\Models\Testimonial;
 use Artesaos\SEOTools\Facades\OpenGraph;
 use Artesaos\SEOTools\Facades\SEOMeta;
 use Illuminate\Http\Request;
@@ -87,7 +88,7 @@ class FrontendController extends Controller
                     'clothing.mayor_price',
                 )->orderByRaw('CASE WHEN clothing.casa IS NOT NULL AND clothing.casa != "" THEN 0 ELSE 1 END')
                 ->orderBy('clothing.casa', 'asc')
-                ->orderBy('clothing.name', 'asc')                
+                ->orderBy('clothing.name', 'asc')
                 ->take(15)
                 ->get();
         });
@@ -159,7 +160,7 @@ class FrontendController extends Controller
                 )
                 ->orderByRaw('CASE WHEN clothing.casa IS NOT NULL AND clothing.casa != "" THEN 0 ELSE 1 END')
                 ->orderBy('clothing.casa', 'asc')
-                ->orderBy('clothing.name', 'asc')                
+                ->orderBy('clothing.name', 'asc')
                 ->take(8)
                 ->get();
         });
@@ -269,7 +270,7 @@ class FrontendController extends Controller
                 ->groupBy('clothing.id', 'clothing.casa', 'clothing.mayor_price', 'categories.name', 'clothing.discount', 'clothing.name', 'clothing.description', 'clothing.price', 'product_images.image')
                 ->orderByRaw('CASE WHEN clothing.casa IS NOT NULL AND clothing.casa != "" THEN 0 ELSE 1 END')
                 ->orderBy('clothing.casa', 'asc')
-                ->orderBy('clothing.name', 'asc')                
+                ->orderBy('clothing.name', 'asc')
                 ->simplePaginate(20);
         });
 
@@ -359,7 +360,7 @@ class FrontendController extends Controller
                 )
                 ->orderByRaw('CASE WHEN clothing.casa IS NOT NULL AND clothing.casa != "" THEN 0 ELSE 1 END')
                 ->orderBy('clothing.casa', 'asc')
-                ->orderBy('clothing.name', 'asc')                
+                ->orderBy('clothing.name', 'asc')
                 ->take(15)
                 ->get();
         });
@@ -395,7 +396,7 @@ class FrontendController extends Controller
             ->groupBy('clothing.id', 'clothing.can_buy', 'clothing.casa', 'departments.id', 'departments.department', 'clothing.mayor_price', 'clothing.discount', 'categories.name', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
             ->orderByRaw('CASE WHEN clothing.casa IS NOT NULL AND clothing.casa != "" THEN 0 ELSE 1 END')
             ->orderBy('clothing.casa', 'asc')
-            ->orderBy('clothing.name', 'asc')            
+            ->orderBy('clothing.name', 'asc')
             ->get();
         //$clothes = ClothingCategory::where('id', $id)->get();
         $size_active = SizeCloth::where('clothing_id', $id)
@@ -460,7 +461,7 @@ class FrontendController extends Controller
             ->groupBy('clothing.id', 'clothing.casa', 'clothing.mayor_price', 'clothing.discount', 'categories.name', 'categories.id', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
             ->orderByRaw('CASE WHEN clothing.casa IS NOT NULL AND clothing.casa != "" THEN 0 ELSE 1 END')
             ->orderBy('clothing.casa', 'asc')
-            ->orderBy('clothing.name', 'asc')            
+            ->orderBy('clothing.name', 'asc')
             ->inRandomOrder()
             ->take(8)
             ->get();
@@ -659,9 +660,12 @@ class FrontendController extends Controller
             OpenGraph::setDescription($tag->meta_og_description);
         }
 
-        $blogs = Blog::inRandomOrder()
+        $blogs = Blog::inRandomOrder()->orderBy('title','asc')
             ->take(4)->get();
 
-        return view('frontend.website.index', compact('clothings', 'blogs', 'social', 'category', 'sellers'));
+            $comments = Testimonial::inRandomOrder()->orderBy('name','asc')
+            ->get();
+
+        return view('frontend.website.index', compact('clothings', 'blogs','comments', 'social', 'category', 'sellers'));
     }
 }

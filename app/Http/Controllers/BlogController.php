@@ -33,7 +33,7 @@ class BlogController extends Controller
      */
     public function index(Request $request)
     {
-        $blogs = Blog::simplePaginate(8);
+        $blogs = Blog::orderBy('title','asc')->simplePaginate(8);
         $tags = MetaTags::where('section', 'Blog')->get();
         foreach ($tags as $tag) {
             SEOMeta::setTitle($tag->title);
@@ -58,7 +58,7 @@ class BlogController extends Controller
      */
     public function indexadmin(Request $request)
     {
-        $blogs = Blog::get();
+        $blogs = Blog::orderBy('title')->get();
 
         return view('admin.blog.index', compact('blogs'));
     }

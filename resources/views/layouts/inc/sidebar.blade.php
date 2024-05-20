@@ -134,6 +134,16 @@
                         <span class="nav-link-text ms-1">Blog</span>
                     </a>
                 </li>
+                <li
+                    class="nav-item {{ isset($tenantinfo->kind_business) && ($tenantinfo->kind_business == 2 || $tenantinfo->kind_business == 3) ? 'd-block' : 'd-none' }}">
+                    <a @if ($view_name == 'admin_testimonial_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
+                        href="{{ url('comments') }}">
+                        <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                            <i class="material-icons opacity-10">chat</i>
+                        </div>
+                        <span class="nav-link-text ms-1">Testimonios</span>
+                    </a>
+                </li>
                 <li class="nav-item">
                     <a @if ($view_name == 'admin_users_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
                         href="{{ url('users') }}">
