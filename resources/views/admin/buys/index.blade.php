@@ -4,7 +4,7 @@
     {!! OpenGraph::generate() !!}
 @endsection
 @section('content')
-    <h1 class="font-title text-center">Adminsitra las compras desde acá</h1>
+    <h1 class="font-title text-center">{{ __('Adminsitra las compras desde acá') }}</h1>
     <div class="container">
         <div class="card mt-3 mb-4">
             <div class="card-body">
@@ -40,109 +40,35 @@
                         <thead>
                             <tr>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                    Comprobante</th>
+                                    {{ __('Acciones') }}</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                    Nombre</th>
+                                    {{ __('Comporbante') }}</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                    Teléfono</th>
+                                    {{ __('Nombre') }}</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                    E-mail</th>
+                                    {{ __('Teléfono') }}</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                    Precio @if ($iva > 0)
-                                        (I.V.A)
-                                    @endif + Envio</th>
+                                    {{ __('E-mail') }}</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                    Envío</th>
+                                    {{ __('Precio') }} @if ($iva > 0)
+                                        {{ __('I.V.A') }}
+                                    @endif {{ __('+ Envío') }}</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                    Entregado</th>
+                                    {{ __('Envío') }}</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                    Aprobado</th>
+                                    {{ __('Entregado') }}</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                    Compra</th>
+                                    {{ __('Aprobado') }}</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                    Fecha</th>
+                                    {{ __('Compra') }}</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                    Acciones</th>
+                                    {{ __('Fecha') }}</th>
 
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($buys as $buy)
                                 <tr>
-
-                                    <td>
-                                        <div class="d-flex px-2 py-1">
-                                            <div>
-                                                @if ($buy->image)
-                                                    <a target="blank" data-fancybox="gallery"
-                                                        href="{{ route('file', $buy->image) }}">
-                                                        <img src="{{ route('file', $buy->image) }}"
-                                                            class="img-fluid shadow border-radius-lg">
-                                                    </a>
-                                                @endif
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="align-middle text-xxs text-center">
-                                        <p class=" font-weight-bold mb-0">
-                                            {{ isset($buy->name) ? $buy->name : $buy->name_b }}
-                                            {{ isset($buy->last_name) ? $buy->last_name : $buy->last_name_b }}</p>
-                                    </td>
-                                    <td class="align-middle text-xxs text-center">
-                                        <p class=" font-weight-bold mb-0">
-                                            {{ isset($buy->telephone) ? $buy->telephone : $buy->telephone_b }}</p>
-                                    </td>
-                                    <td class="align-middle text-xxs text-center">
-                                        <p class=" font-weight-bold mb-0">
-                                            {{ isset($buy->email) ? $buy->email : $buy->email_b }}</p>
-                                    </td>
-                                    <td class="align-middle text-xxs text-center">
-                                        <p class=" font-weight-bold mb-0">
-                                            ₡{{ number_format($buy->total_buy + $buy->total_delivery) }}</p>
-                                    </td>
-                                    <td class="align-middle text-xxs text-center">
-                                        <p class=" font-weight-bold mb-0">₡{{ number_format($buy->total_delivery) }}</p>
-                                    </td>
-
-                                    </td>
-                                    <td class="align-middle text-xxs text-center">
-                                        <p class=" font-weight-bold mb-0">
-                                            @if ($buy->delivered == 0)
-                                                Pendiente
-                                            @else
-                                                Entregado
-                                            @endif
-                                        </p>
-                                    </td>
-                                    <td class="align-middle text-xxs text-center">
-                                        <p class=" font-weight-bold mb-0">
-                                            @if ($buy->approved == 0)
-                                                Pendiente
-                                            @else
-                                                Aprobado
-                                            @endif
-                                        </p>
-                                    </td>
-                                    <td class="align-middle text-xxs text-center">
-                                        <p class=" font-weight-bold mb-0">
-                                            @switch($buy->cancel_buy)
-                                                @case(0)
-                                                    Vigente
-                                                @break
-
-                                                @case(1)
-                                                    En proceso cancelación
-                                                @break
-
-                                                @default
-                                                    Cancelada
-                                            @endswitch
-                                        </p>
-                                    </td>
-                                    <td class="align-middle text-xxs text-center">
-                                        <p class=" font-weight-bold mb-0">{{ $buy->created_at }}</p>
-                                    </td>
-
                                     <td class="align-middle">
                                         <center>
                                             @if ($buy->cancel_buy == 0)
@@ -230,7 +156,76 @@
                                         </center>
 
                                     </td>
+                                    <td>
+                                        <div class="d-flex px-2 py-1">
+                                            <div>
+                                                @if ($buy->image)
+                                                    <a target="blank" data-fancybox="gallery"
+                                                        href="{{ route('file', $buy->image) }}">
+                                                        <img src="{{ route('file', $buy->image) }}"
+                                                            class="img-fluid shadow border-radius-lg">
+                                                    </a>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="align-middle text-xxs text-center">
+                                        <p class=" font-weight-bold mb-0">
+                                            {{ isset($buy->name) ? $buy->name : $buy->name_b }}
+                                            {{ isset($buy->last_name) ? $buy->last_name : $buy->last_name_b }}</p>
+                                    </td>
+                                    <td class="align-middle text-xxs text-center">
+                                        <p class=" font-weight-bold mb-0">
+                                            {{ isset($buy->telephone) ? $buy->telephone : $buy->telephone_b }}</p>
+                                    </td>
+                                    <td class="align-middle text-xxs text-center">
+                                        <p class=" font-weight-bold mb-0">
+                                            {{ isset($buy->email) ? $buy->email : $buy->email_b }}</p>
+                                    </td>
+                                    <td class="align-middle text-xxs text-center">
+                                        <p class=" font-weight-bold mb-0">
+                                            ₡{{ number_format($buy->total_buy + $buy->total_delivery) }}</p>
+                                    </td>
+                                    <td class="align-middle text-xxs text-center">
+                                        <p class=" font-weight-bold mb-0">₡{{ number_format($buy->total_delivery) }}</p>
+                                    </td>
+                                    <td class="align-middle text-xxs text-center">
+                                        <p class=" font-weight-bold mb-0">
+                                            @if ($buy->delivered == 0)
+                                                Pendiente
+                                            @else
+                                                Entregado
+                                            @endif
+                                        </p>
+                                    </td>
+                                    <td class="align-middle text-xxs text-center">
+                                        <p class=" font-weight-bold mb-0">
+                                            @if ($buy->approved == 0)
+                                                Pendiente
+                                            @else
+                                                Aprobado
+                                            @endif
+                                        </p>
+                                    </td>
+                                    <td class="align-middle text-xxs text-center">
+                                        <p class=" font-weight-bold mb-0">
+                                            @switch($buy->cancel_buy)
+                                                @case(0)
+                                                    Vigente
+                                                @break
 
+                                                @case(1)
+                                                    En proceso cancelación
+                                                @break
+
+                                                @default
+                                                    Cancelada
+                                            @endswitch
+                                        </p>
+                                    </td>
+                                    <td class="align-middle text-xxs text-center">
+                                        <p class=" font-weight-bold mb-0">{{ $buy->created_at }}</p>
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>

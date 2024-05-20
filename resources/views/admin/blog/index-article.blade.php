@@ -6,12 +6,12 @@
 @section('content')
     <center>
         <h2 class="text-center font-title">
-            <strong>Artículos relacionados con este post</strong>
+            <strong>{{ __('Artículos relacionados con este post') }}</strong>
         </h2>
     </center>
     <div class="row w-50">
         <div class="col-md-6">
-            <a href="{{ url('blog-add/' . $id . '/agregar-info') }}" class="btn btn-velvet w-100">Nuevo artículo</a>
+            <a href="{{ url('blog-add/' . $id . '/agregar-info') }}" class="btn btn-velvet w-100">{{ __('Nuevo artículo') }}</a>
         </div>
     </div>
     <div class="card mt-3">
@@ -50,26 +50,18 @@
                     <table class="table align-items-center mb-0" id="articles">
                         <thead>
                             <tr>
-                                <th class="text-secondary font-weight-bolder opacity-7 ps-2">Blog
+                                <th class="text-center text-secondary font-weight-bolder opacity-7">
+                                    {{ __('Acciones') }}</th>
+                                <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Blog') }}
                                 </th>
                                 <th class="text-center text-secondary font-weight-bolder opacity-7">
-                                    Artículo</th>                                
-                                <th class="text-center text-secondary font-weight-bolder opacity-7">
-                                    Acciones</th>
+                                    {{ __('Artículo') }}</th>                               
+                                
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($tags as $item)
-                                <tr>                                   
-                                    <td class="align-middle text-sm">
-                                        <p class="text-muted mb-0">{{ $item->blog_title }}
-                                        </p>
-                                    </td>      
-                                    <td class="align-middle text-center text-sm">
-                                        <p class="text-muted mb-0">{{ $item->title }}
-                                        </p>
-                                    </td>                             
-                                   
+                                <tr>     
                                     <td class="align-middle text-center">
                                         <form name="delete-article{{ $item->id }}"
                                             id="delete-article{{ $item->id }}" method="post"
@@ -88,7 +80,17 @@
                                             data-bs-toggle="tooltip" data-bs-placement="bottom" title="Editar">
                                             <i class="material-icons text-lg">edit</i>
                                         </a>
-                                    </td>
+                                    </td>                              
+                                    <td class="align-middle text-sm">
+                                        <p class="text-muted mb-0">{{ $item->blog_title }}
+                                        </p>
+                                    </td>      
+                                    <td class="align-middle text-center text-sm">
+                                        <p class="text-muted mb-0">{{ $item->title }}
+                                        </p>
+                                    </td>                            
+                                   
+                                   
                                 </tr>
                             @endforeach
                         </tbody>
@@ -100,7 +102,7 @@
     </div>
     <center>
         <div class="col-md-12 mt-3">
-            <a href="{{ url('blog/indexadmin') }}" class="btn btn-velvet w-25">Ir a blogs</a>
+            <a href="{{ url('blog/indexadmin') }}" class="btn btn-velvet w-25">{{ __('Ir a blogs') }}</a>
         </div>
     </center>
 @endsection

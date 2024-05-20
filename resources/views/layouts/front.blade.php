@@ -60,6 +60,7 @@
 
 
 <body class="g-sidenav-show  bg-gray-200">
+    @include('frontend.website.add-comment')
     <div
         class="{{ $view_name == 'frontend_blog_show-articles' && $tenantinfo->kind_business == 3 ? 'main-container-front' : '' }}">
         <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">

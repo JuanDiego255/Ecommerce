@@ -6,11 +6,11 @@
 @section('content')
     <center>
         <h2 class="text-center font-title">
-            <strong>Vendedores</strong>
+            <strong>{{ __('Vendedores') }}</strong>
         </h2>
     </center>
     <button type="button" data-bs-toggle="modal" data-bs-target="#add-seller-modal" class="btn btn-velvet">
-        Nuevo vendedor</button>
+        {{ __('Nuevo vendedor') }}</button>
         @include('admin.sellers.add')
     <div class="card mt-3">
         <div class="card-body">
@@ -48,13 +48,12 @@
                     <table class="table align-items-center mb-0" id="sellers">
                         <thead>
                             <tr>
-
-                                <th class="text-secondary font-weight-bolder opacity-7 ps-2">Vendedor
+                                <th class="text-center text-secondary font-weight-bolder opacity-7">
+                                    {{ __('Acciones') }}</th>
+                                <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Vendedor') }}
                                 </th>
                                 <th class="text-center text-secondary font-weight-bolder opacity-7">
-                                    Posición</th>
-                                <th class="text-center text-secondary font-weight-bolder opacity-7">
-                                    Acciones</th>
+                                    {{ __('Posición') }}</th>                                
                             </tr>
                         </thead>
                         <tbody>
@@ -110,7 +109,7 @@
     <center>
 
         <div class="col-md-12 mt-3">
-            <a href="{{ url('categories') }}" class="btn btn-velvet w-25">Volver</a>
+            <a href="{{ url('categories') }}" class="btn btn-velvet w-25">{{ __('Volver') }}</a>
         </div>
     </center>
 @endsection

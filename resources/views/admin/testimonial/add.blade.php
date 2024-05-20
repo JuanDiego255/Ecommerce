@@ -6,6 +6,7 @@
 @section('content')
     <form action="{{ url('comments/store') }}" method="POST" enctype="multipart/form-data">
         @csrf
+        <input type="hidden" name="approve" value="1">
         <div class="row">
             <div class="col-md-12">
                 <div class="card">

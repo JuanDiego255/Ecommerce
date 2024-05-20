@@ -6,7 +6,7 @@
 @section('content')
     <div class="container">
 
-        <h2 class="text-center font-title"><strong>Administra {{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'las tallas' : 'los tamaños'}} desde acá</strong>
+        <h2 class="text-center font-title"><strong>{{ __('Gestiona') }} {{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'las tallas' : 'los tamaños'}}</strong>
         </h2>
 
         <hr class="hr-servicios">
@@ -53,7 +53,7 @@
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                     {{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'Talla' : 'Tamaño'}}</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                    Acciones</th>
+                                    {{ __('Acciones') }}</th>
 
                             </tr>
                         </thead>

@@ -51,18 +51,35 @@
                     <table class="table align-items-center mb-0" id="blogs">
                         <thead>
                             <tr>
+                                <th class="text-center text-secondary font-weight-bolder opacity-7">
+                                    {{ __('Acciones') }}</th>
                                 <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Antes') }}
                                 </th>
                                 <th class="text-secondary font-weight-bolder opacity-7">
-                                    {{ __('Despues') }}</th>
-                                <th class="text-center text-secondary font-weight-bolder opacity-7">
-                                    {{ __('Acciones') }}</th>
+                                    {{ __('Despues') }}</th>                               
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($results as $item)
                                 <tr>
-
+                                    <td class="align-middle text-center">
+                                        <form name="delete-result{{ $item->id }}" id="delete-result{{ $item->id }}"
+                                            method="post" action="{{ url('/delete-result/' . $item->id) }}">
+                                            {{ csrf_field() }}
+                                            {{ method_field('DELETE') }}
+                                        </form>
+                                        <button form="delete-result{{ $item->id }}" type="submit"
+                                            onclick="return confirm('Deseas borrar este resultado?')"
+                                            class="btn btn-link text-velvet ms-auto border-0" data-bs-toggle="tooltip"
+                                            data-bs-placement="bottom" title="Eliminar">
+                                            <i class="material-icons text-lg">delete</i>
+                                        </button>
+                                        <a class="btn btn-link text-velvet me-auto border-0"
+                                            href="{{ url('/blog/' . $item->id . '/' . $blog_id . '/edit-result') }}"
+                                            data-bs-toggle="tooltip" data-bs-placement="bottom" title="Editar">
+                                            <i class="material-icons text-lg">edit</i>
+                                        </a>                                        
+                                    </td>
                                     <td class="w-50">
                                         <div class="d-flex px-2 py-1">
                                             <div>
@@ -84,26 +101,7 @@
                                                 </a>
                                             </div>
                                         </div>
-                                    </td>
-
-                                    <td class="align-middle text-center">
-                                        <form name="delete-result{{ $item->id }}" id="delete-result{{ $item->id }}"
-                                            method="post" action="{{ url('/delete-result/' . $item->id) }}">
-                                            {{ csrf_field() }}
-                                            {{ method_field('DELETE') }}
-                                        </form>
-                                        <button form="delete-result{{ $item->id }}" type="submit"
-                                            onclick="return confirm('Deseas borrar este resultado?')"
-                                            class="btn btn-link text-velvet ms-auto border-0" data-bs-toggle="tooltip"
-                                            data-bs-placement="bottom" title="Eliminar">
-                                            <i class="material-icons text-lg">delete</i>
-                                        </button>
-                                        <a class="btn btn-link text-velvet me-auto border-0"
-                                            href="{{ url('/blog/' . $item->id . '/' . $blog_id . '/edit-result') }}"
-                                            data-bs-toggle="tooltip" data-bs-placement="bottom" title="Editar">
-                                            <i class="material-icons text-lg">edit</i>
-                                        </a>                                        
-                                    </td>
+                                    </td>                                    
                                 </tr>
                             @endforeach
                         </tbody>

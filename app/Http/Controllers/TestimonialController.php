@@ -63,13 +63,23 @@ class TestimonialController extends Controller
             $comment->name = $request->name;
             $comment->stars = $request->rating;
             $comment->description = $request->description;
+            $comment->approve = $request->approve;
             $comment->save();
             
             DB::commit();
-            return redirect('comments')->with(['status' => 'Testimonio creado con éxito!', 'icon' => 'success']);
+            if($request->approve != 0){
+                return redirect('comments')->with(['status' => 'Testimonio creado con éxito!', 'icon' => 'success']);
+            }else{
+                return redirect()->back()->with(['status' => 'Testimonio creado con éxito, una vez que se apruebe se mostrará!', 'icon' => 'success']);
+            }
+           
         } catch (\Exception $th) {
             DB::rollBack();
-            return redirect('/comments')->with(['status' => 'No se pudo guardar el profesional', 'icon' => 'error']);
+            if($request->approve != 0){
+                return redirect('comments')->with(['status' => 'Error al crear el testimonio!', 'icon' => 'success']);
+            }else{
+                return redirect()->back()->with(['status' => 'Error al crear el testimonio', 'icon' => 'success']);
+            }
         }
     }
     /**
@@ -119,12 +129,41 @@ class TestimonialController extends Controller
             $comment->name = $request->name;
             $comment->description = $request->description;
             $comment->stars = $request->rating;
+            $comment->approve = $request->approve;
             $comment->update();            
             db::commit();
             return redirect('comments')->with(['status' => 'Testimonio actualizado con éxito!', 'icon' => 'success']);
         } catch (\Exception $th) {
             DB::rollBack();
             return redirect('/comments')->with(['status' => 'No se pudo actualizar la info', 'icon' => 'error']);
+        }
+    }
+
+    /**
+
+     *Update the form data into the respective table
+
+     *
+
+     * @param Request $request
+
+     * @param $id
+
+
+     */
+    public function updateStatus(Request $request, $id)
+    {
+        DB::beginTransaction();
+        try {
+            
+            $comment = Testimonial::findOrfail($id);     
+            $comment->approve = $request->approve ? 1 : 0;
+            $comment->update();            
+            db::commit();
+            return redirect('comments')->with(['status' => 'Estado actualizado con éxito!', 'icon' => 'success']);
+        } catch (\Exception $th) {
+            DB::rollBack();
+            return redirect('/comments')->with(['status' => 'No se pudo actualizar el estado', 'icon' => 'error']);
         }
     }
 

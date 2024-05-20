@@ -6,15 +6,15 @@
 @section('content')
     <center>
         @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
-            <h2 class="text-center font-title"><strong>Administra las categorías desde acá</strong></h2>
+            <h2 class="text-center font-title"><strong>{{ __('Gestiona las categorías') }}</strong></h2>
         @else
-            <h2 class="text-center font-title"><strong>Categorías del departamento de {{ $department_name }}.</strong></h2>
+            <h2 class="text-center font-title"><strong>{{ __('Categorías del departamento ') }} {{ $department_name }}.</strong></h2>
         @endif
 
     </center>
 
     <div class="col-md-12">
-        <a href="{{ url('add-category/' . $department_id) }}" class="btn btn-velvet">Nueva Categoría</a>
+        <a href="{{ url('add-category/' . $department_id) }}" class="btn btn-velvet">{{ __('Nueva categoría') }}</a>
     </div>
     <div class="card mt-3">
         <div class="card-body">
@@ -58,8 +58,7 @@
                                             </a>
                                         </li>
                                     </ul>
-                                    <a href="{{ url('/add-item') . '/' . $item->id }}" class="add-to-cart">Ver
-                                        Colección</a>
+                                    <a href="{{ url('/add-item') . '/' . $item->id }}" class="add-to-cart">{{ __('Ver colección') }}</a>
                                 </div>
                                 <div class="product-content">
                                     <h3 class="text-muted category"><a

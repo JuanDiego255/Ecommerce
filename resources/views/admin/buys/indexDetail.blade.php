@@ -5,7 +5,7 @@
 @endsection
 @section('content')
     <h1 class="font-title text-center">
-        Detalles De La Compra</h1>
+        {{ __('Detalles de la compra') }}</h1>
     <div class="container-fluid">
         <div class="card mt-3 mb-3">
             <div class="card-body">
@@ -43,39 +43,76 @@
                             <table id="buysDetails" class="table align-items-center mb-0">
                                 <thead>
                                     <tr>
+                                        <th
+                                            class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
+                                            {{ __('Acciones') }}</th>
                                         <th class="text-uppercase text-secondary font-weight-bolder opacity-7">Imagen</th>
                                         <th
                                             class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                            Artículo</th>
+                                            {{ __('Artículo') }}</th>
                                         <th
                                             class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7 {{isset($tenantinfo->manage_size) && $tenantinfo->manage_size == 0 ? 'd-none' : ''}}">
-                                            Talla</th>
+                                            {{ __('Talla') }}</th>
                                         <th
                                             class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                            Precio @if ($iva > 0)
-                                                I.V.A
+                                            {{ __('Precio') }} @if ($iva > 0)
+                                            {{ __('I.V.A') }}
                                             @endif
                                         </th>
                                         @if ($iva > 0)
                                             <th
                                                 class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                                IVA</th>
+                                                {{ __('IVA') }}</th>
                                         @endif
                                         <th
                                             class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                            Estado</th>
+                                            {{ __('Estado') }}</th>
                                         <th
                                             class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                            Cantidad</th>
-                                        <th
-                                            class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                            Acciones</th>
+                                            {{ __('Cantidad') }}</th>
+                                        
 
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach ($buysDetails as $buy)
                                         <tr>
+                                            <td class="align-middle">
+                                                @if ($buy->cancel_item == 1)
+                                                    <form style="display:inline"
+                                                        action="{{ url('cancel/buy-item/' . $buy->item_id . '/' . $buy->cancel_item) }}"
+                                                        method="POST" enctype="multipart/form-data">
+                                                        @csrf
+
+                                                        <input type="hidden" name="action" value="1">
+                                                        <input type="hidden" name="buy" value="{{ $buy->buy }}">
+                                                        <button class="btn btn-velvet text-white btn-tooltip"
+                                                            data-bs-toggle="tooltip" data-bs-placement="top"
+                                                            title="Aprobar Cancelación" data-container="body"
+                                                            data-animation="true" type="submit"> <i
+                                                                class="material-icons opacity-10">
+                                                                check
+                                                            </i>
+                                                        </button>
+                                                    </form>
+                                                    <form style="display:inline"
+                                                        action="{{ url('cancel/buy-item/' . $buy->item_id . '/' . $buy->cancel_item) }}"
+                                                        method="POST" enctype="multipart/form-data">
+                                                        @csrf
+
+                                                        <input type="hidden" name="action" value="0">
+                                                        <input type="hidden" name="buy" value="{{ $buy->buy }}">
+                                                        <button class="btn btn-velvet text-white btn-tooltip"
+                                                            data-bs-toggle="tooltip" data-bs-placement="top"
+                                                            title="Desaprobar Cancelación" data-container="body"
+                                                            data-animation="true" type="submit"> <i
+                                                                class="material-icons opacity-10">
+                                                                cancel
+                                                            </i>
+                                                        </button>
+                                                    </form>
+                                                @endif
+                                            </td>
                                             <td>
                                                 <div class="d-flex px-2 py-1">
                                                     <div>
@@ -121,42 +158,7 @@
                                             <td class="align-middle text-xxs text-center">
                                                 <p class=" font-weight-bold mb-0">{{ $buy->quantity }}</p>
                                             </td>
-                                            <td class="align-middle">
-                                                @if ($buy->cancel_item == 1)
-                                                    <form style="display:inline"
-                                                        action="{{ url('cancel/buy-item/' . $buy->item_id . '/' . $buy->cancel_item) }}"
-                                                        method="POST" enctype="multipart/form-data">
-                                                        @csrf
-
-                                                        <input type="hidden" name="action" value="1">
-                                                        <input type="hidden" name="buy" value="{{ $buy->buy }}">
-                                                        <button class="btn btn-velvet text-white btn-tooltip"
-                                                            data-bs-toggle="tooltip" data-bs-placement="top"
-                                                            title="Aprobar Cancelación" data-container="body"
-                                                            data-animation="true" type="submit"> <i
-                                                                class="material-icons opacity-10">
-                                                                check
-                                                            </i>
-                                                        </button>
-                                                    </form>
-                                                    <form style="display:inline"
-                                                        action="{{ url('cancel/buy-item/' . $buy->item_id . '/' . $buy->cancel_item) }}"
-                                                        method="POST" enctype="multipart/form-data">
-                                                        @csrf
-
-                                                        <input type="hidden" name="action" value="0">
-                                                        <input type="hidden" name="buy" value="{{ $buy->buy }}">
-                                                        <button class="btn btn-velvet text-white btn-tooltip"
-                                                            data-bs-toggle="tooltip" data-bs-placement="top"
-                                                            title="Desaprobar Cancelación" data-container="body"
-                                                            data-animation="true" type="submit"> <i
-                                                                class="material-icons opacity-10">
-                                                                cancel
-                                                            </i>
-                                                        </button>
-                                                    </form>
-                                                @endif
-                                            </td>
+                                            
 
 
                                         </tr>

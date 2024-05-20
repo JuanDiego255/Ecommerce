@@ -6,13 +6,12 @@
 @section('content')
     <div class="container">
 
-        <h2 class="text-center font-title"><strong>Administra los departamentos desde acá</strong>
+        <h2 class="text-center font-title"><strong>{{ __('Gestiona los departamentos') }}</strong>
         </h2>
 
         <hr class="hr-servicios">
 
-        <button type="button" data-bs-toggle="modal" data-bs-target="#add-department-modal" class="btn btn-velvet">Nuevo
-            departamento</button>
+        <button type="button" data-bs-toggle="modal" data-bs-target="#add-department-modal" class="btn btn-velvet">{{ __('Nuevo departamento') }}</button>
 
         <center>
 
@@ -47,9 +46,9 @@
                             <tr>
                                
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                    Departamento</th>
+                                    {{ __('departamento') }}</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                    Acciones</th>
+                                    {{ __('Acciones') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -65,7 +64,7 @@
                                         <center>
                                             <button type="button" data-bs-toggle="modal"
                                                 data-bs-target="#edit-department-modal{{ $item->id }}"
-                                                class="btn btn-velvet" style="text-decoration: none;">Editar</button>
+                                                class="btn btn-velvet" style="text-decoration: none;">{{ __('Editar') }}</button>
 
                                             <form method="post" action="{{ url('/delete/department/' . $item->id) }}"
                                                 style="display:inline">
@@ -73,9 +72,9 @@
                                                 {{ method_field('DELETE') }}
                                                 <button type="submit" data-bs-toggle="modal"
                                                     onclick="return confirm('Deseas borrar este departamento?')"
-                                                    class="btn btn-velvet" style="text-decoration: none;">Borrar</button>
+                                                    class="btn btn-velvet" style="text-decoration: none;">{{ __('Borrar') }}</button>
                                             </form>
-                                            <a href="{{ url('categories/'.$item->id) }}" class="btn btn-velvet">Ver Categorías</a>
+                                            <a href="{{ url('categories/'.$item->id) }}" class="btn btn-velvet">{{ __('Ver categorías') }}</a>
                                         </center>
 
                                     </td>

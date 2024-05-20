@@ -11,14 +11,15 @@
                 if (stripos($social->social_network, 'Twitter') !== false) {
                     $social_logo = 'fa fa-twitter';
                 }
-            @endphp           
-            <li class="social-item"><a
-                href="{{ url($social->url) }}"                
-                target="blank"><span class="screen-reader-text">{{ $social->social_network }}</span></a></li>
-        @endforeach       
+            @endphp
+            <li class="social-item"><a href="{{ url($social->url) }}" target="blank"><span
+                        class="screen-reader-text">{{ $social->social_network }}</span></a></li>
+        @endforeach
         <li class="social-item"><a target="blank" href="{{ url('https://wa.me/506' . $tenantinfo->whatsapp) }}"
                 data-action="share/whatsapp/share"><span class="screen-reader-text">Whatsapp</span></a></li>
         <li class="social-item newsletter"><a target="blank" href="{{ url('blog/index') }}"
+                data-action="share/whatsapp/share"><span class="screen-reader-text">Whatsapp</span></a></li>
+        <li class="social-item"><a type="button" data-bs-toggle="modal" data-bs-target="#add-comment-modal" href="#"
                 data-action="share/whatsapp/share"><span class="screen-reader-text">Whatsapp</span></a></li>
     </ul>
 </aside>

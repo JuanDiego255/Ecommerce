@@ -6,12 +6,12 @@
 @section('content')
     <center>
         <h2 class="text-center font-title">
-            <strong>Administra los blogs informativos desde acá</strong>
+            <strong>{{ __('Administra los blogs informativos desde acá') }}</strong>
         </h2>
     </center>
     <div class="row w-50">
         <div class="col-md-6">
-            <a href="{{ url('blog/agregar') }}" class="btn btn-velvet w-100">Agregar Nuevo Blog</a>
+            <a href="{{ url('blog/agregar') }}" class="btn btn-velvet w-100">{{ __('Agregar nuevo blog') }}</a>
         </div>
     </div>
     <div class="card mt-3">
@@ -50,38 +50,18 @@
                     <table class="table align-items-center mb-0" id="blogs">
                         <thead>
                             <tr>
-                                <th class="text-secondary font-weight-bolder opacity-7 ps-2">Blog
+                                <th class="text-center text-secondary font-weight-bolder opacity-7">
+                                    {{ __('Acciones') }}</th>
+                                <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Blog') }}
                                 </th>
                                 <th class="text-center text-secondary font-weight-bolder opacity-7">
-                                    Fecha Post</th>                                
-                                <th class="text-center text-secondary font-weight-bolder opacity-7">
-                                    Acciones</th>
+                                    {{ __('Fecha Post') }}</th>                                
+                                
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($blogs as $item)
                                 <tr>
-
-                                    <td class="w-50">
-                                        <div class="d-flex px-2 py-1">
-                                            <div>
-                                                <a target="blank" data-fancybox="gallery"
-                                                    href="{{ route('file', $item->image) }}">
-                                                    <img src="{{ route('file', $item->image) }}"
-                                                        class="avatar avatar-md me-3">
-                                                </a>
-                                            </div>
-                                            <div class="d-flex flex-column justify-content-center">
-                                                <h4 class="mb-0 text-lg">{!! $item->title !!}</h4>
-                                                <p>{!! $item->autor !!}</p>
-                                            </div>
-                                        </div>
-                                    </td>       
-                                    <td class="align-middle text-center text-sm">
-                                        <p class="text-success mb-0">{{ $item->fecha_post }}
-                                        </p>
-                                    </td>                             
-                                   
                                     <td class="align-middle text-center">
                                         <form name="delete-blog{{ $item->id }}"
                                             id="delete-blog{{ $item->id }}" method="post"
@@ -116,6 +96,25 @@
                                             <i class="material-icons text-lg">medical_services</i>
                                         </a>
                                     </td>
+                                    <td class="w-50">
+                                        <div class="d-flex px-2 py-1">
+                                            <div>
+                                                <a target="blank" data-fancybox="gallery"
+                                                    href="{{ route('file', $item->image) }}">
+                                                    <img src="{{ route('file', $item->image) }}"
+                                                        class="avatar avatar-md me-3">
+                                                </a>
+                                            </div>
+                                            <div class="d-flex flex-column justify-content-center">
+                                                <h4 class="mb-0 text-lg">{!! $item->title !!}</h4>
+                                                <p>{!! $item->autor !!}</p>
+                                            </div>
+                                        </div>
+                                    </td>       
+                                    <td class="align-middle text-center text-sm">
+                                        <p class="text-success mb-0">{{ $item->fecha_post }}
+                                        </p>
+                                    </td>  
                                 </tr>
                             @endforeach
                         </tbody>

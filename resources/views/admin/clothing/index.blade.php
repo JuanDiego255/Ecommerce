@@ -11,7 +11,8 @@
     </center>
     <div class="row w-50">
         <div class="col-md-6">
-            <a href="{{ url('new-item/' . $category_id) }}" class="btn btn-velvet w-100">Agregar Nuevo Producto</a>
+            <a href="{{ url('new-item/' . $category_id) }}"
+                class="btn btn-velvet w-100">{{ __('Agregar nuevo producto') }}</a>
         </div>
     </div>
     <div class="card mt-3">
@@ -50,24 +51,41 @@
                     <table class="table align-items-center mb-0" id="clothings">
                         <thead>
                             <tr>
-
-                                <th class="text-secondary font-weight-bolder opacity-7 ps-2">Producto
+                                <th class="text-center text-secondary font-weight-bolder opacity-7">
+                                    {{ __('Acciones') }}</th>
+                                <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Producto') }}
                                 </th>
                                 <th class="text-center text-secondary font-weight-bolder opacity-7">
-                                    Precio</th>
+                                    {{ __('Precio') }}</th>
                                 <th
                                     class="text-center text-secondary font-weight-bolder opacity-7 {{ isset($tenantinfo->manage_size) && $tenantinfo->manage_size == 0 ? 'd-none' : '' }}">
-                                    Tallas</th>
+                                    {{ __('Tallas') }}</th>
                                 <th class="text-center text-secondary font-weight-bolder opacity-7">
-                                    Stock</th>
-                                <th class="text-center text-secondary font-weight-bolder opacity-7">
-                                    Acciones</th>
+                                    {{ __('Stock') }}</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($clothings as $item)
                                 <tr>
-
+                                    <td class="align-middle text-center">
+                                        <form name="delete-clothing{{ $item->id }}"
+                                            id="delete-clothing{{ $item->id }}" method="post"
+                                            action="{{ url('/delete-clothing/' . $item->id) }}">
+                                            {{ csrf_field() }}
+                                            {{ method_field('DELETE') }}
+                                        </form>
+                                        <button form="delete-clothing{{ $item->id }}" type="submit"
+                                            onclick="return confirm('Deseas borrar este producto?')"
+                                            class="btn btn-link text-velvet ms-auto border-0" data-bs-toggle="tooltip"
+                                            data-bs-placement="bottom" title="Eliminar">
+                                            <i class="material-icons text-lg">delete</i>
+                                        </button>
+                                        <a class="btn btn-link text-velvet me-auto border-0"
+                                            href="{{ url('/edit-clothing') . '/' . $item->id . '/' . $category_id }}"
+                                            data-bs-toggle="tooltip" data-bs-placement="bottom" title="Editar">
+                                            <i class="material-icons text-lg">edit</i>
+                                        </a>
+                                    </td>
                                     <td class="w-50">
                                         <div class="d-flex px-2 py-1">
                                             <div>
@@ -102,26 +120,6 @@
                                     <td class="align-middle text-center text-sm">
                                         <p class="text-success mb-0">{{ $item->total_stock }}
                                         </p>
-                                    </td>
-
-                                    <td class="align-middle text-center">
-                                        <form name="delete-clothing{{ $item->id }}"
-                                            id="delete-clothing{{ $item->id }}" method="post"
-                                            action="{{ url('/delete-clothing/' . $item->id) }}">
-                                            {{ csrf_field() }}
-                                            {{ method_field('DELETE') }}
-                                        </form>
-                                        <button form="delete-clothing{{ $item->id }}" type="submit"
-                                            onclick="return confirm('Deseas borrar este producto?')"
-                                            class="btn btn-link text-velvet ms-auto border-0" data-bs-toggle="tooltip"
-                                            data-bs-placement="bottom" title="Eliminar">
-                                            <i class="material-icons text-lg">delete</i>
-                                        </button>
-                                        <a class="btn btn-link text-velvet me-auto border-0"
-                                            href="{{ url('/edit-clothing') . '/' . $item->id . '/' . $category_id }}"
-                                            data-bs-toggle="tooltip" data-bs-placement="bottom" title="Editar">
-                                            <i class="material-icons text-lg">edit</i>
-                                        </a>
                                     </td>
                                 </tr>
                             @endforeach

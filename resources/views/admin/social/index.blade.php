@@ -6,13 +6,12 @@
 @section('content')
     <div class="container">
 
-        <h2 class="text-center font-title"><strong>Administra las fotografías para la sección de redes sociales.</strong>
+        <h2 class="text-center font-title"><strong>{{ __('Gestiona las imagenes para la sección de redes sociales') }}.</strong>
         </h2>
 
         <hr class="hr-servicios">
 
-        <button type="button" data-bs-toggle="modal" data-bs-target="#add-size-modal" class="btn btn-velvet">Nueva
-            Fotografía</button>
+        <button type="button" data-bs-toggle="modal" data-bs-target="#add-size-modal" class="btn btn-velvet">{{ __('Nueva imagen') }}</button>
 
         <center>
 
@@ -51,14 +50,13 @@
                         <thead>
                             <tr>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                    Imagen</th>
+                                    {{ __('Acciones') }}</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                    Descripción</th>
+                                    {{ __('Imagen') }}</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                    URL Instagram</th>
+                                    {{ __('Descripción') }}</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                    Acciones</th>
-
+                                    {{ __('URL') }}</th>                             
                             </tr>
                         </thead>
                         <tbody>

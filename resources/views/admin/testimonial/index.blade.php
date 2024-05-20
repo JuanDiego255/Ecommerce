@@ -50,20 +50,41 @@
                     <table class="table align-items-center mb-0" id="comments">
                         <thead>
                             <tr>
+                                <th class="text-center text-secondary font-weight-bolder opacity-7">
+                                    {{ __('Acciones') }}</th>
                                 <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Nombre') }}
                                 </th>
                                 <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Descripción') }}
                                 </th>
+                                <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Aprobar') }}
+                                </th>
                                 <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Rating') }}
                                 </th>
-                                <th class="text-center text-secondary font-weight-bolder opacity-7">
-                                    Acciones</th>
+
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($comments as $item)
                                 <tr>
-
+                                    <td class="align-middle text-center">
+                                        <form name="delete-comment{{ $item->id }}"
+                                            id="delete-comment{{ $item->id }}" method="post"
+                                            action="{{ url('/delete-comments/' . $item->id) }}">
+                                            {{ csrf_field() }}
+                                            {{ method_field('DELETE') }}
+                                        </form>
+                                        <button form="delete-comment{{ $item->id }}" type="submit"
+                                            onclick="return confirm('Deseas borrar este testimonio?')"
+                                            class="btn btn-link text-velvet ms-auto border-0" data-bs-toggle="tooltip"
+                                            data-bs-placement="bottom" title="Eliminar">
+                                            <i class="material-icons text-lg">delete</i>
+                                        </button>
+                                        <a class="btn btn-link text-velvet me-auto border-0"
+                                            href="{{ url('/comments/' . $item->id . '/edit') }}" data-bs-toggle="tooltip"
+                                            data-bs-placement="bottom" title="Editar">
+                                            <i class="material-icons text-lg">edit</i>
+                                        </a>
+                                    </td>
                                     <td class="w-50">
                                         <div class="d-flex px-2 py-1">
                                             <div>
@@ -86,6 +107,22 @@
                                     <td class="align-middle text-xxs text-center">
                                         <p class=" font-weight-bold mb-0">{{ $item->description }}</p>
                                     </td>
+                                    <td class="align-middle text-center">
+                                        <form name="formApprove{{ $item->id }}" id="formApprove" method="post"
+                                            action="{{ url('approve-comment/' . $item->id) }}" style="display:inline">
+                                            {{ csrf_field() }}
+                                            <label for="checkApprove">
+                                                <div class="form-check">
+                                                    <input type="hidden" name="id" value="{{ $item->id }}">
+                                                    <input id="checkApprove" class="form-check-input" type="checkbox"
+                                                        value="1" name="approve"
+                                                        onchange="submitForm('formApprove{{ $item->id }}')"
+                                                        {{ $item->approve == 1 ? 'checked' : '' }}>
+                                                </div>
+                                            </label>
+
+                                        </form>
+                                    </td>
                                     <td class="text-xxs">
                                         <div class="col">
                                             <div class="rated">
@@ -98,25 +135,7 @@
                                         </div>
                                     </td>
 
-                                    <td class="align-middle text-center">
-                                        <form name="delete-comment{{ $item->id }}"
-                                            id="delete-comment{{ $item->id }}" method="post"
-                                            action="{{ url('/delete-comments/' . $item->id) }}">
-                                            {{ csrf_field() }}
-                                            {{ method_field('DELETE') }}
-                                        </form>
-                                        <button form="delete-comment{{ $item->id }}" type="submit"
-                                            onclick="return confirm('Deseas borrar este testimonio?')"
-                                            class="btn btn-link text-velvet ms-auto border-0" data-bs-toggle="tooltip"
-                                            data-bs-placement="bottom" title="Eliminar">
-                                            <i class="material-icons text-lg">delete</i>
-                                        </button>
-                                        <a class="btn btn-link text-velvet me-auto border-0"
-                                            href="{{ url('/comments/' . $item->id . '/edit') }}" data-bs-toggle="tooltip"
-                                            data-bs-placement="bottom" title="Editar">
-                                            <i class="material-icons text-lg">edit</i>
-                                        </a>
-                                    </td>
+
                                 </tr>
                             @endforeach
                         </tbody>
@@ -130,6 +149,10 @@
 @section('script')
     <script src="{{ asset('js/image-error-handler.js') }}"></script>
     <script>
+        function submitForm(alias) {
+            var form = document.querySelector('form[name="' + alias + '"]');
+            form.submit();
+        }
         $(document).ready(function() {
             var dataTable = $('#comments').DataTable({
                 searching: true,

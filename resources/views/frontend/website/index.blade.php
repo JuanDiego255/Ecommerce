@@ -339,7 +339,7 @@
                 </div>
             </div>
         </div>
-    @endif
+    @endif    
     @switch($tenantinfo->kind_business)
         @case(1)
             @include('layouts.inc.indexfooter')

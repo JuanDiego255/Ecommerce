@@ -660,12 +660,12 @@ class FrontendController extends Controller
             OpenGraph::setDescription($tag->meta_og_description);
         }
 
-        $blogs = Blog::inRandomOrder()->orderBy('title','asc')
+        $blogs = Blog::inRandomOrder()->orderBy('title', 'asc')
             ->take(4)->get();
 
-            $comments = Testimonial::inRandomOrder()->orderBy('name','asc')
+        $comments = Testimonial::where('approve',1)->inRandomOrder()->orderBy('name', 'asc')
             ->get();
 
-        return view('frontend.website.index', compact('clothings', 'blogs','comments', 'social', 'category', 'sellers'));
+        return view('frontend.website.index', compact('clothings', 'blogs', 'comments', 'social', 'category', 'sellers'));
     }
 }

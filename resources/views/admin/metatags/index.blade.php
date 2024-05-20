@@ -6,11 +6,11 @@
 @section('content')
     <div class="container">
 
-        <h2 class="text-center font-title"><strong>Maneja las meta etiquetas desde acá</strong>
+        <h2 class="text-center font-title"><strong>{{ __('Gestiona los SEO Tools para posicionar su sitio web') }}</strong>
         </h2>
 
         <hr class="hr-servicios">
-        <a href="{{ url('metatag/agregar') }}" class="btn btn-velvet">Nueva Sección</a>
+        <a href="{{ url('metatag/agregar') }}" class="btn btn-velvet">{{ __('Nueva sección') }}</a>
         <div class="card mt-3 mb-3">
             <div class="card-body">
                 <div class="row w-100">
@@ -45,40 +45,29 @@
                         <thead class="">
                             <tr>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                    Sección</th>
+                                    {{ __('Acciones') }}</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                    Title
+                                    {{ __('Sección') }}</th>
+                                <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
+                                    {{ __('Title') }}
                                 </th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                    Meta
-                                    Keywords</th>
+                                    {{ __('Meta Keywords') }}</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                    OG
-                                    Title</th>
+                                    {{ __('OG Title') }}</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                    OG
-                                    Umage</th>
+                                    {{ __('OG Image') }}</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                    URL
-                                    Canonical</th>
+                                    {{ __('URL Canonical') }}</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                    Type
-                                </th>
-                                <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                    Acciones</th>
+                                    {{ __('Type') }}
+                                </th>                                
                             </tr>
                         </thead>
 
                         <tbody>
                             @foreach ($metatags as $tag)
                                 <tr>
-                                    <td class="align-middle text-center">{{ $tag->section }}</td>
-                                    <td class="align-middle text-center">{{ $tag->title }}</td>
-                                    <td class="align-middle text-center">{{ $tag->meta_keywords }}</td>
-                                    <td class="align-middle text-center">{{ $tag->meta_og_title }}</td>
-                                    <td class="align-middle text-center">{{ $tag->url_image_og }}</td>
-                                    <td class="align-middle text-center">{{ $tag->url_canonical }}</td>
-                                    <td class="align-middle text-center">{{ $tag->meta_type }}</td>
                                     <td class="align-middle">
                                         <center>
                                             <a data-bs-toggle="tooltip" data-bs-placement="top" title="Editar"
@@ -101,6 +90,13 @@
                                             </form>
                                         </center>
                                     </td>
+                                    <td class="align-middle text-center">{{ $tag->section }}</td>
+                                    <td class="align-middle text-center">{{ $tag->title }}</td>
+                                    <td class="align-middle text-center">{{ $tag->meta_keywords }}</td>
+                                    <td class="align-middle text-center">{{ $tag->meta_og_title }}</td>
+                                    <td class="align-middle text-center">{{ $tag->url_image_og }}</td>
+                                    <td class="align-middle text-center">{{ $tag->url_canonical }}</td>
+                                    <td class="align-middle text-center">{{ $tag->meta_type }}</td>                                  
                                 </tr>
                             @endforeach
                         </tbody>

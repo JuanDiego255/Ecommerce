@@ -6,7 +6,7 @@
 @section('content')
     <center>
         <h2 class="text-center font-title">
-            <strong>Administra los profesionales</strong>
+            <strong>{{ __('Gestiona los profesionales') }}</strong>
         </h2>
     </center>
     <div class="row w-50">
@@ -53,7 +53,7 @@
                                 <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Nombre') }}
                                 </th>                                
                                 <th class="text-center text-secondary font-weight-bolder opacity-7">
-                                    Acciones</th>
+                                    {{ __('Acciones') }}</th>
                             </tr>
                         </thead>
                         <tbody>

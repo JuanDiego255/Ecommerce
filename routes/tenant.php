@@ -206,6 +206,7 @@ Route::middleware([
             //Rutas para testimonios de los clientes
             Route::get('/comments/', [TestimonialController::class, 'indexAdmin']);
             Route::put('comments/{id}', [TestimonialController::class, 'update']);
+            Route::post('approve-comment/{id}', [TestimonialController::class, 'updateStatus']);
             Route::delete('delete-comments/{id}', [TestimonialController::class, 'destroy']);            
             Route::get('comments/{id}/edit', [TestimonialController::class, 'edit']);
             Route::get('comments/add', [TestimonialController::class, 'add']);

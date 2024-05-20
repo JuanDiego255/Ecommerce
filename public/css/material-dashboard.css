@@ -29097,11 +29097,14 @@ ul.menu-social li a[href*="twitter.com"] {
 }
 
 ul.menu-social li a[href*="instagram.com"] {
-  background-color: #ff7e56;
+  background-color: #FCC58D;
 }
 
 ul.menu-social li a[href*="wa.me"] {
   background-color: #a8d673;
+}
+ul.menu-social li a[href*="#"] {
+  background-color: #8DC1FC;
 }
 
 .social-sharing ul.menu-social li.newsletter span {
@@ -29140,6 +29143,10 @@ ul.menu-social li a[href*="wa.me"]::before {
 
 ul.menu-social li a[href*="blog/index"]::before {
   content: "\f02d";
+}
+
+ul.menu-social li a[href*="#"]::before {
+  content: "\f075";
 }
 
 .social-sharing ul.menu-social li.next a::before {
