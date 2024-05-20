@@ -9,6 +9,8 @@
         $descuento_mas_alto = max($descuentos);
     }
     $font_icon = '';
+    $logo = '';
+    $btnSize = '';
     switch ($tenantinfo->kind_business) {
         case 1:
             $font_icon = 'fas fa-car';
@@ -21,6 +23,16 @@
             break;
         default:
             $font_icon = 'fas fa-tshirt';
+            break;
+    }
+    switch ($tenantinfo->tenant) {
+        case "draharriscr":
+            $logo = 'logo-harris';
+            $btnSize = 'siteLink-harris';
+            break;        
+        default:
+            $logo = 'logo';
+            $btnSize = 'siteLink';
             break;
     }
 @endphp
@@ -201,14 +213,14 @@
     <div class="flexMain">
         <div class="flex2">
             <button
-                class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'whiteLink-mandi' : 'whiteLink' }} siteLink"
+                class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'whiteLink-mandi' : 'whiteLink' }} {{$btnSize}}"
                 id="btnMenu" style="color: var(--navbar_text); border-right:1px solid #eaeaea"
                 onclick="menuToggle()"><i class="fas fa-bars me-2"></i> MENU</button>
         </div>
         <div class="flex3 text-center" id="siteBrand">
             @if (isset($tenantinfo->show_logo) && $tenantinfo->show_logo != 0)
                 <a class="text-uppercase"
-                    href="{{ url('/') }}"><img class="logo" src="{{ route('file', $tenantinfo->logo) }}"
+                    href="{{ url('/') }}"><img class="{{$logo}}" src="{{ route('file', $tenantinfo->logo) }}"
                         alt=""></a>
             @else
                 <a class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'text-title-mandi' : 'text-title' }} text-uppercase"
@@ -219,16 +231,16 @@
         <div class="flex2 text-end d-block d-md-none">
             @guest
                 <a href="{{ route('login') }}"><button id="btnIngresar"
-                        class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'whiteLink-mandi' : 'whiteLink' }} siteLink"><i
+                        class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'whiteLink-mandi' : 'whiteLink' }} {{$btnSize}}"><i
                             style="color: var(--navbar_text);" class="fa fa-sign-in cartIcon"></i></button></a>
             @else
                 <a href="{{ url('buys') }}"><button id="btnIngresar"
-                        class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'whiteLink-mandi' : 'whiteLink' }} siteLink"><i
+                        class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'whiteLink-mandi' : 'whiteLink' }} {{$btnSize}}"><i
                             style="color: var(--navbar_text);" class="fa fa-credit-card cartIcon"></i></button></a>
             @endguest
 
             <button type="button" data-bs-toggle="modal" data-bs-target="#modalMiniCart"
-                class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'whiteLink-mandi' : 'whiteLink' }} siteLink"><i
+                class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'whiteLink-mandi' : 'whiteLink' }} {{$btnSize}}"><i
                     style="color: var(--navbar_text);" class="fa fa-shopping-cart cartIcon">
                     {{ $cartNumber }}</i></button>
         </div>
@@ -237,19 +249,19 @@
             @guest
                 <a href="{{ route('login') }}">
                     <button id="btnIngresarLogo"
-                        class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'whiteLink-mandi' : 'whiteLink' }} siteLink"
+                        class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'whiteLink-mandi' : 'whiteLink' }} {{$btnSize}}"
                         style="border-right:1px solid #eaeaea"><i class="fa fa-sign-in"></i> INGRESAR</button>
                 </a>
             @else
                 <a href="{{ url('buys') }}">
                     <button id="btnIngresarLogo"
-                        class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'whiteLink-mandi' : 'whiteLink' }} siteLink"
+                        class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'whiteLink-mandi' : 'whiteLink' }} {{$btnSize}}"
                         style="border-right:1px solid #eaeaea"><i class="fa fa-credit-card"></i> MIS COMPRAS</button>
                 </a>
             @endguest
             @if ($view_name != 'frontend_view-cart' && $view_name != 'frontend_checkout')
                 <button type="button" data-bs-toggle="modal" data-bs-target="#modalMiniCart"
-                    class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'blackLink-mandi' : 'blackLink' }} siteLink"><i
+                    class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'blackLink-mandi' : 'blackLink' }} {{$btnSize}}"><i
                         class="fa fa-shopping-cart"></i>
                     {{ 'CARRITO' }} <span
                         class="badge badge-sm badge-info text-pill border-pill text-xxs">{{ $cartNumber }}</span>
@@ -257,7 +269,7 @@
             @else
                 <a href="{{ url('checkout') }}">
                     <button
-                        class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'blackLink-mandi' : 'blackLink' }} siteLink"><i
+                        class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'blackLink-mandi' : 'blackLink' }} {{$btnSize}}"><i
                             class="fa fa-dollar"></i>
                         {{ $view_name == 'frontend_checkout' ? 'FINALIZAR PAGO' : 'IR A PAGAR' }}
                     </button>

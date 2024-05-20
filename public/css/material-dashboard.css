@@ -27994,9 +27994,24 @@ pre[class*="language-"] {
   flex: 3
 }
 
-.logo {
+.logo-car {
   height: 119px;
   width: 119px;
+}
+
+.logo-harris {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  height: 90px;
+  width: 90px;
+}
+
+button.siteLink-harris {
+  margin-left: -5px;
+  border: none;
+  padding: 30px;
+  display: inline-block;
+  min-width: 115px;
 }
 
 button.siteLink {

@@ -54,7 +54,7 @@
         <div class="flex3 text-center" id="siteBrand">
             @if (isset($tenantinfo->show_logo) && $tenantinfo->show_logo != 0)
                 <a class="text-uppercase"
-                    href="{{ url('/') }}"><img class="logo" src="{{ route('file', $tenantinfo->logo) }}"
+                    href="{{ url('/') }}"><img class="logo-car" src="{{ route('file', $tenantinfo->logo) }}"
                         alt=""></a>
             @else
                 <a class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'text-title-mandi' : 'text-title' }} text-uppercase"
@@ -97,7 +97,7 @@
             <a href="{{ url('#best-car') }}"><button
                     class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'blackLink-mandi' : 'blackLink' }} siteLink-car"><i
                         class="fas fa-car-side"></i>
-                    OFERTA DEL MES
+                    OFERTA MES
                 </button>
             </a>
 
