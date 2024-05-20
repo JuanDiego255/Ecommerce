@@ -19,7 +19,7 @@
                 data-action="share/whatsapp/share"><span class="screen-reader-text">Whatsapp</span></a></li>
         <li class="social-item newsletter"><a data-bs-toggle="tooltip" data-bs-placement="top" title="Blog" target="blank" href="{{ url('blog/index') }}"
                 data-action="share/whatsapp/share"><span class="screen-reader-text">Whatsapp</span></a></li>
-        <li class="social-item"><a data-bs-toggle="tooltip" data-bs-placement="top" title="Añadir comentario" type="button"
+        <li class="social-item"><a type="button"
                 data-bs-toggle="modal" data-bs-target="#add-comment-modal" href="#"
                 data-action="share/whatsapp/share"><span class="screen-reader-text">Whatsapp</span></a></li>
     </ul>
