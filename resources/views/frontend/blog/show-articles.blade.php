@@ -164,7 +164,7 @@
                         <h1 class="text-title">{{ $blog->name }}</h1>
                         {!! $blog->personal_body !!}
 
-                        <a class="btn btn-icon btn-3 mt-2 btn-add_to_cart" href="#">
+                        <a class="btn btn-icon btn-3 mt-2 btn-add_to_cart" href="{{ url('https://wa.me/506' . $tenantinfo->whatsapp) }}">
                             <span class="btn-inner--icon"><i class="material-icons">calendar_month</i></span>
                             <span class="btn-inner--text">{{ __('Contactar') }}</span>
                         </a>
