@@ -301,7 +301,7 @@
     @if (count($comments) != 0)
         <hr class="dark horizontal text-danger my-0">
         <div class="mt-3 mb-5">
-            <div class="container-fluid">
+            <div class="container">
                 <div class="text-center">
                     <h3 class="text-center text-muted mt-5 mb-3">Testimonios de nuestros clientes</h3>
                 </div>

@@ -174,11 +174,8 @@
             </div>
         </div>
     @endif
-
     {{-- salto de pagina --}}
-    <div class="{{ $tenantinfo->kind_business == 3 ? 'd-block' : 'd-none' }}" style="height: 75px;">
-
-    </div>
+    <div class="{{ $tenantinfo->kind_business == 3 ? 'd-block' : 'd-none' }}" style="height: 75px;"></div>
     {{-- Carousel de resultados --}}
     @if (count($results) != 0)
         <div class="mt-5 bg-white">
@@ -200,13 +197,12 @@
                                                     class="add-to-cart">{{ __('Detallar') }}</a>
                                             </div>
                                             <div class="product-content">
-                                                <h3
-                                                    class="text-muted text-uppercase">
+                                                <h3 class="text-muted text-uppercase">
                                                     {{ __('Antes') }}
-                                                </h3>                                              
+                                                </h3>
                                             </div>
                                         </div>
-                                    </div>                                   
+                                    </div>
                                 </div>
                                 <div class="carousel-item">
                                     <div class="item">
@@ -217,13 +213,12 @@
                                                     class="add-to-cart">{{ __('Detallar') }}</a>
                                             </div>
                                             <div class="product-content">
-                                                <h3
-                                                    class="text-muted text-uppercase">
+                                                <h3 class="text-muted text-uppercase">
                                                     {{ __('Después') }}
-                                                </h3>                                              
+                                                </h3>
                                             </div>
                                         </div>
-                                    </div>           
+                                    </div>
                                 </div>
                             </div>
 
@@ -244,6 +239,50 @@
         {{-- salto de pagina --}}
         <div class="{{ $tenantinfo->kind_business == 3 ? 'd-block' : 'd-none' }}" style="height: 75px;">
 
+        </div>
+    @endif
+    {{-- Comentarios --}}
+    @if (count($comments) != 0)
+        <div class="bg-gray-light">
+            <div class="mt-3 mb-5 pt-1 pb-5">
+                <div class="container">
+                    <div class="text-center">
+                        <h3 class="text-center text-title mt-5 mb-3">Testimonios de nuestros clientes</h3>
+                    </div>
+
+                    <div class="row">
+                        <div class="owl-carousel featured-carousel owl-theme">
+                            @foreach ($comments as $item)
+                                <div class="item">
+                                    <div>
+                                        <div class="card text-center">
+                                            <img class="card-img-top"
+                                                @if ($item->image) src="{{ route('file', $item->image) }}"
+                                             
+                                         @else
+                                         src="{{ url('images/sin-foto.PNG') }}" @endif
+                                                src="{{ url('images/sin-foto.PNG') }}" alt="">
+                                            <div class="card-body">
+                                                <h5>{{ $item->name }}
+                                                </h5>
+                                                <div class="rated text-center">
+                                                    @for ($i = 1; $i <= $item->stars; $i++)
+                                                        {{-- <input type="radio" id="star{{$i}}" class="rate" name="rating" value="5"/> --}}
+                                                        <label class="star-rating-complete"
+                                                            title="text">{{ $i }}
+                                                            stars</label>
+                                                    @endfor
+                                                </div>
+                                                <p class="card-text">“{{ $item->description }}” </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     @endif
     {{-- antoher blogs --}}
@@ -294,4 +333,23 @@
 @endsection
 @section('scripts')
     <script src="{{ asset('js/image-error-handler.js') }}"></script>
+    <script>
+        $('.featured-carousel').owlCarousel({
+            loop: true,
+            margin: 10,
+
+            dots: false,
+            responsive: {
+                0: {
+                    items: 1
+                },
+                600: {
+                    items: 3
+                },
+                1000: {
+                    items: 4
+                }
+            }
+        })
+    </script>
 @endsection

@@ -9,6 +9,7 @@ use App\Models\MedicineResult;
 use App\Models\MetaTags;
 use App\Models\PersonalUser;
 use App\Models\TenantInfo;
+use App\Models\Testimonial;
 use Artesaos\SEOTools\Facades\OpenGraph;
 use Artesaos\SEOTools\Facades\SEOMeta;
 use DateTime;
@@ -33,7 +34,7 @@ class BlogController extends Controller
      */
     public function index(Request $request)
     {
-        $blogs = Blog::orderBy('title','asc')->simplePaginate(8);
+        $blogs = Blog::orderBy('title', 'asc')->simplePaginate(8);
         $tags = MetaTags::where('section', 'Blog')->get();
         foreach ($tags as $tag) {
             SEOMeta::setTitle($tag->title);
@@ -95,8 +96,9 @@ class BlogController extends Controller
         $another_blogs = Blog::where('id', '!=', $id)->inRandomOrder()->take(4)->get();
         $fecha_post = $blog->fecha_post;
         $cards = CardBlog::where('blog_id', $id)->take(4)->get();
+        $comments = Testimonial::where('approve', 1)->inRandomOrder()->orderBy('name', 'asc')
+            ->get();
         $results = MedicineResult::where('blog_id', $id)->take(9)->get();
-
         $tags = DB::table('article_blogs')
             ->where('blog_id', $id)->join('blogs', 'article_blogs.blog_id', 'blogs.id')
             ->select(
@@ -131,7 +133,7 @@ class BlogController extends Controller
         }
         $fecha_letter = $dia_event . ' de ' . $name_month_event . ' del ' . $anio_event;
 
-        return view('frontend.blog.show-articles', compact('tags', 'cards','results', 'another_blogs', 'id', 'fecha_letter', 'blog'));
+        return view('frontend.blog.show-articles', compact('tags','comments', 'cards', 'results', 'another_blogs', 'id', 'fecha_letter', 'blog'));
     }
     /**
 
@@ -295,7 +297,7 @@ class BlogController extends Controller
                 'personal_users.name as name'
             )
             ->findOrfail($id);
-        return view('admin.blog.edit', compact('blog','profesionals'));
+        return view('admin.blog.edit', compact('blog', 'profesionals'));
     }
     /**
 
