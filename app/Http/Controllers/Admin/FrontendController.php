@@ -85,7 +85,9 @@ class FrontendController extends Controller
                     'clothing.description',
                     'clothing.price',
                     'clothing.mayor_price',
-                )->orderBy('clothing.name', 'asc')
+                )->orderByRaw('CASE WHEN clothing.casa IS NOT NULL AND clothing.casa != "" THEN 0 ELSE 1 END')
+                ->orderBy('clothing.casa', 'asc')
+                ->orderBy('clothing.name', 'asc')                
                 ->take(15)
                 ->get();
         });
@@ -155,7 +157,9 @@ class FrontendController extends Controller
                     'clothing.price',
                     'clothing.mayor_price',
                 )
-                ->orderBy('clothing.name', 'asc')
+                ->orderByRaw('CASE WHEN clothing.casa IS NOT NULL AND clothing.casa != "" THEN 0 ELSE 1 END')
+                ->orderBy('clothing.casa', 'asc')
+                ->orderBy('clothing.name', 'asc')                
                 ->take(8)
                 ->get();
         });
@@ -263,7 +267,9 @@ class FrontendController extends Controller
                     DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
                 )
                 ->groupBy('clothing.id', 'clothing.casa', 'clothing.mayor_price', 'categories.name', 'clothing.discount', 'clothing.name', 'clothing.description', 'clothing.price', 'product_images.image')
-                ->orderBy('clothing.name', 'asc')
+                ->orderByRaw('CASE WHEN clothing.casa IS NOT NULL AND clothing.casa != "" THEN 0 ELSE 1 END')
+                ->orderBy('clothing.casa', 'asc')
+                ->orderBy('clothing.name', 'asc')                
                 ->simplePaginate(20);
         });
 
@@ -350,7 +356,10 @@ class FrontendController extends Controller
                     'clothing.description',
                     'clothing.price',
                     'clothing.mayor_price',
-                )->orderBy('clothing.name', 'asc')
+                )
+                ->orderByRaw('CASE WHEN clothing.casa IS NOT NULL AND clothing.casa != "" THEN 0 ELSE 1 END')
+                ->orderBy('clothing.casa', 'asc')
+                ->orderBy('clothing.name', 'asc')                
                 ->take(15)
                 ->get();
         });
@@ -384,7 +393,9 @@ class FrontendController extends Controller
                 DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
             )
             ->groupBy('clothing.id', 'clothing.can_buy', 'clothing.casa', 'departments.id', 'departments.department', 'clothing.mayor_price', 'clothing.discount', 'categories.name', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
-            ->orderBy('clothing.name', 'asc')
+            ->orderByRaw('CASE WHEN clothing.casa IS NOT NULL AND clothing.casa != "" THEN 0 ELSE 1 END')
+            ->orderBy('clothing.casa', 'asc')
+            ->orderBy('clothing.name', 'asc')            
             ->get();
         //$clothes = ClothingCategory::where('id', $id)->get();
         $size_active = SizeCloth::where('clothing_id', $id)
@@ -447,7 +458,9 @@ class FrontendController extends Controller
                 DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
             )
             ->groupBy('clothing.id', 'clothing.casa', 'clothing.mayor_price', 'clothing.discount', 'categories.name', 'categories.id', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
-            ->orderBy('clothing.name', 'asc')
+            ->orderByRaw('CASE WHEN clothing.casa IS NOT NULL AND clothing.casa != "" THEN 0 ELSE 1 END')
+            ->orderBy('clothing.casa', 'asc')
+            ->orderBy('clothing.name', 'asc')            
             ->inRandomOrder()
             ->take(8)
             ->get();
@@ -459,10 +472,10 @@ class FrontendController extends Controller
                 break;
             case (2):
             case (3):
-                return view('frontend.website.detail-clothing', compact('clothes','default_size', 'category_id', 'size_active', 'clothings_trending'));
+                return view('frontend.website.detail-clothing', compact('clothes', 'default_size', 'category_id', 'size_active', 'clothings_trending'));
                 break;
             default:
-                return view('frontend.detail-clothing', compact('clothes','default_size', 'category_id', 'size_active', 'clothings_trending'));
+                return view('frontend.detail-clothing', compact('clothes', 'default_size', 'category_id', 'size_active', 'clothings_trending'));
         }
     }
 
@@ -560,7 +573,7 @@ class FrontendController extends Controller
         }
 
         $blogs = Blog::inRandomOrder()
-        ->take(4)->get();
+            ->take(4)->get();
 
         return view('frontend.carsale.index', compact('clothings', 'blogs', 'social', 'category', 'sellers'));
     }
@@ -647,7 +660,7 @@ class FrontendController extends Controller
         }
 
         $blogs = Blog::inRandomOrder()
-        ->take(4)->get();
+            ->take(4)->get();
 
         return view('frontend.website.index', compact('clothings', 'blogs', 'social', 'category', 'sellers'));
     }
