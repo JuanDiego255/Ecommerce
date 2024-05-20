@@ -130,7 +130,7 @@
 
         </div>
     @endif
-
+    {{-- Trending --}}
     @if (isset($tenantinfo->show_trending) && $tenantinfo->show_trending == 1)
         @if (count($clothings) != 0)
             <div class="container-fluid mb-5 offer">
@@ -154,7 +154,20 @@
                                         <img class="pic-2" src="{{ route('file', $item->image) }}">
 
                                     </a>
-                                    <span class="product-hot-label">{{ $item->name }}</span>
+                                    <span class="product-hot-label">{{ $item->name }} @if ($item->can_buy == 1)
+                                            <s class="text-danger">{{ $item->total_stock > 0 ? '' : 'Agotado' }}</s>
+                                        @endif
+                                    </span>
+                                    @if ($item->can_buy == 1)
+                                        @if (isset($tenantinfo->show_stock) && $tenantinfo->show_stock != 0)
+                                            <h4 class="title">Stock: @if ($item->total_stock > 0)
+                                                    {{ $item->total_stock }}
+                                                @else
+                                                    <s class="text-danger">{{ $item->total_stock > 0 ? '' : '0' }}</s>
+                                                @endif
+                                            </h4>
+                                        @endif
+                                    @endif
                                     <ul class="product-links-offer">
                                         <li><a href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}"
                                                 data-tip="Detallar"><i class="fa fa-eye"></i></a></li>
@@ -166,8 +179,6 @@
                                         href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}">
                                         <i class="fas fa-plus"></i>Detallar
                                     </a>
-
-
                                     @php
                                         $precio = $item->price;
                                         if (isset($tenantinfo->custom_size) && $tenantinfo->custom_size == 1) {
@@ -193,7 +204,6 @@
 
                                         </a>
                                     </h3>
-
                                 </div>
                             </div>
                         </div>
@@ -339,7 +349,7 @@
                 </div>
             </div>
         </div>
-    @endif    
+    @endif
     @switch($tenantinfo->kind_business)
         @case(1)
             @include('layouts.inc.indexfooter')

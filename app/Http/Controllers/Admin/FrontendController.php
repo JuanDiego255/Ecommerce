@@ -257,6 +257,7 @@ class FrontendController extends Controller
                     'clothing.id as id',
                     'clothing.name as name',
                     'clothing.casa as casa',
+                    'clothing.can_buy as can_buy',
                     'clothing.discount as discount',
                     'clothing.description as description',
                     'clothing.price as price',
@@ -267,7 +268,7 @@ class FrontendController extends Controller
                     DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'), // Obtener stock por talla
                     DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
                 )
-                ->groupBy('clothing.id', 'clothing.casa', 'clothing.mayor_price', 'categories.name', 'clothing.discount', 'clothing.name', 'clothing.description', 'clothing.price', 'product_images.image')
+                ->groupBy('clothing.id','clothing.can_buy', 'clothing.casa', 'clothing.mayor_price', 'categories.name', 'clothing.discount', 'clothing.name', 'clothing.description', 'clothing.price', 'product_images.image')
                 ->orderByRaw('CASE WHEN clothing.casa IS NOT NULL AND clothing.casa != "" THEN 0 ELSE 1 END')
                 ->orderBy('clothing.casa', 'asc')
                 ->orderBy('clothing.name', 'asc')
@@ -599,6 +600,7 @@ class FrontendController extends Controller
                     'categories.id as category_id',
                     'clothing.id as id',
                     'clothing.trending as trending',
+                    'clothing.can_buy as can_buy',
                     'clothing.discount as discount',
                     'clothing.name as name',
                     'clothing.casa as casa',
@@ -613,6 +615,7 @@ class FrontendController extends Controller
                 ->groupBy(
                     'clothing.id',
                     'categories.name',
+                    'clothing.can_buy',
                     'clothing.casa',
                     'categories.id',
                     'clothing.name',

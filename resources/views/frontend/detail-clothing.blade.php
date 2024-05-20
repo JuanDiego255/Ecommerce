@@ -135,7 +135,7 @@
                                                 <span class="text-success ms-2">In stock</span>
                                             @endif
                                         @else
-                                            <span class="text-success ms-2">Not stock</span>
+                                            <s class="text-danger"><span class="text-danger ms-2">Agotado</span></s>
                                         @endif
 
                                     </div>

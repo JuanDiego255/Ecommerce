@@ -42,7 +42,7 @@
         @if (count($categories) != 0)
             <div class="row g-4 align-content-center card-group container-fluid mt-2 mb-5">
                 @foreach ($category as $key => $item)
-                    <div class="{{$key+1 > 3 ? 'col-md-3' : 'col-md-4'}} col-sm-6 mb-2">
+                    <div class="{{ $key + 1 > 3 ? 'col-md-3' : 'col-md-4' }} col-sm-6 mb-2">
                         <div class="product-grid product_data">
                             <div class="product-image">
                                 <img src="{{ route('file', $item->image) }}">
@@ -53,7 +53,7 @@
                                 <a href="{{ url('clothes-category/' . $item->category_id . '/' . $item->department_id) }}"
                                     class="add-to-cart">{{ $item->name }}</a>
                             </div>
-                            
+
                         </div>
                     </div>
                 @endforeach
@@ -101,76 +101,73 @@
                 <div class="row">
                     <div class="owl-carousel featured-carousel owl-theme">
                         @foreach ($clothings as $item)
-                            @if ($item->total_stock != 0)
-                                <div class="item">
-                                    <div class="product-grid product_data">
-                                        <div class="product-image">
-                                            <img src="{{ route('file', $item->image) }}">
-                                            @if ($item->discount)
-                                                <span class="product-discount-label">-{{ $item->discount }}%</span>
-                                            @endif
-                                            <ul class="product-links">
-                                                <li><a target="blank"
-                                                        href="{{ tenant_asset('/') . '/' . $item->image }}"><i
-                                                            class="fas fa-eye"></i></a></li>
-                                            </ul>
-                                            <a href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}"
-                                                class="add-to-cart">Detallar</a>
-                                        </div>
-                                        <div class="product-content">
-                                            <h3
-                                                class="text-muted text-uppercase {{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'd-none' : '' }}">
-                                                {{ $item->casa }}
-                                            </h3>
-                                            <h3
-                                                class="{{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'text-muted' : 'title-frags' }}">
-                                                <a
-                                                    href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}">{{ $item->name }}</a>
-                                            </h3>
-                                            @if (isset($tenantinfo->show_stock) && $tenantinfo->show_stock != 0)
-                                                <h4 class="title">Stock: {{ $item->total_stock }}</h4>
-                                            @endif
-
-                                            @php
-
-                                                $precio = $item->price;
-                                                if (isset($tenantinfo->custom_size) && $tenantinfo->custom_size == 1) {
-                                                    $precio = $item->first_price;
-                                                }
-                                                if (
-                                                    Auth::check() &&
-                                                    Auth::user()->mayor == '1' &&
-                                                    $item->mayor_price > 0
-                                                ) {
-                                                    $precio = $item->mayor_price;
-                                                }
-                                                $descuentoPorcentaje = $item->discount;
-                                                // Calcular el descuento
-                                                $descuento = ($precio * $descuentoPorcentaje) / 100;
-                                                // Calcular el precio con el descuento aplicado
-                                                $precioConDescuento = $precio - $descuento;
-                                            @endphp
-                                            <div class="price">₡{{ number_format($precioConDescuento) }}
-                                                @if ($item->discount)
-                                                    <s class="text-danger"><span
-                                                            class="text-danger">₡{{ number_format(Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0 ? $item->mayor_price : $item->price) }}
-                                                        </span></s>
+                            <div class="item">
+                                <div class="product-grid product_data">
+                                    <div class="product-image">
+                                        <img src="{{ route('file', $item->image) }}">
+                                        @if ($item->discount)
+                                            <span class="product-discount-label">-{{ $item->discount }}%</span>
+                                        @endif
+                                        <ul class="product-links">
+                                            <li><a target="blank" href="{{ tenant_asset('/') . '/' . $item->image }}"><i
+                                                        class="fas fa-eye"></i></a></li>
+                                        </ul>
+                                        <a href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}"
+                                            class="add-to-cart">Detallar</a>
+                                    </div>
+                                    <div class="product-content">
+                                        <h3
+                                            class="text-muted text-uppercase {{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'd-none' : '' }}">
+                                            {{ $item->casa }}
+                                        </h3>
+                                        <h3
+                                            class="{{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'text-muted' : 'title-frags' }}">
+                                            <a href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}">{{ $item->name }}<s
+                                                    class="text-danger">{{ $item->total_stock > 0 ? '' : ' Agotado' }}</s></a>
+                                        </h3>
+                                        @if (isset($tenantinfo->show_stock) && $tenantinfo->show_stock != 0)
+                                            <h4 class="title">Stock: @if ($item->total_stock > 0)
+                                                    {{ $item->total_stock }}
+                                                @else
+                                                    <s class="text-danger">{{ $item->total_stock > 0 ? '' : '0' }}</s>
                                                 @endif
-                                            </div>
+                                            </h4>
+                                        @endif
+
+                                        @php
+
+                                            $precio = $item->price;
+                                            if (isset($tenantinfo->custom_size) && $tenantinfo->custom_size == 1) {
+                                                $precio = $item->first_price;
+                                            }
+                                            if (Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0) {
+                                                $precio = $item->mayor_price;
+                                            }
+                                            $descuentoPorcentaje = $item->discount;
+                                            // Calcular el descuento
+                                            $descuento = ($precio * $descuentoPorcentaje) / 100;
+                                            // Calcular el precio con el descuento aplicado
+                                            $precioConDescuento = $precio - $descuento;
+                                        @endphp
+                                        <div class="price">₡{{ number_format($precioConDescuento) }}
+                                            @if ($item->discount)
+                                                <s class="text-danger"><span
+                                                        class="text-danger">₡{{ number_format(Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0 ? $item->mayor_price : $item->price) }}
+                                                    </span></s>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>
-                            @endif
+                            </div>
                         @endforeach
                     </div>
                 </div>
             </div>
         </div>
     @endif
-
-    <hr class="dark horizontal text-danger mb-3">
     {{-- Offer --}}
     @if (count($clothings_offer) != 0)
+        <hr class="dark horizontal text-danger mb-3">
         <div class="container-fluid mb-5 offer">
             <div class="text-center">
                 <h3 class="text-center text-muted mt-5 mb-4">
@@ -247,8 +244,8 @@
         <hr class="dark horizontal text-danger mb-3">
     @endif
     {{-- Insta --}}
-    <hr class="text-dark">
     @if (isset($tenantinfo->show_insta) && $tenantinfo->show_insta == 1)
+        <hr class="text-dark">
         <div class="text-center">
             <span class="text-muted text-center"><a href="{{ isset($instagram) ? $instagram : '' }}">Instagram</a> |
                 {{ isset($tenantinfo->title_instagram) ? $tenantinfo->title_instagram : '' }}</span>
@@ -278,7 +275,7 @@
 
         </div>
     @endif
-
+    {{-- Mision --}}
     @if (isset($tenantinfo->show_mision) && $tenantinfo->show_mision == 1)
         <div class="bg-footer p-3 mb-3 text-center">
             <h3
