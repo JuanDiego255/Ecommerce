@@ -36,7 +36,6 @@
     </div>
     {{-- blog principal --}}
     <div class="mt-5 bg-white">
-
         <div class="container pt-3 pb-5">
             <div class="row mt-5">
                 <div class="col-md-8 mb-2">
@@ -163,8 +162,8 @@
                     <div class="col-md-8 mb-2">
                         <h1 class="text-title">{{ $blog->name }}</h1>
                         {!! $blog->personal_body !!}
-
-                        <a class="btn btn-icon btn-3 mt-2 btn-add_to_cart" href="{{ url('https://wa.me/506' . $tenantinfo->whatsapp) }}">
+                        <a class="btn btn-icon btn-3 mt-2 btn-add_to_cart"
+                            href="{{ url('https://wa.me/506' . $tenantinfo->whatsapp) }}">
                             <span class="btn-inner--icon"><i class="material-icons">calendar_month</i></span>
                             <span class="btn-inner--text">{{ __('Contactar') }}</span>
                         </a>
@@ -240,6 +239,26 @@
         <div class="{{ $tenantinfo->kind_business == 3 ? 'd-block' : 'd-none' }}" style="height: 75px;">
 
         </div>
+    @endif
+    {{-- Video --}}
+    @if ($blog->video_url)
+        <div class="mt-2 bg-white">
+            <div class="container pt-3 pb-5 text-center">
+                <div class="text-center">
+                    <h1 class="text-center text-title mb-1 pt-3">Video explicativo</h1>
+                </div>
+                <center>
+                    <div class="mt-3 mb-3" style="width: 90%; height: 90%; overflow: hidden;">
+                        <iframe style="width: 100%; height: 100%;" src="{{ $blog->video_url }}" title="YouTube video player"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                    </div>
+                </center>               
+            </div>
+        </div>
+         {{-- salto de pagina --}}
+         <div class="{{ $tenantinfo->kind_business == 3 ? 'd-block' : 'd-none' }}" style="height: 75px;"></div>
     @endif
     {{-- Comentarios --}}
     @if (count($comments) != 0)

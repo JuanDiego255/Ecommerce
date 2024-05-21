@@ -80,6 +80,7 @@ class BlogController extends Controller
                 'blogs.id as id',
                 'blogs.body as body',
                 'blogs.image as image',
+                'blogs.video_url as video_url',
                 'blogs.title as title',
                 'blogs.image as image',
                 'blogs.horizontal_images as horizontal_images',
@@ -217,6 +218,7 @@ class BlogController extends Controller
         $blog['title_optional'] = $title_optional;
         $blog['personal_id'] = $request->personal_id == "0" ? null : $request->personal_id;
         $blog['autor'] = $auth;
+        $blog['video_url'] = $request->video_url;
         $blog['name_url'] = $name_url;
         $blog['fecha_post'] = $datetoday;
 
@@ -292,6 +294,7 @@ class BlogController extends Controller
                 'blogs.autor as autor',
                 'blogs.fecha_post as fecha_post',
                 'blogs.name_url as name_url',
+                'blogs.video_url as video_url',
                 'blogs.title_optional as title_optional',
                 'personal_users.id as personal_id',
                 'personal_users.name as name'
@@ -348,6 +351,7 @@ class BlogController extends Controller
         }
         $name_url_mod = str_replace(" ", "-", $request->name_url);
         $blog->name_url = $name_url_mod;
+        $blog->video_url = $request->video_url;
         $blog->title = $request->title;
         $blog->title_optional = $request->title_optional;
         $blog->personal_id = $request->personal_id == "0" ? null : $request->personal_id;
