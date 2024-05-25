@@ -40,22 +40,9 @@
                     <table id="buysDetails" class="table align-items-center mb-0">
                         <thead>
                             <tr>
-                                <th class="text-uppercase text-secondary font-weight-bolder opacity-7">Imagen</th>
+                                <th class="text-uppercase text-secondary font-weight-bolder opacity-7">Artículo</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                    Artículo</th>
-                                <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7 {{isset($tenantinfo->manage_size) && $tenantinfo->manage_size == 0 ? 'd-none' : ''}}">
-                                    Talla</th>
-                                <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                    Precio @if ($iva > 0)
-                                        + IVA
-                                    @endif
-                                </th>
-                                @if ($iva > 0)
-                                    <th
-                                        class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                        IVA</th>
-                                @endif
-
+                                    Atributos</th>                  
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                     Pedido</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
@@ -67,33 +54,43 @@
                         </thead>
                         <tbody>
                             @foreach ($buysDetails as $buy)
+                                @php
+                                    $attributesValues = explode(', ', $buy->attributes_values);
+                                @endphp
                                 <tr>
-                                    <td>
+                                    <td class="w-50">
                                         <div class="d-flex px-2 py-1">
                                             <div>
                                                 <a target="blank" data-fancybox="gallery"
                                                     href="{{ route('file', $buy->image) }}">
                                                     <img src="{{ route('file', $buy->image) }}"
-                                                        class="text-center img-fluid shadow border-radius-lg w-25">
+                                                        class="avatar avatar-md me-3">
                                                 </a>
                                             </div>
-                                        </div>
-                                    </td>
-                                    <td class="align-middle text-xxs text-center">
-                                        <p class=" font-weight-bold mb-0">{{ $buy->name }}</p>
-                                    </td>
-                                    <td class="align-middle text-xxs text-center {{isset($tenantinfo->manage_size) && $tenantinfo->manage_size == 0 ? 'd-none' : ''}}">
-                                        <p class=" font-weight-bold mb-0">{{ $buy->size }}</p>
-                                    </td>
-                                    <td class="align-middle text-xxs text-center">
-                                        <p class=" font-weight-bold mb-0">₡{{ number_format($buy->total) }}</p>
-                                    </td>
-                                    @if ($iva > 0)
-                                        <td class="align-middle text-xxs text-center">
-                                            <p class=" font-weight-bold mb-0">₡{{ number_format($buy->iva) }}</p>
-                                        </td>
-                                    @endif
+                                            <div class="d-flex flex-column justify-content-center">
+                                                <h4 class="mb-0 text-lg">{{ $buy->name }}</h4>
+                                                <p class="mb-0 mt-0 text-sm text-info">
+                                                    Precio: ₡{{ number_format($buy->total) }}<br>
+                                                    @if ($iva > 0)
+                                                    I.V.A: ₡{{ number_format($buy->iva) }}
+                                                    @endif
+                                                </p>                                               
 
+                                            </div>
+                                        </div>
+                                    </td>      
+                                    <td class="align-middle text-center text-sm">
+                                        <p class=" font-weight-bold mb-0">
+                                            @foreach ($attributesValues as $attributeValue)
+                                                @php
+                                                    // Separa el atributo del valor por ": "
+                                                    [$attribute, $value] = explode(': ', $attributeValue);
+                                                @endphp
+
+                                                {{ $attribute }}: {{ $value }}<br>
+                                            @endforeach
+                                        </p>
+                                    </td>    
                                     <td class="align-middle text-xxs text-center">
                                         <p class=" font-weight-bold mb-0">
                                             @switch($buy->cancel_item)
@@ -113,32 +110,6 @@
                                     <td class="align-middle text-xxs text-center">
                                         <p class=" font-weight-bold mb-0">{{ $buy->quantity }}</p>
                                     </td>
-
-                                    {{-- <td class="align-middle">
-                                        <center>
-
-                                            <form method="post"
-                                                action="{{ url('/cancel/buy-item/' . $buy->buy_id . '/' . $buy->cancel_item) }}"
-                                                style="display:inline">
-                                                {{ csrf_field() }}
-
-                                                <input type="hidden" name="buy" value="{{ $buy->buy }}">
-
-                                                <button @if ($buy->cancel_item != 0 || $buy->approved != 0) disabled @endif type="submit"
-                                                    data-bs-toggle="modal"
-                                                    onclick="return confirm('Deseas cancelar este artículo?')"
-                                                    class="btn btn-velvet" style="text-decoration: none;">
-                                                    @if ($buy->cancel_item != 0)
-                                                        Cancelada
-                                                    @else
-                                                        Cancelar
-                                                    @endif
-                                                </button>
-                                            </form>
-                                        </center>
-
-                                    </td>
- --}}
                                 </tr>
                             @endforeach
                         </tbody>

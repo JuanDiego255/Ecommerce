@@ -120,11 +120,9 @@
             $(document).ready(function() {
                 $(document).on('click', '.btnQuantity', function(e) {
                     e.preventDefault();
-
-                    var cloth_id = $(this).closest('.py-3.border-bottom').find('.prod_id').val();
+                    
                     var quantity = $(this).val();
-                    var price = $(this).closest('.py-3.border-bottom').find('.price').val();
-                    var size_id = $(this).closest('.py-3.border-bottom').find('.size_id').val();
+                    var itemId = $(this).data('cart-id');
 
                     $.ajaxSetup({
                         headers: {
@@ -136,9 +134,8 @@
                         method: "POST",
                         url: "/edit-quantity",
                         data: {
-                            'clothing_id': cloth_id,
                             'quantity': quantity,
-                            'size': size_id,
+                            'cart_id': itemId,
                         },
                         success: function(response) {
                             calcularTotal();
@@ -150,7 +147,6 @@
                     e.preventDefault();
 
                     var itemId = $(this).data('item-id');
-                    var sizeId = $(this).data('size-id');
                     let view_name = document.getElementById("view_name").value;
 
                     $.ajax({
@@ -159,7 +155,6 @@
                         data: {
                             _token: '{{ csrf_token() }}',
                             _method: 'DELETE',
-                            size_id: sizeId
                         },
                         success: function(response) {
                             getCart();
@@ -177,8 +172,6 @@
                     });
                 });
             });
-
-
 
             function calcularTotal() {
                 let total = 0;
@@ -245,10 +238,18 @@
                             // Calcular el precio con el descuento aplicado
                             var precioConDescuento = precio - descuento;
                             var imageUrl = imageBaseUrl + '/' + item.image;
+
+                            // Separar los atributos y valores
+                            var attributesValues = item.attributes_values.split(', ');
+                            var attributesHtml = attributesValues.map(function(attributeValue) {
+                                var [attribute, value] = attributeValue.split(': ');
+                                return `${attribute}: ${value}<br>`;
+                            }).join('');
+
                             var listItem = `<li class="py-3 border-bottom">
                                 <input type="hidden" name="prod_id" value="${item.id}" class="prod_id">
                                 <input type="hidden" class="price" value="${item.discount > 0 ? precioConDescuento : (item.mayor_price > 0 ? item.mayor_price : (item.stock_price ? item.stock_price : item.price))}">
-                                <input type="hidden" value="${item.size_id}" class="size_id" name="size">
+                         
                                 <input type="hidden" value="${descuento}" class="discount" name="discount">
                                 <div class="row align-items-center">
                                     <div class="col-4">
@@ -258,23 +259,21 @@
                                     </div>
                                     <div class="col-8">
                                         <p class="mb-2">
-                                            <a class="text-muted fw-500" href="#">${item.name}</a>
-                                            <span class="m-0 text-dark w-100 d-block ${item.manage_size == 0 ? 'd-none' : ''}">
-                                                ${item.manage_size == 0 ? 'd-none' : ''}
-                                                ${item.tenant != 'fragsperfumecr' ? 'Talla: ' : 'Tamaño: '}
-                                                ${item.size}
+                                            <a class="text-muted fw-500" href="#">${item.name}</a>                                            
+                                            <span class="m-0 text-muted w-100 d-block">₡${item.discount > 0 ? precioConDescuento : (item.mayor_price > 0 ? item.mayor_price : (item.stock_price ? item.stock_price : item.price))}</span>
+                                            <span class="m-0 text-muted w-100 d-block">
+                                                Atributos
                                             </span>
-                                            <span class="m-0 text-muted w-100 d-block">₡${item.discount > 0 ? item.precioConDescuento : (item.mayor_price > 0 ? item.mayor_price : (item.stock_price ? item.stock_price : item.price))}</span>
+                                            ${attributesHtml}
                                         </p>
                                         <div class="d-flex align-items-center">
                                             <div class="input-group text-center input-group-static w-100">
-                                                <input min="1" max="${item.stock}" value="${item.quantity}" type="number" name="quantity" data-cloth-id="${item.id}" class="form-control btnQuantity text-center w-100 quantity">
+                                                <input max="${item.stock}" value="${item.quantity}" type="number" name="quantity" data-cart-id="${item.cart_id}" class="form-control btnQuantity text-center w-100 quantity">
                                             </div>
                                             <form name="delete-item-cart" id="delete-item-cart" class="delete-form">
                                                 <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                                 <input type="hidden" name="_method" value="DELETE">
-                                                <button type="button" data-item-id="${item.id}" id="btnDelete-${item.id}"
-                                                    data-size-id="${item.size_id}" class="btn btn-icon btn-3 btn-danger btnDelete">
+                                                <button type="button" data-item-id="${item.cart_id}" id="btnDelete-${item.id}" class="btn btn-icon btn-3 btn-danger btnDelete">
                                                     <span class="btn-inner--icon"><i class="material-icons">delete</i></span>
                                                 </button>
                                             </form>
@@ -282,6 +281,7 @@
                                     </div>
                                 </div>
                             </li>`;
+
                             $('.productsList').append(listItem);
                         });
 

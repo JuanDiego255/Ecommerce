@@ -26,10 +26,10 @@
             break;
     }
     switch ($tenantinfo->tenant) {
-        case "draharriscr":
+        case 'draharriscr':
             $logo = 'logo-harris';
             $btnSize = 'siteLink-harris';
-            break;        
+            break;
         default:
             $logo = 'logo';
             $btnSize = 'siteLink';
@@ -70,6 +70,7 @@
                                 $descuento = ($precio * $descuentoPorcentaje) / 100;
                                 // Calcular el precio con el descuento aplicado
                                 $precioConDescuento = $precio - $descuento;
+                                $attributesValues = explode(', ', $item->attributes_values);
                             @endphp
 
                             <li class="py-3 border-bottom">
@@ -83,7 +84,6 @@
                                                 ? $item->stock_price
                                                 : $item->price)) }}
                         ">
-                                <input type="hidden" value="{{ $item->size_id }}" class="size_id" name="size">
                                 <input type="hidden" value="{{ $descuento }}" class="discount" name="discount">
                                 <div class="row align-items-center">
                                     <div class="col-4">
@@ -94,10 +94,18 @@
                                     </div>
                                     <div class="col-8">
                                         <p class="mb-2">
-                                            <a class="text-muted fw-500" href="#">{{ $item->name }}</a>
-                                            <span
-                                                class="m-0 text-dark w-100 {{ isset($tenantinfo->tenant) && $tenantinfo->manage_size == 0 ? 'd-none' : 'd-block' }}">
-                                                {{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'Talla: ' : 'Tamaño: ' }}{{ $item->size }}</span>
+                                            <a class="text-muted fw-500" href="#">{{ $item->name }}</a><br>
+                                            <span class="m-0 text-muted w-100 d-block">
+                                                Atributos
+                                            </span>
+                                            @foreach ($attributesValues as $attributeValue)
+                                                @php
+                                                    // Separa el atributo del valor por ": "
+                                                    [$attribute, $value] = explode(': ', $attributeValue);
+                                                @endphp
+
+                                                {{ $attribute }}: {{ $value }}<br>
+                                            @endforeach
                                             <span class="m-0 text-muted w-100 d-block">
                                                 ₡{{ $item->discount > 0 ? $precioConDescuento : (Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0 ? $item->mayor_price : ($tenantinfo->custom_size == 1 ? $item->stock_price : $item->price)) }}
                                             </span>
@@ -105,15 +113,14 @@
                                         <div class="d-flex align-items-center">
                                             <div class="input-group text-center input-group-static w-100">
                                                 <input min="1" max="{{ $item->stock }}"
-                                                    value="{{ $item->quantity }}" type="number" name="quantity"
-                                                    data-cloth-id="{{ $item->id }}"
+                                                    value="{{ $item->quantity }}" type="number" name="quantityCart"
+                                                    data-cart-id="{{ $item->cart_id }}"
                                                     class="form-control btnQuantity text-center w-100 quantity">
                                             </div>
                                             <form name="delete-item-cart" id="delete-item-cart" class="delete-form">
                                                 {{ csrf_field() }}
                                                 {{ method_field('DELETE') }}
-                                                <button data-item-id="{{ $item->id }}"
-                                                    data-size-id="{{ $item->size_id }}"
+                                                <button data-item-id="{{ $item->cart_id }}"
                                                     class="btn btn-icon btn-3 btn-danger btnDelete">
                                                     <span class="btn-inner--icon"><i
                                                             class="material-icons">delete</i></span>
@@ -213,15 +220,14 @@
     <div class="flexMain">
         <div class="flex2">
             <button
-                class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'whiteLink-mandi' : 'whiteLink' }} {{$btnSize}}"
+                class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'whiteLink-mandi' : 'whiteLink' }} {{ $btnSize }}"
                 id="btnMenu" style="color: var(--navbar_text); border-right:1px solid #eaeaea"
                 onclick="menuToggle()"><i class="fas fa-bars me-2"></i> MENU</button>
         </div>
         <div class="flex3 text-center" id="siteBrand">
             @if (isset($tenantinfo->show_logo) && $tenantinfo->show_logo != 0)
-                <a class="text-uppercase"
-                    href="{{ url('/') }}"><img class="{{$logo}}" src="{{ route('file', $tenantinfo->logo) }}"
-                        alt=""></a>
+                <a class="text-uppercase" href="{{ url('/') }}"><img class="{{ $logo }}"
+                        src="{{ route('file', $tenantinfo->logo) }}" alt=""></a>
             @else
                 <a class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'text-title-mandi' : 'text-title' }} text-uppercase"
                     href="{{ url('/') }}">{{ isset($tenantinfo->title) ? $tenantinfo->title : '' }}</a>
@@ -231,16 +237,16 @@
         <div class="flex2 text-end d-block d-md-none">
             @guest
                 <a href="{{ route('login') }}"><button id="btnIngresar"
-                        class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'whiteLink-mandi' : 'whiteLink' }} {{$btnSize}}"><i
+                        class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'whiteLink-mandi' : 'whiteLink' }} {{ $btnSize }}"><i
                             style="color: var(--navbar_text);" class="fa fa-sign-in cartIcon"></i></button></a>
             @else
                 <a href="{{ url('buys') }}"><button id="btnIngresar"
-                        class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'whiteLink-mandi' : 'whiteLink' }} {{$btnSize}}"><i
+                        class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'whiteLink-mandi' : 'whiteLink' }} {{ $btnSize }}"><i
                             style="color: var(--navbar_text);" class="fa fa-credit-card cartIcon"></i></button></a>
             @endguest
 
             <button type="button" data-bs-toggle="modal" data-bs-target="#modalMiniCart"
-                class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'whiteLink-mandi' : 'whiteLink' }} {{$btnSize}}"><i
+                class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'whiteLink-mandi' : 'whiteLink' }} {{ $btnSize }}"><i
                     style="color: var(--navbar_text);" class="fa fa-shopping-cart cartIcon">
                     {{ $cartNumber }}</i></button>
         </div>
@@ -249,19 +255,19 @@
             @guest
                 <a href="{{ route('login') }}">
                     <button id="btnIngresarLogo"
-                        class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'whiteLink-mandi' : 'whiteLink' }} {{$btnSize}}"
+                        class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'whiteLink-mandi' : 'whiteLink' }} {{ $btnSize }}"
                         style="border-right:1px solid #eaeaea"><i class="fa fa-sign-in"></i> INGRESAR</button>
                 </a>
             @else
                 <a href="{{ url('buys') }}">
                     <button id="btnIngresarLogo"
-                        class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'whiteLink-mandi' : 'whiteLink' }} {{$btnSize}}"
+                        class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'whiteLink-mandi' : 'whiteLink' }} {{ $btnSize }}"
                         style="border-right:1px solid #eaeaea"><i class="fa fa-credit-card"></i> MIS COMPRAS</button>
                 </a>
             @endguest
             @if ($view_name != 'frontend_view-cart' && $view_name != 'frontend_checkout')
                 <button type="button" data-bs-toggle="modal" data-bs-target="#modalMiniCart"
-                    class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'blackLink-mandi' : 'blackLink' }} {{$btnSize}}"><i
+                    class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'blackLink-mandi' : 'blackLink' }} {{ $btnSize }}"><i
                         class="fa fa-shopping-cart"></i>
                     {{ 'CARRITO' }} <span
                         class="badge badge-sm badge-info text-pill border-pill text-xxs">{{ $cartNumber }}</span>
@@ -269,7 +275,7 @@
             @else
                 <a href="{{ url('checkout') }}">
                     <button
-                        class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'blackLink-mandi' : 'blackLink' }} {{$btnSize}}"><i
+                        class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'blackLink-mandi' : 'blackLink' }} {{ $btnSize }}"><i
                             class="fa fa-dollar"></i>
                         {{ $view_name == 'frontend_checkout' ? 'FINALIZAR PAGO' : 'IR A PAGAR' }}
                     </button>

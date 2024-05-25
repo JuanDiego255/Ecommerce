@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Mail\Mail as MailMail;
 use App\Mail\SampleMail;
 use App\Models\AddressUser;
+use App\Models\AttributeValueBuy;
 use App\Models\Buy;
 use App\Models\BuyDetail;
 use App\Models\Cart;
@@ -41,32 +42,73 @@ class CheckOutController extends Controller
     public function index()
     {
         $tenantinfo = TenantInfo::first();
+        $userId = Auth::id();
         $user_info = null;
         if (Auth::check()) {
-            $cartItems = Cart::where('user_id', Auth::id())
+            $cartItems = Cart::where('carts.user_id', $userId)
+                ->where('carts.session_id', null)
                 ->where('carts.sold', 0)
-                ->join('clothing', 'carts.clothing_id', 'clothing.id')
-                ->join('sizes', 'carts.size_id', 'sizes.id')
-                ->join('stocks', function ($join) {
+                ->join('users', 'carts.user_id', 'users.id')
+                ->join('attribute_value_cars', 'carts.id', 'attribute_value_cars.cart_id')
+                ->join('attributes', 'attribute_value_cars.attr_id', 'attributes.id')
+                ->join('attribute_values', 'attribute_value_cars.value_attr', 'attribute_values.id')
+                ->where('stocks.price', '!=', 0)
+                ->leftJoin('stocks', function ($join) {
                     $join->on('carts.clothing_id', '=', 'stocks.clothing_id')
-                        ->on('carts.size_id', '=', 'stocks.size_id');
+                        ->on('attribute_value_cars.attr_id', '=', 'stocks.attr_id')
+                        ->on('attribute_value_cars.value_attr', '=', 'stocks.value_attr');
+                })
+                ->join('clothing', 'carts.clothing_id', 'clothing.id')
+                ->leftJoin('product_images', function ($join) {
+                    $join->on('clothing.id', '=', 'product_images.clothing_id')
+                        ->whereRaw('product_images.id = (
+                        SELECT MIN(id) FROM product_images 
+                        WHERE product_images.clothing_id = clothing.id
+                    )');
                 })
                 ->select(
-
                     'clothing.id as id',
                     'clothing.name as name',
                     'clothing.casa as casa',
                     'clothing.description as description',
-                    'clothing.discount as discount',
-                    'clothing.price as price',
-                    'stocks.price as stock_price',
                     'clothing.mayor_price as mayor_price',
+                    'clothing.discount as discount',
                     'clothing.status as status',
-                    'sizes.size as size',
-                    'carts.quantity as quantity'
+                    'carts.quantity as quantity',
+                    'carts.id as cart_id',
+                    'attributes.name as name_attr',
+                    'attribute_values.value as value',
+                    'stocks.price as price',
+                    'stocks.stock as stock',
+                    DB::raw('(
+                    SELECT GROUP_CONCAT(CONCAT(attributes.name, ": ", attribute_values.value) SEPARATOR ", ")
+                    FROM attribute_value_cars
+                    JOIN attributes ON attribute_value_cars.attr_id = attributes.id
+                    JOIN attribute_values ON attribute_value_cars.value_attr = attribute_values.id
+                    WHERE attribute_value_cars.cart_id = carts.id
+                ) as attributes_values'),
+                    DB::raw('IFNULL(product_images.image, "") as image'), // Obtener la primera imagen del producto
 
-                )->get();
+                )
+                ->groupBy(
+                    'clothing.id',
+                    'clothing.name',
+                    'clothing.casa',
+                    'clothing.description',
+                    'stocks.price',
+                    'stocks.stock',
+                    'clothing.mayor_price',
+                    'attributes.name',
+                    'attribute_values.value',
+                    'clothing.status',
+                    'clothing.discount',
+                    'carts.quantity',
+                    'carts.id',
+                    'product_images.image'
+                )
+                ->get();
             $cloth_price = 0;
+
             foreach ($cartItems as $item) {
                 $precio = $item->price;
                 if (isset($tenantinfo->custom_size) && $tenantinfo->custom_size == 1 && $item->stock_price > 0) {
@@ -88,29 +130,67 @@ class CheckOutController extends Controller
             $total_price = $cloth_price + $iva;
         } else {
             $session_id = session()->get('session_id');
-            $cartItems = Cart::where('session_id', $session_id)
+            $cartItems = Cart::where('carts.session_id', $session_id)
+                ->where('carts.user_id', null)
                 ->where('carts.sold', 0)
-                ->join('clothing', 'carts.clothing_id', 'clothing.id')
-                ->join('sizes', 'carts.size_id', 'sizes.id')
-                ->join('stocks', function ($join) {
+                ->join('attribute_value_cars', 'carts.id', 'attribute_value_cars.cart_id')
+                ->join('attributes', 'attribute_value_cars.attr_id', 'attributes.id')
+                ->join('attribute_values', 'attribute_value_cars.value_attr', 'attribute_values.id')
+                ->where('stocks.price', '!=', 0)
+                ->leftJoin('stocks', function ($join) {
                     $join->on('carts.clothing_id', '=', 'stocks.clothing_id')
-                        ->on('carts.size_id', '=', 'stocks.size_id');
+                        ->on('attribute_value_cars.attr_id', '=', 'stocks.attr_id')
+                        ->on('attribute_value_cars.value_attr', '=', 'stocks.value_attr');
+                })
+                ->join('clothing', 'carts.clothing_id', 'clothing.id')
+                ->leftJoin('product_images', function ($join) {
+                    $join->on('clothing.id', '=', 'product_images.clothing_id')
+                        ->whereRaw('product_images.id = (
+                        SELECT MIN(id) FROM product_images 
+                        WHERE product_images.clothing_id = clothing.id
+                    )');
                 })
                 ->select(
-
                     'clothing.id as id',
                     'clothing.name as name',
                     'clothing.casa as casa',
-                    'clothing.discount as discount',
                     'clothing.description as description',
-                    'clothing.price as price',
-                    'stocks.price as stock_price',
                     'clothing.mayor_price as mayor_price',
+                    'clothing.discount as discount',
                     'clothing.status as status',
-                    'sizes.size as size',
-                    'carts.quantity as quantity'
+                    'carts.quantity as quantity',
+                    'carts.id as cart_id',
+                    'attributes.name as name_attr',
+                    'attribute_values.value as value',
+                    'stocks.price as price',
+                    'stocks.stock as stock',
+                    DB::raw('(
+                    SELECT GROUP_CONCAT(CONCAT(attributes.name, ": ", attribute_values.value) SEPARATOR ", ")
+                    FROM attribute_value_cars
+                    JOIN attributes ON attribute_value_cars.attr_id = attributes.id
+                    JOIN attribute_values ON attribute_value_cars.value_attr = attribute_values.id
+                    WHERE attribute_value_cars.cart_id = carts.id
+                ) as attributes_values'),
+                    DB::raw('IFNULL(product_images.image, "") as image'), // Obtener la primera imagen del producto
 
-                )->get();
+                )
+                ->groupBy(
+                    'clothing.id',
+                    'clothing.name',
+                    'clothing.casa',
+                    'clothing.description',
+                    'stocks.price',
+                    'stocks.stock',
+                    'clothing.mayor_price',
+                    'attributes.name',
+                    'attribute_values.value',
+                    'clothing.status',
+                    'clothing.discount',
+                    'carts.quantity',
+                    'carts.id',
+                    'product_images.image'
+                )
+                ->get();
             $cloth_price = 0;
             foreach ($cartItems as $item) {
                 $precio = $item->price;
@@ -179,29 +259,69 @@ class CheckOutController extends Controller
             $request = request();
             DB::beginTransaction();
             if ($request->kind_of == "V") {
+                $userId = Auth::id();
                 if (Auth::check()) {
-                    $cartItems = Cart::where('user_id', Auth::user()->id)->where('sold', 0)
-                        ->join('clothing', 'carts.clothing_id', 'clothing.id')
-                        ->join('sizes', 'carts.size_id', 'sizes.id')
-                        ->join('stocks', function ($join) {
+                    $cartItems = Cart::where('carts.user_id', $userId)
+                        ->where('carts.session_id', null)
+                        ->where('carts.sold', 0)
+                        ->join('users', 'carts.user_id', 'users.id')
+                        ->join('attribute_value_cars', 'carts.id', 'attribute_value_cars.cart_id')
+                        ->join('attributes', 'attribute_value_cars.attr_id', 'attributes.id')
+                        ->join('attribute_values', 'attribute_value_cars.value_attr', 'attribute_values.id')
+                        ->leftJoin('stocks', function ($join) {
                             $join->on('carts.clothing_id', '=', 'stocks.clothing_id')
-                                ->on('carts.size_id', '=', 'stocks.size_id');
+                                ->on('attribute_value_cars.attr_id', '=', 'stocks.attr_id')
+                                ->on('attribute_value_cars.value_attr', '=', 'stocks.value_attr');
+                        })
+                        ->join('clothing', 'carts.clothing_id', 'clothing.id')
+                        ->leftJoin('product_images', function ($join) {
+                            $join->on('clothing.id', '=', 'product_images.clothing_id')
+                                ->whereRaw('product_images.id = (
+                                SELECT MIN(id) FROM product_images 
+                                WHERE product_images.clothing_id = clothing.id
+                            )');
                         })
                         ->select(
                             'clothing.id as clothing_id',
                             'clothing.name as name',
                             'clothing.casa as casa',
-                            'clothing.code as code',
                             'clothing.description as description',
-                            'clothing.price as price',
-                            'stocks.price as stock_price',
                             'clothing.mayor_price as mayor_price',
                             'clothing.discount as discount',
                             'clothing.status as status',
-                            'sizes.size as size',
                             'carts.quantity as quantity',
-                            'carts.size_id as size_id'
-                        )->get();
+                            'carts.id as cart_id',
+                            'attributes.name as name_attr',
+                            'attribute_values.value as value',
+                            'stocks.price as price',
+                            'stocks.stock as stock',
+                            DB::raw('(
+                                SELECT GROUP_CONCAT(CONCAT(attributes.id, "-", attribute_values.id) SEPARATOR ", ")
+                                FROM attribute_value_cars
+                                JOIN attributes ON attribute_value_cars.attr_id = attributes.id
+                                JOIN attribute_values ON attribute_value_cars.value_attr = attribute_values.id
+                                WHERE attribute_value_cars.cart_id = carts.id
+                            ) as attributes_values'),
+                            DB::raw('IFNULL(product_images.image, "") as image'), // Obtener la primera imagen del producto
+
+                        )
+                        ->groupBy(
+                            'clothing.id',
+                            'clothing.name',
+                            'clothing.casa',
+                            'clothing.description',
+                            'stocks.price',
+                            'stocks.stock',
+                            'clothing.mayor_price',
+                            'attributes.name',
+                            'attribute_values.value',
+                            'clothing.status',
+                            'clothing.discount',
+                            'carts.quantity',
+                            'carts.id',
+                            'product_images.image'
+                        )
+                        ->get();
                     $cloth_price = 0;
 
                     foreach ($cartItems as $cart) {
@@ -221,6 +341,7 @@ class CheckOutController extends Controller
                     }
                     $iva = $cloth_price * $tenantinfo->iva;
                     $total_price = $cloth_price + $iva;
+
 
                     $buy = new Buy();
                     if ($request !== null) {
@@ -269,61 +390,117 @@ class CheckOutController extends Controller
 
                     foreach ($cartItems as $cart) {
                         $precio = $cart->price;
-                        if (isset($tenantinfo->custom_size) && $tenantinfo->custom_size == 1 && $cart->stock_price > 0) {
-                            $precio = $cart->stock_price;
+                        if ($precio > 0) {
+                            if (isset($tenantinfo->custom_size) && $tenantinfo->custom_size == 1 && $cart->stock_price > 0) {
+                                $precio = $cart->stock_price;
+                            }
+                            if (Auth::check() && Auth::user()->mayor == '1' && $cart->mayor_price > 0) {
+                                $precio = $cart->mayor_price;
+                            }
+                            $descuentoPorcentaje = $cart->discount;
+                            // Calcular el descuento
+                            $descuento = ($precio * $descuentoPorcentaje) / 100;
+                            // Calcular el precio con el descuento aplicado
+                            $precioConDescuento = $precio - $descuento;
+                            $buy_detail = new BuyDetail();
+                            $buy_detail->buy_id = $buy_id;
+                            $buy_detail->clothing_id = $cart->clothing_id;
+                            $buy_detail->total = ($precioConDescuento * $cart->quantity) + ($precioConDescuento * $tenantinfo->iva);
+                            $buy_detail->iva = $precioConDescuento * $tenantinfo->iva;
+                            $buy_detail->quantity = $cart->quantity;
+                            $buy_detail->cancel_item = 0;
+                            $buy_detail->save();
+                            $buy_detail_id = $buy_detail->id;
+                            $attributeValuePairs = explode(',', $cart->attributes_values);
+                            foreach ($attributeValuePairs as $pair) {
+                                list($attr_id, $value_attr) = explode('-', $pair);
+                                $attr_val_buy = new AttributeValueBuy();
+                                $attr_val_buy->buy_detail_id = $buy_detail_id;
+                                $attr_val_buy->attr_id = $attr_id;
+                                $attr_val_buy->value_attr = $value_attr;
+                                $attr_val_buy->save();
+                                $cart_quantity = $cart->quantity;
+                                $stock = Stock::where('clothing_id', $cart->clothing_id)
+                                    ->where('attr_id', $attr_id)
+                                    ->where('value_attr', $value_attr)
+                                    ->first();
+                                if ($stock->price == 0) {
+                                    $cart_quantity = 1;
+                                }
+                                Stock::where('clothing_id', $cart->clothing_id)
+                                    ->where('attr_id', $attr_id)
+                                    ->where('value_attr', $value_attr)
+                                    ->update(['stock' => ($stock->stock - $cart_quantity)]);
+                            }
                         }
-                        if (Auth::check() && Auth::user()->mayor == '1' && $cart->mayor_price > 0) {
-                            $precio = $cart->mayor_price;
-                        }
-                        $descuentoPorcentaje = $cart->discount;
-                        // Calcular el descuento
-                        $descuento = ($precio * $descuentoPorcentaje) / 100;
-                        // Calcular el precio con el descuento aplicado
-                        $precioConDescuento = $precio - $descuento;
-                        $buy_detail = new BuyDetail();
-                        $buy_detail->buy_id = $buy_id;
-                        $buy_detail->clothing_id = $cart->clothing_id;
-                        $buy_detail->size_id = $cart->size_id;
-                        $buy_detail->total = ($precioConDescuento * $cart->quantity) + ($precioConDescuento * $tenantinfo->iva);
-                        $buy_detail->iva = $precioConDescuento * $tenantinfo->iva;
-                        $buy_detail->quantity = $cart->quantity;
-                        $buy_detail->cancel_item = 0;
-                        $buy_detail->save();
-                        $stock = Stock::where('clothing_id', $cart->clothing_id)
-                            ->where('size_id', $cart->size_id)
-                            ->first();
-                        Stock::where('clothing_id', $cart->clothing_id)
-                            ->where('size_id', $cart->size_id)
-                            ->update(['stock' => ($stock->stock - $cart->quantity)]);
                     }
 
                     Cart::where('user_id', Auth::user()->id)->where('sold', 0)->update(['sold' => 1]);
                     DB::commit();
                 } else {
                     $session_id = session()->get('session_id');
-                    $cartItems = Cart::where('session_id', $session_id)->where('sold', 0)
-                        ->join('clothing', 'carts.clothing_id', 'clothing.id')
-                        ->join('sizes', 'carts.size_id', 'sizes.id')
-                        ->join('stocks', function ($join) {
+                    $cartItems = Cart::where('carts.session_id', $session_id)
+                        ->where('carts.user_id', null)
+                        ->where('carts.sold', 0)
+                        ->join('attribute_value_cars', 'carts.id', 'attribute_value_cars.cart_id')
+                        ->join('attributes', 'attribute_value_cars.attr_id', 'attributes.id')
+                        ->join('attribute_values', 'attribute_value_cars.value_attr', 'attribute_values.id')
+                        ->leftJoin('stocks', function ($join) {
                             $join->on('carts.clothing_id', '=', 'stocks.clothing_id')
-                                ->on('carts.size_id', '=', 'stocks.size_id');
+                                ->on('attribute_value_cars.attr_id', '=', 'stocks.attr_id')
+                                ->on('attribute_value_cars.value_attr', '=', 'stocks.value_attr');
+                        })
+                        ->join('clothing', 'carts.clothing_id', 'clothing.id')
+                        ->leftJoin('product_images', function ($join) {
+                            $join->on('clothing.id', '=', 'product_images.clothing_id')
+                                ->whereRaw('product_images.id = (
+                                SELECT MIN(id) FROM product_images 
+                                WHERE product_images.clothing_id = clothing.id
+                            )');
                         })
                         ->select(
                             'clothing.id as clothing_id',
                             'clothing.name as name',
                             'clothing.casa as casa',
                             'clothing.description as description',
-                            'clothing.discount as discount',
-                            'clothing.code as code',
-                            'clothing.price as price',
-                            'stocks.price as stock_price',
                             'clothing.mayor_price as mayor_price',
+                            'clothing.discount as discount',
                             'clothing.status as status',
-                            'sizes.size as size',
                             'carts.quantity as quantity',
-                            'carts.size_id as size_id'
-                        )->get();
+                            'carts.id as cart_id',
+                            'attributes.name as name_attr',
+                            'attribute_values.value as value',
+                            'stocks.price as price',
+                            'stocks.stock as stock',
+                            DB::raw('(
+                                SELECT GROUP_CONCAT(CONCAT(attributes.id, "-", attribute_values.id) SEPARATOR ", ")
+                                FROM attribute_value_cars
+                                JOIN attributes ON attribute_value_cars.attr_id = attributes.id
+                                JOIN attribute_values ON attribute_value_cars.value_attr = attribute_values.id
+                                WHERE attribute_value_cars.cart_id = carts.id
+                            ) as attributes_values'),
+                            DB::raw('IFNULL(product_images.image, "") as image'), // Obtener la primera imagen del producto
+
+                        )
+                        ->groupBy(
+                            'clothing.id',
+                            'clothing.name',
+                            'clothing.casa',
+                            'clothing.description',
+                            'stocks.price',
+                            'stocks.stock',
+                            'clothing.mayor_price',
+                            'attributes.name',
+                            'attribute_values.value',
+                            'clothing.status',
+                            'clothing.discount',
+                            'carts.quantity',
+                            'carts.id',
+                            'product_images.image'
+                        )
+                        ->get();
                     $cloth_price = 0;
+
 
                     foreach ($cartItems as $cart) {
                         $precio = $cart->price;
@@ -398,32 +575,45 @@ class CheckOutController extends Controller
 
                     foreach ($cartItems as $cart) {
                         $precio = $cart->price;
-                        if (isset($tenantinfo->custom_size) && $tenantinfo->custom_size == 1 && $cart->stock_price > 0) {
-                            $precio = $cart->stock_price;
+                        if ($precio > 0) {
+                            if (isset($tenantinfo->custom_size) && $tenantinfo->custom_size == 1 && $cart->stock_price > 0) {
+                                $precio = $cart->stock_price;
+                            }
+                            if (Auth::check() && Auth::user()->mayor == '1' && $cart->mayor_price > 0) {
+                                $precio = $cart->mayor_price;
+                            }
+                            $descuentoPorcentaje = $cart->discount;
+                            // Calcular el descuento
+                            $descuento = ($precio * $descuentoPorcentaje) / 100;
+                            // Calcular el precio con el descuento aplicado
+                            $precioConDescuento = $precio - $descuento;
+                            $buy_detail = new BuyDetail();
+                            $buy_detail->buy_id = $buy_id;
+                            $buy_detail->clothing_id = $cart->clothing_id;
+                            $buy_detail->total = ($precioConDescuento * $cart->quantity) + ($precioConDescuento * $tenantinfo->iva);
+                            $buy_detail->iva = $precioConDescuento * $tenantinfo->iva;
+                            $buy_detail->quantity = $cart->quantity;
+                            $buy_detail->cancel_item = 0;
+                            $buy_detail->save();
+                            $buy_detail_id = $buy_detail->id;
+                            $attributeValuePairs = explode(',', $cart->attributes_values);
+                            foreach ($attributeValuePairs as $pair) {
+                                list($attr_id, $value_attr) = explode('-', $pair);
+                                $attr_val_buy = new AttributeValueBuy();
+                                $attr_val_buy->buy_detail_id = $buy_detail_id;
+                                $attr_val_buy->attr_id = $attr_id;
+                                $attr_val_buy->value_attr = $value_attr;
+                                $attr_val_buy->save();
+                                $stock = Stock::where('clothing_id', $cart->clothing_id)
+                                    ->where('attr_id', $attr_id)
+                                    ->where('value_attr', $value_attr)
+                                    ->first();
+                                Stock::where('clothing_id', $cart->clothing_id)
+                                    ->where('attr_id', $attr_id)
+                                    ->where('value_attr', $value_attr)
+                                    ->update(['stock' => ($stock->stock - $cart->quantity)]);
+                            }
                         }
-                        if (Auth::check() && Auth::user()->mayor == '1' && $cart->mayor_price > 0) {
-                            $precio = $cart->mayor_price;
-                        }
-                        $descuentoPorcentaje = $cart->discount;
-                        // Calcular el descuento
-                        $descuento = ($precio * $descuentoPorcentaje) / 100;
-                        // Calcular el precio con el descuento aplicado
-                        $precioConDescuento = $precio - $descuento;
-                        $buy_detail = new BuyDetail();
-                        $buy_detail->buy_id = $buy_id;
-                        $buy_detail->clothing_id = $cart->clothing_id;
-                        $buy_detail->size_id = $cart->size_id;
-                        $buy_detail->total = ($precioConDescuento * $cart->quantity) + ($precioConDescuento * $tenantinfo->iva);
-                        $buy_detail->iva = $precioConDescuento * $tenantinfo->iva;
-                        $buy_detail->quantity = $cart->quantity;
-                        $buy_detail->cancel_item = 0;
-                        $buy_detail->save();
-                        $stock = Stock::where('clothing_id', $cart->clothing_id)
-                            ->where('size_id', $cart->size_id)
-                            ->first();
-                        Stock::where('clothing_id', $cart->clothing_id)
-                            ->where('size_id', $cart->size_id)
-                            ->update(['stock' => ($stock->stock - $cart->quantity)]);
                     }
 
                     Cart::where('session_id', $session_id)->where('sold', 0)->update(['sold' => 1]);
@@ -433,29 +623,64 @@ class CheckOutController extends Controller
                 $cartItems = Cart::where('user_id', null)
                     ->where('session_id', null)
                     ->where('sold', 0)
-                    ->join('clothing', 'carts.clothing_id', 'clothing.id')
-                    ->join('sizes', 'carts.size_id', 'sizes.id')
-                    ->join('stocks', function ($join) {
+                    ->join('attribute_value_cars', 'carts.id', 'attribute_value_cars.cart_id')
+                    ->join('attributes', 'attribute_value_cars.attr_id', 'attributes.id')
+                    ->join('attribute_values', 'attribute_value_cars.value_attr', 'attribute_values.id')
+                    ->leftJoin('stocks', function ($join) {
                         $join->on('carts.clothing_id', '=', 'stocks.clothing_id')
-                            ->on('carts.size_id', '=', 'stocks.size_id');
+                            ->on('attribute_value_cars.attr_id', '=', 'stocks.attr_id')
+                            ->on('attribute_value_cars.value_attr', '=', 'stocks.value_attr');
+                    })
+                    ->join('clothing', 'carts.clothing_id', 'clothing.id')
+                    ->leftJoin('product_images', function ($join) {
+                        $join->on('clothing.id', '=', 'product_images.clothing_id')
+                            ->whereRaw('product_images.id = (
+                                SELECT MIN(id) FROM product_images 
+                                WHERE product_images.clothing_id = clothing.id
+                            )');
                     })
                     ->select(
                         'clothing.id as clothing_id',
                         'clothing.name as name',
                         'clothing.casa as casa',
-                        'clothing.code as code',
                         'clothing.description as description',
-                        'clothing.price as price',
-                        'stocks.price as stock_price',
                         'clothing.mayor_price as mayor_price',
                         'clothing.discount as discount',
                         'clothing.status as status',
-                        'sizes.size as size',
                         'carts.quantity as quantity',
-                        'carts.size_id as size_id'
-                    )->get();
-                $cloth_price = 0;
+                        'carts.id as cart_id',
+                        'attributes.name as name_attr',
+                        'attribute_values.value as value',
+                        'stocks.price as price',
+                        'stocks.stock as stock',
+                        DB::raw('(
+                            SELECT GROUP_CONCAT(CONCAT(attributes.id, "-", attribute_values.id) SEPARATOR ", ")
+                            FROM attribute_value_cars
+                            JOIN attributes ON attribute_value_cars.attr_id = attributes.id
+                            JOIN attribute_values ON attribute_value_cars.value_attr = attribute_values.id
+                            WHERE attribute_value_cars.cart_id = carts.id
+                        ) as attributes_values'),
+                        DB::raw('IFNULL(product_images.image, "") as image'), // Obtener la primera imagen del producto
 
+                    )
+                    ->groupBy(
+                        'clothing.id',
+                        'clothing.name',
+                        'clothing.casa',
+                        'clothing.description',
+                        'stocks.price',
+                        'stocks.stock',
+                        'clothing.mayor_price',
+                        'attributes.name',
+                        'attribute_values.value',
+                        'clothing.status',
+                        'clothing.discount',
+                        'carts.quantity',
+                        'carts.id',
+                        'product_images.image'
+                    )
+                    ->get();
+                $cloth_price = 0;
                 foreach ($cartItems as $cart) {
                     $precio = $cart->price;
                     if (isset($tenantinfo->custom_size) && $tenantinfo->custom_size == 1 && $cart->stock_price > 0) {
@@ -488,32 +713,45 @@ class CheckOutController extends Controller
 
                 foreach ($cartItems as $cart) {
                     $precio = $cart->price;
-                    if (isset($tenantinfo->custom_size) && $tenantinfo->custom_size == 1 && $cart->stock_price > 0) {
-                        $precio = $cart->stock_price;
+                    if ($precio > 0) {
+                        if (isset($tenantinfo->custom_size) && $tenantinfo->custom_size == 1 && $cart->stock_price > 0) {
+                            $precio = $cart->stock_price;
+                        }
+                        if (Auth::check() && Auth::user()->mayor == '1' && $cart->mayor_price > 0) {
+                            $precio = $cart->mayor_price;
+                        }
+                        $descuentoPorcentaje = $cart->discount;
+                        // Calcular el descuento
+                        $descuento = ($precio * $descuentoPorcentaje) / 100;
+                        // Calcular el precio con el descuento aplicado
+                        $precioConDescuento = $precio - $descuento;
+                        $buy_detail = new BuyDetail();
+                        $buy_detail->buy_id = $buy_id;
+                        $buy_detail->clothing_id = $cart->clothing_id;
+                        $buy_detail->total = ($precioConDescuento * $cart->quantity) + ($precioConDescuento * $tenantinfo->iva);
+                        $buy_detail->iva = $precioConDescuento * $tenantinfo->iva;
+                        $buy_detail->quantity = $cart->quantity;
+                        $buy_detail->cancel_item = 0;
+                        $buy_detail->save();
+                        $buy_detail_id = $buy_detail->id;
+                        $attributeValuePairs = explode(',', $cart->attributes_values);
+                        foreach ($attributeValuePairs as $pair) {
+                            list($attr_id, $value_attr) = explode('-', $pair);
+                            $attr_val_buy = new AttributeValueBuy();
+                            $attr_val_buy->buy_detail_id = $buy_detail_id;
+                            $attr_val_buy->attr_id = $attr_id;
+                            $attr_val_buy->value_attr = $value_attr;
+                            $attr_val_buy->save();
+                            $stock = Stock::where('clothing_id', $cart->clothing_id)
+                                ->where('attr_id', $attr_id)
+                                ->where('value_attr', $value_attr)
+                                ->first();
+                            Stock::where('clothing_id', $cart->clothing_id)
+                                ->where('attr_id', $attr_id)
+                                ->where('value_attr', $value_attr)
+                                ->update(['stock' => ($stock->stock - $cart->quantity)]);
+                        }
                     }
-                    if (Auth::check() && Auth::user()->mayor == '1' && $cart->mayor_price > 0) {
-                        $precio = $cart->mayor_price;
-                    }
-                    $descuentoPorcentaje = $cart->discount;
-                    // Calcular el descuento
-                    $descuento = ($precio * $descuentoPorcentaje) / 100;
-                    // Calcular el precio con el descuento aplicado
-                    $precioConDescuento = $precio - $descuento;
-                    $buy_detail = new BuyDetail();
-                    $buy_detail->buy_id = $buy_id;
-                    $buy_detail->clothing_id = $cart->clothing_id;
-                    $buy_detail->size_id = $cart->size_id;
-                    $buy_detail->total = ($precioConDescuento * $cart->quantity) + ($precioConDescuento * $tenantinfo->iva);
-                    $buy_detail->iva = $precioConDescuento * $tenantinfo->iva;
-                    $buy_detail->quantity = $cart->quantity;
-                    $buy_detail->cancel_item = 0;
-                    $buy_detail->save();
-                    $stock = Stock::where('clothing_id', $cart->clothing_id)
-                        ->where('size_id', $cart->size_id)
-                        ->first();
-                    Stock::where('clothing_id', $cart->clothing_id)
-                        ->where('size_id', $cart->size_id)
-                        ->update(['stock' => ($stock->stock - $cart->quantity)]);
                 }
 
                 Cart::where('user_id', null)

@@ -7,8 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class ClothingCategory extends Model
 {
-    use HasFactory;
-    use HasFactory;
     protected $table = 'clothing';
     protected $fillable = [
         'name',
@@ -20,4 +18,9 @@ class ClothingCategory extends Model
         'trending',
         'status'
     ];
+
+    public function stocks()
+    {
+        return $this->hasMany(Stock::class, 'clothing_id');
+    }
 }

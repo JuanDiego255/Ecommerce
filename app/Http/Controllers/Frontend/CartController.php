@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Models\AttributeValueCar;
 use App\Models\Cart;
 use App\Models\ClothingCategory;
 use App\Models\MetaTags;
@@ -27,47 +28,99 @@ class CartController extends Controller
         // Define el tiempo de expiración en minutos
         $this->expirationTime = 60; // Por ejemplo, 60 minutos
     }
+    public function checkCartItem($value_attr, $attr_id_val, $cloth_id, $type, $user)
+    {
+        // Obtener el ID del usuario autenticado
+        $found = false;
+        switch ($type) {
+            case "S":
+                $user_id = $user;
+                $cartItem = Cart::where('clothing_id', $cloth_id)
+                    ->where('session_id', $user_id)
+                    ->where('sold', 0)
+                    ->whereExists(function ($query) use ($attr_id_val, $value_attr) {
+                        $query->select(DB::raw(1))
+                            ->from('attribute_value_cars')
+                            ->whereColumn('attribute_value_cars.cart_id', 'carts.id')
+                            ->where('attribute_value_cars.attr_id', $attr_id_val)
+                            ->where('attribute_value_cars.value_attr', $value_attr);
+                    })
+                    ->first();
+                break;
+            case "C":
+                $cartItem = Cart::where('clothing_id', $cloth_id)
+                    ->where('user_id', null)
+                    ->where('session_id', null)
+                    ->where('sold', 0)
+                    ->whereExists(function ($query) use ($attr_id_val, $value_attr) {
+                        $query->select(DB::raw(1))
+                            ->from('attribute_value_cars')
+                            ->whereColumn('attribute_value_cars.cart_id', 'carts.id')
+                            ->where('attribute_value_cars.attr_id', $attr_id_val)
+                            ->where('attribute_value_cars.value_attr', $value_attr);
+                    })
+                    ->first();
+                break;
+            default:
+                $cartItem = Cart::where('clothing_id', $cloth_id)
+                    ->where('user_id', $user)
+                    ->where('sold', 0)
+                    ->whereExists(function ($query) use ($attr_id_val, $value_attr) {
+                        $query->select(DB::raw(1))
+                            ->from('attribute_value_cars')
+                            ->whereColumn('attribute_value_cars.cart_id', 'carts.id')
+                            ->where('attribute_value_cars.attr_id', $attr_id_val)
+                            ->where('attribute_value_cars.value_attr', $value_attr);
+                    })
+                    ->first();
+        }
+
+        if ($cartItem) {
+            $found = true;
+        }
+        // Realizar la consulta en la tabla 'cart' y unirla con 'attribute_value_car'
+        return $found;
+    }
     public function store(Request $request)
     {
         DB::beginTransaction();
         try {
-            $tenantinfo = TenantInfo::first();
-            $size_id = $request->size_id;
-            if (isset($tenantinfo->manage_size) && $tenantinfo->manage_size == 0) {
-                $size = Size::where('size', 'N/A')->first();
-                $size_id = $size->id;
-            }
+            $attributes = json_decode($request->input('attributes'), true);
             if ($request->code) {
                 $code = $request->code;
                 $cloth_check = ClothingCategory::where('code', $code)->first();
 
                 if ($cloth_check) {
-                    $stock = Stock::where('clothing_id', $cloth_check->id)
-                        ->where('size_id', $size_id)
-                        ->first();
-                    if ($stock->stock == 0) {
-                        return response()->json(['status' => 'El producto no cuenta con inventario', 'icon' => 'warning']);
+                    foreach ($attributes as $attr) {
+                        list($value_attr, $attr_id_val, $cloth_id) = explode('-', $attr);
+                        $found = $this->checkCartItem($value_attr, $attr_id_val, $cloth_check->id,"C","");
                     }
-
-                    if (Cart::where('clothing_id', $cloth_check->id)
-                        ->where('user_id', null)
-                        ->where('session_id', null)
-                        ->where('size_id', $request->size_id)
-                        ->where('sold', 0)->first()
-                    ) {
-                        return response()->json(['status' => 'El producto ya existe en la tabla', 'icon' => 'warning']);
+                    if ($found) {
+                        return response()->json(['status' => 'El producto ya existe en el carrito', 'icon' => 'warning']);
                     } else {
-
                         $cart_item = new Cart();
                         $cart_item->user_id = null;
                         $cart_item->clothing_id = $cloth_check->id;
                         $cart_item->quantity = 1;
-                        $cart_item->size_id = $size_id;
                         $cart_item->sold = 0;
                         $cart_item->save();
+                        $cart_id = $cart_item->id;
+                        foreach ($attributes as $attr) {
+                            list($value_attr, $attr_id_val, $cloth_id) = explode('-', $attr);
 
+                            $attr_db = new AttributeValueCar();
+                            $attr_db->cart_id = $cart_id;
+                            $attr_db->attr_id = $attr_id_val;
+                            $attr_db->value_attr = $value_attr;
+                            $attr_db->save();
+                        }
+                        $newCartNumber = count(Cart::where('user_id', Auth::id())->where('sold', 0)->get());
+
+                        view()->share([
+                            'cartNumber' => $newCartNumber
+                        ]);
                         DB::commit();
-                        return response()->json(['status' => 'success', 'icon' => 'success']);
+                        return response()->json(['status' => 'Se ha agregado el artículo al carrito', 'icon' => 'success', 'cartNumber' => $newCartNumber]);
                     }
                 } else {
                 }
@@ -77,20 +130,29 @@ class CartController extends Controller
                 if (Auth::check()) {
                     $cloth_check = ClothingCategory::where('id', $clothing_id)->exists();
                     if ($cloth_check) {
-                        if (Cart::where('clothing_id', $clothing_id)
-                            ->where('user_id', Auth::id())
-                            ->where('sold', 0)
-                            ->where('size_id', $size_id)->first()
-                        ) {
+                        foreach ($attributes as $attr) {
+                            list($value_attr, $attr_id_val, $cloth_id) = explode('-', $attr);
+                            $found = $this->checkCartItem($value_attr, $attr_id_val, $cloth_id,"U",Auth::id());
+                        }
+                        if ($found) {
                             return response()->json(['status' => 'El producto ya existe en el carrito', 'icon' => 'warning']);
                         } else {
                             $cart_item = new Cart();
                             $cart_item->user_id = Auth::id();
                             $cart_item->clothing_id = $clothing_id;
                             $cart_item->quantity = $quantity;
-                            $cart_item->size_id = $size_id;
                             $cart_item->sold = 0;
                             $cart_item->save();
+                            $cart_id = $cart_item->id;
+                            foreach ($attributes as $attr) {
+                                list($value_attr, $attr_id_val, $cloth_id) = explode('-', $attr);
+
+                                $attr_db = new AttributeValueCar();
+                                $attr_db->cart_id = $cart_id;
+                                $attr_db->attr_id = $attr_id_val;
+                                $attr_db->value_attr = $value_attr;
+                                $attr_db->save();
+                            }
                             $newCartNumber = count(Cart::where('user_id', Auth::id())->where('sold', 0)->get());
 
                             view()->share([
@@ -108,22 +170,30 @@ class CartController extends Controller
                         $session_id = uniqid(); // Genera un identificador único temporal
                         session()->put('session_id', $session_id);
                     }
-
                     // Verificar si el producto ya está en el carrito del usuario anónimo
-                    if (Cart::where('clothing_id', $clothing_id)
-                        ->where('session_id', $session_id)
-                        ->where('sold', 0)
-                        ->where('size_id', $size_id)->first()
-                    ) {
+                    foreach ($attributes as $attr) {
+                        list($value_attr, $attr_id_val, $cloth_id) = explode('-', $attr);
+                        $found = $this->checkCartItem($value_attr, $attr_id_val, $cloth_id,"S", $session_id);
+                    }
+                    if ($found) {
                         return response()->json(['status' => 'El producto ya existe en el carrito', 'icon' => 'warning']);
                     } else {
                         $cart_item = new Cart();
                         $cart_item->session_id = $session_id;
                         $cart_item->clothing_id = $clothing_id;
                         $cart_item->quantity = $quantity;
-                        $cart_item->size_id = $size_id;
                         $cart_item->sold = 0;
                         $cart_item->save();
+                        $cart_id = $cart_item->id;
+                        foreach ($attributes as $attr) {
+                            list($value_attr, $attr_id_val, $cloth_id) = explode('-', $attr);
+
+                            $attr_db = new AttributeValueCar();
+                            $attr_db->cart_id = $cart_id;
+                            $attr_db->attr_id = $attr_id_val;
+                            $attr_db->value_attr = $value_attr;
+                            $attr_db->save();
+                        }
 
                         // Obtener el número de elementos en el carrito anónimo
                         $newCartNumber = count(Cart::where('session_id', $session_id)->where('sold', 0)->get());
@@ -135,7 +205,7 @@ class CartController extends Controller
             }
         } catch (\Exception $th) {
             DB::rollBack();
-            return response()->json(['status' => 'Ocurrió un error al agregar la artículo al carrito ' . $th->getMessage(), 'icon' => 'success']);
+            return response()->json(['status' => 'Ocurrió un error al agregar la artículo al carrito ' . $th->getMessage(), 'icon' => 'error']);
         }
     }
     public function viewCart()
@@ -203,72 +273,25 @@ class CartController extends Controller
         DB::beginTransaction();
 
         try {
-            $no_cart = $request->no_cart;
-            $size_id = $request->size_id;
-
-            if ($no_cart != 1) {
-                $session_id = session()->get('session_id');
-                if (Auth::check()) {
-
-                    if (Cart::where('clothing_id', $id)
-                        ->where('user_id', Auth::id())
-                        ->where('sold', 0)
-                        ->where('size_id', $size_id)->exists()
-                    ) {
-                        $cartitem = Cart::where('clothing_id', $id)
-                            ->where('user_id', Auth::id())
-                            ->where('sold', 0)
-                            ->where('size_id', $size_id)->first();
-                        $cartitem->delete();
-                        DB::commit();
-                        $newCartNumber = count(Cart::where('user_id', Auth::id())->where('sold', 0)->get());
-                        if (count(Cart::where('user_id', Auth::id())
-                            ->where('sold', 0)->get()) == 0) {
-                            return response()->json(['status' => 'Se ha eliminado el último artículo del carrito', 'icon' => 'success', 'cartNumber' => $newCartNumber, 'refresh' => true]);
-                        }
-                        return response()->json(['status' => 'Se ha eliminado el artículo del carrito', 'icon' => 'success', 'cartNumber' => $newCartNumber, 'refresh' => false]);
-                    }
-                } else {
-                    if (Cart::where('clothing_id', $id)
-                        ->where('session_id', $session_id)
-                        ->where('sold', 0)
-                        ->where('size_id', $size_id)->exists()
-                    ) {
-                        $cartitem = Cart::where('clothing_id', $id)
-                            ->where('session_id', $session_id)
-                            ->where('sold', 0)
-                            ->where('size_id', $size_id)->first();
-                        $cartitem->delete();
-                        DB::commit();
-                        $newCartNumber = count(Cart::where('user_id', Auth::id())->where('sold', 0)->get());
-                        if (count(Cart::where('session_id', $session_id)
-                            ->where('sold', 0)->get()) == 0) {
-                            return response()->json(['status' => 'Se ha eliminado el último artículo del carrito', 'icon' => 'success', 'cartNumber' => $newCartNumber, 'refresh' => true]);
-                        }
-                        return response()->json(['status' => 'Se ha eliminado el artículo del carrito', 'icon' => 'success', 'cartNumber' => $newCartNumber, 'refresh' => false]);
-                    }
+            $session_id = session()->get('session_id');
+            if (Auth::check()) {
+                Cart::destroy($id);
+                DB::commit();
+                $newCartNumber = count(Cart::where('user_id', Auth::id())->where('sold', 0)->get());
+                if (count(Cart::where('user_id', Auth::id())
+                    ->where('sold', 0)->get()) == 0) {
+                    return response()->json(['status' => 'Se ha eliminado el último artículo del carrito', 'icon' => 'success', 'cartNumber' => $newCartNumber, 'refresh' => true]);
                 }
+                return response()->json(['status' => 'Se ha eliminado el artículo del carrito', 'icon' => 'success', 'cartNumber' => $newCartNumber, 'refresh' => false]);
             } else {
-                if (Cart::where('clothing_id', $id)
-                    ->where('user_id', null)
-                    ->where('session_id', null)
-                    ->where('sold', 0)
-                    ->where('size_id', $size_id)->exists()
-                ) {
-                    $cartitem = Cart::where('clothing_id', $id)
-                        ->where('user_id', null)
-                        ->where('session_id', null)
-                        ->where('sold', 0)
-                        ->where('size_id', $size_id)->first();
-                    $cartitem->delete();
-                    DB::commit();
-                    $newCartNumber = count(Cart::where('user_id', Auth::id())->where('sold', 0)->get());
-                    if (count(Cart::where('user_id', Auth::id())
-                        ->where('sold', 0)->get()) == 0) {
-                        return response()->json(['status' => 'Se ha eliminado el último artículo del carrito', 'icon' => 'success', 'cartNumber' => $newCartNumber, 'refresh' => true]);
-                    }
-                    return response()->json(['status' => 'Se ha eliminado el último artículo del carrito', 'icon' => 'success', 'cartNumber' => $newCartNumber, 'refresh' => false]);
+                Cart::destroy($id);
+                DB::commit();
+                $newCartNumber = count(Cart::where('session_id', $session_id)->where('sold', 0)->get());
+                if (count(Cart::where('session_id', $session_id)
+                    ->where('sold', 0)->get()) == 0) {
+                    return response()->json(['status' => 'Se ha eliminado el último artículo del carrito', 'icon' => 'success', 'cartNumber' => $newCartNumber, 'refresh' => true]);
                 }
+                return response()->json(['status' => 'Se ha eliminado el artículo del carrito', 'icon' => 'success', 'cartNumber' => $newCartNumber, 'refresh' => false]);
             }
         } catch (\Throwable $th) {
             DB::rollBack();
@@ -279,63 +302,18 @@ class CartController extends Controller
     {
         DB::beginTransaction();
         try {
-            $clothing_id = $request->clothing_id;
             $quantity = $request->quantity;
-            $size = $request->size;
-            $kind_of = $request->kind_of;
-            $session_id = session()->get('session_id');
-            if ($kind_of != "F") {
-                if (Auth::check()) {
-
-                    if (Cart::where('clothing_id', $clothing_id)->where('user_id', Auth::id())->where('sold', 0)->exists()) {
-                        $cartitem = Cart::where('clothing_id', $clothing_id)
-                            ->where('user_id', Auth::user()->id)
-                            ->where('sold', 0)
-                            ->where('size_id', $size)
-                            ->first();
-                        $cartitem->quantity = $quantity;
-                        $cartitem->update();
-                        DB::commit();
-                        return response()->json(['status' => $kind_of]);
-                    }
-                } else {
-                    if (Cart::where('clothing_id', $clothing_id)->where('session_id', $session_id)->exists()) {
-                        $cartitem = Cart::where('clothing_id', $clothing_id)
-                            ->where('session_id', $session_id)
-                            ->where('sold', 0)
-                            ->where('size_id', $size)
-                            ->first();
-                        $cartitem->quantity = $quantity;
-                        $cartitem->update();
-                        DB::commit();
-                        return response()->json(['status' => 'Exito']);
-                    }
-                }
-            } else {
-                if (Cart::where('clothing_id', $clothing_id)
-                    ->where('user_id', null)
-                    ->where('session_id', null)
-                    ->where('size_id', $size)
-                    ->where('sold', 0)->exists()
-                ) {
-                    $cartitem = Cart::where('clothing_id', $clothing_id)
-                        ->where('user_id', null)
-                        ->where('session_id', null)
-                        ->where('size_id', $size)
-                        ->where('sold', 0)
-                        ->first();
-                    $cartitem->quantity = $quantity;
-                    $cartitem->update();
-                    DB::commit();
-                    return response()->json(['status' => $clothing_id]);
-                }
-            }
+            $cart_id = $request->cart_id;
+            $cartitem = Cart::find($cart_id);
+            $cartitem->quantity = $quantity;
+            $cartitem->update();
+            DB::commit();
+            return response()->json(['status' => 'success']);
         } catch (Exception $th) {
             DB::rollBack();
             return response()->json(['error' => $th->getMessage()]);
         }
     }
-
     public function getCartItems()
     {
         $cart_items = Cache::remember('cart_items', $this->expirationTime, function () {
@@ -345,33 +323,44 @@ class CartController extends Controller
                     ->where('carts.session_id', null)
                     ->where('carts.sold', 0)
                     ->join('users', 'carts.user_id', 'users.id')
-                    ->join('stocks', function ($join) {
+                    ->join('attribute_value_cars', 'carts.id', 'attribute_value_cars.cart_id')
+                    ->join('attributes', 'attribute_value_cars.attr_id', 'attributes.id')
+                    ->join('attribute_values', 'attribute_value_cars.value_attr', 'attribute_values.id')
+                    ->where('stocks.price', '!=', 0)
+                    ->leftJoin('stocks', function ($join) {
                         $join->on('carts.clothing_id', '=', 'stocks.clothing_id')
-                            ->on('carts.size_id', '=', 'stocks.size_id');
+                            ->on('attribute_value_cars.attr_id', '=', 'stocks.attr_id')
+                            ->on('attribute_value_cars.value_attr', '=', 'stocks.value_attr');
                     })
                     ->join('clothing', 'carts.clothing_id', 'clothing.id')
-                    ->join('sizes', 'carts.size_id', 'sizes.id')
                     ->leftJoin('product_images', function ($join) {
                         $join->on('clothing.id', '=', 'product_images.clothing_id')
                             ->whereRaw('product_images.id = (
-                            SELECT MIN(id) FROM product_images 
-                            WHERE product_images.clothing_id = clothing.id
-                        )');
+                                SELECT MIN(id) FROM product_images 
+                                WHERE product_images.clothing_id = clothing.id
+                            )');
                     })
                     ->select(
                         'clothing.id as id',
                         'clothing.name as name',
                         'clothing.casa as casa',
                         'clothing.description as description',
-                        'clothing.price as price',
                         'clothing.mayor_price as mayor_price',
                         'clothing.discount as discount',
                         'clothing.status as status',
-                        'sizes.size as size',
-                        'sizes.id as size_id',
-                        'stocks.price as stock_price',
                         'carts.quantity as quantity',
+                        'carts.id as cart_id',
+                        'attributes.name as name_attr',
+                        'attribute_values.value as value',
+                        'stocks.price as price',
                         'stocks.stock as stock',
+                        DB::raw('(
+                            SELECT GROUP_CONCAT(CONCAT(attributes.name, ": ", attribute_values.value) SEPARATOR ", ")
+                            FROM attribute_value_cars
+                            JOIN attributes ON attribute_value_cars.attr_id = attributes.id
+                            JOIN attribute_values ON attribute_value_cars.value_attr = attribute_values.id
+                            WHERE attribute_value_cars.cart_id = carts.id
+                        ) as attributes_values'),
                         DB::raw('IFNULL(product_images.image, "") as image'), // Obtener la primera imagen del producto
 
                     )
@@ -380,15 +369,15 @@ class CartController extends Controller
                         'clothing.name',
                         'clothing.casa',
                         'clothing.description',
-                        'clothing.price',
+                        'stocks.price',
+                        'stocks.stock',
                         'clothing.mayor_price',
+                        'attributes.name',
+                        'attribute_values.value',
                         'clothing.status',
                         'clothing.discount',
-                        'sizes.size',
-                        'sizes.id',
-                        'stocks.price',
                         'carts.quantity',
-                        'stocks.stock',
+                        'carts.id',
                         'product_images.image'
                     )
                     ->get();
@@ -399,59 +388,70 @@ class CartController extends Controller
                 $cart_items = Cart::where('carts.session_id', $session_id)
                     ->where('carts.user_id', null)
                     ->where('carts.sold', 0)
-                    ->join('stocks', function ($join) {
+                    ->join('attribute_value_cars', 'carts.id', 'attribute_value_cars.cart_id')
+                    ->join('attributes', 'attribute_value_cars.attr_id', 'attributes.id')
+                    ->join('attribute_values', 'attribute_value_cars.value_attr', 'attribute_values.id')
+                    ->where('stocks.price', '!=', 0)
+                    ->leftJoin('stocks', function ($join) {
                         $join->on('carts.clothing_id', '=', 'stocks.clothing_id')
-                            ->on('carts.size_id', '=', 'stocks.size_id');
+                            ->on('attribute_value_cars.attr_id', '=', 'stocks.attr_id')
+                            ->on('attribute_value_cars.value_attr', '=', 'stocks.value_attr');
                     })
                     ->join('clothing', 'carts.clothing_id', 'clothing.id')
-                    ->join('sizes', 'carts.size_id', 'sizes.id')
                     ->leftJoin('product_images', function ($join) {
                         $join->on('clothing.id', '=', 'product_images.clothing_id')
                             ->whereRaw('product_images.id = (
-                SELECT MIN(id) FROM product_images 
-                WHERE product_images.clothing_id = clothing.id
-            )');
+                                SELECT MIN(id) FROM product_images 
+                                WHERE product_images.clothing_id = clothing.id
+                            )');
                     })
                     ->select(
                         'clothing.id as id',
                         'clothing.name as name',
                         'clothing.casa as casa',
                         'clothing.description as description',
-                        'clothing.price as price',
-                        'stocks.price as stock_price',
                         'clothing.mayor_price as mayor_price',
                         'clothing.discount as discount',
                         'clothing.status as status',
-                        'sizes.size as size',
-                        'sizes.id as size_id',
                         'carts.quantity as quantity',
+                        'carts.id as cart_id',
+                        'attributes.name as name_attr',
+                        'attribute_values.value as value',
+                        'stocks.price as price',
                         'stocks.stock as stock',
+                        DB::raw('(
+                            SELECT GROUP_CONCAT(CONCAT(attributes.name, ": ", attribute_values.value) SEPARATOR ", ")
+                            FROM attribute_value_cars
+                            JOIN attributes ON attribute_value_cars.attr_id = attributes.id
+                            JOIN attribute_values ON attribute_value_cars.value_attr = attribute_values.id
+                            WHERE attribute_value_cars.cart_id = carts.id
+                        ) as attributes_values'),
                         DB::raw('IFNULL(product_images.image, "") as image'), // Obtener la primera imagen del producto
-                        DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id AND sizes.id = stocks.size_id ORDER BY id ASC LIMIT 1) AS first_price')
+
                     )
                     ->groupBy(
                         'clothing.id',
                         'clothing.name',
                         'clothing.casa',
                         'clothing.description',
-                        'clothing.price',
-                        'clothing.mayor_price',
-                        'clothing.discount',
-                        'clothing.status',
-                        'sizes.size',
                         'stocks.price',
-                        'sizes.id',
-                        'carts.quantity',
                         'stocks.stock',
+                        'clothing.mayor_price',
+                        'attributes.name',
+                        'attribute_values.value',
+                        'clothing.status',
+                        'clothing.discount',
+                        'carts.quantity',
+                        'carts.id',
                         'product_images.image'
                     )
                     ->get();
+
                 return $cart_items;
             }
         });
         return $cart_items;
     }
-
     public function getCart()
     {
         $cart_items = $this->getCartItems();

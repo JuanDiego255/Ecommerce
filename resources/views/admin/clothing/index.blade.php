@@ -57,15 +57,19 @@
                                 </th>
                                 <th class="text-center text-secondary font-weight-bolder opacity-7">
                                     {{ __('Precio') }}</th>
-                                <th
-                                    class="text-center text-secondary font-weight-bolder opacity-7 {{ isset($tenantinfo->manage_size) && $tenantinfo->manage_size == 0 ? 'd-none' : '' }}">
-                                    {{ __('Tallas') }}</th>
+                                <th class="text-center text-secondary font-weight-bolder opacity-7">
+                                    {{ __('Atributos') }}</th>
                                 <th class="text-center text-secondary font-weight-bolder opacity-7">
                                     {{ __('Stock') }}</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($clothings as $item)
+                                @php
+                                    $stockPerSize = explode(',', $item->stock_per_size);
+                                    $attrPerItem = explode(',', $item->attr_id_per_size);
+                                    $attr = explode(',', $item->available_attr);
+                                @endphp
                                 <tr>
                                     <td class="align-middle text-center">
                                         <form name="delete-clothing{{ $item->id }}"
@@ -105,18 +109,16 @@
                                         <p class="text-success mb-0">₡{{ $item->price }}
                                         </p>
                                     </td>
-                                    <td
-                                        class="align-middle text-center text-sm {{ isset($tenantinfo->manage_size) && $tenantinfo->manage_size == 0 ? 'd-none' : '' }}">
-                                        @if (isset($tenantinfo->tenant) && $tenantinfo->manage_size == 1)
-                                            @php
-                                                $sizes = explode(',', $item->available_sizes);
-                                                $stockPerSize = explode(',', $item->stock_per_size);
-                                            @endphp
-                                            @for ($i = 0; $i < count($sizes); $i++)
-                                                <p class="mb-0">Talla {{ $sizes[$i] }}: {{ $stockPerSize[$i] }}</p>
-                                            @endfor
-                                        @endif
-                                    </td>
+                                    <td class="align-middle text-center text-sm">
+
+                                        @for ($i = 0; $i < count($attr); $i++)
+                                            @if ($attrPerItem[$i] != null && $attrPerItem[$i] != '')
+                                                <p class="mb-0">Atributo: {{ $attr[$i] }}: {{ $stockPerSize[$i] }}
+                                                </p>
+                                            @endif
+                                        @endfor
+
+                                    </td>                                   
                                     <td class="align-middle text-center text-sm">
                                         <p class="text-success mb-0">{{ $item->total_stock }}
                                         </p>

@@ -34,25 +34,19 @@
                             </div>
                             <input type="hidden" value="{{ $tenantinfo->manage_size }}" id="manage_size">
 
-                            <div class="col-md-4 mb-3 d-none d-flex" id="size_section">
-                                <div
-                                    class="input-group input-group-static w-75 {{ isset($tenantinfo->tenant) && $tenantinfo->manage_size == 0 ? 'd-none' : '' }}">
-                                    <label>Tallas</label>
-                                    <select required id="sizes" name="sizes"
-                                        class="form-control form-control-lg @error('sizes') is-invalid @enderror" required
-                                        autocomplete="section" autofocus>
-                                    </select>
-                                </div>
-                                <div class="div">
-                                    <button class="btn btn-add_to_cart shadow-0 btnAdd"> <i
-                                            class="me-1 fa fa-shopping-basket"></i></button>
-                                </div>
-                            </div>
-
                         </div>
+                        <div class="row" id="container" class="d-none">
+                            <div id="select-container" class="d-none">
+
+                            </div>
+                        </div>
+
+
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="row">
             <div class="col-md-8">
                 <div class="card p-2">
                     <div class="table-responsive">
@@ -65,9 +59,8 @@
                                     </th>
                                     <th class="text-center text-secondary font-weight-bolder opacity-7">
                                         Precio</th>
-                                    <th
-                                        class="text-center text-secondary font-weight-bolder opacity-7 {{ isset($tenantinfo->manage_size) && $tenantinfo->manage_size == 0 ? 'd-none' : '' }}">
-                                        Talla</th>
+                                    <th class="text-center text-secondary font-weight-bolder opacity-7">
+                                        Atributos</th>
                                     <th class="text-center text-secondary font-weight-bolder opacity-7">
                                         Cant</th>
                                     <th class="text-secondary opacity-7"></th>
@@ -83,11 +76,11 @@
                                             $descuento = ($precio * $descuentoPorcentaje) / 100;
                                             // Calcular el precio con el descuento aplicado
                                             $precioConDescuento = $precio - $descuento;
+                                            $attributesValues = explode(', ', $item->attributes_values);
                                         @endphp
                                         <input type="hidden" name="prod_id" value="{{ $item->id }}" class="prod_id">
                                         <input type="hidden" class="price"
                                             value="{{ $item->discount > 0 ? $precioConDescuento : $item->price }}">
-                                        <input type="hidden" value="{{ $item->size_id }}" class="size_id" name="size">
                                         <input type="hidden" value="{{ $descuento }}" class="discount" name="discount">
                                         <td class="w-50">
                                             <div class="d-flex px-2 py-1">
@@ -115,36 +108,36 @@
 
                                         </td>
 
-                                        <td
-                                            class="{{ isset($tenantinfo->tenant) && $tenantinfo->manage_size == 0 ? 'd-none' : '' }}">
-                                            <p class="text-center text-truncate para mb-0">{{ $item->size }}
-                                            </p>
+                                        <td class="align-middle text-center text-sm">
+                                            @foreach ($attributesValues as $attributeValue)
+                                                @php
+                                                    // Separa el atributo del valor por ": "
+                                                    [$attribute, $value] = explode(': ', $attributeValue);
+                                                @endphp
+
+                                                {{ $attribute }}: {{ $value }}<br>
+                                            @endforeach
                                         </td>
                                         <td class="align-middle text-center text-sm">
                                             <div class="input-group text-center input-group-static w-100">
 
                                                 <input min="1" max="{{ $item->stock }}"
-                                                    value="{{ $item->quantity }}" type="number" name="quantity"
-                                                    id="quantity{{ $item->quantity }}"
+                                                    data-cart-id="{{ $item->cart_id }}" value="{{ $item->quantity }}"
+                                                    type="number" name="quantity" id="quantity{{ $item->quantity }}"
                                                     class="form-control btnQuantity text-center w-100 quantity">
                                             </div>
                                         </td>
 
                                         <td class="align-middle">
-                                            <form name="delete-item-cart{{ $item->id }}"
-                                                id="delete-item-cart{{ $item->id }}" method="post"
-                                                action="{{ url('/delete-item-cart/' . $item->id . '/' . $item->size_id) }}">
+                                            <form name="delete-item-cart" id="delete-item-cart" class="delete-form">
                                                 {{ csrf_field() }}
                                                 {{ method_field('DELETE') }}
-                                                <input value="1" type="hidden" name="no_cart">
-                                                <button type="submit" form="delete-item-cart{{ $item->id }}"
-                                                    class="btn btn-icon btn-3 btn-danger">
+                                                <button data-item-id="{{ $item->cart_id }}"
+                                                    class="btn btn-icon btn-3 btn-danger btnDeleteCart">
                                                     <span class="btn-inner--icon"><i
                                                             class="material-icons">delete</i></span>
-
                                                 </button>
                                             </form>
-
                                         </td>
                                     </tr>
                                 @endforeach
@@ -161,7 +154,7 @@
                             <li
                                 class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
                                 Productos
-                                <span><strong id="totalCloth">₡{{ number_format($cloth_price) }}</strong< /span>
+                                <span><strong id="totalCloth">₡{{ number_format($cloth_price) }}</strong</span>
                             </li>
                             @if ($iva > 0)
                                 <li
@@ -205,14 +198,17 @@
                     </div>
                 </div>
             </div>
-
         </div>
+    </div>
 
     </div>
 @endsection
 @section('script')
     <script>
         $(document).ready(function() {
+            var $container = $(
+                '#container'
+            ); // Suponiendo que hay un contenedor con id "container"
             var dataTable = $('#cartTable').DataTable({
                 searching: true,
                 lengthChange: false,
@@ -267,20 +263,83 @@
                                     title: response.status,
                                     icon: response.icon,
                                 });
-                                $('#size_section').removeClass('d-block');
-                                $('#size_section').addClass('d-none');
+                                $container.removeClass('d-block').addClass('d-none');
+                                $('#select-container').removeClass('d-block').addClass(
+                                    'd-none');
+                                $container.empty();
                             } else {
-                                var sizes = response.sizes;
-                                var dropdown = $('#sizes');
-                                dropdown.empty();
-                                dropdown.append(
-                                    '<option value="">Selecciona una talla</option>');
-                                $.each(sizes, function(index, size) {
-                                    dropdown.append('<option value="' + size.id + '">' +
-                                        size.size + '</option>');
+                                var results = response.results;
+                                var $currentRow;
+                                $.each(results, function(index, attribute) {
+                                    if (index % 2 === 0) {
+                                        // Crear una nueva fila cada dos columnas
+                                        $currentRow = $('<div>', {
+                                            class: 'row'
+                                        });
+                                        $container.append($currentRow);
+                                    }
+
+                                    var $col = $('<div>', {
+                                        class: 'col-md-6'
+                                    });
+                                    var $label = $('<label>', {
+                                        text: attribute.columna_atributo
+                                    });
+                                    var values = attribute.valores.split('-');
+                                    var ids = attribute.ids.split('-');
+
+                                    var $select = $('<select>', {
+                                        required: true,
+                                        name: 'size_id',
+                                        class: 'size_id form-control form-control-lg mb-2'
+                                    });
+
+                                    $.each(values, function(key, value) {
+                                        if (ids[key] !== undefined) {
+                                            var $option = $('<option>', {
+                                                value: ids[key] + '-' +
+                                                    attribute.attr_id +
+                                                    '-' + attribute
+                                                    .clothing_id,
+                                                id: 'size_' + ids[key],
+                                                text: value
+                                            });
+                                            if (key === 0) {
+                                                $option.attr('selected',
+                                                    'selected');
+                                            }
+                                            $select.append($option);
+                                        }
+                                    });
+
+                                    var $inputGroup = $('<div>', {
+                                        class: 'input-group input-group-static'
+                                    }).append($select);
+
+                                    $col.append($label).append('<br>').append(
+                                        $inputGroup).append('<br>');
+
+                                    $currentRow.append($col);
+
+                                    // Add the button after every two columns (end of the row)
+                                    if (index % 2 === 1 || index === results.length -
+                                        1) {
+                                        var $buttonCol = $('<div>', {
+                                            class: 'col-md-12'
+                                        });
+                                        var $button = $('<button>', {
+                                            class: 'btn btn-add_to_cart shadow-0 btnAdd'
+                                        }).append(
+                                            '<i class="me-1 fa fa-shopping-basket"></i> Agregar'
+                                        );
+                                        $buttonCol.append($button);
+                                        $currentRow.append($buttonCol);
+                                    }
                                 });
-                                $('#size_section').removeClass('d-none');
-                                $('#size_section').addClass('d-block');
+
+                                $container.removeClass('d-none').addClass('d-block');
+                                $('#select-container').removeClass('d-none').addClass(
+                                    'd-block');
                             }
 
                         }
@@ -288,22 +347,26 @@
                 }
             });
 
-            $('.btnAdd').click(function(e) {
+            $container.on('click', '.btnAdd', function(e) {
                 e.preventDefault();
                 var input_code = document.getElementById('code');
                 var code = input_code.value;
-                var input_size = document.getElementById('sizes');
-                var size_id = input_size.value;
-                var input_manage_size = document.getElementById('manage_size');
-                var manage_size = input_manage_size.value;
+                var selected_sizes = [];
 
-                if ((size_id == null || size_id == "") && manage_size == 1) {
-                    swal({
-                        title: "Por favor seleccione una talla...",
-                        icon: "warning",
-                    });
-                    return;
-                }
+                // Recorrer todos los <select> con la clase .size_id y obtener sus valores
+                $('.size_id').each(function() {
+                    var selected_value = $(this).val();
+                    selected_sizes.push(selected_value);
+                });
+
+                // Convertir el array a una cadena JSON
+                var cleaned_sizes = selected_sizes.filter(function(size) {
+                    return size !== typeof(undefined) && size.trim() !== "";
+                });
+
+                // Convertir el array filtrado a una cadena JSON
+                var attributes = JSON.stringify(cleaned_sizes);
+                console.log(attributes)
 
                 $.ajaxSetup({
                     headers: {
@@ -315,11 +378,11 @@
                     url: "/add-to-cart",
                     data: {
                         'code': code,
-                        'size_id': size_id,
+                        'attributes': attributes,
                     },
                     success: function(response) {
                         //swal(response.status);
-                        if (response.status === "success") {
+                        if (response.icon === "success") {
                             location.reload();
                         } else {
                             swal({
@@ -335,11 +398,8 @@
             $('.btnQuantity').click(function(e) {
                 e.preventDefault();
 
-                var cloth_id = $(this).closest('tr').find('.prod_id').val();
                 var quantity = $(this).val();
-                var price = $(this).closest('tr').find('.price').val();
-                var size_id = $(this).closest('tr').find('.size_id').val();
-                var kind_of = "F";
+                var itemId = $(this).data('cart-id');
 
                 $.ajaxSetup({
                     headers: {
@@ -350,15 +410,43 @@
                     method: "POST",
                     url: "/edit-quantity",
                     data: {
-                        'clothing_id': cloth_id,
+                        'cart_id': itemId,
                         'quantity': quantity,
-                        'size': size_id,
-                        'kind_of': kind_of
                     },
                     success: function(response) {
                         calcularTotal();
                     }
                 });
+            });
+
+            $('.btnDeleteCart').click(function(e) {
+                e.preventDefault();
+
+                var itemId = $(this).data('item-id');
+                // Confirmar la eliminación
+                var confirmDelete = confirm('¿Deseas borrar este artículo?');
+
+                if (confirmDelete) {
+                    $.ajax({
+                        method: "POST",
+                        url: "/delete-item-cart/" + itemId,
+                        data: {
+                            _token: '{{ csrf_token() }}',
+                            _method: 'DELETE',
+                        },
+                        success: function(response) {
+                            if (response.refresh == true) {
+                                window.location.href = "{{ url('/') }}";
+                            } else {
+                                location.reload();
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            // Manejar errores si es necesario
+                            console.error(xhr.responseText);
+                        }
+                    });
+                }
             });
         });
 
@@ -401,8 +489,6 @@
                 totalDiscountElement.textContent = `₡${you_save.toLocaleString()}`;
             }
             totalCloth.textContent = `₡${total_cloth.toLocaleString()}`;
-            btnPay.textContent = `${total.toLocaleString()}`;
-
         }
     </script>
 @endsection

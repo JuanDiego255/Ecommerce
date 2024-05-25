@@ -33,9 +33,8 @@
                                         </th>
                                         <th class="text-center text-secondary font-weight-bolder opacity-7">
                                             Precio</th>
-                                        <th
-                                            class="text-center text-secondary font-weight-bolder opacity-7 {{ isset($tenantinfo->tenant) && $tenantinfo->manage_size == 0 ? 'd-none' : '' }}">
-                                            {{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'Talla' : 'Tamaño' }}
+                                        <th class="text-center text-secondary font-weight-bolder opacity-7">
+                                            Atributos
                                         </th>
                                         <th class="text-center text-secondary font-weight-bolder opacity-7">
                                             Cant</th>
@@ -78,6 +77,7 @@
                                                 $descuento = ($precio * $descuentoPorcentaje) / 100;
                                                 // Calcular el precio con el descuento aplicado
                                                 $precioConDescuento = $precio - $descuento;
+                                                $attributesValues = explode(', ', $item->attributes_values);
                                             @endphp
                                             <input type="hidden" name="prod_id" value="{{ $item->id }}"
                                                 class="prod_id">
@@ -90,8 +90,6 @@
                                                             ? $item->stock_price
                                                             : $item->price)) }}
                                                 ">
-                                            <input type="hidden" value="{{ $item->size_id }}" class="size_id"
-                                                name="size">
                                             <input type="hidden" value="{{ $descuento }}" class="discount"
                                                 name="discount">
                                             <td class="w-50">
@@ -128,17 +126,22 @@
 
                                             </td>
 
-                                            <td
-                                                class="{{ isset($tenantinfo->tenant) && $tenantinfo->manage_size == 0 ? 'd-none' : '' }}">
-                                                <p class="text-center text-truncate para mb-0">{{ $item->size }}
-                                                </p>
+                                            <td class="align-middle text-center text-sm">
+                                                @foreach ($attributesValues as $attributeValue)
+                                                    @php
+                                                        // Separa el atributo del valor por ": "
+                                                        [$attribute, $value] = explode(': ', $attributeValue);
+                                                    @endphp
+
+                                                    {{ $attribute }}: {{ $value }}<br>
+                                                @endforeach
                                             </td>
                                             <td class="align-middle text-center text-sm">
                                                 <div class="input-group text-center input-group-static w-100">
 
                                                     <input min="1" max="{{ $item->stock }}"
-                                                        value="{{ $item->quantity }}" type="number" name="quantity"
-                                                        id="quantity{{ $item->quantity }}"
+                                                        data-cart-id="{{ $item->cart_id }}" value="{{ $item->quantity }}"
+                                                        type="number" name="quantity" id="quantity{{ $item->quantity }}"
                                                         class="form-control btnQuantity text-center w-100 quantity">
                                                 </div>
                                             </td>
@@ -147,8 +150,7 @@
                                                 <form name="delete-item-cart" id="delete-item-cart" class="delete-form">
                                                     {{ csrf_field() }}
                                                     {{ method_field('DELETE') }}
-                                                    <button data-item-id="{{ $item->id }}"
-                                                        data-size-id="{{ $item->size_id }}"
+                                                    <button data-item-id="{{ $item->cart_id }}"
                                                         class="btn btn-icon btn-3 btn-danger btnDeleteCart">
                                                         <span class="btn-inner--icon"><i
                                                                 class="material-icons">delete</i></span>
@@ -235,10 +237,8 @@
             $('.btnQuantity').click(function(e) {
                 e.preventDefault();
 
-                var cloth_id = $(this).closest('tr').find('.prod_id').val();
                 var quantity = $(this).val();
-                var price = $(this).closest('tr').find('.price').val();
-                var size_id = $(this).closest('tr').find('.size_id').val();
+                var itemId = $(this).data('cart-id');
 
                 $.ajaxSetup({
                     headers: {
@@ -249,9 +249,8 @@
                     method: "POST",
                     url: "/edit-quantity",
                     data: {
-                        'clothing_id': cloth_id,
+                        'cart_id': itemId,
                         'quantity': quantity,
-                        'size': size_id,
                     },
                     success: function(response) {
                         calcularTotal();
@@ -264,7 +263,6 @@
             e.preventDefault();
 
             var itemId = $(this).data('item-id');
-            var sizeId = $(this).data('size-id');
             // Confirmar la eliminación
             var confirmDelete = confirm('¿Deseas borrar este artículo?');
 
@@ -275,14 +273,13 @@
                     data: {
                         _token: '{{ csrf_token() }}',
                         _method: 'DELETE',
-                        size_id: sizeId
                     },
                     success: function(response) {
                         if (response.refresh == true) {
                             window.location.href = "{{ url('/') }}";
-                        }else{
+                        } else {
                             location.reload();
-                        }                        
+                        }
                     },
                     error: function(xhr, status, error) {
                         // Manejar errores si es necesario

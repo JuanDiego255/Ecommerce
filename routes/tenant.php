@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\FrontendController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\AttributeController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\BuyController;
 use App\Http\Controllers\ClothingCategoryController;
@@ -23,6 +24,7 @@ use App\Http\Controllers\TenantCarouselController;
 use App\Http\Controllers\TenantInfoController;
 use App\Http\Controllers\TenantSocialNetworkController;
 use App\Http\Controllers\TestimonialController;
+use App\Models\Attribute;
 use App\Models\MedicineResult;
 use App\Models\PersonalUser;
 use Illuminate\Support\Facades\Auth;
@@ -79,6 +81,7 @@ Route::middleware([
         Route::post('/payment', [CheckOutController::class, 'payment']);
         Route::get('/paypal/process/{orderId}', [CheckOutController::class, 'process']);
         Route::post('/comments/store/', [TestimonialController::class, 'store']);
+        Route::get('/get-stock/{cloth_id}/{attr_id}/{value_attr}', [FrontendController::class, 'getStock']);
         Auth::routes();
 
         Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
@@ -210,6 +213,22 @@ Route::middleware([
             Route::delete('delete-comments/{id}', [TestimonialController::class, 'destroy']);            
             Route::get('comments/{id}/edit', [TestimonialController::class, 'edit']);
             Route::get('comments/add', [TestimonialController::class, 'add']);
+            //Rutas para atributos de productos
+            Route::get('/attributes/', [AttributeController::class, 'indexAdmin']);
+            Route::put('attribute/{id}', [AttributeController::class, 'update']);            
+            Route::delete('delete-attribute/{id}', [AttributeController::class, 'destroy']);            
+            Route::get('attribute/{id}/edit', [AttributeController::class, 'edit']);
+            Route::get('attribute/add', [AttributeController::class, 'add']);            
+            Route::post('attribute/store', [AttributeController::class, 'store']);
+            Route::post('main-attribute/{id}', [AttributeController::class, 'mainAttribute']);
+            //Rutas para valores de los atributos
+            Route::get('attribute-values/{id}', [AttributeController::class, 'values']);
+            Route::get('get-values/{id}', [AttributeController::class, 'getValues']);
+            Route::get('get-attr_id/{id}', [AttributeController::class, 'getAttrId']);
+            Route::put('value/{id}/{attr_id}', [AttributeController::class, 'updateValue']);
+            Route::delete('delete-value/{id}', [AttributeController::class, 'destroyValue']);
+            Route::post('/value/store/{id}', [AttributeController::class, 'storeValue']);           
+            Route::get('value/{attr_id}/{id}/edit', [AttributeController::class, 'editValue']);
         });
     });
 

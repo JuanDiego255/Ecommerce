@@ -15,11 +15,9 @@ class CreateStocksTable extends Migration
     {
         Schema::create('stocks', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('clothing_id');
-            $table->unsignedBigInteger('size_id');            
+            $table->unsignedBigInteger('clothing_id');        
             $table->string('stock',60);
             $table->foreign('clothing_id')->references('id')->on('clothing')->onDelete('cascade');
-            $table->foreign('size_id')->references('id')->on('sizes')->onDelete('cascade');
             $table->timestamps();
         });
     }

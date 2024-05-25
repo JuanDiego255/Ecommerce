@@ -98,6 +98,39 @@
             </div>
         @endif
     @endif
+    {{-- profesional info --}}
+    @if (isset($profesional_info))     
+        <div class="mt-5 bg-white">
+            <div class="container pt-3 pb-5">
+                <div class="row mt-5">
+                    <div class="col-md-4">
+                        <div class="product-grid product_data">
+                            <div class="product-image">
+                                <img src="{{ route('file', $profesional_info->image) }}">
+                                <ul class="product-links">
+                                    <li><a target="blank" href="{{ route('file', $profesional_info->image) }}"><i
+                                                class="fas fa-eye"></i></a>
+                                    </li>
+                                </ul>
+
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-md-8 mb-2">
+                        <h1 class="text-title">{{ $profesional_info->name }}</h1>
+                        {!! $profesional_info->body !!}
+                        <a class="btn btn-icon btn-3 mt-2 btn-add_to_cart"
+                            href="{{ url('https://wa.me/506' . $tenantinfo->whatsapp) }}">
+                            <span class="btn-inner--icon"><i class="material-icons">calendar_month</i></span>
+                            <span class="btn-inner--text">{{ __('Contactar') }}</span>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    @endif
     {{-- Insta --}}
     <hr class="text-dark">
     @if (isset($tenantinfo->show_insta) && $tenantinfo->show_insta == 1)

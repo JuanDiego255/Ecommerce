@@ -24,15 +24,36 @@
                             $view_name == 'admin_clothing_edit' ||
                             $view_name == 'admin_clothing_add' ||
                             $view_name == 'admin_categories_add' ||
-                            $view_name == 'admin_categories_edit') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
-                        href="{{ isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1 ? url('categories') : url('departments') }}">
+                            $view_name == 'admin_categories_edit') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif href="javascript:void(0);">
                         <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
-                            <i class="material-icons opacity-10">dashboard</i>
+                            <i class="material-icons opacity-10">inventory_2</i>
                         </div>
-                        <span
-                            class="nav-link-text ms-1">{{ isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1 ? 'Categorías' : 'Departamentos' }}</span>
+                        <span class="nav-link-text ms-1">{{ __('Catálogo') }}</span>
                     </a>
+
+                    <!-- Lista desplegable de "Mi Negocio" -->
+                    <ul class="submenu">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1 ? url('categories') : url('departments') }}">
+                                <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                                    <i class="material-icons opacity-10">arrow_right_alt</i>
+                                </div>
+                                {{ isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1 ? 'Categorías' : 'Departamentos' }}
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ url('/attributes') }}" class="nav-link">
+                                <div
+                                    class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                                    <i class="material-icons opacity-10">arrow_right_alt</i>
+                                </div>
+                                {{ __('Atributos') }}
+                            </a>
+                        </li>
+                       
+                    </ul>
                 </li>
+                
                 @if (isset($tenantinfo->kind_business) && $tenantinfo->kind_business != 1)
                     <li class="nav-item">
                         <a @if ($view_name == 'admin_sizes_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif

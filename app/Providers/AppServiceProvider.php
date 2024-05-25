@@ -7,6 +7,7 @@ use App\Models\Cart;
 use App\Models\Categories;
 use App\Models\ClothingCategory;
 use App\Models\Department;
+use App\Models\PersonalUser;
 use App\Models\Settings;
 use App\Models\TenantCarousel;
 use App\Models\TenantInfo;
@@ -90,7 +91,6 @@ class AppServiceProvider extends ServiceProvider
             $clothings_offer = ClothingCategory::where('categories.name', 'Sale')
                 ->join('categories', 'clothing.category_id', 'categories.id')
                 ->join('stocks', 'clothing.id', 'stocks.clothing_id')
-                ->join('sizes', 'stocks.size_id', 'sizes.id')
                 ->select(
                     'categories.name as category',
                     'categories.id as category_id',
@@ -103,7 +103,6 @@ class AppServiceProvider extends ServiceProvider
                     'clothing.price as price',
                     'clothing.mayor_price as mayor_price',
                     DB::raw('SUM(stocks.stock) as total_stock'),
-                    DB::raw('GROUP_CONCAT(sizes.size) AS available_sizes'), // Obtener tallas dinámicas
                     DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size')
                 )
                 ->groupBy(
@@ -129,12 +128,16 @@ class AppServiceProvider extends ServiceProvider
                         ->where('carts.session_id', null)
                         ->where('carts.sold', 0)
                         ->join('users', 'carts.user_id', 'users.id')
-                        ->join('stocks', function ($join) {
+                        ->join('attribute_value_cars', 'carts.id', 'attribute_value_cars.cart_id')
+                        ->join('attributes', 'attribute_value_cars.attr_id', 'attributes.id')
+                        ->join('attribute_values', 'attribute_value_cars.value_attr', 'attribute_values.id')
+                        ->where('stocks.price','!=',0)
+                        ->leftJoin('stocks', function ($join) {
                             $join->on('carts.clothing_id', '=', 'stocks.clothing_id')
-                                ->on('carts.size_id', '=', 'stocks.size_id');
+                                ->on('attribute_value_cars.attr_id', '=', 'stocks.attr_id')
+                                ->on('attribute_value_cars.value_attr', '=', 'stocks.value_attr');
                         })
                         ->join('clothing', 'carts.clothing_id', 'clothing.id')
-                        ->join('sizes', 'carts.size_id', 'sizes.id')
                         ->leftJoin('product_images', function ($join) {
                             $join->on('clothing.id', '=', 'product_images.clothing_id')
                                 ->whereRaw('product_images.id = (
@@ -147,15 +150,22 @@ class AppServiceProvider extends ServiceProvider
                             'clothing.name as name',
                             'clothing.casa as casa',
                             'clothing.description as description',
-                            'clothing.price as price',
                             'clothing.mayor_price as mayor_price',
                             'clothing.discount as discount',
                             'clothing.status as status',
-                            'sizes.size as size',
-                            'sizes.id as size_id',
-                            'stocks.price as stock_price',
                             'carts.quantity as quantity',
+                            'carts.id as cart_id',
+                            'attributes.name as name_attr',
+                            'attribute_values.value as value',
+                            'stocks.price as price',
                             'stocks.stock as stock',
+                            DB::raw('(
+                                SELECT GROUP_CONCAT(CONCAT(attributes.name, ": ", attribute_values.value) SEPARATOR ", ")
+                                FROM attribute_value_cars
+                                JOIN attributes ON attribute_value_cars.attr_id = attributes.id
+                                JOIN attribute_values ON attribute_value_cars.value_attr = attribute_values.id
+                                WHERE attribute_value_cars.cart_id = carts.id
+                            ) as attributes_values'),
                             DB::raw('IFNULL(product_images.image, "") as image'), // Obtener la primera imagen del producto
 
                         )
@@ -164,15 +174,15 @@ class AppServiceProvider extends ServiceProvider
                             'clothing.name',
                             'clothing.casa',
                             'clothing.description',
-                            'clothing.price',
+                            'stocks.price',
+                            'stocks.stock',
                             'clothing.mayor_price',
+                            'attributes.name',
+                            'attribute_values.value',
                             'clothing.status',
                             'clothing.discount',
-                            'sizes.size',
-                            'sizes.id',
-                            'stocks.price',
                             'carts.quantity',
-                            'stocks.stock',
+                            'carts.id',
                             'product_images.image'
                         )
                         ->get();
@@ -183,53 +193,65 @@ class AppServiceProvider extends ServiceProvider
                     $cart_items = Cart::where('carts.session_id', $session_id)
                         ->where('carts.user_id', null)
                         ->where('carts.sold', 0)
-                        ->join('stocks', function ($join) {
+                        ->join('attribute_value_cars', 'carts.id', 'attribute_value_cars.cart_id')
+                        ->join('attributes', 'attribute_value_cars.attr_id', 'attributes.id')
+                        ->join('attribute_values', 'attribute_value_cars.value_attr', 'attribute_values.id')
+                        ->where('stocks.price','!=',0)
+                        ->leftJoin('stocks', function ($join) {
                             $join->on('carts.clothing_id', '=', 'stocks.clothing_id')
-                                ->on('carts.size_id', '=', 'stocks.size_id');
+                                ->on('attribute_value_cars.attr_id', '=', 'stocks.attr_id')
+                                ->on('attribute_value_cars.value_attr', '=', 'stocks.value_attr');
                         })
                         ->join('clothing', 'carts.clothing_id', 'clothing.id')
-                        ->join('sizes', 'carts.size_id', 'sizes.id')
                         ->leftJoin('product_images', function ($join) {
                             $join->on('clothing.id', '=', 'product_images.clothing_id')
                                 ->whereRaw('product_images.id = (
-                        SELECT MIN(id) FROM product_images 
-                        WHERE product_images.clothing_id = clothing.id
-                    )');
+                                    SELECT MIN(id) FROM product_images 
+                                    WHERE product_images.clothing_id = clothing.id
+                                )');
                         })
                         ->select(
                             'clothing.id as id',
                             'clothing.name as name',
                             'clothing.casa as casa',
                             'clothing.description as description',
-                            'clothing.price as price',
-                            'stocks.price as stock_price',
                             'clothing.mayor_price as mayor_price',
                             'clothing.discount as discount',
                             'clothing.status as status',
-                            'sizes.size as size',
-                            'sizes.id as size_id',
                             'carts.quantity as quantity',
+                            'carts.id as cart_id',
+                            'attributes.name as name_attr',
+                            'attribute_values.value as value',
+                            'stocks.price as price',
                             'stocks.stock as stock',
+                            DB::raw('(
+                                SELECT GROUP_CONCAT(CONCAT(attributes.name, ": ", attribute_values.value) SEPARATOR ", ")
+                                FROM attribute_value_cars
+                                JOIN attributes ON attribute_value_cars.attr_id = attributes.id
+                                JOIN attribute_values ON attribute_value_cars.value_attr = attribute_values.id
+                                WHERE attribute_value_cars.cart_id = carts.id
+                            ) as attributes_values'),
                             DB::raw('IFNULL(product_images.image, "") as image'), // Obtener la primera imagen del producto
-                            DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id AND sizes.id = stocks.size_id ORDER BY id ASC LIMIT 1) AS first_price')
+
                         )
                         ->groupBy(
                             'clothing.id',
                             'clothing.name',
                             'clothing.casa',
                             'clothing.description',
-                            'clothing.price',
-                            'clothing.mayor_price',
-                            'clothing.discount',
-                            'clothing.status',
-                            'sizes.size',
                             'stocks.price',
-                            'sizes.id',
-                            'carts.quantity',
                             'stocks.stock',
+                            'clothing.mayor_price',
+                            'attributes.name',                           
+                            'attribute_values.value',
+                            'clothing.status',
+                            'clothing.discount',
+                            'carts.quantity',
+                            'carts.id',
                             'product_images.image'
                         )
                         ->get();
+                       
                     return $cart_items;
                 }
             });
@@ -264,12 +286,17 @@ class AppServiceProvider extends ServiceProvider
                 $precioConDescuento = $precio - $descuento;
                 $cloth_price += $precioConDescuento * $item->quantity;
             }
+            $profesional_info = null;
+            if($tenantinfo->tenant != "main"){
+                $profesional_info = PersonalUser::first();
+            }
+           
 
             $iva = $cloth_price * $tenantinfo->iva;
             $total_price = $cloth_price + $iva;
-
             view()->share([
                 'view_name' => $view_name,
+                'profesional_info' => $profesional_info,
                 'cartNumber' => $cartNumber,
                 'categories' => $categories,
                 'buys' => $buys,

@@ -17,16 +17,13 @@ class CreateBuyDetailsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('buy_id'); 
             $table->unsignedBigInteger('clothing_id');
-            $table->unsignedBigInteger('size_id'); 
             $table->string('total',80); 
             $table->string('iva',80);      
             $table->string('quantity',80);       
             $table->tinyInteger('cancel_item')->nullable();
             $table->string('total_delivery',60)->nullable();
             $table->foreign('buy_id')->references('id')->on('buys')->onDelete('cascade');
-            $table->foreign('clothing_id')->references('id')->on('clothing')->onDelete('cascade');
-            $table->foreign('size_id')->references('id')->on('sizes')->onDelete('cascade');            
-            
+            $table->foreign('clothing_id')->references('id')->on('clothing')->onDelete('cascade');   
             $table->timestamps();
         });
     }

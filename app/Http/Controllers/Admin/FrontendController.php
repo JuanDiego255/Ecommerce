@@ -13,6 +13,7 @@ use App\Models\Seller;
 use App\Models\Size;
 use App\Models\SizeCloth;
 use App\Models\SocialNetwork;
+use App\Models\Stock;
 use App\Models\TenantInfo;
 use App\Models\Testimonial;
 use Artesaos\SEOTools\Facades\OpenGraph;
@@ -57,8 +58,7 @@ class FrontendController extends Controller
         $clothings = Cache::remember('clothings_trending', $this->expirationTime, function () {
             return ClothingCategory::where('clothing.trending', 1)
                 ->join('categories', 'clothing.category_id', 'categories.id')
-                ->join('stocks', 'clothing.id', 'stocks.clothing_id')
-                ->join('sizes', 'stocks.size_id', 'sizes.id')
+                ->leftJoin('stocks', 'clothing.id', 'stocks.clothing_id')
                 ->select(
                     'categories.name as category',
                     'categories.id as category_id',
@@ -70,8 +70,7 @@ class FrontendController extends Controller
                     'clothing.description as description',
                     'clothing.price as price',
                     'clothing.mayor_price as mayor_price',
-                    DB::raw('SUM(stocks.stock) as total_stock'),
-                    DB::raw('GROUP_CONCAT(sizes.size) AS available_sizes'), // Obtener tallas dinámicas
+                    DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE 0 END) as total_stock'),
                     DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'),
                     DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
                 )
@@ -128,8 +127,7 @@ class FrontendController extends Controller
         $clothings_offer = Cache::remember('clothings_offer', $this->expirationTime, function () {
             return ClothingCategory::where('categories.name', 'Sale')
                 ->join('categories', 'clothing.category_id', 'categories.id')
-                ->join('stocks', 'clothing.id', 'stocks.clothing_id')
-                ->join('sizes', 'stocks.size_id', 'sizes.id')
+                ->leftJoin('stocks', 'clothing.id', 'stocks.clothing_id')
                 ->select(
                     'categories.name as category',
                     'categories.id as category_id',
@@ -141,8 +139,7 @@ class FrontendController extends Controller
                     'clothing.description as description',
                     'clothing.price as price',
                     'clothing.mayor_price as mayor_price',
-                    DB::raw('SUM(stocks.stock) as total_stock'),
-                    DB::raw('GROUP_CONCAT(sizes.size) AS available_sizes'), // Obtener tallas dinámicas
+                    DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE 0 END) as total_stock'),
                     DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'),
                     DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
                 )
@@ -243,8 +240,7 @@ class FrontendController extends Controller
             return ClothingCategory::where('clothing.category_id', $id)
                 ->where('clothing.status', 1)
                 ->join('categories', 'clothing.category_id', 'categories.id')
-                ->join('stocks', 'clothing.id', 'stocks.clothing_id')
-                ->join('sizes', 'stocks.size_id', 'sizes.id')
+                ->leftJoin('stocks', 'clothing.id', 'stocks.clothing_id')
                 ->leftJoin('product_images', function ($join) {
                     $join->on('clothing.id', '=', 'product_images.clothing_id')
                         ->whereRaw('product_images.id = (
@@ -263,12 +259,11 @@ class FrontendController extends Controller
                     'clothing.price as price',
                     'clothing.mayor_price as mayor_price',
                     'product_images.image as image', // Obtener la primera imagen del producto
-                    DB::raw('SUM(stocks.stock) as total_stock'),
-                    DB::raw('GROUP_CONCAT(sizes.size) AS available_sizes'), // Obtener tallas dinámicas
+                    DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE 0 END) as total_stock'),
                     DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'), // Obtener stock por talla
                     DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
                 )
-                ->groupBy('clothing.id','clothing.can_buy', 'clothing.casa', 'clothing.mayor_price', 'categories.name', 'clothing.discount', 'clothing.name', 'clothing.description', 'clothing.price', 'product_images.image')
+                ->groupBy('clothing.id', 'clothing.can_buy', 'clothing.casa', 'clothing.mayor_price', 'categories.name', 'clothing.discount', 'clothing.name', 'clothing.description', 'clothing.price', 'product_images.image')
                 ->orderByRaw('CASE WHEN clothing.casa IS NOT NULL AND clothing.casa != "" THEN 0 ELSE 1 END')
                 ->orderBy('clothing.casa', 'asc')
                 ->orderBy('clothing.name', 'asc')
@@ -330,7 +325,6 @@ class FrontendController extends Controller
             return ClothingCategory::where('clothing.trending', 1)
                 ->join('categories', 'clothing.category_id', 'categories.id')
                 ->join('stocks', 'clothing.id', 'stocks.clothing_id')
-                ->join('sizes', 'stocks.size_id', 'sizes.id')
                 ->select(
                     'categories.name as category',
                     'categories.id as category_id',
@@ -343,7 +337,6 @@ class FrontendController extends Controller
                     'clothing.price as price',
                     'clothing.mayor_price as mayor_price',
                     DB::raw('SUM(stocks.stock) as total_stock'),
-                    DB::raw('GROUP_CONCAT(sizes.size) AS available_sizes'), // Obtener tallas dinámicas
                     DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'),
                     DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
                 )
@@ -370,8 +363,7 @@ class FrontendController extends Controller
             ->where('clothing.status', 1)
             ->join('categories', 'clothing.category_id', 'categories.id')
             ->join('departments', 'categories.department_id', 'departments.id')
-            ->join('stocks', 'clothing.id', 'stocks.clothing_id')
-            ->join('sizes', 'stocks.size_id', 'sizes.id')
+            ->leftJoin('stocks', 'clothing.id', 'stocks.clothing_id')
             ->leftJoin('product_images', 'clothing.id', '=', 'product_images.clothing_id')
             ->select(
                 'categories.name as category',
@@ -388,8 +380,7 @@ class FrontendController extends Controller
                 'clothing.mayor_price as mayor_price',
                 'product_images.image as image', // columna de imagen
                 DB::raw('GROUP_CONCAT(product_images.image ORDER BY product_images.id ASC) AS images'),
-                DB::raw('SUM(stocks.stock) as total_stock'),
-                DB::raw('GROUP_CONCAT(sizes.id) AS available_sizes'), // Obtener tallas dinámicas
+                DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE 0 END) as total_stock'),
                 DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'), // Obtener stock por talla
                 DB::raw('GROUP_CONCAT(stocks.price) AS price_per_size'),
                 DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
@@ -399,20 +390,18 @@ class FrontendController extends Controller
             ->orderBy('clothing.casa', 'asc')
             ->orderBy('clothing.name', 'asc')
             ->get();
-        //$clothes = ClothingCategory::where('id', $id)->get();
-        $size_active = SizeCloth::where('clothing_id', $id)
-            ->join('sizes', 'size_cloths.size_id', 'sizes.id')
-            ->whereNotExists(function ($query) {
-                $query->select(DB::raw(1))
-                    ->from('stocks')
-                    ->whereRaw('stocks.size_id = size_cloths.size_id')
-                    ->whereRaw('stocks.clothing_id = size_cloths.clothing_id')
-                    ->where('stocks.stock', 0);
-            })
+
+        $result = DB::table('stocks as s')->where('s.clothing_id', $id)
+            ->join('attributes as a', 's.attr_id', '=', 'a.id')
+            ->join('attribute_values as v', 's.value_attr', '=', 'v.id')
             ->select(
-                'sizes.id as id',
-                'sizes.size as size'
+                'a.name as columna_atributo',
+                'a.id as attr_id',
+                's.stock as stock',
+                DB::raw('GROUP_CONCAT(v.value SEPARATOR "-") as valores'),
+                DB::raw('GROUP_CONCAT(v.id SEPARATOR "-") as ids'),
             )
+            ->groupBy('a.name', 'a.id','s.stock')
             ->get();
         $tags = MetaTags::where('section', 'Categoría Específica')->get();
         $tenantinfo = TenantInfo::first();
@@ -425,15 +414,11 @@ class FrontendController extends Controller
             OpenGraph::setTitle($tag->title);
             OpenGraph::setDescription($tag->meta_og_description);
         }
-        //Talla por defecto en caso de que no maneje tallas
-        $size = Size::where('size', 'N/A')->first();
-        $default_size = $size->id;
 
         $clothings_trending = ClothingCategory::where('clothing.trending', 1)
             ->where('clothing.id', '!=', $id)
             ->join('categories', 'clothing.category_id', 'categories.id')
-            ->join('stocks', 'clothing.id', 'stocks.clothing_id')
-            ->join('sizes', 'stocks.size_id', 'sizes.id')
+            ->leftJoin('stocks', 'clothing.id', 'stocks.clothing_id')
             ->leftJoin('product_images', function ($join) {
                 $join->on('clothing.id', '=', 'product_images.clothing_id')
                     ->whereRaw('product_images.id = (
@@ -453,8 +438,7 @@ class FrontendController extends Controller
                 'clothing.price as price',
                 'clothing.mayor_price as mayor_price',
                 DB::raw('IFNULL(product_images.image, "") as image'), // Obtener la primera imagen del producto
-                DB::raw('SUM(stocks.stock) as total_stock'),
-                DB::raw('GROUP_CONCAT(sizes.size) AS available_sizes'), // Obtener tallas dinámicas
+                DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE 0 END) as total_stock'),
                 DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'), // Obtener stock por talla
                 DB::raw('GROUP_CONCAT(stocks.price) AS price_per_size'),
                 DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
@@ -468,19 +452,17 @@ class FrontendController extends Controller
             ->get();
 
         switch ($tenantinfo->kind_business) {
-
             case (1):
-                return view('frontend.carsale.detail-car', compact('clothes', 'category_id', 'clothings_trending'));
+                return view('frontend.carsale.detail-car', compact('clothes', 'result', 'category_id', 'clothings_trending'));
                 break;
             case (2):
             case (3):
-                return view('frontend.website.detail-clothing', compact('clothes', 'default_size', 'category_id', 'size_active', 'clothings_trending'));
+                return view('frontend.website.detail-clothing', compact('clothes', 'result', 'category_id', 'clothings_trending'));
                 break;
             default:
-                return view('frontend.detail-clothing', compact('clothes', 'default_size', 'category_id', 'size_active', 'clothings_trending'));
+                return view('frontend.detail-clothing', compact('clothes', 'result', 'category_id', 'clothings_trending'));
         }
     }
-
     public function departments()
     {
         $departments = Cache::remember('departments', $this->expirationTime, function () {
@@ -491,7 +473,6 @@ class FrontendController extends Controller
 
         return view('frontend.departments', compact('departments'));
     }
-
     public function indexCarSale()
     {
         $social = Cache::remember('social_networks', $this->expirationTime, function () {
@@ -506,8 +487,7 @@ class FrontendController extends Controller
         $clothings = Cache::remember('clothings_trending', $this->expirationTime, function () {
             return ClothingCategory::where('clothing.trending', 1)
                 ->join('categories', 'clothing.category_id', 'categories.id')
-                ->join('stocks', 'clothing.id', 'stocks.clothing_id')
-                ->join('sizes', 'stocks.size_id', 'sizes.id')
+                ->leftJoin('stocks', 'clothing.id', 'stocks.clothing_id')
                 ->select(
                     'categories.name as category',
                     'categories.id as category_id',
@@ -519,8 +499,7 @@ class FrontendController extends Controller
                     'clothing.description as description',
                     'clothing.price as price',
                     'clothing.mayor_price as mayor_price',
-                    DB::raw('SUM(stocks.stock) as total_stock'),
-                    DB::raw('GROUP_CONCAT(sizes.size) AS available_sizes'), // Obtener tallas dinámicas
+                    DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE 0 END) as total_stock'),
                     DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'),
                     DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
                 )
@@ -535,7 +514,9 @@ class FrontendController extends Controller
                     'clothing.description',
                     'clothing.price',
                     'clothing.mayor_price',
-                )->orderBy('clothing.name', 'asc')
+                )->orderByRaw('CASE WHEN clothing.casa IS NOT NULL AND clothing.casa != "" THEN 0 ELSE 1 END')
+                ->orderBy('clothing.casa', 'asc')
+                ->orderBy('clothing.name', 'asc')
                 ->take(15)
                 ->get();
         });
@@ -592,41 +573,39 @@ class FrontendController extends Controller
         });
         $clothings = Cache::remember('clothings_trending', $this->expirationTime, function () {
             return ClothingCategory::where('clothing.trending', 1)
-                ->join('categories', 'clothing.category_id', 'categories.id')
-                ->join('stocks', 'clothing.id', 'stocks.clothing_id')
-                ->join('sizes', 'stocks.size_id', 'sizes.id')
-                ->select(
-                    'categories.name as category',
-                    'categories.id as category_id',
-                    'clothing.id as id',
-                    'clothing.trending as trending',
-                    'clothing.can_buy as can_buy',
-                    'clothing.discount as discount',
-                    'clothing.name as name',
-                    'clothing.casa as casa',
-                    'clothing.description as description',
-                    'clothing.price as price',
-                    'clothing.mayor_price as mayor_price',
-                    DB::raw('SUM(stocks.stock) as total_stock'),
-                    DB::raw('GROUP_CONCAT(sizes.size) AS available_sizes'), // Obtener tallas dinámicas
-                    DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'),
-                    DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
-                )
-                ->groupBy(
-                    'clothing.id',
-                    'categories.name',
-                    'clothing.can_buy',
-                    'clothing.casa',
-                    'categories.id',
-                    'clothing.name',
-                    'clothing.discount',
-                    'clothing.trending',
-                    'clothing.description',
-                    'clothing.price',
-                    'clothing.mayor_price',
-                )->orderBy('clothing.name', 'asc')
-                ->take(15)
-                ->get();
+            ->join('categories', 'clothing.category_id', 'categories.id')
+            ->leftJoin('stocks', 'clothing.id', 'stocks.clothing_id')
+            ->select(
+                'categories.name as category',
+                'categories.id as category_id',
+                'clothing.id as id',
+                'clothing.trending as trending',
+                'clothing.discount as discount',
+                'clothing.name as name',
+                'clothing.casa as casa',
+                'clothing.description as description',
+                'clothing.price as price',
+                'clothing.mayor_price as mayor_price',
+                DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE 0 END) as total_stock'),
+                DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'),
+                DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
+            )
+            ->groupBy(
+                'clothing.id',
+                'categories.name',
+                'clothing.casa',
+                'categories.id',
+                'clothing.name',
+                'clothing.discount',
+                'clothing.trending',
+                'clothing.description',
+                'clothing.price',
+                'clothing.mayor_price',
+            )->orderByRaw('CASE WHEN clothing.casa IS NOT NULL AND clothing.casa != "" THEN 0 ELSE 1 END')
+            ->orderBy('clothing.casa', 'asc')
+            ->orderBy('clothing.name', 'asc')
+            ->take(15)
+            ->get();
         });
 
         $category = Cache::remember('categories', $this->expirationTime, function () {
@@ -666,9 +645,17 @@ class FrontendController extends Controller
         $blogs = Blog::inRandomOrder()->orderBy('title', 'asc')
             ->take(4)->get();
 
-        $comments = Testimonial::where('approve',1)->inRandomOrder()->orderBy('name', 'asc')
+        $comments = Testimonial::where('approve', 1)->inRandomOrder()->orderBy('name', 'asc')
             ->get();
 
         return view('frontend.website.index', compact('clothings', 'blogs', 'comments', 'social', 'category', 'sellers'));
+    }
+    public function getStock($cloth_id, $attr_id, $value_attr)
+    {
+        $stock = Stock::where('clothing_id', $cloth_id)
+            ->where('attr_id', $attr_id)
+            ->where('value_attr', $value_attr)
+            ->first();
+        return response()->json($stock);
     }
 }
