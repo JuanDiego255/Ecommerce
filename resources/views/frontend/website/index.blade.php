@@ -99,7 +99,7 @@
         @endif
     @endif
     {{-- profesional info --}}
-    @if (isset($profesional_info))     
+    @if (isset($profesional_info))
         <div class="mt-5 bg-white">
             <div class="container pt-3 pb-5">
                 <div class="row mt-5">
@@ -459,7 +459,8 @@
                                                         stars</label>
                                                 @endfor
                                             </div>
-                                            <p class="card-text">“{{ $item->description }}” </p>
+                                            <p class="card-text card-comment">“{{ $item->description }}” </p>
+                                            <span class="show-more">Ver más</span>
                                         </div>
                                     </div>
                                 </div>
@@ -503,5 +504,22 @@
                 }
             }
         })
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var showMoreButtons = document.querySelectorAll('.show-more');
+
+            showMoreButtons.forEach(function(button) {
+                button.addEventListener('click', function() {
+                    var cardText = button.previousElementSibling;
+                    if (cardText.classList.contains('expanded')) {
+                        cardText.classList.remove('expanded');
+                        button.textContent = 'Ver más';
+                    } else {
+                        cardText.classList.add('expanded');
+                        button.textContent = 'Ver menos';
+                    }
+                });
+            });
+        });
     </script>
 @endsection

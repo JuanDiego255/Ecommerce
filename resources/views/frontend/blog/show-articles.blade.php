@@ -249,16 +249,16 @@
                 </div>
                 <center>
                     <div class="mt-3 mb-3" style="width: 90%; height: 90%; overflow: hidden;">
-                        <iframe style="width: 100%; height: 100%;" src="{{ $blog->video_url }}" title="YouTube video player"
-                            frameborder="0"
+                        <iframe style="width: 100%; height: 100%;" src="{{ $blog->video_url }}"
+                            title="YouTube video player" frameborder="0"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                             referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                     </div>
-                </center>               
+                </center>
             </div>
         </div>
-         {{-- salto de pagina --}}
-         <div class="{{ $tenantinfo->kind_business == 3 ? 'd-block' : 'd-none' }}" style="height: 75px;"></div>
+        {{-- salto de pagina --}}
+        <div class="{{ $tenantinfo->kind_business == 3 ? 'd-block' : 'd-none' }}" style="height: 75px;"></div>
     @endif
     {{-- Comentarios --}}
     @if (count($comments) != 0)
@@ -292,7 +292,8 @@
                                                             stars</label>
                                                     @endfor
                                                 </div>
-                                                <p class="card-text">“{{ $item->description }}” </p>
+                                                <p class="card-text card-comment">“{{ $item->description }}” </p>
+                                                <span class="show-more">Ver más</span>
                                             </div>
                                         </div>
                                     </div>
@@ -370,5 +371,22 @@
                 }
             }
         })
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var showMoreButtons = document.querySelectorAll('.show-more');
+
+            showMoreButtons.forEach(function(button) {
+                button.addEventListener('click', function() {
+                    var cardText = button.previousElementSibling;
+                    if (cardText.classList.contains('expanded')) {
+                        cardText.classList.remove('expanded');
+                        button.textContent = 'Ver más';
+                    } else {
+                        cardText.classList.add('expanded');
+                        button.textContent = 'Ver menos';
+                    }
+                });
+            });
+        });
     </script>
 @endsection

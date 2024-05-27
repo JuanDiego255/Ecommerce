@@ -175,7 +175,7 @@ class FrontendController extends Controller
 
         switch ($tenantinfo->kind_business) {
             case (1):
-                return view('frontend.carsale.index', compact('clothings', 'blogs', 'social', 'clothings_offer', 'category','sellers'));
+                return view('frontend.carsale.index', compact('clothings', 'blogs', 'social', 'clothings_offer', 'category','sellers','comments'));
                 break;
             case (2):
             case (3):

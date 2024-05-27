@@ -47,7 +47,6 @@
             </div>
         </div>
     @endif
-
     {{-- Categories --}}
     @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
         @if (count($categories) != 0)
@@ -109,8 +108,8 @@
         @endif
     @endif
     {{-- Insta --}}
-    <hr class="text-dark">
     @if (isset($tenantinfo->show_insta) && $tenantinfo->show_insta == 1)
+        <hr class="text-dark">
         <div class="row mb-5 container-fluid">
             <div class="text-center">
                 <span
@@ -140,7 +139,7 @@
 
         </div>
     @endif
-
+    {{-- Trending --}}
     @if (isset($tenantinfo->show_trending) && $tenantinfo->show_trending == 1)
         <div class="mt-3 mb-5" id="best-car">
             <div class="container-fluid">
@@ -218,6 +217,7 @@
             @endforeach
         </div>
     </div>
+    {{-- Mision --}}
     @if (isset($tenantinfo->show_mision) && $tenantinfo->show_mision == 1)
         <div class="bg-white p-3 mb-3 text-center">
             <h3
@@ -226,6 +226,50 @@
             <span class="text-center text-dark">{{ isset($tenantinfo->mision) ? $tenantinfo->mision : '' }}</span>
 
 
+        </div>
+    @endif
+    {{-- Comentarios --}}
+    @if (count($comments) != 0)
+        <hr class="dark horizontal text-danger my-0">
+        <div class="mt-3 mb-5">
+            <div class="container">
+                <div class="text-center">
+                    <h3 class="text-center text-muted mt-5 mb-3">Testimonios de nuestros clientes</h3>
+                </div>
+
+                <div class="row">
+                    <div class="owl-carousel featured-carousel owl-theme">
+                        @foreach ($comments as $item)
+                            <div class="item">
+                                <div>
+                                    <div class="card text-center">
+                                        <img class="card-img-top"
+                                            @if ($item->image) src="{{ route('file', $item->image) }}"
+                                         
+                                     @else
+                                     src="{{ url('images/sin-foto.PNG') }}" @endif
+                                            src="{{ url('images/sin-foto.PNG') }}" alt="">
+                                        <div class="card-body">
+                                            <h5>{{ $item->name }}
+                                            </h5>
+                                            <div class="rated text-center">
+                                                @for ($i = 1; $i <= $item->stars; $i++)
+                                                    {{-- <input type="radio" id="star{{$i}}" class="rate" name="rating" value="5"/> --}}
+                                                    <label class="star-rating-complete"
+                                                        title="text">{{ $i }}
+                                                        stars</label>
+                                                @endfor
+                                            </div>
+                                            <p class="card-text card-comment">“{{ $item->description }}” </p>
+                                            <span class="show-more">Ver más</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
         </div>
     @endif
 @endif
@@ -290,5 +334,22 @@
             }
         }
     })
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var showMoreButtons = document.querySelectorAll('.show-more');
+
+        showMoreButtons.forEach(function(button) {
+            button.addEventListener('click', function() {
+                var cardText = button.previousElementSibling;
+                if (cardText.classList.contains('expanded')) {
+                    cardText.classList.remove('expanded');
+                    button.textContent = 'Ver más';
+                } else {
+                    cardText.classList.add('expanded');
+                    button.textContent = 'Ver menos';
+                }
+            });
+        });
+    });
 </script>
 @endsection

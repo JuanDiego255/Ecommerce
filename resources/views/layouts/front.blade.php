@@ -85,9 +85,7 @@
                 @endif
 
                 @yield('content')
-                @if ($tenantinfo->kind_business == 3)
-                    @include('layouts.inc.social-footer')
-                @endif
+                @include('layouts.inc.social-footer')
             </div>
         </main>
     </div>
@@ -120,7 +118,7 @@
             $(document).ready(function() {
                 $(document).on('click', '.btnQuantity', function(e) {
                     e.preventDefault();
-                    
+
                     var quantity = $(this).val();
                     var itemId = $(this).data('cart-id');
 

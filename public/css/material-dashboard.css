@@ -5334,6 +5334,24 @@ fieldset:disabled .btn {
   margin-bottom: 0;
 }
 
+.card-comment {
+  max-height: 100px; /* Limita la altura del texto */
+  overflow: hidden; /* Oculta el texto que excede la altura */
+  position: relative;
+}
+
+.card-text.expanded {
+  max-height: none; /* Permite que el texto se expanda */
+}
+
+.show-more {
+  display: inline-block;
+  margin-top: 10px;
+  color: #007bff;
+  cursor: pointer;
+  font-weight: bold;
+}
+
 .card-link+.card-link {
   margin-left: var(--bs-card-spacer-x);
 }
