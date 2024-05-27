@@ -11,12 +11,12 @@
                             @php
                                 $social_logo = null;
                                 if (stripos($social->social_network, 'Facebook') !== false) {
-                                    $social_logo = 'fa fa-facebook';
+                                    $social_logo = 'fab fa-facebook';
                                 } elseif (stripos($social->social_network, 'Instagram') !== false) {
-                                    $social_logo = 'fa fa-instagram';
+                                    $social_logo = 'fab fa-instagram';
                                 }
                                 if (stripos($social->social_network, 'Twitter') !== false) {
-                                    $social_logo = 'fa fa-twitter';
+                                    $social_logo = 'fab fa-twitter';
                                 }
                             @endphp
                             <a target="blank"
