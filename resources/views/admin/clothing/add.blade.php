@@ -7,7 +7,7 @@
     <form action="{{ url('insert-clothing') }}" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="row">
-            <div class="col-md-8 mb-3">
+            <div @if ($tenantinfo->manage_size != 0) class="col-md-8" @else class="col-md-12" @endif>
                 <div class="card">
                     <div class="card-header">
                         <h4 class="text-dark"> {{ __('Agregar nuevo producto') }}</h4>
@@ -46,8 +46,15 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <div class="input-group input-group-static mb-4">
-                                    <label> {{ __('Stock (Inventario, los atributos alimentan el stock)') }}</label>
-                                    <input readonly type="number" class="form-control form-control-lg" name="stock">
+                                    <label>
+                                        @if ($tenantinfo->manage_size != 0)
+                                            {{ __('Stock (Inventario, los atributos alimentan el stock)') }}
+                                        @else
+                                            {{ __('Stock (Inventario)') }}
+                                        @endif
+                                    </label>
+                                    <input @if ($tenantinfo->manage_size != 0) readonly @endif type="number"
+                                        class="form-control form-control-lg" name="stock">
                                 </div>
                             </div>
                             <div class="col-md-12 mb-3">
@@ -125,7 +132,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div @if ($tenantinfo->manage_size != 0) class="col-md-4" @else class="d-none" @endif>
                 @if (count($attributes) > 0)
                     <div class="card mt-3">
                         <div class="card-header">
@@ -315,8 +322,8 @@
                     var label = document.createElement("label");
                     label.setAttribute("for", precioId);
                     label.textContent = `${selectedText}:`;
-                    if(main_attr == 0){
-                        label.textContent = `${selectedText}`+no_main_text;
+                    if (main_attr == 0) {
+                        label.textContent = `${selectedText}` + no_main_text;
                     }
 
                     // Create a line break element
@@ -335,7 +342,7 @@
                     inputPrecio.required = true;
                     inputPrecio.type = "text";
                     inputPrecio.value = "";
-                    if(main_attr == 0){
+                    if (main_attr == 0) {
                         inputPrecio.value = "0";
                         inputPrecio.readOnly = true;
                     }

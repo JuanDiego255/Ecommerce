@@ -10,10 +10,10 @@
     <form action="{{ url('update-clothing' . '/' . $clothing->id) }}" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="row">
-            <div class="col-md-8 mb-3">
+            <div @if ($tenantinfo->manage_size != 0) class="col-md-8" @else class="col-md-12" @endif>
                 <div class="card">
                     <div class="card-header">
-                        <h4 class="text-dark">Editar Producto</h4>
+                        <h4 class="text-dark">{{ __('Editar producto') }}</h4>
                     </div>
                     <div class="card-body">
 
@@ -21,7 +21,7 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <div class="input-group input-group-static mb-4">
-                                    <label>Producto</label>
+                                    <label>{{ __('Producto') }}</label>
                                     <input required value="{{ $clothing->name }}" type="text"
                                         class="form-control form-control-lg" name="name">
                                 </div>
@@ -29,15 +29,15 @@
                             @if (isset($tenantinfo->tenant) && $tenantinfo->tenant === 'fragsperfumecr')
                                 <div class="col-md-6 mb-3">
                                     <div class="input-group input-group-static mb-4">
-                                        <label>Casa</label>
+                                        <label>{{ __('Casa') }}</label>
                                         <input type="text" value="{{ $clothing->casa }}"
                                             class="form-control form-control-lg" name="casa">
                                     </div>
                                 </div>
                             @endif
-                            <div class="col-md-12 mb-3">
+                            <div class="col-md-6 mb-3">
                                 <div class="input-group input-group-static mb-4">
-                                    <label>Código</label>
+                                    <label>{{ __('Código') }}</label>
                                     <input required value="{{ $clothing->code }}" type="text"
                                         class="form-control form-control-lg" name="code">
                                 </div>
@@ -45,14 +45,14 @@
                             <input type="hidden" name="category_id" value="{{ $clothing->category_id }}">
                             <div class="col-md-12 mb-3">
 
-                                <label>Descripción</label><br>
+                                <label>{{ __('Descripción') }}</label><br>
                                 <textarea id="editor" type="text" class="form-control form-control-lg" name="description">{!! $clothing->description !!}</textarea>
                             </div>
 
                             <input type="hidden" name="clothing_id" id="clothing_id" value="{{ $clothing->id }}">
                             <div class="col-md-6 mb-3">
                                 <div class="input-group input-group-static mb-4">
-                                    <label>Precio</label>
+                                    <label>{{ __('Precio') }}</label>
                                     <input required type="number" value="{{ $clothing->price }}"
                                         class="form-control form-control-lg" name="price">
                                 </div>
@@ -60,7 +60,7 @@
                             @if (isset($tenantinfo->tenant) && $tenantinfo->tenant === 'torres')
                                 <div class="col-md-6 mb-3">
                                     <div class="input-group input-group-static mb-4">
-                                        <label>Precio al por mayor</label>
+                                        <label>{{ __('Precio al por mayor') }}</label>
                                         <input required type="number" value="{{ $clothing->mayor_price }}"
                                             class="form-control form-control-lg" name="mayor_price">
                                     </div>
@@ -68,7 +68,7 @@
                             @endif
                             <div class="col-md-6 mb-3">
                                 <div class="input-group input-group-static mb-4">
-                                    <label>Descuento (%)</label>
+                                    <label>{{ __('Descuento (%)') }}</label>
                                     <input type="number" value="{{ $clothing->discount }}"
                                         class="form-control form-control-lg" name="discount">
                                 </div>
@@ -76,10 +76,14 @@
 
                             <div class="col-md-6 mb-3">
                                 <div class="input-group input-group-static mb-4">
-                                    <label>Stock (El dato que se ingresa aumenta el stock ya existente en las tallas
-                                        seleccionadas,
-                                        siempre y cuando este sea 0)</label>
-                                    <input min="1" required
+                                    <label>
+                                        @if ($tenantinfo->manage_size != 0)
+                                            {{ __('Stock (Inventario, los atributos alimentan el stock)') }}
+                                        @else
+                                            {{ __('Stock (Inventario)') }}
+                                        @endif
+                                    </label>
+                                    <input min="1" required @if ($tenantinfo->manage_size != 0) readonly @endif
                                         value="{{ $clothing->total_stock == 0 ? '1' : $clothing->total_stock }}"
                                         type="number" class="form-control form-control-lg" name="stock">
                                 </div>
@@ -87,7 +91,7 @@
 
                             @if (isset($tenantinfo->kind_business) && ($tenantinfo->kind_business == 2 || $tenantinfo->kind_business == 3))
                                 <div class="col-md-12 mb-3">
-                                    <label>Se puede comprar?</label>
+                                    <label>{{ __('Se puede comprar?') }}</label>
                                     <div class="form-check">
                                         <input {{ $clothing->can_buy == 1 ? 'checked' : '' }} class="form-check-input"
                                             type="checkbox" value="1" id="can_buy" name="can_buy">
@@ -97,11 +101,11 @@
                             @endif
 
                             <div class="col-md-12 mb-3">
-                                <label>Es Tendencia?</label>
+                                <label>{{ __('Es tendencia?') }}</label>
                                 <div class="form-check">
                                     <input {{ $clothing->trending == 1 ? 'checked' : '' }} class="form-check-input"
                                         type="checkbox" value="1" id="trending" name="trending">
-                                    <label class="custom-control-label" for="customCheck1">Trending</label>
+                                    <label class="custom-control-label" for="customCheck1">{{ __('Tendencia') }}</label>
                                 </div>
                             </div>
                             <div class="col-md-12 mb-3">
@@ -109,7 +113,7 @@
                                     <img class="img-fluid img-thumbnail" src="{{ route('file', $clothing->image) }}"
                                         style="width: 150px; height:150px;" alt="image">
                                 @endif
-                                <label>Imágenes (Máximo 4)</label>
+                                <label>{{ __('Imagenes (Max 4)') }}</label>
                                 <div class="input-group input-group-static mb-4">
                                     <input multiple class="form-control form-control-lg" type="file" name="images[]">
                                 </div>
@@ -118,14 +122,14 @@
                         </div>
 
                         <div class="col-md-12 mt-3 text-center">
-                            <button type="submit" class="btn btn-velvet">Editar Producto</button>
+                            <button type="submit" class="btn btn-velvet">{{ __('Guardar cambios') }}</button>
                         </div>
 
 
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div @if ($tenantinfo->manage_size != 0) class="col-md-4" @else class="d-none" @endif>
                 @if (count($attributes) > 0)
                     <div class="card mt-3">
                         <div class="card-header">
@@ -194,7 +198,7 @@
     </form>
     <center>
         <div class="col-md-12 mt-3">
-            <a href="{{ url('add-item/' . $category_id) }}" class="btn btn-velvet w-25">Volver</a>
+            <a href="{{ url('add-item/' . $category_id) }}" class="btn btn-velvet w-25">{{ __('Volver') }}</a>
         </div>
     </center>
 @endsection
@@ -380,7 +384,8 @@
                         var value_id = "value_id" + selectedValue;
                         var cantidadId = "cantidad_attr" + selectedValue;
                         var htmlInput = "";
-                        var no_main_text = " (No es un valor de un atributo principal, no permite el precio)"
+                        var no_main_text =
+                            " (No es un valor de un atributo principal, no permite el precio)"
 
                         // Verificar si los elementos ya existen
                         if (!document.getElementById(precioId) && !document.getElementById(cantidadId) && !
