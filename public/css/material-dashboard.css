@@ -8798,6 +8798,9 @@ fieldset:disabled .btn {
 .cartIcon {
   color: var(--cart_icon) !important;
 }
+.btnIcon {
+  color: var(--cart_icon) !important;
+}
 
 .text-pill {
   color: var(--btn_cart_text) !important;

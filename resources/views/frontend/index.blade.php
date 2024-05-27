@@ -36,7 +36,6 @@
             </div>
         </div>
     @endif
-
     {{-- Categories --}}
     @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
         @if (count($categories) != 0)

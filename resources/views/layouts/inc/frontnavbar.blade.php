@@ -95,7 +95,7 @@
                                                 {{ $attribute }}: {{ $value }}<br>
                                             @endforeach
                                             <span class="m-0 text-muted w-100 d-block">
-                                                ₡{{ $item->discount > 0 ? $precioConDescuento : (Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0 ? $item->mayor_price : ($tenantinfo->custom_size == 1 ? $item->stock_price : $item->price)) }}
+                                                ₡{{ $item->discount > 0 ? $precioConDescuento : (Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0 ? $item->mayor_price : $item->price) }}
                                             </span>
                                         </p>
                                         <div class="d-flex align-items-center">
@@ -236,11 +236,11 @@
             @guest
                 <a href="{{ route('login') }}"><button id="btnIngresar"
                         class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'whiteLink-mandi' : 'whiteLink' }} siteLink"><i
-                            style="color: var(--navbar_text);" class="fa fa-sign-in cartIcon"></i></button></a>
+                            style="color: var(--navbar_text);" class="fa fa-sign-in btnIcon"></i></button></a>
             @else
                 <a href="{{ url('buys') }}"><button id="btnIngresar"
                         class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'whiteLink-mandi' : 'whiteLink' }} siteLink"><i
-                            style="color: var(--navbar_text);" class="fa fa-credit-card cartIcon"></i></button></a>
+                            style="color: var(--navbar_text);" class="fa fa-credit-card btnIcon"></i></button></a>
             @endguest
 
             <button type="button" data-bs-toggle="modal" data-bs-target="#modalMiniCart"
@@ -279,10 +279,6 @@
                     </button>
                 </a>
             @endif
-
-
-
-
         </div>
     </div>
 </div>

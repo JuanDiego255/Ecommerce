@@ -22,7 +22,7 @@
                             <div class="form-check form-switch col-md-6">
                                 <input value="1" class="form-check-input" type="checkbox" name="manage_size"
                                     id="manage_size" @if ($item->manage_size == 1) checked @endif>
-                                <label class="form-check-label" for="manage_size">{{ __('Habilitar tallas') }}</label>
+                                <label class="form-check-label" for="manage_size">{{ __('Habilitar atributos') }}</label>
                             </div>
                             <div class="form-check form-switch col-md-6">
                                 <input value="1" class="form-check-input" type="checkbox" name="manage_department"
@@ -61,7 +61,7 @@
                                 <label class="form-check-label" for="show_mision">{{ __('Mostrar Misión') }}</label>
                             </div>
                         </div>
-                        <div class="row">
+                       {{--  <div class="row">
                             <h4 class="text-dark mb-3">{{ __('Gestión de productos') }}</h4>
                             <div class="form-check form-switch col-md-6">
                                 <input @if ($item->manage_size == 0) disabled @endif value="1"
@@ -71,7 +71,7 @@
                                     cantidad y precio de cada talla, debe tener el manejo de talla activo para habilitar
                                     este control)') }}</label>
                             </div>
-                        </div>
+                        </div> --}}
                         <div class="row">
                             <div class="col-md-6">
                                 <input class="btn btn-velvet mt-4" type="submit" value="Guardar Cambios">
@@ -84,8 +84,8 @@
 
         <div class="card mt-3">
             <div class="card-header">
-                <h4 class="text-dark">Personaliza los colores del sitio web (Si conoce el valor hexadecimal del color en
-                    específico, puedes ingresarlo en el campo de texto.)</h4>
+                <h4 class="text-dark">{{ __('Personaliza los colores del sitio web (Si conoce el valor hexadecimal del color en
+                    específico, puedes ingresarlo en el campo de texto.)') }}</h4>
             </div>
             <form action="{{ url('tenant-components/color-save/') }}" method="post" enctype="multipart/form-data">
                 <div class="card-body">
@@ -104,7 +104,7 @@
                             </div>
                         </div>
                         <div class="col-md-3 mb-3">
-                            <label class="form-label">Texto del menú</label>
+                            <label class="form-label">{{ __('Texto del menú') }}</label>
                             <div class="input-group input-group-lg input-group-outline">
                                 <!-- Input para seleccionar el color -->
                                 <input type="color" value="{{ $settings->navbar_text }}"
@@ -115,7 +115,7 @@
                             </div>
                         </div>
                         <div class="col-md-3 mb-3">
-                            <label class="form-label">Texto del título</label>
+                            <label class="form-label">{{ __('Texto del título') }}</label>
                             <div class="input-group input-group-lg input-group-outline">
                                 <!-- Input para seleccionar el color -->
                                 <input type="color" value="{{ $settings->title_text }}"
@@ -126,18 +126,18 @@
                             </div>
                         </div>
                         <div class="col-md-3 mb-3">
-                            <label class="form-label">Botón carrito del menú (Móvil)</label>
+                            <label class="form-label">{{ __('Botón del carrito del menú (Móvil)') }}</label>
                             <div class="input-group input-group-lg input-group-outline">
                                 <!-- Input para seleccionar el color -->
                                 <input type="color" value="{{ $settings->cart_icon }}"
                                     class="form-control form-control-color color-picker"
-                                    data-color-code="color-code-btn-cart">
+                                    data-color-code="color-code-cart-icon">
                                 <input type="text" name="cart_icon" value="{{ $settings->cart_icon }}"
                                     id="color-code-cart-icon" class="form-control color-code">
                             </div>
                         </div>
                         <div class="col-md-3 mb-3">
-                            <label class="form-label">Botón carrito del menú</label>
+                            <label class="form-label">{{ __('Botón del carrito del menú (Web)') }}</label>
                             <div class="input-group input-group-lg input-group-outline">
                                 <!-- Input para seleccionar el color -->
                                 <input type="color" value="{{ $settings->btn_cart }}"
@@ -148,7 +148,7 @@
                             </div>
                         </div>
                         <div class="col-md-3 mb-3">
-                            <label class="form-label">Texto del botón del carrito del menú</label>
+                            <label class="form-label">{{ __('Texto del botón del carrito del menú') }}</label>
                             <div class="input-group input-group-lg input-group-outline">
                                 <!-- Input para seleccionar el color -->
                                 <input type="color" value="{{ $settings->btn_cart_text }}"
@@ -159,7 +159,7 @@
                             </div>
                         </div>
                         <div class="col-md-3 mb-3">
-                            <label class="form-label">Pie de página</label>
+                            <label class="form-label">{{ __('Pie de página') }}</label>
                             <div class="input-group input-group-lg input-group-outline">
                                 <!-- Input para seleccionar el color -->
                                 <input type="color" value="{{ $settings->footer }}"
@@ -170,7 +170,7 @@
                             </div>
                         </div>
                         <div class="col-md-3 mb-3">
-                            <label class="form-label">Texto del pie de página</label>
+                            <label class="form-label">{{ __('Texto del pie de página') }}</label>
                             <div class="input-group input-group-lg input-group-outline">
                                 <!-- Input para seleccionar el color -->
                                 <input type="color" value="{{ $settings->footer_text }}"
@@ -181,7 +181,7 @@
                             </div>
                         </div>
                         <div class="col-md-3 mb-3">
-                            <label class="form-label">Menú administrativo</label>
+                            <label class="form-label">{{ __('Menú administrativo') }}</label>
                             <div class="input-group input-group-lg input-group-outline">
                                 <!-- Input para seleccionar el color -->
                                 <input type="color" value="{{ $settings->sidebar }}"
@@ -192,7 +192,7 @@
                             </div>
                         </div>
                         <div class="col-md-3 mb-3">
-                            <label class="form-label">Texto del menú administrativo</label>
+                            <label class="form-label">{{ __('Texto del menú administrativo') }}</label>
                             <div class="input-group input-group-lg input-group-outline">
                                 <!-- Input para seleccionar el color -->
                                 <input type="color" value="{{ $settings->sidebar_text }}"
@@ -203,7 +203,7 @@
                             </div>
                         </div>
                         <div class="col-md-3 mb-3">
-                            <label class="form-label">Cintillo</label>
+                            <label class="form-label">{{ __('Cintillo') }}</label>
                             <div class="input-group input-group-lg input-group-outline">
                                 <!-- Input para seleccionar el color -->
                                 <input type="color" value="{{ $settings->cintillo }}"
@@ -214,7 +214,7 @@
                             </div>
                         </div>
                         <div class="col-md-3 mb-3">
-                            <label class="form-label">Texto del cintillo</label>
+                            <label class="form-label">{{ __('Texto del cintillo') }}</label>
                             <div class="input-group input-group-lg input-group-outline">
                                 <!-- Input para seleccionar el color -->
                                 <input type="color" value="{{ $settings->cintillo_text }}"
@@ -225,7 +225,7 @@
                             </div>
                         </div>
                         <div class="col-md-3 mb-3">
-                            <label class="form-label">Efecto de los botones</label>
+                            <label class="form-label">{{ __('Efecto de los botones') }}</label>
                             <div class="input-group input-group-lg input-group-outline">
                                 <!-- Input para seleccionar el color -->
                                 <input type="color" value="{{ $settings->hover }}"
@@ -239,8 +239,6 @@
                         <div class="col-md-12">
                             <input class="btn btn-velvet mt-4" type="submit" value="Guardar Cambios">
                         </div>
-
-
                     </div>
                 </div>
             </form>
@@ -248,9 +246,9 @@
 
         <div class="card mt-3">
             <div class="card-header">
-                <h4 class="text-dark">Gestiona el carrusel de la página principal</h4>
+                <h4 class="text-dark">{{ __('Gestiona el carruselo de la página principal') }}</h4>
                 <a data-bs-toggle="modal"
-                    data-bs-target="#add-tenant-carousel-modal">Nueva Imagen<i
+                    data-bs-target="#add-tenant-carousel-modal">{{ __('Nueva Imagen') }}<i
                         class="fa fa-plus me-3 text-dark cursor-pointer"></i></a>
             </div>
             <div class="card-body">

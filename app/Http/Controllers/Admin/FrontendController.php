@@ -35,20 +35,7 @@ class FrontendController extends Controller
     public function index()
     {
         $tenantinfo = TenantInfo::first();
-        switch ($tenantinfo->kind_business) {
-            case (1):
-                return redirect('index/carsale');
-                break;
-            case (2):
-            case (3):
-                return redirect('spa/index/');
-                break;
-            default:
-                break;
-        }
-        if ($tenantinfo->kind_business == 1) {
-            return redirect('index/carsale');
-        }
+
         $social = Cache::remember('social_networks', $this->expirationTime, function () {
             return SocialNetwork::get();
         });
@@ -103,6 +90,10 @@ class FrontendController extends Controller
                     'categories.name as name',
                 )->orderBy('categories.name', 'asc')
                 ->get();
+        });
+
+        $sellers = Cache::remember('sellers', $this->expirationTime, function () {
+            return Seller::get();
         });
 
         // Obtener las primeras imágenes de las prendas obtenidas
@@ -176,9 +167,26 @@ class FrontendController extends Controller
             $offer->images = $imagePaths ?: [null];
         }
 
-        $blogs = Blog::take(4)->get();
+        $blogs = Blog::inRandomOrder()->orderBy('title', 'asc')
+            ->take(4)->get();
 
-        return view('frontend.index', compact('clothings', 'blogs', 'social', 'clothings_offer', 'category'));
+        $comments = Testimonial::where('approve', 1)->inRandomOrder()->orderBy('name', 'asc')
+            ->get();
+
+        switch ($tenantinfo->kind_business) {
+            case (1):
+                return view('frontend.carsale.index', compact('clothings', 'blogs', 'social', 'clothings_offer', 'category','sellers'));
+                break;
+            case (2):
+            case (3):
+                return view('frontend.website.index', compact('clothings', 'blogs', 'social', 'clothings_offer', 'category','sellers','comments'));
+                break;
+            default:
+            return view('frontend.index', compact('clothings', 'blogs', 'social', 'clothings_offer', 'category','comments'));
+                break;
+        }
+
+       
     }
     public function category($id = null)
     {
@@ -401,7 +409,7 @@ class FrontendController extends Controller
                 DB::raw('GROUP_CONCAT(v.value SEPARATOR "-") as valores'),
                 DB::raw('GROUP_CONCAT(v.id SEPARATOR "-") as ids'),
             )
-            ->groupBy('a.name', 'a.id','s.stock')
+            ->groupBy('a.name', 'a.id', 's.stock')
             ->get();
         $tags = MetaTags::where('section', 'Categoría Específica')->get();
         $tenantinfo = TenantInfo::first();
@@ -472,183 +480,6 @@ class FrontendController extends Controller
         });
 
         return view('frontend.departments', compact('departments'));
-    }
-    public function indexCarSale()
-    {
-        $social = Cache::remember('social_networks', $this->expirationTime, function () {
-            return SocialNetwork::get();
-        });
-        $sellers = Cache::remember('sellers', $this->expirationTime, function () {
-            return Seller::get();
-        });
-        $tags = Cache::remember('meta_tags_inicio', $this->expirationTime, function () {
-            return MetaTags::where('section', 'Inicio')->get();
-        });
-        $clothings = Cache::remember('clothings_trending', $this->expirationTime, function () {
-            return ClothingCategory::where('clothing.trending', 1)
-                ->join('categories', 'clothing.category_id', 'categories.id')
-                ->leftJoin('stocks', 'clothing.id', 'stocks.clothing_id')
-                ->select(
-                    'categories.name as category',
-                    'categories.id as category_id',
-                    'clothing.id as id',
-                    'clothing.trending as trending',
-                    'clothing.discount as discount',
-                    'clothing.name as name',
-                    'clothing.casa as casa',
-                    'clothing.description as description',
-                    'clothing.price as price',
-                    'clothing.mayor_price as mayor_price',
-                    DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE 0 END) as total_stock'),
-                    DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'),
-                    DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
-                )
-                ->groupBy(
-                    'clothing.id',
-                    'categories.name',
-                    'clothing.casa',
-                    'categories.id',
-                    'clothing.name',
-                    'clothing.discount',
-                    'clothing.trending',
-                    'clothing.description',
-                    'clothing.price',
-                    'clothing.mayor_price',
-                )->orderByRaw('CASE WHEN clothing.casa IS NOT NULL AND clothing.casa != "" THEN 0 ELSE 1 END')
-                ->orderBy('clothing.casa', 'asc')
-                ->orderBy('clothing.name', 'asc')
-                ->take(15)
-                ->get();
-        });
-
-        $category = Cache::remember('categories', $this->expirationTime, function () {
-            return Categories::where('departments.department', 'Default')
-                ->where('categories.status', 0)
-                ->join('departments', 'categories.department_id', 'departments.id')
-                ->select(
-                    'departments.id as department_id',
-                    'categories.id as category_id',
-                    'categories.image as image',
-                    'categories.name as name',
-                )->orderBy('categories.name', 'asc')
-                ->get();
-        });
-
-        // Obtener las primeras imágenes de las prendas obtenidas
-        foreach ($clothings as $clothing) {
-            $firstImage = ProductImage::where('clothing_id', $clothing->id)
-                ->orderBy('id')
-                ->first();
-            // Asignar la imagen al objeto $clothing
-            $clothing->image = $firstImage ? $firstImage->image : null;
-        }
-
-        $tenantinfo = TenantInfo::first();
-
-        foreach ($tags as $tag) {
-            SEOMeta::setTitle($tag->title . " - " . $tenantinfo->title);
-            SEOMeta::setKeywords($tag->meta_keywords);
-            SEOMeta::setDescription($tag->meta_description);
-            //Opengraph
-            OpenGraph::addImage(URL::to($tag->url_image_og));
-            OpenGraph::setTitle($tag->title);
-            OpenGraph::setDescription($tag->meta_og_description);
-        }
-
-        $blogs = Blog::inRandomOrder()
-            ->take(4)->get();
-
-        return view('frontend.carsale.index', compact('clothings', 'blogs', 'social', 'category', 'sellers'));
-    }
-    public function indexSpa()
-    {
-        $social = Cache::remember('social_networks', $this->expirationTime, function () {
-            return SocialNetwork::get();
-        });
-        $sellers = Cache::remember('sellers', $this->expirationTime, function () {
-            return Seller::get();
-        });
-        $tags = Cache::remember('meta_tags_inicio', $this->expirationTime, function () {
-            return MetaTags::where('section', 'Inicio')->get();
-        });
-        $clothings = Cache::remember('clothings_trending', $this->expirationTime, function () {
-            return ClothingCategory::where('clothing.trending', 1)
-            ->join('categories', 'clothing.category_id', 'categories.id')
-            ->leftJoin('stocks', 'clothing.id', 'stocks.clothing_id')
-            ->select(
-                'categories.name as category',
-                'categories.id as category_id',
-                'clothing.id as id',
-                'clothing.trending as trending',
-                'clothing.discount as discount',
-                'clothing.name as name',
-                'clothing.casa as casa',
-                'clothing.description as description',
-                'clothing.price as price',
-                'clothing.mayor_price as mayor_price',
-                DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE 0 END) as total_stock'),
-                DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'),
-                DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
-            )
-            ->groupBy(
-                'clothing.id',
-                'categories.name',
-                'clothing.casa',
-                'categories.id',
-                'clothing.name',
-                'clothing.discount',
-                'clothing.trending',
-                'clothing.description',
-                'clothing.price',
-                'clothing.mayor_price',
-            )->orderByRaw('CASE WHEN clothing.casa IS NOT NULL AND clothing.casa != "" THEN 0 ELSE 1 END')
-            ->orderBy('clothing.casa', 'asc')
-            ->orderBy('clothing.name', 'asc')
-            ->take(15)
-            ->get();
-        });
-
-        $category = Cache::remember('categories', $this->expirationTime, function () {
-            return Categories::where('departments.department', 'Default')
-                ->where('categories.status', 0)
-                ->join('departments', 'categories.department_id', 'departments.id')
-                ->select(
-                    'departments.id as department_id',
-                    'categories.id as category_id',
-                    'categories.image as image',
-                    'categories.name as name',
-                )->orderBy('categories.name', 'asc')
-                ->get();
-        });
-
-        // Obtener las primeras imágenes de las prendas obtenidas
-        foreach ($clothings as $clothing) {
-            $firstImage = ProductImage::where('clothing_id', $clothing->id)
-                ->orderBy('id')
-                ->first();
-            // Asignar la imagen al objeto $clothing
-            $clothing->image = $firstImage ? $firstImage->image : null;
-        }
-
-        $tenantinfo = TenantInfo::first();
-
-        foreach ($tags as $tag) {
-            SEOMeta::setTitle($tag->title . " - " . $tenantinfo->title);
-            SEOMeta::setKeywords($tag->meta_keywords);
-            SEOMeta::setDescription($tag->meta_description);
-            //Opengraph
-            OpenGraph::addImage(URL::to($tag->url_image_og));
-            OpenGraph::setTitle($tag->title);
-            OpenGraph::setDescription($tag->meta_og_description);
-        }
-
-        $blogs = Blog::inRandomOrder()->orderBy('title', 'asc')
-            ->take(4)->get();
-
-        $comments = Testimonial::where('approve', 1)->inRandomOrder()->orderBy('name', 'asc')
-            ->get();
-
-        return view('frontend.website.index', compact('clothings', 'blogs', 'comments', 'social', 'category', 'sellers'));
     }
     public function getStock($cloth_id, $attr_id, $value_attr)
     {

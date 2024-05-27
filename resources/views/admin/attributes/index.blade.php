@@ -17,6 +17,11 @@
         </div>
     </div>
     <div class="card mt-3">
+        <div class="card-header">
+            <h4 class="text-dark">
+                {{ __('Puedes agregar todos los atributos que desees, ten en cuenta que solo existe un atributo principal, que puede variar entre precios, todos los demás son extras adicionales que no modifican el precio, por lo que lo ideal es que se contemplen en el precio total.') }}
+            </h4>
+        </div>
         <div class="card-body">
             <div class="row w-100">
                 <div class="col-md-6">

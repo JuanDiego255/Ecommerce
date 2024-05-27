@@ -232,13 +232,6 @@ Route::middleware([
         });
     });
 
-    //Rutas para las ventas de autos
-    Route::group(['middleware' => 'isKindBusiness'], function () {
-        Route::get('index/carsale', [FrontendController::class, 'indexCarSale']);
-        Route::get('spa/index', [FrontendController::class, 'indexSpa']);
-    });
-
-
     //images Tenant
     Route::get('/file/{path}', function ($path) {
         $path = Storage::path($path);
