@@ -10,27 +10,27 @@
                 <input type="hidden" name="porcDescuento" value="{{ $item->discount }}" id="porcDescuento">
                 <div class="breadcrumb-nav bc3x mt-4">
                     @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
-                        <li class="home"><a href="{{ url('/') }}"><i class="fas fa-home me-1"></i></a></li>
+                        <li class="home"><a href="{{ url('/') }}"><i class="fas fa-{{ $icon->home }} me-1"></i></a></li>
                         <li class="bread-standard"><a href="{{ url('category/') }}"><i
-                                    class="fas fa-box me-1"></i>Categorías</a>
+                                    class="fas fa-{{ $icon->categories }} me-1"></i>Categorías</a>
                         </li>
                         <li class="bread-standard"><a
                                 href="{{ url('clothes-category/' . $category_id . '/' . $item->department_id) }}"><i
-                                    class="fas fa-tshirt me-1"></i>{{ $item->category }}</a></li>
+                                    class="fas fa-{{ $icon->services }} me-1"></i>{{ $item->category }}</a></li>
                         <li class="bread-standard"><a class="location" href="#"><i
-                                    class="fas fa-socks me-1"></i>Detalles</a>
+                                    class="fas fa-{{ $icon->detail }} me-1"></i>Detalles</a>
                         </li>
                     @else
                         <li class="home"><a href="{{ url('/') }}"><i class="fas fa-home me-1"></i></a></li>
                         <li class="bread-standard"><a href="{{ url('departments/index') }}"><i
                                     class="fas fa-shapes me-1"></i>Departamentos</a></li>
                         <li class="bread-standard"><a href="{{ url('category/' . $item->department_id) }}"><i
-                                    class="fas fa-box me-1"></i>{{ $item->department_name }}</a></li>
+                                    class="fas fa-{{ $icon->categories }} me-1"></i>{{ $item->department_name }}</a></li>
                         <li class="bread-standard"><a
                                 href="{{ url('clothes-category/' . $category_id . '/' . $item->department_id) }}"><i
-                                    class="fas fa-tshirt me-1"></i>{{ $item->category }}</a></li>
+                                    class="fas fa-{{ $icon->services }} me-1"></i>{{ $item->category }}</a></li>
                         <li class="bread-standard"><a class="location" href="#"><i
-                                    class="fas fa-socks me-1"></i>Detalles</a>
+                                    class="fas fa-{{ $icon->detail }} me-1"></i>Detalles</a>
                         </li>
                     @endif
 

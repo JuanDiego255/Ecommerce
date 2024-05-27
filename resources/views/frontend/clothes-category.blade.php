@@ -7,23 +7,23 @@
     <div class="container mt-4">
         <div class="breadcrumb-nav bc3x">
             @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
-                <li class="home"><a href="{{ url('/') }}"><i class="fas fa-home me-1"></i></a></li>
+                <li class="home"><a href="{{ url('/') }}"><i class="fas fa-{{ $icon->home }} me-1"></i></a></li>
                 <li class="bread-standard"><a href="{{ url('category/') }}"><i
-                            class="{{ isset($tenantinfo->kind_business) && $tenantinfo->kind_business != 1 ? 'fas fa-box' : 'fas fa-car' }} me-1"></i>Categorías</a>
+                            class="fas fa-{{ $icon->categories }} me-1"></i>Categorías</a>
                 </li>
                 <li class="bread-standard"><a href="#"><i
-                            class="{{ isset($tenantinfo->kind_business) && $tenantinfo->kind_business != 1 ? 'fas fa-tshirt' : 'fas fa-car-side' }} me-1"></i>{{ $category_name }}</a>
+                            class="fas fa-{{ $icon->services }} me-1"></i>{{ $category_name }}</a>
                 </li>
             @else
-                <li class="home"><a href="{{ url('/') }}"><i class="fas fa-home me-1"></i></a></li>
+                <li class="home"><a href="{{ url('/') }}"><i class="fas fa-{{ $icon->home }} me-1"></i></a></li>
                 </li>
                 <li class="bread-standard"><a href="{{ url('departments/index') }}"><i
                             class="fas fa-shapes me-1"></i>Departamentos</a></li>
                 <li class="bread-standard"><a href="{{ url('category/' . $department_id) }}"><i
-                            class="{{ isset($tenantinfo->kind_business) && $tenantinfo->kind_business != 1 ? 'fas fa-box' : 'fas fa-car' }} me-1"></i>{{ $department_name }}</a>
+                            class="fas fa-{{ $icon->categories }} me-1"></i>{{ $department_name }}</a>
                 </li>
                 <li class="bread-standard"><a href="#"><i
-                            class="{{ isset($tenantinfo->kind_business) && $tenantinfo->kind_business != 1 ? 'fas fa-tshirt' : 'fas fa-car-side' }} me-1"></i>{{ $category_name }}</a>
+                            class="fas fa-{{ $icon->services }} me-1"></i>{{ $category_name }}</a>
                 </li>
             @endif
 

@@ -148,6 +148,7 @@ Route::middleware([
             Route::put('/tenant-info/update/{id}', [TenantInfoController::class, 'update']);
             Route::put('/tenant-components/save/', [TenantInfoController::class, 'updateComp']);
             Route::put('/tenant-components/color-save/', [TenantInfoController::class, 'updateColor']);
+            Route::put('/tenant-components/icon-save/', [TenantInfoController::class, 'saveIcons']);
             Route::get('/tenant-info', [TenantInfoController::class, 'index']);
             Route::get('/tenant-components', [TenantInfoController::class, 'indexComponents']);
             Route::delete('/delete/tenant-info/{id}', [TenantInfoController::class, 'destroy']);

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ButtonIcon;
 use App\Models\Settings;
 use App\Models\TenantCarousel;
 use App\Models\TenantInfo;
@@ -9,6 +10,7 @@ use App\Models\TenantSocialNetwork;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 
 class TenantInfoController extends Controller
@@ -30,7 +32,7 @@ class TenantInfoController extends Controller
         //
         $data = Cache::remember('tenant_info_data', $this->expirationTime, function () {
             $tenant_info = TenantInfo::get();
-            $tenantsocial = TenantSocialNetwork::get();            
+            $tenantsocial = TenantSocialNetwork::get();
             return compact('tenant_info', 'tenantsocial');
         });
         return view('admin.tenant-info.index', $data);
@@ -46,55 +48,46 @@ class TenantInfoController extends Controller
         $data = Cache::remember('tenant_info_data', $this->expirationTime, function () {
             $tenant_info = TenantInfo::get();
             $tenantcarousel = TenantCarousel::get();
-            $siteButtons = [
-                'Inicio' => 'fa-home',
-                'Categorias' => 'fa-th-list',
-                'Carrito' => 'fa-shopping-cart',
-                'Mis compras' => 'fa-shopping-bag',
-                'Direcciones' => 'fa-map-marker-alt',
-                'Usuario' => 'fa-user',
-                'Comentarios' => 'fa-comments',
-                'Blog' => 'fa-blog',
-                'Servicios' => 'fa-concierge-bell'
+
+            $icons = [
+                'home', 'tshirt', 'heart', 'spa', 'syringe', 'hands', 'mask', 'car', 'shopping-cart',
+                'car-alt','wrench','cogs','paint-brush','flask','lipstick','sparkles',
+                'credit-card', 'sign-in', 'map-marker', 'address-book', 'address-card', 'angry', 'arrow-alt-circle-down',
+                'arrow-alt-circle-left', 'cut', 'arrow-alt-circle-right', 'arrow-alt-circle-up',
+                'bell', 'bell-slash', 'bookmark', 'building', 'calendar',
+                'calendar-alt', 'calendar-check', 'calendar-minus', 'calendar-plus',
+                'calendar-times', 'caret-square-down', 'caret-square-left',
+                'caret-square-right', 'caret-square-up', 'chart-bar', 'check-circle',
+                'check-square', 'circle', 'clipboard', 'clock', 'clone',
+                'closed-captioning', 'comment', 'comment-alt', 'comment-dots',
+                'comments', 'compass', 'copy', 'copyright', 'credit-card',
+                'dizzy', 'dot-circle', 'edit', 'envelope', 'envelope-open',
+                'eye', 'eye-slash', 'file', 'file-alt', 'file-archive',
+                'file-audio', 'file-code', 'file-excel', 'file-image', 'file-pdf',
+                'file-powerpoint', 'file-video', 'file-word', 'flag', 'flushed',
+                'folder', 'folder-open', 'frown', 'frown-open', 'futbol',
+                'gem', 'grimace', 'grin', 'grin-alt', 'grin-beam',
+                'grin-beam-sweat', 'grin-hearts', 'grin-squint', 'grin-squint-tears',
+                'grin-stars', 'grin-tears', 'grin-tongue', 'grin-tongue-squint',
+                'grin-tongue-wink', 'grin-wink', 'hand-lizard', 'hand-paper',
+                'hand-peace', 'hand-point-down', 'hand-point-left', 'hand-point-right',
+                'hand-point-up', 'hand-pointer', 'hand-rock', 'hand-scissors',
+                'hand-spock', 'handshake', 'hdd', 'heart', 'hospital', 'hourglass',
+                'id-badge', 'id-card', 'image', 'images', 'keyboard', 'kiss',
+                'kiss-beam', 'kiss-wink-heart', 'laugh', 'laugh-beam', 'laugh-squint',
+                'laugh-wink', 'lemon', 'life-ring', 'lightbulb', 'list-alt',
+                'map', 'meh', 'meh-blank', 'meh-rolling-eyes', 'minus-square',
+                'money-bill-alt', 'moon', 'newspaper', 'object-group', 'object-ungroup',
+                'paper-plane', 'pause-circle', 'play-circle', 'plus-square',
+                'question-circle', 'registered', 'sad-cry', 'sad-tear', 'save',
+                'share-square', 'smile', 'smile-beam', 'smile-wink', 'snowflake',
+                'square', 'star', 'star-half', 'sticky-note', 'stop-circle',
+                'sun', 'surprise', 'thumbs-down', 'thumbs-up', 'times-circle',
+                'tired', 'trash-alt', 'user', 'user-circle', 'window-close',
+                'window-maximize', 'window-minimize', 'window-restore'
             ];
-    
-            $fontAwesomeIcons = [
-                'fa-address-book', 'fa-address-card', 'fa-angry', 'fa-arrow-alt-circle-down',
-                'fa-arrow-alt-circle-left', 'fa-arrow-alt-circle-right', 'fa-arrow-alt-circle-up',
-                'fa-bell', 'fa-bell-slash', 'fa-bookmark', 'fa-building', 'fa-calendar',
-                'fa-calendar-alt', 'fa-calendar-check', 'fa-calendar-minus', 'fa-calendar-plus',
-                'fa-calendar-times', 'fa-caret-square-down', 'fa-caret-square-left',
-                'fa-caret-square-right', 'fa-caret-square-up', 'fa-chart-bar', 'fa-check-circle',
-                'fa-check-square', 'fa-circle', 'fa-clipboard', 'fa-clock', 'fa-clone',
-                'fa-closed-captioning', 'fa-comment', 'fa-comment-alt', 'fa-comment-dots',
-                'fa-comments', 'fa-compass', 'fa-copy', 'fa-copyright', 'fa-credit-card',
-                'fa-dizzy', 'fa-dot-circle', 'fa-edit', 'fa-envelope', 'fa-envelope-open',
-                'fa-eye', 'fa-eye-slash', 'fa-file', 'fa-file-alt', 'fa-file-archive',
-                'fa-file-audio', 'fa-file-code', 'fa-file-excel', 'fa-file-image', 'fa-file-pdf',
-                'fa-file-powerpoint', 'fa-file-video', 'fa-file-word', 'fa-flag', 'fa-flushed',
-                'fa-folder', 'fa-folder-open', 'fa-frown', 'fa-frown-open', 'fa-futbol',
-                'fa-gem', 'fa-grimace', 'fa-grin', 'fa-grin-alt', 'fa-grin-beam',
-                'fa-grin-beam-sweat', 'fa-grin-hearts', 'fa-grin-squint', 'fa-grin-squint-tears',
-                'fa-grin-stars', 'fa-grin-tears', 'fa-grin-tongue', 'fa-grin-tongue-squint',
-                'fa-grin-tongue-wink', 'fa-grin-wink', 'fa-hand-lizard', 'fa-hand-paper',
-                'fa-hand-peace', 'fa-hand-point-down', 'fa-hand-point-left', 'fa-hand-point-right',
-                'fa-hand-point-up', 'fa-hand-pointer', 'fa-hand-rock', 'fa-hand-scissors',
-                'fa-hand-spock', 'fa-handshake', 'fa-hdd', 'fa-heart', 'fa-hospital', 'fa-hourglass',
-                'fa-id-badge', 'fa-id-card', 'fa-image', 'fa-images', 'fa-keyboard', 'fa-kiss',
-                'fa-kiss-beam', 'fa-kiss-wink-heart', 'fa-laugh', 'fa-laugh-beam', 'fa-laugh-squint',
-                'fa-laugh-wink', 'fa-lemon', 'fa-life-ring', 'fa-lightbulb', 'fa-list-alt',
-                'fa-map', 'fa-meh', 'fa-meh-blank', 'fa-meh-rolling-eyes', 'fa-minus-square',
-                'fa-money-bill-alt', 'fa-moon', 'fa-newspaper', 'fa-object-group', 'fa-object-ungroup',
-                'fa-paper-plane', 'fa-pause-circle', 'fa-play-circle', 'fa-plus-square',
-                'fa-question-circle', 'fa-registered', 'fa-sad-cry', 'fa-sad-tear', 'fa-save',
-                'fa-share-square', 'fa-smile', 'fa-smile-beam', 'fa-smile-wink', 'fa-snowflake',
-                'fa-square', 'fa-star', 'fa-star-half', 'fa-sticky-note', 'fa-stop-circle',
-                'fa-sun', 'fa-surprise', 'fa-thumbs-down', 'fa-thumbs-up', 'fa-times-circle',
-                'fa-tired', 'fa-trash-alt', 'fa-user', 'fa-user-circle', 'fa-window-close',
-                'fa-window-maximize', 'fa-window-minimize', 'fa-window-restore'
-            ];
-            return compact('tenant_info','tenantcarousel','fontAwesomeIcons','siteButtons');
-        });        
+            return compact('tenant_info', 'tenantcarousel', 'icons');
+        });
 
         return view('admin.tenant-info.components', $data);
     }
@@ -307,6 +300,70 @@ class TenantInfoController extends Controller
         } catch (\Exception $th) {
             DB::rollBack();
             return redirect()->back()->with(['status' => 'No se pudo guardar los colores de los componentes', 'icon' => 'error']);
+        }
+    }
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function updateIcons(Request $request)
+    {
+        //
+        DB::beginTransaction();
+        try {
+            $tenantinfo = TenantInfo::first();
+            $tenantinfo->manage_size = $request->manage_size ? 1 : 0;
+            $tenantinfo->manage_department = $request->manage_department ? 1 : 0;
+            $tenantinfo->show_logo = $request->show_logo ? 1 : 0;
+            $tenantinfo->show_stock = $request->show_stock ? 1 : 0;
+            $tenantinfo->show_trending = $request->show_trending ? 1 : 0;
+            $tenantinfo->show_insta = $request->show_insta ? 1 : 0;
+            $tenantinfo->show_mision = $request->show_mision ? 1 : 0;
+            $tenantinfo->show_cintillo = $request->show_cintillo ? 1 : 0;
+            $tenantinfo->custom_size = $request->custom_size ? 1 : 0;
+            if (!$request->manage_size) {
+                $tenantinfo->custom_size = 0;
+            }
+            $tenantinfo->update();
+            DB::commit();
+            return redirect()->back()->with(['status' => 'Se ha editado la visualización de componentes', 'icon' => 'success']);
+        } catch (\Exception $th) {
+            DB::rollBack();
+            return redirect()->back()->with(['status' => 'No se pudo guardar la información del negocio', 'icon' => 'error']);
+        }
+    }
+    public function saveIcons(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $new = false;
+            $icons = ButtonIcon::first();
+            if (!$icons) {
+                $icons = new ButtonIcon();
+                $new = true;
+            }
+            $icons->home = $request->home;
+            $icons->categories = $request->categories;
+            $icons->cart = $request->cart;
+            $icons->shopping = $request->shopping;
+            $icons->address = $request->address;
+            $icons->user = $request->user;
+            $icons->services = $request->services;
+            $icons->products = $request->products;
+            $icons->detail = $request->detail;
+            if ($new) {
+                $icons->save();
+            } else {
+                $icons->update();
+            }
+            DB::commit();
+            return redirect()->back()->with(['status' => 'Se han guardado los íconos con éxito', 'icon' => 'success']);
+        } catch (\Exception $th) {
+            DB::rollBack();
+            return redirect()->back()->with(['status' => 'No se pudo guardar la información de los iconos' . $th->getMessage(), 'icon' => 'error']);
         }
     }
 }

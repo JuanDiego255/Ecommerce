@@ -8,23 +8,9 @@
         // Luego, encontramos el descuento más alto usando la función max()
         $descuento_mas_alto = max($descuentos);
     }
-    $font_icon = '';
     $logo = '';
     $btnSize = '';
-    switch ($tenantinfo->kind_business) {
-        case 1:
-            $font_icon = 'fas fa-car';
-            break;
-        case 2:
-            $font_icon = 'fas fa-spa';
-            break;
-        case 3:
-            $font_icon = 'fas fa-heart';
-            break;
-        default:
-            $font_icon = 'fas fa-tshirt';
-            break;
-    }
+
     switch ($tenantinfo->tenant) {
         case 'draharriscr':
             $logo = 'logo-harris';
@@ -299,7 +285,7 @@
             <a href="{{ url('/') }}" class="nav-menu-item"><i class="fas fa-home me-3"></i>INICIO</a>
             @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
                 <div class="nav-menu-item">
-                    <i class="{{ $font_icon }} me-3"></i><a class="color-menu" href="javascript:void(0);"
+                    <i class="fas fa-{{ $icon->categories }} me-3"></i><a class="color-menu" href="javascript:void(0);"
                         id="toggleCategories">CATEGORIAS <i class="fa fa-arrow-circle-down ml-3"></i></a>
                     <div class="subcategories" id="categoriesDropdown">
                         <ul>
@@ -323,7 +309,7 @@
                 </div>
             @else
                 <div class="nav-menu-item">
-                    <i class="{{ $font_icon }} me-3"></i><a class="color-menu" href="javascript:void(0);"
+                    <i class="fas fa-{{ $icon->categories }} me-3"></i><a class="color-menu" href="javascript:void(0);"
                         id="toggleCategories">DEPARTAMENTOS <i class="fa fa-arrow-circle-down ml-3"></i></a>
                     <div class="subcategories" id="categoriesDropdown">
                         <ul>
@@ -373,7 +359,7 @@
             <a href="{{ url('/') }}" class="nav-menu-item"><i class="fas fa-home me-3"></i>INICIO</a>
             @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
                 <div class="nav-menu-item">
-                    <i class="{{ $font_icon }} me-3"></i><a class="color-menu" href="javascript:void(0);"
+                    <i class="fas fa-{{ $icon->categories }} me-3"></i><a class="color-menu" href="javascript:void(0);"
                         id="toggleCategories">CATEGORIAS <i class="fa fa-arrow-circle-down ml-3"></i></a>
                     <div class="subcategories" id="categoriesDropdown">
                         <ul>
@@ -397,7 +383,7 @@
                 </div>
             @else
                 <div class="nav-menu-item">
-                    <i class="{{ $font_icon }} me-3"></i><a class="color-menu" href="javascript:void(0);"
+                    <i class="fas fa-{{ $icon->categories }} me-3"></i><a class="color-menu" href="javascript:void(0);"
                         id="toggleCategories">DEPARTAMENTOS <i class="fa fa-arrow-circle-down ml-3"></i></a>
                     <div class="subcategories" id="categoriesDropdown">
                         <ul>

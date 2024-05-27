@@ -8,21 +8,6 @@
         // Luego, encontramos el descuento más alto usando la función max()
         $descuento_mas_alto = max($descuentos);
     }
-    $font_icon = '';
-    switch ($tenantinfo->kind_business) {
-        case 1:
-            $font_icon = 'fas fa-car';
-            break;
-        case 2:
-            $font_icon = 'fas fa-spa';
-            break;
-        case 3:
-            $font_icon = 'fas fa-heart';
-            break;
-        default:
-            $font_icon = 'fas fa-tshirt';
-            break;
-    }
 @endphp
 @if ($view_name != 'frontend_view-cart' && $view_name != 'frontend_checkout')
     <input type="hidden" name="iva_tenant" id="iva_tenant" value="{{ $iva }}">
@@ -240,12 +225,12 @@
             @else
                 <a href="{{ url('buys') }}"><button id="btnIngresar"
                         class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'whiteLink-mandi' : 'whiteLink' }} siteLink"><i
-                            style="color: var(--navbar_text);" class="fa fa-credit-card btnIcon"></i></button></a>
+                            style="color: var(--navbar_text);" class="fas fa-{{ $icon->shopping }}"></i></button></a>
             @endguest
 
             <button type="button" data-bs-toggle="modal" data-bs-target="#modalMiniCart"
                 class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'whiteLink-mandi' : 'whiteLink' }} siteLink"><i
-                    style="color: var(--navbar_text);" class="fa fa-shopping-cart cartIcon">
+                    style="color: var(--navbar_text);" class="fas fa-{{ $icon->cart }} cartIcon">
                     {{ $cartNumber }}</i></button>
         </div>
 
@@ -260,13 +245,13 @@
                 <a href="{{ url('buys') }}">
                     <button id="btnIngresarLogo"
                         class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'whiteLink-mandi' : 'whiteLink' }} siteLink"
-                        style="border-right:1px solid #eaeaea"><i class="fa fa-credit-card"></i> MIS COMPRAS</button>
+                        style="border-right:1px solid #eaeaea"><i class="fas fa-{{ $icon->shopping }}"></i> MIS COMPRAS</button>
                 </a>
             @endguest
             @if ($view_name != 'frontend_view-cart' && $view_name != 'frontend_checkout')
                 <button type="button" data-bs-toggle="modal" data-bs-target="#modalMiniCart"
                     class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'blackLink-mandi' : 'blackLink' }} siteLink"><i
-                        class="fa fa-shopping-cart"></i>
+                        class="fas fa-{{ $icon->cart }}"></i>
                     {{ 'CARRITO' }} <span
                         class="badge badge-sm badge-info text-pill border-pill text-xxs">{{ $cartNumber }}</span>
                 </button>
@@ -290,10 +275,10 @@
             <a class="nav-menu-item" href="javascript:void(0);" onclick="menuToggle()"><i
                     class="fa fa-arrow-circle-left me-3"></i>CERRAR MENU</a>
 
-            <a href="{{ url('/') }}" class="nav-menu-item"><i class="fas fa-home me-3"></i>INICIO</a>
+            <a href="{{ url('/') }}" class="nav-menu-item"><i class="fas fa-{{ $icon->home }} me-3"></i>INICIO</a>
             @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
                 <div class="nav-menu-item">
-                    <i class="{{ $font_icon }} me-3"></i><a class="color-menu" href="javascript:void(0);"
+                    <i class="fas fa-{{ $icon->categories }} me-3"></i><a class="color-menu" href="javascript:void(0);"
                         id="toggleCategories">CATEGORIAS <i class="fa fa-arrow-circle-down ml-3"></i></a>
                     <div class="subcategories" id="categoriesDropdown">
                         <ul>
@@ -317,7 +302,7 @@
                 </div>
             @else
                 <div class="nav-menu-item">
-                    <i class="{{ $font_icon }} me-3"></i><a class="color-menu" href="javascript:void(0);"
+                    <i class="fas fa-{{ $icon->categories }} me-3"></i><a class="color-menu" href="javascript:void(0);"
                         id="toggleCategories">DEPARTAMENTOS <i class="fa fa-arrow-circle-down ml-3"></i></a>
                     <div class="subcategories" id="categoriesDropdown">
                         <ul>
@@ -363,10 +348,10 @@
         @else
             <a class="nav-menu-item" href="javascript:void(0);" onclick="menuToggle()"><i
                     class="fa fa-arrow-circle-left me-3"></i>CERRAR MENU</a>
-            <a href="{{ url('/') }}" class="nav-menu-item"><i class="fas fa-home me-3"></i>INICIO</a>
+            <a href="{{ url('/') }}" class="nav-menu-item"><i class="fas fa-{{ $icon->home }} me-3"></i>INICIO</a>
             @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
                 <div class="nav-menu-item">
-                    <i class="{{ $font_icon }} me-3"></i><a class="color-menu" href="javascript:void(0);"
+                    <i class="fa fa-{{ $icon->categories }} me-3"></i><a class="color-menu" href="javascript:void(0);"
                         id="toggleCategories">CATEGORIAS <i class="fa fa-arrow-circle-down ml-3"></i></a>
                     <div class="subcategories" id="categoriesDropdown">
                         <ul>
@@ -427,13 +412,13 @@
                     </div>
                 </div>
             @endif
-            <a href="{{ url('view-cart') }}" class="nav-menu-item"><i class="fa fa-shopping-cart me-3"></i>CARRITO
+            <a href="{{ url('view-cart') }}" class="nav-menu-item"><i class="fas fa-{{ $icon->cart }} me-3"></i>CARRITO
                 <span
                     class="badge badge-sm text-pill-menu badge-info border-pill-menu border-2 text-xxs">{{ $cartNumber }}</span></a>
-            <a href="{{ url('buys') }}" class="nav-menu-item"><i class="fa fa-credit-card me-3"></i>MIS
+            <a href="{{ url('buys') }}" class="nav-menu-item"><i class="fas fa-{{ $icon->shopping }} me-3"></i>MIS
                 COMPRAS</a>
             <a href="{{ url('/address') }}" class="nav-menu-item"><i
-                    class="fas fa-map-marker me-3"></i>DIRECCIONES</a>
+                    class="fas fa-{{ $icon->address }} me-3"></i>DIRECCIONES</a>
 
             <div class="nav-menu-item">
                 <a class="color-menu" href="javascript:void(0);" id="toggleLogout"><i

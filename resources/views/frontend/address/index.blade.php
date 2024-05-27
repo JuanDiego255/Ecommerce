@@ -6,8 +6,8 @@
 @section('content')
     <div class="container">
         <div class="breadcrumb-nav bc3x mt-4">
-            <li class="home"><a href="{{ url('/') }}"><i class="fas fa-home me-1"></i></a></li>
-            <li class="bread-standard"><a class="location" href="#"><i class="fas fa-map-marker me-1"></i>Mis Direcciones</a></li>
+            <li class="home"><a href="{{ url('/') }}"><i class="fas fa-{{ $icon->home }} me-1"></i></a></li>
+            <li class="bread-standard"><a class="location" href="#"><i class="fas fa-{{ $icon->address }} me-1"></i>Mis Direcciones</a></li>
             <li class="bread-standard"><a type="button" data-bs-toggle="modal" data-bs-target="#add-address-modal"><i class="fas fa-plus me-1"></i>Nueva
                     Dirección</a></li>            
             <li></li>

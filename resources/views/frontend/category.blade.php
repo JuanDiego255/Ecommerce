@@ -4,25 +4,20 @@
     {!! OpenGraph::generate() !!}
 @endsection
 @php
-    $font_icon = '';
     $title_service = 'Categorías';
     $btn = 'Descubrir Estilos';
     switch ($tenantinfo->kind_business) {
         case 1:
-            $font_icon = 'fas fa-car'; 
             $btn = 'Ver Vehículos';          
             break;
         case 2:
-            $font_icon = 'fas fa-spa';
             $title_service = 'Servicios'; 
             break;
         case 3:
-            $font_icon = 'fas fa-heart';
             $title_service = 'Servicios';
             $btn = 'tratamientos'; 
             break;
-        default:
-            $font_icon = 'fas fa-box';            
+        default:       
             break;
     }
 @endphp
@@ -30,16 +25,16 @@
     <div class="container mt-4">
         <div class="breadcrumb-nav bc3x">
             @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
-                <li class="home"><a href="{{ url('/') }}"><i class="fas fa-home me-1"></i></a></li>
+                <li class="home"><a href="{{ url('/') }}"><i class="fas fa-{{ $icon->home }} me-1"></i></a></li>
                 <li class="bread-standard"><a href="#"><i
-                            class="{{$font_icon}} me-1"></i>{{$title_service}}</a>
+                            class="fas fa-{{ $icon->services }} me-1"></i>{{$title_service}}</a>
                 </li>
             @else
-                <li class="home"><a href="{{ url('/') }}"><i class="fas fa-home me-1"></i></a></li>
+                <li class="home"><a href="{{ url('/') }}"><i class="fas fa-{{ $icon->home }} me-1"></i></a></li>
                 <li class="bread-standard"><a href="{{ url('departments/index') }}"><i
                             class="fas fa-shapes me-1"></i>Departamentos</a></li>
                 <li class="bread-standard"><a href="#"><i
-                            class="{{$font_icon}} me-1"></i>{{ $department_name }}</a>
+                            class="fas fa-{{ $icon->categories }} me-1"></i>{{ $department_name }}</a>
                 </li>
             @endif
 

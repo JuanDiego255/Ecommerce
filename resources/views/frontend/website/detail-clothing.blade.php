@@ -4,30 +4,19 @@
     {!! OpenGraph::generate() !!}
 @endsection
 @php
-    $font_icon_cat = '';
-    $font_icon_cloth = '';
-    $font_icon_det = 'fas fa-paint-brush';
     $title_service = 'Categorías';
     $trend = 'Descubre más estilos deslumbrantes';
     switch ($tenantinfo->kind_business) {
-        case 1:
-            $font_icon_cat = 'fas fa-car';
-            $font_icon_cloth = 'fas fa-car-side';
+        case 1:            
             break;
-        case 2:
-            $font_icon_cat = 'fas fa-spa';
-            $font_icon_cloth = 'fas fa-cut';
+        case 2:            
             $title_service = 'Servicios';
             break;
-        case 3:
-            $font_icon_cat = 'fas fa-heart';
-            $font_icon_cloth = 'fas fa-cut';
-            $font_icon_det = 'fas fa-smile';
+        case 3:           
             $title_service = 'Servicios';
             $trend = 'Descubre más tratamientos para tu belleza física';
             break;
         default:
-            $font_icon_cat = 'fas fa-box';
             break;
     }
 @endphp
@@ -38,27 +27,27 @@
                 <input type="hidden" name="porcDescuento" value="{{ $item->discount }}" id="porcDescuento">
                 <div class="breadcrumb-nav bc3x mt-4">
                     @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
-                        <li class="home"><a href="{{ url('/') }}"><i class="fas fa-home me-1"></i></a></li>
+                        <li class="home"><a href="{{ url('/') }}"><i class="fas fa-{{ $icon->home }} me-1"></i></a></li>
                         <li class="bread-standard"><a href="{{ url('category/') }}"><i
-                                    class="{{ $font_icon_cat }} me-1"></i>{{ $title_service }}</a>
+                                    class="fas fa-{{ $icon->categories }} me-1"></i>{{ $title_service }}</a>
                         </li>
                         <li class="bread-standard"><a
                                 href="{{ url('clothes-category/' . $category_id . '/' . $item->department_id) }}"><i
-                                    class="{{ $font_icon_cloth }} me-1"></i>{{ $item->category }}</a></li>
+                                    class="fas fa-{{ $icon->services }} me-1"></i>{{ $item->category }}</a></li>
                         <li class="bread-standard"><a class="location" href="#"><i
-                                    class="{{ $font_icon_det }} me-1"></i>Detalles</a>
+                                    class="fas fa-{{ $icon->detail }} me-1"></i>Detalles</a>
                         </li>
                     @else
-                        <li class="home"><a href="{{ url('/') }}"><i class="fas fa-home me-1"></i></a></li>
+                        <li class="home"><a href="{{ url('/') }}"><i class="fas fa-{{ $icon->home }} me-1"></i></a></li>
                         <li class="bread-standard"><a href="{{ url('departments/index') }}"><i
                                     class="fas fa-shapes me-1"></i>Departamentos</a></li>
                         <li class="bread-standard"><a href="{{ url('category/' . $item->department_id) }}"><i
-                                    class="{{ $font_icon_cat }}"></i>{{ $item->department_name }}</a></li>
+                                    class="fas fa-{{ $icon->categories }}"></i>{{ $item->department_name }}</a></li>
                         <li class="bread-standard"><a
                                 href="{{ url('clothes-category/' . $category_id . '/' . $item->department_id) }}"><i
-                                    class="{{ $font_icon_cloth }} me-1"></i>{{ $item->category }}</a></li>
+                                    class="fas fa-{{ $icon->services }} me-1"></i>{{ $item->category }}</a></li>
                         <li class="bread-standard"><a class="location" href="#"><i
-                                    class="{{ $font_icon_det }} me-1"></i>Detalles</a>
+                                    class="fas fa-{{ $icon->detail }} me-1"></i>Detalles</a>
                         </li>
                     @endif
 

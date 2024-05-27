@@ -6,7 +6,7 @@
 
     <div class="container mt-5 {{ $tenantinfo->kind_business != 3 ? 'd-block' : 'd-none' }}">
         <div class="breadcrumb-nav bc3x">
-            <li class="home"><a href="{{ url('/') }}"><i class="fas fa-home me-1"></i></a></li>
+            <li class="home"><a href="{{ url('/') }}"><i class="fas fa-{{ $icon->home }} me-1"></i></a></li>
             <li class="bread-standard"><a href="{{ url('blog/index') }}"><i class="fas fa-book me-1"></i>Blog</a></li>
             <li class="bread-standard"><a href="#"><i class="fas fa-tag me-1"></i>Artículo</a></li>
         </div>

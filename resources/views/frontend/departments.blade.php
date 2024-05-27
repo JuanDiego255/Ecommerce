@@ -6,7 +6,7 @@
 @section('content')
     <div class="container mt-4">
         <div class="breadcrumb-nav bc3x">
-            <li class="home"><a href="{{ url('/') }}"><i class="fas fa-home me-1"></i></a></li>
+            <li class="home"><a href="{{ url('/') }}"><i class="fas fa-{{ $icon->home }} me-1"></i></a></li>
             <li class="bread-standard"><a href="#"><i class="fas fa-shapes me-1"></i>Departamentos</a></li>
         </div>
         <div class="row row-cols-1 row-cols-md-3 g-4 align-content-center card-group mt-5 mb-5">

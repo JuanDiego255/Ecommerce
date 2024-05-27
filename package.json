@@ -11,13 +11,14 @@
     },
     "devDependencies": {
         "axios": "^0.21",
-        "laravel-mix": "^6.0.6",
+        "laravel-mix": "^6.0.49",
         "lodash": "^4.17.19",
         "postcss": "^8.1.14"
     },
     "dependencies": {
         "@ckeditor/ckeditor5-image": "^41.3.1",
         "@ckeditor/ckeditor5-style": "^41.3.1",
+        "@fortawesome/fontawesome-free": "^6.5.2",
         "datatables.net-bs4": "^1.13.8",
         "jscolor": "^0.3.0"
     }

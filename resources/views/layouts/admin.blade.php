@@ -27,8 +27,7 @@
     <link rel="stylesheet" href="{{ asset('css/dataTables.bootstrap5.min.css') }}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-colorpicker/2.5.3/css/bootstrap-colorpicker.min.css" rel="stylesheet">
     <link href="{{ asset('css/material-dashboard.css') }}" rel="stylesheet">
-
-
+    <link rel="stylesheet" href="{{ asset('css/fontawesome.css') }}">
 </head>
 <style>
     :root {

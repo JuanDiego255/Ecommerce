@@ -27,12 +27,14 @@
                             <div class="form-check form-switch col-md-6">
                                 <input value="1" class="form-check-input" type="checkbox" name="manage_department"
                                     id="manage_department" @if ($item->manage_department == 1) checked @endif>
-                                <label class="form-check-label" for="manage_department">{{ __('Habilitar departamentos') }}</label>
+                                <label class="form-check-label"
+                                    for="manage_department">{{ __('Habilitar departamentos') }}</label>
                             </div>
                             <div class="form-check form-switch col-md-6">
                                 <input value="1" class="form-check-input" type="checkbox" name="show_logo"
                                     id="show_logo" @if ($item->show_logo == 1) checked @endif>
-                                <label class="form-check-label" for="show_logo">{{ __('Mostrar logo en página principal (Al deshabilitarse se mostrará el nombre del negocio)') }}</label>
+                                <label class="form-check-label"
+                                    for="show_logo">{{ __('Mostrar logo en página principal (Al deshabilitarse se mostrará el nombre del negocio)') }}</label>
                             </div>
                             <div class="form-check form-switch col-md-6">
                                 <input value="1" class="form-check-input" type="checkbox" name="show_stock"
@@ -42,18 +44,21 @@
                             <div class="form-check form-switch col-md-6">
                                 <input value="1" class="form-check-input" type="checkbox" name="show_insta"
                                     id="show_insta" @if ($item->show_insta == 1) checked @endif>
-                                <label class="form-check-label" for="show_insta">{{ __('Mostrar Sección Instagram') }}</label>
+                                <label class="form-check-label"
+                                    for="show_insta">{{ __('Mostrar Sección Instagram') }}</label>
                             </div>
                             <div class="form-check form-switch col-md-6">
                                 <input value="1" class="form-check-input" type="checkbox" name="show_trending"
                                     id="show_trending" @if ($item->show_trending == 1) checked @endif>
-                                <label class="form-check-label" for="show_trending">{{ __('Mostrar productos en tendencia') }}</label>
+                                <label class="form-check-label"
+                                    for="show_trending">{{ __('Mostrar productos en tendencia') }}</label>
                             </div>
                             <div class="form-check form-switch col-md-6">
                                 <input value="1" class="form-check-input" type="checkbox" name="show_cintillo"
                                     id="show_cintillo" @if ($item->show_cintillo == 1) checked @endif>
-                                <label class="form-check-label" for="show_cintillo">{{ __('Mostrar Cintillo (Cinta arriba del menu
-                                    principal)') }}</label>
+                                <label class="form-check-label"
+                                    for="show_cintillo">{{ __('Mostrar Cintillo (Cinta arriba del menu
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                principal)') }}</label>
                             </div>
                             <div class="form-check form-switch col-md-6">
                                 <input value="1" class="form-check-input" type="checkbox" name="show_mision"
@@ -61,7 +66,7 @@
                                 <label class="form-check-label" for="show_mision">{{ __('Mostrar Misión') }}</label>
                             </div>
                         </div>
-                       {{--  <div class="row">
+                        {{--  <div class="row">
                             <h4 class="text-dark mb-3">{{ __('Gestión de productos') }}</h4>
                             <div class="form-check form-switch col-md-6">
                                 <input @if ($item->manage_size == 0) disabled @endif value="1"
@@ -84,8 +89,10 @@
 
         <div class="card mt-3">
             <div class="card-header">
-                <h4 class="text-dark">{{ __('Personaliza los colores del sitio web (Si conoce el valor hexadecimal del color en
-                    específico, puedes ingresarlo en el campo de texto.)') }}</h4>
+                <h4 class="text-dark">
+                    {{ __('Personaliza los colores del sitio web (Si conoce el valor hexadecimal del color en
+                                                                                                                                                                                                                                                                                                                                                                                                                específico, puedes ingresarlo en el campo de texto.)') }}
+                </h4>
             </div>
             <form action="{{ url('tenant-components/color-save/') }}" method="post" enctype="multipart/form-data">
                 <div class="card-body">
@@ -246,9 +253,128 @@
 
         <div class="card mt-3">
             <div class="card-header">
+                <h4 class="text-dark">
+                    {{ __('Iconografía (Presione el botón izquierdo para seleccionar un ícono)') }}
+                </h4>
+            </div>
+            <form action="{{ url('tenant-components/icon-save/') }}" method="post" enctype="multipart/form-data">
+                <div class="card-body">
+                    <div class="row">
+                        {{ csrf_field() }}
+                        {{ method_field('PUT') }}
+                        <div class="col-md-3 mt-3">
+                            <div class="input-group input-group-lg input-group-outline">
+                                <!-- Botón para abrir el modal de selección de iconos -->
+                                <input type="button" data-bs-toggle="modal" value="Inicio"
+                                    data-bs-target="#add-icons-modal" data-name="home"
+                                    class="form-control form-control-color icon-button">
+                                <!-- Campo de texto para mostrar el icono seleccionado -->
+                                <input type="text" value="{{isset($icon->home) ? $icon->home : '' }}" name="home" id="selected-icon-home"
+                                    class="form-control color-code icon-input">
+                            </div>
+                        </div>
+
+                        <div class="col-md-3 mt-3">
+                            <div class="input-group input-group-lg input-group-outline">
+                                <!-- Botón para abrir el modal de selección de iconos -->
+                                <input type="button" data-bs-toggle="modal" value="Categorías"
+                                    data-bs-target="#add-icons-modal" data-name="categories"
+                                    class="form-control form-control-color icon-button">
+                                <!-- Campo de texto para mostrar el icono seleccionado -->
+                                <input type="text" value="{{isset($icon->categories) ? $icon->categories : '' }}" name="categories" id="selected-icon-categories"
+                                    class="form-control color-code icon-input">
+                            </div>
+                        </div>
+                        <div class="col-md-3 mt-3">
+                            <div class="input-group input-group-lg input-group-outline">
+                                <!-- Botón para abrir el modal de selección de iconos -->
+                                <input type="button" data-bs-toggle="modal" value="Carrito"
+                                    data-bs-target="#add-icons-modal" data-name="cart"
+                                    class="form-control form-control-color icon-button">
+                                <!-- Campo de texto para mostrar el icono seleccionado -->
+                                <input type="text" value="{{isset($icon->cart) ? $icon->cart : '' }}" name="cart" id="selected-icon-cart"
+                                    class="form-control color-code icon-input">
+                            </div>
+                        </div>
+                        <div class="col-md-3 mt-3">
+                            <div class="input-group input-group-lg input-group-outline">
+                                <!-- Botón para abrir el modal de selección de iconos -->
+                                <input type="button" data-bs-toggle="modal" value="Mis compras"
+                                    data-bs-target="#add-icons-modal" data-name="shopping"
+                                    class="form-control form-control-color icon-button">
+                                <!-- Campo de texto para mostrar el icono seleccionado -->
+                                <input type="text" value="{{isset($icon->shopping) ? $icon->shopping : '' }}" name="shopping" id="selected-icon-shopping"
+                                    class="form-control color-code icon-input">
+                            </div>
+                        </div>
+                        <div class="col-md-3 mt-3">
+                            <div class="input-group input-group-lg input-group-outline">
+                                <!-- Botón para abrir el modal de selección de iconos -->
+                                <input type="button" data-bs-toggle="modal" value="Direcciones"
+                                    data-bs-target="#add-icons-modal" data-name="address"
+                                    class="form-control form-control-color icon-button">
+                                <!-- Campo de texto para mostrar el icono seleccionado -->
+                                <input type="text" value="{{isset($icon->address) ? $icon->address : '' }}" name="address" id="selected-icon-address"
+                                    class="form-control color-code icon-input">
+                            </div>
+                        </div>
+                        <div class="col-md-3 mt-3">
+                            <div class="input-group input-group-lg input-group-outline">
+                                <!-- Botón para abrir el modal de selección de iconos -->
+                                <input type="button" data-bs-toggle="modal" value="Usuario"
+                                    data-bs-target="#add-icons-modal" data-name="user"
+                                    class="form-control form-control-color icon-button">
+                                <!-- Campo de texto para mostrar el icono seleccionado -->
+                                <input type="text" value="{{isset($icon->user) ? $icon->user : '' }}" name="user" id="selected-icon-user"
+                                    class="form-control color-code icon-input">
+                            </div>
+                        </div>
+                        <div class="col-md-3 mt-3">
+                            <div class="input-group input-group-lg input-group-outline">
+                                <!-- Botón para abrir el modal de selección de iconos -->
+                                <input type="button" data-bs-toggle="modal" value="Servicios"
+                                    data-bs-target="#add-icons-modal" data-name="services"
+                                    class="form-control form-control-color icon-button">
+                                <!-- Campo de texto para mostrar el icono seleccionado -->
+                                <input type="text" value="{{isset($icon->services) ? $icon->services : '' }}" name="services" id="selected-icon-services"
+                                    class="form-control color-code icon-input">
+                            </div>
+                        </div>
+                        <div class="col-md-3 mt-3">
+                            <div class="input-group input-group-lg input-group-outline">
+                                <!-- Botón para abrir el modal de selección de iconos -->
+                                <input type="button" data-bs-toggle="modal" value="Productos"
+                                    data-bs-target="#add-icons-modal" data-name="products"
+                                    class="form-control form-control-color icon-button">
+                                <!-- Campo de texto para mostrar el icono seleccionado -->
+                                <input type="text" value="{{isset($icon->products) ? $icon->products : '' }}" name="products" id="selected-icon-products"
+                                    class="form-control color-code icon-input">
+                            </div>
+                        </div>
+                        <div class="col-md-3 mt-3">
+                            <div class="input-group input-group-lg input-group-outline">
+                                <!-- Botón para abrir el modal de selección de iconos -->
+                                <input type="button" data-bs-toggle="modal" value="Detalle Producto"
+                                    data-bs-target="#add-icons-modal" data-name="detail"
+                                    class="form-control form-control-color icon-button">
+                                <!-- Campo de texto para mostrar el icono seleccionado -->
+                                <input type="text" value="{{isset($icon->detail) ? $icon->detail : '' }}" name="detail" id="selected-icon-detail"
+                                    class="form-control color-code icon-input">
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-md-12">
+                        <input class="btn btn-velvet mt-4" type="submit" value="Guardar Iconos">
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-header">
                 <h4 class="text-dark">{{ __('Gestiona el carruselo de la página principal') }}</h4>
-                <a data-bs-toggle="modal"
-                    data-bs-target="#add-tenant-carousel-modal">{{ __('Nueva Imagen') }}<i
+                <a data-bs-toggle="modal" data-bs-target="#add-tenant-carousel-modal">{{ __('Nueva Imagen') }}<i
                         class="fa fa-plus me-3 text-dark cursor-pointer"></i></a>
             </div>
             <div class="card-body">
@@ -298,6 +424,8 @@
                 @endif
             </div>
         </div>
+        @include('admin.tenant-info.icons')
+
     </div>
 @endsection
 @section('script')
@@ -308,7 +436,6 @@
         document.addEventListener("DOMContentLoaded", function() {
             // Obtener todos los controles de color
             var colorPickers = document.querySelectorAll('.color-picker');
-
             // Iterar sobre cada control de color
             colorPickers.forEach(function(colorPicker) {
                 // Obtener el input de texto asociado a este control de color
@@ -350,5 +477,42 @@
                 background.style.backgroundImage = 'url(' + imageUrl + ')';
             });
         });
+
+        let currentButtonName = null;
+
+        // Añadir event listener a los botones
+        document.querySelectorAll('.icon-button').forEach(button => {
+            button.addEventListener('click', function() {
+                // Almacenar el nombre del botón actual en una variable global
+                currentButtonName = this.getAttribute('data-name');
+            });
+        });
+
+        function selectIcon(icon) {
+            if (currentButtonName) {
+                let input = document.getElementById(`selected-icon-${currentButtonName}`);
+                input.value = icon;
+
+                var modal = bootstrap.Modal.getInstance(document.getElementById('add-icons-modal'));
+                modal.hide();
+            }
+        }
+
+        function filterIcons() {
+            var input, filter, iconList, icons, i;
+            input = document.getElementById('icon-search');
+            filter = input.value.toLowerCase();
+            iconList = document.getElementById('icon-list');
+            icons = iconList.getElementsByClassName('icon-item');
+
+            for (i = 0; i < icons.length; i++) {
+                var iconName = icons[i].getAttribute('data-name');
+                if (iconName.toLowerCase().indexOf(filter) > -1) {
+                    icons[i].style.display = "";
+                } else {
+                    icons[i].style.display = "none";
+                }
+            }
+        }
     </script>
 @endsection

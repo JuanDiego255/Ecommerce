@@ -17,14 +17,15 @@
     <!-- Nucleo Icons -->
     <link href="{{ asset('css/nucleo-svg.css') }}" rel="stylesheet">
     <link href="{{ asset('css/nucleo-icons.css') }}" rel="stylesheet">
-    <!-- Font Awesome Icons -->
-    <script src="https://kit.fontawesome.com/82a78dd1a0.js" crossorigin="anonymous"></script>
+    
     <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <!-- CSS Files -->
     <link href="{{ asset('css/material-dashboard.css') }}" rel="stylesheet">
     <link href="{{ asset('frontend/css/owl.carousel.min.css') }}" rel="stylesheet">
     <link href="{{ asset('frontend/css/owl.theme.default.min.css') }}" rel="stylesheet">
+    
+    <link rel="stylesheet" href="{{ asset('css/fontawesome.css') }}">
 
     {{--  <link href="{{ asset('css/material-dashboard.css.map') }}" rel="stylesheet">
 

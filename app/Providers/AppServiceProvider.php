@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\ButtonIcon;
 use App\Models\Buy;
 use App\Models\Cart;
 use App\Models\Categories;
@@ -84,6 +85,7 @@ class AppServiceProvider extends ServiceProvider
 
             $tenantinfo = TenantInfo::first();
             $settings = Settings::first();
+            $icons = ButtonIcon::first();
             $departments = Department::where('department', '!=', 'Default')->with('categories')
                 ->orderBy('departments.department', 'asc')
                 ->get();
@@ -307,6 +309,7 @@ class AppServiceProvider extends ServiceProvider
                 'facebook' => $facebook,
                 'tenantcarousel' => $tenantcarousel,
                 'settings' => $settings,
+                'icon' => $icons,
                 'clothings_offer' => $clothings_offer,
                 'departments' => $departments,
                 'cart_items' => $cart_items,

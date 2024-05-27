@@ -2872,6 +2872,14 @@ textarea.form-control-lg {
   width: 3rem;
   height: auto;
   padding: 0.5rem;
+  background-color: #D7E8FC;
+}
+
+.form-control-icon {
+  width: 3rem;
+  height: auto;
+  padding: 0.5rem;
+  background-color: #D7E8FC;
 }
 
 .form-control-color:not(:disabled):not([readonly]) {
@@ -29363,4 +29371,16 @@ a.more-link {
     color: #e03d00;
     transition: .3s;
 }
-
+/*Div Icons*/
+.icon-selector {
+  padding: 20px;
+}
+.icon-item {
+  display: inline-block;
+  margin: 5px;
+  text-align: center;
+  cursor: pointer;
+}
+.icon-item i {
+  font-size: 24px;
+}
