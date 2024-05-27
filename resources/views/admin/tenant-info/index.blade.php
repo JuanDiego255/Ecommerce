@@ -34,6 +34,20 @@
                                 </div>
                             </div>
                             <div class="col-md-12">
+                                <div
+                                    class="input-group input-group-lg input-group-outline {{ isset($item->text_cintillo) ? 'is-filled' : '' }} my-3">
+                                    <label class="form-label">Cintillo</label>
+                                    <input value="{{ isset($item->text_cintillo) ? $item->text_cintillo : '' }}" type="text"
+                                        class="form-control form-control-lg @error('text_cintillo') is-invalid @enderror"
+                                        name="text_cintillo" id="text_cintillo">
+                                    @error('text_cintillo')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>Campo Requerido</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-12">
                                 <label class="form-label">Descuento (Esta descripción se mostrará en la sección de
                                     descuentos en la página de inicio)</label>
                                 <div
