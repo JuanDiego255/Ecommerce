@@ -156,7 +156,7 @@
                     </a>
                 </li>
                 <li
-                    class="nav-item {{ isset($tenantinfo->kind_business) && ($tenantinfo->kind_business == 2 || $tenantinfo->kind_business == 3) ? 'd-block' : 'd-none' }}">
+                    class="nav-item">
                     <a @if ($view_name == 'admin_testimonial_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
                         href="{{ url('comments') }}">
                         <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
