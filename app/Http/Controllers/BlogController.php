@@ -199,7 +199,7 @@ class BlogController extends Controller
             'body' => 'required|string|max:10000',
             'name_url' => 'required|string|max:200',
             'image' => 'required|max:10000|mimes:jpeg,png,jpg,ico',
-            'horizontal_image' => 'required|max:10000|mimes:jpeg,png,jpg,ico'
+            'horizontal_images' => 'required|max:10000|mimes:jpeg,png,jpg,ico'
         ];
         $mensaje = ["required" => 'El :attribute es requerido'];
         $this->validate($request, $campos, $mensaje);

@@ -477,6 +477,7 @@
         @break
 
         @case(2)
+        @case(3)
             @include('layouts.inc.websites.indexfooter')
         @break
 
