@@ -193,7 +193,6 @@ class ClothingCategoryController extends Controller
     {
         DB::beginTransaction();
         $tenantinfo = TenantInfo::first();
-        $size_continue = false;
         try {
             $validator = Validator::make($request->all(), [
                 'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Validación básica de cada imagen
@@ -212,8 +211,6 @@ class ClothingCategoryController extends Controller
             $clothing->code = $request->code;
             $clothing->description = $request->description;
             $clothing->price = $request->price;
-            $prices = $request->input('precios');
-            $quantities = $request->input('cantidades');
             $prices_attr = $request->input('precios_attr');
             $cantidades_attr = $request->input('cantidades_attr');
 
@@ -259,35 +256,29 @@ class ClothingCategoryController extends Controller
                 }
             }
             if (isset($tenantinfo->manage_size) && $tenantinfo->manage_size == 1) {
-
-                $validator = Validator::make($request->all(), [
-                    'precios' => 'required|array|min:1', // Verifica que precios sea un array y que contenga al menos un elemento
-                    'cantidades' => 'required|array|min:1', // Verifica que cantidades sea un array y que contenga al menos un elemento
+                $validator_attr = Validator::make($request->all(), [
+                    'precios_attr' => 'required|array|min:1', // Verifica que precios sea un array y que contenga al menos un elemento
+                    'cantidades_attr' => 'required|array|min:1'
                 ]);
-
                 // Si la validación falla, redirecciona de vuelta al formulario con los errores
-                if (!$validator->fails()) {
-                    foreach ($prices as $tallaId => $precio) {
-                        $cantidad = $quantities[$tallaId];
+                if (!$validator_attr->fails()) {
 
-                        $this->updateSizeStock($id, $cantidad, $precio, $tenantinfo->custom_size);
+                    $requestItemIds = array_keys($prices_attr);
+                    $currentClothingRecords = Stock::where('clothing_id', $id)->get();
+                    foreach ($currentClothingRecords as $record) {
+                        if (!in_array($record->attribute_value_id, $requestItemIds)) {
+                            $record->delete();
+                        }
+                    }
+
+                    foreach ($prices_attr as $itemId => $precio) {
+                        $cantidad = $cantidades_attr[$itemId];
+                        $attr_id = AttributeValue::where('id', $itemId)->first();
+                        $this->updateAttr($id, $cantidad, $precio, $attr_id->attribute_id, $itemId);
                     }
                 }
-            }
-
-            $validator_attr = Validator::make($request->all(), [
-                'precios_attr' => 'required|array|min:1', // Verifica que precios sea un array y que contenga al menos un elemento
-                'cantidades_attr' => 'required|array|min:1'
-            ]);
-            // Si la validación falla, redirecciona de vuelta al formulario con los errores
-            if (!$validator_attr->fails()) {
-                foreach ($prices_attr as $itemId => $precio) {
-                    $cantidad = $cantidades_attr[$itemId];
-                    $attr_id = AttributeValue::where('id', $itemId)->first();
-
-                    $this->updateAttr($id, $cantidad, $precio, $tenantinfo->custom_size, $attr_id->attribute_id, $itemId);
-                }
-                $size_continue = true;
+            } else {
+                $this->updateSizeStock($id, $request->stock, $request->price);
             }
 
             DB::commit();
@@ -427,7 +418,7 @@ class ClothingCategoryController extends Controller
         $stock_size->price = $price;
         $stock_size->save();
     }
-    public function updateSizeStock($id, $stock, $price = null, $custom_size = null)
+    public function updateSizeStock($id, $stock, $price = null)
     {
         $stock_size = Stock::where('clothing_id', $id)
             ->where('attr_id', null)
@@ -443,7 +434,7 @@ class ClothingCategoryController extends Controller
             Stock::where('clothing_id', $id)->update(['stock' => $stock, 'price' => $price]);
         }
     }
-    public function updateAttr($id, $stock, $price = null, $custom_size = null, $attr_id, $value)
+    public function updateAttr($id, $stock, $price = null, $attr_id, $value)
     {
         $stock_size = Stock::where('clothing_id', $id)
             ->where('attr_id', $attr_id)

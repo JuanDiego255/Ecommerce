@@ -29350,3 +29350,17 @@ a.more-link {
   height: 100px;
 }
 
+.delete-btn {
+    margin-left: 10px;
+    background-color: transparent;
+    color: #000;
+    border: none;
+    padding: 5px;
+    cursor: pointer;
+}
+
+.delete-btn:hover {
+    color: #e03d00;
+    transition: .3s;
+}
+

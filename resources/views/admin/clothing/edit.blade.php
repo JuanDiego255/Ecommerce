@@ -7,7 +7,8 @@
     $stock_array = $stocks;
 @endphp
 @section('content')
-    <form action="{{ url('update-clothing' . '/' . $clothing->id) }}" method="POST" enctype="multipart/form-data">
+    <form id="updateForm" action="{{ url('update-clothing' . '/' . $clothing->id) }}" method="POST"
+        enctype="multipart/form-data">
         @csrf
         <div class="row">
             <div @if ($tenantinfo->manage_size != 0) class="col-md-8" @else class="col-md-12" @endif>
@@ -259,11 +260,11 @@
                 }
 
             }
-
             $('#attr_id').change(function(e) {
                 var selectedValue = $(this).val();
                 getValues(selectedValue);
             });
+            var deletedValues = [];
 
             $('#value').change(function(e) {
                 var selectedValueComplete = $(this).val();
@@ -277,13 +278,18 @@
                 var attr_id = "attr_id" + selectedValue;
                 var value_id = "value_id" + selectedValue;
                 var cantidadId = "cantidad_attr" + selectedValue;
-                var htmlInput = "";
+                var containerId = "container_attr" + selectedValue; // Nuevo ID para el contenedor
                 var no_main_text = " (No es un valor de un atributo principal, no permite el precio)"
 
                 // Verificar si los elementos ya existen
                 if (!document.getElementById(precioId) && !document.getElementById(cantidadId) && !document
                     .getElementById(attr_id) &&
                     selectedValue != "0") {
+
+                    // Crear un contenedor para agrupar todos los elementos
+                    var container = document.createElement("div");
+                    container.id = containerId;
+                    container.className = "attr-container row"; // Añadir clase "row" para estilo de filas
 
                     var hiddenInput = document.createElement("input");
                     hiddenInput.required = true;
@@ -293,7 +299,7 @@
                     hiddenInput.name = `attr_id[${selectedValue}]`;
                     hiddenInput.placeholder = "Precio";
 
-                    // Create the label element
+                    // Crear el elemento label
                     var label = document.createElement("label");
                     label.setAttribute("for", precioId);
                     label.textContent = `${selectedText}:`;
@@ -301,18 +307,15 @@
                         label.textContent = `${selectedText}` + no_main_text;
                     }
 
-                    // Create a line break element
-                    var lineBreak = document.createElement("br");
-
-                    // Create the first div with col-md-6 class
+                    // Crear el primer div con clase col-md-4 para el precio
                     var divCol1 = document.createElement("div");
-                    divCol1.className = "col-md-6";
+                    divCol1.className = "col-md-4";
 
-                    // Create the first input group div
+                    // Crear el primer grupo de entrada
                     var inputGroup1 = document.createElement("div");
                     inputGroup1.className = "input-group input-group-static";
 
-                    // Create the first input element
+                    // Crear el primer elemento de entrada
                     var inputPrecio = document.createElement("input");
                     inputPrecio.required = true;
                     inputPrecio.type = "text";
@@ -326,21 +329,21 @@
                     inputPrecio.name = `precios_attr[${selectedValue}]`;
                     inputPrecio.placeholder = "Precio";
 
-                    // Append the first input to its input group div
+                    // Añadir el primer input a su grupo de entrada
                     inputGroup1.appendChild(inputPrecio);
 
-                    // Append the input group div to the first col-md-6 div
+                    // Añadir el grupo de entrada al primer div
                     divCol1.appendChild(inputGroup1);
 
-                    // Create the second div with col-md-6 class
+                    // Crear el segundo div con clase col-md-4 para la cantidad
                     var divCol2 = document.createElement("div");
-                    divCol2.className = "col-md-6";
+                    divCol2.className = "col-md-4";
 
-                    // Create the second input group div
+                    // Crear el segundo grupo de entrada
                     var inputGroup2 = document.createElement("div");
                     inputGroup2.className = "input-group input-group-static";
 
-                    // Create the second input element
+                    // Crear el segundo elemento de entrada
                     var inputCantidad = document.createElement("input");
                     inputCantidad.required = true;
                     inputCantidad.type = "text";
@@ -350,21 +353,44 @@
                     inputCantidad.name = `cantidades_attr[${selectedValue}]`;
                     inputCantidad.placeholder = "Cantidad";
 
-                    // Append the second input to its input group div
+                    // Añadir el segundo input a su grupo de entrada
                     inputGroup2.appendChild(inputCantidad);
 
-                    // Append the input group div to the second col-md-6 div
+                    // Añadir el grupo de entrada al segundo div
                     divCol2.appendChild(inputGroup2);
 
-                    // Assuming you have a container to append these elements to
-                    var container = document.getElementById("divValue");
+                    // Crear el tercer div con clase col-md-4 para el botón de eliminación
+                    var divCol3 = document.createElement("div");
+                    divCol3.className = "col-md-4 d-flex align-items-center";
 
-                    // Append all elements to the container in the correct order
+                    // Crear el botón de eliminación (X)
+                    var deleteButton = document.createElement("button");
+                    deleteButton.type = "button";
+                    deleteButton.textContent = "X";
+                    deleteButton.className = "delete-btn"; // Clase para estilos
+                    deleteButton.onclick = function() {
+                        deletedValues.push({
+                            attr_id: attr_id_h,
+                            precio: inputPrecio.value,
+                            cantidad: inputCantidad.value
+                        });
+                        console.log("Deleted Values:", deletedValues);
+                        container.remove();
+                    };
+
+                    // Añadir el botón de eliminación al tercer div
+                    divCol3.appendChild(deleteButton);
+
+                    // Añadir todos los elementos al contenedor
                     container.appendChild(hiddenInput);
                     container.appendChild(label);
-                    container.appendChild(lineBreak);
                     container.appendChild(divCol1);
                     container.appendChild(divCol2);
+                    container.appendChild(divCol3);
+
+                    // Añadir el contenedor al div principal
+                    var mainContainer = document.getElementById("divValue");
+                    mainContainer.appendChild(container);
                 }
             });
 
@@ -383,15 +409,20 @@
                         var attr_id = "attr_id" + selectedValue;
                         var value_id = "value_id" + selectedValue;
                         var cantidadId = "cantidad_attr" + selectedValue;
-                        var htmlInput = "";
+                        var containerId = "container_attr" + selectedValue; // Nuevo ID para el contenedor
                         var no_main_text =
                             " (No es un valor de un atributo principal, no permite el precio)"
 
                         // Verificar si los elementos ya existen
                         if (!document.getElementById(precioId) && !document.getElementById(cantidadId) && !
-                            document
-                            .getElementById(attr_id) &&
+                            document.getElementById(attr_id) &&
                             selectedValue != "0") {
+
+                            // Crear un contenedor para agrupar todos los elementos
+                            var container = document.createElement("div");
+                            container.id = containerId;
+                            container.className =
+                                "attr-container row"; // Añadir clase "row" para estilo de filas
 
                             var hiddenInput = document.createElement("input");
                             hiddenInput.required = true;
@@ -401,7 +432,7 @@
                             hiddenInput.name = `attr_id[${selectedValue}]`;
                             hiddenInput.placeholder = "Precio";
 
-                            // Create the label element
+                            // Crear el elemento label
                             var label = document.createElement("label");
                             label.setAttribute("for", precioId);
                             label.textContent = `${selectedText}:`;
@@ -409,18 +440,15 @@
                                 label.textContent = `${selectedText}` + no_main_text;
                             }
 
-                            // Create a line break element
-                            var lineBreak = document.createElement("br");
-
-                            // Create the first div with col-md-6 class
+                            // Crear el primer div con clase col-md-4 para el precio
                             var divCol1 = document.createElement("div");
-                            divCol1.className = "col-md-6";
+                            divCol1.className = "col-md-4";
 
-                            // Create the first input group div
+                            // Crear el primer grupo de entrada
                             var inputGroup1 = document.createElement("div");
                             inputGroup1.className = "input-group input-group-static";
 
-                            // Create the first input element
+                            // Crear el primer elemento de entrada
                             var inputPrecio = document.createElement("input");
                             inputPrecio.required = true;
                             inputPrecio.type = "text";
@@ -433,21 +461,21 @@
                             inputPrecio.name = `precios_attr[${selectedValue}]`;
                             inputPrecio.placeholder = "Precio";
 
-                            // Append the first input to its input group div
+                            // Añadir el primer input a su grupo de entrada
                             inputGroup1.appendChild(inputPrecio);
 
-                            // Append the input group div to the first col-md-6 div
+                            // Añadir el grupo de entrada al primer div
                             divCol1.appendChild(inputGroup1);
 
-                            // Create the second div with col-md-6 class
+                            // Crear el segundo div con clase col-md-4 para la cantidad
                             var divCol2 = document.createElement("div");
-                            divCol2.className = "col-md-6";
+                            divCol2.className = "col-md-4";
 
-                            // Create the second input group div
+                            // Crear el segundo grupo de entrada
                             var inputGroup2 = document.createElement("div");
                             inputGroup2.className = "input-group input-group-static";
 
-                            // Create the second input element
+                            // Crear el segundo elemento de entrada
                             var inputCantidad = document.createElement("input");
                             inputCantidad.required = true;
                             inputCantidad.type = "text";
@@ -457,21 +485,38 @@
                             inputCantidad.name = `cantidades_attr[${selectedValue}]`;
                             inputCantidad.placeholder = "Cantidad";
 
-                            // Append the second input to its input group div
+                            // Añadir el segundo input a su grupo de entrada
                             inputGroup2.appendChild(inputCantidad);
 
-                            // Append the input group div to the second col-md-6 div
+                            // Añadir el grupo de entrada al segundo div
                             divCol2.appendChild(inputGroup2);
 
-                            // Assuming you have a container to append these elements to
-                            var container = document.getElementById("divValue");
+                            // Crear el tercer div con clase col-md-4 para el botón de eliminación
+                            var divCol3 = document.createElement("div");
+                            divCol3.className = "col-md-4 d-flex align-items-center";
 
-                            // Append all elements to the container in the correct order
+                            // Crear el botón de eliminación (X)
+                            var deleteButton = document.createElement("button");
+                            deleteButton.type = "button";
+                            deleteButton.textContent = "X";
+                            deleteButton.className = "delete-btn"; // Clase para estilos
+                            deleteButton.onclick = function() {
+                                container.remove();
+                            };
+
+                            // Añadir el botón de eliminación al tercer div
+                            divCol3.appendChild(deleteButton);
+
+                            // Añadir todos los elementos al contenedor
                             container.appendChild(hiddenInput);
                             container.appendChild(label);
-                            container.appendChild(lineBreak);
                             container.appendChild(divCol1);
                             container.appendChild(divCol2);
+                            container.appendChild(divCol3);
+
+                            // Añadir el contenedor al div principal
+                            var mainContainer = document.getElementById("divValue");
+                            mainContainer.appendChild(container);
                         }
                     }
                 });
