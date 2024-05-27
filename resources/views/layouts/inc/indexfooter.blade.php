@@ -1,30 +1,27 @@
 <center>
-    <div class="container-fluid bg-footer">        
+    <div class="container-fluid bg-footer">
         <div class="row pt-5">
 
             <div class="col-md-4">
-                <h5 class="text-uppercase text-footer-title">Redes Sociales</h5>
-                <div>
-                    <p class="text-footer text-uppercase text-lg">
-                        @foreach ($social_network as $social)
-                            @php
-                                $social_logo = null;
-                                if (stripos($social->social_network, 'Facebook') !== false) {
-                                    $social_logo = 'fa fa-facebook';
-                                } elseif (stripos($social->social_network, 'Instagram') !== false) {
-                                    $social_logo = 'fa fa-instagram';
-                                }
-                                if (stripos($social->social_network, 'Twitter') !== false) {
-                                    $social_logo = 'fa fa-twitter';
-                                }
-                            @endphp
-                            <a target="blank"
-                                class="mr-5 text-footer" href="{{url($social->url)}}">
-                                <i class="{{ $social_logo }}"></i> {{ $social->social_network }}
-                            </a><br>
-                        @endforeach
-                    </p>
-                </div>
+                <ul class="ul-icon">
+                    @foreach ($social_network as $social)
+                        @php
+                            $social_logo = null;
+                            if (stripos($social->social_network, 'Facebook') !== false) {
+                                $social_logo = 'fab fa-facebook';
+                            } elseif (stripos($social->social_network, 'Instagram') !== false) {
+                                $social_logo = 'fab fa-instagram';
+                            } elseif (stripos($social->social_network, 'Twitter') !== false) {
+                                $social_logo = 'fab fa-twitter';
+                            } elseif (stripos($social->social_network, 'LinkedIn') !== false) {
+                                $social_logo = 'fab fa-linkedin';
+                            }
+                        @endphp
+                        <li><a target="blank" href="{{ url($social->url) }}"><i class="{{ $social_logo }}"
+                                    aria-hidden="true"></i></a>
+                        </li>
+                    @endforeach
+                </ul>
             </div>
             <div class="col-md-4 mt-5">
                 @guest
@@ -33,10 +30,12 @@
                         <p class="text-footer text-uppercase text-lg">
                             <a style="text-decoration: none;" class="mr-5 text-footer text-lg"
                                 href="{{ route('register') }}">
-                                <i class="fa fa-envelope"></i> {{isset($tenantinfo->title_suscrib_a) ? $tenantinfo->title_suscrib_a : ''}}
+                                <i class="fa fa-envelope"></i>
+                                {{ isset($tenantinfo->title_suscrib_a) ? $tenantinfo->title_suscrib_a : '' }}
                             </a><br>
 
-                            <i class="fas fa-percentage"></i> {{isset($tenantinfo->description_suscrib) ? $tenantinfo->description_suscrib : ''}}
+                            <i class="fas fa-percentage"></i>
+                            {{ isset($tenantinfo->description_suscrib) ? $tenantinfo->description_suscrib : '' }}
 
                         </p>
                     </div>
@@ -50,8 +49,10 @@
                         <a style="text-decoration: none;" class="mr-5 text-footer" href="#">
                             <i class="fa fa-envelope"></i> Envíos por correos de C.R
                         </a><br>
-                        <a target="blank" href="{{url('https://wa.me/506'.$tenantinfo->whatsapp)}}" class="text-footer">
-                            <i class="fa fa-whatsapp"></i> {{isset($tenantinfo->whatsapp) ? $tenantinfo->whatsapp : ''}}
+                        <a target="blank" href="{{ url('https://wa.me/506' . $tenantinfo->whatsapp) }}"
+                            class="text-footer">
+                            <i class="fa fa-whatsapp"></i>
+                            {{ isset($tenantinfo->whatsapp) ? $tenantinfo->whatsapp : '' }}
                         </a>
                     </p>
                 </div>
@@ -64,11 +65,12 @@
             <script>
                 document.write(new Date().getFullYear())
             </script>,
-            <a href="#" class="font-weight-bold text-footer" target="_blank">{{isset($tenantinfo->title) ? $tenantinfo->title : ''}}</a>
-            {{isset($tenantinfo->footer) ? $tenantinfo->footer : ''}}
+            <a href="#" class="font-weight-bold text-footer"
+                target="_blank">{{ isset($tenantinfo->title) ? $tenantinfo->title : '' }}</a>
+            {{ isset($tenantinfo->footer) ? $tenantinfo->footer : '' }}
 
         </div>
-       
+
     </div>
 
 
