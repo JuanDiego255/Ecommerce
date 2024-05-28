@@ -248,7 +248,7 @@
                                 } else {
                                     result = `${attribute}: ${value}`;
                                 }
-                                return result;
+                                return `<span>${result}</span><br>`;
 
                             }).join('');
 
