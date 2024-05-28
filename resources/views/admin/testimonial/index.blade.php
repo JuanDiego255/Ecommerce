@@ -90,7 +90,7 @@
                                             <div>
                                                 <a target="blank" data-fancybox="gallery" href="#">
                                                     @if ($item->image)
-                                                        <img src="{{ route('file', $item->image) }}"
+                                                        <img src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"
                                                             class="avatar avatar-md me-3">
                                                     @else
                                                         <img src="{{ url('images/sin-foto.PNG') }}"

@@ -73,8 +73,10 @@
                                 <input type="hidden" value="{{ $descuento }}" class="discount" name="discount">
                                 <div class="row align-items-center">
                                     <div class="col-4">
-                                        <a href="{{ route('file', $item->image) }}">
-                                            <img class="img-fluid border" src="{{ route('file', $item->image) }}"
+                                        <a
+                                            href="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
+                                            <img class="img-fluid border"
+                                                src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"
                                                 alt="...">
                                         </a>
                                     </div>
@@ -90,7 +92,8 @@
                                                     [$attribute, $value] = explode(': ', $attributeValue);
                                                 @endphp
 
-                                                {{ $attribute }}: {{ $value }}<br>
+                                                <span>{{ $attribute == 'Stock' ? 'Predeterminado' : $attribute . ':' }}
+                                                    {{ $attribute == 'Stock' ? '' : $value }}</span><br>
                                             @endforeach
                                             <span class="m-0 text-muted w-100 d-block">
                                                 ₡{{ $item->discount > 0 ? $precioConDescuento : (Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0 ? $item->mayor_price : ($tenantinfo->custom_size == 1 ? $item->stock_price : $item->price)) }}

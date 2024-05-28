@@ -44,7 +44,7 @@
                 <div class="col-md-3 col-sm-6 mb-2">
                     <div class="product-grid product_data">
                         <div class="product-image">
-                            <img src="{{ route('file', $item->image) }}">
+                            <img src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
                             <ul class="product-links">
                                 <li><a target="blank" href="{{ tenant_asset('/') . '/' . $item->image }}"><i
                                             class="fas fa-eye"></i></a></li>

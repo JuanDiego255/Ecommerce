@@ -96,8 +96,8 @@
                                                 <div class="d-flex px-2 py-1">
                                                     <div>
                                                         <a target="blank" data-fancybox="gallery"
-                                                            href="{{ route('file', $item->image) }}">
-                                                            <img src="{{ route('file', $item->image) }}"
+                                                            href="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
+                                                            <img src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"
                                                                 class="img-fluid shadow border-radius-lg w-25">
                                                         </a>
                                                     </div>

@@ -43,13 +43,13 @@
                     <input type="hidden" class="code" name="code" value="{{ $item->code }}">
                     <div class="product-grid product_data">
                         <div class="product-image">
-                            <img src="{{ route('file', $item->image) }}">
+                            <img src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
                             @if ($item->discount)
                                 <span class="product-discount-label">-{{ $item->discount }}%</span>
                             @endif
 
                             <ul class="product-links">
-                                <li><a target="blank" href="{{ route('file', $item->image) }}"><i
+                                <li><a target="blank" href="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"><i
                                             class="fas fa-eye"></i></a></li>
                             </ul>
                             <a href="{{ url('detail-clothing/' . $item->id . '/' . $category_id) }}"

@@ -17,14 +17,14 @@
     <!-- Nucleo Icons -->
     <link href="{{ asset('css/nucleo-svg.css') }}" rel="stylesheet">
     <link href="{{ asset('css/nucleo-icons.css') }}" rel="stylesheet">
-    
+
     <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <!-- CSS Files -->
     <link href="{{ asset('css/material-dashboard.css') }}" rel="stylesheet">
     <link href="{{ asset('frontend/css/owl.carousel.min.css') }}" rel="stylesheet">
     <link href="{{ asset('frontend/css/owl.theme.default.min.css') }}" rel="stylesheet">
-    
+
     <link rel="stylesheet" href="{{ asset('css/fontawesome.css') }}">
 
     {{--  <link href="{{ asset('css/material-dashboard.css.map') }}" rel="stylesheet">
@@ -242,7 +242,14 @@
                             var attributesValues = item.attributes_values.split(', ');
                             var attributesHtml = attributesValues.map(function(attributeValue) {
                                 var [attribute, value] = attributeValue.split(': ');
-                                return `${attribute}: ${value}<br>`;
+                                var result;
+                                if (attribute === 'Stock') {
+                                    result = 'Predeterminado';
+                                } else {
+                                    result = `${attribute}: ${value}`;
+                                }
+                                return result;
+
                             }).join('');
 
                             var listItem = `<li class="py-3 border-bottom">

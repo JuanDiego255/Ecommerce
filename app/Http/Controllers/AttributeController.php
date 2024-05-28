@@ -22,7 +22,7 @@ class AttributeController extends Controller
      */
     public function indexadmin()
     {
-        $attributes = Attribute::get();
+        $attributes = Attribute::where('name','!=','Stock')->get();
 
         return view('admin.attributes.index', compact('attributes'));
     }

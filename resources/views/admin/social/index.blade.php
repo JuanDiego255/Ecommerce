@@ -64,8 +64,8 @@
                                 <tr>
                                     <td class="text-center">
 
-                                        <a target="blank" data-fancybox="gallery" href="{{ route('file', $item->image) }}">
-                                            <img src="{{ route('file', $item->image) }}"
+                                        <a target="blank" data-fancybox="gallery" href="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
+                                            <img src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"
                                                 class="text-center img-fluid shadow border-radius-lg w-25"></a>
 
 

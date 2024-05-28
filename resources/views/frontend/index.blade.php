@@ -44,7 +44,7 @@
                     <div class="{{ $key + 1 > 3 ? 'col-md-3' : 'col-md-4' }} col-sm-6 mb-2">
                         <div class="product-grid product_data">
                             <div class="product-image">
-                                <img src="{{ route('file', $item->image) }}">
+                                <img src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
                                 <ul class="product-links">
                                     <li><a target="blank" href="{{ tenant_asset('/') . '/' . $item->image }}"><i
                                                 class="fas fa-eye"></i></a></li>
@@ -69,7 +69,7 @@
                     <div class="col-md-4 col-sm-6 mb-2">
                         <div class="product-grid product_data">
                             <div class="product-image">
-                                <img src="{{ route('file', $item->image) }}">
+                                <img src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
                                 <ul class="product-links">
                                     <li><a target="blank" href="{{ tenant_asset('/') . '/' . $item->image }}"><i
                                                 class="fas fa-eye"></i></a></li>
@@ -103,12 +103,12 @@
                             <div class="item">
                                 <div class="product-grid product_data">
                                     <div class="product-image">
-                                        <img src="{{ route('file', $item->image) }}">
+                                        <img src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
                                         @if ($item->discount)
                                             <span class="product-discount-label">-{{ $item->discount }}%</span>
                                         @endif
                                         <ul class="product-links">
-                                            <li><a target="blank" href="{{ tenant_asset('/') . '/' . $item->image }}"><i
+                                            <li><a target="blank" href="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"><i
                                                         class="fas fa-eye"></i></a></li>
                                         </ul>
                                         <a href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}"
@@ -263,7 +263,7 @@
                 <div class="col-md-6 mt-4">
                     <div class="card text-center">
                         <div class="overflow-hidden position-relative bg-cover p-3"
-                            style="background-image: url('{{ route('file', $item->image) }}'); height:700px;  background-position: center;">
+                            style="background-image: url('{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}'); height:700px;  background-position: center;">
                             <span class="mask bg-gradient-dark opacity-6"></span>
                             <div class="card-body position-relative z-index-1 d-flex flex-column mt-5">
                                 <h3 class="text-white">{{ $item->description }}.</h3>
@@ -310,7 +310,7 @@
                                 <div>
                                     <div class="card text-center">
                                         <img class="card-img-top"
-                                            @if ($item->image) src="{{ route('file', $item->image) }}"
+                                            @if ($item->image) src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"
                                          
                                      @else
                                      src="{{ url('images/sin-foto.PNG') }}" @endif

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\ProductsImport;
 use App\Models\Attribute;
 use App\Models\AttributeValue;
 use App\Models\Categories;
@@ -23,6 +24,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\URL;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ClothingCategoryController extends Controller
 {
@@ -83,7 +85,7 @@ class ClothingCategoryController extends Controller
     {
         $category = Categories::find($id);
         $category_name = $category->name;
-        $attributes = Attribute::get();
+        $attributes = Attribute::where('name', '!=', 'Stock')->get();
         return view('admin.clothing.add', compact('id', 'category_name', 'attributes'));
     }
     public function edit($id, $category_id)
@@ -146,7 +148,7 @@ class ClothingCategoryController extends Controller
                 'attribute_values.value as value',
             )
             ->get();
-        $attributes = Attribute::get();
+        $attributes = Attribute::where('name', '!=', 'Stock')->get();
         $stock_active = Stock::where('clothing_id', $id)
             ->where('attr_id', '!=', "")
             ->leftJoin('attributes', 'stocks.attr_id', 'attributes.id')
@@ -278,7 +280,12 @@ class ClothingCategoryController extends Controller
                     }
                 }
             } else {
-                $this->updateSizeStock($id, $request->stock, $request->price);
+                $value = AttributeValue::where('attributes.name', 'Stock')
+                    ->where('attribute_values.value', 'Automático')
+                    ->join('attributes', 'attributes.id', '=', 'attribute_values.attribute_id')
+                    ->select('attributes.id as attr_id', 'attribute_values.id as value_id')
+                    ->first();
+                $this->updateAttr($id, $request->stock, $request->price, $value->attr_id, $value->value_id);
             }
 
             DB::commit();
@@ -315,10 +322,7 @@ class ClothingCategoryController extends Controller
         $msg = "Producto Agregado Exitosamente!";
         $break = false;
         $code = 0;
-        $size_continue = false;
         $latestCode = ClothingCategory::max('code');
-        $prices = $request->input('precios');
-        $quantities = $request->input('cantidades');
         $prices_attr = $request->input('precios_attr');
         $cantidades_attr = $request->input('cantidades_attr');
         $attr_id = $request->input('attr_id');
@@ -390,23 +394,38 @@ class ClothingCategoryController extends Controller
                         }
                     }
                 } else {
-                    $this->processSize($clothingId, $request->stock, $request->price);
+                    $value = AttributeValue::where('attributes.name', 'Stock')
+                        ->where('attribute_values.value', 'Automático')
+                        ->join('attributes', 'attributes.id', '=', 'attribute_values.attribute_id')
+                        ->select('attributes.id as attr_id', 'attribute_values.id as value_id')
+                        ->first();
+                    $this->processAttr($clothingId, $request->stock, $request->price, $value->attr_id, $value->value_id);
                 }
 
                 if ($break) {
                     break;
                 }
             }
+        } else {
+            $value = AttributeValue::where('attributes.name', 'Stock')
+                ->where('attribute_values.value', 'Automático')
+                ->join('attributes', 'attributes.id', '=', 'attribute_values.attribute_id')
+                ->select('attributes.id as attr_id', 'attribute_values.id as value_id')
+                ->first();
+            $clothing = new ClothingCategory();
+            $clothing->category_id = $request->category_id;
+            $clothing->name = $request->name;
+            $clothing->code = $request->code;
+            $clothing->description = $request->description;
+            $clothing->price = $request->price;
+            $clothing->status = 1;
+            $clothing->trending = $request->filled('trending') ? 1 : 0;
+            $clothing->save();
+            $clothingId = $clothing->id;
+            $masive = $request->filled('masive') ? 1 : 0;
+            $this->processAttr($clothingId, $request->stock, $request->price, $value->attr_id, $value->value_id);
         }
         return $msg;
-    }
-    public function processSize($clothingId, $stock, $price = null)
-    {
-        $stock_size = new Stock();
-        $stock_size->clothing_id = $clothingId;
-        $stock_size->stock = $stock;
-        $stock_size->price = $price;
-        $stock_size->save();
     }
     public function processAttr($clothingId, $stock, $price = null, $attr_id, $value)
     {
@@ -417,22 +436,6 @@ class ClothingCategoryController extends Controller
         $stock_size->value_attr = $value;
         $stock_size->price = $price;
         $stock_size->save();
-    }
-    public function updateSizeStock($id, $stock, $price = null)
-    {
-        $stock_size = Stock::where('clothing_id', $id)
-            ->where('attr_id', null)
-            ->where('value_attr', null)
-            ->first();
-        if ($stock_size === null) {
-            $stock_size =  new Stock();
-            $stock_size->stock = $stock;
-            $stock_size->price = $price;
-            $stock_size->clothing_id = $id;
-            $stock_size->save();
-        } else {
-            Stock::where('clothing_id', $id)->update(['stock' => $stock, 'price' => $price]);
-        }
     }
     public function updateAttr($id, $stock, $price = null, $attr_id, $value)
     {
@@ -458,6 +461,18 @@ class ClothingCategoryController extends Controller
                     'attr_id' => $attr_id,
                     'value_attr' => $value
                 ]);
+        }
+    }
+    public function importProducts(Request $request, $id)
+    {
+        try {
+            $request->validate([
+                'file' => 'required|mimes:xlsx,xls',
+            ]);
+            Excel::import(new ProductsImport($id), $request->file('file'));
+            return redirect()->back()->with(['status' => 'Se importaron los productos correctamente', 'icon' => 'success']);
+        } catch (\Exception $th) {
+            return redirect()->back()->with(['status' => 'No se importaron los productos!' . $th->getMessage(), 'icon' => 'error']);
         }
     }
 }

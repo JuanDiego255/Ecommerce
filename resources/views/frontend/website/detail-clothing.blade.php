@@ -7,12 +7,12 @@
     $title_service = 'Categorías';
     $trend = 'Descubre más estilos deslumbrantes';
     switch ($tenantinfo->kind_business) {
-        case 1:            
+        case 1:
             break;
-        case 2:            
+        case 2:
             $title_service = 'Servicios';
             break;
-        case 3:           
+        case 3:
             $title_service = 'Servicios';
             $trend = 'Descubre más tratamientos para tu belleza física';
             break;
@@ -27,7 +27,8 @@
                 <input type="hidden" name="porcDescuento" value="{{ $item->discount }}" id="porcDescuento">
                 <div class="breadcrumb-nav bc3x mt-4">
                     @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
-                        <li class="home"><a href="{{ url('/') }}"><i class="fas fa-{{ $icon->home }} me-1"></i></a></li>
+                        <li class="home"><a href="{{ url('/') }}"><i class="fas fa-{{ $icon->home }} me-1"></i></a>
+                        </li>
                         <li class="bread-standard"><a href="{{ url('category/') }}"><i
                                     class="fas fa-{{ $icon->categories }} me-1"></i>{{ $title_service }}</a>
                         </li>
@@ -38,7 +39,8 @@
                                     class="fas fa-{{ $icon->detail }} me-1"></i>Detalles</a>
                         </li>
                     @else
-                        <li class="home"><a href="{{ url('/') }}"><i class="fas fa-{{ $icon->home }} me-1"></i></a></li>
+                        <li class="home"><a href="{{ url('/') }}"><i
+                                    class="fas fa-{{ $icon->home }} me-1"></i></a></li>
                         <li class="bread-standard"><a href="{{ url('departments/index') }}"><i
                                     class="fas fa-shapes me-1"></i>Departamentos</a></li>
                         <li class="bread-standard"><a href="{{ url('category/' . $item->department_id) }}"><i
@@ -78,10 +80,22 @@
                                                     <div class="rounded-4 mb-3 d-flex">
                                                         <a data-fslightbox="mygallery" class="rounded-4" target="_blank"
                                                             data-type="image"
-                                                            href="{{ tenant_asset('/') . '/' . $firstImage }}">
+                                                            href="{{ isset($firstImage) && $firstImage != '' ? route('file', $firstImage) : url('images/producto-sin-imagen.PNG') }}">
                                                             <img style="max-width: 100%; max-height: 100vh; margin: auto;"
                                                                 class="rounded-4 fit"
-                                                                src="{{ tenant_asset('/') . '/' . $firstImage }}" />
+                                                                src="{{ isset($firstImage) && $firstImage != '' ? route('file', $firstImage) : url('images/producto-sin-imagen.PNG') }}" />
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            @else
+                                                <div class="item">
+                                                    <div class="rounded-4 mb-3 d-flex">
+                                                        <a data-fslightbox="mygallery" class="rounded-4" target="_blank"
+                                                            data-type="image"
+                                                            href="{{ url('images/producto-sin-imagen.PNG') }}">
+                                                            <img style="max-width: 100%; max-height: 100vh; margin: auto;"
+                                                                class="rounded-4 fit"
+                                                                src="{{ url('images/producto-sin-imagen.PNG') }}" />
                                                         </a>
                                                     </div>
                                                 </div>
@@ -107,9 +121,11 @@
                                                 <div class="item">
                                                     <div class="rounded-4 mb-3 d-flex justify-content-center">
                                                         <a data-fslightbox="mygallery" class="rounded-4" target="_blank"
-                                                            data-type="image" href="{{ route('file', $image) }}">
+                                                            data-type="image"
+                                                            href="{{ isset($image) && $image != '' ? route('file', $image) : url('images/producto-sin-imagen.PNG') }}">
                                                             <img style="max-width: 100%; max-height: 100vh; margin: auto;"
-                                                                class="rounded-4 fit" src="{{ route('file', $image) }}" />
+                                                                class="rounded-4 fit"
+                                                                src="{{ isset($image) && $image != '' ? route('file', $image) : url('images/producto-sin-imagen.PNG') }}" />
                                                         </a>
                                                     </div>
                                                 </div>
@@ -198,8 +214,7 @@
                                                     class="form-control float-left w-100 quantity">
                                             </div>
                                         </div>
-                                        <div
-                                            class="col-md-12 col-12">
+                                        <div class="col-md-12 col-12">
 
                                             {{--  @foreach ($size_active as $key => $size)
                                                 <div class="form-check form-check-inline">
@@ -214,31 +229,33 @@
                                             @endforeach --}}
                                             <div class="row">
                                                 @foreach ($result as $attribute)
-                                                    <div class="col-md-6">
-                                                        <label
-                                                            class="">{{ $attribute->columna_atributo }}</label><br>
-                                                        @php
-                                                            $values = explode('-', $attribute->valores);
-                                                            $ids = explode('-', $attribute->ids);
-                                                        @endphp
-                                                        <div class="input-group input-group-static">
-                                                            <select required name="size_id"
-                                                                class="size_id form-control form-control-lg mb-2">
-                                                                @foreach ($values as $key => $value)
-                                                                    @if (isset($ids[$key]))
-                                                                        <option
-                                                                            value="{{ $ids[$key] . '-' . $attribute->attr_id . '-' . $item->id }}"
-                                                                            id="size_{{ $ids[$key] }}"
-                                                                            {{ $key === 0 ? 'selected' : '' }}>
-                                                                            {{ $value }}
-                                                                        </option>
-                                                                    @endif
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
+                                                    @if ($attribute->stock != 0)
+                                                        <div class="col-md-6">
+                                                            <label
+                                                                class="">{{ $attribute->columna_atributo == 'Stock' ? 'Predeterminado' : $attribute->columna_atributo }}</label><br>
+                                                            @php
+                                                                $values = explode('-', $attribute->valores);
+                                                                $ids = explode('-', $attribute->ids);
+                                                            @endphp
+                                                            <div class="input-group input-group-static">
+                                                                <select required name="size_id"
+                                                                    class="size_id form-control form-control-lg mb-2">
+                                                                    @foreach ($values as $key => $value)
+                                                                        @if (isset($ids[$key]))
+                                                                            <option
+                                                                                value="{{ $ids[$key] . '-' . $attribute->attr_id . '-' . $item->id }}"
+                                                                                id="size_{{ $ids[$key] }}"
+                                                                                {{ $key === 0 ? 'selected' : '' }}>
+                                                                                {{ $attribute->columna_atributo == 'Stock' ? 'Predeterminado' : $value }}
+                                                                            </option>
+                                                                        @endif
+                                                                    @endforeach
+                                                                </select>
+                                                            </div>
 
-                                                        <br>
-                                                    </div>
+                                                            <br>
+                                                        </div>
+                                                    @endif
                                                 @endforeach
                                             </div>
                                         </div>
@@ -286,9 +303,11 @@
                 <div class="col-md-3 col-sm-6 mb-2">
                     <div class="product-grid product_data">
                         <div class="product-image">
-                            <img src="{{ route('file', $item->image) }}">
+                            <img
+                                src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
                             <ul class="product-links">
-                                <li><a target="blank" href="{{ route('file', $item->image) }}"><i
+                                <li><a target="blank"
+                                        href="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"><i
                                             class="fas fa-eye"></i></a></li>
                             </ul>
                             <a href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}"

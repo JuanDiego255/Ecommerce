@@ -22,7 +22,7 @@
             <!-- Team item -->
             @foreach ($cards as $item)
                 <div class="col-xl-3 col-sm-6 mb-5">
-                    <div class="bg-white rounded shadow-sm py-5 px-4"><img src="{{ route('file', $item->image) }}"
+                    <div class="bg-white rounded shadow-sm py-5 px-4"><img src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"
                             alt="" width="100"
                             class="img-fluid rounded-circle border-0 mb-3 img-thumbnail shadow-sm">
                         <h5 class="mb-0">{{ $item->title }}</h5><span
@@ -276,7 +276,7 @@
                                     <div>
                                         <div class="card text-center">
                                             <img class="card-img-top"
-                                                @if ($item->image) src="{{ route('file', $item->image) }}"
+                                                @if ($item->image) src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"
                                              
                                          @else
                                          src="{{ url('images/sin-foto.PNG') }}" @endif
@@ -319,10 +319,10 @@
                             <div class="item">
                                 <div class="product-grid product_data">
                                     <div class="product-image">
-                                        <img src="{{ route('file', $item->image) }}">
+                                        <img src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
 
                                         <ul class="product-links">
-                                            <li><a target="blank" href="{{ route('file', $item->image) }}"><i
+                                            <li><a target="blank" href="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"><i
                                                         class="fas fa-eye"></i></a></li>
                                         </ul>
                                         <a href="{{ url('/blog/' . $item->id . '/' . $item->name_url) }}"

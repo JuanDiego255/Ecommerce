@@ -94,8 +94,8 @@
                                         <div class="d-flex px-2 py-1">
                                             <div>
                                                 <a target="blank" data-fancybox="gallery"
-                                                    href="{{ route('file', $item->image) }}">
-                                                    <img src="{{ route('file', $item->image) }}"
+                                                    href="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
+                                                    <img src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"
                                                         class="avatar avatar-md me-3">
                                                 </a>
                                             </div>
@@ -112,7 +112,7 @@
                                     <td class="align-middle text-center text-sm">
 
                                         @for ($i = 0; $i < count($attr); $i++)
-                                            @if ($attrPerItem[$i] != null && $attrPerItem[$i] != '')
+                                            @if ($attrPerItem[$i] != null && $attrPerItem[$i] != '' && $attr[$i] != 'Stock')
                                                 <p class="mb-0">Atributo: {{ $attr[$i] }}: {{ $stockPerSize[$i] }}
                                                 </p>
                                             @endif

@@ -10,7 +10,8 @@
                 <input type="hidden" name="porcDescuento" value="{{ $item->discount }}" id="porcDescuento">
                 <div class="breadcrumb-nav bc3x mt-4">
                     @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
-                        <li class="home"><a href="{{ url('/') }}"><i class="fas fa-{{ $icon->home }} me-1"></i></a></li>
+                        <li class="home"><a href="{{ url('/') }}"><i class="fas fa-{{ $icon->home }} me-1"></i></a>
+                        </li>
                         <li class="bread-standard"><a href="{{ url('category/') }}"><i
                                     class="fas fa-{{ $icon->categories }} me-1"></i>Categorías</a>
                         </li>
@@ -47,8 +48,6 @@
                         <div class="row gx-5">
                             <aside class="col-lg-6">
                                 <div class="outer">
-
-
                                     <!-- Carrusel big -->
                                     <div id="big" class="owl-carousel owl-theme">
                                         @foreach ($clothes as $clothing)
@@ -62,17 +61,28 @@
                                                     <div class="rounded-4 mb-3 d-flex">
                                                         <a data-fslightbox="mygallery" class="rounded-4" target="_blank"
                                                             data-type="image"
-                                                            href="{{ tenant_asset('/') . '/' . $firstImage }}">
+                                                            href="{{ isset($firstImage) && $firstImage != '' ? route('file', $firstImage) : url('images/producto-sin-imagen.PNG') }}">
                                                             <img style="max-width: 100%; max-height: 100vh; margin: auto;"
                                                                 class="rounded-4 fit"
-                                                                src="{{ tenant_asset('/') . '/' . $firstImage }}" />
+                                                                src="{{ isset($firstImage) && $firstImage != '' ? route('file', $firstImage) : url('images/producto-sin-imagen.PNG') }}" />
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            @else
+                                                <div class="item">
+                                                    <div class="rounded-4 mb-3 d-flex">
+                                                        <a data-fslightbox="mygallery" class="rounded-4" target="_blank"
+                                                            data-type="image"
+                                                            href="{{ url('images/producto-sin-imagen.PNG') }}">
+                                                            <img style="max-width: 100%; max-height: 100vh; margin: auto;"
+                                                                class="rounded-4 fit"
+                                                                src="{{ url('images/producto-sin-imagen.PNG') }}" />
                                                         </a>
                                                     </div>
                                                 </div>
                                             @endif
                                         @endforeach
                                     </div>
-
                                 </div>
 
                                 <!-- thumbs-wrap.// -->
@@ -91,9 +101,11 @@
                                                 <div class="item">
                                                     <div class="rounded-4 mb-3 d-flex justify-content-center">
                                                         <a data-fslightbox="mygallery" class="rounded-4" target="_blank"
-                                                            data-type="image" href="{{ route('file', $image) }}">
+                                                            data-type="image"
+                                                            href="{{ isset($image) && $image != '' ? route('file', $image) : url('images/producto-sin-imagen.PNG') }}">
                                                             <img style="max-width: 100%; max-height: 100vh; margin: auto;"
-                                                                class="rounded-4 fit" src="{{ route('file', $image) }}" />
+                                                                class="rounded-4 fit"
+                                                                src="{{ isset($image) && $image != '' ? route('file', $image) : url('images/producto-sin-imagen.PNG') }}" />
                                                         </a>
                                                     </div>
                                                 </div>
@@ -201,7 +213,7 @@
                                                     @if ($attribute->stock != 0)
                                                         <div class="col-md-6">
                                                             <label
-                                                                class="">{{ $attribute->columna_atributo }}</label><br>
+                                                                class="">{{ $attribute->columna_atributo == 'Stock' ? 'Predeterminado' : $attribute->columna_atributo }}</label><br>
                                                             @php
                                                                 $values = explode('-', $attribute->valores);
                                                                 $ids = explode('-', $attribute->ids);
@@ -215,7 +227,7 @@
                                                                                 value="{{ $ids[$key] . '-' . $attribute->attr_id . '-' . $item->id }}"
                                                                                 id="size_{{ $ids[$key] }}"
                                                                                 {{ $key === 0 ? 'selected' : '' }}>
-                                                                                {{ $value }}
+                                                                                {{ $attribute->columna_atributo == 'Stock' ? 'Predeterminado' : $value }}
                                                                             </option>
                                                                         @endif
                                                                     @endforeach
@@ -264,9 +276,11 @@
             <div class="col-md-3 col-sm-6 mb-2">
                 <div class="product-grid product_data">
                     <div class="product-image">
-                        <img src="{{ route('file', $item->image) }}">
+                        <img
+                            src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
                         <ul class="product-links">
-                            <li><a target="blank" href="{{ route('file', $item->image) }}"><i
+                            <li><a target="blank"
+                                    href="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"><i
                                         class="fas fa-eye"></i></a></li>
                         </ul>
                         <a href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}"

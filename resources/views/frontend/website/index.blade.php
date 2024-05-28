@@ -55,7 +55,7 @@
                     <div class="{{ $key + 1 > 3 ? 'col-md-3' : 'col-md-4' }} col-sm-6 mb-2">
                         <div class="product-grid product_data">
                             <div class="product-image">
-                                <img src="{{ route('file', $item->image) }}">
+                                <img src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
                                 <ul class="product-links">
                                     <li><a target="blank" href="{{ tenant_asset('/') . '/' . $item->image }}"><i
                                                 class="fas fa-eye"></i></a></li>
@@ -80,7 +80,7 @@
                     <div class="col-md-4 col-sm-6 mb-2">
                         <div class="product-grid product_data">
                             <div class="product-image">
-                                <img src="{{ route('file', $item->image) }}">
+                                <img src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
                                 <ul class="product-links">
                                     <li><a target="blank" href="{{ tenant_asset('/') . '/' . $item->image }}"><i
                                                 class="fas fa-eye"></i></a></li>
@@ -143,7 +143,7 @@
                 <div class="col-md-6 mt-4">
                     <div class="card text-center">
                         <div class="overflow-hidden position-relative bg-cover p-3"
-                            style="background-image: url('{{ route('file', $item->image) }}'); height:700px;  background-position: center;">
+                            style="background-image: url('{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}'); height:700px;  background-position: center;">
                             <span class="mask bg-gradient-dark opacity-6"></span>
                             <div class="card-body position-relative z-index-1 d-flex flex-column mt-5">
                                 <h3 class="text-white">{{ $item->description }}.</h3>
@@ -182,9 +182,9 @@
                                 <div class="product-image-offer">
                                     <a href="#" class="image-offer">
 
-                                        <img class="pic-1" src="{{ route('file', $item->image) }}">
+                                        <img class="pic-1" src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
 
-                                        <img class="pic-2" src="{{ route('file', $item->image) }}">
+                                        <img class="pic-2" src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
 
                                     </a>
                                     <span class="product-hot-label">{{ $item->name }} @if ($item->can_buy == 1)
@@ -347,7 +347,7 @@
                 <!-- Team item -->
                 @foreach ($sellers as $item)
                     <div class="col-xl-3 col-sm-6 mb-5">
-                        <div class="bg-white rounded shadow-sm py-5 px-4"><img src="{{ route('file', $item->image) }}"
+                        <div class="bg-white rounded shadow-sm py-5 px-4"><img src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"
                                 alt="" width="100"
                                 class="img-fluid rounded-circle mb-3 img-thumbnail shadow-sm">
                             <h5 class="mb-0">{{ $item->name }}</h5><span
@@ -400,10 +400,10 @@
                             <div class="item">
                                 <div class="product-grid product_data">
                                     <div class="product-image">
-                                        <img src="{{ route('file', $item->image) }}">
+                                        <img src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
 
                                         <ul class="product-links">
-                                            <li><a target="blank" href="{{ route('file', $item->image) }}"><i
+                                            <li><a target="blank" href="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"><i
                                                         class="fas fa-eye"></i></a></li>
                                         </ul>
                                         <a href="{{ url('/blog/' . $item->id . '/' . $item->name_url) }}"
@@ -443,7 +443,7 @@
                                 <div>
                                     <div class="card text-center">
                                         <img class="card-img-top"
-                                            @if ($item->image) src="{{ route('file', $item->image) }}"
+                                            @if ($item->image) src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"
                                             
                                         @else
                                         src="{{ url('images/sin-foto.PNG') }}" @endif

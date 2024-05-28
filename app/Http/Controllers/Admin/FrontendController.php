@@ -89,6 +89,7 @@ class FrontendController extends Controller
                     'categories.image as image',
                     'categories.name as name',
                 )->orderBy('categories.name', 'asc')
+                ->take(7)
                 ->get();
         });
 

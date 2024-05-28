@@ -45,7 +45,7 @@
                         </div>
                     </div>
                     @if ($item->image)
-                        <img class="img-fluid img-thumbnail w-50" src="{{ route('file', $item->image) }}" alt="image">
+                        <img class="img-fluid img-thumbnail w-50" src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}" alt="image">
                     @endif
                     <div class="col-md-12 mb-3">
                         <div class="input-group input-group-static mb-4">

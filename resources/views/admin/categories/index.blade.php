@@ -8,14 +8,24 @@
         @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
             <h2 class="text-center font-title"><strong>{{ __('Gestiona las categorías') }}</strong></h2>
         @else
-            <h2 class="text-center font-title"><strong>{{ __('Categorías del departamento ') }} {{ $department_name }}.</strong></h2>
+            <h2 class="text-center font-title"><strong>{{ __('Categorías del departamento ') }}
+                    {{ $department_name }}.</strong></h2>
         @endif
 
     </center>
-
-    <div class="col-md-12">
-        <a href="{{ url('add-category/' . $department_id) }}" class="btn btn-velvet">{{ __('Nueva categoría') }}</a>
+    @include('admin.categories.import')
+    <div class="row w-50">
+        <div class="col-md-3">
+            <a href="{{ url('add-category/' . $department_id) }}" class="btn btn-velvet">{{ __('Nueva categoría') }}</a>
+        </div>
+        <div class="col-md-3">
+            <button type="button" data-bs-toggle="modal" data-bs-target="#import-product-modal"
+                class="btn btn-icon btn-3 btn-success">Importar Productos
+                <i class="fas fa-file-excel"></i>
+            </button>
+        </div>
     </div>
+
     <div class="card mt-3">
         <div class="card-body">
             <div class="row w-100">
@@ -38,7 +48,7 @@
                             <div class="product-grid product_data">
                                 <div class="product-image">
 
-                                    <img src="{{ route('file', $item->image) }}">
+                                    <img src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
                                     <ul class="product-links">
                                         <li><a data-bs-toggle="tooltip" data-bs-placement="bottom" title="Editar"
                                                 target="blank" href="{{ url('/edit-category') . '/' . $item->id }}"><i
@@ -58,13 +68,16 @@
                                             </a>
                                         </li>
                                     </ul>
-                                    <a href="{{ url('/add-item') . '/' . $item->id }}" class="add-to-cart">{{ __('Ver colección') }}</a>
+                                    <a href="{{ url('/add-item') . '/' . $item->id }}"
+                                        class="add-to-cart">{{ __('Ver colección') }}</a>
                                 </div>
                                 <div class="product-content">
                                     <h3 class="text-muted category"><a
                                             href="{{ url('/add-item') . '/' . $item->id }}">{{ $item->name }}</a>
                                     </h3>
-                                    <h5 class="text-muted-normal {{(isset($tenantinfo->kind_business) && ($tenantinfo->kind_business != 2 && $tenantinfo->kind_business != 3) ? 'd-block' : 'd-none')}}">{{ $item->description }}
+                                    <h5
+                                        class="text-muted-normal {{ isset($tenantinfo->kind_business) && ($tenantinfo->kind_business != 2 && $tenantinfo->kind_business != 3) ? 'd-block' : 'd-none' }}">
+                                        {{ $item->description }}
                                     </h5>
                                 </div>
                             </div>
@@ -76,7 +89,7 @@
     </div>
 
     <center>
-        <div class="container">
+        <div class="container mt-3">
             {{ $categories ?? ('')->links('pagination::simple-bootstrap-4') }}
         </div>
     </center>
