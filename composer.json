@@ -16,7 +16,8 @@
         "laravel/socialite": "^5.11",
         "laravel/tinker": "^2.5",
         "laravel/ui": "^3.4",
-        "stancl/tenancy": "^3.6"
+        "stancl/tenancy": "^3.6",
+        "spatie/laravel-sitemap": "^5.8"
     },
     "require-dev": {
         "facade/ignition": "^2.5",
