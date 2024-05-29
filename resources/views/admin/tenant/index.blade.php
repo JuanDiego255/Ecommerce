@@ -10,7 +10,20 @@
         </h2>
 
         <hr class="hr-servicios">
-        <button type="button" data-bs-toggle="modal" data-bs-target="#add-tenant-modal" class="btn btn-velvet">Nuevo Inquilino</button>
+
+
+        <div class="row w-50">
+            <div class="col-md-3">
+                <button type="button" data-bs-toggle="modal" data-bs-target="#add-tenant-modal" class="btn btn-velvet">Nuevo
+                    Inquilino</button>
+            </div>
+            <div class="col-md-3">
+                <form action="{{ url('generate/sitemap') }}" method="post" enctype="multipart/form-data">
+                    {{ csrf_field() }}
+                    <button type="submit" class="btn btn-danger">Generar Sitemaps</button>
+                </form>
+            </div>
+        </div>
         @include('admin.tenant.add-tenant')
         <center>
             <div class="card mt-3 mb-4">
@@ -51,7 +64,7 @@
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                     Dominio</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                    Licencia</th>                               
+                                    Licencia</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                     Acciones</th>
 
@@ -68,21 +81,22 @@
                                         <p class=" font-weight-bold mb-0">{{ $tenant->domains->first()->domain ?? '' }}</p>
                                     </td>
                                     <td class="align-middle text-center">
-                                        <form name="formLicense{{$tenant->id}}" id="formLicense" method="post"
+                                        <form name="formLicense{{ $tenant->id }}" id="formLicense" method="post"
                                             action="{{ url('license/' . $tenant->id) }}" style="display:inline">
                                             {{ csrf_field() }}
                                             <label for="checkLicense">
                                                 <div class="form-check">
-                                                    <input type="hidden" name="tenant" value="{{$tenant->id}}">
+                                                    <input type="hidden" name="tenant" value="{{ $tenant->id }}">
                                                     <input id="checkLicense" class="form-check-input" type="checkbox"
-                                                        value="1" name="license" onchange="submitForm('formLicense{{$tenant->id}}')"
+                                                        value="1" name="license"
+                                                        onchange="submitForm('formLicense{{ $tenant->id }}')"
                                                         {{ $tenant->license == 1 ? 'checked' : '' }}>
                                                 </div>
                                             </label>
 
                                         </form>
                                     </td>
-                                    
+
                                     <td class="align-middle">
                                         <center>
                                             <a href="{{ url('manage/tenant/' . $tenant->id) }}" class="btn btn-velvet"

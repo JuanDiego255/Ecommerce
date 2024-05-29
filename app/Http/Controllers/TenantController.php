@@ -135,4 +135,12 @@ class TenantController extends Controller
             return redirect()->back()->with(['status' => $th->getMessage(), 'icon' => 'error']);
         }
     }
+    public function generateSitemap(){
+        try {
+            Artisan::call('tenants:sitemap:generate ');
+            return redirect()->back()->with(['status' => 'Se crearon los sitemaps con éxito', 'icon' => 'success']);
+        } catch (\Exception $th) {
+            return redirect()->back()->with(['status' => 'Hubo un error al crear los sitemaps', 'icon' => 'error']);
+        }       
+    }
 }

@@ -31,5 +31,6 @@ Route::group(['middleware' => 'isAdmin'], function () {
     Route::post('user/admin/{id}', [TenantController::class, 'isAdmin']);     
     Route::post('license/{id}', [TenantController::class, 'isLicense']);   
     Route::post('manage/size/{id}', [TenantController::class, 'manageSize']);   
-    Route::post('manage/department/{id}', [TenantController::class, 'manageDepartment']);   
+    Route::post('manage/department/{id}', [TenantController::class, 'manageDepartment']);  
+    Route::post('generate/sitemap/', [TenantController::class, 'generateSitemap']);   
 });
