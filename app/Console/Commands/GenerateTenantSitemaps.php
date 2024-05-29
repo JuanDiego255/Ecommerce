@@ -24,7 +24,7 @@ class GenerateTenantSitemaps extends Command
 
     public function handle()
     {
-        $tenants = Tenant::where('id','!=','main')->get();
+        $tenants = Tenant::where('id', '!=', 'main')->get();
 
         foreach ($tenants as $tenant) {
             tenancy()->initialize($tenant);
@@ -33,40 +33,38 @@ class GenerateTenantSitemaps extends Command
 
             // Define the base URL for the tenant
             $tenantBaseUrl = "https://{$tenant->id}.safeworsolutions.com";
+            // Add static URLs with higher priority
+            $sitemap->add(Url::create("{$tenantBaseUrl}/")->setPriority(1.0)); // Highest priority
+            $sitemap->add(Url::create("{$tenantBaseUrl}/category")->setPriority(0.5));
+            $sitemap->add(Url::create("{$tenantBaseUrl}/blog/index")->setPriority(0.2));
+            $sitemap->add(Url::create("{$tenantBaseUrl}/departments/index")->setPriority(0.7));
+            $sitemap->add(Url::create("{$tenantBaseUrl}/view-cart")->setPriority(0.8));
+            $sitemap->add(Url::create("{$tenantBaseUrl}/checkout")->setPriority(0.8));
 
-            // Add static URLs
-            // Add static URLs
-            $sitemap->add(Url::create("{$tenantBaseUrl}/"));
-            $sitemap->add(Url::create("{$tenantBaseUrl}/category"));
-            $sitemap->add(Url::create("{$tenantBaseUrl}/blog/index"));
-            $sitemap->add(Url::create("{$tenantBaseUrl}/departments/index"));
-            $sitemap->add(Url::create("{$tenantBaseUrl}/view-cart"));
-            $sitemap->add(Url::create("{$tenantBaseUrl}/checkout"));
-
-            // Add dynamic URLs (example for blogs)
+            // Add dynamic URLs with higher priority
             Blog::all()->each(function ($blog) use ($sitemap, $tenantBaseUrl) {
-                $sitemap->add(Url::create("{$tenantBaseUrl}/blog/{$blog->id}/{$blog->name_url}"));
+                $sitemap->add(Url::create("{$tenantBaseUrl}/blog/{$blog->id}/{$blog->name_url}")->setPriority(0.2));
             });
 
-            // Add dynamic URLs for other models
             Categories::all()->each(function ($category) use ($sitemap, $tenantBaseUrl) {
-                $sitemap->add(Url::create("{$tenantBaseUrl}/category/{$category->id}"));
+                $sitemap->add(Url::create("{$tenantBaseUrl}/category/{$category->id}")->setPriority(0.5));
             });
 
             Department::all()->each(function ($department) use ($sitemap, $tenantBaseUrl) {
-                $sitemap->add(Url::create("{$tenantBaseUrl}/clothes-category/{$department->id}/{$department->category_id}"));
+                $sitemap->add(Url::create("{$tenantBaseUrl}/clothes-category/{$department->id}/{$department->category_id}")->setPriority(0.4));
             });
 
             ClothingCategory::all()->each(function ($clothing) use ($sitemap, $tenantBaseUrl) {
-                $sitemap->add(Url::create("{$tenantBaseUrl}/detail-clothing/{$clothing->id}/{$clothing->category_id}"));
+                $sitemap->add(Url::create("{$tenantBaseUrl}/detail-clothing/{$clothing->id}/{$clothing->category_id}")->setPriority(0.4));
             });
 
-            // Handle dynamic file routes (assuming files are stored in public storage)
+            // Handle dynamic file routes (assuming files are stored in public storage) with lower priority
             $files = Storage::allFiles('public');
             foreach ($files as $file) {
                 $relativePath = str_replace('public/', '', $file);
-                $sitemap->add(Url::create("{$tenantBaseUrl}/file/{$relativePath}"));
+                $sitemap->add(Url::create("{$tenantBaseUrl}/file/{$relativePath}")->setPriority(0.3));
             }
+
 
             // Determine the path to store the sitemap
             $path = public_path("sitemaps/{$tenant->id}");
