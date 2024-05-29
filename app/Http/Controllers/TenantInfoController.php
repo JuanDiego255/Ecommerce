@@ -122,6 +122,9 @@ class TenantInfoController extends Controller
             if ($request->hasFile('login_image')) {
                 $tenantinfo->login_image = $request->file('login_image')->store('uploads', 'public');
             }
+            if ($request->hasFile('logo_ico')) {
+                $tenantinfo->logo_ico = $request->file('logo_ico')->store('uploads', 'public');
+            }
 
             $tenantinfo->title = $request->title;
             $tenantinfo->text_cintillo = $request->text_cintillo;
@@ -185,6 +188,11 @@ class TenantInfoController extends Controller
                 Storage::delete('public/' . $tenantinfo->login_image);
                 $login_image = $request->file('login_image')->store('uploads', 'public');
                 $tenantinfo->login_image = $login_image;
+            }
+            if ($request->hasFile('logo_ico')) {
+                Storage::delete('public/' . $tenantinfo->logo_ico);
+                $logo_ico = $request->file('logo_ico')->store('uploads', 'public');
+                $tenantinfo->logo_ico = $logo_ico;
             }
             $tenantinfo->title = $request->title;
             $tenantinfo->text_cintillo = $request->text_cintillo;

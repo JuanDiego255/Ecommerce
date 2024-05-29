@@ -37,7 +37,8 @@
                                 <div
                                     class="input-group input-group-lg input-group-outline {{ isset($item->text_cintillo) ? 'is-filled' : '' }} my-3">
                                     <label class="form-label">Cintillo</label>
-                                    <input value="{{ isset($item->text_cintillo) ? $item->text_cintillo : '' }}" type="text"
+                                    <input value="{{ isset($item->text_cintillo) ? $item->text_cintillo : '' }}"
+                                        type="text"
                                         class="form-control form-control-lg @error('text_cintillo') is-invalid @enderror"
                                         name="text_cintillo" id="text_cintillo">
                                     @error('text_cintillo')
@@ -266,7 +267,6 @@ is-invalid
                     </div>
                     <div class="card-body">
                         <div class="row">
-
                             <div class="col-md-6 mb-3">
                                 @if ($item->logo)
                                     <a href="{{ route('file', $item->logo) }}">
@@ -288,6 +288,18 @@ is-invalid
                                 <label class="form-label">Imagen Login</label>
                                 <div class="input-group input-group-static mb-4">
                                     <input class="form-control" type="file" name="login_image">
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                @if ($item->logo_ico)
+                                    <a href="{{ route('file', $item->logo_ico) }}">
+                                        <img style="width: 100px; height:100px;" class="img-fluid img-thumbnail"
+                                            src="{{ route('file', $item->logo_ico) }}" alt="image">
+                                    </a>
+                                @endif
+                                <label class="form-label">Favicon (logo)</label>
+                                <div class="input-group input-group-static mb-4">
+                                    <input class="form-control" type="file" name="logo_ico">
                                 </div>
                             </div>
                         </div>

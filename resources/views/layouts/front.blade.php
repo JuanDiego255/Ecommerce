@@ -4,12 +4,10 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" href="{{ tenant_asset('/') . '/' . (isset($tenantinfo->logo) ? $tenantinfo->logo : '') }}"
+    <link rel="shortcut icon" href="{{ isset($tenantinfo->logo_ico) ? route('file', $tenantinfo->logo_ico) : '' }}"
         type="image/x-icon">
-
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link rel="apple-touch-icon" sizes="76x76" href="../assets/img/apple-icon.png">
     @yield('metatag')
     <!--     Fonts and icons     -->
     <link rel="stylesheet" type="text/css"
