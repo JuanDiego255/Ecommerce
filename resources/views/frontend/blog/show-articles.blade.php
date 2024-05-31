@@ -4,7 +4,8 @@
 
 @section('content')
 
-    <div class="container mt-5 {{ $tenantinfo->kind_business != 3 ? 'd-block' : 'd-none' }}">
+    <div
+        class="container mt-5 {{ $tenantinfo->kind_business != 3 && $tenantinfo->kind_business != 4 ? 'd-block' : 'd-none' }}">
         <div class="breadcrumb-nav bc3x">
             <li class="home"><a href="{{ url('/') }}"><i class="fas fa-{{ $icon->home }} me-1"></i></a></li>
             <li class="bread-standard"><a href="{{ url('blog/index') }}"><i class="fas fa-book me-1"></i>Blog</a></li>
@@ -15,14 +16,17 @@
         <h1 class="text-title-blog text-center">{{ $blog->title }}</h1>
     </div>
     {{-- salto de pagina --}}
-    <div class="{{ $tenantinfo->kind_business == 3 ? 'd-block' : 'd-none' }}" style="height: 200px;"></div>
+    <div class="{{ $tenantinfo->kind_business == 3 || $tenantinfo->kind_business == 4 ? 'd-block' : 'd-none' }}"
+        style="height: 200px;"></div>
     {{-- cards info --}}
-    <div class="text-center container {{ $tenantinfo->kind_business == 3 ? 'd-block' : 'd-none' }}">
+    <div
+        class="text-center container {{ $tenantinfo->kind_business == 3 || $tenantinfo->kind_business == 4 ? 'd-block' : 'd-none' }}">
         <div class="row text-center">
             <!-- Team item -->
             @foreach ($cards as $item)
                 <div class="col-xl-3 col-sm-6 mb-5">
-                    <div class="bg-white rounded shadow-sm py-5 px-4"><img src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"
+                    <div class="bg-white rounded shadow-sm py-5 px-4"><img
+                            src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"
                             alt="" width="100"
                             class="img-fluid rounded-circle border-0 mb-3 img-thumbnail shadow-sm">
                         <h5 class="mb-0">{{ $item->title }}</h5><span
@@ -174,7 +178,8 @@
         </div>
     @endif
     {{-- salto de pagina --}}
-    <div class="{{ $tenantinfo->kind_business == 3 ? 'd-block' : 'd-none' }}" style="height: 75px;"></div>
+    <div class="{{ $tenantinfo->kind_business == 3 || $tenantinfo->kind_business == 4 ? 'd-block' : 'd-none' }}"
+        style="height: 75px;"></div>
     {{-- Carousel de resultados --}}
     @if (count($results) != 0)
         <div class="mt-5 bg-white">
@@ -236,7 +241,8 @@
             </div>
         </div>
         {{-- salto de pagina --}}
-        <div class="{{ $tenantinfo->kind_business == 3 ? 'd-block' : 'd-none' }}" style="height: 75px;">
+        <div class="{{ $tenantinfo->kind_business == 3 || $tenantinfo->kind_business == 4 ? 'd-block' : 'd-none' }}"
+            style="height: 75px;">
 
         </div>
     @endif
@@ -258,7 +264,8 @@
             </div>
         </div>
         {{-- salto de pagina --}}
-        <div class="{{ $tenantinfo->kind_business == 3 ? 'd-block' : 'd-none' }}" style="height: 75px;"></div>
+        <div class="{{ $tenantinfo->kind_business == 3 || $tenantinfo->kind_business == 4 ? 'd-block' : 'd-none' }}"
+            style="height: 75px;"></div>
     @endif
     {{-- Comentarios --}}
     @if (count($comments) != 0)
@@ -319,10 +326,12 @@
                             <div class="item">
                                 <div class="product-grid product_data">
                                     <div class="product-image">
-                                        <img src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
+                                        <img
+                                            src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
 
                                         <ul class="product-links">
-                                            <li><a target="blank" href="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"><i
+                                            <li><a target="blank"
+                                                    href="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"><i
                                                         class="fas fa-eye"></i></a></li>
                                         </ul>
                                         <a href="{{ url('/blog/' . $item->id . '/' . $item->name_url) }}"
@@ -347,9 +356,18 @@
         </div>
     @endif
 
-    @if (isset($tenantinfo->kind_business) && $tenantinfo->kind_business != 1)
-        @include('layouts.inc.indexfooter')
-    @endif
+    @switch($tenantinfo->kind_business)
+        @case(3)
+            @include('layouts.inc.websites.indexfooter')
+        @break
+
+        @case(4)
+            @include('layouts.inc.main.indexfooter')
+        @break
+
+        @default
+            @include('layouts.inc.indexfooter')
+    @endswitch
 @endsection
 @section('scripts')
     <script src="{{ asset('js/image-error-handler.js') }}"></script>

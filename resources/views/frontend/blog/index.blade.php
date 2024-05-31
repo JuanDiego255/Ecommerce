@@ -14,17 +14,17 @@
                 <div class="col-md-3 col-sm-6 mb-2">
                     <div class="product-grid product_data">
                         <div class="product-image">
-                            <img src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
+                            <img
+                                src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
                             <ul class="product-links">
                                 <li><a target="blank" href="{{ tenant_asset('/') . '/' . $item->image }}"><i
                                             class="fas fa-eye"></i></a></li>
                             </ul>
-                            <a href="{{ url('/blog/' . $item->id . '/'.$item->name_url) }}"
-                                class="add-to-cart">Ver información</a>
+                            <a href="{{ url('/blog/' . $item->id . '/' . $item->name_url) }}" class="add-to-cart">{{ __('Ver Información') }}</a>
                         </div>
                         <div class="product-content">
                             <h3 class="title"><a
-                                    href="{{ url('/blog/' . $item->id . '/'.$item->name_url) }}">{{ $item->title }}</a>
+                                    href="{{ url('/blog/' . $item->id . '/' . $item->name_url) }}">{{ $item->title }}</a>
                             </h3>
                         </div>
                     </div>
@@ -38,9 +38,18 @@
             </div>
         </center>
     </div>
-    @if (isset($tenantinfo->kind_business) && $tenantinfo->kind_business != 1)
-        @include('layouts.inc.indexfooter')
-    @endif
+    @switch($tenantinfo->kind_business)
+        @case(3)
+            @include('layouts.inc.websites.indexfooter')
+        @break
+
+        @case(4)
+            @include('layouts.inc.main.indexfooter')
+        @break
+
+        @default
+            @include('layouts.inc.indexfooter')
+    @endswitch
 @endsection
 @section('scripts')
     <script src="{{ asset('js/image-error-handler.js') }}"></script>

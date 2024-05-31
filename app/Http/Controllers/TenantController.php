@@ -2,16 +2,33 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Blog;
+use App\Models\Categories;
+use App\Models\MetaTags;
+use App\Models\Seller;
+use App\Models\SocialNetwork;
 use App\Models\Tenant;
 use App\Models\TenantInfo;
+use App\Models\Testimonial;
 use App\Models\User;
+use Artesaos\SEOTools\Facades\OpenGraph;
+use Artesaos\SEOTools\Facades\SEOMeta;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\URL;
 use Stancl\Tenancy\Database\Models\Domain;
 
 class TenantController extends Controller
 {
+    protected $expirationTime;
+
+    public function __construct()
+    {
+        // Define el tiempo de expiración en minutos
+        $this->expirationTime = 60; // Por ejemplo, 60 minutos
+    }
     /**
      * Display a listing of the resource.
      *
@@ -19,7 +36,7 @@ class TenantController extends Controller
      */
     public function index()
     {
-        $tenants = Tenant::where('id','!=','main')->get();
+        $tenants = Tenant::where('id', '!=', 'main')->get();
 
         $tenants = $tenants->map(function ($tenant) {
             $tenant_info = $this->getData($tenant->id);
@@ -46,7 +63,7 @@ class TenantController extends Controller
     public function isAdmin($tenant, Request $request)
     {
         //
-        DB::beginTransaction();        
+        DB::beginTransaction();
         try {
             $tenants = Tenant::where('id', $tenant)->first();
             tenancy()->initialize($tenants);
@@ -70,13 +87,49 @@ class TenantController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function frontend()
-    {       
-        return view('frontend.central.index');
+    {
+        $tenantinfo = TenantInfo::first();
+
+        $social = Cache::remember('social_networks', $this->expirationTime, function () {
+            return SocialNetwork::get();
+        });
+        $tags = Cache::remember('meta_tags_inicio', $this->expirationTime, function () {
+            return MetaTags::where('section', 'Inicio')->get();
+        });
+        $category = Cache::remember('categories', $this->expirationTime, function () {
+            return Categories::where('departments.department', 'Default')
+                ->where('categories.status', 0)
+                ->join('departments', 'categories.department_id', 'departments.id')
+                ->select(
+                    'departments.id as department_id',
+                    'categories.id as category_id',
+                    'categories.image as image',
+                    'categories.name as name',
+                )->orderBy('categories.name', 'asc')
+                ->take(7)
+                ->get();
+        });
+        foreach ($tags as $tag) {
+            SEOMeta::setTitle($tag->title . " - " . $tenantinfo->title);
+            SEOMeta::setKeywords($tag->meta_keywords);
+            SEOMeta::setDescription($tag->meta_description);
+            //Opengraph
+            OpenGraph::addImage(URL::to($tag->url_image_og));
+            OpenGraph::setTitle($tag->title);
+            OpenGraph::setDescription($tag->meta_og_description);
+        }
+        $blogs = Blog::inRandomOrder()->orderBy('title', 'asc')
+            ->take(4)->get();
+
+        $comments = Testimonial::where('approve', 1)->inRandomOrder()->orderBy('name', 'asc')
+            ->get();
+        return view('frontend.central.index',compact('blogs', 'social', 'category','comments'));
     }
-    public function getData($tenant){
+    public function getData($tenant)
+    {
         $tenants = Tenant::where('id', $tenant)->first();
         tenancy()->initialize($tenants);
-        $tenant_info = TenantInfo::first();       
+        $tenant_info = TenantInfo::first();
         tenancy()->end();
         return $tenant_info;
     }
@@ -84,7 +137,7 @@ class TenantController extends Controller
     public function isLicense($tenant, Request $request)
     {
         //
-        DB::beginTransaction();      
+        DB::beginTransaction();
         try {
             $tenants = Tenant::where('id', $tenant)->first();
             tenancy()->initialize($tenants);
@@ -105,10 +158,10 @@ class TenantController extends Controller
     public function store(Request $request)
     {
         //
-        DB::beginTransaction();      
+        DB::beginTransaction();
         try {
             $datos = [
-                "tenancy_db_name" => "safewors_".$request->tenant,
+                "tenancy_db_name" => "safewors_" . $request->tenant,
                 "tenancy_db_password" => "UYHkOYFXReJ4aDcJ",
                 "tenancy_db_username" => "safewors"
             ];
@@ -118,12 +171,12 @@ class TenantController extends Controller
             $new_tenant->save();
             $id = $new_tenant->id;
             $new_domain = new Domain();
-            $new_domain->domain = $id.".safeworsolutions.com";
+            $new_domain->domain = $id . ".safeworsolutions.com";
             $new_domain->tenant_id = $id;
             $new_domain->save();
-            
+
             Artisan::call('tenants:migrate');
-            $tenants = Tenant::where('id', $id)->first();           
+            $tenants = Tenant::where('id', $id)->first();
             tenancy()->initialize($tenants);
             Artisan::call('db:seed');
             tenancy()->end();
@@ -135,12 +188,13 @@ class TenantController extends Controller
             return redirect()->back()->with(['status' => $th->getMessage(), 'icon' => 'error']);
         }
     }
-    public function generateSitemap(){
+    public function generateSitemap()
+    {
         try {
             Artisan::call('tenants:sitemap:generate ');
             return redirect()->back()->with(['status' => 'Se crearon los sitemaps con éxito', 'icon' => 'success']);
         } catch (\Exception $th) {
             return redirect()->back()->with(['status' => 'Hubo un error al crear los sitemaps', 'icon' => 'error']);
-        }       
+        }
     }
 }

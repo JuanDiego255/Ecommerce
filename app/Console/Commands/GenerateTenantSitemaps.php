@@ -24,10 +24,14 @@ class GenerateTenantSitemaps extends Command
 
     public function handle()
     {
-        $tenants = Tenant::where('id', '!=', 'main')->get();
+        $tenants = Tenant::get();
 
         foreach ($tenants as $tenant) {
-            tenancy()->initialize($tenant);
+            if($tenant->id != "main"){
+                tenancy()->initialize($tenant);
+            }else{
+                tenancy()->end();
+            }            
 
             $sitemap = Sitemap::create();
 
@@ -42,7 +46,7 @@ class GenerateTenantSitemaps extends Command
             $sitemap->add(Url::create("{$tenantBaseUrl}/checkout")->setPriority(0.8));
 
             // Add dynamic URLs with higher priority
-            Blog::all()->each(function ($blog) use ($sitemap, $tenantBaseUrl) {
+            Blog::all()->each(function ($blog) use ($sitemap, $tenantBaseUrl) {                
                 $sitemap->add(Url::create("{$tenantBaseUrl}/blog/{$blog->id}/{$blog->name_url}")->setPriority(0.2));
             });
 
