@@ -290,5 +290,22 @@
                 }
             }
         })
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var showMoreButtons = document.querySelectorAll('.show-more');
+
+            showMoreButtons.forEach(function(button) {
+                button.addEventListener('click', function() {
+                    var cardText = button.previousElementSibling;
+                    if (cardText.classList.contains('expanded')) {
+                        cardText.classList.remove('expanded');
+                        button.textContent = 'Ver más';
+                    } else {
+                        cardText.classList.add('expanded');
+                        button.textContent = 'Ver menos';
+                    }
+                });
+            });
+        });
     </script>
 @endsection
