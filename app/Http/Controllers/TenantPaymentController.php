@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Bill;
 use App\Models\Tenant;
 use App\Models\TenantPayment;
 use Illuminate\Http\Request;
@@ -27,8 +28,9 @@ class TenantPaymentController extends Controller
             DB::raw('DATE_ADD(MAX(tenant_payments.payment_date), INTERVAL 1 MONTH) as payment_date')
         )->groupBy('tenants.id','tenants.plan')
         ->get();
+        $bills = Bill::get();
 
-        return view('admin.tenant.tenants-pay', compact('tenants'));
+        return view('admin.tenant.tenants-pay', compact('tenants','bills'));
     }
     /**
      * Display a listing of the resource.

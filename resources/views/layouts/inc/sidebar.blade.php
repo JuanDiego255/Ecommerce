@@ -24,7 +24,8 @@
                             $view_name == 'admin_clothing_edit' ||
                             $view_name == 'admin_clothing_add' ||
                             $view_name == 'admin_categories_add' ||
-                            $view_name == 'admin_categories_edit') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif href="javascript:void(0);">
+                            $view_name == 'admin_categories_edit') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
+                        href="javascript:void(0);">
                         <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
                             <i class="material-icons opacity-10">inventory_2</i>
                         </div>
@@ -34,8 +35,10 @@
                     <!-- Lista desplegable de "Mi Negocio" -->
                     <ul class="submenu">
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1 ? url('categories') : url('departments') }}">
-                                <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                            <a class="nav-link"
+                                href="{{ isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1 ? url('categories') : url('departments') }}">
+                                <div
+                                    class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
                                     <i class="material-icons opacity-10">arrow_right_alt</i>
                                 </div>
                                 {{ isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1 ? 'Categorías' : 'Departamentos' }}
@@ -50,10 +53,10 @@
                                 {{ __('Atributos') }}
                             </a>
                         </li>
-                       
+
                     </ul>
-                </li>               
-            
+                </li>
+
                 <li class="nav-item">
                     <a @if ($view_name == 'admin_social_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
                         href="{{ url('social-network') }}">
@@ -104,49 +107,47 @@
                 </ul>
             </li>
 
-            @if (isset($tenantinfo->tenant) && $tenantinfo->tenant != 'main')
-                <li
-                    class="nav-item">
-                    <a @if ($view_name == 'admin_blog_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
-                        href="{{ url('blog/indexadmin') }}">
-                        <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
-                            <i class="material-icons opacity-10">menu_book</i>
-                        </div>
-                        <span class="nav-link-text ms-1">Blog</span>
-                    </a>
-                </li>
-                <li
-                    class="nav-item">
-                    <a @if ($view_name == 'admin_testimonial_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
-                        href="{{ url('comments') }}">
-                        <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
-                            <i class="material-icons opacity-10">chat</i>
-                        </div>
-                        <span class="nav-link-text ms-1">Testimonios</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a @if ($view_name == 'admin_users_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
-                        href="{{ url('users') }}">
-                        <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
-                            <i class="material-icons opacity-10">group</i>
-                        </div>
-                        <span class="nav-link-text ms-1">Usuarios</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a @if (
-                        $view_name == 'admin_metatags_index' ||
-                            $view_name == 'admin_metatags_agregar' ||
-                            $view_name == 'admin_metatags_edit') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
-                        href="{{ url('/meta-tags/indexadmin') }}">
-                        <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
-                            <i class="material-icons opacity-10">sports_score</i>
-                        </div>
-                        <span class="nav-link-text ms-1">SEO Tools</span>
-                    </a>
-                </li>
-            @endif
+
+            <li class="nav-item">
+                <a @if ($view_name == 'admin_blog_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
+                    href="{{ url('blog/indexadmin') }}">
+                    <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                        <i class="material-icons opacity-10">menu_book</i>
+                    </div>
+                    <span class="nav-link-text ms-1">Blog</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a @if ($view_name == 'admin_testimonial_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
+                    href="{{ url('comments') }}">
+                    <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                        <i class="material-icons opacity-10">chat</i>
+                    </div>
+                    <span class="nav-link-text ms-1">Testimonios</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a @if ($view_name == 'admin_users_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
+                    href="{{ url('users') }}">
+                    <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                        <i class="material-icons opacity-10">group</i>
+                    </div>
+                    <span class="nav-link-text ms-1">Usuarios</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a @if (
+                    $view_name == 'admin_metatags_index' ||
+                        $view_name == 'admin_metatags_agregar' ||
+                        $view_name == 'admin_metatags_edit') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
+                    href="{{ url('/meta-tags/indexadmin') }}">
+                    <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                        <i class="material-icons opacity-10">sports_score</i>
+                    </div>
+                    <span class="nav-link-text ms-1">SEO Tools</span>
+                </a>
+            </li>
+
             @if (isset($tenantinfo->kind_business) && $tenantinfo->kind_business == 1)
                 <li class="nav-item">
                     <a @if ($view_name == 'admin_sellers_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
@@ -174,7 +175,7 @@
                         <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
                             <i class="material-icons opacity-10">payments</i>
                         </div>
-                        <span class="nav-link-text ms-1">Pagos</span>
+                        <span class="nav-link-text ms-1">Pagos y gastos</span>
                     </a>
                 </li>
             @endif
