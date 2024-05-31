@@ -61,7 +61,7 @@
 <body class="g-sidenav-show  bg-gray-200">
     @include('frontend.website.add-comment')
     <div
-        class="{{ $view_name == 'frontend_blog_show-articles' && $tenantinfo->kind_business == 3 || $tenantinfo->kind_business == 4 ? 'main-container-front' : '' }}">
+        class="{{ ($view_name == 'frontend_blog_show-articles' && $tenantinfo->kind_business == 3) || $tenantinfo->kind_business == 4 ? 'main-container-front' : '' }}">
         <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
 
             <div>
@@ -210,6 +210,9 @@
                 totalCloth.textContent = `₡${total_cloth.toLocaleString()}`;
             }
 
+            var isAuthenticated = {{ Auth::check() ? 'true' : 'false' }};
+            var isMayor = {{ Auth::check() && Auth::user()->mayor == '1' ? 'true' : 'false' }};
+
             function getCart() {
                 // Nueva solicitud AJAX para cargar el contenido del carrito actualizado
                 $.ajax({
@@ -226,7 +229,8 @@
                             if (item.custom_size && item.stock_price > 0) {
                                 precio = item.stock_price;
                             }
-                            if (item.user_mayor && item.mayor_price > 0) {
+                            if (isAuthenticated === 'true' && isMayor === 'true' && item.user_mayor &&
+                                item.mayor_price > 0) {
                                 precio = item.mayor_price;
                             }
                             var descuentoPorcentaje = item.discount;
@@ -252,7 +256,7 @@
 
                             var listItem = `<li class="py-3 border-bottom">
                                 <input type="hidden" name="prod_id" value="${item.id}" class="prod_id">
-                                <input type="hidden" class="price" value="${item.discount > 0 ? precioConDescuento : (item.mayor_price > 0 ? item.mayor_price : (item.stock_price ? item.stock_price : item.price))}">
+                                <input type="hidden" class="price" value="${item.discount > 0 ? precioConDescuento : (isAuthenticated === 'true' && isMayor === 'true' && item.mayor_price > 0  ? item.mayor_price : (item.stock_price ? item.stock_price : item.price))}">
                          
                                 <input type="hidden" value="${descuento}" class="discount" name="discount">
                                 <div class="row align-items-center">
@@ -264,7 +268,7 @@
                                     <div class="col-8">
                                         <p class="mb-2">
                                             <a class="text-muted fw-500" href="#">${item.name}</a>                                            
-                                            <span class="m-0 text-muted w-100 d-block">₡${item.discount > 0 ? precioConDescuento : (item.mayor_price > 0 ? item.mayor_price : (item.stock_price ? item.stock_price : item.price))}</span>
+                                            <span class="m-0 text-muted w-100 d-block">₡${item.discount > 0 ? precioConDescuento : (isAuthenticated === 'true' && isMayor === 'true' && item.mayor_price > 0 ? item.mayor_price : (item.stock_price ? item.stock_price : item.price))}</span>
                                             <span class="m-0 text-muted w-100 d-block">
                                                 Atributos
                                             </span>

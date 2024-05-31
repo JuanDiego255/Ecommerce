@@ -73,11 +73,11 @@
                                 </div>
                                 <div class="text-center">
                                     <a href="{{ url('/facebook-auth/redirect') }}" class="m-5 text-facebook">
-                                        <i class="fa fa-facebook"></i>
+                                        <i class="fab fa-facebook"></i>
                                     </a>
 
                                     <a href="{{ url('/google-auth/redirect') }}" class="m-5 text-google">
-                                        <i class="fa fa-google"></i>
+                                        <i class="fab fa-google"></i>
                                     </a>
                                 </div>
 
