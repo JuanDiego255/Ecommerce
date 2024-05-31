@@ -21,6 +21,30 @@
                         @method('PUT')
                         <div class="row">
                             <div class="col-md-6 mb-3">
+
+                                <div class="input-group input-group-static">
+                                    <label>{{ __('Categorías') }}</label>
+                                    <select id="category_id" name="category_id"
+                                        class="form-control form-control-lg @error('category_id') is-invalid @enderror"
+                                        autocomplete="category_id" autofocus>
+                                        <option selected value="{{ $clothing->category_id }}">
+                                            {{ $clothing->category_name }}
+                                        </option>
+                                        @foreach ($categories as $item)
+                                            <option value="{{ $item->id }}">
+                                                {{ $item->name }}
+                                            </option>
+                                        @endforeach
+
+                                    </select>
+                                    @error('category_id')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
                                 <div class="input-group input-group-static mb-4">
                                     <label>{{ __('Producto') }}</label>
                                     <input required value="{{ $clothing->name }}" type="text"
@@ -42,8 +66,7 @@
                                     <input required value="{{ $clothing->code }}" type="text"
                                         class="form-control form-control-lg" name="code">
                                 </div>
-                            </div>
-                            <input type="hidden" name="category_id" value="{{ $clothing->category_id }}">
+                            </div>                            
                             <div class="col-md-12 mb-3">
 
                                 <label>{{ __('Descripción') }}</label><br>

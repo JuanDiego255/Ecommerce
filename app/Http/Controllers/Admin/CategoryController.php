@@ -33,7 +33,7 @@ class CategoryController extends Controller
         }
         $categories = Categories::where('department_id', $department_id)
         ->orderBy('categories.name','asc')
-        ->simplePaginate(8);
+        ->get();
         $department_name = $department->department;
 
         return view('admin.categories.index', compact('categories', 'department_name', 'department_id'));

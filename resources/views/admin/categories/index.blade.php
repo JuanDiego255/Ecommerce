@@ -36,63 +36,96 @@
                             class="form-control form-control-lg" name="searchfor" id="searchfor">
                     </div>
                 </div>
+                <div class="col-md-6">
+                    <div class="input-group input-group-lg input-group-static my-3 w-100">
+                        <label>Mostrar</label>
+                        <select id="recordsPerPage" name="recordsPerPage" class="form-control form-control-lg"
+                            autocomplete="recordsPerPage">
+                            <option value="5">5 Registros</option>
+                            <option selected value="10">10 Registros</option>
+                            <option value="25">25 Registros</option>
+                            <option value="50">50 Registros</option>
+                        </select>
+
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
-    <div class="card mt-3">
-        <div class="card-body">
-            <div class="row w-100">
-                <div class="row row-cols-1 row-cols-md-3 g-4 align-content-center card-group mt-2 mb-5">
-                    @foreach ($categories as $item)
-                        <div class="col-md-3 col-sm-6 mb-2 card-container">
-                            <div class="product-grid product_data">
-                                <div class="product-image">
+    <div class="row row-cols-1 row-cols-md-2 g-4 align-content-center card-group mt-1">
+        <div class="col-md-12">
+            <div class="card p-2">
+                <div class="table-responsive">
 
-                                    <img src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
-                                    <ul class="product-links">
-                                        <li><a data-bs-toggle="tooltip" data-bs-placement="bottom" title="Editar"
-                                                target="blank" href="{{ url('/edit-category') . '/' . $item->id }}"><i
-                                                    class="fa fa-pencil"></i></a>
-                                        </li>
-
+                    <table class="table align-items-center mb-0" id="categories">
+                        <thead>
+                            <tr>
+                                <th class="text-center text-secondary font-weight-bolder opacity-7">
+                                    {{ __('Acciones') }}</th>
+                                <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Categoría') }}
+                                </th>
+                                <th class="text-secondary font-weight-bolder opacity-7">
+                                    {{ __('Descripción') }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($categories as $item)
+                                <tr>
+                                    <td class="align-middle text-center">
+                                        
                                         <form name="delete-category{{ $item->id }}"
                                             id="delete-category{{ $item->id }}" method="post"
                                             action="{{ url('/delete-category/' . $item->id) }}">
                                             {{ csrf_field() }}
                                             {{ method_field('DELETE') }}
                                         </form>
-                                        <li>
-                                            <a data-bs-toggle="tooltip" data-bs-placement="bottom" title="Eliminar"
-                                                href="javascript:void(0);" onclick="submitForm({{ $item->id }})">
-                                                <i class="fa fa-times"></i>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                    <a href="{{ url('/add-item') . '/' . $item->id }}"
-                                        class="add-to-cart">{{ __('Ver colección') }}</a>
-                                </div>
-                                <div class="product-content">
-                                    <h3 class="text-muted category"><a
-                                            href="{{ url('/add-item') . '/' . $item->id }}">{{ $item->name }}</a>
-                                    </h3>
-                                    <h5
-                                        class="text-muted-normal {{ isset($tenantinfo->kind_business) && ($tenantinfo->kind_business != 2 && $tenantinfo->kind_business != 3) ? 'd-block' : 'd-none' }}">
-                                        {{ $item->description }}
-                                    </h5>
-                                </div>
-                            </div>
-                        </div>
-                    @endforeach
+                                        <button class="btn btn-link text-velvet ms-auto border-0" data-bs-toggle="tooltip"
+                                            data-bs-placement="bottom" title="Eliminar"
+                                            class="btn btn-link text-velvet me-auto border-0"
+                                            onclick="submitForm({{ $item->id }})">
+                                            <i class="material-icons text-lg">delete</i>
+                                        </button>
+                                        <a class="btn btn-link text-velvet me-auto border-0"
+                                            href="{{ url('/edit-category') . '/' . $item->id }}" data-bs-toggle="tooltip"
+                                            data-bs-placement="bottom" title="Editar">
+                                            <i class="material-icons text-lg">edit</i>
+                                        </a>
+                                        <a class="btn btn-link text-velvet me-auto border-0"
+                                            href="{{ url('/add-item') . '/' . $item->id }}" data-bs-toggle="tooltip"
+                                            data-bs-placement="bottom" title="Ver colección">
+                                            <i class="material-icons text-lg">visibility</i>
+                                        </a>
+                                    </td>
+                                    <td class="w-50">
+                                        <div class="d-flex px-2 py-1">
+                                            <div>
+                                                <a target="blank" data-fancybox="gallery"
+                                                    href="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
+                                                    <img src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"
+                                                        class="avatar avatar-md me-3">
+                                                </a>
+                                            </div>
+                                            <div class="d-flex flex-column justify-content-center">
+                                                <h4 class="mb-0 text-lg">{{ $item->name }}</h4>
+
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <td class="align-middle text-sm">
+                                        <p class="mb-0">{{ $item->description }}
+                                        </p>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
             </div>
+
         </div>
     </div>
-
-    <center>
-        <div class="container mt-3">
-            {{ $categories ?? ('')->links('pagination::simple-bootstrap-4') }}
-        </div>
-    </center>
 @endsection
 @section('script')
     <script src="{{ asset('js/image-error-handler.js') }}"></script>
@@ -106,19 +139,45 @@
             }
         }
 
-        $(document).ready(function() {
-            $('#searchfor').on('keyup', function() {
-                var searchTerm = $(this).val().toLowerCase();
-                $('.card-container').each(function() {
-                    var name = $(this).find('.category').text().toLowerCase();
-                    if (name.includes(searchTerm)) {
-                        $(this).show();
-                    } else {
-                        $(this).hide();
-                    }
-                });
-            });
+        var dataTable = $('#categories').DataTable({
+            searching: true,
+            lengthChange: false,
 
+            "language": {
+                "sProcessing": "Procesando...",
+                "sLengthMenu": "Mostrar _MENU_ registros",
+                "sZeroRecords": "No se encontraron resultados",
+                "sEmptyTable": "Ningún dato disponible en esta tabla",
+                "sInfo": "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                "sInfoEmpty": "Mostrando 0 a 0 de 0 registros",
+                "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+                "sInfoPostFix": "",
+                "sSearch": "Buscar:",
+                "sUrl": "",
+                "sInfoThousands": ",",
+                "sLoadingRecords": "Cargando...",
+                "oPaginate": {
+                    "sFirst": "<<",
+                    "sLast": "Último",
+                    "sNext": ">>",
+                    "sPrevious": "<<"
+                },
+                "oAria": {
+                    "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
+                    "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+                }
+            }
+        });
+
+        $('#recordsPerPage').on('change', function() {
+            var recordsPerPage = parseInt($(this).val(), 10);
+            dataTable.page.len(recordsPerPage).draw();
+        });
+
+        // Captura el evento input en el campo de búsqueda
+        $('#searchfor').on('input', function() {
+            var searchTerm = $(this).val();
+            dataTable.search(searchTerm).draw();
         });
     </script>
 @endsection

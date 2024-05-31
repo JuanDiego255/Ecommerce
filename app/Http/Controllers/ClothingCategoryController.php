@@ -90,8 +90,10 @@ class ClothingCategoryController extends Controller
     }
     public function edit($id, $category_id)
     {
+        $categories = Categories::orderBy('name','asc')->get();
         $clothing = Cache::remember('clothing_' . $id, $this->expirationTime, function () use ($id) {
             return ClothingCategory::leftJoin('stocks', 'clothing.id', 'stocks.clothing_id')
+            ->leftJoin('categories','clothing.category_id','categories.id')
                 ->leftJoin('product_images', function ($join) {
                     $join->on('clothing.id', '=', 'product_images.clothing_id')
                         ->whereRaw('product_images.id = (
@@ -103,6 +105,7 @@ class ClothingCategoryController extends Controller
                 ->select(
                     'clothing.id as id',
                     'clothing.category_id as category_id',
+                    'categories.name as category_name',
                     'clothing.name as name',
                     'clothing.casa as casa',
                     'clothing.can_buy as can_buy',
@@ -122,6 +125,7 @@ class ClothingCategoryController extends Controller
                     'clothing.code',
                     'clothing.can_buy',
                     'clothing.category_id',
+                    'categories.name',
                     'clothing.description',
                     'clothing.trending',
                     'clothing.price',
@@ -165,7 +169,7 @@ class ClothingCategoryController extends Controller
                 'attribute_values.value as value',
             )
             ->first();
-        return view('admin.clothing.edit', compact('clothing', 'stock_active', 'attributes', 'category_id', 'stocks'));
+        return view('admin.clothing.edit', compact('clothing', 'stock_active','category_id', 'attributes', 'categories', 'stocks'));
     }
     public function store(Request $request)
     {
