@@ -10,6 +10,7 @@ use App\Models\Blog;
 use App\Models\Categories;
 use App\Models\Department;
 use App\Models\ClothingCategory;
+use App\Models\TenantInfo;
 use Illuminate\Support\Facades\Storage;
 
 class GenerateTenantSitemaps extends Command
@@ -27,11 +28,12 @@ class GenerateTenantSitemaps extends Command
         $tenants = Tenant::get();
 
         foreach ($tenants as $tenant) {
-            if($tenant->id != "main"){
+            if ($tenant->id != "main") {
                 tenancy()->initialize($tenant);
-            }else{
+            } else {
                 tenancy()->end();
-            }            
+            }
+            $tenantinfo = TenantInfo::first();
 
             $sitemap = Sitemap::create();
 
@@ -41,23 +43,24 @@ class GenerateTenantSitemaps extends Command
             $sitemap->add(Url::create("{$tenantBaseUrl}/")->setPriority(1.0)); // Highest priority
             $sitemap->add(Url::create("{$tenantBaseUrl}/category")->setPriority(0.5));
             $sitemap->add(Url::create("{$tenantBaseUrl}/blog/index")->setPriority(0.2));
-            $sitemap->add(Url::create("{$tenantBaseUrl}/departments/index")->setPriority(0.7));
-            $sitemap->add(Url::create("{$tenantBaseUrl}/view-cart")->setPriority(0.8));
-            $sitemap->add(Url::create("{$tenantBaseUrl}/checkout")->setPriority(0.8));
+            if ($tenantinfo->manage_department != 0) {
+                $sitemap->add(Url::create("{$tenantBaseUrl}/departments/index")->setPriority(0.7));
+            }
 
             // Add dynamic URLs with higher priority
-            Blog::all()->each(function ($blog) use ($sitemap, $tenantBaseUrl) {                
-                $sitemap->add(Url::create("{$tenantBaseUrl}/blog/{$blog->id}/{$blog->name_url}")->setPriority(0.2));
+            Blog::all()->each(function ($blog) use ($sitemap, $tenantBaseUrl) {
+                $sitemap->add(Url::create("{$tenantBaseUrl}/blog/{$blog->id}/{$blog->name_url}")->setPriority(0.1));
             });
 
             Categories::all()->each(function ($category) use ($sitemap, $tenantBaseUrl) {
                 $sitemap->add(Url::create("{$tenantBaseUrl}/category/{$category->id}")->setPriority(0.5));
             });
 
-            Department::all()->each(function ($department) use ($sitemap, $tenantBaseUrl) {
-                $sitemap->add(Url::create("{$tenantBaseUrl}/clothes-category/{$department->id}/{$department->category_id}")->setPriority(0.4));
-            });
-
+            if ($tenantinfo->manage_department != 0) {
+                Department::all()->each(function ($department) use ($sitemap, $tenantBaseUrl) {
+                    $sitemap->add(Url::create("{$tenantBaseUrl}/clothes-category/{$department->id}/{$department->category_id}")->setPriority(0.4));
+                });
+            }
             ClothingCategory::all()->each(function ($clothing) use ($sitemap, $tenantBaseUrl) {
                 $sitemap->add(Url::create("{$tenantBaseUrl}/detail-clothing/{$clothing->id}/{$clothing->category_id}")->setPriority(0.4));
             });
