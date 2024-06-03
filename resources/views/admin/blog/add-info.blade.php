@@ -10,29 +10,32 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
-                        <h4 class="text-dark">Agregar Nuevo Artículo</h4>
+                        <h4 class="text-dark">{{ __('Agregar Nuevo Artículo') }}</h4>
                     </div>
                     <div class="card-body">
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <div class="input-group input-group-lg input-group-outline my-3">
-                                    <label class="form-label">Artículo</label>
+                                    <label class="form-label">{{ __('Artículo') }}</label>
                                     <input id="title" required type="text" class="form-control form-control-lg"
                                         name="title">
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <div class="input-group input-group-lg input-group-outline my-3">
-                                    <label class="form-label">Meta Keywords (Opcional)</label>
-                                    <input type="text" class="form-control form-control-lg" name="meta_keywords">
                                 </div>
                             </div>
 
                             <div class="col-md-6 mb-3">
                                 <div class="input-group input-group-lg input-group-outline my-3">
-                                    <label class="form-label">Meta description (Opcional)</label>
+                                    <label class="form-label">{{ __('Meta description (Opcional)') }}</label>
                                     <input type="text" class="form-control form-control-lg" name="meta_description">
+                                </div>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label">{{ __('Meta Keywords (Opcional - Presione enter para agregar la palabra
+                                    clave)') }}</label><br>
+                                <div class="tags-input">
+                                    <ul id="tags"></ul>
+                                    <input type="text" id="input-tag" placeholder="Escriba la palabra clave.." />
+                                    <input type="hidden" value="" id="meta_keywords" name="meta_keywords">
                                 </div>
                             </div>
                             <div class="col-md-12 mb-3">
@@ -46,7 +49,7 @@
 
 
                         <div class="col-md-12">
-                            <button type="submit" class="btn btn-velvet">Agregar artículo</button>
+                            <button type="submit" class="btn btn-velvet">{{ __('Crear') }}</button>
                         </div>
                     </div>
                 </div>
@@ -56,15 +59,13 @@
 
     <center>
         <div class="col-md-12 mt-3">
-            <a href="{{ url('blog-show/'.$blog_id.'/show') }}" class="btn btn-velvet w-25">Volver</a>
+            <a href="{{ url('blog-show/' . $blog_id . '/show') }}" class="btn btn-velvet w-25">{{ __('Volver') }}</a>
         </div>
     </center>
 @endsection
 @section('script')
     <script>
         $(document).ready(function() {
-
-            
             ClassicEditor
                 .create(document.querySelector('#editor'), {
                     heading: {
@@ -84,7 +85,7 @@
                     ckfinder: {
                         uploadUrl: "{{ route('upload', ['_token' => csrf_token()]) }}"
                     },
-                    
+
                     fontSize: {
                         options: [9, 10, 11, 12, 14, 16, 18, 20, 22, 24]
                     },
@@ -94,4 +95,5 @@
                 });
         });
     </script>
+    <script src="{{ asset('js/add-tag.js') }}"></script>
 @endsection

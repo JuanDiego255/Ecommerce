@@ -52,19 +52,13 @@
                             <input required type="text" class="form-control form-control-lg" name="title">
                         </div>
                     </div>
-                    <div class="col-md-6 mb-3">
-                        <div class="input-group input-group-lg input-group-outline my-3">
-                            <label class="form-label">Meta Keywords</label>
-                            <input required type="text" class="form-control form-control-lg" name="meta_keywords">
-                        </div>
-                    </div>
 
                     <div class="col-md-6 mb-3">
                         <div class="input-group input-group-lg input-group-outline my-3">
                             <label class="form-label">Meta description</label>
                             <input required type="text" class="form-control form-control-lg" name="meta_description">
                         </div>
-                    </div>
+                    </div>                    
                     <div class="col-md-6 mb-3">
                         <div class="input-group input-group-lg input-group-outline my-3">
                             <label class="form-label">Meta OG Title</label>
@@ -95,6 +89,15 @@
                             <input required type="text" class="form-control form-control-lg" name="meta_type">
                         </div>
                     </div>
+                    <div class="col-md-12 mb-3">
+                        <label class="form-label">Meta Keywords (Opcional - Presione enter para agregar la palabra
+                            clave)</label><br>
+                        <div class="tags-input">
+                            <ul id="tags"></ul>
+                            <input type="text" id="input-tag" placeholder="Escriba la palabra clave.." />
+                            <input type="hidden" value="" id="meta_keywords" name="meta_keywords">
+                        </div>
+                    </div>
                 </div>
 
 
@@ -105,4 +108,7 @@
             </form>
         </div>
     </div>
+@endsection
+@section('script')
+    <script src="{{ asset('js/add-tag.js') }}"></script>
 @endsection
