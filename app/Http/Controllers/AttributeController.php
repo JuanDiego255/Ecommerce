@@ -189,7 +189,7 @@ class AttributeController extends Controller
 
 
      */
-    public function editValue($id, $attr_id)
+    public function editValue($attr_id, $id)
     {
         $value = AttributeValue::findOrfail($id);
         return view('admin.attributes.values.edit', compact('value', 'attr_id'));

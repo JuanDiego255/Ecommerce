@@ -102,7 +102,7 @@
     <script src="{{ asset('js/image-error-handler.js') }}"></script>
     <script>
         $(document).ready(function() {
-            var dataTable = $('#attributes').DataTable({
+            var dataTable = $('#values').DataTable({
                 searching: true,
                 lengthChange: false,
 
