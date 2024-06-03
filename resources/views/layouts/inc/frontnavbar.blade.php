@@ -323,6 +323,7 @@
                 <a href="{{ url('view-cart') }}" class="nav-menu-item"><i class="fa fa-shopping-cart me-3"></i>CARRITO
                     <span
                         class="badge badge-sm text-pill-menu badge-info border-pill-menu border-2 text-xxs">{{ $cartNumber }}</span></a>
+                <a href="{{ url('blog/index') }}" class="nav-menu-item"><i class="fa fa-book me-3"></i>BLOG</a>
                 <a href="{{ route('register') }}" class="nav-menu-item"><i
                         class="fa fa-user-plus me-3"></i>REGISTRARSE</a>
                 <a href="{{ route('login') }}" class="nav-menu-item"><i class="fa fa-sign-in me-3"></i>INGRESAR</a>
@@ -399,6 +400,7 @@
                         class="fas fa-{{ $icon->cart }} me-3"></i>CARRITO
                     <span
                         class="badge badge-sm text-pill-menu badge-info border-pill-menu border-2 text-xxs">{{ $cartNumber }}</span></a>
+                        <a href="{{ url('blog/index') }}" class="nav-menu-item"><i class="fa fa-book me-3"></i>BLOG</a>
                 <a href="{{ url('buys') }}" class="nav-menu-item"><i
                         class="fas fa-{{ $icon->shopping }} me-3"></i>MIS
                     COMPRAS</a>
@@ -434,3 +436,4 @@
 
         </div>
     </div>
+</div>

@@ -49,7 +49,7 @@
     }
 </style>
 
-@if ($view_name == 'frontend_blog_show-articles' && ($tenantinfo->kind_business == 3 || $tenantinfo->kind_business == 4))
+@if ($view_name == 'frontend_blog_show-articles' && ($tenantinfo->kind_business == 3 || $tenantinfo->kind_business == 4 || $tenantinfo->kind_business == 0))
     <style>
         :root {
             --url_image: url('{{ route('file', $blog->horizontal_images) }}');
@@ -61,7 +61,7 @@
 <body class="g-sidenav-show  bg-gray-200">
     @include('frontend.website.add-comment')
     <div
-        class="{{ ($view_name == 'frontend_blog_show-articles' && $tenantinfo->kind_business == 3) || $tenantinfo->kind_business == 4 ? 'main-container-front' : '' }}">
+        class="{{ ($view_name == 'frontend_blog_show-articles' && $tenantinfo->kind_business == 3 || $tenantinfo->kind_business == 4 || $tenantinfo->kind_business == 0) ? 'main-container-front' : '' }}">
         <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
 
             <div>

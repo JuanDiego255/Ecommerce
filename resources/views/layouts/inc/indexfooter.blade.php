@@ -51,7 +51,7 @@
                         </a><br>
                         <a target="blank" href="{{ url('https://wa.me/506' . $tenantinfo->whatsapp) }}"
                             class="text-footer">
-                            <i class="fa fa-whatsapp"></i>
+                            <i class="fab fa-whatsapp"></i>
                             {{ isset($tenantinfo->whatsapp) ? $tenantinfo->whatsapp : '' }}
                         </a>
                     </p>
