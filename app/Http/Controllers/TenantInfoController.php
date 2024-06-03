@@ -50,8 +50,9 @@ class TenantInfoController extends Controller
             $tenantcarousel = TenantCarousel::get();
 
             $icons = [
-                'home', 'tshirt', 'heart', 'spa', 'syringe', 'hands', 'mask', 'car', 'shopping-cart',
-                'car-alt','wrench','cogs','paint-brush','flask','lipstick','sparkles',
+                'home', 'tshirt', 'heart', 'spa', 'syringe', 'hands', 'mask', 'car', 'shopping-cart', 'baby', 'flask', 'baby-shoes',
+                'baby-carriage', 'baby-bottle', 'bell','shoe-heel','shoe-prints','socks',
+                'car-alt', 'wrench', 'cogs', 'paint-brush', 'flask', 'lipstick', 'sparkles',
                 'credit-card', 'sign-in', 'map-marker', 'address-book', 'address-card', 'angry', 'arrow-alt-circle-down',
                 'arrow-alt-circle-left', 'cut', 'arrow-alt-circle-right', 'arrow-alt-circle-up',
                 'bell', 'bell-slash', 'bookmark', 'building', 'calendar',
@@ -86,6 +87,7 @@ class TenantInfoController extends Controller
                 'tired', 'trash-alt', 'user', 'user-circle', 'window-close',
                 'window-maximize', 'window-minimize', 'window-restore'
             ];
+
             return compact('tenant_info', 'tenantcarousel', 'icons');
         });
 
@@ -271,7 +273,7 @@ class TenantInfoController extends Controller
             return redirect()->back()->with(['status' => 'Se ha editado la visualización de componentes', 'icon' => 'success']);
         } catch (\Exception $th) {
             DB::rollBack();
-            return redirect()->back()->with(['status' => 'No se pudo guardar la información del negocio'.$th->getMessage(), 'icon' => 'error']);
+            return redirect()->back()->with(['status' => 'No se pudo guardar la información del negocio' . $th->getMessage(), 'icon' => 'error']);
         }
     }
     /**
