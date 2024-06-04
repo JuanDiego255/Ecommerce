@@ -9,6 +9,7 @@
 @section('content')
     <form id="updateForm" action="{{ url('update-clothing' . '/' . $clothing->id) }}" method="POST"
         enctype="multipart/form-data">
+        <input type="hidden" name="category_id_main" value="{{$category_id}}">
         @csrf
         <div class="row">
             <div @if ($tenantinfo->manage_size != 0) class="col-md-8" @else class="col-md-12" @endif>
@@ -20,22 +21,19 @@
 
                         @method('PUT')
                         <div class="row">
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-12 mb-3">
 
                                 <div class="input-group input-group-static">
-                                    <label>{{ __('Categorías') }}</label>
-                                    <select id="category_id" name="category_id"
+                                    <label>{{ __('Categorías (Puede seleccionar múltiples categorías para el producto)') }}</label>
+                                    <select id="category_id" name="category_id[]"
                                         class="form-control form-control-lg @error('category_id') is-invalid @enderror"
-                                        autocomplete="category_id" autofocus>
-                                        <option selected value="{{ $clothing->category_id }}">
-                                            {{ $clothing->category_name }}
-                                        </option>
+                                        autocomplete="category_id" autofocus multiple>
                                         @foreach ($categories as $item)
-                                            <option value="{{ $item->id }}">
+                                            <option value="{{ $item->id }}"
+                                                {{ in_array($item->id, $selectedCategories) ? 'selected' : '' }}>
                                                 {{ $item->name }}
                                             </option>
                                         @endforeach
-
                                     </select>
                                     @error('category_id')
                                         <span class="invalid-feedback" role="alert">
@@ -43,6 +41,7 @@
                                         </span>
                                     @enderror
                                 </div>
+
                             </div>
                             <div class="col-md-6 mb-3">
                                 <div class="input-group input-group-static mb-4">
@@ -66,7 +65,7 @@
                                     <input required value="{{ $clothing->code }}" type="text"
                                         class="form-control form-control-lg" name="code">
                                 </div>
-                            </div>                            
+                            </div>
                             <div class="col-md-12 mb-3">
 
                                 <label>{{ __('Descripción') }}</label><br>

@@ -22,8 +22,6 @@ class CategoryController extends Controller
     }
     public function index($id = null)
     {
-
-
         if ($id == null) {
             $department = Department::where('department', 'Default')->first();
             $department_id = $department->id;

@@ -44,7 +44,8 @@
                     <div class="{{ $key + 1 > 3 ? 'col-md-3' : 'col-md-4' }} col-sm-6 mb-2">
                         <div class="product-grid product_data">
                             <div class="product-image">
-                                <img src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
+                                <img
+                                    src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
                                 <ul class="product-links">
                                     <li><a target="blank" href="{{ tenant_asset('/') . '/' . $item->image }}"><i
                                                 class="fas fa-eye"></i></a></li>
@@ -69,7 +70,8 @@
                     <div class="col-md-4 col-sm-6 mb-2">
                         <div class="product-grid product_data">
                             <div class="product-image">
-                                <img src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
+                                <img
+                                    src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
                                 <ul class="product-links">
                                     <li><a target="blank" href="{{ tenant_asset('/') . '/' . $item->image }}"><i
                                                 class="fas fa-eye"></i></a></li>
@@ -103,12 +105,14 @@
                             <div class="item">
                                 <div class="product-grid product_data">
                                     <div class="product-image">
-                                        <img src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
+                                        <img
+                                            src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
                                         @if ($item->discount)
                                             <span class="product-discount-label">-{{ $item->discount }}%</span>
                                         @endif
                                         <ul class="product-links">
-                                            <li><a target="blank" href="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"><i
+                                            <li><a target="blank"
+                                                    href="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"><i
                                                         class="fas fa-eye"></i></a></li>
                                         </ul>
                                         <a href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}"
@@ -118,6 +122,8 @@
                                         <h3
                                             class="text-muted text-uppercase {{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'd-none' : '' }}">
                                             {{ $item->casa }}
+                                        </h3>
+                                        <h3 class="title clothing-name"><a href="#">({{ $item->category }})</a>
                                         </h3>
                                         <h3
                                             class="{{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'text-muted' : 'title-frags' }}">
@@ -292,6 +298,50 @@
             <span class="text-center text-muted">{{ isset($tenantinfo->mision) ? $tenantinfo->mision : '' }}</span>
 
 
+        </div>
+    @endif
+    {{-- blogs --}}
+    @if (count($blogs) != 0)
+        <hr class="dark horizontal text-danger my-0">
+        <div class="mt-3 mb-5">
+            <div class="container-fluid">
+                <div class="text-center">
+                    <h3 class="text-center text-muted mt-5 mb-3">Blog de
+                        {{ isset($tenantinfo->title) ? $tenantinfo->title : '' }}, explora nuestras secciones, y aclara las
+                        dudas acerca de nuestros servicios.</h3>
+                </div>
+
+                <div class="row">
+                    <div class="row row-cols-1 row-cols-md-4 g-4 align-content-center card-group mt-2 mb-5">
+                        @foreach ($blogs as $item)
+                            <div class="item">
+                                <div class="product-grid product_data">
+                                    <div class="product-image">
+                                        <img src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
+
+                                        <ul class="product-links">
+                                            <li><a target="blank" href="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"><i
+                                                        class="fas fa-eye"></i></a></li>
+                                        </ul>
+                                        <a href="{{ url('/blog/' . $item->id . '/' . $item->name_url) }}"
+                                            class="add-to-cart">Ver
+                                            información</a>
+                                    </div>
+                                    <div class="product-content">
+
+                                        <h3
+                                            class="{{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'text-muted' : 'title-frags' }}">
+                                            <a
+                                                href="{{ url('/blog/' . $item->id . '/' . $item->name_url) }}">{{ $item->title }}</a>
+                                        </h3>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+
+                </div>
+            </div>
         </div>
     @endif
     {{-- Comentarios --}}

@@ -10,15 +10,12 @@ use App\Models\Department;
 use App\Models\MetaTags;
 use App\Models\ProductImage;
 use App\Models\Seller;
-use App\Models\Size;
-use App\Models\SizeCloth;
 use App\Models\SocialNetwork;
 use App\Models\Stock;
 use App\Models\TenantInfo;
 use App\Models\Testimonial;
 use Artesaos\SEOTools\Facades\OpenGraph;
 use Artesaos\SEOTools\Facades\SEOMeta;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
@@ -44,7 +41,8 @@ class FrontendController extends Controller
         });
         $clothings = Cache::remember('clothings_trending', $this->expirationTime, function () {
             return ClothingCategory::where('clothing.trending', 1)
-                ->join('categories', 'clothing.category_id', 'categories.id')
+                ->leftJoin('pivot_clothing_categories', 'clothing.id', '=', 'pivot_clothing_categories.clothing_id')
+                ->leftJoin('categories', 'pivot_clothing_categories.category_id', '=', 'categories.id')
                 ->leftJoin('stocks', 'clothing.id', 'stocks.clothing_id')
                 ->select(
                     'categories.name as category',
@@ -118,7 +116,8 @@ class FrontendController extends Controller
         //Promociones
         $clothings_offer = Cache::remember('clothings_offer', $this->expirationTime, function () {
             return ClothingCategory::where('categories.name', 'Sale')
-                ->join('categories', 'clothing.category_id', 'categories.id')
+                ->leftJoin('pivot_clothing_categories', 'clothing.id', '=', 'pivot_clothing_categories.clothing_id')
+                ->leftJoin('categories', 'pivot_clothing_categories.category_id', '=', 'categories.id')
                 ->leftJoin('stocks', 'clothing.id', 'stocks.clothing_id')
                 ->select(
                     'categories.name as category',
@@ -176,18 +175,16 @@ class FrontendController extends Controller
 
         switch ($tenantinfo->kind_business) {
             case (1):
-                return view('frontend.carsale.index', compact('clothings', 'blogs', 'social', 'clothings_offer', 'category','sellers','comments'));
+                return view('frontend.carsale.index', compact('clothings', 'blogs', 'social', 'clothings_offer', 'category', 'sellers', 'comments'));
                 break;
             case (2):
             case (3):
-                return view('frontend.website.index', compact('clothings', 'blogs', 'social', 'clothings_offer', 'category','sellers','comments'));
+                return view('frontend.website.index', compact('clothings', 'blogs', 'social', 'clothings_offer', 'category', 'sellers', 'comments'));
                 break;
             default:
-            return view('frontend.index', compact('clothings', 'blogs', 'social', 'clothings_offer', 'category','comments'));
+                return view('frontend.index', compact('clothings', 'blogs', 'social', 'clothings_offer', 'category', 'comments'));
                 break;
         }
-
-       
     }
     public function category($id = null)
     {
@@ -246,9 +243,10 @@ class FrontendController extends Controller
         $department_name = $department->department;
 
         $clothings = Cache::remember('clothings_' . $id, $this->expirationTime, function () use ($id) {
-            return ClothingCategory::where('clothing.category_id', $id)
+            return ClothingCategory::where('pivot_clothing_categories.category_id', $id)
                 ->where('clothing.status', 1)
-                ->join('categories', 'clothing.category_id', 'categories.id')
+                ->leftJoin('pivot_clothing_categories', 'clothing.id', '=', 'pivot_clothing_categories.clothing_id')
+                ->leftJoin('categories', 'pivot_clothing_categories.category_id', '=', 'categories.id')
                 ->leftJoin('stocks', 'clothing.id', 'stocks.clothing_id')
                 ->leftJoin('product_images', function ($join) {
                     $join->on('clothing.id', '=', 'product_images.clothing_id')
@@ -332,7 +330,8 @@ class FrontendController extends Controller
         });
         $clothings = Cache::remember('clothings_trending', $this->expirationTime, function () {
             return ClothingCategory::where('clothing.trending', 1)
-                ->join('categories', 'clothing.category_id', 'categories.id')
+                ->leftJoin('pivot_clothing_categories', 'clothing.id', '=', 'pivot_clothing_categories.clothing_id')
+                ->leftJoin('categories', 'pivot_clothing_categories.category_id', '=', 'categories.id')
                 ->join('stocks', 'clothing.id', 'stocks.clothing_id')
                 ->select(
                     'categories.name as category',
@@ -369,8 +368,10 @@ class FrontendController extends Controller
         });
 
         $clothes = ClothingCategory::where('clothing.id', $id)
+            ->where('pivot_clothing_categories.category_id',$category_id)
             ->where('clothing.status', 1)
-            ->join('categories', 'clothing.category_id', 'categories.id')
+            ->leftJoin('pivot_clothing_categories', 'clothing.id', '=', 'pivot_clothing_categories.clothing_id')
+            ->leftJoin('categories', 'pivot_clothing_categories.category_id', '=', 'categories.id')
             ->join('departments', 'categories.department_id', 'departments.id')
             ->leftJoin('stocks', 'clothing.id', 'stocks.clothing_id')
             ->leftJoin('product_images', 'clothing.id', '=', 'product_images.clothing_id')
@@ -399,7 +400,6 @@ class FrontendController extends Controller
             ->orderBy('clothing.casa', 'asc')
             ->orderBy('clothing.name', 'asc')
             ->get();
-
         $result = DB::table('stocks as s')->where('s.clothing_id', $id)
             ->join('attributes as a', 's.attr_id', '=', 'a.id')
             ->join('attribute_values as v', 's.value_attr', '=', 'v.id')
@@ -426,7 +426,8 @@ class FrontendController extends Controller
 
         $clothings_trending = ClothingCategory::where('clothing.trending', 1)
             ->where('clothing.id', '!=', $id)
-            ->join('categories', 'clothing.category_id', 'categories.id')
+            ->leftJoin('pivot_clothing_categories', 'clothing.id', '=', 'pivot_clothing_categories.clothing_id')
+            ->leftJoin('categories', 'pivot_clothing_categories.category_id', '=', 'categories.id')
             ->leftJoin('stocks', 'clothing.id', 'stocks.clothing_id')
             ->leftJoin('product_images', function ($join) {
                 $join->on('clothing.id', '=', 'product_images.clothing_id')

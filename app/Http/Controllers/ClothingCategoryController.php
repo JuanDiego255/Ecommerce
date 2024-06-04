@@ -7,10 +7,8 @@ use App\Models\Attribute;
 use App\Models\AttributeValue;
 use App\Models\Categories;
 use App\Models\ClothingCategory;
-use App\Models\MetaTags;
+use App\Models\PivotClothingCategory;
 use App\Models\ProductImage;
-use App\Models\Size;
-use App\Models\SizeCloth;
 use App\Models\Stock;
 use App\Models\TenantInfo;
 use App\Rules\FourImage;
@@ -18,12 +16,8 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Artesaos\SEOTools\Facades\OpenGraph;
-use Artesaos\SEOTools\Facades\SEOMeta;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\URL;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ClothingCategoryController extends Controller
@@ -38,11 +32,11 @@ class ClothingCategoryController extends Controller
     public function indexById($id)
     {
         $clothings = Cache::remember('clothings_' . $id, $this->expirationTime, function () use ($id) {
-            return ClothingCategory::where('clothing.category_id', $id)
-                ->where('clothing.status', 1)
-                ->join('categories', 'clothing.category_id', 'categories.id')
-                ->leftJoin('stocks', 'clothing.id', 'stocks.clothing_id')
-                ->leftJoin('attributes', 'stocks.attr_id', 'attributes.id')
+            return DB::table('clothing')
+                ->join('pivot_clothing_categories', 'clothing.id', '=', 'pivot_clothing_categories.clothing_id')
+                ->join('categories', 'pivot_clothing_categories.category_id', '=', 'categories.id')
+                ->leftJoin('stocks', 'clothing.id', '=', 'stocks.clothing_id')
+                ->leftJoin('attributes', 'stocks.attr_id', '=', 'attributes.id')
                 ->leftJoin('product_images', function ($join) {
                     $join->on('clothing.id', '=', 'product_images.clothing_id')
                         ->whereRaw('product_images.id = (
@@ -50,6 +44,8 @@ class ClothingCategoryController extends Controller
                             WHERE product_images.clothing_id = clothing.id
                         )');
                 })
+                ->where('pivot_clothing_categories.category_id', $id)
+                ->where('clothing.status', 1)
                 ->select(
                     'categories.name as category',
                     'clothing.id as id',
@@ -67,8 +63,19 @@ class ClothingCategoryController extends Controller
                     DB::raw('GROUP_CONCAT(COALESCE(stocks.attr_id, "")) AS attr_id_per_size'),
                     'product_images.image as image'
                 )
-
-                ->groupBy('clothing.id', 'clothing.casa', 'clothing.mayor_price', 'clothing.discount', 'categories.name', 'clothing.code', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
+                ->groupBy(
+                    'clothing.id',
+                    'clothing.casa',
+                    'clothing.mayor_price',
+                    'clothing.discount',
+                    'categories.name',
+                    'clothing.code',
+                    'clothing.name',
+                    'clothing.trending',
+                    'clothing.description',
+                    'clothing.price',
+                    'product_images.image'
+                )
                 ->get();
         });
 
@@ -90,10 +97,16 @@ class ClothingCategoryController extends Controller
     }
     public function edit($id, $category_id)
     {
-        $categories = Categories::orderBy('name','asc')->get();
+        $categories = Categories::orderBy('name', 'asc')->get();
+        $selectedCategories = [];
+        $selectedCategoriesSql = PivotClothingCategory::where('clothing_id', $id)->get('category_id');
+        foreach ($selectedCategoriesSql as $selected_category) {
+            array_push($selectedCategories, $selected_category->category_id);
+        }
         $clothing = Cache::remember('clothing_' . $id, $this->expirationTime, function () use ($id) {
             return ClothingCategory::leftJoin('stocks', 'clothing.id', 'stocks.clothing_id')
-            ->leftJoin('categories','clothing.category_id','categories.id')
+                ->leftJoin('pivot_clothing_categories', 'clothing.id', '=', 'pivot_clothing_categories.clothing_id')
+                ->leftJoin('categories', 'pivot_clothing_categories.category_id', '=', 'categories.id')
                 ->leftJoin('product_images', function ($join) {
                     $join->on('clothing.id', '=', 'product_images.clothing_id')
                         ->whereRaw('product_images.id = (
@@ -104,7 +117,7 @@ class ClothingCategoryController extends Controller
                 ->where('clothing.id', $id)
                 ->select(
                     'clothing.id as id',
-                    'clothing.category_id as category_id',
+                    'pivot_clothing_categories.category_id as category_id',
                     'categories.name as category_name',
                     'clothing.name as name',
                     'clothing.casa as casa',
@@ -124,7 +137,7 @@ class ClothingCategoryController extends Controller
                     'clothing.name',
                     'clothing.code',
                     'clothing.can_buy',
-                    'clothing.category_id',
+                    'pivot_clothing_categories.category_id',
                     'categories.name',
                     'clothing.description',
                     'clothing.trending',
@@ -169,7 +182,7 @@ class ClothingCategoryController extends Controller
                 'attribute_values.value as value',
             )
             ->first();
-        return view('admin.clothing.edit', compact('clothing', 'stock_active','category_id', 'attributes', 'categories', 'stocks'));
+        return view('admin.clothing.edit', compact('clothing', 'selectedCategories', 'stock_active', 'category_id', 'attributes', 'categories', 'stocks'));
     }
     public function store(Request $request)
     {
@@ -211,8 +224,6 @@ class ClothingCategoryController extends Controller
                 return redirect('/edit-clothing/' . $id . '/' . $request->category_id)->with(['status' => 'No puede seleccionar más de 4 imágenes!', 'icon' => 'warning']);
             }
             $clothing = ClothingCategory::findOrfail($id);
-
-            $clothing->category_id = $request->category_id;
             $clothing->name = $request->name;
             $clothing->code = $request->code;
             $clothing->description = $request->description;
@@ -243,6 +254,23 @@ class ClothingCategoryController extends Controller
             }
 
             $clothing->update();
+            //Procesar categorias
+            $selectedCategories = $request->input('category_id');
+            $categoriesItemIds = array_keys($selectedCategories);           
+            $currentCategoriesRecords = PivotClothingCategory::where('clothing_id', $id)->get();
+            foreach ($currentCategoriesRecords as $record) {
+                if (!in_array($record->category_id, $categoriesItemIds)) {
+                    $record->delete();
+                }
+            }
+
+            foreach($selectedCategories as $selected_category){
+               $pivot_cat = new PivotClothingCategory();
+               $pivot_cat->category_id = $selected_category;
+               $pivot_cat->clothing_id = $id;
+               $pivot_cat->save();
+            }
+            //Porocesar categorias fin
 
             $imagesProduct =  ProductImage::where('clothing_id', $id)->get();
 
@@ -293,7 +321,7 @@ class ClothingCategoryController extends Controller
             }
 
             DB::commit();
-            return redirect('add-item/' . $request->category_id)->with(['status' => 'Producto Editado Con Exito!', 'icon' => 'success']);
+            return redirect('add-item/' . $request->category_id_main)->with(['status' => 'Producto Editado Con Exito!', 'icon' => 'success']);
         } catch (Exception $th) {
             DB::rollback();
             return redirect()->back()->with(['status' => 'Ocurrió un error al editar el producto!' . $th->getMessage(), 'icon' => 'warning']);
@@ -341,8 +369,6 @@ class ClothingCategoryController extends Controller
                 $code = $code + 1;
 
                 $clothing = new ClothingCategory();
-
-                $clothing->category_id = $request->category_id;
                 $clothing->name = $request->name;
                 $clothing->code = $code;
                 $clothing->description = $request->description;
@@ -363,6 +389,13 @@ class ClothingCategoryController extends Controller
                 $clothing->trending = $request->filled('trending') ? 1 : 0;
                 $clothing->save();
                 $clothingId = $clothing->id;
+
+                //Ligar categoria al producto
+                $clothing_category = new PivotClothingCategory();
+                $clothing_category->category_id = $request->category_id;
+                $clothing_category->clothing_id = $clothingId;
+                $clothing_category->save();
+
                 $masive = $request->filled('masive') ? 1 : 0;
                 if ($masive == 1 && isset($tenantinfo->tenant) && $tenantinfo->tenant === 'marylu') {
                     $imageObj = new ProductImage();

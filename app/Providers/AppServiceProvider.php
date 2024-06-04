@@ -91,7 +91,8 @@ class AppServiceProvider extends ServiceProvider
                 ->get();
 
             $clothings_offer = ClothingCategory::where('categories.name', 'Sale')
-                ->join('categories', 'clothing.category_id', 'categories.id')
+                ->join('pivot_clothing_categories', 'clothing.id', '=', 'pivot_clothing_categories.clothing_id')
+                ->join('categories', 'pivot_clothing_categories.category_id', '=', 'categories.id')
                 ->join('stocks', 'clothing.id', 'stocks.clothing_id')
                 ->select(
                     'categories.name as category',
@@ -133,7 +134,7 @@ class AppServiceProvider extends ServiceProvider
                         ->join('attribute_value_cars', 'carts.id', 'attribute_value_cars.cart_id')
                         ->join('attributes', 'attribute_value_cars.attr_id', 'attributes.id')
                         ->join('attribute_values', 'attribute_value_cars.value_attr', 'attribute_values.id')
-                        ->where('stocks.price','!=',0)
+                        ->where('stocks.price', '!=', 0)
                         ->leftJoin('stocks', function ($join) {
                             $join->on('carts.clothing_id', '=', 'stocks.clothing_id')
                                 ->on('attribute_value_cars.attr_id', '=', 'stocks.attr_id')
@@ -198,7 +199,7 @@ class AppServiceProvider extends ServiceProvider
                         ->join('attribute_value_cars', 'carts.id', 'attribute_value_cars.cart_id')
                         ->join('attributes', 'attribute_value_cars.attr_id', 'attributes.id')
                         ->join('attribute_values', 'attribute_value_cars.value_attr', 'attribute_values.id')
-                        ->where('stocks.price','!=',0)
+                        ->where('stocks.price', '!=', 0)
                         ->leftJoin('stocks', function ($join) {
                             $join->on('carts.clothing_id', '=', 'stocks.clothing_id')
                                 ->on('attribute_value_cars.attr_id', '=', 'stocks.attr_id')
@@ -244,7 +245,7 @@ class AppServiceProvider extends ServiceProvider
                             'stocks.price',
                             'stocks.stock',
                             'clothing.mayor_price',
-                            'attributes.name',                           
+                            'attributes.name',
                             'attribute_values.value',
                             'clothing.status',
                             'clothing.discount',
@@ -253,7 +254,7 @@ class AppServiceProvider extends ServiceProvider
                             'product_images.image'
                         )
                         ->get();
-                       
+
                     return $cart_items;
                 }
             });
@@ -289,10 +290,10 @@ class AppServiceProvider extends ServiceProvider
                 $cloth_price += $precioConDescuento * $item->quantity;
             }
             $profesional_info = null;
-            if($tenantinfo->tenant != "main"){
+            if ($tenantinfo->tenant != "main") {
                 $profesional_info = PersonalUser::first();
             }
-           
+
 
             $iva = $cloth_price * $tenantinfo->iva;
             $total_price = $cloth_price + $iva;

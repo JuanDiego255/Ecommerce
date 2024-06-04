@@ -288,6 +288,9 @@
                     </div>
                     <div class="product-content">
                         <h3 class="title clothing-name"><a
+                                href="#">({{ $item->category }})</a>
+                        </h3>
+                        <h3 class="title clothing-name"><a
                                 href="{{ url('detail-clothing/' . $item->id . '/' . $category_id) }}">{{ $item->name }}<s
                                     class="text-danger">{{ $item->total_stock > 0 ? '' : ' Agotado' }}</s></a>
                         </h3>
