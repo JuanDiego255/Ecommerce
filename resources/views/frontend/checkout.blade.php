@@ -5,12 +5,14 @@
 @endsection
 @php
     $address_tenant = '';
+    $sinpe_name = '';
     switch ($tenantinfo->tenant) {
         case 'abril7cr':
         case 'aycfashion':
             $address_tenant = '(Envío dentro de la GAM ₡2500)';
+            $sinpe_name = 'Sharlin Patricia Espinoza';
             break;
-        
+
         default:
             break;
     }
@@ -20,7 +22,8 @@
         <div class="breadcrumb-nav bc3x">
             @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
                 <li class="home"><a href="{{ url('/') }}"><i class="fas fa-{{ $icon->home }} me-1"></i></a></li>
-                <li class="bread-standard"><a href="{{ url('category/') }}"><i class="fas fa-{{ $icon->categories }} me-1"></i>Categorías</a></li>
+                <li class="bread-standard"><a href="{{ url('category/') }}"><i
+                            class="fas fa-{{ $icon->categories }} me-1"></i>Categorías</a></li>
                 <li class="bread-standard"><a href="{{ url('/view-cart') }}"><i
                             class="fas fa-{{ $icon->cart }} me-1"></i>Carrito</a>
                 </li>
@@ -52,7 +55,8 @@
                             <form action="{{ url('payment') }}" method="POST" enctype="multipart/form-data">
                                 @csrf
                                 <input type="hidden" value="0" name="delivery" id="delivery">
-                                <input type="hidden" value="{{ $delivery }}" name="total_delivery" id="total_delivery">
+                                <input type="hidden" value="{{ $delivery }}" name="total_delivery"
+                                    id="total_delivery">
                                 <input type="hidden" value="V" name="kind_of" id="kind_of">
                                 <div class="row checkout-form">
                                     <div class="col-md-6">
@@ -246,7 +250,10 @@
                                     <p class="ms-auto"></span>₡<span
                                             id="totalIva">{{ number_format($total_price) }}</span></p>
                                 </div>
-                                <p class="fw-bold h7">Tarifa de envío por correos de C.R ₡{{ $delivery }} {{$address_tenant}}</p>
+                                <p class="fw-bold h7">Tarifa de envío por correos de C.R ₡{{ $delivery }}
+                                    {{ $address_tenant }}</p>
+                                <p class="fw-bold h7">SINPE Móvil:
+                                    {{ isset($tenantinfo->sinpe) ? $tenantinfo->sinpe : '' }} {{'('.$sinpe_name.')'}}</p>
                                 <div class="h8">
                                     <label for="checkboxSubmit">
                                         <div class="form-check">
@@ -297,34 +304,45 @@
     </script>
     <script>
         /*  paypal.Buttons({
-                                                        locale: 'es',
-                                                        fundingSource: paypal.FUNDING.CARD,
-                                                        createOrder: function(data, actions) {
-                                                            return actions.order.create({
+                                                            locale: 'es',
+                                                            fundingSource: paypal.FUNDING.CARD,
+                                                            createOrder: function(data, actions) {
+                                                                return actions.order.create({
 
-                                                                payer: {
-                                                                    email_address: '{{ isset(Auth::user()->email) ? Auth::user()->email : '' }}',
-                                                                    name: {
-                                                                        given_name: '{{ isset(Auth::user()->name) ? Auth::user()->name : '' }}',
-                                                                        surname: ''
+                                                                    payer: {
+                                                                        email_address: '{{ isset(Auth::user()->email) ? Auth::user()->email : '' }}',
+                                                                        name: {
+                                                                            given_name: '{{ isset(Auth::user()->name) ? Auth::user()->name : '' }}',
+                                                                            surname: ''
+                                                                        },
+                                                                        address: {
+                                                                            country_code: "CR",
+                                                                        }
                                                                     },
-                                                                    address: {
-                                                                        country_code: "CR",
-                                                                    }
-                                                                },
-                                                                purchase_units: [{
-                                                                    amount: {
-                                                                        value: {{ $paypal_amount }}
-                                                                    }
-                                                                }]
-                                                            });
-                                                        },
+                                                                    purchase_units: [{
+                                                                        amount: {
+                                                                            value: {{ $paypal_amount }}
+                                                                        }
+                                                                    }]
+                                                                });
+                                                            },
 
-                                                        onApprove(data) {
-                                                            return fetch("/paypal/process/" + data.orderID)
-                                                                .then((response) => response.json())
-                                                                .then((orderData) => {
-                                                                    if (!orderData.success) {
+                                                            onApprove(data) {
+                                                                return fetch("/paypal/process/" + data.orderID)
+                                                                    .then((response) => response.json())
+                                                                    .then((orderData) => {
+                                                                        if (!orderData.success) {
+                                                                            swal({
+                                                                                title: orderData.status,
+                                                                                icon: orderData.icon,
+                                                                            }).then((value) => {
+                                                                                // Esta función se ejecuta cuando el usuario hace clic en el botón "Ok"
+                                                                                if (value) {
+                                                                                    // Recargar la página
+                                                                                    window.location.href = '{{ url('/') }}';
+                                                                                }
+                                                                            });
+                                                                        }
                                                                         swal({
                                                                             title: orderData.status,
                                                                             icon: orderData.icon,
@@ -335,23 +353,12 @@
                                                                                 window.location.href = '{{ url('/') }}';
                                                                             }
                                                                         });
-                                                                    }
-                                                                    swal({
-                                                                        title: orderData.status,
-                                                                        icon: orderData.icon,
-                                                                    }).then((value) => {
-                                                                        // Esta función se ejecuta cuando el usuario hace clic en el botón "Ok"
-                                                                        if (value) {
-                                                                            // Recargar la página
-                                                                            window.location.href = '{{ url('/') }}';
-                                                                        }
                                                                     });
-                                                                });
-                                                        },
-                                                        onError: function(err) {
-                                                            alert(err);
-                                                        }
-                                                    }).render('#paypal-button-container'); */
+                                                            },
+                                                            onError: function(err) {
+                                                                alert(err);
+                                                            }
+                                                        }).render('#paypal-button-container'); */
 
         function togglePaypalButton() {
             var checkBox = document.getElementById("sinpe");
