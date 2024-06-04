@@ -151,7 +151,7 @@
 
                                             </div>
                                         @endif
-                                        @if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'mandicr')
+                                        @if (isset($tenantinfo->show_stock) && $tenantinfo->show_stock != 0)
                                             <span class="text-muted-normal"><i
                                                     class="fas fa-shopping-basket fa-sm mx-1"></i>{{ $item->total_stock }}
                                                 {{ $item->total_stock > 1 ? 'órdenes' : 'orden' }}</span>

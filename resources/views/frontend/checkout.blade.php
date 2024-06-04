@@ -3,6 +3,18 @@
     {!! SEOMeta::generate() !!}
     {!! OpenGraph::generate() !!}
 @endsection
+@php
+    $address_tenant = '';
+    switch ($tenantinfo->tenant) {
+        case 'abril7cr':
+        case 'aycfashion':
+            $address_tenant = '(Envío dentro de la GAM ₡2500)';
+            break;
+        
+        default:
+            break;
+    }
+@endphp
 @section('content')
     <div class="container mt-4">
         <div class="breadcrumb-nav bc3x">
@@ -234,9 +246,7 @@
                                     <p class="ms-auto"></span>₡<span
                                             id="totalIva">{{ number_format($total_price) }}</span></p>
                                 </div>
-                                <p class="fw-bold h7">Tarifa de envío por correos de C.R ₡{{ $delivery }} (Grecia o
-                                    alrededores no se
-                                    cobra envío.)</p>
+                                <p class="fw-bold h7">Tarifa de envío por correos de C.R ₡{{ $delivery }} {{$address_tenant}}</p>
                                 <div class="h8">
                                     <label for="checkboxSubmit">
                                         <div class="form-check">
