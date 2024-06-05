@@ -53,7 +53,7 @@
                                             {{ __('Stock (Inventario)') }}
                                         @endif
                                     </label>
-                                    <input @if ($tenantinfo->manage_size != 0) readonly @endif type="number"
+                                    <input required type="number"
                                         class="form-control form-control-lg" name="stock">
                                 </div>
                             </div>
@@ -220,13 +220,13 @@
                         <label for="precio_${talla}">{{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'Tallas' : 'Tamaños' }} ${sizeName}:</label><br>                       
                         <div class="col-md-6">
                             <div class="input-group input-group-static">                           
-                                <input required type="text" value="" class="form-control form-control-lg" id="precio_${talla}" name="precios[${talla}]" placeholder="Precio">                            
+                                <input required type="text" value="0" class="form-control form-control-lg" id="precio_${talla}" name="precios[${talla}]" placeholder="Precio">                            
                             </div>
                         </div>
                        
                         <div class="col-md-6">
                             <div class="input-group input-group-static">                           
-                                <input required type="text" value="" class="form-control form-control-lg" id="cantidad_${talla}" name="cantidades[${talla}]" placeholder="Cantidad">
+                                <input required type="text" value="0" class="form-control form-control-lg" id="cantidad_${talla}" name="cantidades[${talla}]" placeholder="Cantidad">
                             </div>
                         </div>
                         
@@ -326,7 +326,7 @@
                     // Crear el elemento label
                     var label = document.createElement("label");
                     label.setAttribute("for", precioId);
-                    label.textContent = `${selectedText}:`;
+                    label.textContent = `${selectedText}: Al dejar el precio o el stock en 0, se tomará en cuenta el precio y el stock del producto`;
                     if (main_attr == 0) {
                         label.textContent = `${selectedText}` + no_main_text;
                     }
@@ -343,7 +343,7 @@
                     var inputPrecio = document.createElement("input");
                     inputPrecio.required = true;
                     inputPrecio.type = "text";
-                    inputPrecio.value = "";
+                    inputPrecio.value = "0";
                     if (main_attr == 0) {
                         inputPrecio.value = "0";
                         inputPrecio.readOnly = true;
@@ -371,7 +371,7 @@
                     var inputCantidad = document.createElement("input");
                     inputCantidad.required = true;
                     inputCantidad.type = "text";
-                    inputCantidad.value = "";
+                    inputCantidad.value = "0";
                     inputCantidad.className = "form-control form-control-lg";
                     inputCantidad.id = cantidadId;
                     inputCantidad.name = `cantidades_attr[${selectedValue}]`;

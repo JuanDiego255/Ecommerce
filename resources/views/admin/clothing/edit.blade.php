@@ -324,7 +324,7 @@
                     // Crear el elemento label
                     var label = document.createElement("label");
                     label.setAttribute("for", precioId);
-                    label.textContent = `${selectedText}:`;
+                    label.textContent = `${selectedText}: Al dejar el precio o el stock en 0, se tomará en cuenta el precio y el stock del producto`;
                     if (main_attr == 0) {
                         label.textContent = `${selectedText}` + no_main_text;
                     }
@@ -341,7 +341,7 @@
                     var inputPrecio = document.createElement("input");
                     inputPrecio.required = true;
                     inputPrecio.type = "text";
-                    inputPrecio.value = "";
+                    inputPrecio.value = "0";
                     if (main_attr == 0) {
                         inputPrecio.value = "0";
                         inputPrecio.readOnly = true;
@@ -369,7 +369,7 @@
                     var inputCantidad = document.createElement("input");
                     inputCantidad.required = true;
                     inputCantidad.type = "text";
-                    inputCantidad.value = "";
+                    inputCantidad.value = "0";
                     inputCantidad.className = "form-control form-control-lg";
                     inputCantidad.id = cantidadId;
                     inputCantidad.name = `cantidades_attr[${selectedValue}]`;
@@ -457,7 +457,7 @@
                             // Crear el elemento label
                             var label = document.createElement("label");
                             label.setAttribute("for", precioId);
-                            label.textContent = `${selectedText}:`;
+                            label.textContent = `${selectedText}: Al dejar el precio o el stock en 0, se tomará en cuenta el precio y el stock del producto`;
                             if (main_attr == 0) {
                                 label.textContent = `${selectedText}` + no_main_text;
                             }

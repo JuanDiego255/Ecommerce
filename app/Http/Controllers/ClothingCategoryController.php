@@ -315,7 +315,9 @@ class ClothingCategoryController extends Controller
                     foreach ($prices_attr as $itemId => $precio) {
                         $cantidad = $cantidades_attr[$itemId];
                         $attr_id = AttributeValue::where('id', $itemId)->first();
-                        $this->updateAttr($id, $cantidad, $precio, $attr_id->attribute_id, $itemId);
+                        $correct_price = $precio > 0 ? $precio : $request->price;
+                        $correct_qty = $cantidad > 0 ? $cantidad : $request->stock;
+                        $this->updateAttr($id, $correct_qty, $correct_price, $attr_id->attribute_id, $itemId);
                     }
                 }
             } else {
@@ -434,7 +436,9 @@ class ClothingCategoryController extends Controller
                         foreach ($prices_attr as $itemId => $precio) {
                             $cantidad = $cantidades_attr[$itemId];
                             $attr_id = AttributeValue::where('id', $itemId)->first();
-                            $this->processAttr($clothingId, $cantidad, $precio, $attr_id->attribute_id, $itemId);
+                            $correct_price = $precio > 0 ? $precio : $request->price;
+                            $correct_qty = $cantidad > 0 ? $cantidad : $request->stock;
+                            $this->processAttr($clothingId, $correct_qty, $correct_price, $attr_id->attribute_id, $itemId);
                         }
                     }
                 } else {
