@@ -317,10 +317,12 @@
                             <div class="item">
                                 <div class="product-grid product_data">
                                     <div class="product-image">
-                                        <img src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
+                                        <img
+                                            src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
 
                                         <ul class="product-links">
-                                            <li><a target="blank" href="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"><i
+                                            <li><a target="blank"
+                                                    href="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"><i
                                                         class="fas fa-eye"></i></a></li>
                                         </ul>
                                         <a href="{{ url('/blog/' . $item->id . '/' . $item->name_url) }}"
@@ -395,6 +397,31 @@
     @include('layouts.inc.indexfooter')
 @endsection
 @section('scripts')
+    @if (isset($advert))
+        <script>
+            // Verifica si la alerta ya ha sido mostrada en esta sesión
+            if (!sessionStorage.getItem('alertShown')) {
+                // Muestra la alerta
+                var advertContent = @json($advert->content);
+
+                // Muestra la alerta
+                Swal.fire({
+                    title: 'Anuncio importante!',
+                    html: advertContent,
+                    icon: "info",
+                    showCloseButton: true,
+                    focusConfirm: false,
+                    confirmButtonText: `
+                <i class="fa fa-thumbs-up"></i> Great!
+            `,
+                    confirmButtonAriaLabel: "Thumbs up, great!"
+                });
+                // Marca que la alerta ha sido mostrada
+                sessionStorage.setItem('alertShown', 'true');
+            }
+        </script>
+    @endif
+
     <script src="{{ asset('js/image-error-handler.js') }}"></script>
     <script>
         $('.featured-carousel').owlCarousel({

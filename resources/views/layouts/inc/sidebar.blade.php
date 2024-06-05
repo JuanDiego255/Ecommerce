@@ -157,6 +157,15 @@
                 </a>
             </li>
             <li class="nav-item">
+                <a @if ($view_name == 'admin_adverts_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
+                    href="{{ url('adverts') }}">
+                    <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                        <i class="material-icons opacity-10">campaign</i>
+                    </div>
+                    <span class="nav-link-text ms-1">Anuncios</span>
+                </a>
+            </li>
+            <li class="nav-item">
                 <a @if ($view_name == 'admin_users_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
                     href="{{ url('users') }}">
                     <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">

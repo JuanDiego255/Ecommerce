@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Mail\Mail as MailMail;
 use App\Mail\SampleMail;
 use App\Models\AddressUser;
+use App\Models\Advert;
 use App\Models\AttributeValueBuy;
 use App\Models\Buy;
 use App\Models\BuyDetail;
@@ -239,7 +240,9 @@ class CheckOutController extends Controller
             OpenGraph::setDescription($tag->meta_og_description);
         }
 
-        return view('frontend.checkout', compact('cartItems', 'tenant', 'delivery', 'iva', 'total_price', 'cloth_price', 'user_info', 'paypal_amount'));
+        $advert = Advert::where('section', 'checkout')->latest()->first();
+
+        return view('frontend.checkout', compact('cartItems','advert', 'tenant', 'delivery', 'iva', 'total_price', 'cloth_price', 'user_info', 'paypal_amount'));
     }
 
     public function payment(

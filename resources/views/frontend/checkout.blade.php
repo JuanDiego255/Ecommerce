@@ -253,7 +253,9 @@
                                 <p class="fw-bold h7">Tarifa de envío por correos de C.R ₡{{ $delivery }}
                                     {{ $address_tenant }}</p>
                                 <p class="fw-bold h7">SINPE Móvil:
-                                    {{ isset($tenantinfo->sinpe) ? $tenantinfo->sinpe : '' }} {{'('.$sinpe_name.')'}}</p>
+                                    {{ isset($tenantinfo->sinpe) ? $tenantinfo->sinpe : '' }}
+                                    {{ '(' . $sinpe_name . ')' }}
+                                </p>
                                 <div class="h8">
                                     <label for="checkboxSubmit">
                                         <div class="form-check">
@@ -299,66 +301,90 @@
     @include('layouts.inc.indexfooter')
 @endsection
 @section('scripts')
+    @if (isset($advert))
+        <script>
+            // Verifica si la alerta ya ha sido mostrada en esta sesión
+            if (!sessionStorage.getItem('alertShown')) {
+                // Muestra la alerta
+                var advertContent = @json($advert->content);
+
+                // Muestra la alerta
+                Swal.fire({
+                    title: 'Anuncio importante!',
+                    html: advertContent,
+                    icon: "info",
+                    showCloseButton: true,
+                    focusConfirm: false,
+                    confirmButtonText: `
+                        <i class="fa fa-thumbs-up"></i> Great!
+                    `,
+                    confirmButtonAriaLabel: "Thumbs up, great!"
+                });
+                // Marca que la alerta ha sido mostrada
+                sessionStorage.setItem('alertShown', 'true');
+            }
+        </script>
+    @endif
     <script
         src="https://www.paypal.com/sdk/js?client-id={{ env('PAYPAL_CLIENT_ID') }}&components=buttons,funding-eligibility">
     </script>
     <script>
         /*  paypal.Buttons({
-                                                            locale: 'es',
-                                                            fundingSource: paypal.FUNDING.CARD,
-                                                            createOrder: function(data, actions) {
-                                                                return actions.order.create({
+                                                                            locale: 'es',
+                                                                            fundingSource: paypal.FUNDING.CARD,
+                                                                            createOrder: function(data, actions) {
+                                                                                return actions.order.create({
 
-                                                                    payer: {
-                                                                        email_address: '{{ isset(Auth::user()->email) ? Auth::user()->email : '' }}',
-                                                                        name: {
-                                                                            given_name: '{{ isset(Auth::user()->name) ? Auth::user()->name : '' }}',
-                                                                            surname: ''
-                                                                        },
-                                                                        address: {
-                                                                            country_code: "CR",
-                                                                        }
-                                                                    },
-                                                                    purchase_units: [{
-                                                                        amount: {
-                                                                            value: {{ $paypal_amount }}
-                                                                        }
-                                                                    }]
-                                                                });
-                                                            },
+                                                                                    payer: {
+                                                                                        email_address: '{{ isset(Auth::user()->email) ? Auth::user()->email : '' }}',
+                                                                                        name: {
+                                                                                            given_name: '{{ isset(Auth::user()->name) ? Auth::user()->name : '' }}',
+                                                                                            surname: ''
+                                                                                        },
+                                                                                        address: {
+                                                                                            country_code: "CR",
+                                                                                        }
+                                                                                    },
+                                                                                    purchase_units: [{
+                                                                                        amount: {
+                                                                                            value: {{ $paypal_amount }}
+                                                                                        }
+                                                                                    }]
+                                                                                });
+                                                                            },
 
-                                                            onApprove(data) {
-                                                                return fetch("/paypal/process/" + data.orderID)
-                                                                    .then((response) => response.json())
-                                                                    .then((orderData) => {
-                                                                        if (!orderData.success) {
-                                                                            swal({
-                                                                                title: orderData.status,
-                                                                                icon: orderData.icon,
-                                                                            }).then((value) => {
-                                                                                // Esta función se ejecuta cuando el usuario hace clic en el botón "Ok"
-                                                                                if (value) {
-                                                                                    // Recargar la página
-                                                                                    window.location.href = '{{ url('/') }}';
-                                                                                }
-                                                                            });
-                                                                        }
-                                                                        swal({
-                                                                            title: orderData.status,
-                                                                            icon: orderData.icon,
-                                                                        }).then((value) => {
-                                                                            // Esta función se ejecuta cuando el usuario hace clic en el botón "Ok"
-                                                                            if (value) {
-                                                                                // Recargar la página
-                                                                                window.location.href = '{{ url('/') }}';
+                                                                            onApprove(data) {
+                                                                                return fetch("/paypal/process/" + data.orderID)
+                                                                                    .then((response) => response.json())
+                                                                                    .then((orderData) => {
+                                                                                        if (!orderData.success) {
+                                                                                            swal({
+                                                                                                title: orderData.status,
+                                                                                                icon: orderData.icon,
+                                                                                            }).then((value) => {
+                                                                                                // Esta función se ejecuta cuando el usuario hace clic en el botón "Ok"
+                                                                                                if (value) {
+                                                                                                    // Recargar la página
+                                                                                                    window.location.href = '{{ url('/') }}';
+                                                                                                }
+                                                                                            });
+                                                                                        }
+                                                                                        swal({
+                                                                                            title: orderData.status,
+                                                                                            icon: orderData.icon,
+                                                                                        }).then((value) => {
+                                                                                            // Esta función se ejecuta cuando el usuario hace clic en el botón "Ok"
+                                                                                            if (value) {
+                                                                                                // Recargar la página
+                                                                                                window.location.href = '{{ url('/') }}';
+                                                                                            }
+                                                                                        });
+                                                                                    });
+                                                                            },
+                                                                            onError: function(err) {
+                                                                                alert(err);
                                                                             }
-                                                                        });
-                                                                    });
-                                                            },
-                                                            onError: function(err) {
-                                                                alert(err);
-                                                            }
-                                                        }).render('#paypal-button-container'); */
+                                                                        }).render('#paypal-button-container'); */
 
         function togglePaypalButton() {
             var checkBox = document.getElementById("sinpe");

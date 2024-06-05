@@ -259,7 +259,7 @@
                         },
                         success: function(response) {
                             if (response.status != "success") {
-                                swal({
+                                Swal.fire({
                                     title: response.status,
                                     icon: response.icon,
                                 });
@@ -385,7 +385,7 @@
                         if (response.icon === "success") {
                             location.reload();
                         } else {
-                            swal({
+                            Swal.fire({
                                 title: response.status,
                                 icon: response.icon,
                             });

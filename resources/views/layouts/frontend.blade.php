@@ -52,7 +52,7 @@
 
     @if (session('status'))
         <script>
-             swal({
+             Swal.fire({
                 title: "{{ session('status') }}",
                 icon: "{{ session('icon') }}",
             });

@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\FrontendController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\AdvertController;
 use App\Http\Controllers\AttributeController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\BuyController;
@@ -127,11 +128,10 @@ Route::middleware([
             Route::put('/approve/{id}/{approved}', [BuyController::class, 'approve']);
             Route::put('/delivery/{id}/{delivery}', [BuyController::class, 'delivery']);
 
-            //Rutas para tallas
-            Route::post('sizes/store', [SizeController::class, 'store']);
-            Route::put('/sizes/update/{id}', [SizeController::class, 'update']);
-            Route::get('/sizes', [SizeController::class, 'index']);
-            Route::delete('/delete/sizes/{id}', [SizeController::class, 'destroy']);
+            //Rutas para anuncios
+            Route::post('advert/store', [AdvertController::class, 'store']);
+            Route::get('/adverts', [AdvertController::class, 'index']);
+            Route::delete('/delete/advert/{id}', [AdvertController::class, 'destroy']);
             //Rutas Metatags
             Route::get('/meta-tags/indexadmin', [MetaTagsController::class, 'index']);
             Route::post('/metatag', [MetaTagsController::class, 'store']);

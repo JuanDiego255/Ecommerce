@@ -65,7 +65,7 @@
     <script src="{{ asset('js/chartjs.min.js') }}" defer></script>
     <script async defer src="https://buttons.github.io/buttons.js"></script>
    
-    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="{{ asset('frontend/js/jquery-3.6.0.min.js') }}"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
@@ -74,7 +74,7 @@
 
     @if (session('status'))
         <script>
-            swal({
+            Swal.fire({
                 title: "{{ session('status') }}",
                 icon: "{{ session('icon') }}",
             });

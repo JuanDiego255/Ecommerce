@@ -256,7 +256,7 @@ class ClothingCategoryController extends Controller
             $clothing->update();
             //Procesar categorias
             $selectedCategories = $request->input('category_id');
-            $categoriesItemIds = array_keys($selectedCategories);           
+            $categoriesItemIds = array_keys($selectedCategories);
             $currentCategoriesRecords = PivotClothingCategory::where('clothing_id', $id)->get();
             foreach ($currentCategoriesRecords as $record) {
                 if (!in_array($record->category_id, $categoriesItemIds)) {
@@ -264,12 +264,19 @@ class ClothingCategoryController extends Controller
                 }
             }
 
-            foreach($selectedCategories as $selected_category){
-               $pivot_cat = new PivotClothingCategory();
-               $pivot_cat->category_id = $selected_category;
-               $pivot_cat->clothing_id = $id;
-               $pivot_cat->save();
+            foreach ($selectedCategories as $selected_category) {
+                $exists = PivotClothingCategory::where('category_id', $selected_category)
+                    ->where('clothing_id', $id)
+                    ->exists();
+
+                if (!$exists) {
+                    $pivot_cat = new PivotClothingCategory();
+                    $pivot_cat->category_id = $selected_category;
+                    $pivot_cat->clothing_id = $id;
+                    $pivot_cat->save();
+                }
             }
+
             //Porocesar categorias fin
 
             $imagesProduct =  ProductImage::where('clothing_id', $id)->get();

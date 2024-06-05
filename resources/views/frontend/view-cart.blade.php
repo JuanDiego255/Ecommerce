@@ -230,7 +230,7 @@
                         'quantity': quantity,
                     },
                     success: function(response) {
-                        swal(response.status);
+                        Swal.fire(response.status);
                     }
                 });
             });

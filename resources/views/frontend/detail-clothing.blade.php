@@ -376,7 +376,7 @@
                     'attributes': attributes,
                 },
                 success: function(response) {
-                    swal({
+                    Swal.fire({
                         title: response.status,
                         icon: response.icon,
                     });

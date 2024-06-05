@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Advert;
 use App\Models\Blog;
 use App\Models\Categories;
 use App\Models\ClothingCategory;
@@ -172,17 +173,17 @@ class FrontendController extends Controller
 
         $comments = Testimonial::where('approve', 1)->inRandomOrder()->orderBy('name', 'asc')
             ->get();
-
+        $advert = Advert::where('section', 'inicio')->latest()->first();
         switch ($tenantinfo->kind_business) {
             case (1):
-                return view('frontend.carsale.index', compact('clothings', 'blogs', 'social', 'clothings_offer', 'category', 'sellers', 'comments'));
+                return view('frontend.carsale.index', compact('clothings','advert', 'blogs', 'social', 'clothings_offer', 'category', 'sellers', 'comments'));
                 break;
             case (2):
             case (3):
-                return view('frontend.website.index', compact('clothings', 'blogs', 'social', 'clothings_offer', 'category', 'sellers', 'comments'));
+                return view('frontend.website.index', compact('clothings','advert', 'blogs', 'social', 'clothings_offer', 'category', 'sellers', 'comments'));
                 break;
             default:
-                return view('frontend.index', compact('clothings', 'blogs', 'social', 'clothings_offer', 'category', 'comments'));
+                return view('frontend.index', compact('clothings','advert', 'blogs', 'social', 'clothings_offer', 'category', 'comments'));
                 break;
         }
     }
@@ -368,7 +369,7 @@ class FrontendController extends Controller
         });
 
         $clothes = ClothingCategory::where('clothing.id', $id)
-            ->where('pivot_clothing_categories.category_id',$category_id)
+            ->where('pivot_clothing_categories.category_id', $category_id)
             ->where('clothing.status', 1)
             ->leftJoin('pivot_clothing_categories', 'clothing.id', '=', 'pivot_clothing_categories.clothing_id')
             ->leftJoin('categories', 'pivot_clothing_categories.category_id', '=', 'categories.id')
