@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Frontend;
 
+use Adrianorosa\GeoLocation\GeoLocation;
 use App\Http\Controllers\Controller;
 use App\Mail\Mail as MailMail;
 use App\Mail\SampleMail;
@@ -242,7 +243,7 @@ class CheckOutController extends Controller
 
         $advert = Advert::where('section', 'checkout')->latest()->first();
 
-        return view('frontend.checkout', compact('cartItems','advert', 'tenant', 'delivery', 'iva', 'total_price', 'cloth_price', 'user_info', 'paypal_amount'));
+        return view('frontend.checkout', compact('cartItems', 'advert', 'tenant', 'delivery', 'iva', 'total_price', 'cloth_price', 'user_info', 'paypal_amount'));
     }
 
     public function payment(
@@ -257,6 +258,15 @@ class CheckOutController extends Controller
         $postal_code = null
     ) {
         try {
+            // Obtener la IP del usuario
+            $userIp = request()->ip();
+
+            // Utilizar una API de geolocalización para obtener la ubicación basada en la IP
+            $details = GeoLocation::lookup($userIp);
+            $countryCode = $details->getCountryCode();
+            if($countryCode != 'CR'){
+                return redirect()->back()->with(['status' => 'No puede realizar una compra si se encuentra fuera de Costa Rica!', 'icon' => 'success']);
+            }
             $tenantinfo = TenantInfo::first();
             $tenant = $tenantinfo->tenant;
             $request = request();

@@ -130,7 +130,7 @@
                                             <label>País</label>
                                             <input
                                                 value="{{ isset($user_info->country) ? $user_info->country : 'Costa Rica' }}"
-                                                required value="Costa Rica" type="text" name="country"
+                                                required readonly value="Costa Rica" type="text" name="country"
                                                 class="form-control float-left w-100">
                                         </div>
                                     </div>
