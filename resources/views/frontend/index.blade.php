@@ -412,7 +412,7 @@
                     showCloseButton: true,
                     focusConfirm: false,
                     confirmButtonText: `
-                <i class="fa fa-thumbs-up"></i> Great!
+                <i class="fa fa-thumbs-up"></i> Entendido!
             `,
                     confirmButtonAriaLabel: "Thumbs up, great!"
                 });
