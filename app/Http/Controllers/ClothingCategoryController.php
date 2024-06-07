@@ -319,6 +319,13 @@ class ClothingCategoryController extends Controller
                         $correct_qty = $cantidad > 0 ? $cantidad : $request->stock;
                         $this->updateAttr($id, $correct_qty, $correct_price, $attr_id->attribute_id, $itemId);
                     }
+                } else {
+                    $value = AttributeValue::where('attributes.name', 'Stock')
+                        ->where('attribute_values.value', 'Automático')
+                        ->join('attributes', 'attributes.id', '=', 'attribute_values.attribute_id')
+                        ->select('attributes.id as attr_id', 'attribute_values.id as value_id')
+                        ->first();
+                    $this->updateAttr($id, $request->stock, $request->price, $value->attr_id, $value->value_id);
                 }
             } else {
                 $value = AttributeValue::where('attributes.name', 'Stock')
@@ -440,6 +447,13 @@ class ClothingCategoryController extends Controller
                             $correct_qty = $cantidad > 0 ? $cantidad : $request->stock;
                             $this->processAttr($clothingId, $correct_qty, $correct_price, $attr_id->attribute_id, $itemId);
                         }
+                    } else {
+                        $value = AttributeValue::where('attributes.name', 'Stock')
+                            ->where('attribute_values.value', 'Automático')
+                            ->join('attributes', 'attributes.id', '=', 'attribute_values.attribute_id')
+                            ->select('attributes.id as attr_id', 'attribute_values.id as value_id')
+                            ->first();
+                        $this->processAttr($clothingId, $request->stock, $request->price, $value->attr_id, $value->value_id);
                     }
                 } else {
                     $value = AttributeValue::where('attributes.name', 'Stock')
