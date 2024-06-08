@@ -17,7 +17,7 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <div class="input-group input-group-static mb-4">
-                            <label>{{ __('categoría') }}</label>
+                            <label>{{ __('Categoría') }}</label>
                             <input required value="{{ $categories->name }}" type="text"
                                 class="form-control form-control-lg" name="name">
                         </div>
@@ -39,8 +39,7 @@
 
                     <div class="col-md-12 mb-3">
                         <div class="input-group input-group-dynamic">
-                            <label class="form-label">{{ __('Descripción (*)') }}</label><br>
-                            <textarea required spellcheck="false" placeholder="Descripción" name="description" class="form-control" rows="3">{{ $categories->description }}</textarea>
+                            <textarea required spellcheck="false" placeholder="Escriba aquí la descripción..." name="description" class="form-control" rows="3">{{ $categories->description }}</textarea>
                         </div>
                     </div>
                     <div class="col-md-12 mb-3">

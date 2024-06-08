@@ -41,8 +41,7 @@
                     </div> --}}
                     <div class="col-md-12 mb-3">
                         <div class="input-group input-group-dynamic">
-                            <label class="form-label">{{ __('Descripción (*)') }}</label><br>
-                            <textarea required spellcheck="false" placeholder="Descripción" name="description" class="form-control" rows="3">
+                            <textarea required spellcheck="false" placeholder="Escriba aquí la descripción" name="description" class="form-control" rows="3">
 
                             </textarea>
                         </div>
