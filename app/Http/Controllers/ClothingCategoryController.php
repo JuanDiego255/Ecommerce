@@ -190,14 +190,14 @@ class ClothingCategoryController extends Controller
         $tenantinfo = TenantInfo::first();
         try {
             $validator = Validator::make($request->all(), [
-                'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Validación básica de cada imagen
+                'images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Validación básica de cada imagen
                 'images' => [ // Regla personalizada para validar la cantidad máxima de imágenes
                     new FourImage,
                 ],
             ]);
 
             if ($validator->fails() && isset($tenantinfo->tenant) && $tenantinfo->tenant != 'marylu') {
-                return redirect('/new-item/' . $request->category_id)->with(['status' => 'No puede seleccionar más de 4 imágenes!', 'icon' => 'warning']);
+                return redirect('/new-item/' . $request->category_id)->with(['status' => '(El formato de la imagen debe ser: jpg,png,jpeg,gif,svg. Max(2048), permitidas solo 4 imagenes)', 'icon' => 'warning']);
             }
 
             $msg = $this->createClothing($request, $tenantinfo);
@@ -221,7 +221,7 @@ class ClothingCategoryController extends Controller
             ]);
 
             if ($validator->fails()) {
-                return redirect('/edit-clothing/' . $id . '/' . $request->category_id)->with(['status' => 'No puede seleccionar más de 4 imágenes!', 'icon' => 'warning']);
+                return redirect('/edit-clothing/' . $id . '/' . $request->category_id)->with(['status' => '(El formato de la imagen debe ser: jpg,png,jpeg,gif,svg. Max(2048), permitidas solo 4 imagenes)', 'icon' => 'warning']);
             }
             $clothing = ClothingCategory::findOrfail($id);
             $clothing->name = $request->name;

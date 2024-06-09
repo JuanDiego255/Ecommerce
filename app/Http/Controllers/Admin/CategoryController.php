@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Categories;
+use App\Models\ClothingCategory;
 use App\Models\Department;
+use App\Models\PivotClothingCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -108,6 +110,10 @@ class CategoryController extends Controller
         DB::beginTransaction();
         try {
             $category = Categories::findOrfail($id);
+            $clothingsByCategoryId = PivotClothingCategory::where('category_id',$id)->get();
+            foreach($clothingsByCategoryId as $item){
+                ClothingCategory::where('id',$item->clothing_id)->delete();
+            }
             $category_name = $category->name;
             if (
                 Storage::delete('public/' . $category->image)
