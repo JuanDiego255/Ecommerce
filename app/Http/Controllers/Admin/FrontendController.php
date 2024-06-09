@@ -30,8 +30,8 @@ class FrontendController extends Controller
         // Define el tiempo de expiración en minutos
         $this->expirationTime = 60; // Por ejemplo, 60 minutos
     }
-    public function index()
-    {
+    public function index($showModal = null)
+    {        
         $tenantinfo = TenantInfo::first();
 
         $social = Cache::remember('social_networks', $this->expirationTime, function () {
@@ -176,14 +176,14 @@ class FrontendController extends Controller
         $advert = Advert::where('section', 'inicio')->latest()->first();
         switch ($tenantinfo->kind_business) {
             case (1):
-                return view('frontend.carsale.index', compact('clothings','advert', 'blogs', 'social', 'clothings_offer', 'category', 'sellers', 'comments'));
+                return view('frontend.carsale.index', compact('clothings','showModal','advert', 'blogs', 'social', 'clothings_offer', 'category', 'sellers', 'comments'));
                 break;
             case (2):
             case (3):
-                return view('frontend.website.index', compact('clothings','advert', 'blogs', 'social', 'clothings_offer', 'category', 'sellers', 'comments'));
+                return view('frontend.website.index', compact('clothings','showModal','advert', 'blogs', 'social', 'clothings_offer', 'category', 'sellers', 'comments'));
                 break;
             default:
-                return view('frontend.index', compact('clothings','advert', 'blogs', 'social', 'clothings_offer', 'category', 'comments'));
+                return view('frontend.index', compact('clothings','advert', 'showModal','blogs', 'social', 'clothings_offer', 'category', 'comments'));
                 break;
         }
     }

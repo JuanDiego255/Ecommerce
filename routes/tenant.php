@@ -53,6 +53,7 @@ Route::middleware([
     PreventAccessFromCentralDomains::class,
 ])->group(function () {
     Route::get('/', [FrontendController::class, 'index']);
+    Route::get('/{show}', [FrontendController::class, 'index']);
     Route::group(['middleware' => 'isLicense'], function () {
 
         //Google authentication ----->

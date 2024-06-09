@@ -4,6 +4,7 @@
     {!! OpenGraph::generate() !!}
 @endsection
 @section('content')
+    <input type="hidden" value="{{ $showModal }}" name="showModalComment" id="showModalComment">
     <style>
         .cascading-right {
             margin-right: -50px;
@@ -55,7 +56,8 @@
                     <div class="{{ $key + 1 > 3 ? 'col-md-3' : 'col-md-4' }} col-sm-6 mb-2">
                         <div class="product-grid product_data">
                             <div class="product-image">
-                                <img src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
+                                <img
+                                    src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
                                 <ul class="product-links">
                                     <li><a target="blank" href="{{ tenant_asset('/') . '/' . $item->image }}"><i
                                                 class="fas fa-eye"></i></a></li>
@@ -80,7 +82,8 @@
                     <div class="col-md-4 col-sm-6 mb-2">
                         <div class="product-grid product_data">
                             <div class="product-image">
-                                <img src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
+                                <img
+                                    src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
                                 <ul class="product-links">
                                     <li><a target="blank" href="{{ tenant_asset('/') . '/' . $item->image }}"><i
                                                 class="fas fa-eye"></i></a></li>
@@ -182,9 +185,11 @@
                                 <div class="product-image-offer">
                                     <a href="#" class="image-offer">
 
-                                        <img class="pic-1" src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
+                                        <img class="pic-1"
+                                            src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
 
-                                        <img class="pic-2" src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
+                                        <img class="pic-2"
+                                            src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
 
                                     </a>
                                     <span class="product-hot-label">{{ $item->name }} @if ($item->can_buy == 1)
@@ -347,7 +352,8 @@
                 <!-- Team item -->
                 @foreach ($sellers as $item)
                     <div class="col-xl-3 col-sm-6 mb-5">
-                        <div class="bg-white rounded shadow-sm py-5 px-4"><img src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"
+                        <div class="bg-white rounded shadow-sm py-5 px-4"><img
+                                src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"
                                 alt="" width="100"
                                 class="img-fluid rounded-circle mb-3 img-thumbnail shadow-sm">
                             <h5 class="mb-0">{{ $item->name }}</h5><span
@@ -400,10 +406,12 @@
                             <div class="item">
                                 <div class="product-grid product_data">
                                     <div class="product-image">
-                                        <img src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
+                                        <img
+                                            src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
 
                                         <ul class="product-links">
-                                            <li><a target="blank" href="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"><i
+                                            <li><a target="blank"
+                                                    href="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"><i
                                                         class="fas fa-eye"></i></a></li>
                                         </ul>
                                         <a href="{{ url('/blog/' . $item->id . '/' . $item->name_url) }}"
@@ -521,6 +529,13 @@
                     }
                 });
             });
+
+            var showModal = document.getElementById('showModalComment');
+            var showModalValue = showModal.value;
+            if (showModalValue == "add-comment") {
+                var myModal = new bootstrap.Modal(document.getElementById('add-comment-modal'));
+                myModal.show();
+            }
         });
     </script>
 @endsection

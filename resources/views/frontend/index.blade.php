@@ -4,6 +4,7 @@
     {!! OpenGraph::generate() !!}
 @endsection
 @section('content')
+    <input type="hidden" value="{{ $showModal }}" name="showModalComment" id="showModalComment">
     @if (count($tenantcarousel) != 0)
         <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
             <div class="carousel-inner mb-1 foto">
@@ -457,6 +458,13 @@
                     }
                 });
             });
+
+            var showModal = document.getElementById('showModalComment');
+            var showModalValue = showModal.value;
+            if(showModalValue == "add-comment"){
+                var myModal = new bootstrap.Modal(document.getElementById('add-comment-modal'));
+                myModal.show();
+            }            
         });
     </script>
 @endsection
