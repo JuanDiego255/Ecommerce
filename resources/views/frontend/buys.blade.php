@@ -90,7 +90,7 @@
 
                                     <td class="align-middle text-xxs text-center">
                                         <p class=" font-weight-bold mb-0">
-                                            @if ($buy->aprroved == 0)
+                                            @if ($buy->approved == 0)
                                                 Pendiente
                                             @else
                                                 Aprobado
