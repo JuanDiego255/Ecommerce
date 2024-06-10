@@ -264,7 +264,7 @@ class CheckOutController extends Controller
             // Utilizar una API de geolocalización para obtener la ubicación basada en la IP
             $details = GeoLocation::lookup($userIp);
             $countryCode = $details->getCountryCode();
-            if($countryCode != 'CR'){
+            if ($countryCode != 'CR') {
                 return redirect()->back()->with(['status' => 'No puede realizar una compra si se encuentra fuera de Costa Rica!', 'icon' => 'success']);
             }
             $tenantinfo = TenantInfo::first();
@@ -819,34 +819,17 @@ class CheckOutController extends Controller
             $email = $tenantinfo->email;
             if ($email) {
 
-                $details = [
-                    'title' => 'Se realizó una venta por medio del sitio web.',
-                    'body' => '---------------------------' . PHP_EOL
-                ];
-
                 if ($delivery > 0) {
                     $total_price = $total_price + $delivery;
                 }
-                foreach ($cartItems as $item) {
-                    $precio = $item->price;
-                    if (Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0) {
-                        $precio = $item->mayor_price;
-                    }
 
+                $details = [
+                    'cartItems' => $cartItems,
+                    'total_price' => $total_price,
+                    'title' => 'Se realizó una venta por medio del sitio web - ' . $tenantinfo->title
+                ];
 
-                    $details['body'] .= $item->name . ' - Código: ' . $item->code . ':' . PHP_EOL;
-                    $details['body'] .= 'Cantidad = ' . $item->quantity . PHP_EOL;
-                    $details['body'] .= 'Precio C/U = ' . $precio . PHP_EOL;
-                    if ($item->discount != 0) {
-                        $details['body'] .= 'Descuento = ' . $item->discount . PHP_EOL;
-                    }
-                    $details['body'] .= 'Talla = ' . $item->size . PHP_EOL;
-                    $details['body'] .= '---------------------------' . PHP_EOL;
-                }
-                $details['body'] .= 'Precio (IVA + Envío) = ' . $total_price . PHP_EOL;
-
-                // Aquí enviamos el correo sin necesidad de especificar una vista
-                Mail::raw($details['body'], function ($message) use ($details, $email) {
+                Mail::send('emails.sale', $details, function ($message) use ($details, $email) {
                     $message->to($email)
                         ->subject($details['title']);
                 });
