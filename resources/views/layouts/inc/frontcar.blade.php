@@ -151,7 +151,7 @@
                         </div>
                     </div>
                 @endif
-
+                <a href="{{ url('blog/index') }}" class="nav-menu-item"><i class="fa fa-book me-3"></i>BLOG</a>
                 <a href="{{ route('register') }}" class="nav-menu-item"><i
                         class="fa fa-user-plus me-3"></i>REGISTRARSE</a>
                 <a href="{{ route('login') }}" class="nav-menu-item"><i class="fa fa-sign-in me-3"></i>INGRESAR</a>
@@ -225,6 +225,7 @@
                         </div>
                     </div>
                 @endif
+                <a href="{{ url('blog/index') }}" class="nav-menu-item"><i class="fa fa-book me-3"></i>BLOG</a>
 
                 <div class="nav-menu-item">
                     <a class="color-menu" href="javascript:void(0);" id="toggleLogout"><i

@@ -3,24 +3,15 @@
 {!! OpenGraph::generate() !!}
 
 @section('content')
-
-    <div
-        class="container mt-5 {{ $tenantinfo->kind_business != 3 && $tenantinfo->kind_business != 4 && $tenantinfo->kind_business != 0 ? 'd-block' : 'd-none' }}">
-        <div class="breadcrumb-nav bc3x">
-            <li class="home"><a href="{{ url('/') }}"><i class="fas fa-{{ $icon->home }} me-1"></i></a></li>
-            <li class="bread-standard"><a href="{{ url('blog/index') }}"><i class="fas fa-book me-1"></i>Blog</a></li>
-            <li class="bread-standard"><a href="#"><i class="fas fa-tag me-1"></i>Artículo</a></li>
-        </div>
-    </div>
     <div class="bg-transparent mt-5">
         <h1 class="text-title-blog text-center">{{ $blog->title }}</h1>
     </div>
     {{-- salto de pagina --}}
-    <div class="{{ $tenantinfo->kind_business == 3 || $tenantinfo->kind_business == 4 || $tenantinfo->kind_business == 0 ? 'd-block' : 'd-none' }}"
+    <div class="d-block"
         style="height: 200px;"></div>
     {{-- cards info --}}
     <div
-        class="text-center container {{ $tenantinfo->kind_business == 3 || $tenantinfo->kind_business == 4 || $tenantinfo->kind_business == 0 ? 'd-block' : 'd-none' }}">
+        class="text-center container">
         <div class="row text-center">
             <!-- Team item -->
             @foreach ($cards as $item)
@@ -176,7 +167,7 @@
         </div>
     @endif
     {{-- salto de pagina --}}
-    <div class="{{ $tenantinfo->kind_business == 3 || $tenantinfo->kind_business == 4 || $tenantinfo->kind_business == 0 ? 'd-block' : 'd-none' }}"
+    <div class=""
         style="height: 75px;"></div>
     {{-- Carousel de resultados --}}
     @if (count($results) != 0)
@@ -239,7 +230,7 @@
             </div>
         </div>
         {{-- salto de pagina --}}
-        <div class="{{ $tenantinfo->kind_business == 3 || $tenantinfo->kind_business == 4 || $tenantinfo->kind_business == 0 ? 'd-block' : 'd-none' }}"
+        <div class=""
             style="height: 75px;">
 
         </div>
@@ -262,7 +253,7 @@
             </div>
         </div>
         {{-- salto de pagina --}}
-        <div class="{{ $tenantinfo->kind_business == 3 || $tenantinfo->kind_business == 4 || $tenantinfo->kind_business == 0 ? 'd-block' : 'd-none' }}"
+        <div class=""
             style="height: 75px;"></div>
     @endif
     {{-- Comentarios --}}

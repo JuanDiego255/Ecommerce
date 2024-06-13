@@ -11,12 +11,12 @@
                             @php
                                 $social_logo = null;
                                 if (stripos($social->social_network, 'Facebook') !== false) {
-                                    $social_logo = 'fa fa-facebook';
+                                    $social_logo = 'fab fa-facebook';
                                 } elseif (stripos($social->social_network, 'Instagram') !== false) {
-                                    $social_logo = 'fa fa-instagram';
+                                    $social_logo = 'fab fa-instagram';
                                 }
                                 if (stripos($social->social_network, 'Twitter') !== false) {
-                                    $social_logo = 'fa fa-twitter';
+                                    $social_logo = 'fab fa-twitter';
                                 }
                             @endphp
                             <a target="blank" class="mr-5 text-footer" href="{{ url($social->url) }}">
@@ -43,7 +43,7 @@
                 <div>
                     <p class="text-footer text-uppercase text-lg">
                         <a target="blank" href="{{url('https://wa.me/506'.$tenantinfo->whatsapp)}}" class="text-footer">
-                            <i class="fa fa-whatsapp"></i>
+                            <i class="fab fa-whatsapp"></i>
                             {{ isset($tenantinfo->whatsapp) ? $tenantinfo->whatsapp : '' }}
                         </a>
                     </p>

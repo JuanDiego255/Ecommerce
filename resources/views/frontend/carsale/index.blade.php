@@ -50,29 +50,21 @@
     {{-- Categories --}}
     @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
         @if (count($categories) != 0)
-            <div class="text-center">
-                <span class="text-muted text-center">Explora nuestras secciones! Navega y encuentra todo lo que desees. <a
-                        href="{{ url('category') }}">(Más secciones)</a></span>
-            </div>
-            <div class="row row-cols-1 row-cols-md-3 g-4 align-content-center card-group container-fluid mt-2 mb-5">
-                @foreach ($category as $item)
-                    <div class="col-md-3 col-sm-6 mb-2">
+            <div class="row g-4 align-content-center card-group container-fluid mt-2 mb-5">
+                @foreach ($category as $key => $item)
+                    <div class="{{ $key + 1 > 3 ? 'col-md-3' : 'col-md-4' }} col-sm-6 mb-2">
                         <div class="product-grid product_data">
                             <div class="product-image">
-                                <img src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
+                                <img
+                                    src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
                                 <ul class="product-links">
                                     <li><a target="blank" href="{{ tenant_asset('/') . '/' . $item->image }}"><i
                                                 class="fas fa-eye"></i></a></li>
                                 </ul>
                                 <a href="{{ url('clothes-category/' . $item->category_id . '/' . $item->department_id) }}"
-                                    class="add-to-cart">Descubrir
-                                    estilos</a>
+                                    class="add-to-cart">{{ $item->name }}</a>
                             </div>
-                            <div class="product-content">
-                                <h3 class="title"><a
-                                        href="{{ url('clothes-category/' . $item->category_id . '/' . $item->department_id) }}">{{ $item->name }}</a>
-                                </h3>
-                            </div>
+
                         </div>
                     </div>
                 @endforeach
@@ -86,10 +78,11 @@
             </div>
             <div class="row row-cols-1 row-cols-md-3 g-4 align-content-center card-group container-fluid mt-2 mb-5">
                 @foreach ($departments as $item)
-                    <div class="col-md-3 col-sm-6 mb-2">
+                    <div class="col-md-4 col-sm-6 mb-2">
                         <div class="product-grid product_data">
                             <div class="product-image">
-                                <img src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
+                                <img
+                                    src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
                                 <ul class="product-links">
                                     <li><a target="blank" href="{{ tenant_asset('/') . '/' . $item->image }}"><i
                                                 class="fas fa-eye"></i></a></li>
@@ -226,6 +219,52 @@
             <span class="text-center text-dark">{{ isset($tenantinfo->mision) ? $tenantinfo->mision : '' }}</span>
 
 
+        </div>
+    @endif
+    {{-- blogs --}}
+    @if (count($blogs) != 0)
+        <hr class="dark horizontal text-danger my-0">
+        <div class="mt-3 mb-5">
+            <div class="container-fluid">
+                <div class="text-center">
+                    <h3 class="text-center text-muted mt-5 mb-3">Blog de
+                        {{ isset($tenantinfo->title) ? $tenantinfo->title : '' }}, explora nuestras secciones, y aclara las
+                        dudas acerca de nuestros servicios.</h3>
+                </div>
+
+                <div class="row">
+                    <div class="row row-cols-1 row-cols-md-4 g-4 align-content-center card-group mt-2 mb-5">
+                        @foreach ($blogs as $item)
+                            <div class="item">
+                                <div class="product-grid product_data">
+                                    <div class="product-image">
+                                        <img
+                                            src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
+
+                                        <ul class="product-links">
+                                            <li><a target="blank"
+                                                    href="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"><i
+                                                        class="fas fa-eye"></i></a></li>
+                                        </ul>
+                                        <a href="{{ url('/blog/' . $item->id . '/' . $item->name_url) }}"
+                                            class="add-to-cart">Ver
+                                            información</a>
+                                    </div>
+                                    <div class="product-content">
+
+                                        <h3
+                                            class="{{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'text-muted' : 'title-frags' }}">
+                                            <a
+                                                href="{{ url('/blog/' . $item->id . '/' . $item->name_url) }}">{{ $item->title }}</a>
+                                        </h3>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+
+                </div>
+            </div>
         </div>
     @endif
     {{-- Comentarios --}}
