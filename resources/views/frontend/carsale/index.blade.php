@@ -332,13 +332,13 @@
                         <ul class="social mb-0 list-inline mt-3">
                             <li class="list-inline-item"><a
                                     href="{{ $item->url_face != '' ? $item->url_facebook : '#' }}"
-                                    class="social-link"><i class="fa fa-facebook-f"></i></a></li>
+                                    class="social-link"><i class="fab fa-facebook-f"></i></a></li>
                             <li class="list-inline-item"><a
                                     href="{{ $item->url_insta != '' ? $item->url_insta : '#' }}"
-                                    class="social-link"><i class="fa fa-instagram"></i></a></li>
+                                    class="social-link"><i class="fab fa-instagram"></i></a></li>
                             <li class="list-inline-item"><a
                                     href="{{ $item->url_linkedin != '' ? $item->url_linkedin : '#' }}"
-                                    class="social-link"><i class="fa fa-linkedin"></i></a></li>
+                                    class="social-link"><i class="fab fa-linkedin"></i></a></li>
                         </ul>
                     </div>
                 </div>
