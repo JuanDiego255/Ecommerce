@@ -18,7 +18,7 @@
     }
 @endphp
 @section('content')
-    <div class="container mt-4">
+    <div class="container mt-4 mb-4">
         <div class="breadcrumb-nav bc3x">
             @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
                 <li class="home"><a href="{{ url('/') }}"><i class="fas fa-{{ $icon->home }} me-1"></i></a></li>
@@ -78,7 +78,7 @@
                                     </div>
                                     <div class="col-md-6 mt-2">
                                         <div class="input-group input-group-static mb-4">
-                                            <label>Teléfono</label>
+                                            <label>Teléfono (WhatsApp)</label>
                                             <input
                                                 value="{{ isset(Auth::user()->telephone) ? Auth::user()->telephone : '' }}"
                                                 required type="text" name="telephone"

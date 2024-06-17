@@ -408,10 +408,11 @@ class FrontendController extends Controller
                 'a.name as columna_atributo',
                 'a.id as attr_id',
                 's.stock as stock',
-                DB::raw('GROUP_CONCAT(v.value SEPARATOR "-") as valores'),
-                DB::raw('GROUP_CONCAT(v.id SEPARATOR "-") as ids'),
+                DB::raw('GROUP_CONCAT(v.value ORDER BY v.value ASC SEPARATOR "-") as valores'),
+                DB::raw('GROUP_CONCAT(v.id ORDER BY v.value ASC SEPARATOR "-") as ids'),
             )
             ->groupBy('a.name', 'a.id', 's.stock')
+            ->orderBy('a.name','asc')
             ->get();
         $tags = MetaTags::where('section', 'Categoría Específica')->get();
         $tenantinfo = TenantInfo::first();
