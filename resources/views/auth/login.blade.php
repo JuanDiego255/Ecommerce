@@ -82,6 +82,3 @@
         <!-- Jumbotron -->
     </section>
 @endsection
-@section('script')
-    <script src="{{ asset('js/image-error-handler.js') }}"></script>
-@endsection

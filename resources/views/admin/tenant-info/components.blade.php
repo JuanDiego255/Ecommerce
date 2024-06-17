@@ -430,8 +430,7 @@
 @endsection
 @section('script')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-colorpicker/2.5.3/js/bootstrap-colorpicker.min.js">
-    </script>
-    <script src="{{ asset('js/image-error-handler.js') }}"></script>
+    </script>    
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             // Obtener todos los controles de color

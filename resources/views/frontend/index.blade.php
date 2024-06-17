@@ -423,7 +423,6 @@
         </script>
     @endif
 
-    <script src="{{ asset('js/image-error-handler.js') }}"></script>
     <script>
         $('.featured-carousel').owlCarousel({
             loop: true,

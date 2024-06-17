@@ -51,6 +51,3 @@
             @include('layouts.inc.indexfooter')
     @endswitch
 @endsection
-@section('scripts')
-    <script src="{{ asset('js/image-error-handler.js') }}"></script>
-@endsection

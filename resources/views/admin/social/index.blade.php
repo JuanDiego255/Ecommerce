@@ -108,7 +108,6 @@
     </div>
 @endsection
 @section('script')
-    <script src="{{ asset('js/image-error-handler.js') }}"></script>
     <script>
         var dataTable = $('#social').DataTable({
             searching: true,

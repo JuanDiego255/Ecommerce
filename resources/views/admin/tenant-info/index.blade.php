@@ -355,8 +355,7 @@ is-invalid
 
     </div>
 @endsection
-@section('script')
-    <script src="{{ asset('js/image-error-handler.js') }}"></script>
+@section('script')   
     <script>
         function confirmAndSubmit(id) {
             if (confirm('¿Deseas borrar esta red social?')) {

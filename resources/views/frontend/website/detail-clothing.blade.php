@@ -365,7 +365,6 @@
 @include('layouts.inc.indexfooter')
 @endsection
 @section('scripts')
-<script src="{{ asset('js/image-error-handler.js') }}"></script>
 <script>
     $(document).ready(function() {
 

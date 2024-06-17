@@ -106,8 +106,7 @@
         </div>
     </center>
 @endsection
-@section('script')
-    <script src="{{ asset('js/image-error-handler.js') }}"></script>
+@section('script')    
     <script>
         $(document).ready(function() {
             var dataTable = $('#articles').DataTable({

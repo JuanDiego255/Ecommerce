@@ -165,7 +165,6 @@
     @endif
 @endsection
 @section('scripts')
-    <script src="{{ asset('js/image-error-handler.js') }}"></script>
     <script>
         $(document).ready(function() {
             $('#searchfor').on('keyup', function() {

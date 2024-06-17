@@ -128,7 +128,6 @@
     </div>
 @endsection
 @section('script')
-    <script src="{{ asset('js/image-error-handler.js') }}"></script>
     <script>
         function submitForm(itemId) {
             var form = document.getElementById('delete-category' + itemId);

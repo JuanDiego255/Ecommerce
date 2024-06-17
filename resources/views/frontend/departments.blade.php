@@ -42,6 +42,3 @@
         @include('layouts.inc.indexfooter')
     @endif
 @endsection
-@section('scripts')
-    <script src="{{ asset('js/image-error-handler.js') }}"></script>
-@endsection

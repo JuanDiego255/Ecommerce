@@ -271,7 +271,6 @@
     @include('layouts.inc.main.indexfooter')
 @endsection
 @section('scripts')
-    <script src="{{ asset('js/image-error-handler.js') }}"></script>
     <script>
         $('.featured-carousel').owlCarousel({
             loop: true,
