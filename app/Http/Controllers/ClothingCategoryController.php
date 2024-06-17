@@ -314,8 +314,14 @@ class ClothingCategoryController extends Controller
 
                     foreach ($prices_attr as $itemId => $precio) {
                         $cantidad = $cantidades_attr[$itemId];
-                        $attr_id = AttributeValue::where('id', $itemId)->first();
-                        $correct_price = $precio > 0 ? $precio : $request->price;
+                        $correct_price = 0;
+                        $attr_id = AttributeValue::where('attribute_values.id', $itemId)
+                            ->join('attributes', 'attributes.id', '=', 'attribute_values.attribute_id')
+                            ->select('attributes.id as attribute_id', 'attribute_values.id as value_id', 'attributes.main as main')
+                            ->first();
+                        if ($attr_id->main != 0) {
+                            $correct_price = $precio > 0 ? $precio : $request->price;
+                        }
                         $correct_qty = $cantidad > 0 ? $cantidad : $request->stock;
                         $this->updateAttr($id, $correct_qty, $correct_price, $attr_id->attribute_id, $itemId);
                     }
@@ -442,8 +448,14 @@ class ClothingCategoryController extends Controller
                     if (!$validator_attr->fails()) {
                         foreach ($prices_attr as $itemId => $precio) {
                             $cantidad = $cantidades_attr[$itemId];
-                            $attr_id = AttributeValue::where('id', $itemId)->first();
-                            $correct_price = $precio > 0 ? $precio : $request->price;
+                            $correct_price = 0;
+                            $attr_id = AttributeValue::where('attribute_values.id', $itemId)
+                                ->join('attributes', 'attributes.id', '=', 'attribute_values.attribute_id')
+                                ->select('attributes.id as attribute_id', 'attribute_values.id as value_id', 'attributes.main as main')
+                                ->first();
+                            if ($attr_id->main != 0) {
+                                $correct_price = $precio > 0 ? $precio : $request->price;
+                            }
                             $correct_qty = $cantidad > 0 ? $cantidad : $request->stock;
                             $this->processAttr($clothingId, $correct_qty, $correct_price, $attr_id->attribute_id, $itemId);
                         }

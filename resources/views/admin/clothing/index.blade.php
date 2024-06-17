@@ -3,6 +3,9 @@
     {!! SEOMeta::generate() !!}
     {!! OpenGraph::generate() !!}
 @endsection
+@php
+    $exist_attr = false;
+@endphp
 @section('content')
     <center>
         <h2 class="text-center font-title">
@@ -113,12 +116,20 @@
 
                                         @for ($i = 0; $i < count($attr); $i++)
                                             @if ($attrPerItem[$i] != null && $attrPerItem[$i] != '' && $attr[$i] != 'Stock')
-                                                <p class="mb-0">Atributo: {{ $attr[$i] }}: {{ $stockPerSize[$i] }}
-                                                </p>
+                                                @php
+                                                    $exist_attr = true;
+                                                @endphp
                                             @endif
                                         @endfor
+                                        @if ($exist_attr == true)
+                                            <p class="mb-0">{{ __('Con atributos') }}
+                                            </p>
+                                        @else
+                                            <p class="mb-0">{{ __('Sin atributos') }}
+                                            </p>
+                                        @endif
 
-                                    </td>                                   
+                                    </td>
                                     <td class="align-middle text-center text-sm">
                                         <p class="text-success mb-0">{{ $item->total_stock }}
                                         </p>
