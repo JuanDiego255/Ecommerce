@@ -320,12 +320,24 @@ is-invalid
                                     @php
                                         $social_logo = null;
                                         if (stripos($social->social_network, 'Facebook') !== false) {
-                                            $social_logo = 'fa fa-facebook';
+                                            $social_logo = 'fab fa-facebook';
                                         } elseif (stripos($social->social_network, 'Instagram') !== false) {
-                                            $social_logo = 'fa fa-instagram';
+                                            $social_logo = 'fab fa-instagram';
                                         }
                                         if (stripos($social->social_network, 'Twitter') !== false) {
-                                            $social_logo = 'fa fa-twitter';
+                                            $social_logo = 'fab fa-twitter';
+                                        }
+                                        if (stripos($social->social_network, 'LinkedIn') !== false) {
+                                            $social_logo = 'fab fa-linkedin';
+                                        }
+                                        if (stripos($social->social_network, 'You tube') !== false) {
+                                            $social_logo = 'fab fa-youtube';
+                                        }
+                                        if (stripos($social->social_network, 'Wordpress') !== false) {
+                                            $social_logo = 'fab fa-wordpress';
+                                        }
+                                        if (stripos($social->social_network, 'Tik tok') !== false) {
+                                            $social_logo = 'fab fa-tiktok';
                                         }
                                     @endphp
                                     <a data-bs-toggle="modal"

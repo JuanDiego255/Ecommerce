@@ -29132,6 +29132,20 @@ ul.menu-social li a[href*="twitter.com"] {
 ul.menu-social li a[href*="instagram.com"] {
   background-color: #FCC58D;
 }
+ul.menu-social li a[href*="youtube.com"] {
+  background-color: #FF0000;
+}
+
+ul.menu-social li a[href*="x.com"] {
+  background-color: #43d2e4;
+}
+
+ul.menu-social li a[href*="tiktok.com"] {
+  background-color: #69C9D0;
+}
+ul.menu-social li a[href*="wordpress.com"] {
+  background-color: #21759B;
+}
 
 ul.menu-social li a[href*="wa.me"] {
   background-color: #a8d673;
@@ -29177,6 +29191,18 @@ ul.menu-social li a[href*="wa.me"]::before {
 
 ul.menu-social li a[href*="blog/index"]::before {
   content: "\f02d";
+}
+ul.menu-social li a[href*="x.com"]::before {
+  content: "\f099";
+}
+ul.menu-social li a[href*="youtube.com"]::before {
+  content: "\f167";
+}
+ul.menu-social li a[href*="wordpress.com"]::before {
+  content: "\f19a";
+}
+ul.menu-social li a[href*="tiktok.com"]::before {
+  content: "\f3e5";
 }
 
 ul.menu-social li a[href*="#"]::before {

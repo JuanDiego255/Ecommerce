@@ -15,6 +15,15 @@
                             } elseif (stripos($social->social_network, 'LinkedIn') !== false) {
                                 $social_logo = 'fab fa-linkedin';
                             }
+                            if (stripos($social->social_network, 'You tube') !== false) {
+                                $social_logo = 'fab fa-youtube';
+                            }
+                            if (stripos($social->social_network, 'Wordpress') !== false) {
+                                $social_logo = 'fab fa-wordpress';
+                            }
+                            if (stripos($social->social_network, 'Tik tok') !== false) {
+                                $social_logo = 'fab fa-tiktok';
+                            }
                         @endphp
                         <li><a target="blank" href="{{ url($social->url) }}"><i class="{{ $social_logo }}"
                                     aria-hidden="true"></i></a>
@@ -45,7 +54,8 @@
                 <h5 class="text-uppercase text-footer-title">Más Información!</h5>
                 <div>
                     <p class="text-footer text-uppercase text-lg">
-                        <a style="text-decoration: none;" class="mr-5 text-footer" href="{{ isset($tenantinfo->email) ? 'mailto:'.$tenantinfo->email : '#' }}">
+                        <a style="text-decoration: none;" class="mr-5 text-footer"
+                            href="{{ isset($tenantinfo->email) ? 'mailto:' . $tenantinfo->email : '#' }}">
                             <i class="fa fa-envelope"></i> {{ isset($tenantinfo->email) ? $tenantinfo->email : '' }}
                         </a><br>
                         <a target="blank" href="{{ url('https://wa.me/506' . $tenantinfo->whatsapp) }}"

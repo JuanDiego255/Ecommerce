@@ -16,6 +16,15 @@
                             } elseif (stripos($social->social_network, 'LinkedIn') !== false) {
                                 $social_logo = 'fab fa-linkedin';
                             }
+                            if (stripos($social->social_network, 'You tube') !== false) {
+                                $social_logo = 'fab fa-youtube';
+                            }
+                            if (stripos($social->social_network, 'Wordpress') !== false) {
+                                $social_logo = 'fab fa-wordpress';
+                            }
+                            if (stripos($social->social_network, 'Tik tok') !== false) {
+                                $social_logo = 'fab fa-tiktok';
+                            }
                         @endphp
                         <li><a target="blank" href="{{ url($social->url) }}"><i class="{{ $social_logo }}"
                                     aria-hidden="true"></i></a>
