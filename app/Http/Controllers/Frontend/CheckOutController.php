@@ -281,6 +281,7 @@ class CheckOutController extends Controller
                         ->join('attribute_value_cars', 'carts.id', 'attribute_value_cars.cart_id')
                         ->join('attributes', 'attribute_value_cars.attr_id', 'attributes.id')
                         ->join('attribute_values', 'attribute_value_cars.value_attr', 'attribute_values.id')
+                        ->where('stocks.price', '!=', 0)
                         ->leftJoin('stocks', function ($join) {
                             $join->on('carts.clothing_id', '=', 'stocks.clothing_id')
                                 ->on('attribute_value_cars.attr_id', '=', 'stocks.attr_id')
@@ -297,6 +298,7 @@ class CheckOutController extends Controller
                         ->select(
                             'clothing.id as clothing_id',
                             'clothing.name as name',
+                            'clothing.code as code',
                             'clothing.casa as casa',
                             'clothing.description as description',
                             'clothing.mayor_price as mayor_price',
@@ -315,6 +317,13 @@ class CheckOutController extends Controller
                                 JOIN attribute_values ON attribute_value_cars.value_attr = attribute_values.id
                                 WHERE attribute_value_cars.cart_id = carts.id
                             ) as attributes_values'),
+                            DB::raw('(
+                                SELECT GROUP_CONCAT(CONCAT(attributes.name, ": ", attribute_values.value) SEPARATOR ", ")
+                                FROM attribute_value_cars
+                                JOIN attributes ON attribute_value_cars.attr_id = attributes.id
+                                JOIN attribute_values ON attribute_value_cars.value_attr = attribute_values.id
+                                WHERE attribute_value_cars.cart_id = carts.id
+                            ) as attributes_values_str'),
                             DB::raw('IFNULL(product_images.image, "") as image'), // Obtener la primera imagen del producto
 
                         )
@@ -322,6 +331,7 @@ class CheckOutController extends Controller
                             'clothing.id',
                             'clothing.name',
                             'clothing.casa',
+                            'clothing.code',
                             'clothing.description',
                             'stocks.price',
                             'stocks.stock',
@@ -458,6 +468,7 @@ class CheckOutController extends Controller
                         ->join('attribute_value_cars', 'carts.id', 'attribute_value_cars.cart_id')
                         ->join('attributes', 'attribute_value_cars.attr_id', 'attributes.id')
                         ->join('attribute_values', 'attribute_value_cars.value_attr', 'attribute_values.id')
+                        ->where('stocks.price', '!=', 0)
                         ->leftJoin('stocks', function ($join) {
                             $join->on('carts.clothing_id', '=', 'stocks.clothing_id')
                                 ->on('attribute_value_cars.attr_id', '=', 'stocks.attr_id')
@@ -475,6 +486,7 @@ class CheckOutController extends Controller
                             'clothing.id as clothing_id',
                             'clothing.name as name',
                             'clothing.casa as casa',
+                            'clothing.code as code',
                             'clothing.description as description',
                             'clothing.mayor_price as mayor_price',
                             'clothing.discount as discount',
@@ -492,6 +504,13 @@ class CheckOutController extends Controller
                                 JOIN attribute_values ON attribute_value_cars.value_attr = attribute_values.id
                                 WHERE attribute_value_cars.cart_id = carts.id
                             ) as attributes_values'),
+                            DB::raw('(
+                                SELECT GROUP_CONCAT(CONCAT(attributes.name, ": ", attribute_values.value) SEPARATOR ", ")
+                                FROM attribute_value_cars
+                                JOIN attributes ON attribute_value_cars.attr_id = attributes.id
+                                JOIN attribute_values ON attribute_value_cars.value_attr = attribute_values.id
+                                WHERE attribute_value_cars.cart_id = carts.id
+                            ) as attributes_values_str'),
                             DB::raw('IFNULL(product_images.image, "") as image'), // Obtener la primera imagen del producto
 
                         )
@@ -499,6 +518,7 @@ class CheckOutController extends Controller
                             'clothing.id',
                             'clothing.name',
                             'clothing.casa',
+                            'clothing.code',
                             'clothing.description',
                             'stocks.price',
                             'stocks.stock',
@@ -639,6 +659,7 @@ class CheckOutController extends Controller
                     ->join('attribute_value_cars', 'carts.id', 'attribute_value_cars.cart_id')
                     ->join('attributes', 'attribute_value_cars.attr_id', 'attributes.id')
                     ->join('attribute_values', 'attribute_value_cars.value_attr', 'attribute_values.id')
+                    ->where('stocks.price', '!=', 0)
                     ->leftJoin('stocks', function ($join) {
                         $join->on('carts.clothing_id', '=', 'stocks.clothing_id')
                             ->on('attribute_value_cars.attr_id', '=', 'stocks.attr_id')
@@ -656,6 +677,7 @@ class CheckOutController extends Controller
                         'clothing.id as clothing_id',
                         'clothing.name as name',
                         'clothing.casa as casa',
+                        'clothing.code as code',
                         'clothing.description as description',
                         'clothing.mayor_price as mayor_price',
                         'clothing.discount as discount',
@@ -673,6 +695,13 @@ class CheckOutController extends Controller
                             JOIN attribute_values ON attribute_value_cars.value_attr = attribute_values.id
                             WHERE attribute_value_cars.cart_id = carts.id
                         ) as attributes_values'),
+                        DB::raw('(
+                            SELECT GROUP_CONCAT(CONCAT(attributes.name, ": ", attribute_values.value) SEPARATOR ", ")
+                            FROM attribute_value_cars
+                            JOIN attributes ON attribute_value_cars.attr_id = attributes.id
+                            JOIN attribute_values ON attribute_value_cars.value_attr = attribute_values.id
+                            WHERE attribute_value_cars.cart_id = carts.id
+                        ) as attributes_values_str'),
                         DB::raw('IFNULL(product_images.image, "") as image'), // Obtener la primera imagen del producto
 
                     )
@@ -680,6 +709,7 @@ class CheckOutController extends Controller
                         'clothing.id',
                         'clothing.name',
                         'clothing.casa',
+                        'clothing.code',
                         'clothing.description',
                         'stocks.price',
                         'stocks.stock',

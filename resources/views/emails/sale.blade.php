@@ -16,11 +16,14 @@
                         <th>Cantidad</th>
                         <th>Precio C/U</th>
                         <th>Descuento</th>
-                        <th>Talla</th>
+                        <th>Atributos</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($cartItems as $item)
+                        @php                            
+                            $attributesValues = explode(', ', $item->attributes_values_str);
+                        @endphp
                         <tr>
                             <td>{{ $item->name }}</td>
                             <td>{{ $item->code }}</td>
@@ -28,7 +31,18 @@
                             <td>{{ Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0 ? $item->mayor_price : $item->price }}
                             </td>
                             <td>{{ $item->discount != 0 ? $item->discount : '-' }}</td>
-                            <td>{{ $item->size }}</td>
+                            <td>
+                                <span class="ps-3 textmuted">
+                                    @foreach ($attributesValues as $attributeValue)
+                                        @php
+                                            // Separa el atributo del valor por ": "
+                                            [$attribute, $value] = explode(': ', $attributeValue);
+                                        @endphp
+
+                                        {{ $attribute }}: {{ $value }}
+                                    @endforeach
+                                </span>
+                            </td>
                         </tr>
                     @endforeach
                     <tr class="total-price-row">
