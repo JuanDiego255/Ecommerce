@@ -1,39 +1,48 @@
 <!-- resources/views/emails/sale.blade.php -->
 <!DOCTYPE html>
 <html>
+
 <body>
     <div class="receipt-container">
         <div class="receipt-header">
             <h1>Tiquete de compra</h1>
         </div>
         <div class="receipt-body">
-            @foreach ($cartItems as $item)
-                <div class="receipt-line">
-                    <div>{{ $item->name }}</div>
-                    <div>{{ $item->code }}</div>
-                </div>
-                <div class="receipt-line">
-                    <div>Cantidad: {{ $item->quantity }}</div>
-                    <div>Precio C/U: {{ Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0 ? $item->mayor_price : $item->price }}</div>
-                </div>
-                @if ($item->discount != 0)
-                    <div class="receipt-line">
-                        <div>Descuento: {{ $item->discount }}</div>
-                    </div>
-                @endif
-                <div class="receipt-line">
-                    <div>Talla: {{ $item->size }}</div>
-                </div>
-                <hr>
-            @endforeach
-            <div class="receipt-line">
-                <div>Precio (IVA + Envío):</div>
-                <div class="total-price">{{ $total_price }}</div>
-            </div>
+            <table class="receipt-table">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Código</th>
+                        <th>Cantidad</th>
+                        <th>Precio C/U</th>
+                        <th>Descuento</th>
+                        <th>Talla</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($cartItems as $item)
+                        <tr>
+                            <td>{{ $item->name }}</td>
+                            <td>{{ $item->code }}</td>
+                            <td>{{ $item->quantity }}</td>
+                            <td>{{ Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0 ? $item->mayor_price : $item->price }}
+                            </td>
+                            <td>{{ $item->discount != 0 ? $item->discount : '-' }}</td>
+                            <td>{{ $item->size }}</td>
+                        </tr>
+                    @endforeach
+                    <tr class="total-price-row">
+                        <td colspan="5">Precio (IVA + Envío):</td>
+                        <td>{{ $total_price }}</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
+        <hr>
         <div class="receipt-footer">
             <p>Compra recibida</p>
         </div>
     </div>
 </body>
+
 </html>

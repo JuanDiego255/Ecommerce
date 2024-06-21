@@ -28,59 +28,59 @@ class CartController extends Controller
         // Define el tiempo de expiración en minutos
         $this->expirationTime = 60; // Por ejemplo, 60 minutos
     }
-    public function checkCartItem($value_attr, $attr_id_val, $cloth_id, $type, $user)
+    public function checkCartItem($attributes, $cloth_id, $type, $user)
     {
-        // Obtener el ID del usuario autenticado
-        $found = false;
-        switch ($type) {
-            case "S":
-                $user_id = $user;
-                $cartItem = Cart::where('clothing_id', $cloth_id)
-                    ->where('session_id', $user_id)
-                    ->where('sold', 0)
-                    ->whereExists(function ($query) use ($attr_id_val, $value_attr) {
-                        $query->select(DB::raw(1))
-                            ->from('attribute_value_cars')
-                            ->whereColumn('attribute_value_cars.cart_id', 'carts.id')
-                            ->where('attribute_value_cars.attr_id', $attr_id_val)
-                            ->where('attribute_value_cars.value_attr', $value_attr);
-                    })
-                    ->first();
-                break;
-            case "C":
-                $cartItem = Cart::where('clothing_id', $cloth_id)
-                    ->where('user_id', null)
-                    ->where('session_id', null)
-                    ->where('sold', 0)
-                    ->whereExists(function ($query) use ($attr_id_val, $value_attr) {
-                        $query->select(DB::raw(1))
-                            ->from('attribute_value_cars')
-                            ->whereColumn('attribute_value_cars.cart_id', 'carts.id')
-                            ->where('attribute_value_cars.attr_id', $attr_id_val)
-                            ->where('attribute_value_cars.value_attr', $value_attr);
-                    })
-                    ->first();
-                break;
-            default:
-                $cartItem = Cart::where('clothing_id', $cloth_id)
-                    ->where('user_id', $user)
-                    ->where('sold', 0)
-                    ->whereExists(function ($query) use ($attr_id_val, $value_attr) {
-                        $query->select(DB::raw(1))
-                            ->from('attribute_value_cars')
-                            ->whereColumn('attribute_value_cars.cart_id', 'carts.id')
-                            ->where('attribute_value_cars.attr_id', $attr_id_val)
-                            ->where('attribute_value_cars.value_attr', $value_attr);
-                    })
-                    ->first();
+        $found = true;
+        $parsedAttributes = [];
+        foreach ($attributes as $attribute) {
+            list($value_attr, $attr_id) = explode('-', $attribute);
+            $parsedAttributes[$attr_id] = $value_attr;
         }
 
-        if ($cartItem) {
-            $found = true;
+        switch ($type) {
+            case "S":
+                $cartItems = Cart::where('clothing_id', $cloth_id)
+                    ->where('session_id', $user)
+                    ->where('sold', 0)->get();
+                break;
+            case "C":
+                $cartItems = Cart::where('clothing_id', $cloth_id)
+                    ->where('user_id', null)
+                    ->where('session_id', null)
+                    ->where('sold', 0)->get();
+                break;
+            default:
+                $cartItems = Cart::where('clothing_id', $cloth_id)
+                    ->where('user_id', $user)
+                    ->where('sold', 0)
+                    ->get();
         }
-        // Realizar la consulta en la tabla 'cart' y unirla con 'attribute_value_car'
+
+        foreach ($cartItems as $cartItem) {
+            $cartAttributes = DB::table('attribute_value_cars')
+                ->where('cart_id', $cartItem->id)
+                ->get()
+                ->pluck('value_attr', 'attr_id')
+                ->toArray();
+
+            $match = true;
+            foreach ($parsedAttributes as $attr_id => $value_attr) {
+                if (!isset($cartAttributes[$attr_id]) || $cartAttributes[$attr_id] != $value_attr) {
+                    $match = false;
+                    break;
+                }
+            }
+
+            if ($match) {
+                $found = false;
+                break; // Si se encuentra una coincidencia, no es necesario seguir buscando
+            }
+        }
+
+        // Retorna true si no se encontró una coincidencia, false en caso contrario
         return $found;
     }
+
     public function store(Request $request)
     {
         DB::beginTransaction();
@@ -91,11 +91,8 @@ class CartController extends Controller
                 $cloth_check = ClothingCategory::where('code', $code)->first();
 
                 if ($cloth_check) {
-                    foreach ($attributes as $attr) {
-                        list($value_attr, $attr_id_val, $cloth_id) = explode('-', $attr);
-                        $found = $this->checkCartItem($value_attr, $attr_id_val, $cloth_check->id,"C","");
-                    }
-                    if ($found) {
+                    $found = $this->checkCartItem($attributes, $cloth_check->id,"C","");
+                    if (!$found) {
                         return response()->json(['status' => 'El producto ya existe en el carrito', 'icon' => 'warning']);
                     } else {
                         $cart_item = new Cart();
@@ -130,11 +127,8 @@ class CartController extends Controller
                 if (Auth::check()) {
                     $cloth_check = ClothingCategory::where('id', $clothing_id)->exists();
                     if ($cloth_check) {
-                        foreach ($attributes as $attr) {
-                            list($value_attr, $attr_id_val, $cloth_id) = explode('-', $attr);
-                            $found = $this->checkCartItem($value_attr, $attr_id_val, $cloth_id,"U",Auth::id());
-                        }
-                        if ($found) {
+                        $found = $this->checkCartItem($attributes, $clothing_id, "U", Auth::id());
+                        if (!$found) {
                             return response()->json(['status' => 'El producto ya existe en el carrito', 'icon' => 'warning']);
                         } else {
                             $cart_item = new Cart();
@@ -170,12 +164,9 @@ class CartController extends Controller
                         $session_id = uniqid(); // Genera un identificador único temporal
                         session()->put('session_id', $session_id);
                     }
-                    // Verificar si el producto ya está en el carrito del usuario anónimo
-                    foreach ($attributes as $attr) {
-                        list($value_attr, $attr_id_val, $cloth_id) = explode('-', $attr);
-                        $found = $this->checkCartItem($value_attr, $attr_id_val, $cloth_id,"S", $session_id);
-                    }
-                    if ($found) {
+                    // Verificar si el producto ya está en el carrito del usuario anónimo                    
+                    $found = $this->checkCartItem($attributes, $clothing_id,"S",$session_id);
+                    if (!$found) {
                         return response()->json(['status' => 'El producto ya existe en el carrito', 'icon' => 'warning']);
                     } else {
                         $cart_item = new Cart();

@@ -407,11 +407,11 @@ class FrontendController extends Controller
             ->select(
                 'a.name as columna_atributo',
                 'a.id as attr_id',
-                's.stock as stock',
                 DB::raw('GROUP_CONCAT(v.value ORDER BY v.value ASC SEPARATOR "-") as valores'),
                 DB::raw('GROUP_CONCAT(v.id ORDER BY v.value ASC SEPARATOR "-") as ids'),
+                DB::raw('GROUP_CONCAT(s.stock ORDER BY v.value ASC SEPARATOR "-") as stock'),
             )
-            ->groupBy('a.name', 'a.id', 's.stock')
+            ->groupBy('a.name', 'a.id')
             ->orderBy('a.name','asc')
             ->get();
         $tags = MetaTags::where('section', 'Categoría Específica')->get();
