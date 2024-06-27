@@ -288,9 +288,9 @@ class FrontendController extends Controller
 
 
         foreach ($tags as $tag) {
-            SEOMeta::setTitle($tag->title . " - " . $tenantinfo->title);
-            SEOMeta::setKeywords($tag->meta_keywords);
-            SEOMeta::setDescription($tag->meta_description);
+            SEOMeta::setTitle($category_name . " - " . $tenantinfo->title);
+            SEOMeta::setKeywords($category->meta_keywords);
+            SEOMeta::setDescription($category->description);
             //Opengraph
             OpenGraph::addImage(URL::to($tag->url_image_og));
             OpenGraph::setTitle($tag->title);
@@ -381,6 +381,7 @@ class FrontendController extends Controller
                 'clothing.id as id',
                 'clothing.trending as trending',
                 'clothing.name as name',
+                'clothing.meta_keywords as meta_keywords',
                 'clothing.casa as casa',
                 'clothing.can_buy as can_buy',
                 'departments.id as department_id',
@@ -396,7 +397,7 @@ class FrontendController extends Controller
                 DB::raw('GROUP_CONCAT(stocks.price) AS price_per_size'),
                 DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
             )
-            ->groupBy('clothing.id', 'clothing.can_buy', 'clothing.casa', 'departments.id', 'departments.department', 'clothing.mayor_price', 'clothing.discount', 'categories.name', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
+            ->groupBy('clothing.id','clothing.meta_keywords', 'clothing.can_buy', 'clothing.casa', 'departments.id', 'departments.department', 'clothing.mayor_price', 'clothing.discount', 'categories.name', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
             ->orderByRaw('CASE WHEN clothing.casa IS NOT NULL AND clothing.casa != "" THEN 0 ELSE 1 END')
             ->orderBy('clothing.casa', 'asc')
             ->orderBy('clothing.name', 'asc')
@@ -416,10 +417,17 @@ class FrontendController extends Controller
             ->get();
         $tags = MetaTags::where('section', 'Categoría Específica')->get();
         $tenantinfo = TenantInfo::first();
+
+        foreach($clothes as $item){
+            $meta_keywords_cloth = $item->meta_keywords;
+            $name_cloth = $item->name;
+            $description_cloth = $item->description;
+        }
+
         foreach ($tags as $tag) {
-            SEOMeta::setTitle($tag->title . " - " . $tenantinfo->title);
-            SEOMeta::setKeywords($tag->meta_keywords);
-            SEOMeta::setDescription($tag->meta_description);
+            SEOMeta::setTitle($name_cloth . " - " . $tenantinfo->title);
+            SEOMeta::setKeywords($meta_keywords_cloth);
+            SEOMeta::setDescription($description_cloth);
             //Opengraph
             OpenGraph::addImage(URL::to($tag->url_image_og));
             OpenGraph::setTitle($tag->title);
