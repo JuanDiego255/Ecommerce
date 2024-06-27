@@ -12,7 +12,7 @@
         <hr class="hr-servicios">
 
 
-        <div class="row w-50">
+        <div class="row w-75">
             <div class="col-md-3">
                 <button type="button" data-bs-toggle="modal" data-bs-target="#add-tenant-modal" class="btn btn-velvet">Nuevo
                     Inquilino</button>
@@ -21,6 +21,12 @@
                 <form action="{{ url('generate/sitemap') }}" method="post" enctype="multipart/form-data">
                     {{ csrf_field() }}
                     <button type="submit" class="btn btn-danger">Generar Sitemaps</button>
+                </form>
+            </div>
+            <div class="col-md-3">
+                <form action="{{ url('generate/migrate') }}" method="post" enctype="multipart/form-data">
+                    {{ csrf_field() }}
+                    <button type="submit" class="btn btn-danger">Migrar BD</button>
                 </form>
             </div>
         </div>

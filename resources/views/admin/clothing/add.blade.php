@@ -122,6 +122,16 @@
                                     <label class="custom-control-label" for="customCheck1">{{ __('Tendencia') }}</label>
                                 </div>
                             </div>
+                            <div class="col-md-12 mb-3">
+                                <label
+                                    class="form-label">{{ __('Meta Keywords (Opcional - Presione enter para agregar la palabra
+                                                                clave)') }}</label><br>
+                                <div class="tags-input">
+                                    <ul id="tags"></ul>
+                                    <input type="text" id="input-tag" placeholder="Escriba la palabra clave.." />
+                                    <input type="hidden" value="" id="meta_keywords" name="meta_keywords">
+                                </div>
+                            </div>
 
                         </div>
 
@@ -419,4 +429,5 @@
                 });
         });
     </script>
+    <script src="{{ asset('js/add-tag.js') }}"></script>
 @endsection

@@ -126,6 +126,7 @@ class ClothingCategoryController extends Controller
                     'clothing.discount as discount',
                     'clothing.trending as trending',
                     'clothing.description as description',
+                    'clothing.meta_keywords as meta_keywords',
                     'clothing.price as price',
                     'clothing.mayor_price as mayor_price',
                     DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE 0 END) as total_stock'),
@@ -143,6 +144,7 @@ class ClothingCategoryController extends Controller
                     'clothing.trending',
                     'clothing.price',
                     'clothing.mayor_price',
+                    'clothing.meta_keywords',
                     'product_images.image',
                     'clothing.discount'
                 )
@@ -252,6 +254,7 @@ class ClothingCategoryController extends Controller
             } else {
                 $clothing->trending = 0;
             }
+            $clothing->meta_keywords = $request->meta_keywords;
 
             $clothing->update();
             //Procesar categorias
@@ -409,6 +412,7 @@ class ClothingCategoryController extends Controller
                 }
                 $clothing->status = 1;
                 $clothing->trending = $request->filled('trending') ? 1 : 0;
+                $clothing->meta_keywords = $request->meta_keywords;
                 $clothing->save();
                 $clothingId = $clothing->id;
 

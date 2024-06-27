@@ -178,6 +178,7 @@ Route::group(['middleware' => 'isAdmin'], function () {
     Route::post('manage/size/{id}', [TenantController::class, 'manageSize']);
     Route::post('manage/department/{id}', [TenantController::class, 'manageDepartment']);
     Route::post('generate/sitemap/', [TenantController::class, 'generateSitemap']);
+    Route::post('generate/migrate/', [TenantController::class, 'generateMigrate']);
     //Rutas para pagos de inquilinos
     Route::get('tenants/payments', [TenantPaymentController::class, 'index']);
     Route::get('tenant/manage-pay/{id}', [TenantPaymentController::class, 'indexPayment']);

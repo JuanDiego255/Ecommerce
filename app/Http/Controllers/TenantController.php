@@ -197,4 +197,13 @@ class TenantController extends Controller
             return redirect()->back()->with(['status' => 'Hubo un error al crear los sitemaps', 'icon' => 'error']);
         }
     }
+    public function generateMigrate()
+    {
+        try {
+            Artisan::call('tenants:migrate ');
+            return redirect()->back()->with(['status' => 'Se ejecutaron las migraciones con éxito', 'icon' => 'success']);
+        } catch (\Exception $th) {
+            return redirect()->back()->with(['status' => 'Hubo un error al ejecutar las migraciones', 'icon' => 'error']);
+        }
+    }
 }

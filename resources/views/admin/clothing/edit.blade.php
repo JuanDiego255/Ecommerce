@@ -141,6 +141,17 @@
                                     <input multiple class="form-control form-control-lg" type="file" name="images[]">
                                 </div>
                             </div>
+                            <div class="col-md-12 mb-3">
+
+                                <label>{{ __('Meta Keywords (Opcional - Presione enter para agregar la palabra clave)') }}</label><br>
+                                <div class="tags-input">
+                                    <ul id="tags"></ul>
+                                    <input type="text" id="input-tag" placeholder="Escriba la palabra clave.." />
+                                </div>
+                                <input id="meta_keywords" type="hidden" name="meta_keywords"
+                                    value="{{ $clothing->meta_keywords }}">
+        
+                            </div>
 
                         </div>
 
@@ -226,6 +237,8 @@
     </center>
 @endsection
 @section('script')
+    <script src="{{ asset('js/edit-tag.js') }}"></script>
+
     <script>
         $(document).ready(function() {
             createHtml();
