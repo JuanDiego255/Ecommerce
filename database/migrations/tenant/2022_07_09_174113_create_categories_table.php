@@ -20,10 +20,10 @@ class CreateCategoriesTable extends Migration
             $table->longText('description');
             $table->tinyInteger('status')->default(0);
             $table->tinyInteger('popular')->default(0);
-            $table->string('image',191);
-            $table->string('meta_title')->nullable();
-            $table->string('meta_descrip')->nullable();
-            $table->string('meta_keywords')->nullable();
+            $table->string('image',191)->nullable();
+            $table->text('meta_title')->nullable();
+            $table->text('meta_descrip')->nullable();
+            $table->text('meta_keywords')->nullable();
             $table->timestamps();
         });
     }

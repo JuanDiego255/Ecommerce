@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Attribute;
 use App\Models\Department;
 use App\Models\Settings;
 use App\Models\Size;
@@ -68,9 +69,10 @@ class DatabaseSeeder extends Seeder
             $new_department->department = "Default";
             $new_department->save();
 
-            $new_size = new Size();
-            $new_size->size = "N/A";
-            $new_size->save();
+            $attr = new Attribute();
+            $attr->name = "Stock";
+            $attr->type = "0";
+            $attr->save();
             DB::commit();
             return true;
         } catch (\Exception $th) {
