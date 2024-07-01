@@ -109,7 +109,7 @@
                                         </div>
                                     </td>
                                     <td class="align-middle text-center text-sm">
-                                        <p class="text-success mb-0">₡{{ $item->price }}
+                                        <p class="text-success mb-0">₡{{ number_format($item->price) }}
                                         </p>
                                     </td>
                                     <td class="align-middle text-center text-sm">

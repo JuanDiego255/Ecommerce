@@ -72,8 +72,10 @@ class CategoryController extends Controller
             $category->meta_keywords = $request->meta_keywords;
             $category->save();
             DB::commit();
+           
             return redirect('/categories/'.$department_id)->with(['status' => 'Categoría Agregada Exitosamente!', 'icon' => 'success']);
         } catch (\Exception $th) {
+            dd($th->getMessage());
             DB::rollBack();
             return redirect('/categories/'.$department_id)->with(['status' => $th->getMessage(), 'icon' => 'error']);
         }

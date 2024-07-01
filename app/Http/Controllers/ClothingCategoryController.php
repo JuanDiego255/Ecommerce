@@ -491,7 +491,6 @@ class ClothingCategoryController extends Controller
                 ->select('attributes.id as attr_id', 'attribute_values.id as value_id')
                 ->first();
             $clothing = new ClothingCategory();
-            $clothing->category_id = $request->category_id;
             $clothing->name = $request->name;
             $clothing->code = $request->code;
             $clothing->description = $request->description;
@@ -500,6 +499,11 @@ class ClothingCategoryController extends Controller
             $clothing->trending = $request->filled('trending') ? 1 : 0;
             $clothing->save();
             $clothingId = $clothing->id;
+            //Ligar categoria al producto
+            $clothing_category = new PivotClothingCategory();
+            $clothing_category->category_id = $request->category_id;
+            $clothing_category->clothing_id = $clothingId;
+            $clothing_category->save();
             $masive = $request->filled('masive') ? 1 : 0;
             $this->processAttr($clothingId, $request->stock, $request->price, $value->attr_id, $value->value_id);
         }
