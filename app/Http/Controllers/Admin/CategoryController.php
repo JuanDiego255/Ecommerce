@@ -75,9 +75,10 @@ class CategoryController extends Controller
            
             return redirect('/categories/'.$department_id)->with(['status' => 'Categoría Agregada Exitosamente!', 'icon' => 'success']);
         } catch (\Exception $th) {
-            dd($th->getMessage());
+            //dd($th->getMessage());
             DB::rollBack();
-            return redirect('/categories/'.$department_id)->with(['status' => $th->getMessage(), 'icon' => 'error']);
+            return redirect()->back()->with(['status' => 'Ocurrió un error al agregar la categoría, verifique que no hayan campos en blanco', 'icon' => 'error'])
+            ->withInput();
         }
     }
     public function update($id, Request $request)

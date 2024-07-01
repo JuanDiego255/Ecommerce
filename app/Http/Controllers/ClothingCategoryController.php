@@ -207,7 +207,8 @@ class ClothingCategoryController extends Controller
             return redirect()->back()->with(['status' => $msg, 'icon' => 'success']);
         } catch (Exception $th) {
             DB::rollback();
-            return redirect()->back()->with(['status' => $th->getMessage(), 'icon' => 'error']);
+            return redirect()->back()->with(['status' => 'Ocurrió un error al agregar el producto, verifique que no hayan campos en blanco', 'icon' => 'error'])
+            ->withInput();
         }
     }
     public function update($id, Request $request)

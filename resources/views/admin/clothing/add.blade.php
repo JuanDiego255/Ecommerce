@@ -26,14 +26,16 @@
                             <div class="col-md-6 mb-3">
                                 <div class="input-group input-group-static mb-4">
                                     <label> {{ __('Producto') }}</label>
-                                    <input required type="text" class="form-control form-control-lg" name="name">
+                                    <input required type="text" class="form-control form-control-lg" name="name"
+                                        value="{{ old('name') }}">
                                 </div>
                             </div>
                             @if (isset($tenantinfo->tenant) && $tenantinfo->tenant === 'fragsperfumecr')
                                 <div class="col-md-6 mb-3">
                                     <div class="input-group input-group-static mb-4">
                                         <label> {{ __('Casa') }}</label>
-                                        <input type="text" class="form-control form-control-lg" name="casa">
+                                        <input type="text" class="form-control form-control-lg" name="casa"
+                                            value="{{ old('casa') }}">
                                     </div>
                                 </div>
                             @endif
@@ -41,7 +43,7 @@
                                 <div class="input-group input-group-static mb-4">
                                     <label> {{ __('Código') }}</label>
                                     <input readonly type="text" placeholder="Se completa automáticamente"
-                                        class="form-control form-control-lg" name="code">
+                                        class="form-control form-control-lg" name="code" value="{{ old('code') }}">
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
@@ -53,28 +55,30 @@
                                             {{ __('Stock (Inventario)') }}
                                         @endif
                                     </label>
-                                    <input required type="number"
-                                        class="form-control form-control-lg" name="stock">
+                                    <input required type="number" class="form-control form-control-lg" name="stock"
+                                        value="{{ old('stock') }}">
                                 </div>
                             </div>
                             <div class="col-md-12 mb-3">
                                 <div class="input-group input-group-static mb-4">
                                     <textarea id="editor" type="text" class="form-control form-control-lg" name="description"
-                                        placeholder="Descripción del producto"></textarea>
+                                        placeholder="Descripción del producto">{{ old('description') }}</textarea>
                                 </div>
                             </div>
 
                             <div class="col-md-6 mb-3">
                                 <div class="input-group input-group-static mb-4">
                                     <label> {{ __('Precio') }}</label>
-                                    <input required type="number" class="form-control form-control-lg" name="price">
+                                    <input required type="number" class="form-control form-control-lg" name="price"
+                                        value="{{ old('price') }}">
                                 </div>
                             </div>
                             @if (isset($tenantinfo->tenant) && $tenantinfo->tenant === 'torres')
                                 <div class="col-md-6 mb-3">
                                     <div class="input-group input-group-static mb-4">
                                         <label>{{ __('Precio al por mayor') }}</label>
-                                        <input type="number" class="form-control form-control-lg" name="mayor_price">
+                                        <input type="number" class="form-control form-control-lg" name="mayor_price"
+                                            value="{{ old('mayor_price') }}">
                                     </div>
                                 </div>
                             @endif
@@ -82,7 +86,8 @@
                             <div class="col-md-6 mb-3">
                                 <div class="input-group input-group-static mb-4">
                                     <label>{{ __('Descuento (%) Opcional') }}</label>
-                                    <input type="number" class="form-control form-control-lg" name="discount">
+                                    <input type="number" class="form-control form-control-lg" name="discount"
+                                        value="{{ old('discount') }}">
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
@@ -98,7 +103,7 @@
                                     <label>{{ __('Crear productos masivamente?') }}</label>
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="1" id="masive"
-                                            name="masive">
+                                            name="masive" {{ old('masive') ? 'checked' : '' }}>
                                         <label class="custom-control-label" for="customCheck1">Crear</label>
                                     </div>
                                 </div>
@@ -108,7 +113,7 @@
                                     <label>{{ __('Se puede comprar?') }}</label>
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="1" id="can_buy"
-                                            name="can_buy">
+                                            name="can_buy" {{ old('can_buy') ? 'checked' : '' }}>
                                         <label class="custom-control-label" for="customCheck1">Producto de compra</label>
                                     </div>
                                 </div>
@@ -118,23 +123,28 @@
                                 <label>{{ __('Es tendencia?') }}</label>
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" value="1" id="trending"
-                                        name="trending">
+                                        name="trending" {{ old('trending') ? 'checked' : '' }}>
                                     <label class="custom-control-label" for="customCheck1">{{ __('Tendencia') }}</label>
                                 </div>
                             </div>
                             <div class="col-md-12 mb-3">
                                 <label
-                                    class="form-label">{{ __('Meta Keywords (Opcional - Presione enter para agregar la palabra
-                                                                clave)') }}</label><br>
+                                    class="form-label">{{ __('Meta Keywords (Opcional - Presione enter para agregar la palabra clave)') }}</label><br>
                                 <div class="tags-input">
-                                    <ul id="tags"></ul>
+                                    <ul id="tags">
+                                        @if (old('meta_keywords'))
+                                            @foreach (explode(',', old('meta_keywords')) as $keyword)
+                                                <li>{{ $keyword }}<span class="tag-remove"
+                                                        onclick="removeTag(this)">&times;</span></li>
+                                            @endforeach
+                                        @endif
+                                    </ul>
                                     <input type="text" id="input-tag" placeholder="Escriba la palabra clave.." />
-                                    <input type="hidden" value="" id="meta_keywords" name="meta_keywords">
+                                    <input type="hidden" value="{{ old('meta_keywords') }}" id="meta_keywords"
+                                        name="meta_keywords">
                                 </div>
                             </div>
-
                         </div>
-
 
                         <div class="col-md-12">
                             <button type="submit" class="btn btn-velvet">{{ __('Agregar producto') }}</button>
@@ -146,8 +156,7 @@
                 @if (count($attributes) > 0)
                     <div class="card mt-3">
                         <div class="card-header">
-                            <h4 class="text-dark">{{ __('Atributos') }}
-                            </h4>
+                            <h4 class="text-dark">{{ __('Atributos') }}</h4>
                         </div>
                         <div class="card-body">
                             <div class="row">
@@ -159,11 +168,11 @@
                                             autocomplete="attr_id" autofocus>
                                             <option selected value="0">{{ __('Sin atributos') }}</option>
                                             @foreach ($attributes as $key => $item)
-                                                <option value="{{ $item->id }}">
+                                                <option value="{{ $item->id }}"
+                                                    {{ old('attr_id') == $item->id ? 'selected' : '' }}>
                                                     {{ $item->name }}
                                                 </option>
                                             @endforeach
-
                                         </select>
                                         @error('attr_id')
                                             <span class="invalid-feedback" role="alert">
@@ -174,39 +183,13 @@
                                 </div>
                             </div>
                             <div id="hidden_id"></div>
-                            <div id="attr" class="row d-none">
-                                <div class="col-md-12 mb-2">
-                                    <div class="input-group input-group-static">
-                                        <label>{{ __('Seleccionar valor') }}</label>
-                                        <select id="value" name="value"
-                                            class="form-control form-control-lg @error('value') is-invalid @enderror"
-                                            autocomplete="value" autofocus>
-
-                                        </select>
-                                        @error('value')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                        @enderror
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div id="divValue" class="row">
-
-                            </div>
+                            <div id="all_values"></div>
                         </div>
                     </div>
                 @endif
             </div>
         </div>
     </form>
-
-    <center>
-        <div class="col-md-12 mt-3">
-            <a href="{{ url('add-item/' . $id) }}" class="btn btn-velvet w-25">Volver</a>
-        </div>
-    </center>
 @endsection
 @section('script')
     <script>
@@ -336,7 +319,8 @@
                     // Crear el elemento label
                     var label = document.createElement("label");
                     label.setAttribute("for", precioId);
-                    label.textContent = `${selectedText}: Al dejar el precio o el stock en 0, se tomará en cuenta el precio y el stock del producto`;
+                    label.textContent =
+                        `${selectedText}: Al dejar el precio o el stock en 0, se tomará en cuenta el precio y el stock del producto`;
                     if (main_attr == 0) {
                         label.textContent = `${selectedText}` + no_main_text;
                     }

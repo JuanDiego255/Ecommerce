@@ -16,20 +16,20 @@
                     <div class="col-md-6 mb-3">
                         <div class="input-group input-group-lg input-group-outline my-3">
                             <label class="form-label">{{ __('Categoría (*)') }}</label>
-                            <input required type="text" class="form-control form-control-lg" name="name">
+                            <input value="{{ old('name') }}" required type="text" class="form-control form-control-lg" name="name">
                         </div>
                     </div>
 
                     <div class="col-md-6 mb-3">
                         <div class="input-group input-group-lg input-group-outline my-3">
                             <label class="form-label">{{ __('Meta title (Opcional)') }}</label>
-                            <input type="text" class="form-control form-control-lg" name="meta_title">
+                            <input value="{{ old('meta_title') }}" type="text" class="form-control form-control-lg" name="meta_title">
                         </div>
                     </div>
                     <div class="col-md-6 mb-3">
                         <div class="input-group input-group-lg input-group-outline my-3">
                             <label class="form-label">{{ __('Meta description (Opcional)') }}</label>
-                            <input type="text" class="form-control form-control-lg" name="meta_descrip">
+                            <input value="{{ old('meta_descrip') }}" type="text" class="form-control form-control-lg" name="meta_descrip">
                         </div>
                     </div>
 
@@ -41,11 +41,10 @@
                     </div> --}}
                     <div class="col-md-12 mb-3">
                         <div class="input-group input-group-dynamic">
-                            <textarea required spellcheck="false" placeholder="Escriba aquí la descripción" name="description" class="form-control" rows="3">
-
-                            </textarea>
+                            <textarea required spellcheck="false" placeholder="Escriba aquí la descripción" name="description" class="form-control" rows="3">{{ old('description') }}</textarea>
                         </div>
                     </div>
+                    
                     <div class="col-md-12 mb-3">
                         <label
                             class="form-label">{{ __('Meta Keywords (Opcional - Presione enter para agregar la palabra
