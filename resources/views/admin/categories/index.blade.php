@@ -73,7 +73,7 @@
                             @foreach ($categories as $item)
                                 <tr>
                                     <td class="align-middle text-center">
-                                        
+
                                         <form name="delete-category{{ $item->id }}"
                                             id="delete-category{{ $item->id }}" method="post"
                                             action="{{ url('/delete-category/' . $item->id) }}">
@@ -126,6 +126,14 @@
 
         </div>
     </div>
+
+    @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 0)
+        <center>
+            <div class="col-md-12 mt-3">
+                <a href="{{ url('departments') }}" class="btn btn-velvet w-25">Volver</a>
+            </div>
+        </center>
+    @endif
 @endsection
 @section('script')
     <script>

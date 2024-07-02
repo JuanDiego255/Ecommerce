@@ -85,8 +85,9 @@ class ClothingCategoryController extends Controller
 
         $category_name = $category->name;
         $category_id = $id;
+        $department_id = $category->department_id;
 
-        return view('admin.clothing.index', compact('clothings', 'category_name', 'category_id'));
+        return view('admin.clothing.index', compact('clothings', 'category_name', 'category_id','department_id'));
     }
     public function add($id)
     {

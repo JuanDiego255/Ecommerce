@@ -61,11 +61,7 @@
             </div>
         @endif
     @else
-        @if (count($departments) != 0)
-            <div class="text-center">
-                <span class="text-muted text-center">Explora nuestros departamentos! Navega y encuentra todo lo que
-                    desees.</span>
-            </div>
+        @if (count($departments) != 0)            
             <div class="row row-cols-1 row-cols-md-3 g-4 align-content-center card-group container-fluid mt-2 mb-5">
                 @foreach ($departments as $item)
                     <div class="col-md-4 col-sm-6 mb-2">
@@ -77,13 +73,9 @@
                                     <li><a target="blank" href="{{ tenant_asset('/') . '/' . $item->image }}"><i
                                                 class="fas fa-eye"></i></a></li>
                                 </ul>
-                                <a href="{{ url('category/' . $item->id) }}" class="add-to-cart">Categorías</a>
+                                <a href="{{ url('category/' . $item->id) }}" class="add-to-cart">Categorías - {{$item->department}}</a>
                             </div>
-                            <div class="product-content">
-                                <h3 class="title"><a
-                                        href="{{ url('category/' . $item->id) }}">{{ $item->department }}</a>
-                                </h3>
-                            </div>
+                            
                         </div>
                     </div>
                 @endforeach

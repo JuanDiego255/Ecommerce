@@ -146,7 +146,7 @@
     <center>
 
         <div class="col-md-12 mt-3">
-            <a href="{{ url('categories') }}" class="btn btn-velvet w-25">Volver</a>
+            <a href="{{ url('categories/'.$department_id) }}" class="btn btn-velvet w-25">Volver</a>
         </div>
     </center>
 @endsection

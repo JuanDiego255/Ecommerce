@@ -105,7 +105,7 @@
 
         </div>
         <center>
-            <div class="container">
+            <div class="container mb-5">
                 {{ $clothings ?? ('')->links('pagination::simple-bootstrap-4') }}
             </div>
         </center>
