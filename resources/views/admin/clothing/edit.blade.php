@@ -31,7 +31,7 @@
                                         @foreach ($categories as $item)
                                             <option value="{{ $item->id }}"
                                                 {{ in_array($item->id, $selectedCategories) ? 'selected' : '' }}>
-                                                {{ $item->name }}
+                                                {{ $item->name }} {{$item->department != "Default" ? '- '.$item->department : ''}}
                                             </option>
                                         @endforeach
                                     </select>

@@ -98,7 +98,14 @@ class ClothingCategoryController extends Controller
     }
     public function edit($id, $category_id)
     {
-        $categories = Categories::orderBy('name', 'asc')->get();
+        $categories = Categories::orderBy('name', 'asc')
+        ->join('departments','categories.department_id','departments.id')
+        ->select(
+            'categories.id as id',
+            'categories.name as name',
+            'departments.department as department'
+        )
+        ->get();
         $selectedCategories = [];
         $selectedCategoriesSql = PivotClothingCategory::where('clothing_id', $id)->get('category_id');
         foreach ($selectedCategoriesSql as $selected_category) {
