@@ -359,7 +359,7 @@
                     </div>
                 @else
                     <div class="nav-menu-item">
-                        <i class="{{ $font_icon }} me-3"></i><a class="color-menu" href="javascript:void(0);"
+                        <i class="fas fa-{{ $icon->categories }} me-3"></i><a class="color-menu" href="javascript:void(0);"
                             id="toggleCategories">DEPARTAMENTOS <i class="fa fa-arrow-circle-down ml-3"></i></a>
                         <div class="subcategories" id="categoriesDropdown">
                             <ul>
