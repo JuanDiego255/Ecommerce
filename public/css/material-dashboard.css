@@ -269,6 +269,16 @@ sub {
   color: var(--btn_cart_text);
 }
 
+.badge-date {
+  color: #212529;
+  background-color: red;
+}
+
+.badge-date-blue {
+  color: #212529;
+  background-color: rgb(51, 0, 255);
+}
+
 .bg-cintillo {
   background-color: var(--cintillo) !important;
 }
@@ -8834,6 +8844,10 @@ fieldset:disabled .btn {
 
 .text-pill {
   color: var(--btn_cart_text) !important;
+}
+
+.text-pill-date {
+  color: red !important;
 }
 
 .text-pill-menu {
@@ -29554,4 +29568,34 @@ a.more-link {
 }
 .receipt-footer {
   text-align: center;
+}
+/* Efecto de parpadeo */
+.animacion {
+animation-name: parpadeo;
+animation-duration: 1s;
+animation-timing-function: linear;
+animation-iteration-count: infinite;
+
+-webkit-animation-name:parpadeo;
+-webkit-animation-duration: 1s;
+-webkit-animation-timing-function: linear;
+-webkit-animation-iteration-count: infinite;
+}
+
+@-moz-keyframes parpadeo{  
+0% { opacity: 1.0; }
+50% { opacity: 0.0; }
+100% { opacity: 1.0; }
+}
+
+@-webkit-keyframes parpadeo {  
+0% { opacity: 1.0; }
+50% { opacity: 0.0; }
+100% { opacity: 1.0; }
+}
+
+@keyframes parpadeo {  
+0% { opacity: 1.0; }
+50% { opacity: 0.0; }
+100% { opacity: 1.0; }
 }
