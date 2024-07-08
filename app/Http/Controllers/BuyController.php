@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\DB;
 use Artesaos\SEOTools\Facades\OpenGraph;
 use Artesaos\SEOTools\Facades\SEOMeta;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 
 class BuyController extends Controller
@@ -531,6 +532,39 @@ class BuyController extends Controller
             return response()->json(['status' => 'success', 'results' => $result]);
         } else {
             return response()->json(['status' => 'No existe ningún producto con el código digitado', 'icon' => 'warning']);
+        }
+    }
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        //
+        DB::beginTransaction();
+        try {
+
+            $order = Buy::findOrfail($id);            
+            if (
+                Storage::delete('public/' . $order->image)
+            ) {
+                Buy::destroy($id);
+            }
+            Buy::destroy($id);
+            DB::commit();
+
+            $buys = Buy::all();
+
+            if (count($buys) == 0) {
+                return redirect('/categories')->with(['status' => 'No hay pedidos registrados!', 'icon' => 'warning']);
+            }
+
+            return redirect('/buys-admin')->with(['status' => 'Se ha eliminado el pedido con éxito', 'icon' => 'success']);
+        } catch (\Exception $th) {
+            //throw $th;
+            DB::rollBack();
         }
     }
 }

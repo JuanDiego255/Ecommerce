@@ -71,6 +71,21 @@
                                 <tr>
                                     <td class="align-middle">
                                         <center>
+
+                                            <form style="display:inline" action="{{ url('delete-buy/' . $buy->id) }}"
+                                                method="POST" enctype="multipart/form-data">
+                                                @csrf
+                                                @method('DELETE')
+
+                                                <button class="btn btn-velvet text-white btn-tooltip"
+                                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar pedido"
+                                                    data-container="body" data-animation="true" type="submit"><i
+                                                        class="material-icons opacity-10">
+                                                        delete
+                                                    </i>
+                                                </button>
+                                            </form>
+
                                             @if ($buy->cancel_buy == 0)
                                                 <a data-bs-toggle="tooltip" data-bs-placement="top" title="Ver Detalle"
                                                     data-container="body" data-animation="true" class="btn btn-velvet"
@@ -236,7 +251,7 @@
 
     </div>
 @endsection
-@section('script')   
+@section('script')
     <script>
         var dataTable = $('#buys').DataTable({
             searching: true,

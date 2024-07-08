@@ -128,7 +128,7 @@ Route::middleware([
             Route::get('/buy/details/admin/{id}', [BuyController::class, 'buyDetailsAdmin']);
             Route::put('/approve/{id}/{approved}', [BuyController::class, 'approve']);
             Route::put('/delivery/{id}/{delivery}', [BuyController::class, 'delivery']);
-
+            Route::delete('delete-buy/{id}', [BuyController::class, 'destroy']);
             //Rutas para anuncios
             Route::post('advert/store', [AdvertController::class, 'store']);
             Route::get('/adverts', [AdvertController::class, 'index']);

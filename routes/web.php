@@ -82,6 +82,7 @@ Route::group(['middleware' => 'isAdmin'], function () {
     Route::get('/buy/details/admin/{id}', [BuyController::class, 'buyDetailsAdmin']);
     Route::put('/approve/{id}/{approved}', [BuyController::class, 'approve']);
     Route::put('/delivery/{id}/{delivery}', [BuyController::class, 'delivery']);
+    Route::delete('delete-buy/{id}', [BuyController::class, 'destroy']);
     //Rutas Metatags
     Route::get('/meta-tags/indexadmin', [MetaTagsController::class, 'index']);
     Route::post('/metatag', [MetaTagsController::class, 'store']);
