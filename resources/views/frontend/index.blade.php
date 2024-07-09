@@ -61,7 +61,7 @@
             </div>
         @endif
     @else
-        @if (count($departments) != 0)            
+        @if (count($departments) != 0)
             <div class="row row-cols-1 row-cols-md-3 g-4 align-content-center card-group container-fluid mt-2 mb-5">
                 @foreach ($departments as $item)
                     <div class="col-md-4 col-sm-6 mb-2">
@@ -73,9 +73,10 @@
                                     <li><a target="blank" href="{{ tenant_asset('/') . '/' . $item->image }}"><i
                                                 class="fas fa-eye"></i></a></li>
                                 </ul>
-                                <a href="{{ url('category/' . $item->id) }}" class="add-to-cart">Categorías - {{$item->department}}</a>
+                                <a href="{{ url('category/' . $item->id) }}" class="add-to-cart">Categorías -
+                                    {{ $item->department }}</a>
                             </div>
-                            
+
                         </div>
                     </div>
                 @endforeach
@@ -120,17 +121,26 @@
                                         </h3>
                                         <h3
                                             class="{{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'text-muted' : 'title-frags' }}">
-                                            <a href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}">{{ $item->name }}<s
-                                                    class="text-danger">{{ $item->total_stock > 0 ? '' : ' Agotado' }}</s></a>
+                                            <a href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}">{{ $item->name }}
+                                                @if ($item->total_stock == 0)
+                                                    <s class="text-danger"> Agotado</s>
+                                                @endif
+                                            </a>
                                         </h3>
+
                                         @if (isset($tenantinfo->show_stock) && $tenantinfo->show_stock != 0)
-                                            <h4 class="title">Stock: @if ($item->total_stock > 0)
+                                            <h4 class="title">
+                                                Stock:
+                                                @if ($item->total_stock > 0)
                                                     {{ $item->total_stock }}
+                                                @elseif ($item->total_stock == 0)
+                                                    <s class="text-danger">0</s>
                                                 @else
-                                                    <s class="text-danger">{{ $item->total_stock > 0 ? '' : '0' }}</s>
+                                                    <span class="text-info">Sin manejo de stock</span>
                                                 @endif
                                             </h4>
                                         @endif
+
 
                                         @php
 
@@ -452,10 +462,10 @@
 
             var showModal = document.getElementById('showModalComment');
             var showModalValue = showModal.value;
-            if(showModalValue == "add-comment"){
+            if (showModalValue == "add-comment") {
                 var myModal = new bootstrap.Modal(document.getElementById('add-comment-modal'));
                 myModal.show();
-            }            
+            }
         });
     </script>
 @endsection

@@ -277,7 +277,7 @@
                                         </p>
                                         <div class="d-flex align-items-center">
                                             <div class="input-group text-center input-group-static w-100">
-                                                <input max="${item.stock}" value="${item.quantity}" type="number" name="quantity" data-cart-id="${item.cart_id}" class="form-control btnQuantity text-center w-100 quantity">
+                                                <input max="${item.stock > 0 ? item.stock : ''}" min="1" value="${item.quantity}" type="number" name="quantity" data-cart-id="${item.cart_id}" class="form-control btnQuantity text-center w-100 quantity">
                                             </div>
                                             <form name="delete-item-cart" id="delete-item-cart" class="delete-form">
                                                 <input type="hidden" name="_token" value="{{ csrf_token() }}">

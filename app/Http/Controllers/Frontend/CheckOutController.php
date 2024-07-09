@@ -299,6 +299,7 @@ class CheckOutController extends Controller
                             'clothing.id as clothing_id',
                             'clothing.name as name',
                             'clothing.code as code',
+                            'clothing.manage_stock as manage_stock',
                             'clothing.casa as casa',
                             'clothing.description as description',
                             'clothing.mayor_price as mayor_price',
@@ -332,6 +333,7 @@ class CheckOutController extends Controller
                             'clothing.name',
                             'clothing.casa',
                             'clothing.code',
+                            'clothing.manage_stock',
                             'clothing.description',
                             'stocks.price',
                             'stocks.stock',
@@ -435,6 +437,7 @@ class CheckOutController extends Controller
                             $buy_detail->save();
                             $buy_detail_id = $buy_detail->id;
                             $attributeValuePairs = explode(',', $cart->attributes_values);
+
                             foreach ($attributeValuePairs as $pair) {
                                 list($attr_id, $value_attr) = explode('-', $pair);
                                 $attr_val_buy = new AttributeValueBuy();
@@ -442,18 +445,20 @@ class CheckOutController extends Controller
                                 $attr_val_buy->attr_id = $attr_id;
                                 $attr_val_buy->value_attr = $value_attr;
                                 $attr_val_buy->save();
-                                $cart_quantity = $cart->quantity;
-                                $stock = Stock::where('clothing_id', $cart->clothing_id)
-                                    ->where('attr_id', $attr_id)
-                                    ->where('value_attr', $value_attr)
-                                    ->first();
-                                if ($stock->price == 0) {
-                                    $cart_quantity = 1;
+                                if ($cart->manage_stock == 1) {
+                                    $cart_quantity = $cart->quantity;
+                                    $stock = Stock::where('clothing_id', $cart->clothing_id)
+                                        ->where('attr_id', $attr_id)
+                                        ->where('value_attr', $value_attr)
+                                        ->first();
+                                    if ($stock->price == 0) {
+                                        $cart_quantity = 1;
+                                    }
+                                    Stock::where('clothing_id', $cart->clothing_id)
+                                        ->where('attr_id', $attr_id)
+                                        ->where('value_attr', $value_attr)
+                                        ->update(['stock' => ($stock->stock - $cart_quantity)]);
                                 }
-                                Stock::where('clothing_id', $cart->clothing_id)
-                                    ->where('attr_id', $attr_id)
-                                    ->where('value_attr', $value_attr)
-                                    ->update(['stock' => ($stock->stock - $cart_quantity)]);
                             }
                         }
                     }
@@ -487,6 +492,7 @@ class CheckOutController extends Controller
                             'clothing.name as name',
                             'clothing.casa as casa',
                             'clothing.code as code',
+                            'clothing.manage_stock as manage_stock',
                             'clothing.description as description',
                             'clothing.mayor_price as mayor_price',
                             'clothing.discount as discount',
@@ -519,6 +525,7 @@ class CheckOutController extends Controller
                             'clothing.name',
                             'clothing.casa',
                             'clothing.code',
+                            'clothing.manage_stock',
                             'clothing.description',
                             'stocks.price',
                             'stocks.stock',
@@ -630,6 +637,7 @@ class CheckOutController extends Controller
                             $buy_detail->save();
                             $buy_detail_id = $buy_detail->id;
                             $attributeValuePairs = explode(',', $cart->attributes_values);
+
                             foreach ($attributeValuePairs as $pair) {
                                 list($attr_id, $value_attr) = explode('-', $pair);
                                 $attr_val_buy = new AttributeValueBuy();
@@ -637,14 +645,16 @@ class CheckOutController extends Controller
                                 $attr_val_buy->attr_id = $attr_id;
                                 $attr_val_buy->value_attr = $value_attr;
                                 $attr_val_buy->save();
-                                $stock = Stock::where('clothing_id', $cart->clothing_id)
-                                    ->where('attr_id', $attr_id)
-                                    ->where('value_attr', $value_attr)
-                                    ->first();
-                                Stock::where('clothing_id', $cart->clothing_id)
-                                    ->where('attr_id', $attr_id)
-                                    ->where('value_attr', $value_attr)
-                                    ->update(['stock' => ($stock->stock - $cart->quantity)]);
+                                if ($cart->manage_stock == 1) {
+                                    $stock = Stock::where('clothing_id', $cart->clothing_id)
+                                        ->where('attr_id', $attr_id)
+                                        ->where('value_attr', $value_attr)
+                                        ->first();
+                                    Stock::where('clothing_id', $cart->clothing_id)
+                                        ->where('attr_id', $attr_id)
+                                        ->where('value_attr', $value_attr)
+                                        ->update(['stock' => ($stock->stock - $cart->quantity)]);
+                                }
                             }
                         }
                     }
@@ -678,6 +688,7 @@ class CheckOutController extends Controller
                         'clothing.name as name',
                         'clothing.casa as casa',
                         'clothing.code as code',
+                        'clothing.manage_stock as manage_stock',
                         'clothing.description as description',
                         'clothing.mayor_price as mayor_price',
                         'clothing.discount as discount',
@@ -710,6 +721,7 @@ class CheckOutController extends Controller
                         'clothing.name',
                         'clothing.casa',
                         'clothing.code',
+                        'clothing.manage_stock',
                         'clothing.description',
                         'stocks.price',
                         'stocks.stock',
@@ -778,6 +790,7 @@ class CheckOutController extends Controller
                         $buy_detail->save();
                         $buy_detail_id = $buy_detail->id;
                         $attributeValuePairs = explode(',', $cart->attributes_values);
+
                         foreach ($attributeValuePairs as $pair) {
                             list($attr_id, $value_attr) = explode('-', $pair);
                             $attr_val_buy = new AttributeValueBuy();
@@ -785,14 +798,16 @@ class CheckOutController extends Controller
                             $attr_val_buy->attr_id = $attr_id;
                             $attr_val_buy->value_attr = $value_attr;
                             $attr_val_buy->save();
-                            $stock = Stock::where('clothing_id', $cart->clothing_id)
-                                ->where('attr_id', $attr_id)
-                                ->where('value_attr', $value_attr)
-                                ->first();
-                            Stock::where('clothing_id', $cart->clothing_id)
-                                ->where('attr_id', $attr_id)
-                                ->where('value_attr', $value_attr)
-                                ->update(['stock' => ($stock->stock - $cart->quantity)]);
+                            if ($cart->manage_stock == 1) {
+                                $stock = Stock::where('clothing_id', $cart->clothing_id)
+                                    ->where('attr_id', $attr_id)
+                                    ->where('value_attr', $value_attr)
+                                    ->first();
+                                Stock::where('clothing_id', $cart->clothing_id)
+                                    ->where('attr_id', $attr_id)
+                                    ->where('value_attr', $value_attr)
+                                    ->update(['stock' => ($stock->stock - $cart->quantity)]);
+                            }
                         }
                     }
                 }

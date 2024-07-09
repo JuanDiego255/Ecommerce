@@ -138,8 +138,7 @@
                                             </td>
                                             <td class="align-middle text-center text-sm">
                                                 <div class="input-group text-center input-group-static w-100">
-
-                                                    <input min="1" max="{{ $item->stock }}"
+                                                    <input min="1" max="{{ $item->stock > 0 ? $item->stock : ''}}"
                                                         data-cart-id="{{ $item->cart_id }}" value="{{ $item->quantity }}"
                                                         type="number" name="quantity" id="quantity{{ $item->quantity }}"
                                                         class="form-control btnQuantity text-center w-100 quantity">

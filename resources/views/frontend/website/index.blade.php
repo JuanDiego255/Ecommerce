@@ -192,20 +192,30 @@
                                             src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
 
                                     </a>
-                                    <span class="product-hot-label">{{ $item->name }} @if ($item->can_buy == 1)
-                                            <s class="text-danger">{{ $item->total_stock > 0 ? '' : 'Agotado' }}</s>
+                                    <span class="product-hot-label">
+                                        {{ $item->name }}
+                                        @if ($item->can_buy == 1)
+                                            @if ($item->total_stock == 0)
+                                                <s class="text-danger">Agotado</s>
+                                            @endif
                                         @endif
                                     </span>
+
                                     @if ($item->can_buy == 1)
                                         @if (isset($tenantinfo->show_stock) && $tenantinfo->show_stock != 0)
-                                            <h4 class="title">Stock: @if ($item->total_stock > 0)
+                                            <h4 class="title">
+                                                Stock:
+                                                @if ($item->total_stock > 0)
                                                     {{ $item->total_stock }}
+                                                @elseif ($item->total_stock == 0)
+                                                    <s class="text-danger">0</s>
                                                 @else
-                                                    <s class="text-danger">{{ $item->total_stock > 0 ? '' : '0' }}</s>
+                                                    <span class="text-info">Sin manejo de stock</span>
                                                 @endif
                                             </h4>
                                         @endif
                                     @endif
+
                                     <ul class="product-links-offer">
                                         <li><a href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}"
                                                 data-tip="Detallar"><i class="fa fa-eye"></i></a></li>

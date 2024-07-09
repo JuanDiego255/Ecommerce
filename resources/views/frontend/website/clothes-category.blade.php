@@ -3,17 +3,17 @@
     {!! SEOMeta::generate() !!}
     {!! OpenGraph::generate() !!}
 @endsection
-@php   
+@php
     $title_service = 'Categorías';
     $btn = 'Descubrir Estilos';
     switch ($tenantinfo->kind_business) {
-        case 1:           
+        case 1:
             $btn = 'Ver Vehículos';
             break;
-        case 2:            
+        case 2:
             $title_service = 'Servicios';
             break;
-        case 3:            
+        case 3:
             $title_service = 'Servicios';
             $btn = 'tratamientos';
             break;
@@ -88,35 +88,41 @@
                             <input type="hidden" class="code" name="code" value="{{ $item->code }}">
                             <div class="product-grid product_data">
                                 <div class="product-image">
-                                    <img src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
+                                    <img
+                                        src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
                                     @if ($item->discount)
                                         <span class="product-discount-label">-{{ $item->discount }}%</span>
                                     @endif
 
                                     <ul class="product-links">
-                                        <li><a target="blank" href="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"><i
+                                        <li><a target="blank"
+                                                href="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"><i
                                                     class="fas fa-eye"></i></a></li>
                                     </ul>
                                     <a href="{{ url('detail-clothing/' . $item->id . '/' . $category_id) }}"
                                         class="add-to-cart">Detallar</a>
                                 </div>
                                 <div class="product-content">
-                                    <h3 class="title clothing-name"><a
-                                            href="{{ isset($tenantinfo->kind_business) && $tenantinfo->kind_business != 1 ? url('detail-clothing/' . $item->id . '/' . $category_id) : url('detail-car/' . $item->id . '/' . $category_id) }}">{{ $item->name }}
-                                            @if ($item->can_buy == 1)
-                                                <s class="text-danger">{{ $item->total_stock > 0 ? '' : 'Agotado' }}</s>
+                                    <h3
+                                        class="{{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'text-muted' : 'title-frags' }}">
+                                        <a href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}">{{ $item->name }}
+                                            @if ($item->total_stock == 0)
+                                                <s class="text-danger"> Agotado</s>
                                             @endif
                                         </a>
                                     </h3>
-                                    @if ($item->can_buy == 1)
-                                        @if (isset($tenantinfo->show_stock) && $tenantinfo->show_stock != 0)
-                                            <h4 class="title">Stock: @if ($item->total_stock > 0)
-                                                    {{ $item->total_stock }}
-                                                @else
-                                                    <s class="text-danger">{{ $item->total_stock > 0 ? '' : '0' }}</s>
-                                                @endif
-                                            </h4>
-                                        @endif
+
+                                    @if (isset($tenantinfo->show_stock) && $tenantinfo->show_stock != 0)
+                                        <h4 class="title">
+                                            Stock:
+                                            @if ($item->total_stock > 0)
+                                                {{ $item->total_stock }}
+                                            @elseif ($item->total_stock == 0)
+                                                <s class="text-danger">0</s>
+                                            @else
+                                                <span class="text-info">Sin manejo de stock</span>
+                                            @endif
+                                        </h4>
                                     @endif
 
                                     @php

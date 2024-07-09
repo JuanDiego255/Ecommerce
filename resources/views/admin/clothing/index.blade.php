@@ -131,7 +131,7 @@
 
                                     </td>
                                     <td class="align-middle text-center text-sm">
-                                        <p class="text-success mb-0">{{ $item->total_stock }}
+                                        <p class="text-success mb-0">{{ $item->manage_stock == 0 ? 'No maneja' : $item->total_stock}}
                                         </p>
                                     </td>
                                 </tr>

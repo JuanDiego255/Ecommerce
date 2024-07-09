@@ -88,7 +88,7 @@
                                         </p>
                                         <div class="d-flex align-items-center">
                                             <div class="input-group text-center input-group-static w-100">
-                                                <input min="1" max="{{ $item->stock }}"
+                                                <input min="1" max="{{ $item->stock > 0 ? $item->stock : ''}}"
                                                     value="{{ $item->quantity }}" type="number" name="quantityCart"
                                                     data-cart-id="{{ $item->cart_id }}"
                                                     class="form-control btnQuantity text-center w-100 quantity">

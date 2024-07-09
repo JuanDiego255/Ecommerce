@@ -53,6 +53,7 @@ class ClothingCategoryController extends Controller
                     'clothing.name as name',
                     'clothing.casa as casa',
                     'clothing.code as code',
+                    'clothing.manage_stock as manage_stock',
                     'clothing.discount as discount',
                     'clothing.description as description',
                     'clothing.price as price',
@@ -70,6 +71,7 @@ class ClothingCategoryController extends Controller
                     'clothing.discount',
                     'categories.name',
                     'clothing.code',
+                    'clothing.manage_stock',
                     'clothing.name',
                     'clothing.trending',
                     'clothing.description',
@@ -129,6 +131,7 @@ class ClothingCategoryController extends Controller
                     'categories.name as category_name',
                     'clothing.name as name',
                     'clothing.casa as casa',
+                    'clothing.manage_stock as manage_stock',
                     'clothing.can_buy as can_buy',
                     'clothing.code as code',
                     'clothing.discount as discount',
@@ -144,6 +147,7 @@ class ClothingCategoryController extends Controller
                     'clothing.id',
                     'clothing.casa',
                     'clothing.name',
+                    'clothing.manage_stock',
                     'clothing.code',
                     'clothing.can_buy',
                     'pivot_clothing_categories.category_id',
@@ -264,6 +268,7 @@ class ClothingCategoryController extends Controller
                 $clothing->trending = 0;
             }
             $clothing->meta_keywords = $request->meta_keywords;
+            $clothing->manage_stock = $request->manage_stock ? 1 : 0;
 
             $clothing->update();
             //Procesar categorias
@@ -335,7 +340,7 @@ class ClothingCategoryController extends Controller
                             $correct_price = $precio > 0 ? $precio : $request->price;
                         }
                         $correct_qty = $cantidad > 0 ? $cantidad : $request->stock;
-                        $this->updateAttr($id, $correct_qty, $correct_price, $attr_id->attribute_id, $itemId);
+                        $this->updateAttr($id, $correct_qty, $correct_price, $attr_id->attribute_id, $itemId,$request->manage_stock);
                     }
                 } else {
                     $value = AttributeValue::where('attributes.name', 'Stock')
@@ -343,7 +348,7 @@ class ClothingCategoryController extends Controller
                         ->join('attributes', 'attributes.id', '=', 'attribute_values.attribute_id')
                         ->select('attributes.id as attr_id', 'attribute_values.id as value_id')
                         ->first();
-                    $this->updateAttr($id, $request->stock, $request->price, $value->attr_id, $value->value_id);
+                    $this->updateAttr($id, $request->stock, $request->price, $value->attr_id, $value->value_id,$request->manage_stock);
                 }
             } else {
                 $value = AttributeValue::where('attributes.name', 'Stock')
@@ -351,7 +356,7 @@ class ClothingCategoryController extends Controller
                     ->join('attributes', 'attributes.id', '=', 'attribute_values.attribute_id')
                     ->select('attributes.id as attr_id', 'attribute_values.id as value_id')
                     ->first();
-                $this->updateAttr($id, $request->stock, $request->price, $value->attr_id, $value->value_id);
+                $this->updateAttr($id, $request->stock, $request->price, $value->attr_id, $value->value_id,$request->manage_stock);
             }
 
             DB::commit();
@@ -422,6 +427,7 @@ class ClothingCategoryController extends Controller
                 $clothing->status = 1;
                 $clothing->trending = $request->filled('trending') ? 1 : 0;
                 $clothing->meta_keywords = $request->meta_keywords;
+                $clothing->manage_stock = $request->manage_stock ? 1 : 0;
                 $clothing->save();
                 $clothingId = $clothing->id;
 
@@ -470,7 +476,7 @@ class ClothingCategoryController extends Controller
                                 $correct_price = $precio > 0 ? $precio : $request->price;
                             }
                             $correct_qty = $cantidad > 0 ? $cantidad : $request->stock;
-                            $this->processAttr($clothingId, $correct_qty, $correct_price, $attr_id->attribute_id, $itemId);
+                            $this->processAttr($clothingId, $correct_qty, $correct_price, $attr_id->attribute_id, $itemId,$request->manage_stock);
                         }
                     } else {
                         $value = AttributeValue::where('attributes.name', 'Stock')
@@ -478,7 +484,7 @@ class ClothingCategoryController extends Controller
                             ->join('attributes', 'attributes.id', '=', 'attribute_values.attribute_id')
                             ->select('attributes.id as attr_id', 'attribute_values.id as value_id')
                             ->first();
-                        $this->processAttr($clothingId, $request->stock, $request->price, $value->attr_id, $value->value_id);
+                        $this->processAttr($clothingId, $request->stock, $request->price, $value->attr_id, $value->value_id,$request->manage_stock);
                     }
                 } else {
                     $value = AttributeValue::where('attributes.name', 'Stock')
@@ -486,7 +492,7 @@ class ClothingCategoryController extends Controller
                         ->join('attributes', 'attributes.id', '=', 'attribute_values.attribute_id')
                         ->select('attributes.id as attr_id', 'attribute_values.id as value_id')
                         ->first();
-                    $this->processAttr($clothingId, $request->stock, $request->price, $value->attr_id, $value->value_id);
+                    $this->processAttr($clothingId, $request->stock, $request->price, $value->attr_id, $value->value_id,$request->manage_stock);
                 }
 
                 if ($break) {
@@ -514,21 +520,21 @@ class ClothingCategoryController extends Controller
             $clothing_category->clothing_id = $clothingId;
             $clothing_category->save();
             $masive = $request->filled('masive') ? 1 : 0;
-            $this->processAttr($clothingId, $request->stock, $request->price, $value->attr_id, $value->value_id);
+            $this->processAttr($clothingId, $request->stock, $request->price, $value->attr_id, $value->value_id,$request->manage_stock);
         }
         return $msg;
     }
-    public function processAttr($clothingId, $stock, $price = null, $attr_id, $value)
+    public function processAttr($clothingId, $stock, $price = null, $attr_id, $value,$manage_stock)
     {
         $stock_size = new Stock();
         $stock_size->clothing_id = $clothingId;
-        $stock_size->stock = $stock;
+        $stock_size->stock = $manage_stock == 1 ? $stock : -1;
         $stock_size->attr_id = $attr_id;
         $stock_size->value_attr = $value;
         $stock_size->price = $price;
         $stock_size->save();
     }
-    public function updateAttr($id, $stock, $price = null, $attr_id, $value)
+    public function updateAttr($id, $stock, $price = null, $attr_id, $value,$manage_stock)
     {
         $stock_size = Stock::where('clothing_id', $id)
             ->where('attr_id', $attr_id)
@@ -536,7 +542,7 @@ class ClothingCategoryController extends Controller
             ->first();
         if ($stock_size === null) {
             $stock_size =  new Stock();
-            $stock_size->stock = $stock;
+            $stock_size->stock = $manage_stock == 1 ? $stock : -1;
             $stock_size->attr_id = $attr_id;
             $stock_size->value_attr = $value;
             $stock_size->price = $price;

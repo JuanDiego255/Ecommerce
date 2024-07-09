@@ -161,13 +161,18 @@
 
                                         @if ($item->total_stock > 0)
                                             @if (isset($tenantinfo->tenant) && $tenantinfo->tenant === 'mandicr')
-                                                <span class="text-success"><i
-                                                        class="fas fa-shopping-basket fa-sm mx-1"></i>In Stock</span>
+                                                <span class="text-success">
+                                                    <i class="fas fa-shopping-basket fa-sm mx-1"></i>In Stock
+                                                </span>
                                             @else
                                                 <span class="text-success ms-2">In stock</span>
                                             @endif
+                                        @elseif ($item->total_stock == 0)
+                                            <s class="text-danger">
+                                                <span class="text-danger ms-2">Agotado</span>
+                                            </s>
                                         @else
-                                            <s class="text-danger"><span class="text-danger ms-2">Agotado</span></s>
+                                            <span class="text-info ms-2">in Stock</span>
                                         @endif
 
                                     </div>
@@ -206,11 +211,12 @@
                                     </p>
 
                                     <div class="row mb-3">
-                                        <div class="col-md-6 col-12 {{ $item->can_buy != 1 ? 'd-none' : '' }}">
+                                        <div class="col-md-6 col-12">
                                             <div class="input-group input-group-static w-25">
                                                 <label>Cantidad</label>
-                                                <input min="1" max="{{ $item->stock }}" id="quantityInput"
-                                                    value="1" type="number" name="quantity"
+                                                <input @if ($item->total_stock == 0) disabled @endif min="1"
+                                                    max="{{ $item->total_stock > 0 ? $item->total_stock : '' }}"
+                                                    id="quantityInput" value="1" type="number" name="quantity"
                                                     class="form-control float-left w-100 quantity">
                                             </div>
                                         </div>
@@ -265,13 +271,17 @@
 
                                     </div>
                                     @if ($item->can_buy == 1)
-                                        <button @if ($item->total_stock > 0) @else disabled @endif
-                                            class="btn btn-add_to_cart shadow-0 btnAddToCart"> <i
-                                                class="me-1 fa fa-shopping-basket"></i>
+                                        <button
+                                            @if ($item->total_stock > 0 || $item->total_stock == -1) @else 
+                                        disabled @endif
+                                            class="btn btn-add_to_cart shadow-0 btnAddToCart">
+                                            <i class="me-1 fa fa-shopping-basket"></i>
                                             @if ($item->total_stock > 0)
                                                 Agregar Al Carrito
-                                            @else
+                                            @elseif ($item->total_stock == 0)
                                                 Vendido!
+                                            @else
+                                                Agregar Al Carrito
                                             @endif
                                         </button>
                                     @else
@@ -444,7 +454,7 @@
                     cloth_id + '/' + attr_id + '/' +
                     value_attr, // Cambia esto por la ruta que devuelve los elementos del carrito
                 success: function(stock) {
-                    maxStock = stock.stock;
+                    maxStock = stock.stock > 0  ? stock.stock : '';
 
                     // Actualizar el atributo 'max' del input quantity                    
                     porcDescuento = document.getElementById("porcDescuento").value
