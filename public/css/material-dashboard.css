@@ -29599,3 +29599,63 @@ animation-iteration-count: infinite;
 50% { opacity: 0.0; }
 100% { opacity: 1.0; }
 }
+
+input {
+  text-align:center;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  margin: 0;
+}
+
+/*Input Cantidad*/
+.button-plus, .button-minus {
+  background-color: #d3d3d3; /* Gris claro */
+  color: #333; /* Gris oscuro */
+  border: none; /* Sin borde */
+  padding: 1px 15px; /* Espaciado interno */
+  font-size: 18px; /* Tamaño de la fuente */
+  cursor: pointer; /* Cursor al pasar por encima */
+  transition: background-color 0.3s, transform 0.3s; /* Transición suave */
+}
+
+.button-plus:hover, .button-minus:hover {
+  background-color: #bcbcbc; /* Color de fondo al pasar el ratón por encima */
+}
+
+.button-plus:active, .button-minus:active {
+  background-color: #a9a9a9; /* Color de fondo al hacer clic */
+  transform: translateY(0); /* Volver a la posición original */
+}
+.button-plus {
+  border-radius: 5px 0 0 5px; /* Bordes redondeados solo en la izquierda */
+  margin-right: -4px; /* Quitar margen para pegar al input */
+}
+
+.button-minus {
+  border-radius: 0 5px 5px 0; /* Bordes redondeados solo en la derecha */
+  margin-left: -4px; /* Quitar margen para pegar al input */
+}
+
+.qty {
+  width: 60px; /* Ancho del input */
+  height: 30px;
+  padding: 5px; /* Espaciado interno */
+  font-size: 18px; /* Tamaño de la fuente */
+  text-align: center; /* Alinear el texto al centro */
+  border: 1px solid #ccc; /* Borde gris claro */
+  border-left: none; /* Sin borde izquierdo */
+  border-right: none; /* Sin borde derecho */
+  margin: 0 5px; /* Margen entre botones y el input */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra */
+}
+
+.qty-cont {
+  display: flex; /* Alinear los elementos en una fila */
+  margin-top: 5px; /* Margen superior */
+  margin-bottom: 5px;
+}

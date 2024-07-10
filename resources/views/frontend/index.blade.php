@@ -218,15 +218,23 @@
                                     class="text-muted text-uppercase {{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'd-none' : '' }}">
                                     {{ $item->casa }}
                                 </h3>
-                                <h3 class="title clothing-name"><a
-                                        href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}">{{ $item->name }}<s
-                                            class="text-danger">{{ $item->total_stock > 0 ? '' : ' Agotado' }}</s></a>
+                                <h3 class="title clothing-name">
+                                    <a href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}">{{ $item->name }}
+                                        @if ($item->total_stock == 0)
+                                            <s class="text-danger"> Agotado</s>
+                                        @endif
+                                    </a>
                                 </h3>
+
                                 @if (isset($tenantinfo->show_stock) && $tenantinfo->show_stock != 0)
-                                    <h4 class="title">Stock: @if ($item->total_stock > 0)
+                                    <h4 class="title">
+                                        Stock:
+                                        @if ($item->total_stock > 0)
                                             {{ $item->total_stock }}
+                                        @elseif ($item->total_stock == 0)
+                                            <s class="text-danger">0</s>
                                         @else
-                                            <s class="text-danger">{{ $item->total_stock > 0 ? '' : '0' }}</s>
+                                            <span class="text-info">Sin manejo de stock</span>
                                         @endif
                                     </h4>
                                 @endif

@@ -193,12 +193,21 @@
 
                                     <div class="row mb-3">
                                         <div class="col-md-6 col-12">
-                                            <div class="input-group input-group-static w-25">
-                                                <label>Cantidad</label>
-                                                <input @if ($item->total_stock == 0) disabled @endif min="1"
+                                            <div class="qty-cont">
+                                                <button class="button-plus" type="button"
+                                                    onclick="this.parentNode.querySelector('[type=number]').stepDown();">
+                                                    -
+                                                </button>
+
+                                                <input class="qty quantity" @if ($item->total_stock == 0) disabled @endif
+                                                    min="1"
                                                     @if ($item->total_stock > 0) max="{{ $item->total_stock }}" @endif
-                                                    id="quantityInput" value="1" type="number" name="quantity"
-                                                    class="form-control float-left w-100 quantity">
+                                                    id="quantityInput" value="1" type="number" name="quantity">
+
+                                                <button class="button-minus" type="button"
+                                                    onclick="this.parentNode.querySelector('[type=number]').stepUp();">
+                                                    +
+                                                </button>
                                             </div>
                                         </div>
 
@@ -253,7 +262,7 @@
                                         <input type="hidden" class="cloth_id" value="{{ $item->id }}">
                                     </div>
 
-                                    <button @if ($item->total_stock > 0 || $item->manage_stock = 1) @else 
+                                    <button @if ($item->total_stock > 0 || ($item->manage_stock = 1)) @else 
         disabled @endif
                                         class="btn btn-add_to_cart shadow-0 btnAddToCart">
                                         <i class="me-1 fa fa-shopping-basket"></i>
@@ -437,7 +446,7 @@
                     cloth_id + '/' + attr_id + '/' +
                     value_attr, // Cambia esto por la ruta que devuelve los elementos del carrito
                 success: function(stock) {
-                maxStock = stock.stock > 0  ? stock.stock : '';
+                    maxStock = stock.stock > 0 ? stock.stock : '';
 
                     // Actualizar el atributo 'max' del input quantity                    
                     porcDescuento = document.getElementById("porcDescuento").value
