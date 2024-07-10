@@ -29600,18 +29600,6 @@ animation-iteration-count: infinite;
 100% { opacity: 1.0; }
 }
 
-input {
-  text-align:center;
-}
-
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  margin: 0;
-}
-
 /*Input Cantidad*/
 .button-plus, .button-minus {
   background-color: #d3d3d3; /* Gris claro */
