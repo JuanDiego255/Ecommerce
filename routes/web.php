@@ -74,6 +74,7 @@ Route::group(['middleware' => 'isAdmin'], function () {
     Route::get('/edit-clothing/{id}/{cat_id}', [ClothingCategoryController::class, 'edit']);
     Route::put('/update-clothing/{id}', [ClothingCategoryController::class, 'update']);
     Route::delete('/delete-clothing/{id}', [ClothingCategoryController::class, 'delete']);
+    Route::post('status/{id}', [ClothingCategoryController::class, 'isStatus']);
     //Routes for Buys
     Route::get('/buys-admin', [BuyController::class, 'indexAdmin']);
     Route::post('/size-by-cloth', [BuyController::class, 'sizeByCloth']);

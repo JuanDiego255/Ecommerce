@@ -45,7 +45,6 @@ class ClothingCategoryController extends Controller
                         )');
                 })
                 ->where('pivot_clothing_categories.category_id', $id)
-                ->where('clothing.status', 1)
                 ->select(
                     'categories.name as category',
                     'clothing.id as id',
@@ -53,6 +52,7 @@ class ClothingCategoryController extends Controller
                     'clothing.name as name',
                     'clothing.casa as casa',
                     'clothing.code as code',
+                    'clothing.status as status',
                     'clothing.manage_stock as manage_stock',
                     'clothing.discount as discount',
                     'clothing.description as description',
@@ -71,6 +71,7 @@ class ClothingCategoryController extends Controller
                     'clothing.discount',
                     'categories.name',
                     'clothing.code',
+                    'clothing.status',
                     'clothing.manage_stock',
                     'clothing.name',
                     'clothing.trending',
@@ -78,6 +79,7 @@ class ClothingCategoryController extends Controller
                     'clothing.price',
                     'product_images.image'
                 )
+                ->orderBy('name','asc')
                 ->get();
         });
 
@@ -382,10 +384,10 @@ class ClothingCategoryController extends Controller
             Stock::where('clothing_id', $id)->delete();
             ClothingCategory::destroy($id);
             DB::commit();
-            return redirect()->back()->with(['status' => $clothing_name . ' se ha borrado el producto con éxito', 'icon' => 'success']);
+            return response()->json(['status' => 'Se ha eliminado el artículo del carrito', 'icon' => 'success']);
         } catch (Exception $th) {
             DB::rollBack();
-            return redirect()->back()->with(['status' => 'Ocurrió un error al eliminar el producto!', 'icon' => 'error']);
+            return response()->json(['status' => 'No se pudo eliminar el producto', 'icon' => 'error']);
         }
     }
     function createClothing($request, $tenantinfo)
@@ -571,5 +573,26 @@ class ClothingCategoryController extends Controller
         } catch (\Exception $th) {
             return redirect()->back()->with(['status' => 'No se importaron los productos!' . $th->getMessage(), 'icon' => 'error']);
         }
+    }
+    public function isStatus($id,Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            if ($request->status == "1") {
+                ClothingCategory::where('id', $id)->update(['status' => 1]);
+            } else {
+                ClothingCategory::where('id', $id)->update(['status' => 0]);
+            }
+            DB::commit();
+            return redirect()->back()->with(['status' => 'Se cambio el estado del producto', 'icon' => 'success']);
+        } catch (\Exception $th) {
+            //throw $th;
+            DB::rollBack();
+        }
+    }
+    public function getTotalCategories($id)
+    {
+        $total = PivotClothingCategory::where('clothing_id',$id)->count();
+        return response()->json($total);
     }
 }
