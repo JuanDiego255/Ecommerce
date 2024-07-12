@@ -7,11 +7,9 @@
         <h1 class="text-title-blog text-center">{{ $blog->title }}</h1>
     </div>
     {{-- salto de pagina --}}
-    <div class="d-block"
-        style="height: 200px;"></div>
+    <div class="d-block" style="height: 200px;"></div>
     {{-- cards info --}}
-    <div
-        class="text-center container">
+    <div class="text-center container">
         <div class="row text-center">
             <!-- Team item -->
             @foreach ($cards as $item)
@@ -44,7 +42,13 @@
                     <a target="blank" href="{{ url('https://wa.me/506' . $tenantinfo->whatsapp) }}"
                         class="btn btn-icon btn-3 mt-2 btn-add_to_cart">
                         <span class="btn-inner--icon"><i class="material-icons">calendar_month</i></span>
-                        <span class="btn-inner--text">{{ __('Solicitar una cita') }}</span>
+                        <span class="btn-inner--text">
+                            @if ($tenantinfo->kind_business != 0)
+                                {{ __('Solicitar una cita') }}
+                            @else
+                                {{ __('Ir a WhatsApp') }}
+                            @endif
+                        </span>
                     </a>
                 </div>
                 <div class="col-md-4">
@@ -167,8 +171,7 @@
         </div>
     @endif
     {{-- salto de pagina --}}
-    <div class=""
-        style="height: 75px;"></div>
+    <div class="" style="height: 75px;"></div>
     {{-- Carousel de resultados --}}
     @if (count($results) != 0)
         <div class="mt-5 bg-white">
@@ -230,8 +233,7 @@
             </div>
         </div>
         {{-- salto de pagina --}}
-        <div class=""
-            style="height: 75px;">
+        <div class="" style="height: 75px;">
 
         </div>
     @endif
@@ -253,8 +255,7 @@
             </div>
         </div>
         {{-- salto de pagina --}}
-        <div class=""
-            style="height: 75px;"></div>
+        <div class="" style="height: 75px;"></div>
     @endif
     {{-- Comentarios --}}
     @if (count($comments) != 0)
