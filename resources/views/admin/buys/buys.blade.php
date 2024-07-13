@@ -6,7 +6,7 @@
 @section('content')
     <h1 class="font-title text-center">Ventas</h1>
     <div class="container">
-
+        @include('admin.buys.products')
         <div class="row row-cols-1 row-cols-md-2 g-4 align-content-center card-group mt-1">
             <div class="row w-100">
                 <div class="card mt-3 mb-3">
@@ -31,6 +31,12 @@
                                     <input value="" placeholder="Código del producto...." type="text"
                                         class="form-control form-control-lg" name="code" id="code">
                                 </div>
+                            </div>
+                            <div class="col-md-4">
+                                <button type="button" data-bs-toggle="modal" data-bs-target="#add-products-modal"
+                                    data-name="products" class="btn btn-velvet icon-button">
+                                    Productos
+                                </button>
                             </div>
                             <input type="hidden" value="{{ $tenantinfo->manage_size }}" id="manage_size">
 
@@ -154,7 +160,7 @@
                             <li
                                 class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
                                 Productos
-                                <span><strong id="totalCloth">₡{{ number_format($cloth_price) }}</strong</span>
+                                <span><strong id="totalCloth">₡{{ number_format($cloth_price) }}</strong< /span>
                             </li>
                             @if ($iva > 0)
                                 <li
@@ -199,8 +205,6 @@
                 </div>
             </div>
         </div>
-    </div>
-
     </div>
 @endsection
 @section('script')
@@ -449,6 +453,147 @@
                 }
             });
         });
+
+        let currentButtonName = null;
+
+        // Añadir event listener a los botones
+        document.querySelectorAll('.icon-button').forEach(button => {
+            button.addEventListener('click', function() {
+                // Almacenar el nombre del botón actual en una variable global
+                currentButtonName = this.getAttribute('data-name');
+            });
+        });
+
+        function selectIcon(icon) {
+            if (currentButtonName) {
+                let input = document.getElementById("code");
+                input.value = icon;
+                var modal = bootstrap.Modal.getInstance(document.getElementById('add-products-modal'));
+                modal.hide();
+                var code = icon;
+                var $container = $(
+                    '#container'
+                );
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                $.ajax({
+                    method: "POST",
+                    url: "/size-by-cloth",
+                    data: {
+                        'code': code,
+                    },
+                    success: function(response) {
+                        if (response.status != "success") {
+                            Swal.fire({
+                                title: response.status,
+                                icon: response.icon,
+                            });
+                            $container.removeClass('d-block').addClass('d-none');
+                            $('#select-container').removeClass('d-block').addClass(
+                                'd-none');
+                            $container.empty();
+                        } else {
+                            $container.empty();
+                            var results = response.results;
+                            var $currentRow;
+                            $.each(results, function(index, attribute) {
+                                if (index % 2 === 0) {
+                                    // Crear una nueva fila cada dos columnas
+                                    $currentRow = $('<div>', {
+                                        class: 'row'
+                                    });
+                                    $container.append($currentRow);
+                                }
+
+                                var $col = $('<div>', {
+                                    class: 'col-md-6'
+                                });
+                                var $label = $('<label>', {
+                                    text: attribute.columna_atributo
+                                });
+                                var values = attribute.valores.split('-');
+                                var ids = attribute.ids.split('-');
+
+                                var $select = $('<select>', {
+                                    required: true,
+                                    name: 'size_id',
+                                    class: 'size_id form-control form-control-lg mb-2'
+                                });
+
+                                $.each(values, function(key, value) {
+                                    if (ids[key] !== undefined) {
+                                        var $option = $('<option>', {
+                                            value: ids[key] + '-' +
+                                                attribute.attr_id +
+                                                '-' + attribute
+                                                .clothing_id,
+                                            id: 'size_' + ids[key],
+                                            text: value
+                                        });
+                                        if (key === 0) {
+                                            $option.attr('selected',
+                                                'selected');
+                                        }
+                                        $select.append($option);
+                                    }
+                                });
+
+                                var $inputGroup = $('<div>', {
+                                    class: 'input-group input-group-static'
+                                }).append($select);
+
+                                $col.append($label).append('<br>').append(
+                                    $inputGroup).append('<br>');
+
+                                $currentRow.append($col);
+
+                                // Add the button after every two columns (end of the row)
+                                if (index % 2 === 1 || index === results.length -
+                                    1) {
+                                    var $buttonCol = $('<div>', {
+                                        class: 'col-md-12'
+                                    });
+                                    var $button = $('<button>', {
+                                        class: 'btn btn-add_to_cart shadow-0 btnAdd'
+                                    }).append(
+                                        '<i class="me-1 fa fa-shopping-basket"></i> Agregar'
+                                    );
+                                    $buttonCol.append($button);
+                                    $currentRow.append($buttonCol);
+                                }
+                            });
+
+                            $container.removeClass('d-none').addClass('d-block');
+                            $('#select-container').removeClass('d-none').addClass(
+                                'd-block');
+                        }
+
+                    }
+                });
+            }
+
+        }
+
+        function filterIcons() {
+            var input, filter, iconList, icons, i;
+            input = document.getElementById('icon-search');
+            filter = input.value.toLowerCase();
+            iconList = document.getElementById('icon-list');
+            icons = iconList.getElementsByClassName('icon-item');
+
+            for (i = 0; i < icons.length; i++) {
+                var iconCode = icons[i].getAttribute('data-code');
+                var iconName = icons[i].getAttribute('data-name');
+                if (iconCode.toLowerCase().indexOf(filter) > -1 || iconName.toLowerCase().indexOf(filter) > -1) {
+                    icons[i].style.display = "";
+                } else {
+                    icons[i].style.display = "none";
+                }
+            }
+        }
 
         function calcularTotal() {
             let total = 0;

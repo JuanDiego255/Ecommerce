@@ -41,7 +41,7 @@ class BuyController extends Controller
         $tags = MetaTags::where('section', 'Mis Compras')->get();
         $tenantinfo = TenantInfo::first();
         foreach ($tags as $tag) {
-            SEOMeta::setTitle($tenantinfo->title . " - " . $tag->title);
+            SEOMeta::setTitle($tenantinfo->title . ' - ' . $tag->title);
             SEOMeta::setKeywords($tag->meta_keywords);
             SEOMeta::setDescription($tag->meta_description);
             //Opengraph
@@ -57,32 +57,14 @@ class BuyController extends Controller
     {
         $tenantinfo = TenantInfo::first();
         $buys = Cache::remember('buys_data', $this->expirationTime, function () {
-            return Buy::leftJoin('users', 'buys.user_id', 'users.id')
-                ->where('buys.kind_of_buy', '!=', 'F')
-                ->select(
-                    'buys.id as id',
-                    'buys.total_iva as total_iva',
-                    'buys.total_buy as total_buy',
-                    'buys.total_delivery as total_delivery',
-                    'buys.delivered as delivered',
-                    'buys.approved as approved',
-                    'buys.created_at as created_at',
-                    'buys.image as image',
-                    'users.id as user_id',
-                    'users.name as name',
-                    'users.telephone as telephone',
-                    'users.email as email',
-                    'buys.name as name_b',
-                    'buys.telephone as telephone_b',
-                    'buys.email as email_b',
-                    'buys.cancel_buy as cancel_buy'
-                )
-                ->get();
+            return Buy::leftJoin('users', 'buys.user_id', 'users.id')->where('buys.kind_of_buy', '!=', 'F')->select('buys.id as id', 'buys.total_iva as total_iva', 'buys.total_buy as total_buy', 'buys.total_delivery as total_delivery', 'buys.delivered as delivered', 'buys.approved as approved', 'buys.created_at as created_at', 'buys.image as image', 'users.id as user_id', 'users.name as name', 'users.telephone as telephone', 'users.email as email', 'buys.name as name_b', 'buys.telephone as telephone_b', 'buys.email as email_b', 'buys.cancel_buy as cancel_buy')->get();
         });
         $iva = $tenantinfo->iva;
 
         if (count($buys) == 0) {
-            return redirect()->back()->with(['status' => 'No hay pedidos registrados!', 'icon' => 'warning']);
+            return redirect()
+                ->back()
+                ->with(['status' => 'No hay pedidos registrados!', 'icon' => 'warning']);
         }
 
         return view('admin.buys.index', compact('buys', 'iva'));
@@ -99,9 +81,8 @@ class BuyController extends Controller
                 ->join('attributes', 'attribute_value_buys.attr_id', 'attributes.id')
                 ->join('attribute_values', 'attribute_value_buys.value_attr', 'attribute_values.id')
                 ->leftJoin('product_images', function ($join) {
-                    $join->on('clothing.id', '=', 'product_images.clothing_id')
-                        ->whereRaw('product_images.id = (
-                        SELECT MIN(id) FROM product_images 
+                    $join->on('clothing.id', '=', 'product_images.clothing_id')->whereRaw('product_images.id = (
+                        SELECT MIN(id) FROM product_images
                         WHERE product_images.clothing_id = clothing.id
                     )');
                 })
@@ -125,30 +106,16 @@ class BuyController extends Controller
                         JOIN attributes ON attribute_value_buys.attr_id = attributes.id
                         JOIN attribute_values ON attribute_value_buys.value_attr = attribute_values.id
                         WHERE attribute_value_buys.buy_detail_id = buy_details.id
-                    ) as attributes_values')
+                    ) as attributes_values'),
                 )
-                ->groupBy(
-                    'clothing.id',
-                    'clothing.name',
-                    'clothing.casa',
-                    'clothing.description',
-                    'buy_details.total',
-                    'buy_details.iva',
-                    'buy_details.id',
-                    'buy_details.buy_id',
-                    'buy_details.cancel_item',
-                    'clothing.status',
-                    'buy_details.quantity',
-                    'buys.approved',
-                    'product_images.image'
-                )
+                ->groupBy('clothing.id', 'clothing.name', 'clothing.casa', 'clothing.description', 'buy_details.total', 'buy_details.iva', 'buy_details.id', 'buy_details.buy_id', 'buy_details.cancel_item', 'clothing.status', 'buy_details.quantity', 'buys.approved', 'product_images.image')
                 ->get();
         });
         $iva = $tenantinfo->iva;
         $tags = MetaTags::where('section', 'Mis Compras')->get();
         $tenantinfo = TenantInfo::first();
         foreach ($tags as $tag) {
-            SEOMeta::setTitle($tag->title . " - " . $tenantinfo->title);
+            SEOMeta::setTitle($tag->title . ' - ' . $tenantinfo->title);
             SEOMeta::setKeywords($tag->meta_keywords);
             SEOMeta::setDescription($tag->meta_description);
             //Opengraph
@@ -170,9 +137,8 @@ class BuyController extends Controller
                 ->join('attributes', 'attribute_value_buys.attr_id', 'attributes.id')
                 ->join('attribute_values', 'attribute_value_buys.value_attr', 'attribute_values.id')
                 ->leftJoin('product_images', function ($join) {
-                    $join->on('clothing.id', '=', 'product_images.clothing_id')
-                        ->whereRaw('product_images.id = (
-                    SELECT MIN(id) FROM product_images 
+                    $join->on('clothing.id', '=', 'product_images.clothing_id')->whereRaw('product_images.id = (
+                    SELECT MIN(id) FROM product_images
                     WHERE product_images.clothing_id = clothing.id
                 )');
                 })
@@ -211,34 +177,7 @@ class BuyController extends Controller
                         WHERE attribute_value_buys.buy_detail_id = buy_details.id
                     ) as attributes_values'),
                 )
-                ->groupBy(
-                    'clothing.id',
-                    'clothing.name',
-                    'clothing.casa',
-                    'clothing.description',
-                    'buy_details.total',
-                    'buy_details.iva',
-                    'buy_details.id',
-                    'buy_details.buy_id',
-                    'buy_details.cancel_item',
-                    'clothing.status',
-                    'buy_details.quantity',
-                    'buys.approved',
-                    'address_users.user_id',
-                    'address_users.address',
-                    'address_users.address_two',
-                    'address_users.city',
-                    'address_users.country',
-                    'address_users.province',
-                    'address_users.postal_code',
-                    'buys.address',
-                    'buys.address_two',
-                    'buys.city',
-                    'buys.country',
-                    'buys.province',
-                    'buys.postal_code',
-                    'product_images.image'
-                )
+                ->groupBy('clothing.id', 'clothing.name', 'clothing.casa', 'clothing.description', 'buy_details.total', 'buy_details.iva', 'buy_details.id', 'buy_details.buy_id', 'buy_details.cancel_item', 'clothing.status', 'buy_details.quantity', 'buys.approved', 'address_users.user_id', 'address_users.address', 'address_users.address_two', 'address_users.city', 'address_users.country', 'address_users.province', 'address_users.postal_code', 'buys.address', 'buys.address_two', 'buys.city', 'buys.country', 'buys.province', 'buys.postal_code', 'product_images.image')
                 ->get();
         });
         $iva = $tenantinfo->iva;
@@ -256,7 +195,9 @@ class BuyController extends Controller
             }
             Buy::where('id', $id)->update(['approved' => $status]);
             DB::commit();
-            return redirect()->back()->with(['status' => 'Se ha cambiado el estado de la compra!', 'icon' => 'success']);
+            return redirect()
+                ->back()
+                ->with(['status' => 'Se ha cambiado el estado de la compra!', 'icon' => 'success']);
         } catch (Exception $th) {
             DB::rollBack();
         }
@@ -271,7 +212,9 @@ class BuyController extends Controller
             }
             Buy::where('id', $id)->update(['delivered' => $status]);
             DB::commit();
-            return redirect()->back()->with(['status' => 'Se ha cambiado el estado de la entrega!', 'icon' => 'success']);
+            return redirect()
+                ->back()
+                ->with(['status' => 'Se ha cambiado el estado de la entrega!', 'icon' => 'success']);
         } catch (Exception $th) {
             DB::rollBack();
         }
@@ -301,16 +244,18 @@ class BuyController extends Controller
 
             DB::commit();
             switch ($status) {
-                case (1):
-                    $status_desc = "Proceso de cancelación";
+                case 1:
+                    $status_desc = 'Proceso de cancelación';
                     break;
-                case (2):
-                    $status_desc = "Cancelada";
+                case 2:
+                    $status_desc = 'Cancelada';
                     break;
                 default:
-                    $status_desc = "Vigente";
+                    $status_desc = 'Vigente';
             }
-            return redirect()->back()->with(['status' => 'Proceso de compra: ' . $status_desc, 'icon' => 'success']);
+            return redirect()
+                ->back()
+                ->with(['status' => 'Proceso de compra: ' . $status_desc, 'icon' => 'success']);
         } catch (Exception $th) {
             DB::rollBack();
         }
@@ -354,16 +299,18 @@ class BuyController extends Controller
             }
             DB::commit();
             switch ($status) {
-                case (1):
-                    $status_desc = "Proceso de cancelación";
+                case 1:
+                    $status_desc = 'Proceso de cancelación';
                     break;
-                case (2):
-                    $status_desc = "Cancelada";
+                case 2:
+                    $status_desc = 'Cancelada';
                     break;
                 default:
-                    $status_desc = "Vigente";
+                    $status_desc = 'Vigente';
             }
-            return redirect()->back()->with(['status' => 'Proceso de artículo: ' . $status_desc, 'icon' => 'success']);
+            return redirect()
+                ->back()
+                ->with(['status' => 'Proceso de artículo: ' . $status_desc, 'icon' => 'success']);
         } catch (Exception $th) {
             DB::rollBack();
         }
@@ -372,19 +319,7 @@ class BuyController extends Controller
     {
         $tenantinfo = TenantInfo::first();
         $buys = Cache::remember('buys_data', $this->expirationTime, function () {
-            return Buy::leftJoin('users', 'buys.user_id', 'users.id')
-                ->leftJoin('buy_details', 'buys.id', 'buy_details.buy_id')
-                ->select(
-                    'buys.id as id',
-                    'buys.total_iva as total_iva',
-                    'buys.total_buy as total_buy',
-                    'buys.kind_of_buy as kind_of',
-                    'buys.total_delivery as total_delivery',
-                    'buys.created_at as created_at',
-                    DB::raw('sum(buy_details.quantity) as details_count')
-                )
-                ->groupBy('buys.id', 'buys.kind_of_buy', 'buys.total_iva', 'buys.total_buy', 'buys.total_Delivery', 'buys.created_at')
-                ->get();
+            return Buy::leftJoin('users', 'buys.user_id', 'users.id')->leftJoin('buy_details', 'buys.id', 'buy_details.buy_id')->select('buys.id as id', 'buys.total_iva as total_iva', 'buys.total_buy as total_buy', 'buys.kind_of_buy as kind_of', 'buys.total_delivery as total_delivery', 'buys.created_at as created_at', DB::raw('sum(buy_details.quantity) as details_count'))->groupBy('buys.id', 'buys.kind_of_buy', 'buys.total_iva', 'buys.total_buy', 'buys.total_Delivery', 'buys.created_at')->get();
         });
         $iva = $tenantinfo->iva;
         $totalEnvio = 0;
@@ -409,6 +344,20 @@ class BuyController extends Controller
     public function indexBuy()
     {
         $tenantinfo = TenantInfo::first();
+        $clothings = ClothingCategory::where('status', 1)
+            ->leftJoin('product_images', function ($join) {
+                $join->on('clothing.id', '=', 'product_images.clothing_id')->whereRaw('product_images.id = (
+                                SELECT MIN(id) FROM product_images
+                                WHERE product_images.clothing_id = clothing.id
+                            )');
+            })
+            ->select(
+                    'clothing.id as id',
+                    'clothing.name as name',
+                    'clothing.code as code',
+                    DB::raw('IFNULL(product_images.image, "") as image'), // Obtener la primera imagen del producto
+                )
+            ->get();
         $cart_items = Cache::remember('cart_items', $this->expirationTime, function () {
             $cart_items = Cart::where('carts.user_id', null)
                 ->where('carts.session_id', null)
@@ -418,15 +367,12 @@ class BuyController extends Controller
                 ->join('attribute_values', 'attribute_value_cars.value_attr', 'attribute_values.id')
                 ->where('stocks.price', '!=', 0)
                 ->leftJoin('stocks', function ($join) {
-                    $join->on('carts.clothing_id', '=', 'stocks.clothing_id')
-                        ->on('attribute_value_cars.attr_id', '=', 'stocks.attr_id')
-                        ->on('attribute_value_cars.value_attr', '=', 'stocks.value_attr');
+                    $join->on('carts.clothing_id', '=', 'stocks.clothing_id')->on('attribute_value_cars.attr_id', '=', 'stocks.attr_id')->on('attribute_value_cars.value_attr', '=', 'stocks.value_attr');
                 })
                 ->join('clothing', 'carts.clothing_id', 'clothing.id')
                 ->leftJoin('product_images', function ($join) {
-                    $join->on('clothing.id', '=', 'product_images.clothing_id')
-                        ->whereRaw('product_images.id = (
-                                SELECT MIN(id) FROM product_images 
+                    $join->on('clothing.id', '=', 'product_images.clothing_id')->whereRaw('product_images.id = (
+                                SELECT MIN(id) FROM product_images
                                 WHERE product_images.clothing_id = clothing.id
                             )');
                 })
@@ -453,34 +399,17 @@ class BuyController extends Controller
                             WHERE attribute_value_cars.cart_id = carts.id
                         ) as attributes_values'),
                     DB::raw('IFNULL(product_images.image, "") as image'), // Obtener la primera imagen del producto
-
                 )
-                ->groupBy(
-                    'clothing.id',
-                    'clothing.name',
-                    'clothing.casa',
-                    'clothing.code',
-                    'clothing.description',
-                    'stocks.price',
-                    'stocks.stock',
-                    'clothing.mayor_price',
-                    'attributes.name',
-                    'attribute_values.value',
-                    'clothing.status',
-                    'clothing.discount',
-                    'carts.quantity',
-                    'carts.id',
-                    'product_images.image'
-                )
+                ->groupBy('clothing.id', 'clothing.name', 'clothing.casa', 'clothing.code', 'clothing.description', 'stocks.price', 'stocks.stock', 'clothing.mayor_price', 'attributes.name', 'attribute_values.value', 'clothing.status', 'clothing.discount', 'carts.quantity', 'carts.id', 'product_images.image')
                 ->get();
             // Resto del código para obtener los artículos del carrito para usuarios autenticados
             return $cart_items;
-        });        
+        });
 
         $tags = MetaTags::where('section', 'Carrito')->get();
         $tenantinfo = TenantInfo::first();
         foreach ($tags as $tag) {
-            SEOMeta::setTitle($tag->title . " - " . $tenantinfo->title);
+            SEOMeta::setTitle($tag->title . ' - ' . $tenantinfo->title);
             SEOMeta::setKeywords($tag->meta_keywords);
             SEOMeta::setDescription($tag->meta_description);
             //Opengraph
@@ -510,24 +439,19 @@ class BuyController extends Controller
         $iva_tenant = $tenantinfo->iva;
         $total_price = $cloth_price + $iva;
 
-        return view('admin.buys.buys', compact('cart_items', 'iva_tenant', 'name', 'cloth_price', 'iva', 'total_price', 'you_save'));
+        return view('admin.buys.buys', compact('cart_items', 'clothings', 'iva_tenant', 'name', 'cloth_price', 'iva', 'total_price', 'you_save'));
     }
     public function sizeByCloth(Request $request)
     {
         $code = $request->code;
         $cloth_check = ClothingCategory::where('code', $code)->first();
         if ($cloth_check) {
-            $result = DB::table('stocks as s')->where('s.clothing_id', $cloth_check->id)
+            $result = DB::table('stocks as s')
+                ->where('s.clothing_id', $cloth_check->id)
                 ->join('attributes as a', 's.attr_id', '=', 'a.id')
                 ->join('attribute_values as v', 's.value_attr', '=', 'v.id')
-                ->select(
-                    'a.name as columna_atributo',
-                    'a.id as attr_id',
-                    's.clothing_id as clothing_id',
-                    DB::raw('GROUP_CONCAT(v.value SEPARATOR "-") as valores'),
-                    DB::raw('GROUP_CONCAT(v.id SEPARATOR "-") as ids'),
-                )
-                ->groupBy('a.name', 'a.id','s.clothing_id')
+                ->select('a.name as columna_atributo', 'a.id as attr_id', 's.clothing_id as clothing_id', DB::raw('GROUP_CONCAT(v.value SEPARATOR "-") as valores'), DB::raw('GROUP_CONCAT(v.id SEPARATOR "-") as ids'))
+                ->groupBy('a.name', 'a.id', 's.clothing_id')
                 ->get();
             return response()->json(['status' => 'success', 'results' => $result]);
         } else {
@@ -545,11 +469,8 @@ class BuyController extends Controller
         //
         DB::beginTransaction();
         try {
-
-            $order = Buy::findOrfail($id);            
-            if (
-                Storage::delete('public/' . $order->image)
-            ) {
+            $order = Buy::findOrfail($id);
+            if (Storage::delete('public/' . $order->image)) {
                 Buy::destroy($id);
             }
             Buy::destroy($id);
