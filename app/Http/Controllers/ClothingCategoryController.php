@@ -97,8 +97,9 @@ class ClothingCategoryController extends Controller
     {
         $category = Categories::find($id);
         $category_name = $category->name;
+        $category_id = $category->id;
         $attributes = Attribute::where('name', '!=', 'Stock')->get();
-        return view('admin.clothing.add', compact('id', 'category_name', 'attributes'));
+        return view('admin.clothing.add', compact('id', 'category_name', 'attributes','category_id'));
     }
     public function edit($id, $category_id)
     {
