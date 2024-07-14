@@ -233,8 +233,8 @@
                                                             <label
                                                                 class="">{{ $attribute->columna_atributo == 'Stock' ? 'Predeterminado' : $attribute->columna_atributo }}</label><br>
                                                             @php
-                                                                $values = explode('-', $attribute->valores);
-                                                                $ids = explode('-', $attribute->ids);
+                                                                $values = explode('/', $attribute->valores);
+                                                                $ids = explode('/', $attribute->ids);
                                                             @endphp
                                                             <div class="input-group input-group-static">
                                                                 <select required name="size_id"

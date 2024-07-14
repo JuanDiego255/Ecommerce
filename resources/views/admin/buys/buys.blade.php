@@ -289,8 +289,8 @@
                                     var $label = $('<label>', {
                                         text: attribute.columna_atributo
                                     });
-                                    var values = attribute.valores.split('-');
-                                    var ids = attribute.ids.split('-');
+                                    var values = attribute.valores.split('/');
+                                    var ids = attribute.ids.split('/');
 
                                     var $select = $('<select>', {
                                         required: true,
@@ -514,8 +514,8 @@
                                 var $label = $('<label>', {
                                     text: attribute.columna_atributo
                                 });
-                                var values = attribute.valores.split('-');
-                                var ids = attribute.ids.split('-');
+                                var values = attribute.valores.split('/');
+                                var ids = attribute.ids.split('/');
 
                                 var $select = $('<select>', {
                                     required: true,

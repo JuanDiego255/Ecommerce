@@ -450,7 +450,7 @@ class BuyController extends Controller
                 ->where('s.clothing_id', $cloth_check->id)
                 ->join('attributes as a', 's.attr_id', '=', 'a.id')
                 ->join('attribute_values as v', 's.value_attr', '=', 'v.id')
-                ->select('a.name as columna_atributo', 'a.id as attr_id', 's.clothing_id as clothing_id', DB::raw('GROUP_CONCAT(v.value SEPARATOR "-") as valores'), DB::raw('GROUP_CONCAT(v.id SEPARATOR "-") as ids'))
+                ->select('a.name as columna_atributo', 'a.id as attr_id', 's.clothing_id as clothing_id', DB::raw('GROUP_CONCAT(v.value SEPARATOR "/") as valores'), DB::raw('GROUP_CONCAT(v.id SEPARATOR "/") as ids'))
                 ->groupBy('a.name', 'a.id', 's.clothing_id')
                 ->get();
             return response()->json(['status' => 'success', 'results' => $result]);
