@@ -29655,7 +29655,7 @@ animation-iteration-count: infinite;
 
 .attribute-btn {
   padding: 3px 10px;
-  border: 1px solid #ccc;
+  border: none;
   border-radius: 10px;
   background-color: white;
   cursor: pointer;
@@ -29663,11 +29663,11 @@ animation-iteration-count: infinite;
 }
 
 .attribute-btn.selected {
-  background-color: #007bff;
+  background-color: var(--btn_cart);
   color: white;
 }
 
 .attribute-btn:hover {
-  background-color: #0056b3;
+  background-color: var(--hover);
   color: white;
 }
