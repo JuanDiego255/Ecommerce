@@ -291,7 +291,7 @@
                                     });
                                     var values = attribute.valores.split('/');
                                     var ids = attribute.ids.split('/');
-
+                                    var stock_values = attribute.stock.split('/');
                                     var $select = $('<select>', {
                                         required: true,
                                         name: 'size_id',
@@ -299,7 +299,8 @@
                                     });
 
                                     $.each(values, function(key, value) {
-                                        if (ids[key] !== undefined) {
+                                        if (ids[key] !== undefined &&
+                                            stock_values[key] != 0) {
                                             var $option = $('<option>', {
                                                 value: ids[key] + '-' +
                                                     attribute.attr_id +
@@ -516,6 +517,7 @@
                                 });
                                 var values = attribute.valores.split('/');
                                 var ids = attribute.ids.split('/');
+                                var stock_values = attribute.stock.split('/');
 
                                 var $select = $('<select>', {
                                     required: true,
@@ -524,7 +526,8 @@
                                 });
 
                                 $.each(values, function(key, value) {
-                                    if (ids[key] !== undefined) {
+                                    if (ids[key] !== undefined &&
+                                        stock_values[key] != 0) {
                                         var $option = $('<option>', {
                                             value: ids[key] + '-' +
                                                 attribute.attr_id +

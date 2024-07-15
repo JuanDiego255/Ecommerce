@@ -242,12 +242,13 @@
                                                             @php
                                                                 $values = explode('/', $attribute->valores);
                                                                 $ids = explode('/', $attribute->ids);
+                                                                $stock_values = explode('/', $attribute->stock);
                                                             @endphp
                                                             <div class="input-group input-group-static">
                                                                 <select required name="size_id"
                                                                     class="size_id form-control form-control-lg mb-2">
                                                                     @foreach ($values as $key => $value)
-                                                                        @if (isset($ids[$key]))
+                                                                        @if (isset($ids[$key]) && $stock_values[$key] != 0)
                                                                             <option
                                                                                 value="{{ $ids[$key] . '-' . $attribute->attr_id . '-' . $item->id }}"
                                                                                 id="size_{{ $ids[$key] }}"
@@ -454,7 +455,7 @@
                     cloth_id + '/' + attr_id + '/' +
                     value_attr, // Cambia esto por la ruta que devuelve los elementos del carrito
                 success: function(stock) {
-                    maxStock = stock.stock > 0  ? stock.stock : '';
+                    maxStock = stock.stock > 0 ? stock.stock : '';
 
                     // Actualizar el atributo 'max' del input quantity                    
                     porcDescuento = document.getElementById("porcDescuento").value
