@@ -441,10 +441,8 @@
                         if (porcDescuento > 0) {
                             var descuento = (perPrice * porcDescuento) / 100;
                             var precioConDescuento = perPrice - descuento;
-                            price.textContent =
-                                `₡${perPrice.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
-                            price_discount.textContent =
-                                `₡${perPrice.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
+                            price.textContent = `₡${precioConDescuento.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
+                            price_discount.textContent = `₡${perPrice.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
                         } else {
                             price.textContent =
                                 `₡${perPrice.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;

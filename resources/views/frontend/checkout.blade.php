@@ -413,12 +413,12 @@
             var numericTotalIva = parseFloat(labelTotal.textContent.replace(',', ''));
 
             if (checkBox.checked) {
-                labelTotal.textContent = `${(numericTotalIva + envio).toLocaleString()}`;
-                labelBtnPay.textContent = `${(numericTotalIva + envio).toLocaleString()}`;
+                labelTotal.textContent = `${(numericTotalIva + envio).toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
+                labelBtnPay.textContent = `${(numericTotalIva + envio).toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
                 inputTotal.value = envio;
             } else {
-                labelTotal.textContent = `${(numericTotalIva - envio).toLocaleString()}`;
-                labelBtnPay.textContent = `${(numericTotalIva - envio).toLocaleString()}`;
+                labelTotal.textContent = `${(numericTotalIva - envio).toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
+                labelBtnPay.textContent = `${(numericTotalIva - envio).toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
                 inputTotal.value = 0;
             }
         }

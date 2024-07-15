@@ -318,14 +318,14 @@
             const totalCloth = document.getElementById('totalCloth');
             const btnPay = document.getElementById('btnPay');
 
-            totalElement.textContent = `₡${total.toLocaleString()}`;
+            totalElement.textContent = `₡${total.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
             if (total_iva > 0) {
-                totalIvaElement.textContent = `₡${total_iva.toLocaleString()}`;
+                totalIvaElement.textContent = `₡${total_iva.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
             }
             if (you_save > 0) {
-                totalDiscountElement.textContent = `₡${you_save.toLocaleString()}`;
+                totalDiscountElement.textContent = `₡${you_save.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
             }
-            totalCloth.textContent = `₡${total_cloth.toLocaleString()}`;
+            totalCloth.textContent = `₡${total_cloth.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
         }
     </script>
 @endsection

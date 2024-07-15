@@ -300,9 +300,9 @@
         const total_bills = document.getElementById('total_bills');
         const totalPayment = document.getElementById('totalPayment');
 
-        payments.textContent = `₡${pays.toLocaleString()}`;
-        total_bills.textContent = `₡${bills.toLocaleString()}`;
-        totalPayment.textContent = `₡${total_payment.toLocaleString()}`;
+        payments.textContent = `₡${pays.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
+        total_bills.textContent = `₡${bills.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
+        totalPayment.textContent = `₡${total_payment.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
     }
 
     var dataTable_bills = $('#bills').DataTable({
