@@ -88,7 +88,7 @@
                                         </p>
                                         <div class="d-flex align-items-center">
                                             <div class="input-group text-center input-group-static w-100">
-                                                <input min="1" max="{{ $item->stock > 0 ? $item->stock : ''}}"
+                                                <input min="1" max="{{ $item->stock > 0 ? $item->stock : '' }}"
                                                     value="{{ $item->quantity }}" type="number" name="quantityCart"
                                                     data-cart-id="{{ $item->cart_id }}"
                                                     class="form-control btnQuantity text-center w-100 quantity">
@@ -133,17 +133,17 @@
                     </div>
 
 
-                    @if ($you_save > 0)
-                        <div class="row g-0 py-2 descuento">
-                            <div class="col-8">
-                                <span class="text-dark">Descuento:</span>
-                            </div>
-                            <div class="col-4 text-end">
-                                <span id="totalDiscountElement"
-                                    class="ml-auto descuentoValue">₡{{ number_format($you_save) }}</span>
-                            </div>
+
+                    <div class="row g-0 py-2 descuento" id="descuento">
+                        <div class="col-8">
+                            <span class="text-dark">Descuento:</span>
                         </div>
-                    @endif
+                        <div class="col-4 text-end">
+                            <span id="totalDiscountElement"
+                                class="ml-auto descuentoValue">₡{{ number_format($you_save) }}</span>
+                        </div>
+                    </div>
+
 
                     <div class="row g-0 pt-2 mt-2 border-top fw-bold text-dark total">
                         <div class="col-8">
@@ -359,8 +359,9 @@
                     </div>
                 @else
                     <div class="nav-menu-item">
-                        <i class="fas fa-{{ $icon->categories }} me-3"></i><a class="color-menu" href="javascript:void(0);"
-                            id="toggleCategories">DEPARTAMENTOS <i class="fa fa-arrow-circle-down ml-3"></i></a>
+                        <i class="fas fa-{{ $icon->categories }} me-3"></i><a class="color-menu"
+                            href="javascript:void(0);" id="toggleCategories">DEPARTAMENTOS <i
+                                class="fa fa-arrow-circle-down ml-3"></i></a>
                         <div class="subcategories" id="categoriesDropdown">
                             <ul>
                                 <li class="item-submenu"><a href="{{ url('departments/index') }}"
@@ -400,7 +401,7 @@
                         class="fas fa-{{ $icon->cart }} me-3"></i>CARRITO
                     <span
                         class="badge badge-sm text-pill-menu badge-info border-pill-menu border-2 text-xxs">{{ $cartNumber }}</span></a>
-                        <a href="{{ url('blog/index') }}" class="nav-menu-item"><i class="fa fa-book me-3"></i>BLOG</a>
+                <a href="{{ url('blog/index') }}" class="nav-menu-item"><i class="fa fa-book me-3"></i>BLOG</a>
                 <a href="{{ url('buys') }}" class="nav-menu-item"><i
                         class="fas fa-{{ $icon->shopping }} me-3"></i>MIS
                     COMPRAS</a>

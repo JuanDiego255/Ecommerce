@@ -49,8 +49,7 @@
     }
 </style>
 
-@if (
-    $view_name == 'frontend_blog_show-articles')
+@if ($view_name == 'frontend_blog_show-articles')
     <style>
         :root {
             --url_image: url('{{ route('file', $blog->horizontal_images) }}');
@@ -196,19 +195,25 @@
                 total = total + total_iva;
 
                 // Mostrar el total actualizado en los elementos correspondientes
+                var divDescuento = $(
+                    '#descuento'
+                );
                 const totalElement = document.getElementById('totalPriceElement');
                 const totalIvaElement = document.getElementById('totalIvaElement');
                 const totalDiscountElement = document.getElementById('totalDiscountElement');
                 const totalCloth = document.getElementById('totalCloth');
 
-                totalElement.textContent = `₡${total.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
+                totalElement.textContent = `₡${total.toLocaleString()}`;
                 if (total_iva > 0) {
-                    totalIvaElement.textContent = `₡${total_iva.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
+                    totalIvaElement.textContent = `₡${total_iva.toLocaleString()}`;
                 }
                 if (you_save > 0) {
-                    totalDiscountElement.textContent = `₡${you_save.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
+                    divDescuento.removeClass('d-none');
+                    totalDiscountElement.textContent = `₡${you_save.toLocaleString()}`;
+                } else {
+                    divDescuento.addClass('d-none');
                 }
-                totalCloth.textContent = `₡${total_cloth.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
+                totalCloth.textContent = `₡${total_cloth.toLocaleString()}`;
             }
 
             var isAuthenticated = {{ Auth::check() ? 'true' : 'false' }};

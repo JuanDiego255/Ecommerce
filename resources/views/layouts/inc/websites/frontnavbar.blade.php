@@ -146,17 +146,15 @@
                     </div>
 
 
-                    @if ($you_save > 0)
-                        <div class="row g-0 py-2 descuento">
-                            <div class="col-8">
-                                <span class="text-dark">Descuento:</span>
-                            </div>
-                            <div class="col-4 text-end">
-                                <span id="totalDiscountElement"
-                                    class="ml-auto descuentoValue">₡{{ number_format($you_save) }}</span>
-                            </div>
+                    <div class="row g-0 py-2 descuento" id="descuento">
+                        <div class="col-8">
+                            <span class="text-dark">Descuento:</span>
                         </div>
-                    @endif
+                        <div class="col-4 text-end">
+                            <span id="totalDiscountElement"
+                                class="ml-auto descuentoValue">₡{{ number_format($you_save) }}</span>
+                        </div>
+                    </div>
 
                     <div class="row g-0 pt-2 mt-2 border-top fw-bold text-dark total">
                         <div class="col-8">
