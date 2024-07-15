@@ -199,8 +199,8 @@
                                                     -
                                                 </button>
 
-                                                <input class="qty quantity" @if ($item->total_stock == 0) disabled @endif
-                                                    min="1"
+                                                <input class="qty quantity"
+                                                    @if ($item->total_stock == 0) disabled @endif min="1"
                                                     @if ($item->total_stock > 0) max="{{ $item->total_stock }}" @endif
                                                     id="quantityInput" value="1" type="number" name="quantity">
 
@@ -229,7 +229,7 @@
                                             <div class="row">
                                                 @foreach ($result as $attribute)
                                                     @if ($attribute->stock != 0)
-                                                        <div class="col-md-6">
+                                                        <div class="col-md-12">
                                                             <label
                                                                 class="">{{ $attribute->columna_atributo == 'Stock' ? 'Predeterminado' : $attribute->columna_atributo }}</label><br>
                                                             @php
@@ -237,30 +237,31 @@
                                                                 $ids = explode('/', $attribute->ids);
                                                                 $stock_values = explode('/', $attribute->stock);
                                                             @endphp
-                                                            <div class="input-group input-group-static">
-                                                                <select required name="size_id"
-                                                                    class="size_id form-control form-control-lg mb-2">
-                                                                    @foreach ($values as $key => $value)
-                                                                        @if (isset($ids[$key]) && $stock_values[$key] != 0)
-                                                                            <option
-                                                                                value="{{ $ids[$key] . '-' . $attribute->attr_id . '-' . $item->id }}"
-                                                                                id="size_{{ $ids[$key] }}"
-                                                                                {{ $key === 0 ? 'selected' : '' }}>
-                                                                                {{ $attribute->columna_atributo == 'Stock' ? 'Predeterminado' : $value }}
-                                                                            </option>
-                                                                        @endif
-                                                                    @endforeach
-                                                                </select>
+                                                            <div class="attribute-selector">
+                                                                @foreach ($values as $key => $value)
+                                                                    @if (isset($ids[$key]) && $stock_values[$key] != 0)
+                                                                        <button type="button"
+                                                                            class="attribute-btn {{ $key === 0 ? 'selected' : '' }}"
+                                                                            data-attribute="{{ $attribute->columna_atributo }}"
+                                                                            data-value="{{ $ids[$key] . '-' . $attribute->attr_id . '-' . $item->id }}"
+                                                                            id="{{ $attribute->columna_atributo }}_{{ $ids[$key] }}">
+                                                                            {{ $value }}
+                                                                        </button>
+                                                                    @endif
+                                                                @endforeach
                                                             </div>
-
+                                                            <input type="hidden"
+                                                                name="{{ strtolower($attribute->columna_atributo) }}_id"
+                                                                value="{{ isset($ids[0]) ? $ids[0] . '-' . $attribute->attr_id . '-' . $item->id : '' }}">
                                                             <br>
                                                         </div>
                                                     @endif
                                                 @endforeach
+
                                             </div>
                                         </div>
                                         <!-- col.// -->
-                                        <input type="hidden" class="cloth_id" value="{{ $item->id }}">
+                                        <input type="hidden" class="cloth_item" value="{{ $item->id }}">
                                     </div>
 
                                     <button @if ($item->total_stock > 0 || ($item->manage_stock = 1)) @else 
@@ -294,8 +295,6 @@
     <hr class="dark horizontal text-danger mb-3">
     <div class="row mt-4">
         @foreach ($clothings_trending as $item)
-            <input type="hidden" class="cloth_id" value="{{ $item->id }}">
-            <input type="hidden" class="quantity" value="1">
             <div class="col-md-3 col-sm-6 mb-2">
                 <div class="product-grid product_data">
                     <div class="product-image">
@@ -370,100 +369,72 @@
 @section('scripts')
 <script>
     $(document).ready(function() {
+        var attributeButtons = document.querySelectorAll('.attribute-btn');
 
-        $('.btnAddToCart').click(function(e) {
-            e.preventDefault();
-            var cloth_id = $(this).closest('.product_data').find('.cloth_id').val();
-            var quantity = $(this).closest('.product_data').find('.quantity').val();
-            var selected_sizes = [];
+        // Inicializar la selección por defecto
+        var defaultSelectedButtons = document.querySelectorAll('.attribute-btn.selected');
+        defaultSelectedButtons.forEach(function(button) {
+            updateHiddenInput(button);
+            var partes = button.getAttribute('data-value').split("-");
+            if (partes.length === 3) {
+                getStock(partes[2], partes[1], partes[0]);
+            }
+        });
 
-            // Recorrer todos los <select> con la clase .size_id y obtener sus valores
-            $('.size_id').each(function() {
-                var selected_value = $(this).val();
-                selected_sizes.push(selected_value);
-            });
+        attributeButtons.forEach(function(button) {
+            button.addEventListener('click', function() {
+                var attributeType = this.getAttribute('data-attribute');
+                var selectedButtons = document.querySelectorAll(
+                    `.attribute-btn[data-attribute="${attributeType}"]`);
 
-            // Convertir el array a una cadena JSON
-            var cleaned_sizes = selected_sizes.filter(function(size) {
-                return size !== typeof(undefined) && size.trim() !== "";
-            });
+                // Deseleccionar todos los botones del mismo atributo
+                selectedButtons.forEach(function(btn) {
+                    btn.classList.remove('selected');
+                });
 
-            // Convertir el array filtrado a una cadena JSON
-            var attributes = JSON.stringify(cleaned_sizes);
-            console.log(attributes)
+                // Seleccionar el botón actual
+                this.classList.add('selected');
 
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-            $.ajax({
-                method: "POST",
-                url: "/add-to-cart",
-                data: {
-                    'clothing_id': cloth_id,
-                    'quantity': quantity,
-                    'attributes': attributes,
-                },
-                success: function(response) {
-                    Swal.fire({
-                        title: response.status,
-                        icon: response.icon,
-                    });
-                    var newCartNumber = response.cartNumber
-                    $('.badge').text(newCartNumber);
-                    $('.cartIcon').text(' ' + newCartNumber);
+                // Actualizar el valor del input oculto correspondiente
+                updateHiddenInput(this);
 
-                    getCart();
+                var partes = this.getAttribute('data-value').split("-");
+                if (partes.length === 3) {
+                    getStock(partes[2], partes[1], partes[0]);
                 }
             });
         });
 
-        var size_id = $('select[name="size_id"]').val();
-        var partes = size_id.split("-");
-        var value_attr = partes[0];
-        var attr_id = partes[1];
-        var cloth_id = partes[2];
-        var maxStock = 1;
-        getQuantity();
-
-        $('input[name="quantity"]').attr('max', maxStock);
-        custom_size = document.getElementById("custom_size").value
-        $('select[name="size_id"]').on('change', function() {
-            // Obtener el ID de la talla seleccionada
-            var selectedSizeId = $(this).val();
-            partes = selectedSizeId.split("-");
-            // Acceder a cada parte individualmente
-            value_attr = partes[0]; // "7"
-            attr_id = partes[1];
-            cloth_id = partes[2];
-            getStock(cloth_id, attr_id, value_attr);
-        });
+        function updateHiddenInput(button) {
+            var attributeType = button.getAttribute('data-attribute').toLowerCase();
+            var input = document.querySelector(`input[name="${attributeType}_id"]`);
+            if (input) {
+                input.value = button.getAttribute('data-value');
+            }
+        }
 
         function getStock(cloth_id, attr_id, value_attr) {
             $.ajax({
                 method: "GET",
-                url: "/get-stock/" +
-                    cloth_id + '/' + attr_id + '/' +
-                    value_attr, // Cambia esto por la ruta que devuelve los elementos del carrito
+                url: "/get-stock/" + cloth_id + '/' + attr_id + '/' + value_attr,
                 success: function(stock) {
-                    maxStock = stock.stock > 0 ? stock.stock : '';
+                    var maxStock = stock.stock > 0 ? stock.stock : '';
+                    var porcDescuento = document.getElementById("porcDescuento").value;
+                    var perPrice = stock.price;
 
-                    // Actualizar el atributo 'max' del input quantity                    
-                    porcDescuento = document.getElementById("porcDescuento").value
-                    perPrice = stock.price;
                     if (perPrice > 0) {
                         $('input[name="quantity"]').attr('max', maxStock);
                         $('input[name="quantity"]').val(1);
-                        const price = document.getElementById('text_price');
-                        const price_discount = document.getElementById('text_price_discount');
+
+                        var price = document.getElementById('text_price');
+                        var price_discount = document.getElementById('text_price_discount');
                         if (porcDescuento > 0) {
                             var descuento = (perPrice * porcDescuento) / 100;
                             var precioConDescuento = perPrice - descuento;
-                            price.textContent = `₡${precioConDescuento.toLocaleString()}`;
-                            price_discount.textContent = `₡${perPrice.toLocaleString()}`;
+                            price.textContent = `₡${perPrice.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
+                            price_discount.textContent = `₡${perPrice.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
                         } else {
-                            price.textContent = `₡${perPrice.toLocaleString()}`;
+                            price.textContent = `₡${perPrice.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
                         }
                     }
                 }
@@ -471,17 +442,68 @@
         }
 
         function getQuantity() {
-            $('.size_id').each(function() {
+            $('input[type="hidden"][name$="_id"]').each(function() {
                 var selected_value = $(this).val();
-                var partes = selected_value.split("-");
-                var value_attr = partes[0]; // "7"
-                var attr_id = partes[1];
-                var cloth_id = partes[2];
-                if (value_attr != "") {
-                    getStock(cloth_id, attr_id, value_attr);
+                if (selected_value) {
+                    var partes = selected_value.split("-");
+                    if (partes.length === 3) {
+                        var value_attr = partes[0];
+                        var attr_id = partes[1];
+                        var cloth_id = partes[2];
+                        if (value_attr !== "") {
+                            getStock(cloth_id, attr_id, value_attr);
+                        }
+                    }
                 }
             });
         }
+
+        getQuantity();
+    });
+
+    $('.btnAddToCart').click(function(e) {
+        e.preventDefault();
+        var cloth_id = $(this).closest('.product_data').find('.cloth_item').val();
+        var quantity = $(this).closest('.product_data').find('.quantity').val();
+        var selected_attributes = [];
+
+        // Recorrer todos los inputs ocultos con los valores seleccionados
+        $('input[type="hidden"][name$="_id"]').each(function() {
+            var selected_value = $(this).val();
+            var regex = /^\d+-\d+-\d+$/;
+            if (selected_value && regex.test(selected_value)) {
+                selected_attributes.push(selected_value);
+            }
+        });
+
+        // Convertir el array a una cadena JSON
+        var attributes = JSON.stringify(selected_attributes);
+
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $.ajax({
+            method: "POST",
+            url: "/add-to-cart",
+            data: {
+                'clothing_id': cloth_id,
+                'quantity': quantity,
+                'attributes': attributes,
+            },
+            success: function(response) {
+                Swal.fire({
+                    title: response.status,
+                    icon: response.icon,
+                });
+                var newCartNumber = response.cartNumber;
+                $('.badge').text(newCartNumber);
+                $('.cartIcon').text(' ' + newCartNumber);
+
+                getCart();
+            }
+        });
 
         const quantityInput = document.getElementById('quantityInput');
 

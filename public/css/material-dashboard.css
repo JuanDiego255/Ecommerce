@@ -29647,3 +29647,27 @@ animation-iteration-count: infinite;
   margin-top: 5px; /* Margen superior */
   margin-bottom: 5px;
 }
+/*Size selector*/
+.attribute-selector {
+  display: flex;
+  gap: 10px;
+}
+
+.attribute-btn {
+  padding: 3px 10px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background-color: white;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.attribute-btn.selected {
+  background-color: #007bff;
+  color: white;
+}
+
+.attribute-btn:hover {
+  background-color: #0056b3;
+  color: white;
+}
