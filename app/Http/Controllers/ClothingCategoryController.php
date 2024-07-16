@@ -409,7 +409,6 @@ class ClothingCategoryController extends Controller
 
             foreach ($images as $image) {
                 $code = $code + 1;
-
                 $clothing = new ClothingCategory();
                 $clothing->name = $request->name;
                 $clothing->code = $code;
