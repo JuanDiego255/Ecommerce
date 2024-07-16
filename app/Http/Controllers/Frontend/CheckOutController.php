@@ -395,7 +395,6 @@ class CheckOutController extends Controller
                             $postal_code = $request->postal_code;
                         }
                     }
-
                     $buy->user_id =  Auth::user()->id;
                     $buy->address =  $address;
                     $buy->address_two =  $address_two;
@@ -761,6 +760,7 @@ class CheckOutController extends Controller
                 $buy->delivered = 1;
                 $buy->approved = 1;
                 $buy->cancel_buy = 0;
+                $buy->total_delivery = $request->delivery;
                 $buy->kind_of_buy = $request->kind_of;
                 $buy->detail = $request->detail;
                 $buy->save();

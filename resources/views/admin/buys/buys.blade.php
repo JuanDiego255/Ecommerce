@@ -188,10 +188,16 @@
                                 @csrf
                                 <input type="hidden" value="F" name="kind_of" id="kind_of">
                                 <div class="row checkout-form">
-                                    <div class="col-md-12 text-center w-100 mb-3 px-5">
-                                        <div class="input-group input-group-lg input-group-outline my-3">
+                                    <div class="col-md-12 text-center w-100">
+                                        <div class="input-group input-group-lg input-group-outline">
                                             <label class="form-label">Detalle (Opcional)</label>
                                             <input type="text" class="form-control form-control-lg" name="detail">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 text-center w-100 mb-3">
+                                        <div class="input-group input-group-lg input-group-outline my-3">
+                                            <label class="form-label">Envío (Opcional)</label>
+                                            <input type="number" class="form-control form-control-lg" name="delivery">
                                         </div>
                                     </div>
                                 </div>
