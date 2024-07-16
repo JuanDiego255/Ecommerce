@@ -10,7 +10,7 @@
         case 'abril7cr':
         case 'aycfashion':
             $address_tenant = '(Envío dentro de la GAM ₡2500)';
-            $sinpe_name = 'Sharlin Patricia Espinoza';
+            $sinpe_name = 'Ariel Valdivia';
             break;
 
         default:
@@ -413,12 +413,12 @@
             var numericTotalIva = parseFloat(labelTotal.textContent.replace(',', ''));
 
             if (checkBox.checked) {
-                labelTotal.textContent = `${(numericTotalIva + envio).toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
-                labelBtnPay.textContent = `${(numericTotalIva + envio).toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
+                labelTotal.textContent = `${(numericTotalIva + envio).toLocaleString().replace('.', ',')}`;
+                labelBtnPay.textContent = `${(numericTotalIva + envio).toLocaleString().replace('.', ',')}`;
                 inputTotal.value = envio;
             } else {
-                labelTotal.textContent = `${(numericTotalIva - envio).toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
-                labelBtnPay.textContent = `${(numericTotalIva - envio).toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
+                labelTotal.textContent = `${(numericTotalIva - envio).toLocaleString().replace('.', ',')}`;
+                labelBtnPay.textContent = `${(numericTotalIva - envio).toLocaleString().replace('.', ',')}`;
                 inputTotal.value = 0;
             }
         }
