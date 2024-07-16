@@ -263,11 +263,11 @@ class CheckOutController extends Controller
             $request = request();
 
             // Utilizar una API de geolocalización para obtener la ubicación basada en la IP
-            $details = GeoLocation::lookup($userIp);
+            /* $details = GeoLocation::lookup($userIp);
             $countryCode = $details->getCountryCode();
             if ($countryCode != 'CR' && $request->kind_of == "V") {
                 return redirect()->back()->with(['status' => 'No puede realizar una compra si se encuentra fuera de Costa Rica!', 'icon' => 'success']);
-            }
+            } */
             $tenantinfo = TenantInfo::first();
             $tenant = $tenantinfo->tenant;           
             DB::beginTransaction();
