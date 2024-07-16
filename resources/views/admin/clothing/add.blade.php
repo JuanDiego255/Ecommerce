@@ -57,10 +57,10 @@
                                 <input required type="number" class="form-control form-control-lg" name="stock" id="stock" value="{{ old('stock') }}">
                             </div>
                         </div>
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-12 mb-3">
                             <div class="input-group input-group-static mb-4">
-                                <label> {{ __('Código') }}</label>
-                                <input readonly type="text" placeholder="Se completa automáticamente" class="form-control form-control-lg" name="code" value="{{ old('code') }}">
+                                <label> {{ __('SKU o Código (Si dejas el campo en blanco o el código digitado ya existe, el sistema sugerirá un código random, compuesto por la letra P indicando que es un producto, y una secuencia de 13 números aleatorios)') }}</label>
+                                <input type="text" placeholder="Puedes digitar el código deseado..." class="form-control form-control-lg" name="code" value="{{ old('code') }}">
                             </div>
                         </div>
                         <div class="col-md-12 mb-3">
