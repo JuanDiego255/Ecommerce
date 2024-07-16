@@ -131,7 +131,7 @@
                                             </div>
                                             <div class="d-flex flex-column justify-content-center">
                                                 <h4 class="mb-0 text-lg">{{ $item->name }}</h4>
-
+                                                <p class="text-xs text-secondary mb-0">Código: {{ $item->code }}</p>
                                             </div>
                                         </div>
                                     </td>
