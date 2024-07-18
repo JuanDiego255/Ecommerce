@@ -47,11 +47,11 @@
             <div class="card p-2">
                 <div class="table-responsive">
 
-                    <table class="table align-items-center mb-0" id="profesionals">
+                    <table class="table align-items-center mb-0" id="table">
                         <thead>
                             <tr>
                                 <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Nombre') }}
-                                </th>                                
+                                </th>
                                 <th class="text-center text-secondary font-weight-bolder opacity-7">
                                     {{ __('Acciones') }}</th>
                             </tr>
@@ -71,11 +71,11 @@
                                             </div>
                                             <div class="d-flex flex-column justify-content-center">
                                                 <h4 class="mb-0 text-lg">{!! $item->name !!}</h4>
-                                                
+
                                             </div>
                                         </div>
-                                    </td>                                  
-                                   
+                                    </td>
+
                                     <td class="align-middle text-center">
                                         <form name="delete-profesional{{ $item->id }}"
                                             id="delete-profesional{{ $item->id }}" method="post"
@@ -90,8 +90,8 @@
                                             <i class="material-icons text-lg">delete</i>
                                         </button>
                                         <a class="btn btn-link text-velvet me-auto border-0"
-                                            href="{{ url('/edit-user-info/' . $item->id) }}"
-                                            data-bs-toggle="tooltip" data-bs-placement="bottom" title="Editar">
+                                            href="{{ url('/edit-user-info/' . $item->id) }}" data-bs-toggle="tooltip"
+                                            data-bs-placement="bottom" title="Editar">
                                             <i class="material-icons text-lg">edit</i>
                                         </a>
                                     </td>
@@ -105,50 +105,6 @@
         </div>
     </div>
 @endsection
-@section('script')    
-    <script>
-        $(document).ready(function() {
-            var dataTable = $('#profesionals').DataTable({
-                searching: true,
-                lengthChange: false,
-
-                "language": {
-                    "sProcessing": "Procesando...",
-                    "sLengthMenu": "Mostrar _MENU_ registros",
-                    "sZeroRecords": "No se encontraron resultados",
-                    "sEmptyTable": "Ningún dato disponible en esta tabla",
-                    "sInfo": "Mostrando _START_ a _END_ de _TOTAL_ registros",
-                    "sInfoEmpty": "Mostrando 0 a 0 de 0 registros",
-                    "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
-                    "sInfoPostFix": "",
-                    "sSearch": "Buscar:",
-                    "sUrl": "",
-                    "sInfoThousands": ",",
-                    "sLoadingRecords": "Cargando...",
-                    "oPaginate": {
-                        "sFirst": "<<",
-                        "sLast": "Último",
-                        "sNext": ">>",
-                        "sPrevious": "<<"
-                    },
-                    "oAria": {
-                        "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
-                        "sSortDescending": ": Activar para ordenar la columna de manera descendente"
-                    }
-                }
-            });
-
-            $('#recordsPerPage').on('change', function() {
-                var recordsPerPage = parseInt($(this).val(), 10);
-                dataTable.page.len(recordsPerPage).draw();
-            });
-
-            // Captura el evento input en el campo de búsqueda
-            $('#searchfor').on('input', function() {
-                var searchTerm = $(this).val();
-                dataTable.search(searchTerm).draw();
-            });
-
-        });
-    </script>
+@section('script')
+    <script src="{{ asset('js/datatables.js') }}"></script>
 @endsection

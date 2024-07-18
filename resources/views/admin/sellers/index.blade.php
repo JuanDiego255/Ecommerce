@@ -11,7 +11,7 @@
     </center>
     <button type="button" data-bs-toggle="modal" data-bs-target="#add-seller-modal" class="btn btn-velvet">
         {{ __('Nuevo vendedor') }}</button>
-        @include('admin.sellers.add')
+    @include('admin.sellers.add')
     <div class="card mt-3">
         <div class="card-body">
             <div class="row w-100">
@@ -53,7 +53,7 @@
                                 <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Vendedor') }}
                                 </th>
                                 <th class="text-center text-secondary font-weight-bolder opacity-7">
-                                    {{ __('Posición') }}</th>                                
+                                    {{ __('Posición') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -78,7 +78,7 @@
                                     <td class="align-middle text-center text-sm">
                                         <p class="text-success mb-0">{{ $item->position }}
                                         </p>
-                                    </td>                                    
+                                    </td>
                                     <td class="align-middle">
                                         <center>
                                             <button type="button" data-bs-toggle="modal"
@@ -91,7 +91,8 @@
                                                 {{ method_field('DELETE') }}
                                                 <button type="submit" data-bs-toggle="modal"
                                                     onclick="return confirm('Deseas borrar este vendedor?')"
-                                                    class="btn btn-admin-delete" style="text-decoration: none;">Borrar</button>
+                                                    class="btn btn-admin-delete"
+                                                    style="text-decoration: none;">Borrar</button>
                                             </form>
                                         </center>
 
@@ -113,50 +114,6 @@
         </div>
     </center>
 @endsection
-@section('script')    
-    <script>
-        $(document).ready(function() {
-            var dataTable = $('#sellers').DataTable({
-                searching: true,
-                lengthChange: false,
-
-                "language": {
-                    "sProcessing": "Procesando...",
-                    "sLengthMenu": "Mostrar _MENU_ registros",
-                    "sZeroRecords": "No se encontraron resultados",
-                    "sEmptyTable": "Ningún dato disponible en esta tabla",
-                    "sInfo": "Mostrando _START_ a _END_ de _TOTAL_ registros",
-                    "sInfoEmpty": "Mostrando 0 a 0 de 0 registros",
-                    "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
-                    "sInfoPostFix": "",
-                    "sSearch": "Buscar:",
-                    "sUrl": "",
-                    "sInfoThousands": ",",
-                    "sLoadingRecords": "Cargando...",
-                    "oPaginate": {
-                        "sFirst": "<<",
-                        "sLast": "Último",
-                        "sNext": ">>",
-                        "sPrevious": "<<"
-                    },
-                    "oAria": {
-                        "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
-                        "sSortDescending": ": Activar para ordenar la columna de manera descendente"
-                    }
-                }
-            });
-
-            $('#recordsPerPage').on('change', function() {
-                var recordsPerPage = parseInt($(this).val(), 10);
-                dataTable.page.len(recordsPerPage).draw();
-            });
-
-            // Captura el evento input en el campo de búsqueda
-            $('#searchfor').on('input', function() {
-                var searchTerm = $(this).val();
-                dataTable.search(searchTerm).draw();
-            });
-
-        });
-    </script>
+@section('script')
+    <script src="{{ asset('js/datatables.js') }}"></script>
 @endsection

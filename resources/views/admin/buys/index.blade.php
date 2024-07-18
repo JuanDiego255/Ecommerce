@@ -36,7 +36,7 @@
         <center>
             <div class="card w-100 mb-4">
                 <div class="table-responsive">
-                    <table id="buys" class="table align-items-center mb-0">
+                    <table id="table" class="table align-items-center mb-0">
                         <thead>
                             <tr>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
@@ -252,46 +252,5 @@
     </div>
 @endsection
 @section('script')
-    <script>
-        var dataTable = $('#buys').DataTable({
-            searching: true,
-            lengthChange: false,
-
-            "language": {
-                "sProcessing": "Procesando...",
-                "sLengthMenu": "Mostrar _MENU_ registros",
-                "sZeroRecords": "No se encontraron resultados",
-                "sEmptyTable": "Ningún dato disponible en esta tabla",
-                "sInfo": "Mostrando _START_ a _END_ de _TOTAL_ registros",
-                "sInfoEmpty": "Mostrando 0 a 0 de 0 registros",
-                "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
-                "sInfoPostFix": "",
-                "sSearch": "Buscar:",
-                "sUrl": "",
-                "sInfoThousands": ",",
-                "sLoadingRecords": "Cargando...",
-                "oPaginate": {
-                    "sFirst": "<<",
-                    "sLast": "Último",
-                    "sNext": ">>",
-                    "sPrevious": "<<"
-                },
-                "oAria": {
-                    "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
-                    "sSortDescending": ": Activar para ordenar la columna de manera descendente"
-                }
-            }
-        });
-
-        $('#recordsPerPage').on('change', function() {
-            var recordsPerPage = parseInt($(this).val(), 10);
-            dataTable.page.len(recordsPerPage).draw();
-        });
-
-        // Captura el evento input en el campo de búsqueda
-        $('#searchfor').on('input', function() {
-            var searchTerm = $(this).val();
-            dataTable.search(searchTerm).draw();
-        });
-    </script>
+    <script src="{{ asset('js/datatables.js') }}"></script>
 @endsection

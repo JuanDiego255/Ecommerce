@@ -11,7 +11,8 @@
     </center>
     <div class="row w-50">
         <div class="col-md-6">
-            <a href="{{ url('blog-add/' . $id . '/agregar-info') }}" class="btn btn-velvet w-100">{{ __('Nuevo artículo') }}</a>
+            <a href="{{ url('blog-add/' . $id . '/agregar-info') }}"
+                class="btn btn-velvet w-100">{{ __('Nuevo artículo') }}</a>
         </div>
     </div>
     <div class="card mt-3">
@@ -47,7 +48,7 @@
             <div class="card p-2">
                 <div class="table-responsive">
 
-                    <table class="table align-items-center mb-0" id="articles">
+                    <table class="table align-items-center mb-0" id="table">
                         <thead>
                             <tr>
                                 <th class="text-center text-secondary font-weight-bolder opacity-7">
@@ -55,13 +56,13 @@
                                 <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Blog') }}
                                 </th>
                                 <th class="text-center text-secondary font-weight-bolder opacity-7">
-                                    {{ __('Artículo') }}</th>                               
-                                
+                                    {{ __('Artículo') }}</th>
+
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($tags as $item)
-                                <tr>     
+                                <tr>
                                     <td class="align-middle text-center">
                                         <form name="delete-article{{ $item->id }}"
                                             id="delete-article{{ $item->id }}" method="post"
@@ -74,23 +75,23 @@
                                             class="btn btn-link text-velvet ms-auto border-0" data-bs-toggle="tooltip"
                                             data-bs-placement="bottom" title="Eliminar">
                                             <i class="material-icons text-lg">delete</i>
-                                        </button>                                
+                                        </button>
                                         <a class="btn btn-link text-velvet me-auto border-0"
                                             href="{{ url('blog/' . $item->id . '/' . $id . '/edit-info') }}"
                                             data-bs-toggle="tooltip" data-bs-placement="bottom" title="Editar">
                                             <i class="material-icons text-lg">edit</i>
                                         </a>
-                                    </td>                              
+                                    </td>
                                     <td class="align-middle text-sm">
                                         <p class="text-muted mb-0">{{ $item->blog_title }}
                                         </p>
-                                    </td>      
+                                    </td>
                                     <td class="align-middle text-center text-sm">
                                         <p class="text-muted mb-0">{{ $item->title }}
                                         </p>
-                                    </td>                            
-                                   
-                                   
+                                    </td>
+
+
                                 </tr>
                             @endforeach
                         </tbody>
@@ -106,50 +107,6 @@
         </div>
     </center>
 @endsection
-@section('script')    
-    <script>
-        $(document).ready(function() {
-            var dataTable = $('#articles').DataTable({
-                searching: true,
-                lengthChange: false,
-
-                "language": {
-                    "sProcessing": "Procesando...",
-                    "sLengthMenu": "Mostrar _MENU_ registros",
-                    "sZeroRecords": "No se encontraron resultados",
-                    "sEmptyTable": "Ningún dato disponible en esta tabla",
-                    "sInfo": "Mostrando _START_ a _END_ de _TOTAL_ registros",
-                    "sInfoEmpty": "Mostrando 0 a 0 de 0 registros",
-                    "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
-                    "sInfoPostFix": "",
-                    "sSearch": "Buscar:",
-                    "sUrl": "",
-                    "sInfoThousands": ",",
-                    "sLoadingRecords": "Cargando...",
-                    "oPaginate": {
-                        "sFirst": "<<",
-                        "sLast": "Último",
-                        "sNext": ">>",
-                        "sPrevious": "<<"
-                    },
-                    "oAria": {
-                        "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
-                        "sSortDescending": ": Activar para ordenar la columna de manera descendente"
-                    }
-                }
-            });
-
-            $('#recordsPerPage').on('change', function() {
-                var recordsPerPage = parseInt($(this).val(), 10);
-                dataTable.page.len(recordsPerPage).draw();
-            });
-
-            // Captura el evento input en el campo de búsqueda
-            $('#searchfor').on('input', function() {
-                var searchTerm = $(this).val();
-                dataTable.search(searchTerm).draw();
-            });
-
-        });
-    </script>
+@section('script')
+    <script src="{{ asset('js/datatables.js') }}"></script>
 @endsection

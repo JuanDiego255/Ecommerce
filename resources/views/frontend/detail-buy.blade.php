@@ -37,12 +37,12 @@
         <center>
             <div class="card w-100 mb-4">
                 <div class="table-responsive">
-                    <table id="buysDetails" class="table align-items-center mb-0">
+                    <table id="table" class="table align-items-center mb-0">
                         <thead>
                             <tr>
                                 <th class="text-uppercase text-secondary font-weight-bolder opacity-7">Artículo</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                    Atributos</th>                  
+                                    Atributos</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                     Pedido</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
@@ -72,13 +72,13 @@
                                                 <p class="mb-0 mt-0 text-sm text-info">
                                                     Precio: ₡{{ number_format($buy->total) }}<br>
                                                     @if ($iva > 0)
-                                                    I.V.A: ₡{{ number_format($buy->iva) }}
+                                                        I.V.A: ₡{{ number_format($buy->iva) }}
                                                     @endif
-                                                </p>                                               
+                                                </p>
 
                                             </div>
                                         </div>
-                                    </td>      
+                                    </td>
                                     <td class="align-middle text-center text-sm">
                                         <p class=" font-weight-bold mb-0">
                                             @foreach ($attributesValues as $attributeValue)
@@ -90,7 +90,7 @@
                                                 {{ $attribute }}: {{ $value }}<br>
                                             @endforeach
                                         </p>
-                                    </td>    
+                                    </td>
                                     <td class="align-middle text-xxs text-center">
                                         <p class=" font-weight-bold mb-0">
                                             @switch($buy->cancel_item)
@@ -121,46 +121,5 @@
     @include('layouts.inc.indexfooter')
 @endsection
 @section('scripts')
-    <script>
-        var dataTable = $('#buysDetails').DataTable({
-            searching: true,
-            lengthChange: false,
-
-            "language": {
-                "sProcessing": "Procesando...",
-                "sLengthMenu": "Mostrar _MENU_ registros",
-                "sZeroRecords": "No se encontraron resultados",
-                "sEmptyTable": "Ningún dato disponible en esta tabla",
-                "sInfo": "Mostrando _START_ a _END_ de _TOTAL_ registros",
-                "sInfoEmpty": "Mostrando 0 a 0 de 0 registros",
-                "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
-                "sInfoPostFix": "",
-                "sSearch": "Buscar:",
-                "sUrl": "",
-                "sInfoThousands": ",",
-                "sLoadingRecords": "Cargando...",
-                "oPaginate": {
-                    "sFirst": "<<",
-                    "sLast": "Último",
-                    "sNext": ">>",
-                    "sPrevious": "<<"
-                },
-                "oAria": {
-                    "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
-                    "sSortDescending": ": Activar para ordenar la columna de manera descendente"
-                }
-            }
-        });
-
-        $('#recordsPerPage').on('change', function() {
-            var recordsPerPage = parseInt($(this).val(), 10);
-            dataTable.page.len(recordsPerPage).draw();
-        });
-
-        // Captura el evento input en el campo de búsqueda
-        $('#searchfor').on('input', function() {
-            var searchTerm = $(this).val();
-            dataTable.search(searchTerm).draw();
-        });
-    </script>
+    <script src="{{ asset('js/datatables.js') }}"></script>
 @endsection

@@ -47,7 +47,7 @@
             <div class="card p-2">
                 <div class="table-responsive">
 
-                    <table class="table align-items-center mb-0" id="cards">
+                    <table class="table align-items-center mb-0" id="table">
                         <thead>
                             <tr>
                                 <th class="text-center text-secondary font-weight-bolder opacity-7">
@@ -55,16 +55,15 @@
                                 <th class="text-secondary font-weight-bolder opacity-7">
                                     {{ __('Tarjeta') }}</th>
                                 <th class="text-center text-secondary font-weight-bolder opacity-7">
-                                    {{ __('Descripción') }}</th>                               
+                                    {{ __('Descripción') }}</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($cards as $item)
                                 <tr>
                                     <td class="align-middle text-center">
-                                        <form name="delete-card{{ $item->id }}"
-                                            id="delete-card{{ $item->id }}" method="post"
-                                            action="{{ url('/delete-card/' . $item->id) }}">
+                                        <form name="delete-card{{ $item->id }}" id="delete-card{{ $item->id }}"
+                                            method="post" action="{{ url('/delete-card/' . $item->id) }}">
                                             {{ csrf_field() }}
                                             {{ method_field('DELETE') }}
                                         </form>
@@ -91,14 +90,14 @@
                                             </div>
                                             <div class="d-flex flex-column justify-content-center">
                                                 <h4 class="mb-0 text-lg">{{ $item->title }}</h4>
-                                                
+
                                             </div>
                                         </div>
                                     </td>
                                     <td class="align-middle text-center text-sm">
                                         <p class="text-muted mb-0">{{ $item->description }}
                                         </p>
-                                    </td>                                   
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -114,50 +113,6 @@
         </div>
     </center>
 @endsection
-@section('script')    
-    <script>
-        $(document).ready(function() {
-            var dataTable = $('#cards').DataTable({
-                searching: true,
-                lengthChange: false,
-
-                "language": {
-                    "sProcessing": "Procesando...",
-                    "sLengthMenu": "Mostrar _MENU_ registros",
-                    "sZeroRecords": "No se encontraron resultados",
-                    "sEmptyTable": "Ningún dato disponible en esta tabla",
-                    "sInfo": "Mostrando _START_ a _END_ de _TOTAL_ registros",
-                    "sInfoEmpty": "Mostrando 0 a 0 de 0 registros",
-                    "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
-                    "sInfoPostFix": "",
-                    "sSearch": "Buscar:",
-                    "sUrl": "",
-                    "sInfoThousands": ",",
-                    "sLoadingRecords": "Cargando...",
-                    "oPaginate": {
-                        "sFirst": "<<",
-                        "sLast": "Último",
-                        "sNext": ">>",
-                        "sPrevious": "<<"
-                    },
-                    "oAria": {
-                        "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
-                        "sSortDescending": ": Activar para ordenar la columna de manera descendente"
-                    }
-                }
-            });
-
-            $('#recordsPerPage').on('change', function() {
-                var recordsPerPage = parseInt($(this).val(), 10);
-                dataTable.page.len(recordsPerPage).draw();
-            });
-
-            // Captura el evento input en el campo de búsqueda
-            $('#searchfor').on('input', function() {
-                var searchTerm = $(this).val();
-                dataTable.search(searchTerm).draw();
-            });
-
-        });
-    </script>
+@section('script')
+    <script src="{{ asset('js/datatables.js') }}"></script>
 @endsection

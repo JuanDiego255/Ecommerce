@@ -47,7 +47,7 @@
             <div class="card p-2">
                 <div class="table-responsive">
 
-                    <table class="table align-items-center mb-0" id="blogs">
+                    <table class="table align-items-center mb-0" id="table">
                         <thead>
                             <tr>
                                 <th class="text-center text-secondary font-weight-bolder opacity-7">
@@ -55,17 +55,16 @@
                                 <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Blog') }}
                                 </th>
                                 <th class="text-center text-secondary font-weight-bolder opacity-7">
-                                    {{ __('Fecha Post') }}</th>                                
-                                
+                                    {{ __('Fecha Post') }}</th>
+
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($blogs as $item)
                                 <tr>
                                     <td class="align-middle text-center">
-                                        <form name="delete-blog{{ $item->id }}"
-                                            id="delete-blog{{ $item->id }}" method="post"
-                                            action="{{ url('/blog/' . $item->id) }}">
+                                        <form name="delete-blog{{ $item->id }}" id="delete-blog{{ $item->id }}"
+                                            method="post" action="{{ url('/blog/' . $item->id) }}">
                                             {{ csrf_field() }}
                                             {{ method_field('DELETE') }}
                                         </form>
@@ -76,13 +75,13 @@
                                             <i class="material-icons text-lg">delete</i>
                                         </button>
                                         <a class="btn btn-link text-velvet me-auto border-0"
-                                            href="{{ url('/blog-edit/' . $item->id . '/edit') }}"
-                                            data-bs-toggle="tooltip" data-bs-placement="bottom" title="Editar">
+                                            href="{{ url('/blog-edit/' . $item->id . '/edit') }}" data-bs-toggle="tooltip"
+                                            data-bs-placement="bottom" title="Editar">
                                             <i class="material-icons text-lg">edit</i>
                                         </a>
                                         <a class="btn btn-link text-velvet me-auto border-0"
-                                            href="{{ url('/blog-show/' . $item->id . '/show') }}"
-                                            data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ver artículos">
+                                            href="{{ url('/blog-show/' . $item->id . '/show') }}" data-bs-toggle="tooltip"
+                                            data-bs-placement="bottom" title="Ver artículos">
                                             <i class="material-icons text-lg">visibility</i>
                                         </a>
                                         <a class="btn btn-link text-velvet me-auto border-0"
@@ -91,8 +90,8 @@
                                             <i class="material-icons text-lg">book</i>
                                         </a>
                                         <a class="btn btn-link text-velvet me-auto border-0"
-                                            href="{{ url('/results/' . $item->id) }}"
-                                            data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ver resultados">
+                                            href="{{ url('/results/' . $item->id) }}" data-bs-toggle="tooltip"
+                                            data-bs-placement="bottom" title="Ver resultados">
                                             <i class="material-icons text-lg">medical_services</i>
                                         </a>
                                     </td>
@@ -110,11 +109,11 @@
                                                 <p>{!! $item->autor !!}</p>
                                             </div>
                                         </div>
-                                    </td>       
+                                    </td>
                                     <td class="align-middle text-center text-sm">
                                         <p class="text-success mb-0">{{ $item->fecha_post }}
                                         </p>
-                                    </td>  
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -125,50 +124,6 @@
         </div>
     </div>
 @endsection
-@section('script')    
-    <script>
-        $(document).ready(function() {
-            var dataTable = $('#blogs').DataTable({
-                searching: true,
-                lengthChange: false,
-
-                "language": {
-                    "sProcessing": "Procesando...",
-                    "sLengthMenu": "Mostrar _MENU_ registros",
-                    "sZeroRecords": "No se encontraron resultados",
-                    "sEmptyTable": "Ningún dato disponible en esta tabla",
-                    "sInfo": "Mostrando _START_ a _END_ de _TOTAL_ registros",
-                    "sInfoEmpty": "Mostrando 0 a 0 de 0 registros",
-                    "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
-                    "sInfoPostFix": "",
-                    "sSearch": "Buscar:",
-                    "sUrl": "",
-                    "sInfoThousands": ",",
-                    "sLoadingRecords": "Cargando...",
-                    "oPaginate": {
-                        "sFirst": "<<",
-                        "sLast": "Último",
-                        "sNext": ">>",
-                        "sPrevious": "<<"
-                    },
-                    "oAria": {
-                        "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
-                        "sSortDescending": ": Activar para ordenar la columna de manera descendente"
-                    }
-                }
-            });
-
-            $('#recordsPerPage').on('change', function() {
-                var recordsPerPage = parseInt($(this).val(), 10);
-                dataTable.page.len(recordsPerPage).draw();
-            });
-
-            // Captura el evento input en el campo de búsqueda
-            $('#searchfor').on('input', function() {
-                var searchTerm = $(this).val();
-                dataTable.search(searchTerm).draw();
-            });
-
-        });
-    </script>
+@section('script')
+    <script src="{{ asset('js/datatables.js') }}"></script>
 @endsection
