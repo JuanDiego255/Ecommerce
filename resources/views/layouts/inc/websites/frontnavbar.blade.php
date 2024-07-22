@@ -414,6 +414,8 @@
                         class="badge badge-sm text-pill-menu badge-info border-pill-menu border-2 text-xxs">{{ $cartNumber }}</span></a>
                 <a href="{{ url('buys') }}" class="nav-menu-item"><i class="fa fa-credit-card me-3"></i>MIS
                     COMPRAS</a>
+                <a href="{{ url('/index-gifts') }}" class="nav-menu-item"><i class="fas fa-gift me-3"></i>MIS
+                    TARJETAS</a>
                 <a href="{{ url('blog/index') }}" class="nav-menu-item"><i class="fa fa-book me-3"></i>BLOG</a>
                 <a href="{{ url('/address') }}" class="nav-menu-item"><i
                         class="fas fa-map-marker me-3"></i>DIRECCIONES</a>

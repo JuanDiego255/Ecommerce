@@ -19,15 +19,15 @@
                     <div class="col-md-3">
                         <div class="input-group input-group-lg input-group-static my-3 w-100">
                             <label>Fecha Inicial</label>
-                            <input value="" type="date" class="form-control form-control-lg" name="searchfordateini"
-                                id="searchfordateini">
+                            <input value="" type="date" class="form-control form-control-lg"
+                                name="searchfordateini" id="searchfordateini">
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="input-group input-group-lg input-group-static my-3 w-100">
                             <label>Fecha Final</label>
-                            <input value="" type="date" class="form-control form-control-lg" name="searchfordatefin"
-                                id="searchfordatefin">
+                            <input value="" type="date" class="form-control form-control-lg"
+                                name="searchfordatefin" id="searchfordatefin">
                         </div>
                     </div>
                     <div class="col-md-3">
@@ -40,13 +40,13 @@
                                 <option value="25">25 Registros</option>
                                 <option value="50">50 Registros</option>
                             </select>
-        
+
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-       
+
         <div class="row row-cols-1 row-cols-md-2 g-4 align-content-center card-group mt-1">
             <div class="col-md-4">
                 <div class="card">
@@ -102,6 +102,9 @@
                                     <th
                                         class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                         Productos</th>
+                                    <th
+                                        class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
+                                        Cupón Aplicado</th>
 
 
                                 </tr>
@@ -114,7 +117,7 @@
                                         </td>
                                         <td class="align-middle text-xxs text-center">
                                             <p class=" font-weight-bold mb-0">
-                                                ₡{{ number_format($buy->total_buy) }}</p>
+                                                ₡{{ number_format($buy->total_buy + $buy->credit_used) }}</p>
                                         </td>
                                         <td class="align-middle text-xxs text-center">
                                             <p class=" font-weight-bold mb-0">
@@ -138,6 +141,10 @@
                                         <td class="align-middle text-xxs text-center">
                                             <p class=" font-weight-bold mb-0">
                                                 {{ $buy->details_count }}</p>
+                                        </td>
+                                        <td class="align-middle text-xxs text-center">
+                                            <p class=" font-weight-bold mb-0">
+                                                ₡{{ number_format($buy->credit_used) }}</p>
                                         </td>
 
 

@@ -319,7 +319,7 @@ class BuyController extends Controller
     {
         $tenantinfo = TenantInfo::first();
         $buys = Cache::remember('buys_data', $this->expirationTime, function () {
-            return Buy::leftJoin('users', 'buys.user_id', 'users.id')->leftJoin('buy_details', 'buys.id', 'buy_details.buy_id')->select('buys.id as id', 'buys.total_iva as total_iva', 'buys.total_buy as total_buy', 'buys.kind_of_buy as kind_of', 'buys.total_delivery as total_delivery', 'buys.created_at as created_at', DB::raw('sum(buy_details.quantity) as details_count'))->groupBy('buys.id', 'buys.kind_of_buy', 'buys.total_iva', 'buys.total_buy', 'buys.total_Delivery', 'buys.created_at')->get();
+            return Buy::leftJoin('users', 'buys.user_id', 'users.id')->leftJoin('buy_details', 'buys.id', 'buy_details.buy_id')->select('buys.id as id', 'buys.total_iva as total_iva', 'buys.total_buy as total_buy', 'buys.kind_of_buy as kind_of', 'buys.total_delivery as total_delivery','buys.credit_used as credit_used', 'buys.created_at as created_at', DB::raw('sum(buy_details.quantity) as details_count'))->groupBy('buys.id', 'buys.kind_of_buy','buys.credit_used', 'buys.total_iva', 'buys.total_buy', 'buys.total_Delivery', 'buys.created_at')->get();
         });
         $iva = $tenantinfo->iva;
         $totalEnvio = 0;

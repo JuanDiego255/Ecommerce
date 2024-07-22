@@ -79,6 +79,15 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a @if ($view_name == 'admin_gifts_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
+                        href="{{ url('/gifts') }}">
+                        <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                            <i class="material-icons opacity-10">redeem</i>
+                        </div>
+                        <span class="nav-link-text ms-1">Tarjetas de regalo</span>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a @if ($view_name == 'admin_buys_buys') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
                         href="{{ url('new-buy') }}">
                         <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">

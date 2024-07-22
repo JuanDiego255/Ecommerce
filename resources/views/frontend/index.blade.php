@@ -83,6 +83,12 @@
             </div>
         @endif
     @endif
+    {{-- Gift Cards --}}
+    <div class="gift-card">
+        <h1>Disfruta de la flexibilidad de nuestras tarjetas de regalo para canjear en cualquier producto.</h1>
+        <button type="button" data-bs-toggle="modal" data-bs-target="#gift-card-modal">Obtener Tarjeta de Regalo</button>
+    </div>
+    @include('frontend.modals.gift-card')
     {{-- Trending --}}
     @if (isset($tenantinfo->show_trending) && $tenantinfo->show_trending == 1)
         <div class="mt-3 mb-5">

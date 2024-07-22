@@ -29670,4 +29670,61 @@ animation-iteration-count: infinite;
 .attribute-btn:hover {
   background-color: var(--hover);
   color: white;
+} 
+/*Gift Card*/
+.gift-card {
+  text-align: center;
+}
+.gift-card h1 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: var(--title_text);
+}
+.gift-card button, .gift-button {
+  background-color: var(--btn_cart);
+  color: white;
+  padding: 15px 30px;
+  border: none;
+  border-radius: 5px;
+  font-size: 18px;
+  cursor: pointer;
+}
+.gift-card button:hover, .gift-button:hover {
+  background-color: var(--hover);
+  transition: all .5s ease;
+}
+/*Gift Form*/
+.gift-title {
+  font-size: 24px;
+  margin-bottom: 10px;
+  font-family: 'Cursive', sans-serif;
+  color: var(--title_text);
+}
+.input-group-gift {
+  margin-bottom: 10px;
+}
+.input-group-gift label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+.input-group-gift input {
+  width: calc(100% - 22px);
+  padding: 10px;
+  border: none;
+  background-color: #FCEDE2;
+  font-size: 16px;
+}
+.gift-code {
+  display: flex;
+  justify-content: space-between;
+}
+.gift-code input {
+  width: calc(50% - 11px);
+}
+.footer-gift {
+  margin-top: 20px;
+  font-size: 14px;
+  text-align: center;
+  color: #888;
 }

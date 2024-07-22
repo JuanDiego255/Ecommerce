@@ -15,6 +15,7 @@ use App\Http\Controllers\ClothingCategoryController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\Frontend\CartController;
 use App\Http\Controllers\Frontend\CheckOutController;
+use App\Http\Controllers\GiftCardController;
 use App\Http\Controllers\MedicineResultController;
 use App\Http\Controllers\MetaTagsController;
 use App\Http\Controllers\PersonalUserController;
@@ -84,6 +85,7 @@ Route::middleware([
         Route::get('/paypal/process/{orderId}', [CheckOutController::class, 'process']);
         Route::post('/comments/store/', [TestimonialController::class, 'store']);
         Route::get('/get-stock/{cloth_id}/{attr_id}/{value_attr}', [FrontendController::class, 'getStock']);
+        Route::get('/gift-code/{id}', [GiftCardController::class, 'applyCode']);
         Auth::routes();
 
         Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
@@ -234,6 +236,14 @@ Route::middleware([
             Route::delete('delete-value/{id}', [AttributeController::class, 'destroyValue']);
             Route::post('/value/store/{id}', [AttributeController::class, 'storeValue']);           
             Route::get('value/{attr_id}/{id}/edit', [AttributeController::class, 'editValue']);
+            //Rutas para tarjetas de regalo
+            Route::get('/gifts/', [GiftCardController::class, 'indexAdmin']);
+            Route::get('/index-gifts/', [GiftCardController::class, 'index']);
+            Route::put('gift/{id}', [GiftCardController::class, 'update']);            
+            Route::delete('delete-gift/{id}', [GiftCardController::class, 'destroy']);            
+            Route::get('gift/{id}/edit', [GiftCardController::class, 'edit']);           
+            Route::post('gift/store', [GiftCardController::class, 'store']);
+            Route::put('/approve-gift/{id}/{approved}', [GiftCardController::class, 'approve']);
         });
     });
 

@@ -12,6 +12,7 @@ use App\Models\AttributeValueBuy;
 use App\Models\Buy;
 use App\Models\BuyDetail;
 use App\Models\Cart;
+use App\Models\GiftCard;
 use App\Models\MetaTags;
 use App\Models\Stock;
 use App\Models\TenantInfo;
@@ -269,7 +270,7 @@ class CheckOutController extends Controller
                 return redirect()->back()->with(['status' => 'No puede realizar una compra si se encuentra fuera de Costa Rica!', 'icon' => 'success']);
             } */
             $tenantinfo = TenantInfo::first();
-            $tenant = $tenantinfo->tenant;           
+            $tenant = $tenantinfo->tenant;
             DB::beginTransaction();
             if ($request->kind_of == "V") {
                 $userId = Auth::id();
@@ -403,12 +404,32 @@ class CheckOutController extends Controller
                     $buy->country =  $country;
                     $buy->postal_code =  $postal_code;
                     $buy->total_iva =  $iva;
-                    $buy->total_buy =  $total_price;
                     $buy->total_delivery =  $request->delivery;
                     $buy->delivered = 0;
                     $buy->approved = 0;
                     $buy->cancel_buy = 0;
                     $buy->kind_of_buy = $request->kind_of;
+                    //Codigo para registrar cupones
+                    if ($request->apply_code != "") {
+                        $gift_code = $request->apply_code;
+                    }
+                    $giftCard = GiftCard::where('code', $gift_code)->first();
+                    if ($giftCard) {
+                        $gift_status = 1;
+                        $gift_approve = 1;
+                        $buy->gift_card_id = $giftCard->id;
+                        $buy->credit_used = $request->credit_use;
+                        $buy->total_buy = $total_price - $request->credit_use;
+                        if (($giftCard->credit - $request->credit_use) == 0) {
+                            $gift_status = 0;
+                            $gift_approve = 0;
+                        }
+                        GiftCard::where('id', $giftCard->id)
+                            ->update(['credit' => ($giftCard->credit - $request->credit_use), "status" => $gift_status, "approve" => $gift_approve]);
+                    } else {
+                        $buy->total_buy =  $total_price;
+                    }
+                    //Codigo para registrar cupones
                     $buy->save();
                     $buy_id = $buy->id;
 
@@ -603,7 +624,27 @@ class CheckOutController extends Controller
                     $buy->country =  $country;
                     $buy->postal_code =  $postal_code;
                     $buy->total_iva =  $iva;
-                    $buy->total_buy =  $total_price;
+                    //Codigo para registrar cupones
+                    if ($request->apply_code != "") {
+                        $gift_code = $request->apply_code;
+                    }
+                    $giftCard = GiftCard::where('code', $gift_code)->first();
+                    if ($giftCard) {
+                        $gift_status = 1;
+                        $gift_approve = 1;
+                        $buy->gift_card_id = $giftCard->id;
+                        $buy->credit_used = $request->credit_use;
+                        $buy->total_buy = $total_price - $request->credit_use;
+                        if (($giftCard->credit - $request->credit_use) == 0) {
+                            $gift_status = 0;
+                            $gift_approve = 0;
+                        }
+                        GiftCard::where('id', $giftCard->id)
+                            ->update(['credit' => ($giftCard->credit - $request->credit_use), "status" => $gift_status, "approve" => $gift_approve]);
+                    } else {
+                        $buy->total_buy =  $total_price;
+                    }
+                    //Codigo para registrar cupones
                     $buy->total_delivery =  $request->delivery;
                     $buy->delivered = 0;
                     $buy->approved = 0;

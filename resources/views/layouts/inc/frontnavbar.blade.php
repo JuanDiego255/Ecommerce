@@ -405,6 +405,9 @@
                 <a href="{{ url('buys') }}" class="nav-menu-item"><i
                         class="fas fa-{{ $icon->shopping }} me-3"></i>MIS
                     COMPRAS</a>
+                <a href="{{ url('/index-gifts') }}" class="nav-menu-item"><i
+                        class="fas fa-gift me-3"></i>MIS
+                    TARJETAS</a>
                 <a href="{{ url('/address') }}" class="nav-menu-item"><i
                         class="fas fa-{{ $icon->address }} me-3"></i>DIRECCIONES</a>
 
