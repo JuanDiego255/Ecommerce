@@ -86,6 +86,7 @@ Route::middleware([
         Route::post('/comments/store/', [TestimonialController::class, 'store']);
         Route::get('/get-stock/{cloth_id}/{attr_id}/{value_attr}', [FrontendController::class, 'getStock']);
         Route::get('/gift-code/{id}', [GiftCardController::class, 'applyCode']);
+        Route::post('gift/store', [GiftCardController::class, 'store']);
         Auth::routes();
 
         Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
@@ -241,8 +242,7 @@ Route::middleware([
             Route::get('/index-gifts/', [GiftCardController::class, 'index']);
             Route::put('gift/{id}', [GiftCardController::class, 'update']);            
             Route::delete('delete-gift/{id}', [GiftCardController::class, 'destroy']);            
-            Route::get('gift/{id}/edit', [GiftCardController::class, 'edit']);           
-            Route::post('gift/store', [GiftCardController::class, 'store']);
+            Route::get('gift/{id}/edit', [GiftCardController::class, 'edit']); 
             Route::put('/approve-gift/{id}/{approved}', [GiftCardController::class, 'approve']);
         });
     });
