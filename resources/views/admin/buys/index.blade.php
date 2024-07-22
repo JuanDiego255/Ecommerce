@@ -56,6 +56,8 @@
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                     {{ __('Envío') }}</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
+                                    {{ __('Cupón Aplicado') }}</th>
+                                <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                     {{ __('Entregado') }}</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                     {{ __('Aprobado') }}</th>
@@ -203,6 +205,9 @@
                                     </td>
                                     <td class="align-middle text-xxs text-center">
                                         <p class=" font-weight-bold mb-0">₡{{ number_format($buy->total_delivery) }}</p>
+                                    </td>
+                                    <td class="align-middle text-xxs text-center">
+                                        <p class=" font-weight-bold mb-0">₡{{ number_format($buy->credit_used) }}</p>
                                     </td>
                                     <td class="align-middle text-xxs text-center">
                                         <p class=" font-weight-bold mb-0">

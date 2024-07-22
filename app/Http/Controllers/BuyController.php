@@ -57,7 +57,7 @@ class BuyController extends Controller
     {
         $tenantinfo = TenantInfo::first();
         $buys = Cache::remember('buys_data', $this->expirationTime, function () {
-            return Buy::leftJoin('users', 'buys.user_id', 'users.id')->where('buys.kind_of_buy', '!=', 'F')->select('buys.id as id', 'buys.total_iva as total_iva', 'buys.total_buy as total_buy', 'buys.total_delivery as total_delivery', 'buys.delivered as delivered', 'buys.approved as approved', 'buys.created_at as created_at', 'buys.image as image', 'users.id as user_id', 'users.name as name', 'users.telephone as telephone', 'users.email as email', 'buys.name as name_b', 'buys.telephone as telephone_b', 'buys.email as email_b', 'buys.cancel_buy as cancel_buy')->get();
+            return Buy::leftJoin('users', 'buys.user_id', 'users.id')->where('buys.kind_of_buy', '!=', 'F')->select('buys.id as id', 'buys.total_iva as total_iva', 'buys.total_buy as total_buy','buys.credit_used', 'buys.total_delivery as total_delivery', 'buys.delivered as delivered', 'buys.approved as approved', 'buys.created_at as created_at', 'buys.image as image', 'users.id as user_id', 'users.name as name', 'users.telephone as telephone', 'users.email as email', 'buys.name as name_b', 'buys.telephone as telephone_b', 'buys.email as email_b', 'buys.cancel_buy as cancel_buy')->get();
         });
         $iva = $tenantinfo->iva;
 
