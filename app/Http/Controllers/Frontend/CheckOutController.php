@@ -412,20 +412,20 @@ class CheckOutController extends Controller
                     //Codigo para registrar cupones
                     if ($request->apply_code != "") {
                         $gift_code = $request->apply_code;
-                    }
-                    $giftCard = GiftCard::where('code', $gift_code)->first();
-                    if ($giftCard) {
-                        $gift_status = 1;
-                        $gift_approve = 1;
-                        $buy->gift_card_id = $giftCard->id;
-                        $buy->credit_used = $request->credit_use;
-                        $buy->total_buy = $total_price - $request->credit_use;
-                        if (($giftCard->credit - $request->credit_use) == 0) {
-                            $gift_status = 0;
-                            $gift_approve = 0;
+                        $giftCard = GiftCard::where('code', $gift_code)->first();
+                        if ($giftCard) {
+                            $gift_status = 1;
+                            $gift_approve = 1;
+                            $buy->gift_card_id = $giftCard->id;
+                            $buy->credit_used = $request->credit_use;
+                            $buy->total_buy = $total_price - $request->credit_use;
+                            if (($giftCard->credit - $request->credit_use) == 0) {
+                                $gift_status = 0;
+                                $gift_approve = 0;
+                            }
+                            GiftCard::where('id', $giftCard->id)
+                                ->update(['credit' => ($giftCard->credit - $request->credit_use), "status" => $gift_status, "approve" => $gift_approve]);
                         }
-                        GiftCard::where('id', $giftCard->id)
-                            ->update(['credit' => ($giftCard->credit - $request->credit_use), "status" => $gift_status, "approve" => $gift_approve]);
                     } else {
                         $buy->total_buy =  $total_price;
                     }
@@ -627,20 +627,20 @@ class CheckOutController extends Controller
                     //Codigo para registrar cupones
                     if ($request->apply_code != "") {
                         $gift_code = $request->apply_code;
-                    }
-                    $giftCard = GiftCard::where('code', $gift_code)->first();
-                    if ($giftCard) {
-                        $gift_status = 1;
-                        $gift_approve = 1;
-                        $buy->gift_card_id = $giftCard->id;
-                        $buy->credit_used = $request->credit_use;
-                        $buy->total_buy = $total_price - $request->credit_use;
-                        if (($giftCard->credit - $request->credit_use) == 0) {
-                            $gift_status = 0;
-                            $gift_approve = 0;
+                        $giftCard = GiftCard::where('code', $gift_code)->first();
+                        if ($giftCard) {
+                            $gift_status = 1;
+                            $gift_approve = 1;
+                            $buy->gift_card_id = $giftCard->id;
+                            $buy->credit_used = $request->credit_use;
+                            $buy->total_buy = $total_price - $request->credit_use;
+                            if (($giftCard->credit - $request->credit_use) == 0) {
+                                $gift_status = 0;
+                                $gift_approve = 0;
+                            }
+                            GiftCard::where('id', $giftCard->id)
+                                ->update(['credit' => ($giftCard->credit - $request->credit_use), "status" => $gift_status, "approve" => $gift_approve]);
                         }
-                        GiftCard::where('id', $giftCard->id)
-                            ->update(['credit' => ($giftCard->credit - $request->credit_use), "status" => $gift_status, "approve" => $gift_approve]);
                     } else {
                         $buy->total_buy =  $total_price;
                     }
