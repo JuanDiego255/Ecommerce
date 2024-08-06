@@ -63,7 +63,7 @@
                                 {{ $item->casa }}
                             </h3>
                             <h3
-                                class="{{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'text-muted' : 'title-frags' }}">
+                                class="{{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'text-muted' : 'text-muted' }}">
                                 <a href="{{ url('detail-clothing/' . $item->id . '/' . $category_id) }}">{{ $item->name }}
                                     @if ($item->total_stock == 0)
                                         <s class="text-danger"> Agotado</s>
