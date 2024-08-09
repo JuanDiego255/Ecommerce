@@ -114,6 +114,25 @@
                                     @enderror
                                 </div>
                             </div>
+                            @if ($item->kind_business == 1)
+                                <div class="col-md-12">
+                                    <label class="form-label">Acerca de (Esta descripción se mostrará en la sección de
+                                        acerca de en página de inicio)</label>
+                                    <div
+                                        class="input-group input-group-lg input-group-outline {{ isset($item->about) ? 'is-filled' : '' }} my-3">
+
+                                        <textarea
+                                            placeholder="Acerca de la empresa..."
+                                            type="text" class="form-control form-control-lg @error('about') is-invalid @enderror" name="about"
+                                            id="about">{{ isset($item->about) ? $item->about : '' }}</textarea>
+                                        @error('about')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>Campo Requerido</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
+                                </div>
+                            @endif
                             <div class="col-md-12">
                                 <div
                                     class="input-group input-group-lg input-group-outline {{ isset($item->title_suscrib_a) ? 'is-filled' : '' }} my-3">
@@ -367,7 +386,7 @@ is-invalid
 
     </div>
 @endsection
-@section('script')   
+@section('script')
     <script>
         function confirmAndSubmit(id) {
             if (confirm('¿Deseas borrar esta red social?')) {

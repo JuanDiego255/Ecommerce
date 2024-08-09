@@ -34,6 +34,7 @@ class BlogController extends Controller
      */
     public function index(Request $request)
     {
+        $tenantinfo = TenantInfo::first();
         $blogs = Blog::orderBy('title', 'asc')->simplePaginate(8);
         $tags = MetaTags::where('section', 'Blog')->get();
         foreach ($tags as $tag) {
@@ -45,7 +46,14 @@ class BlogController extends Controller
             OpenGraph::setTitle($tag->title);
             OpenGraph::setDescription($tag->meta_og_description);
         }
-        return view('frontend.blog.index', compact('blogs'));
+        switch ($tenantinfo->kind_business) {
+            case (1):
+                return view('frontend.blog.carsale.index', compact('blogs'));
+                break;
+            default:
+                return view('frontend.blog.index', compact('blogs'));
+                break;
+        }
     }
     /**
 
@@ -75,6 +83,7 @@ class BlogController extends Controller
      */
     public function showArticles(Request $request, $id, $name_url)
     {
+        $tenantinfo = TenantInfo::first();
         $blog = Blog::leftJoin('personal_users', 'blogs.personal_id', 'personal_users.id')
             ->select(
                 'blogs.id as id',
@@ -134,7 +143,14 @@ class BlogController extends Controller
         }
         $fecha_letter = $dia_event . ' de ' . $name_month_event . ' del ' . $anio_event;
 
-        return view('frontend.blog.show-articles', compact('tags','comments', 'cards', 'results', 'another_blogs', 'id', 'fecha_letter', 'blog'));
+        switch ($tenantinfo->kind_business) {
+            case (1):
+                return view('frontend.blog.carsale.show-articles', compact('tags', 'comments', 'cards', 'results', 'another_blogs', 'id', 'fecha_letter', 'blog'));
+                break;
+            default:
+            return view('frontend.blog.show-articles', compact('tags', 'comments', 'cards', 'results', 'another_blogs', 'id', 'fecha_letter', 'blog'));
+                break;
+        }        
     }
     /**
 

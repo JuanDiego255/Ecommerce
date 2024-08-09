@@ -174,9 +174,11 @@ class FrontendController extends Controller
         $comments = Testimonial::where('approve', 1)->inRandomOrder()->orderBy('name', 'asc')
             ->get();
         $advert = Advert::where('section', 'inicio')->latest()->first();
+        $car_count = ClothingCategory::where('status',1)->count();
+        $comment_count = Testimonial::where('approve',1)->count();
         switch ($tenantinfo->kind_business) {
             case (1):
-                return view('frontend.carsale.index', compact('clothings','showModal','advert', 'blogs', 'social', 'clothings_offer', 'category', 'sellers', 'comments'));
+                return view('frontend.carsale.index', compact('clothings','car_count','comment_count','showModal','advert', 'blogs', 'social', 'clothings_offer', 'category', 'sellers', 'comments'));
                 break;
             case (2):
             case (3):
@@ -222,8 +224,15 @@ class FrontendController extends Controller
         $social = Cache::remember('social_networks', $this->expirationTime, function () {
             return SocialNetwork::get();
         });
-
-        return view('frontend.category', compact('category', 'department_name', 'department_id'));
+        switch ($tenantinfo->kind_business) {
+            case (1):
+                return view('frontend.carsale.category', compact('category', 'department_name', 'department_id'));
+                break;           
+            default:
+            return view('frontend.category', compact('category', 'department_name', 'department_id'));
+                break;
+        }
+        
     }
     public function clothesByCategory($id, $department_id)
     {
@@ -301,6 +310,9 @@ class FrontendController extends Controller
             return redirect()->back()->with(['status' => 'No hay artículos en esta categoría', 'icon' => 'warning']);
         }
         switch ($tenantinfo->kind_business) {
+            case (1):               
+                return view('frontend.carsale.clothes-category', compact('clothings', 'category_name', 'category_id', 'department_id', 'department_name', 'category'));
+                break;
             case (2):
             case (3):
                 return view('frontend.website.clothes-category', compact('clothings', 'category_name', 'category_id', 'department_id', 'department_name', 'category'));
@@ -390,6 +402,7 @@ class FrontendController extends Controller
                 'departments.id as department_id',
                 'departments.department as department_name',
                 'clothing.discount as discount',
+                'clothing.horizontal_image as horizontal_image',
                 'clothing.description as description',
                 'clothing.price as price',
                 'clothing.mayor_price as mayor_price',
@@ -400,7 +413,7 @@ class FrontendController extends Controller
                 DB::raw('GROUP_CONCAT(stocks.price) AS price_per_size'),
                 DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
             )
-            ->groupBy('clothing.id','clothing.meta_keywords','clothing.manage_stock', 'clothing.can_buy', 'clothing.casa', 'departments.id', 'departments.department', 'clothing.mayor_price', 'clothing.discount', 'categories.name', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
+            ->groupBy('clothing.id','clothing.meta_keywords','clothing.manage_stock','clothing.horizontal_image', 'clothing.can_buy', 'clothing.casa', 'departments.id', 'departments.department', 'clothing.mayor_price', 'clothing.discount', 'categories.name', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
             ->orderByRaw('CASE WHEN clothing.casa IS NOT NULL AND clothing.casa != "" THEN 0 ELSE 1 END')
             ->orderBy('clothing.casa', 'asc')
             ->orderBy('clothing.name', 'asc')

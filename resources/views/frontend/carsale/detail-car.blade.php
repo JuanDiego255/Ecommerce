@@ -1,43 +1,251 @@
-@extends('layouts.front')
+@extends('layouts.frontrent')
 @section('metatag')
     {!! SEOMeta::generate() !!}
     {!! OpenGraph::generate() !!}
 @endsection
 @section('content')
-    <div class="container">
+    {{-- Main Banner --}}
+    @foreach ($clothes as $item)
+        <div class="hero-wrap ftco-degree-bg"
+            style="background-image: url('{{ isset($item->horizontal_image) && $item->horizontal_image != '' ? route('file', $item->horizontal_image) : url('images/producto-sin-imagen.PNG') }}');"
+            data-stellar-background-ratio="0.5">
+            <div class="overlay"></div>
+            <div class="container">
+                <div class="row no-gutters slider-text justify-content-start align-items-center justify-content-center">
+                    <div class="col-lg-8 ftco-animate">
+                        <div class="text w-100 text-center mb-md-5 pb-md-5">
+                            <h1 class="mb-4">
+                                {{ $item->name }}</h1>
+                            <p style="font-size: 18px;"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container mt-5">
+            <div class="row">
+                <div class="col-md-12 pills">
+                    <div class="bd-example bd-example-tabs">
+                        <div class="d-flex justify-content-center">
+                            <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" id="pills-manufacturer-tab" data-toggle="pill"
+                                        href="#pills-manufacturer" role="tab" aria-controls="pills-manufacturer"
+                                        aria-expanded="true">Características</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="pills-review-tab" data-toggle="pill" href="#pills-review"
+                                        role="tab" aria-controls="pills-review" aria-expanded="true">Detalle</a>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="tab-content" id="pills-tabContent">
+                            <div class="tab-pane fade show active" id="pills-manufacturer" role="tabpanel"
+                                aria-labelledby="pills-manufacturer-tab">
+                                <h4
+                                    class="text-muted text-uppercase {{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'd-none' : '' }}">
+                                    {{ $item->casa }}
+                                </h4>
+                                <h4 class="title text-dark">
+                                    {{ $item->name }}
+                                </h4>
+                                <div class="d-flex flex-row my-3">
+                                    @if ($item->total_stock > 0)
+                                        @if (isset($tenantinfo->tenant) && $tenantinfo->tenant === 'mandicr')
+                                            <span class="text-success"><i class="fas fa-shopping-basket fa-sm mx-1"></i>In
+                                                Stock</span>
+                                        @else
+                                            <span class="text-success ms-2">Disponible</span>
+                                        @endif
+                                    @else
+                                        <span class="text-success ms-2">Vendido</span>
+                                    @endif
+
+                                </div>
+
+                                <div class="mb-1">
+
+                                    @php
+                                        $precio = $item->price;
+                                        if (isset($tenantinfo->custom_size) && $tenantinfo->custom_size == 1) {
+                                            $precio = $item->first_price;
+                                        }
+                                        if (Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0) {
+                                            $precio = $item->mayor_price;
+                                        }
+                                        $descuentoPorcentaje = $item->discount;
+                                        // Calcular el descuento
+                                        $descuento = ($precio * $descuentoPorcentaje) / 100;
+                                        // Calcular el precio con el descuento aplicado
+                                        $precioConDescuento = $precio - $descuento;
+                                    @endphp
+
+                                    <div class="price"><strong
+                                            id="text_price">₡{{ number_format($precioConDescuento) }}</strong>
+                                        @if ($item->discount)
+                                            <s class="text-danger"><span class="text-danger"><strong
+                                                        id="text_price_discount">₡{{ number_format(Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0 ? $item->mayor_price : $item->price) }}</strong>
+                                                </span></s>
+                                            / por unidad
+                                        @endif
+                                    </div>
+
+                                </div>
+
+                                <p>
+                                    {!! $item->description !!}
+                                </p>
+
+                                <a target="blank" href="{{ url('https://wa.me/506' . $tenantinfo->whatsapp) }}"
+                                    class="btn btn-secondary py-2 ml-1"> <i class="me-1 fa fa-user"></i>
+                                    @if ($item->total_stock > 0)
+                                        Contactar al vendedor
+                                    @else
+                                        Vendido!
+                                    @endif
+                                </a>
+                            </div>
+
+                            <div class="tab-pane fade" id="pills-review" role="tabpanel" aria-labelledby="pills-review-tab">
+                                <section class="pt-4">
+                                    <div class="container product_data">
+                                        <div class="row gx-5">
+                                            <aside class="col-lg-6">
+                                                <div class="outer">
+                                                    <!-- Carrusel big -->
+                                                    <div id="big" class="owl-carousel owl-theme">
+                                                        @foreach ($clothes as $clothing)
+                                                            @if (!empty($clothing->images))
+                                                                @php
+                                                                    $images = explode(',', $clothing->images);
+                                                                    // Convertir la lista de imágenes en un array
+                                                                    $firstImage = reset($images); // Obtener la primera imagen
+                                                                @endphp
+                                                                <div class="item">
+                                                                    <div class="rounded-4 mb-3 d-flex">
+                                                                        <a data-fslightbox="mygallery" class="rounded-4"
+                                                                            target="_blank" data-type="image"
+                                                                            href="{{ isset($firstImage) && $firstImage != '' ? route('file', $firstImage) : url('images/producto-sin-imagen.PNG') }}">
+                                                                            <img style="max-width: 100%; max-height: 100vh; margin: auto;"
+                                                                                class="rounded-4 fit"
+                                                                                src="{{ isset($firstImage) && $firstImage != '' ? route('file', $firstImage) : url('images/producto-sin-imagen.PNG') }}" />
+                                                                        </a>
+                                                                    </div>
+                                                                </div>
+                                                            @else
+                                                                <div class="item">
+                                                                    <div class="rounded-4 mb-3 d-flex">
+                                                                        <a data-fslightbox="mygallery" class="rounded-4"
+                                                                            target="_blank" data-type="image"
+                                                                            href="{{ url('images/producto-sin-imagen.PNG') }}">
+                                                                            <img style="max-width: 100%; max-height: 100vh; margin: auto;"
+                                                                                class="rounded-4 fit"
+                                                                                src="{{ url('images/producto-sin-imagen.PNG') }}" />
+                                                                        </a>
+                                                                    </div>
+                                                                </div>
+                                                            @endif
+                                                        @endforeach
+                                                    </div>
+
+                                                </div>
+
+                                                <!-- thumbs-wrap.// -->
+                                                <!-- gallery-wrap .end// -->
+                                            </aside>
+
+                                            <main class="col-lg-6">
+                                                <div class="ps-lg-3">
+                                                    <div id="thumbs" class="owl-carousel owl-theme mb-2">
+                                                        @foreach ($clothes as $clothing)
+                                                            @php
+                                                                $images = explode(',', $clothing->images); // Convertir la lista de imágenes en un array
+                                                                $uniqueImages = array_unique($images); // Obtener imágenes únicas
+                                                            @endphp
+                                                            @foreach ($uniqueImages as $image)
+                                                                <div class="item">
+                                                                    <div
+                                                                        class="rounded-4 mb-3 d-flex justify-content-center">
+                                                                        <a data-fslightbox="mygallery" class="rounded-4"
+                                                                            target="_blank" data-type="image"
+                                                                            href="{{ isset($image) && $image != '' ? route('file', $image) : url('images/producto-sin-imagen.PNG') }}">
+                                                                            <img style="max-width: 100%; max-height: 100vh; margin: auto;"
+                                                                                class="rounded-4 fit"
+                                                                                src="{{ isset($image) && $image != '' ? route('file', $image) : url('images/producto-sin-imagen.PNG') }}" />
+                                                                        </a>
+                                                                    </div>
+                                                                </div>
+                                                            @endforeach
+                                                        @endforeach
+                                                    </div>
+                                                </div>
+                                            </main>
+                                        </div>
+                                    </div>
+                                </section>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @break
+@endforeach
+@if (count($clothings_trending) != 0)
+    <section class="ftco-section ftco-no-pt bg-light mt-5">
+        <div class="container mt-5">
+            <div class="row justify-content-center">
+                <div class="col-md-12 heading-section text-center ftco-animate mb-5">
+                    <h2 class="mb-2">Otros vehículos que pueden interesarte</h2>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="carousel-car owl-carousel">
+                        @foreach ($clothings_trending as $item)
+                            @php
+                                $precio = $item->price;
+                                if (isset($tenantinfo->custom_size) && $tenantinfo->custom_size == 1) {
+                                    $precio = $item->first_price;
+                                }
+                                if (Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0) {
+                                    $precio = $item->mayor_price;
+                                }
+                                $descuentoPorcentaje = $item->discount;
+                                // Calcular el descuento
+                                $descuento = ($precio * $descuentoPorcentaje) / 100;
+                                // Calcular el precio con el descuento aplicado
+                                $precioConDescuento = $precio - $descuento;
+                            @endphp
+                            <div class="item">
+                                <div class="car-wrap rounded ftco-animate">
+                                    <div class="img rounded d-flex align-items-end"
+                                        style="background-image: url('{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}');">
+                                    </div>
+                                    <div class="text">
+                                        <h2 class="mb-0"><a href="#">{{ $item->name }}</a></h2>
+                                        <div class="d-flex mb-3">
+                                            <span class="cat">Tendencia</span>
+                                            <p class="price ml-auto">₡{{ number_format($precioConDescuento) }}</p>
+                                        </div>
+                                        <p class="d-flex mb-0 d-block"><a
+                                                href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}"
+                                                class="btn btn-secondary py-2 ml-1">Detallar</a></p>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+@endif
+{{--     <div class="container">
         <div>
             @foreach ($clothes as $item)
                 <input type="hidden" name="porcDescuento" value="{{ $item->discount }}" id="porcDescuento">
-                <div class="breadcrumb-nav bc3x mt-4">
-                    @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
-                        <li class="home"><a href="{{ url('/') }}"><i class="fas fa-{{ $icon->home }} me-1"></i></a>
-                        </li>
-                        <li class="bread-standard"><a href="{{ url('category/') }}"><i
-                                    class="fas fa-{{ $icon->categories }} me-1"></i>Categorías</a>
-                        </li>
-                        <li class="bread-standard"><a
-                                href="{{ url('clothes-category/' . $category_id . '/' . $item->department_id) }}"><i
-                                    class="fas fa-{{ $icon->services }} me-1"></i>{{ $item->category }}</a></li>
-                        <li class="bread-standard"><a class="location" href="#"><i
-                                    class="fas fa-{{ $icon->detail }} me-1"></i>Detalles</a>
-                        </li>
-                    @else
-                        <li class="home"><a href="{{ url('/') }}"><i
-                                    class="fas fa-{{ $icon->home }} me-1"></i></a></li>
-                        <li class="bread-standard"><a href="{{ url('departments/index') }}"><i
-                                    class="fas fa-shapes me-1"></i>Departamentos</a></li>
-                        <li class="bread-standard"><a href="{{ url('category/' . $item->department_id) }}"><i
-                                    class="fas fa-{{ $icon->categories }} me-1"></i>{{ $item->department_name }}</a></li>
-                        <li class="bread-standard"><a
-                                href="{{ url('clothes-category/' . $category_id . '/' . $item->department_id) }}"><i
-                                    class="fas fa-{{ $icon->services }} me-1"></i>{{ $item->category }}</a></li>
-                        <li class="bread-standard"><a class="location" href="#"><i
-                                    class="fas fa-{{ $icon->detail }} me-1"></i>Detalles</a>
-                        </li>
-                    @endif
-
-
-                </div>
                 <section class="pt-4">
                     <div class="container product_data">
                         <div class="row gx-5">
@@ -251,9 +459,28 @@
                 </div>
             </div>
         @endforeach
-    </div>
+    </div> --}}
 </div>
-@include('layouts.inc.indexfooter')
+@include('layouts.inc.carsale.footer')
 @endsection
 @section('scripts')
+<script>
+    $('.featured-carousel').owlCarousel({
+        loop: true,
+        margin: 10,
+
+        dots: false,
+        responsive: {
+            0: {
+                items: 1
+            },
+            600: {
+                items: 3
+            },
+            1000: {
+                items: 4
+            }
+        }
+    })
+</script>
 @endsection

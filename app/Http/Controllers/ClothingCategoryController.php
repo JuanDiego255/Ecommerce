@@ -95,6 +95,7 @@ class ClothingCategoryController extends Controller
                     'clothing.casa as casa',
                     'clothing.manage_stock as manage_stock',
                     'clothing.can_buy as can_buy',
+                    'clothing.horizontal_image as horizontal_image',
                     'clothing.code as code',
                     'clothing.discount as discount',
                     'clothing.trending as trending',
@@ -105,7 +106,7 @@ class ClothingCategoryController extends Controller
                     DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE 0 END) as total_stock'),
                     'product_images.image as image', // Obtener la primera imagen del producto
                 )
-                ->groupBy('clothing.id', 'clothing.casa', 'clothing.name', 'clothing.manage_stock', 'clothing.code', 'clothing.can_buy', 'pivot_clothing_categories.category_id', 'categories.name', 'clothing.description', 'clothing.trending', 'clothing.price', 'clothing.mayor_price', 'clothing.meta_keywords', 'product_images.image', 'clothing.discount')
+                ->groupBy('clothing.id','clothing.horizontal_image', 'clothing.casa', 'clothing.name', 'clothing.manage_stock', 'clothing.code', 'clothing.can_buy', 'pivot_clothing_categories.category_id', 'categories.name', 'clothing.description', 'clothing.trending', 'clothing.price', 'clothing.mayor_price', 'clothing.meta_keywords', 'product_images.image', 'clothing.discount')
                 ->first();
         });
 
@@ -191,6 +192,10 @@ class ClothingCategoryController extends Controller
             }
             $clothing->meta_keywords = $request->meta_keywords;
             $clothing->manage_stock = $request->manage_stock ? 1 : 0;
+            if ($request->hasFile('horizontal_image')) {
+                $image = $request->file('horizontal_image');
+                $clothing->horizontal_image = $image->store('uploads', 'public');
+            }
 
             $clothing->update();
             //Procesar categorias
@@ -313,6 +318,10 @@ class ClothingCategoryController extends Controller
                 $clothing->code = $code;
                 $clothing->description = $request->description;
                 $clothing->price = $request->price;
+                if ($request->hasFile('horizontal_image')) {
+                    $image = $request->file('horizontal_image');
+                    $clothing->horizontal_image = $image->store('uploads', 'public');
+                }
                 if ($tenantinfo->tenant === 'torres') {
                     $clothing->mayor_price = $request->mayor_price;
                 }
@@ -484,7 +493,7 @@ class ClothingCategoryController extends Controller
     }
     function generateSku($code)
     {
-      
+
         if ($code == null) {
             $prefix = 'P';
             $randomNumbers = str_pad(mt_rand(1, 9999999999999), 13, '0', STR_PAD_LEFT);
@@ -492,7 +501,7 @@ class ClothingCategoryController extends Controller
         } else {
             $sku = $code;
         }
-       
+
         if (ClothingCategory::where('code', $sku)->exists()) {
             $this->generateSku(null);
         }
