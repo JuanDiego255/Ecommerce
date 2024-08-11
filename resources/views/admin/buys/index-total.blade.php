@@ -200,7 +200,25 @@
         var dataTable = $('#buys').DataTable({
             searching: true,
             lengthChange: false,
-
+            buttons: [{
+                    extend: 'excelHtml5',
+                    text: '<i class="fas fa-file-excel"></i> Excel',
+                    titleAttr: 'Exportar a Excel',
+                    className: 'btn btn-success',
+                    messageTop: 'Mi reporte personalizado de Excel',
+                    title: 'Reporte Excel'
+                },
+                {
+                    extend: 'pdfHtml5',
+                    text: '<i class="fas fa-file-pdf"></i> PDF',
+                    titleAttr: 'Exportar a PDF',
+                    className: 'btn btn-danger',
+                    messageTop: 'Mi reporte personalizado de PDF',
+                    // Opcionalmente, puedes agregar más configuración como la personalización del título:
+                    title: 'Reporte PDF'
+                }
+            ],
+            dom: 'Bfrtip', // Para colocar los botones
             "language": {
                 "sProcessing": "Procesando...",
                 "sLengthMenu": "Mostrar _MENU_ registros",

@@ -1,18 +1,22 @@
 var dataTable = $('#table').DataTable({
     searching: true,
     lengthChange: false,
-    buttons: [
-        {
+    buttons: [{
             extend: 'excelHtml5',
             text: '<i class="fas fa-file-excel"></i> Excel',
             titleAttr: 'Exportar a Excel',
-            className: 'btn btn-success'
+            className: 'btn btn-success',
+            messageTop: 'Mi reporte personalizado de Excel',
+            title: 'Reporte Excel'
         },
         {
             extend: 'pdfHtml5',
             text: '<i class="fas fa-file-pdf"></i> PDF',
             titleAttr: 'Exportar a PDF',
-            className: 'btn btn-danger'
+            className: 'btn btn-danger',
+            messageTop: 'Mi reporte personalizado de PDF',
+            // Opcionalmente, puedes agregar más configuración como la personalización del título:
+            title: 'Reporte PDF'
         }
     ],
     dom: 'Bfrtip', // Para colocar los botones
@@ -42,13 +46,12 @@ var dataTable = $('#table').DataTable({
     }
 });
 
-// Ajustar la longitud de la página y la búsqueda como antes
-$('#recordsPerPage').on('change', function() {
+$('#recordsPerPage').on('change', function () {
     var recordsPerPage = parseInt($(this).val(), 10);
     dataTable.page.len(recordsPerPage).draw();
 });
 
-$('#searchfor').on('input', function() {
+$('#searchfor').on('input', function () {
     var searchTerm = $(this).val();
     dataTable.search(searchTerm).draw();
 });
