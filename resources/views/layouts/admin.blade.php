@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" href="{{ isset($tenantinfo->logo_ico) ? route('file', $tenantinfo->logo_ico) : '' }}"
-    type="image/x-icon">
+        type="image/x-icon">
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -26,7 +26,8 @@
     <link href="{{ asset('css/material-dashboard.min.css') }}" rel="stylesheet"> --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ asset('css/dataTables.bootstrap5.min.css') }}">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-colorpicker/2.5.3/css/bootstrap-colorpicker.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-colorpicker/2.5.3/css/bootstrap-colorpicker.min.css"
+        rel="stylesheet">
     <link href="{{ asset('css/material-dashboard.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/fontawesome.css') }}">
 </head>
@@ -35,16 +36,17 @@
         --navbar: {{ $settings->navbar }};
         --navbar_text: {{ $settings->navbar_text }};
         --btn_cart: {{ $settings->btn_cart }};
-        --btn_cart_text: {{ $settings->btn_cart_text }};        
-        --footer: {{ $settings->footer }};        
-        --footer_text: {{ $settings->footer_text }};        
-        --sidebar: {{ $settings->sidebar }};        
-        --sidebar_text: {{ $settings->sidebar_text }};  
-        --hover: {{ $settings->hover }};  
-        --cintillo: {{ $settings->cintillo }};  
-        --cintillo_text: {{ $settings->cintillo_text }};        
+        --btn_cart_text: {{ $settings->btn_cart_text }};
+        --footer: {{ $settings->footer }};
+        --footer_text: {{ $settings->footer_text }};
+        --sidebar: {{ $settings->sidebar }};
+        --sidebar_text: {{ $settings->sidebar_text }};
+        --hover: {{ $settings->hover }};
+        --cintillo: {{ $settings->cintillo }};
+        --cintillo_text: {{ $settings->cintillo_text }};
     }
 </style>
+
 <body class="g-sidenav-show  bg-gray-200">
     <div class="main-container">
         @include('layouts.inc.sidebar')
@@ -54,7 +56,7 @@
                 @yield('content')
             </div>
             @include('layouts.inc.adminfooter')
-    
+
         </main>
     </div>
 
@@ -64,11 +66,19 @@
     <script src="{{ asset('js/smooth-scrollbar.min.js') }}" defer></script>
     <script src="{{ asset('js/chartjs.min.js') }}" defer></script>
     <script async defer src="https://buttons.github.io/buttons.js"></script>
-   
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="{{ asset('frontend/js/jquery-3.6.0.min.js') }}"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.bootstrap4.min.css">
+    <script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.bootstrap4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.4/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.4/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
+
     <script src="{{ asset('js/material-dashboard.min.js') }}" defer></script>
     <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
 

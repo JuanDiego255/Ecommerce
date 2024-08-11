@@ -1,7 +1,21 @@
 var dataTable = $('#table').DataTable({
     searching: true,
     lengthChange: false,
-
+    buttons: [
+        {
+            extend: 'excelHtml5',
+            text: '<i class="fas fa-file-excel"></i> Excel',
+            titleAttr: 'Exportar a Excel',
+            className: 'btn btn-success'
+        },
+        {
+            extend: 'pdfHtml5',
+            text: '<i class="fas fa-file-pdf"></i> PDF',
+            titleAttr: 'Exportar a PDF',
+            className: 'btn btn-danger'
+        }
+    ],
+    dom: 'Bfrtip', // Para colocar los botones
     "language": {
         "sProcessing": "Procesando...",
         "sLengthMenu": "Mostrar _MENU_ registros",
@@ -28,12 +42,12 @@ var dataTable = $('#table').DataTable({
     }
 });
 
+// Ajustar la longitud de la página y la búsqueda como antes
 $('#recordsPerPage').on('change', function() {
     var recordsPerPage = parseInt($(this).val(), 10);
     dataTable.page.len(recordsPerPage).draw();
 });
 
-// Captura el evento input en el campo de búsqueda
 $('#searchfor').on('input', function() {
     var searchTerm = $(this).val();
     dataTable.search(searchTerm).draw();
