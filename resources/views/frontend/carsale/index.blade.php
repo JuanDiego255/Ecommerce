@@ -1,4 +1,4 @@
-@extends('layouts.front')
+@extends('layouts.frontrent')
 @section('metatag')
     {!! SEOMeta::generate() !!}
     {!! OpenGraph::generate() !!}
@@ -15,282 +15,264 @@
             }
         }
     </style>
-    @if (count($tenantcarousel) != 0)
-        <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
-            <div class="carousel-inner mb-4 foto">
-                @foreach ($tenantcarousel as $key => $carousel)
-                    <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
-                        <div class="page-header min-vh-75 m-3"
-                            style="background-image: url('{{ tenant_asset('/') . '/' . $carousel->image }}');">
-                            <span class="mask bg-gradient-dark"></span>
-                            <div class="container">
-                                <div class="row">
-                                    <div class="col-lg-6 my-auto">
-                                        <h4 class="text-white mb-0 fadeIn1 fadeInBottom">{{ $carousel->text1 }}</h4>
-                                        <h1 class="text-white fadeIn2 fadeInBottom">{{ $carousel->text2 }}</h1>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
-            </div>
-            <div class="min-vh-75 position-absolute w-100 top-0">
-                <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon position-absolute bottom-50" aria-hidden="true"></span>
-                    <span class="visually-hidden">Previous</span>
-                </a>
-                <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-bs-slide="next">
-                    <span class="carousel-control-next-icon position-absolute bottom-50" aria-hidden="true"></span>
-                    <span class="visually-hidden">Next</span>
-                </a>
-            </div>
-        </div>
-    @endif
-    {{-- Categories --}}
-    @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
-        @if (count($categories) != 0)
-            <div class="row g-4 align-content-center card-group container-fluid mt-2 mb-5">
-                @foreach ($category as $key => $item)
-                    <div class="{{ $key + 1 > 3 ? 'col-md-3' : 'col-md-4' }} col-sm-6 mb-2">
-                        <div class="product-grid product_data">
-                            <div class="product-image">
-                                <img
-                                    src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
-                                <ul class="product-links">
-                                    <li><a target="blank" href="{{ tenant_asset('/') . '/' . $item->image }}"><i
-                                                class="fas fa-eye"></i></a></li>
-                                </ul>
-                                <a href="{{ url('clothes-category/' . $item->category_id . '/' . $item->department_id) }}"
-                                    class="add-to-cart">{{ $item->name }}</a>
-                            </div>
+    {{-- Main Banner --}}
+    <div class="hero-wrap ftco-degree-bg"
+        style="background-image: url('{{ isset($tenantcarousel[0]->image) ? route('file', $tenantcarousel[0]->image) : url('images/producto-sin-imagen.PNG') }}');"
+        data-stellar-background-ratio="0.5">
+        <div class="overlay"></div>
+        <div class="container">
+            <div class="row no-gutters slider-text justify-content-start align-items-center justify-content-center">
+                <div class="col-lg-8 ftco-animate">
+                    <div class="text w-100 text-center mb-md-5 pb-md-5">
+                        <h1 class="mb-4">
+                            {{ isset($tenantcarousel[0]->text1) ? $tenantcarousel[0]->text1 : 'Autos Grecia' }}</h1>
+                        <p style="font-size: 18px;">
+                            {{ isset($tenantcarousel[0]->text2) ? $tenantcarousel[0]->text2 : 'Lo mejor en autos' }}</p>
 
-                        </div>
-                    </div>
-                @endforeach
-            </div>
-        @endif
-    @else
-        @if (count($departments) != 0)
-            <div class="text-center">
-                <span class="text-muted text-center">Explora nuestros departamentos! Navega y encuentra todo lo que
-                    desees.</span>
-            </div>
-            <div class="row row-cols-1 row-cols-md-3 g-4 align-content-center card-group container-fluid mt-2 mb-5">
-                @foreach ($departments as $item)
-                    <div class="col-md-4 col-sm-6 mb-2">
-                        <div class="product-grid product_data">
-                            <div class="product-image">
-                                <img
-                                    src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
-                                <ul class="product-links">
-                                    <li><a target="blank" href="{{ tenant_asset('/') . '/' . $item->image }}"><i
-                                                class="fas fa-eye"></i></a></li>
-                                </ul>
-                                <a href="{{ url('category/' . $item->id) }}" class="add-to-cart">Categorías</a>
-                            </div>
-                            <div class="product-content">
-                                <h3 class="title"><a
-                                        href="{{ url('category/' . $item->id) }}">{{ $item->department }}</a>
-                                </h3>
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
-            </div>
-        @endif
-    @endif
-    {{-- Insta --}}
-    @if (isset($tenantinfo->show_insta) && $tenantinfo->show_insta == 1)
-        <hr class="text-dark">
-        <div class="row mb-5 container-fluid">
-            <div class="text-center">
-                <span
-                    class="text-muted text-center">{{ isset($tenantinfo->title_instagram) ? $tenantinfo->title_instagram : '' }}</span>
-            </div>
-            @foreach ($social as $item)
-                <div class="col-md-6 mt-4">
-                    <div class="card text-center">
-                        <div class="overflow-hidden position-relative bg-cover p-3"
-                            style="background-image: url('{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}'); height:700px;  background-position: center;">
-                            <span class="mask bg-gradient-dark opacity-6"></span>
-                            <div class="card-body position-relative z-index-1 d-flex flex-column mt-5">
-                                <h3 class="text-white">{{ $item->description }}.</h3>
-                                <a target="blank" class="text-white text-sm mb-0 icon-move-right mt-4"
-                                    href="{{ $item->url }}">
-                                    <h3 class="text-white"> Ver fotografía
-                                        <i class="material-icons text-sm ms-1 position-relative"
-                                            aria-hidden="true">arrow_forward</i>
-                                    </h3>
-
-                                </a>
-                            </div>
-                        </div>
                     </div>
                 </div>
-            @endforeach
-
+            </div>
         </div>
-    @endif
-    {{-- Trending --}}
-    @if (isset($tenantinfo->show_trending) && $tenantinfo->show_trending == 1)
-        <div class="mt-3 mb-5" id="best-car">
-            <div class="container-fluid">
-                @if (count($clothings) != 0)
-                    <div class="text-center">
-                        <h3 class="text-center text-muted mt-5 mb-3">
-                            {{ isset($tenantinfo->title_trend) ? $tenantinfo->title_trend : '' }}</h3>
-                    </div>
-                @endif
-
-                @foreach ($clothings as $item)
-                    <!-- Jumbotron -->
-                    <div class="container py-4">
-                        <div class="row g-0 align-items-center">
-                            <div class="col-lg-6 mb-5 mb-lg-0">
-                                <div class="card cascading-right card-login">
-                                    <div class="card-body p-5 shadow-5">
-                                        <h4 class="fw-bold mb-1">Detalles del vehículo</h4>
-                                        <div class="card-body">
-                                            <h4
-                                                class="text-muted text-uppercase {{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'd-none' : '' }}">
-                                                {{ $item->casa }}
-                                            </h4>
-                                            <h4 class="title text-dark">
-                                                {{ $item->name }}
-                                            </h4>
-
-                                            <div class="mb-1">
-
-                                                @php
-                                                    $precio = $item->price;
-                                                    if (
-                                                        isset($tenantinfo->custom_size) &&
-                                                        $tenantinfo->custom_size == 1
-                                                    ) {
-                                                        $precio = $item->first_price;
-                                                    }
-                                                    if (
-                                                        Auth::check() &&
-                                                        Auth::user()->mayor == '1' &&
-                                                        $item->mayor_price > 0
-                                                    ) {
-                                                        $precio = $item->mayor_price;
-                                                    }
-                                                    $descuentoPorcentaje = $item->discount;
-                                                    // Calcular el descuento
-                                                    $descuento = ($precio * $descuentoPorcentaje) / 100;
-                                                    // Calcular el precio con el descuento aplicado
-                                                    $precioConDescuento = $precio - $descuento;
-                                                @endphp
-
+    </div>
+    {{-- Contact form --}}
+    <section class="ftco-section ftco-no-pt bg-light">
+        <div class="container">
+            <div class="row no-gutters">
+                <div class="col-md-12	featured-top">
+                    <div class="row no-gutters">
+                        <div class="col-md-4 d-flex align-items-center">
+                            
+                            <form class="request-form ftco-animate bg-primary" action="{{ url('send-email/blog') }}" method="POST" enctype="multipart/form-data">
+                                <h2>¿Tienes alguna duda?, ¡contáctanos!</h2>
+                                @csrf
+                                <div class="form-group">
+                                    <label for="" class="label">Nombre</label>
+                                    <input type="text" class="form-control" name="name" required
+                                        placeholder="Nombre completo">
+                                </div>
+                                <div class="form-group">
+                                    <label for="" class="label">Teléfono</label>
+                                    <input type="text" class="form-control" name="telephone" required
+                                        placeholder="Número de teléfono">
+                                </div>
+                                <div class="form-group">
+                                    <label for="" class="label">E-mail</label>
+                                    <input type="text" class="form-control" name="email" required
+                                        placeholder="Correo electrónico">
+                                </div>
+                                <div class="form-group">
+                                    <label for="" class="label">Consulta</label>
+                                    <input type="text" class="form-control" name="question" required
+                                        placeholder="¿Cuál es tu duda?">
+                                </div>
+                                <div class="form-group">
+                                    <input type="submit" value="Enviar formulario" class="btn btn-secondary py-3 px-4">
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-md-8 d-flex align-items-center">
+                            <div class="services-wrap rounded-right w-100">
+                                <h3 class="heading-section mb-4">En autos Grecia contamos con los mejores precios</h3>
+                                <div class="row d-flex mb-4">
+                                    <div class="col-md-4 d-flex align-self-stretch ftco-animate">
+                                        <div class="services w-100 text-center">
+                                            <div class="icon d-flex align-items-center justify-content-center"><span
+                                                    class="flaticon-route"></span></div>
+                                            <div class="text w-100">
+                                                <h3 class="heading mb-2">Ubicación estratégica</h3>
                                             </div>
-
-                                            <p class="text text-justify">
-                                                {!! $item->description !!}
-                                            </p>
-
-                                            <a href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}"
-                                                class="btn btn-add_to_cart shadow-0"> <i
-                                                    class="me-1 fas fa-eye"></i>Detallar
-                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 d-flex align-self-stretch ftco-animate">
+                                        <div class="services w-100 text-center">
+                                            <div class="icon d-flex align-items-center justify-content-center"><span
+                                                    class="flaticon-handshake"></span></div>
+                                            <div class="text w-100">
+                                                <h3 class="heading mb-2">Trámite rápido y sencillo</h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 d-flex align-self-stretch ftco-animate">
+                                        <div class="services w-100 text-center">
+                                            <div class="icon d-flex align-items-center justify-content-center"><span
+                                                    class="flaticon-rent"></span></div>
+                                            <div class="text w-100">
+                                                <h3 class="heading mb-2">Te ayudamos a escoger el carro ideal</h3>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-
-                            <div class="col-lg-6 mb-5 mb-lg-0">
-                                <img src="{{ route('file', isset($item->image) ? $item->image : '') }}"
-                                    class="w-100 rounded-4 shadow-4" alt="" />
+                                <p><a href="#" class="btn btn-primary py-3 px-4">Financiar vehículo</a></p>
                             </div>
                         </div>
                     </div>
-                    <!-- Jumbotron -->
-                @break;
-            @endforeach
-        </div>
-    </div>
-    {{-- Mision --}}
-    @if (isset($tenantinfo->show_mision) && $tenantinfo->show_mision == 1)
-        <div class="bg-white p-3 mb-3 text-center">
-            <h3
-                class="text-center {{ isset($tenantinfo->tenant) && $tenantinfo->tenant === 'mandicr' ? 'text-title-mandi' : 'text-title' }} mt-3">
-                {{ isset($tenantinfo->title) ? $tenantinfo->title : '' }}</h3>
-            <span class="text-center text-dark">{{ isset($tenantinfo->mision) ? $tenantinfo->mision : '' }}</span>
-
-
-        </div>
-    @endif
-    {{-- blogs --}}
-    @if (count($blogs) != 0)
-        <hr class="dark horizontal text-danger my-0">
-        <div class="mt-3 mb-5">
-            <div class="container-fluid">
-                <div class="text-center">
-                    <h3 class="text-center text-muted mt-5 mb-3">Blog de
-                        {{ isset($tenantinfo->title) ? $tenantinfo->title : '' }}, explora nuestras secciones, y aclara las
-                        dudas acerca de nuestros servicios.</h3>
                 </div>
-
+            </div>
+    </section>
+    {{-- Trending --}}
+    @if (isset($tenantinfo->show_trending) && $tenantinfo->show_trending == 1)
+        <section class="ftco-section ftco-no-pt bg-light">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-md-12 heading-section text-center ftco-animate mb-5">
+                        <span class="subheading">Navega en nuestro sitio web</span>
+                        <h2 class="mb-2">Vehículos en tendencia</h2>
+                    </div>
+                </div>
                 <div class="row">
-                    <div class="row row-cols-1 row-cols-md-4 g-4 align-content-center card-group mt-2 mb-5">
-                        @foreach ($blogs as $item)
-                            <div class="item">
-                                <div class="product-grid product_data">
-                                    <div class="product-image">
-                                        <img
-                                            src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
-
-                                        <ul class="product-links">
-                                            <li><a target="blank"
-                                                    href="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"><i
-                                                        class="fas fa-eye"></i></a></li>
-                                        </ul>
-                                        <a href="{{ url('/blog/' . $item->id . '/' . $item->name_url) }}"
-                                            class="add-to-cart">Ver
-                                            información</a>
-                                    </div>
-                                    <div class="product-content">
-
-                                        <h3
-                                            class="{{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'text-muted' : 'title-frags' }}">
-                                            <a
-                                                href="{{ url('/blog/' . $item->id . '/' . $item->name_url) }}">{{ $item->title }}</a>
-                                        </h3>
+                    <div class="col-md-12">
+                        <div class="carousel-car owl-carousel">
+                            @foreach ($clothings as $item)
+                                @php
+                                    $precio = $item->price;
+                                    if (isset($tenantinfo->custom_size) && $tenantinfo->custom_size == 1) {
+                                        $precio = $item->first_price;
+                                    }
+                                    if (Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0) {
+                                        $precio = $item->mayor_price;
+                                    }
+                                    $descuentoPorcentaje = $item->discount;
+                                    // Calcular el descuento
+                                    $descuento = ($precio * $descuentoPorcentaje) / 100;
+                                    // Calcular el precio con el descuento aplicado
+                                    $precioConDescuento = $precio - $descuento;
+                                @endphp
+                                <div class="item">
+                                    <div class="car-wrap rounded ftco-animate">
+                                        <div class="img rounded d-flex align-items-end"
+                                            style="background-image: url('{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}');">
+                                        </div>
+                                        <div class="text">
+                                            <h2 class="mb-0"><a href="#">{{ $item->name }}</a></h2>
+                                            <div class="d-flex mb-3">
+                                                <span class="cat">Tendencia</span>
+                                                <p class="price ml-auto">₡{{ number_format($precioConDescuento) }}</p>
+                                            </div>
+                                            <p class="d-flex mb-0 d-block"><a
+                                                    href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}"
+                                                    class="btn btn-secondary py-2 ml-1">Detallar</a></p>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        @endforeach
+                            @endforeach
+                        </div>
                     </div>
+                </div>
+            </div>
+        </section>
+    @endif
+    {{-- About Us --}}
+    @if (isset($tenantinfo->about) && $tenantinfo->about != '')
+        <section class="ftco-section ftco-about" id="about_us">
+            <div class="container">
+                <div class="row no-gutters">
+                    <div class="col-md-6 p-md-5 img img-2 d-flex justify-content-center align-items-center"
+                        style="background-image: url(car-styles/images/about.jpg);">
+                    </div>
+                    <div class="col-md-6 wrap-about ftco-animate">
+                        <div class="heading-section heading-section-white pl-md-5">
+                            <span class="subheading">Nosotros</span>
+                            <h2 class="mb-4">Bienvenido a {{ isset($tenantinfo->title) ? $tenantinfo->title : '' }}</h2>
 
+                            <p class="text-justify">{{ $tenantinfo->about }}</p>
+                            <p><a href="{{ url('https://wa.me/506' . $tenantinfo->whatsapp) }}"
+                                    class="btn btn-primary py-3 px-4">Agendar cita</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    @endif
+    {{-- Services --}}
+   {{--  <section class="ftco-section">
+        <div class="container">
+            <div class="row justify-content-center mb-5">
+                <div class="col-md-7 text-center heading-section ftco-animate">
+                    <span class="subheading">Services</span>
+                    <h2 class="mb-3">Our Latest Services</h2>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="services services-2 w-100 text-center">
+                        <div class="icon d-flex align-items-center justify-content-center"><span
+                                class="flaticon-wedding-car"></span></div>
+                        <div class="text w-100">
+                            <h3 class="heading mb-2">Wedding Ceremony</h3>
+                            <p>A small river named Duden flows by their place and supplies it with the necessary regelialia.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="services services-2 w-100 text-center">
+                        <div class="icon d-flex align-items-center justify-content-center"><span
+                                class="flaticon-transportation"></span></div>
+                        <div class="text w-100">
+                            <h3 class="heading mb-2">City Transfer</h3>
+                            <p>A small river named Duden flows by their place and supplies it with the necessary regelialia.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="services services-2 w-100 text-center">
+                        <div class="icon d-flex align-items-center justify-content-center"><span
+                                class="flaticon-car"></span></div>
+                        <div class="text w-100">
+                            <h3 class="heading mb-2">Airport Transfer</h3>
+                            <p>A small river named Duden flows by their place and supplies it with the necessary regelialia.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="services services-2 w-100 text-center">
+                        <div class="icon d-flex align-items-center justify-content-center"><span
+                                class="flaticon-transportation"></span></div>
+                        <div class="text w-100">
+                            <h3 class="heading mb-2">Whole City Tour</h3>
+                            <p>A small river named Duden flows by their place and supplies it with the necessary regelialia.
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    @endif
-    {{-- Comentarios --}}
+    </section> --}}
+    {{--     <section class="ftco-section ftco-intro" style="background-image: url(images/bg_3.jpg);">
+        <div class="overlay"></div>
+        <div class="container">
+            <div class="row justify-content-end">
+                <div class="col-md-6 heading-section heading-section-white ftco-animate">
+                    <h2 class="mb-3">Do You Want To Earn With Us? So Don't Be Late.</h2>
+                    <a href="#" class="btn btn-primary btn-lg">Become A Driver</a>
+                </div>
+            </div>
+        </div>
+    </section> --}}
+    {{-- Comments --}}
     @if (count($comments) != 0)
         <hr class="dark horizontal text-danger my-0">
-        <div class="mt-3 mb-5">
+        <section class="ftco-section testimony-section bg-light">
             <div class="container">
-                <div class="text-center">
-                    <h3 class="text-center text-muted mt-5 mb-3">Testimonios de nuestros clientes</h3>
+                <div class="row justify-content-center mb-5">
+                    <div class="col-md-7 text-center heading-section ftco-animate">
+                        <span class="subheading">Testimonios de nuestros clientes</span>
+                        <h2 class="mb-3">Clientes satisfechos</h2>
+                    </div>
                 </div>
-
-                <div class="row">
-                    <div class="owl-carousel featured-carousel owl-theme">
-                        @foreach ($comments as $item)
-                            <div class="item">
-                                <div>
-                                    <div class="card text-center">
-                                        <img class="card-img-top"
-                                            @if ($item->image) src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"
-                                         
-                                     @else
-                                     src="{{ url('images/sin-foto.PNG') }}" @endif
-                                            src="{{ url('images/sin-foto.PNG') }}" alt="">
-                                        <div class="card-body">
-                                            <h5>{{ $item->name }}
-                                            </h5>
+                <div class="row ftco-animate">
+                    <div class="col-md-12">
+                        <div class="carousel-testimony owl-carousel ftco-owl">
+                            @foreach ($comments as $item)
+                                <div class="item">
+                                    <div class="testimony-wrap rounded text-center py-4 pb-5">
+                                        <div class="user-img mb-2"
+                                            style="background-image: url('{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}')">
+                                        </div>
+                                        <div class="text pt-4">
+                                            <p class="name">{{ $item->name }}</p>
                                             <div class="rated text-center">
                                                 @for ($i = 1; $i <= $item->stars; $i++)
                                                     {{-- <input type="radio" id="star{{$i}}" class="rate" name="rating" value="5"/> --}}
@@ -299,95 +281,124 @@
                                                         stars</label>
                                                 @endfor
                                             </div>
-                                            <p class="card-text card-comment">“{{ $item->description }}” </p>
+                                            <p class="card-text card-comment">“{{ $item->description }}”</p>
                                             <span class="show-more">Ver más</span>
                                         </div>
                                     </div>
                                 </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    @endif
+    {{-- blogs --}}
+    @if (count($blogs) != 0)
+        <section class="ftco-section">
+            <div class="container">
+                <div class="row justify-content-center mb-5">
+                    <div class="col-md-7 heading-section text-center ftco-animate">
+                        <span class="subheading">Blog de
+                            {{ isset($tenantinfo->title) ? $tenantinfo->title : '' }}, explora nuestras secciones, y aclara
+                            las
+                            dudas acerca de nuestros servicios.</span>
+                    </div>
+                </div>
+                <div class="row d-flex">
+                    @foreach ($blogs as $item)
+                        <div class="col-md-4 d-flex ftco-animate">
+                            <div class="blog-entry justify-content-end">
+                                <a href="blog-single.html" class="block-20"
+                                    style="background-image: url('{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}');">
+                                </a>
+                                <div class="text pt-4">
+                                    <div class="meta mb-3">
+                                        <div><a href="#">{{ $item->fecha_post }}</a></div>
+                                        <div><a href="#">{{ $item->autor }}</a></div>
+                                    </div>
+                                    <h3 class="heading mt-2"><a
+                                            href="{{ url('/blog/' . $item->id . '/' . $item->name_url) }}">{{ $item->title }}</a>
+                                    </h3>
+                                    <p><a href="{{ url('/blog/' . $item->id . '/' . $item->name_url) }}"
+                                            class="btn btn-primary">Leer más</a></p>
+                                </div>
                             </div>
-                        @endforeach
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </section>
+    @endif
+    {{-- Counter --}}
+    <section class="ftco-counter ftco-section img bg-light" id="section-counter">
+        <div class="overlay"></div>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 col-lg-3 justify-content-center counter-wrap ftco-animate">
+                    <div class="block-18">
+                        <div class="text text-border d-flex align-items-center">
+                            <strong class="number" data-number="40">0</strong>
+                            <span>Años de <br>Experiencia</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3 justify-content-center counter-wrap ftco-animate">
+                    <div class="block-18">
+                        <div class="text text-border d-flex align-items-center">
+                            <strong class="number" data-number="{{$car_count}}">0</strong>
+                            <span>Vehículos <br>Disponibles</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3 justify-content-center counter-wrap ftco-animate">
+                    <div class="block-18">
+                        <div class="text text-border d-flex align-items-center">
+                            <strong class="number" data-number="{{$comment_count}}">0</strong>
+                            <span>Clientes <br>Satisfechos</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    @endif
-@endif
-<hr class="dark horizontal text-danger my-0">
-{{-- Personal --}}
-@if (count($sellers) != 0)
-    <div class="container">
-        <div class="text-center">
-            <h1 class="text-center text-title mt-5 mb-3">Nuestros personal especializado en todo tipo de autos. </h1>
-        </div>
-        <div class="row text-center">
-
-            <!-- Team item -->
-            @foreach ($sellers as $item)
-                <div class="col-xl-3 col-sm-6 mb-5">
-                    <div class="bg-white rounded shadow-sm py-5 px-4"><img src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"
-                            alt="" width="100"
-                            class="img-fluid rounded-circle mb-3 img-thumbnail shadow-sm">
-                        <h5 class="mb-0">{{ $item->name }}</h5><span
-                            class="small text-uppercase text-muted">{{ $item->position }}</span>
-                        <ul class="social mb-0 list-inline mt-3">
-                            <li class="list-inline-item"><a
-                                    href="{{ $item->url_face != '' ? $item->url_facebook : '#' }}"
-                                    class="social-link"><i class="fab fa-facebook-f"></i></a></li>
-                            <li class="list-inline-item"><a
-                                    href="{{ $item->url_insta != '' ? $item->url_insta : '#' }}"
-                                    class="social-link"><i class="fab fa-instagram"></i></a></li>
-                            <li class="list-inline-item"><a
-                                    href="{{ $item->url_linkedin != '' ? $item->url_linkedin : '#' }}"
-                                    class="social-link"><i class="fab fa-linkedin"></i></a></li>
-                        </ul>
-                    </div>
-                </div>
-            @endforeach
-
-            <!-- End -->
-        </div>
-    </div>
-@endif
-
-
-<hr class="dark horizontal text-danger my-0">
-@include('layouts.inc.indexfooter-car')
+    </section>
+    @include('layouts.inc.carsale.footer')
 @endsection
 @section('scripts')
-<script>
-    $('.featured-carousel').owlCarousel({
-        loop: true,
-        margin: 10,
+    <script>
+        $('.featured-carousel').owlCarousel({
+            loop: true,
+            margin: 10,
 
-        dots: false,
-        responsive: {
-            0: {
-                items: 1
-            },
-            600: {
-                items: 3
-            },
-            1000: {
-                items: 4
-            }
-        }
-    })
-
-    document.addEventListener('DOMContentLoaded', function() {
-        var showMoreButtons = document.querySelectorAll('.show-more');
-
-        showMoreButtons.forEach(function(button) {
-            button.addEventListener('click', function() {
-                var cardText = button.previousElementSibling;
-                if (cardText.classList.contains('expanded')) {
-                    cardText.classList.remove('expanded');
-                    button.textContent = 'Ver más';
-                } else {
-                    cardText.classList.add('expanded');
-                    button.textContent = 'Ver menos';
+            dots: false,
+            responsive: {
+                0: {
+                    items: 1
+                },
+                600: {
+                    items: 3
+                },
+                1000: {
+                    items: 4
                 }
+            }
+        })
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var showMoreButtons = document.querySelectorAll('.show-more');
+
+            showMoreButtons.forEach(function(button) {
+                button.addEventListener('click', function() {
+                    var cardText = button.previousElementSibling;
+                    if (cardText.classList.contains('expanded')) {
+                        cardText.classList.remove('expanded');
+                        button.textContent = 'Ver más';
+                    } else {
+                        cardText.classList.add('expanded');
+                        button.textContent = 'Ver menos';
+                    }
+                });
             });
         });
-    });
-</script>
+    </script>
 @endsection

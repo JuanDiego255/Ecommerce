@@ -210,6 +210,7 @@ class TenantInfoController extends Controller
             $tenantinfo->count = $request->count;
             $tenantinfo->email = $request->email;
             $tenantinfo->delivery = $request->delivery;
+            $tenantinfo->about = $request->about;
             $tenantinfo->update();
             DB::commit();
             return redirect('/tenant-info')->with(['status' => 'Se ha editado la información del negocio con éxito', 'icon' => 'success']);
