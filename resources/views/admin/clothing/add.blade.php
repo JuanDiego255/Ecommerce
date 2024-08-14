@@ -7,10 +7,11 @@
     <form action="{{ url('insert-clothing') }}" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="row">
-            <div @if ($tenantinfo->manage_size != 0) class="col-md-8" @else class="col-md-12" @endif>
+            <div @if ($tenantinfo->manage_size != 0 || $tenantinfo->kind_business == 1) class="col-md-7" @else class="col-md-12" @endif>
                 <div class="card">
                     <div class="card-header">
-                        <h4 class="text-dark"> {{ __('Agregar nuevo producto') }}</h4>
+                        <h4 class="text-dark"> {{ __('Agregar nuevo ') }}
+                            {{ $tenantinfo->kind_business == 1 ? 'vehículo' : 'producto' }}</h4>
                     </div>
                     <div class="card-body">
 
@@ -25,7 +26,7 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <div class="input-group input-group-static mb-4">
-                                    <label> {{ __('Producto') }}</label>
+                                    <label> {{ $tenantinfo->kind_business == 1 ? 'Vehículo' : 'Producto' }}</label>
                                     <input required type="text" class="form-control form-control-lg" name="name"
                                         value="{{ old('name') }}">
                                 </div>
@@ -71,7 +72,7 @@
                             <div class="col-md-12 mb-3">
                                 <div class="input-group input-group-static mb-4">
                                     <textarea id="editor" type="text" class="form-control form-control-lg" name="description"
-                                        placeholder="Descripción del producto">{{ old('description') }}</textarea>
+                                        placeholder="Descripción del {{ $tenantinfo->kind_business == 1 ? 'vehículo' : 'producto' }}">{{ old('description') }}</textarea>
                                 </div>
                             </div>
 
@@ -225,6 +226,123 @@
                     </div>
                 @endif
             </div>
+            <div @if ($tenantinfo->kind_business == 1) class="col-md-5" @else class="d-none" @endif>
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="text-dark">{{ __('Especificaciones') }}</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="input-group input-group-static mb-4">
+                                    <label>{{ __('distancia al suelo (mm)') }}</label>
+                                    <input type="text" class="form-control form-control-lg" name="distancia_suelo"
+                                        value="{{ old('distancia_suelo') }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="input-group input-group-static mb-4">
+                                    <label>{{ __('Peso (Kg)') }}</label>
+                                    <input type="text" class="form-control form-control-lg" name="peso"
+                                        value="{{ old('peso') }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="input-group input-group-static mb-4">
+                                    <label>{{ __('Color') }}</label>
+                                    <input type="text" class="form-control form-control-lg" name="color"
+                                        value="{{ old('color') }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="input-group input-group-static mb-4">
+                                    <label>{{ __('Modelo o Año') }}</label>
+                                    <input type="text" class="form-control form-control-lg" name="modelo"
+                                        value="{{ old('modelo') }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="input-group input-group-static mb-4">
+                                    <label>{{ __('Kilometraje MI') }}</label>
+                                    <input type="text" class="form-control form-control-lg" name="kilometraje"
+                                        value="{{ old('kilometraje') }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="input-group input-group-static mb-4">
+                                    <label>{{ __('Capacidad del tanque (L)') }}</label>
+                                    <input type="text" class="form-control form-control-lg" name="capacidad_tanque"
+                                        value="{{ old('capacidad_tanque') }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="input-group input-group-static mb-4">
+                                    <label>{{ __('Tipo combustible') }}</label>
+                                    <input type="text" class="form-control form-control-lg" name="combustible"
+                                        value="{{ old('combustible') }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="input-group input-group-static mb-4">
+                                    <label>{{ __('Motor (CC)') }}</label>
+                                    <input type="text" class="form-control form-control-lg" name="motor"
+                                        value="{{ old('motor') }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="input-group input-group-static mb-4">
+                                    <label>{{ __('Potencia') }}</label>
+                                    <input type="text" class="form-control form-control-lg" name="potencia"
+                                        value="{{ old('potencia') }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="input-group input-group-static mb-4">
+                                    <label>{{ __('Pasajeros') }}</label>
+                                    <input type="text" class="form-control form-control-lg" name="pasajeros"
+                                        value="{{ old('pasajeros') }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="input-group input-group-static mb-4">
+                                    <label>{{ __('Llantas') }}</label>
+                                    <input type="text" class="form-control form-control-lg" name="llantas"
+                                        value="{{ old('llantas') }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="input-group input-group-static mb-4">
+                                    <label>{{ __('Tracción') }}</label>
+                                    <input type="text" class="form-control form-control-lg" name="traccion"
+                                        value="{{ old('traccion') }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="input-group input-group-static mb-4">
+                                    <label>{{ __('Transmisión') }}</label>
+                                    <input type="text" class="form-control form-control-lg" name="transmision"
+                                        value="{{ old('transmision') }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="input-group input-group-static mb-4">
+                                    <label>{{ __('Largo (mm)') }}</label>
+                                    <input type="text" class="form-control form-control-lg" name="largo"
+                                        value="{{ old('largo') }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="input-group input-group-static mb-4">
+                                    <label>{{ __('Ancho (mm)') }}</label>
+                                    <input type="text" class="form-control form-control-lg" name="ancho"
+                                        value="{{ old('ancho') }}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         </div>
     </form>
     <center>

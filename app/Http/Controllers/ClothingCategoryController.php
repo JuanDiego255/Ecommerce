@@ -7,6 +7,7 @@ use App\Models\Attribute;
 use App\Models\AttributeValue;
 use App\Models\Categories;
 use App\Models\ClothingCategory;
+use App\Models\ClothingDetails;
 use App\Models\PivotClothingCategory;
 use App\Models\ProductImage;
 use App\Models\Stock;
@@ -106,14 +107,16 @@ class ClothingCategoryController extends Controller
                     DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE 0 END) as total_stock'),
                     'product_images.image as image', // Obtener la primera imagen del producto
                 )
-                ->groupBy('clothing.id','clothing.horizontal_image', 'clothing.casa', 'clothing.name', 'clothing.manage_stock', 'clothing.code', 'clothing.can_buy', 'pivot_clothing_categories.category_id', 'categories.name', 'clothing.description', 'clothing.trending', 'clothing.price', 'clothing.mayor_price', 'clothing.meta_keywords', 'product_images.image', 'clothing.discount')
+                ->groupBy('clothing.id', 'clothing.horizontal_image', 'clothing.casa', 'clothing.name', 'clothing.manage_stock', 'clothing.code', 'clothing.can_buy', 'pivot_clothing_categories.category_id', 'categories.name', 'clothing.description', 'clothing.trending', 'clothing.price', 'clothing.mayor_price', 'clothing.meta_keywords', 'product_images.image', 'clothing.discount')
                 ->first();
         });
 
+
+        $details = ClothingDetails::where('clothing_id', $id)->first();
         $stocks = Stock::where('clothing_id', $id)->leftJoin('attributes', 'stocks.attr_id', 'attributes.id')->leftJoin('attribute_values', 'stocks.value_attr', 'attribute_values.id')->select('stocks.id as id', 'stocks.clothing_id as clothing_id', 'stocks.stock as stock', 'stocks.price as price', 'stocks.attr_id as attr_id', 'stocks.value_attr as value_attr', 'attributes.name as name', 'attributes.main as main', 'attribute_values.id as value_id', 'attribute_values.value as value')->get();
         $attributes = Attribute::where('name', '!=', 'Stock')->get();
         $stock_active = Stock::where('clothing_id', $id)->where('attr_id', '!=', '')->leftJoin('attributes', 'stocks.attr_id', 'attributes.id')->leftJoin('attribute_values', 'stocks.value_attr', 'attribute_values.id')->select('stocks.id as id', 'stocks.clothing_id as clothing_id', 'stocks.stock as stock', 'stocks.price as price', 'stocks.attr_id as attr_id', 'stocks.value_attr as value_attr', 'attributes.name as name', 'attribute_values.id as value_id', 'attribute_values.value as value')->first();
-        return view('admin.clothing.edit', compact('clothing', 'selectedCategories', 'stock_active', 'category_id', 'attributes', 'categories', 'stocks'));
+        return view('admin.clothing.edit', compact('clothing', 'selectedCategories', 'details', 'stock_active', 'category_id', 'attributes', 'categories', 'stocks'));
     }
     public function store(Request $request)
     {
@@ -138,6 +141,7 @@ class ClothingCategoryController extends Controller
                 ->back()
                 ->with(['status' => $msg, 'icon' => 'success']);
         } catch (Exception $th) {
+            dd($th->getMessage());
             DB::rollback();
             return redirect()
                 ->back()
@@ -198,6 +202,48 @@ class ClothingCategoryController extends Controller
             }
 
             $clothing->update();
+
+            if ($tenantinfo->kind_business == 1) {
+                $car_details = ClothingDetails::where('clothing_id', $id)->first();
+                if($car_details == null){
+                    $car_detail = new ClothingDetails();
+                    $car_detail->clothing_id = $id;
+                    $car_detail->distancia_suelo = $request->distancia_suelo;
+                    $car_detail->color = $request->color;
+                    $car_detail->modelo = $request->modelo;
+                    $car_detail->kilometraje = $request->kilometraje;
+                    $car_detail->peso = $request->peso;
+                    $car_detail->capacidad_tanque = $request->capacidad_tanque;
+                    $car_detail->combustible = $request->combustible;
+                    $car_detail->motor = $request->motor;
+                    $car_detail->potencia = $request->potencia;
+                    $car_detail->pasajeros = $request->pasajeros;
+                    $car_detail->llantas = $request->llantas;
+                    $car_detail->traccion = $request->traccion;
+                    $car_detail->transmision = $request->transmision;
+                    $car_detail->largo = $request->largo;
+                    $car_detail->ancho = $request->ancho;
+                    $car_detail->save();
+                }else{
+                    $car_detail = ClothingDetails::findOrfail($car_details->id);
+                    $car_detail->distancia_suelo = $request->distancia_suelo;
+                    $car_detail->peso = $request->peso;
+                    $car_detail->color = $request->color;
+                    $car_detail->modelo = $request->modelo;
+                    $car_detail->kilometraje = $request->kilometraje;
+                    $car_detail->capacidad_tanque = $request->capacidad_tanque;
+                    $car_detail->combustible = $request->combustible;
+                    $car_detail->motor = $request->motor;
+                    $car_detail->potencia = $request->potencia;
+                    $car_detail->pasajeros = $request->pasajeros;
+                    $car_detail->llantas = $request->llantas;
+                    $car_detail->traccion = $request->traccion;
+                    $car_detail->transmision = $request->transmision;
+                    $car_detail->largo = $request->largo;
+                    $car_detail->ancho = $request->ancho;
+                    $car_detail->update();
+                }
+            }
             //Procesar categorias
             $selectedCategories = $request->input('category_id');
             $categoriesItemIds = array_keys($selectedCategories);
@@ -346,6 +392,28 @@ class ClothingCategoryController extends Controller
                 $clothing_category->category_id = $request->category_id;
                 $clothing_category->clothing_id = $clothingId;
                 $clothing_category->save();
+
+                //Especificaciones de vehiculos, solo para tipo de negocio 1
+                if ($tenantinfo->kind_business == 1) {
+                    $car_detail = new ClothingDetails();
+                    $car_detail->clothing_id = $clothingId;
+                    $car_detail->distancia_suelo = $request->distancia_suelo;
+                    $car_detail->color = $request->color;
+                    $car_detail->modelo = $request->modelo;
+                    $car_detail->kilometraje = $request->kilometraje;
+                    $car_detail->peso = $request->peso;
+                    $car_detail->capacidad_tanque = $request->capacidad_tanque;
+                    $car_detail->combustible = $request->combustible;
+                    $car_detail->motor = $request->motor;
+                    $car_detail->potencia = $request->potencia;
+                    $car_detail->pasajeros = $request->pasajeros;
+                    $car_detail->llantas = $request->llantas;
+                    $car_detail->traccion = $request->traccion;
+                    $car_detail->transmision = $request->transmision;
+                    $car_detail->largo = $request->largo;
+                    $car_detail->ancho = $request->ancho;
+                    $car_detail->save();
+                }
 
                 $masive = $request->filled('masive') ? 1 : 0;
                 if ($masive == 1 && isset($tenantinfo->tenant) && $tenantinfo->tenant === 'marylu') {
@@ -507,5 +575,35 @@ class ClothingCategoryController extends Controller
         }
 
         return $sku;
+    }
+    public function getCartDetail($code)
+    {
+        $clothes = ClothingCategory::where('clothing.code', $code)
+            ->where('clothing.status', 1)            
+            ->join('clothing_details', 'clothing.id', 'clothing_details.clothing_id')
+            ->join('product_images', 'clothing.id', '=', 'product_images.clothing_id')
+            ->select(               
+                'clothing.id as id',                
+                'clothing.name as name',                
+                'clothing.price as price',                
+                'clothing_details.distancia_suelo as distance',
+                'clothing_details.peso as weight',
+                'clothing_details.capacidad_tanque as tank_capacity',
+                'clothing_details.color as color',
+                'clothing_details.modelo as model',
+                'clothing_details.kilometraje as mileage',
+                'clothing_details.combustible as fuel_type',
+                'clothing_details.motor as engine',
+                'clothing_details.potencia as power',
+                'clothing_details.pasajeros as passengers',
+                'clothing_details.llantas as tires',
+                'clothing_details.traccion as traction',
+                'clothing_details.transmision as transmission',
+                'clothing_details.largo as length',
+                'clothing_details.ancho as width',
+                'product_images.image as image'              
+            )           
+            ->get();
+        return response()->json(['status' => 'success', 'results' => $clothes]);
     }
 }

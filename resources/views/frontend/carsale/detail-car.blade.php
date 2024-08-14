@@ -6,6 +6,20 @@
 @section('content')
     {{-- Main Banner --}}
     @foreach ($clothes as $item)
+        @php
+            $precio = $item->price;
+            if (isset($tenantinfo->custom_size) && $tenantinfo->custom_size == 1) {
+                $precio = $item->first_price;
+            }
+            if (Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0) {
+                $precio = $item->mayor_price;
+            }
+            $descuentoPorcentaje = $item->discount;
+            // Calcular el descuento
+            $descuento = ($precio * $descuentoPorcentaje) / 100;
+            // Calcular el precio con el descuento aplicado
+            $precioConDescuento = $precio - $descuento;
+        @endphp
         <div class="hero-wrap ftco-degree-bg"
             style="background-image: url('{{ isset($item->horizontal_image) && $item->horizontal_image != '' ? route('file', $item->horizontal_image) : url('images/producto-sin-imagen.PNG') }}');"
             data-stellar-background-ratio="0.5">
@@ -14,9 +28,16 @@
                 <div class="row no-gutters slider-text justify-content-start align-items-center justify-content-center">
                     <div class="col-lg-8 ftco-animate">
                         <div class="text w-100 text-center mb-md-5 pb-md-5">
-                            <h1 class="mb-4">
+                            <h1 class="mb-2">
                                 {{ $item->name }}</h1>
-                            <p style="font-size: 18px;"></p>
+                            <p style="font-size: 36px;">
+                                <strong id="text_price">₡{{ number_format($precioConDescuento) }}</strong>
+                                @if ($item->discount)
+                                    <s class="text-danger"><span class="text-danger"><strong
+                                                id="text_price_discount">₡{{ number_format(Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0 ? $item->mayor_price : $item->price) }}</strong>
+                                        </span></s>
+                                @endif
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -34,6 +55,11 @@
                                         aria-expanded="true">Características</a>
                                 </li>
                                 <li class="nav-item">
+                                    <a class="nav-link" id="pills-details-tab" data-toggle="pill" href="#pills-details"
+                                        role="tab" aria-controls="pills-details"
+                                        aria-expanded="true">Especificaciones</a>
+                                </li>
+                                <li class="nav-item">
                                     <a class="nav-link" id="pills-review-tab" data-toggle="pill" href="#pills-review"
                                         role="tab" aria-controls="pills-review" aria-expanded="true">Detalle</a>
                                 </li>
@@ -43,56 +69,6 @@
                         <div class="tab-content" id="pills-tabContent">
                             <div class="tab-pane fade show active" id="pills-manufacturer" role="tabpanel"
                                 aria-labelledby="pills-manufacturer-tab">
-                                <h4
-                                    class="text-muted text-uppercase {{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'd-none' : '' }}">
-                                    {{ $item->casa }}
-                                </h4>
-                                <h4 class="title text-dark">
-                                    {{ $item->name }}
-                                </h4>
-                                <div class="d-flex flex-row my-3">
-                                    @if ($item->total_stock > 0)
-                                        @if (isset($tenantinfo->tenant) && $tenantinfo->tenant === 'mandicr')
-                                            <span class="text-success"><i class="fas fa-shopping-basket fa-sm mx-1"></i>In
-                                                Stock</span>
-                                        @else
-                                            <span class="text-success ms-2">Disponible</span>
-                                        @endif
-                                    @else
-                                        <span class="text-success ms-2">Vendido</span>
-                                    @endif
-
-                                </div>
-
-                                <div class="mb-1">
-
-                                    @php
-                                        $precio = $item->price;
-                                        if (isset($tenantinfo->custom_size) && $tenantinfo->custom_size == 1) {
-                                            $precio = $item->first_price;
-                                        }
-                                        if (Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0) {
-                                            $precio = $item->mayor_price;
-                                        }
-                                        $descuentoPorcentaje = $item->discount;
-                                        // Calcular el descuento
-                                        $descuento = ($precio * $descuentoPorcentaje) / 100;
-                                        // Calcular el precio con el descuento aplicado
-                                        $precioConDescuento = $precio - $descuento;
-                                    @endphp
-
-                                    <div class="price"><strong
-                                            id="text_price">₡{{ number_format($precioConDescuento) }}</strong>
-                                        @if ($item->discount)
-                                            <s class="text-danger"><span class="text-danger"><strong
-                                                        id="text_price_discount">₡{{ number_format(Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0 ? $item->mayor_price : $item->price) }}</strong>
-                                                </span></s>
-                                            / por unidad
-                                        @endif
-                                    </div>
-
-                                </div>
-
                                 <p>
                                     {!! $item->description !!}
                                 </p>
@@ -106,8 +82,113 @@
                                     @endif
                                 </a>
                             </div>
-
-                            <div class="tab-pane fade" id="pills-review" role="tabpanel" aria-labelledby="pills-review-tab">
+                            <div class="tab-pane fade" id="pills-details" role="tabpanel"
+                                aria-labelledby="pills-details-tab">
+                                <h4 class="text-muted text-center text-uppercase">
+                                    Especificaciones
+                                </h4>
+                                <h4 class="title text-center text-dark">
+                                    {{ $item->name }}
+                                </h4>
+                                <div class="col-md-12 d-flex align-items-center">
+                                    <div class="services-wrap rounded-right w-100">
+                                        <div class="row d-flex mb-4">
+                                            <div class="col-md-4 d-flex align-self-stretch ftco-animate">
+                                                <div class="services w-100 text-center">
+                                                    <div class="icon d-flex align-items-center justify-content-center"><span
+                                                            class="flaticon-diesel"></span></div>
+                                                    <div class="text w-100">
+                                                        <h3 class="heading mb-2">Tamaño del tanque:
+                                                            {{ $details->capacidad_tanque != '' ? $details->capacidad_tanque . ' L' : '--' }}
+                                                        </h3>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 d-flex align-self-stretch ftco-animate">
+                                                <div class="services w-100 text-center">
+                                                    <div class="icon d-flex align-items-center justify-content-center"><span
+                                                            class="flaticon-diesel"></span></div>
+                                                    <div class="text w-100">
+                                                        <h3 class="heading mb-2">Tipo combustible:
+                                                            {{ $details->combustible != '' ? $details->combustible : '--' }}
+                                                        </h3>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 d-flex align-self-stretch ftco-animate">
+                                                <div class="services w-100 text-center">
+                                                    <div class="icon d-flex align-items-center justify-content-center"><span
+                                                            class="flaticon-car-seat"></span></div>
+                                                    <div class="text w-100">
+                                                        <h3 class="heading mb-2">Pasajeros:
+                                                            {{ $details->pasajeros != '' ? $details->pasajeros : '--' }}
+                                                        </h3>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 d-flex align-self-stretch ftco-animate">
+                                                <div class="services w-100 text-center">
+                                                    <div class="icon d-flex align-items-center justify-content-center"><span
+                                                            class="flaticon-dashboard"></span></div>
+                                                    <div class="text w-100">
+                                                        <h3 class="heading mb-2">Potencia:
+                                                            {{ $details->potencia != '' ? $details->potencia : '--' }}</h3>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 d-flex align-self-stretch ftco-animate">
+                                                <div class="services w-100 text-center">
+                                                    <div class="icon d-flex align-items-center justify-content-center">
+                                                        <span class="flaticon-suv"></span>
+                                                    </div>
+                                                    <div class="text w-100">
+                                                        <h3 class="heading mb-2">Llantas:
+                                                            {{ $details->llantas != '' ? $details->llantas : '--' }}</h3>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 d-flex align-self-stretch ftco-animate">
+                                                <div class="services w-100 text-center">
+                                                    <div class="icon d-flex align-items-center justify-content-center">
+                                                        <span class="flaticon-pistons"></span>
+                                                    </div>
+                                                    <div class="text w-100">
+                                                        <h3 class="heading mb-2">Motor:
+                                                            {{ $details->motor != '' ? $details->motor . 'CC' : '--' }}
+                                                        </h3>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 d-flex align-self-stretch ftco-animate">
+                                                <div class="services w-100 text-center">
+                                                    <div class="icon d-flex align-items-center justify-content-center">
+                                                        <span class="flaticon-transportation"></span>
+                                                    </div>
+                                                    <div class="text w-100">
+                                                        <h3 class="heading mb-2">Kilometraje:
+                                                            {{ $details->kilometraje != '' ? number_format($details->kilometraje) . ' MI' : '--' }}
+                                                        </h3>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 d-flex align-self-stretch ftco-animate">
+                                                <div class="services w-100 text-center">
+                                                    <div class="icon d-flex align-items-center justify-content-center">
+                                                        <span class="flaticon-car"></span>
+                                                    </div>
+                                                    <div class="text w-100">
+                                                        <h3 class="heading mb-2">Modelo o año:
+                                                            {{ $details->modelo != '' ? $details->modelo : '--' }}
+                                                        </h3>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="pills-review" role="tabpanel"
+                                aria-labelledby="pills-review-tab">
                                 <section class="pt-4">
                                     <div class="container product_data">
                                         <div class="row gx-5">

@@ -54,6 +54,8 @@ Route::middleware([
     PreventAccessFromCentralDomains::class,
 ])->group(function () {
     Route::get('/', [FrontendController::class, 'index']);
+    Route::get('compare/vehicles', [FrontendController::class, 'compareIndex']);
+    Route::get('/get-cart-details/{code}', [ClothingCategoryController::class, 'getCartDetail']);
     Route::get('/comment/{show}', [FrontendController::class, 'index']);
     Route::group(['middleware' => 'isLicense'], function () {
 
@@ -127,7 +129,7 @@ Route::middleware([
             Route::get('/get-total-categories/{id}', [ClothingCategoryController::class, 'getTotalCategories']);
             //Routes for Buys
             Route::get('/buys-admin', [BuyController::class, 'indexAdmin']);
-            Route::post('/size-by-cloth', [BuyController::class, 'sizeByCloth']);
+            Route::post('/size-by-cloth', [BuyController::class, 'sizeByCloth']);            
             Route::get('/total-buys', [BuyController::class, 'indexTotalBuys']);
             Route::get('/new-buy', [BuyController::class, 'indexBuy']);
             Route::get('/buy/details/admin/{id}', [BuyController::class, 'buyDetailsAdmin']);

@@ -25,7 +25,6 @@
                 <li class="nav-item {{$view_name == 'frontend_carsale_index' ? 'active' : ''}}"><a href="{{ url('/') }}" class="nav-link">Inicio</a></li>
                 <li class="nav-item"><a href="{{ url('#about_us') }}" class="nav-link">Acerca De</a></li>
                 <li class="nav-item {{$view_name == 'frontend_blog_carsale_index' || $view_name == 'frontend_blog_carsale_show-articles' ? 'active' : ''}}"><a href="{{ url('blog/index') }}" class="nav-link">Blog</a></li>
-
                 @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
                     <li class="nav-item {{$view_name == 'frontend_carsale_category' || $view_name == 'frontend_carsale_clothes-category' ? 'active' : ''}} dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="categoriesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -60,7 +59,6 @@
                         </div>
                     </li>
                 @endif
-
                 @guest
                     <li class="nav-item"><a href="{{ route('login') }}" class="nav-link">Ingresar</a></li>
                     <li class="nav-item"><a href="{{ route('register') }}" class="nav-link">Registrarse</a></li>
@@ -81,6 +79,14 @@
                         </div>
                     </li>
                 @endguest
+                <li class="nav-item {{$view_name == 'frontend_carsale_compare' ? 'active' : ''}} dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="toolsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Herramientas
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="toolsDropdown">
+                        <a class="dropdown-item" href="{{ url('compare/vehicles') }}">Comparar vehículos</a>
+                    </div>
+                </li>
             </ul>
         </div>
     </div>

@@ -10,9 +10,10 @@
     <form id="updateForm" action="{{ url('update-clothing' . '/' . $clothing->id) }}" method="POST"
         enctype="multipart/form-data">
         <input type="hidden" name="category_id_main" value="{{ $category_id }}">
+        <input type="hidden" name="manage_size" id="manage_size" value="{{ $tenantinfo->manage_size }}">
         @csrf
         <div class="row">
-            <div @if ($tenantinfo->manage_size != 0) class="col-md-8" @else class="col-md-12" @endif>
+            <div @if ($tenantinfo->manage_size != 0 || $tenantinfo->kind_business == 1) class="col-md-7" @else class="col-md-12" @endif>
                 <div class="card">
                     <div class="card-header">
                         <h4 class="text-dark">{{ __('Editar producto') }}</h4>
@@ -246,6 +247,122 @@
                     </div>
                 @endif
             </div>
+            <div @if ($tenantinfo->kind_business == 1) class="col-md-5" @else class="d-none" @endif>
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="text-dark">{{ __('Especificaciones') }}</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="input-group input-group-static mb-4">
+                                    <label>{{ __('distancia al suelo (mm)') }}</label>
+                                    <input type="text" class="form-control form-control-lg" name="distancia_suelo"
+                                        value="{{ isset($details->distancia_suelo) ? $details->distancia_suelo : ''  }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="input-group input-group-static mb-4">
+                                    <label>{{ __('Peso (Kg)') }}</label>
+                                    <input type="text" class="form-control form-control-lg" name="peso"
+                                        value="{{ isset($details->peso) ? $details->peso : ''  }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="input-group input-group-static mb-4">
+                                    <label>{{ __('Color') }}</label>
+                                    <input type="text" class="form-control form-control-lg" name="color"
+                                        value="{{ isset($details->color) ? $details->color : ''  }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="input-group input-group-static mb-4">
+                                    <label>{{ __('Modelo o Año') }}</label>
+                                    <input type="text" class="form-control form-control-lg" name="modelo"
+                                        value="{{ isset($details->modelo) ? $details->modelo : ''  }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="input-group input-group-static mb-4">
+                                    <label>{{ __('Kilometraje MI') }}</label>
+                                    <input type="text" class="form-control form-control-lg" name="kilometraje"
+                                        value="{{ isset($details->kilometraje) ? $details->kilometraje : ''  }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="input-group input-group-static mb-4">
+                                    <label>{{ __('Capacidad del tanque (L)') }}</label>
+                                    <input type="text" class="form-control form-control-lg" name="capacidad_tanque"
+                                        value="{{ isset($details->kilometraje) ? $details->kilometraje : ''  }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="input-group input-group-static mb-4">
+                                    <label>{{ __('Tipo combustible') }}</label>
+                                    <input type="text" class="form-control form-control-lg" name="combustible"
+                                        value="{{ isset($details->combustible) ? $details->combustible : ''  }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="input-group input-group-static mb-4">
+                                    <label>{{ __('Motor (CC)') }}</label>
+                                    <input type="text" class="form-control form-control-lg" name="motor"
+                                        value="{{ isset($details->motor) ? $details->motor : ''  }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="input-group input-group-static mb-4">
+                                    <label>{{ __('Potencia') }}</label>
+                                    <input type="text" class="form-control form-control-lg" name="potencia"
+                                        value="{{ isset($details->potencia) ? $details->potencia : ''  }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="input-group input-group-static mb-4">
+                                    <label>{{ __('Pasajeros') }}</label>
+                                    <input type="text" class="form-control form-control-lg" name="pasajeros"
+                                        value="{{ isset($details->pasajeros) ? $details->pasajeros : ''  }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="input-group input-group-static mb-4">
+                                    <label>{{ __('Llantas') }}</label>
+                                    <input type="text" class="form-control form-control-lg" name="llantas"
+                                        value="{{ isset($details->llantas) ? $details->llantas : ''  }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="input-group input-group-static mb-4">
+                                    <label>{{ __('Tracción') }}</label>
+                                    <input type="text" class="form-control form-control-lg" name="traccion"
+                                        value="{{ isset($details->traccion) ? $details->traccion : ''  }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="input-group input-group-static mb-4">
+                                    <label>{{ __('Transmisión') }}</label>
+                                    <input type="text" class="form-control form-control-lg" name="transmision"
+                                        value="{{ isset($details->transmision) ? $details->transmision : ''  }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="input-group input-group-static mb-4">
+                                    <label>{{ __('Largo (mm)') }}</label>
+                                    <input type="text" class="form-control form-control-lg" name="largo"
+                                        value="{{ isset($details->largo) ? $details->largo : ''  }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="input-group input-group-static mb-4">
+                                    <label>{{ __('Ancho (mm)') }}</label>
+                                    <input type="text" class="form-control form-control-lg" name="ancho"
+                                        value="{{ isset($details->ancho) ? $details->ancho : ''  }}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
     </form>
@@ -261,8 +378,11 @@
     <script>
         $(document).ready(function() {
             const manageStockCheckbox = document.getElementById('manage_stock');
+            const manageSize = document.getElementById('manage_size');
             const stockQuantityField = document.getElementById('stock');
-            createHtml(true, false);
+            if(manageSize.value != 0){
+                createHtml(true, false);
+            }            
 
             $('.size-checkbox').change(function(e) {
                 createHtml(true, false);

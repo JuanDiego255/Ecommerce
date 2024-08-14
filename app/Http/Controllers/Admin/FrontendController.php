@@ -7,6 +7,7 @@ use App\Models\Advert;
 use App\Models\Blog;
 use App\Models\Categories;
 use App\Models\ClothingCategory;
+use App\Models\ClothingDetails;
 use App\Models\Department;
 use App\Models\MetaTags;
 use App\Models\ProductImage;
@@ -31,7 +32,7 @@ class FrontendController extends Controller
         $this->expirationTime = 60; // Por ejemplo, 60 minutos
     }
     public function index($showModal = null)
-    {        
+    {
         $tenantinfo = TenantInfo::first();
 
         $social = Cache::remember('social_networks', $this->expirationTime, function () {
@@ -174,18 +175,18 @@ class FrontendController extends Controller
         $comments = Testimonial::where('approve', 1)->inRandomOrder()->orderBy('name', 'asc')
             ->get();
         $advert = Advert::where('section', 'inicio')->latest()->first();
-        $car_count = ClothingCategory::where('status',1)->count();
-        $comment_count = Testimonial::where('approve',1)->count();
+        $car_count = ClothingCategory::where('status', 1)->count();
+        $comment_count = Testimonial::where('approve', 1)->count();
         switch ($tenantinfo->kind_business) {
             case (1):
-                return view('frontend.carsale.index', compact('clothings','car_count','comment_count','showModal','advert', 'blogs', 'social', 'clothings_offer', 'category', 'sellers', 'comments'));
+                return view('frontend.carsale.index', compact('clothings', 'car_count', 'comment_count', 'showModal', 'advert', 'blogs', 'social', 'clothings_offer', 'category', 'sellers', 'comments'));
                 break;
             case (2):
             case (3):
-                return view('frontend.website.index', compact('clothings','showModal','advert', 'blogs', 'social', 'clothings_offer', 'category', 'sellers', 'comments'));
+                return view('frontend.website.index', compact('clothings', 'showModal', 'advert', 'blogs', 'social', 'clothings_offer', 'category', 'sellers', 'comments'));
                 break;
             default:
-                return view('frontend.index', compact('clothings','advert', 'showModal','blogs', 'social', 'clothings_offer', 'category', 'comments'));
+                return view('frontend.index', compact('clothings', 'advert', 'showModal', 'blogs', 'social', 'clothings_offer', 'category', 'comments'));
                 break;
         }
     }
@@ -227,12 +228,11 @@ class FrontendController extends Controller
         switch ($tenantinfo->kind_business) {
             case (1):
                 return view('frontend.carsale.category', compact('category', 'department_name', 'department_id'));
-                break;           
+                break;
             default:
-            return view('frontend.category', compact('category', 'department_name', 'department_id'));
+                return view('frontend.category', compact('category', 'department_name', 'department_id'));
                 break;
         }
-        
     }
     public function clothesByCategory($id, $department_id)
     {
@@ -310,7 +310,7 @@ class FrontendController extends Controller
             return redirect()->back()->with(['status' => 'No hay artículos en esta categoría', 'icon' => 'warning']);
         }
         switch ($tenantinfo->kind_business) {
-            case (1):               
+            case (1):
                 return view('frontend.carsale.clothes-category', compact('clothings', 'category_name', 'category_id', 'department_id', 'department_name', 'category'));
                 break;
             case (2):
@@ -413,7 +413,7 @@ class FrontendController extends Controller
                 DB::raw('GROUP_CONCAT(stocks.price) AS price_per_size'),
                 DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
             )
-            ->groupBy('clothing.id','clothing.meta_keywords','clothing.manage_stock','clothing.horizontal_image', 'clothing.can_buy', 'clothing.casa', 'departments.id', 'departments.department', 'clothing.mayor_price', 'clothing.discount', 'categories.name', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
+            ->groupBy('clothing.id', 'clothing.meta_keywords', 'clothing.manage_stock', 'clothing.horizontal_image', 'clothing.can_buy', 'clothing.casa', 'departments.id', 'departments.department', 'clothing.mayor_price', 'clothing.discount', 'categories.name', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
             ->orderByRaw('CASE WHEN clothing.casa IS NOT NULL AND clothing.casa != "" THEN 0 ELSE 1 END')
             ->orderBy('clothing.casa', 'asc')
             ->orderBy('clothing.name', 'asc')
@@ -429,12 +429,12 @@ class FrontendController extends Controller
                 DB::raw('GROUP_CONCAT(s.stock ORDER BY v.value ASC SEPARATOR "/") as stock'),
             )
             ->groupBy('a.name', 'a.id')
-            ->orderBy('a.name','asc')
+            ->orderBy('a.name', 'asc')
             ->get();
         $tags = MetaTags::where('section', 'Categoría Específica')->get();
         $tenantinfo = TenantInfo::first();
 
-        foreach($clothes as $item){
+        foreach ($clothes as $item) {
             $meta_keywords_cloth = $item->meta_keywords;
             $name_cloth = $item->name;
             $description_cloth = $item->description;
@@ -489,7 +489,8 @@ class FrontendController extends Controller
 
         switch ($tenantinfo->kind_business) {
             case (1):
-                return view('frontend.carsale.detail-car', compact('clothes', 'result', 'category_id', 'clothings_trending'));
+                $details = ClothingDetails::where('clothing_id', $id)->first();
+                return view('frontend.carsale.detail-car', compact('clothes', 'details', 'result', 'category_id', 'clothings_trending'));
                 break;
             case (2):
             case (3):
@@ -516,5 +517,32 @@ class FrontendController extends Controller
             ->where('value_attr', $value_attr)
             ->first();
         return response()->json($stock);
+    }
+    public function compareIndex()
+    {
+
+        $tenantinfo = Cache::remember('tenant_info', $this->expirationTime, function () {
+            return TenantInfo::first();
+        });
+
+        SEOMeta::setTitle("Comparar Vehículos" . " - " . $tenantinfo->title);
+        SEOMeta::setKeywords("comparar vehiculos");
+        SEOMeta::setDescription("Compara vehículos en " . $tenantinfo->title);
+
+        $clothings = ClothingCategory::where('status', 1)
+            ->leftJoin('product_images', function ($join) {
+                $join->on('clothing.id', '=', 'product_images.clothing_id')->whereRaw('product_images.id = (
+                                SELECT MIN(id) FROM product_images
+                                WHERE product_images.clothing_id = clothing.id
+                            )');
+            })
+            ->select(
+                'clothing.id as id',
+                'clothing.name as name',
+                'clothing.code as code',
+                DB::raw('IFNULL(product_images.image, "") as image'), // Obtener la primera imagen del producto
+            )
+            ->get();
+        return view('frontend.carsale.compare', compact('clothings'));
     }
 }
