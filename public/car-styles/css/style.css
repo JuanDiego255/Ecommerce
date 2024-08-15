@@ -11105,7 +11105,6 @@ h5,
     display: block;
 }
 .icon-item {
-    display: inline-block;
     margin: 5px;
     text-align: center;
     cursor: pointer;
@@ -11698,7 +11697,6 @@ h5,
 }
 
 .table {
-    min-width: 1000px !important;
     width: 100%;
 }
 .table th {

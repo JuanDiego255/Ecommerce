@@ -59,8 +59,7 @@ class TenantSocialNetworkController extends Controller
 
             $mensaje = ["required" => 'El :attribute es requerido ' . $id . ' update'];
             $this->validate($request, $campos, $mensaje);
-            $social = TenantSocialNetwork::findOrfail($id);
-            
+            $social = TenantSocialNetwork::findOrfail($id);            
             $social->social_network = $request->social_network;
             $social->url = $request->url;
             $social->update();
