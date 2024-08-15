@@ -1,11 +1,12 @@
 var dataTable = $('#table').DataTable({
     searching: true,
     lengthChange: false,
+    pageLength: 25,
     buttons: [{
             extend: 'excelHtml5',
             text: '<i class="fas fa-file-excel"></i> Excel',
             titleAttr: 'Exportar a Excel',
-            className: 'btn btn-success',
+            className: 'btn btn-table',
             messageTop: 'Mi reporte personalizado de Excel',
             title: 'Reporte Excel'
         },
@@ -13,7 +14,7 @@ var dataTable = $('#table').DataTable({
             extend: 'pdfHtml5',
             text: '<i class="fas fa-file-pdf"></i> PDF',
             titleAttr: 'Exportar a PDF',
-            className: 'btn btn-danger',
+            className: 'btn btn-table',
             messageTop: 'Mi reporte personalizado de PDF',
             // Opcionalmente, puedes agregar más configuración como la personalización del título:
             title: 'Reporte PDF'
@@ -46,9 +47,27 @@ var dataTable = $('#table').DataTable({
     }
 });
 
+function setearEntregado() {
+    var headers = $('#table th');
+
+    headers.each(function (index) {
+        if ($(this).text().trim() === 'Entregado') {
+            dataTable.search("Pendiente").draw();
+            return false;
+        }
+    });
+}
+
+setearEntregado();
+
 $('#recordsPerPage').on('change', function () {
-    var recordsPerPage = parseInt($(this).val(), 10);
+    var recordsPerPage = parseInt($(this).val(), 25);
     dataTable.page.len(recordsPerPage).draw();
+});
+
+$('#recordsPerStatus').on('change', function () {
+    var searchTerm = $(this).val();
+    dataTable.search(searchTerm).draw();
 });
 
 $('#searchfor').on('input', function () {

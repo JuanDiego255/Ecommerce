@@ -22,8 +22,8 @@
                             <select id="recordsPerPage" name="recordsPerPage" class="form-control form-control-lg"
                                 autocomplete="recordsPerPage">
                                 <option value="5">5 Registros</option>
-                                <option selected value="10">10 Registros</option>
-                                <option value="25">25 Registros</option>
+                                <option value="10">10 Registros</option>
+                                <option selected value="25">25 Registros</option>
                                 <option value="50">50 Registros</option>
                             </select>
 

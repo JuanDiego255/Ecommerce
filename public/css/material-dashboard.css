@@ -3808,6 +3808,34 @@ fieldset:disabled .btn {
   --bs-btn-disabled-border-color: #4CAF50;
 }
 
+/* Estilo personalizado para los botones */
+.btn.btn-table {
+  background-color: #808080; /* Gris */
+  color: white; /* Texto blanco */
+  border: none; /* Sin borde */
+  border-radius: 0; /* Botones cuadrados */
+  padding: 10px 20px; /* Espaciado interno */
+  font-size: 12px; /* Tamaño de fuente */
+  transition: background-color 0.3s ease; /* Animación suave para el hover */
+  box-shadow: none; /* Eliminar cualquier sombra */
+  margin-right: 12px; /* Espacio a la derecha entre botones */
+}
+
+/* Cambiar color al pasar el mouse */
+.btn.btn-table:hover {
+  background-color: #6c757d; /* Un gris más oscuro al hacer hover */
+  color: white; /* Mantener el texto blanco */
+  box-shadow: none; /* Asegurarse de que no haya sombra en el hover */
+}
+
+/* Eliminar cualquier estilo de foco o sombra verde */
+.btn.btn-table:focus, 
+.btn.btn-table:active {
+  box-shadow: none; /* Sin sombra en foco o al hacer clic */
+  outline: none; /* Sin contorno */
+}
+
+
 .btn-info {
   --bs-btn-color: #fff;
   --bs-btn-bg: #1A73E8;

@@ -36,8 +36,8 @@
                             <select id="recordsPerPage" name="recordsPerPage" class="form-control form-control-lg"
                                 autocomplete="recordsPerPage">
                                 <option value="5">5 Registros</option>
-                                <option selected value="10">10 Registros</option>
-                                <option value="25">25 Registros</option>
+                                <option value="10">10 Registros</option>
+                                <option selected value="25">25 Registros</option>
                                 <option value="50">50 Registros</option>
                             </select>
 
@@ -200,6 +200,7 @@
         var dataTable = $('#buys').DataTable({
             searching: true,
             lengthChange: false,
+            pageLength: 25,
             buttons: [{
                     extend: 'excelHtml5',
                     text: '<i class="fas fa-file-excel"></i> Excel',
@@ -246,7 +247,7 @@
         });
 
         $('#recordsPerPage').on('change', function() {
-            var recordsPerPage = parseInt($(this).val(), 10);
+            var recordsPerPage = parseInt($(this).val(), 25);
             dataTable.page.len(recordsPerPage).draw();
         });
 
