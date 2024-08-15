@@ -37,7 +37,7 @@
                                 autocomplete="recordsPerPage">
                                 <option value="5">5 Registros</option>
                                 <option value="10">10 Registros</option>
-                                <option selected value="25">25 Registros</option>
+                                <option selected value="15">15 Registros</option>
                                 <option value="50">50 Registros</option>
                             </select>
 
@@ -200,12 +200,12 @@
         var dataTable = $('#buys').DataTable({
             searching: true,
             lengthChange: false,
-            pageLength: 25,
+            pageLength: 15,
             buttons: [{
                     extend: 'excelHtml5',
                     text: '<i class="fas fa-file-excel"></i> Excel',
                     titleAttr: 'Exportar a Excel',
-                    className: 'btn btn-success',
+                    className: 'btn btn-table',
                     messageTop: 'Mi reporte personalizado de Excel',
                     title: 'Reporte Excel'
                 },
@@ -213,7 +213,7 @@
                     extend: 'pdfHtml5',
                     text: '<i class="fas fa-file-pdf"></i> PDF',
                     titleAttr: 'Exportar a PDF',
-                    className: 'btn btn-danger',
+                    className: 'btn btn-table',
                     messageTop: 'Mi reporte personalizado de PDF',
                     // Opcionalmente, puedes agregar más configuración como la personalización del título:
                     title: 'Reporte PDF'

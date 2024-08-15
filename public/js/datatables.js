@@ -1,7 +1,7 @@
 var dataTable = $('#table').DataTable({
     searching: true,
     lengthChange: false,
-    pageLength: 25,
+    pageLength: 15,
     buttons: [{
             extend: 'excelHtml5',
             text: '<i class="fas fa-file-excel"></i> Excel',

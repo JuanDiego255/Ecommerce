@@ -28,7 +28,7 @@
                                 autocomplete="recordsPerPage">
                                 <option value="5">5 Registros</option>
                                 <option value="10">10 Registros</option>
-                                <option selected value="25">25 Registros</option>
+                                <option selected value="15">15 Registros</option>
                                 <option value="50">50 Registros</option>
                             </select>
 
@@ -162,7 +162,7 @@
                                 class="form-control form-control-lg" autocomplete="recordsPerPage">
                                 <option value="5">5 Registros</option>
                                 <option value="10">10 Registros</option>
-                                <option selected value="25">25 Registros</option>
+                                <option selected value="15">15 Registros</option>
                                 <option value="50">50 Registros</option>
                             </select>
 
@@ -233,7 +233,7 @@
     var dataTable = $('#tenants-pay').DataTable({
         searching: true,
         lengthChange: false,
-        pageLength: 25,
+        pageLength: 15,
         "language": {
             "sProcessing": "Procesando...",
             "sLengthMenu": "Mostrar _MENU_ registros",
@@ -308,7 +308,7 @@
     var dataTable_bills = $('#bills').DataTable({
         searching: true,
         lengthChange: false,
-        pageLength: 25,
+        pageLength: 15,
         "language": {
             "sProcessing": "Procesando...",
             "sLengthMenu": "Mostrar _MENU_ registros",
