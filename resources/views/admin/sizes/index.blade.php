@@ -128,7 +128,7 @@
         });
 
         $('#recordsPerPage').on('change', function() {
-            var recordsPerPage = parseInt($(this).val(), 25);
+            var recordsPerPage = parseInt($(this).val(), 15);
             dataTable.page.len(recordsPerPage).draw();
         });
 
