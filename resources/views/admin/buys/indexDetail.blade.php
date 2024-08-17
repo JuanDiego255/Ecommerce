@@ -4,6 +4,13 @@
     {!! OpenGraph::generate() !!}
 @endsection
 @section('content')
+    @php
+        $firstBuy = $buysDetails->first();
+
+        if ($firstBuy) {
+            $kind_of_buy = $firstBuy->kind_of_buy;
+        }
+    @endphp
     <h1 class="font-title text-center">
         {{ __('Detalles de la compra') }}</h1>
     <div class="container-fluid">
@@ -37,7 +44,7 @@
 
         <center>
             <div class="row row-cols-1 row-cols-md-2 g-4 align-content-center card-group">
-                <div class="col-lg-8 bg-transparent">
+                <div class="bg-transparent {{ $kind_of_buy == "F" ? 'col-lg-12' : 'col-lg-8' }}">
                     <div class="card w-100 mb-4">
                         <div class="table-responsive">
                             <table id="buysDetails" class="table align-items-center mb-0">
@@ -164,15 +171,14 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="col-lg-4 bg-transparent">
-                    <div class="card card-frame">
-                        <h3 class="ps-3 mt-2">
-                            Detalles Del Envío
-                        </h3>
-                        <div class="card-body text-center">
-                            <div class="row checkout-form">
-                                @foreach ($buysDetails as $item)
+                @foreach ($buysDetails as $item)
+                    <div class="col-lg-4 bg-transparent {{ $buy->kind_of_buy == 'F' ? 'd-none' : 'col-lg-4' }}">
+                        <div class="card card-frame">
+                            <h3 class="ps-3 mt-2">
+                                Detalles Del Envío
+                            </h3>
+                            <div class="card-body text-center">
+                                <div class="row checkout-form">
                                     <div class="d-flex justify-content-center p-2">
 
                                         <h4 class="text-muted">
@@ -207,18 +213,19 @@
 
                                     </div>
                                     <hr class="dark horizontal my-0">
-                                @break
-                            @endforeach
-                            <div class="card-footer d-flex">
+
+                                    <div class="card-footer d-flex">
+
+                                    </div>
+                                </div>
 
                             </div>
                         </div>
-
-                    </div>
-                </div>
-            </div>
+                    @break
+            @endforeach
         </div>
-    </center>
+</div>
+</center>
 </div>
 <center>
 

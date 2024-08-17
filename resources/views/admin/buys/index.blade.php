@@ -31,11 +31,12 @@
                     </div>
                     <div class="col-md-4">
                         <div class="input-group input-group-lg input-group-static my-3 w-100">
-                            <label>Estado</label>
+                            <label>Venta</label>
                             <select id="recordsPerStatus" name="recordsPerStatus" class="form-control form-control-lg"
                                 autocomplete="recordsPerStatus">
                                 <option value="Pendiente" selected>Pendiente</option>
                                 <option value="Entregado">Entregado</option>
+                                <option value="Venta Interna">Venta Interna</option>
                             </select>
                         </div>
                     </div>
@@ -49,6 +50,8 @@
                         <tr>
                             <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                 {{ __('Acciones') }}</th>
+                            <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
+                                {{ __('Origen') }}</th>
                             <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                 {{ __('Comporbante') }}</th>
                             <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
@@ -103,7 +106,7 @@
                                                     class="material-icons opacity-10">visibility</i></a>
                                         @endif
 
-                                        @if ($buy->cancel_buy == 0)
+                                        @if ($buy->cancel_buy == 0 && $buy->kind_of_buy != 'F')
                                             <form style="display:inline"
                                                 action="{{ url('approve/' . $buy->id . '/' . $buy->approved) }}"
                                                 method="POST" enctype="multipart/form-data">
@@ -179,6 +182,11 @@
                                         @endif
                                     </center>
 
+                                </td>
+                                <td class="align-middle text-xxs text-center">
+                                    <p class=" font-weight-bold mb-0">
+                                        {{ $buy->kind_of_buy == 'V' ? 'Sitio Web' : 'Venta Interna' }}
+                                    </p>
                                 </td>
                                 <td>
                                     <div class="d-flex px-2 py-1">

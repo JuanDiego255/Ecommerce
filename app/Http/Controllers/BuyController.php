@@ -57,7 +57,26 @@ class BuyController extends Controller
     {
         $tenantinfo = TenantInfo::first();
         $buys = Cache::remember('buys_data', $this->expirationTime, function () {
-            return Buy::leftJoin('users', 'buys.user_id', 'users.id')->where('buys.kind_of_buy', '!=', 'F')->select('buys.id as id', 'buys.total_iva as total_iva', 'buys.total_buy as total_buy','buys.credit_used', 'buys.total_delivery as total_delivery', 'buys.delivered as delivered', 'buys.approved as approved', 'buys.created_at as created_at', 'buys.image as image', 'users.id as user_id', 'users.name as name', 'users.telephone as telephone', 'users.email as email', 'buys.name as name_b', 'buys.telephone as telephone_b', 'buys.email as email_b', 'buys.cancel_buy as cancel_buy')->get();
+            return Buy::leftJoin('users', 'buys.user_id', 'users.id')->select(
+                'buys.id as id',
+                'buys.total_iva as total_iva',
+                'buys.total_buy as total_buy',
+                'buys.credit_used',
+                'buys.kind_of_buy',                
+                'buys.total_delivery as total_delivery',
+                'buys.delivered as delivered',
+                'buys.approved as approved',
+                'buys.created_at as created_at',
+                'buys.image as image',
+                'users.id as user_id',
+                'users.name as name',
+                'users.telephone as telephone',
+                'users.email as email',
+                'buys.name as name_b',
+                'buys.telephone as telephone_b',
+                'buys.email as email_b',
+                'buys.cancel_buy as cancel_buy'
+            )->get();
         });
         $iva = $tenantinfo->iva;
 
@@ -99,6 +118,7 @@ class BuyController extends Controller
                     'clothing.status as status',
                     'buy_details.quantity as quantity',
                     'buys.approved as approved',
+                    'buys.kind_of_buy as kind_of_buy',
                     DB::raw('IFNULL(product_images.image, "") as image'),
                     DB::raw('(
                         SELECT GROUP_CONCAT(CONCAT(attributes.name, ": ", attribute_values.value) SEPARATOR ", ")
@@ -108,7 +128,7 @@ class BuyController extends Controller
                         WHERE attribute_value_buys.buy_detail_id = buy_details.id
                     ) as attributes_values'),
                 )
-                ->groupBy('clothing.id', 'clothing.name', 'clothing.casa', 'clothing.description', 'buy_details.total', 'buy_details.iva', 'buy_details.id', 'buy_details.buy_id', 'buy_details.cancel_item', 'clothing.status', 'buy_details.quantity', 'buys.approved', 'product_images.image')
+                ->groupBy('clothing.id','buys.kind_of_buy', 'clothing.name', 'clothing.casa', 'clothing.description', 'buy_details.total', 'buy_details.iva', 'buy_details.id', 'buy_details.buy_id', 'buy_details.cancel_item', 'clothing.status', 'buy_details.quantity', 'buys.approved', 'product_images.image')
                 ->get();
         });
         $iva = $tenantinfo->iva;
@@ -169,6 +189,7 @@ class BuyController extends Controller
                     'buys.country as country_b',
                     'buys.province as province_b',
                     'buys.postal_code as postal_code_b',
+                    'buys.kind_of_buy as kind_of_buy',
                     DB::raw('(
                         SELECT GROUP_CONCAT(CONCAT(attributes.name, ": ", attribute_values.value) SEPARATOR ", ")
                         FROM attribute_value_buys
@@ -177,7 +198,7 @@ class BuyController extends Controller
                         WHERE attribute_value_buys.buy_detail_id = buy_details.id
                     ) as attributes_values'),
                 )
-                ->groupBy('clothing.id', 'clothing.name', 'clothing.casa', 'clothing.description', 'buy_details.total', 'buy_details.iva', 'buy_details.id', 'buy_details.buy_id', 'buy_details.cancel_item', 'clothing.status', 'buy_details.quantity', 'buys.approved', 'address_users.user_id', 'address_users.address', 'address_users.address_two', 'address_users.city', 'address_users.country', 'address_users.province', 'address_users.postal_code', 'buys.address', 'buys.address_two', 'buys.city', 'buys.country', 'buys.province', 'buys.postal_code', 'product_images.image')
+                ->groupBy('clothing.id','buys.kind_of_buy', 'clothing.name', 'clothing.casa', 'clothing.description', 'buy_details.total', 'buy_details.iva', 'buy_details.id', 'buy_details.buy_id', 'buy_details.cancel_item', 'clothing.status', 'buy_details.quantity', 'buys.approved', 'address_users.user_id', 'address_users.address', 'address_users.address_two', 'address_users.city', 'address_users.country', 'address_users.province', 'address_users.postal_code', 'buys.address', 'buys.address_two', 'buys.city', 'buys.country', 'buys.province', 'buys.postal_code', 'product_images.image')
                 ->get();
         });
         $iva = $tenantinfo->iva;
@@ -319,7 +340,7 @@ class BuyController extends Controller
     {
         $tenantinfo = TenantInfo::first();
         $buys = Cache::remember('buys_data', $this->expirationTime, function () {
-            return Buy::leftJoin('users', 'buys.user_id', 'users.id')->leftJoin('buy_details', 'buys.id', 'buy_details.buy_id')->select('buys.id as id', 'buys.total_iva as total_iva', 'buys.total_buy as total_buy', 'buys.kind_of_buy as kind_of', 'buys.total_delivery as total_delivery','buys.credit_used as credit_used', 'buys.created_at as created_at', DB::raw('sum(buy_details.quantity) as details_count'))->groupBy('buys.id', 'buys.kind_of_buy','buys.credit_used', 'buys.total_iva', 'buys.total_buy', 'buys.total_Delivery', 'buys.created_at')->get();
+            return Buy::leftJoin('users', 'buys.user_id', 'users.id')->leftJoin('buy_details', 'buys.id', 'buy_details.buy_id')->select('buys.id as id', 'buys.total_iva as total_iva', 'buys.total_buy as total_buy', 'buys.kind_of_buy as kind_of', 'buys.total_delivery as total_delivery', 'buys.credit_used as credit_used', 'buys.created_at as created_at', DB::raw('sum(buy_details.quantity) as details_count'))->groupBy('buys.id', 'buys.kind_of_buy', 'buys.credit_used', 'buys.total_iva', 'buys.total_buy', 'buys.total_Delivery', 'buys.created_at')->get();
         });
         $iva = $tenantinfo->iva;
         $totalEnvio = 0;
