@@ -180,7 +180,7 @@
                             <div class="row">
                                 <div class="col-md-12 mb-2">
                                     <div class="input-group input-group-static">
-                                        <label>{{ __('Seleccionar atributo') }}</label>
+                                        <label>{{ __('Seleccionar atributo (Los atributos se mostrarán en el orden que los agregues en esta sección)') }}</label>
                                         <select id="attr_id" name="attr_id"
                                             class="form-control form-control-lg @error('attr_id') is-invalid @enderror"
                                             autocomplete="attr_id" autofocus>

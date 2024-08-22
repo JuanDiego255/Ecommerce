@@ -205,7 +205,7 @@ class ClothingCategoryController extends Controller
 
             if ($tenantinfo->kind_business == 1) {
                 $car_details = ClothingDetails::where('clothing_id', $id)->first();
-                if($car_details == null){
+                if ($car_details == null) {
                     $car_detail = new ClothingDetails();
                     $car_detail->clothing_id = $id;
                     $car_detail->distancia_suelo = $request->distancia_suelo;
@@ -224,7 +224,7 @@ class ClothingCategoryController extends Controller
                     $car_detail->largo = $request->largo;
                     $car_detail->ancho = $request->ancho;
                     $car_detail->save();
-                }else{
+                } else {
                     $car_detail = ClothingDetails::findOrfail($car_details->id);
                     $car_detail->distancia_suelo = $request->distancia_suelo;
                     $car_detail->peso = $request->peso;
@@ -285,21 +285,27 @@ class ClothingCategoryController extends Controller
                 }
             }
             if (isset($tenantinfo->manage_size) && $tenantinfo->manage_size == 1) {
+                if (!empty($prices_attr)) {
+                    $requestItemIds = array_keys($prices_attr);
+                    $updateAttr = true;
+                } else {
+                    $updateAttr = false;
+                    $requestItemIds = [];
+                }
+                $currentClothingRecords = Stock::where('clothing_id', $id)->get();
+                foreach ($currentClothingRecords as $record) {
+                    if (!in_array($record->attribute_value_id, $requestItemIds)) {
+                        $record->delete();
+                    }
+                }
                 $validator_attr = Validator::make($request->all(), [
                     'precios_attr' => 'required|array|min:1', // Verifica que precios sea un array y que contenga al menos un elemento
                     'cantidades_attr' => 'required|array|min:1',
                 ]);
                 // Si la validación falla, redirecciona de vuelta al formulario con los errores
                 if (!$validator_attr->fails()) {
-                    $requestItemIds = array_keys($prices_attr);
-                    $currentClothingRecords = Stock::where('clothing_id', $id)->get();
-                    foreach ($currentClothingRecords as $record) {
-                        if (!in_array($record->attribute_value_id, $requestItemIds)) {
-                            $record->delete();
-                        }
-                    }
-
-                    foreach ($prices_attr as $itemId => $precio) {
+                    $count = 1;
+                    foreach ($prices_attr as $itemId => $precio) {                        
                         $cantidad = $cantidades_attr[$itemId];
                         $correct_price = 0;
                         $attr_id = AttributeValue::where('attribute_values.id', $itemId)->join('attributes', 'attributes.id', '=', 'attribute_values.attribute_id')->select('attributes.id as attribute_id', 'attribute_values.id as value_id', 'attributes.main as main')->first();
@@ -307,15 +313,18 @@ class ClothingCategoryController extends Controller
                             $correct_price = $precio > 0 ? $precio : $request->price;
                         }
                         $correct_qty = $cantidad > 0 ? $cantidad : $request->stock;
-                        $this->updateAttr($id, $correct_qty, $correct_price, $attr_id->attribute_id, $itemId, $request->manage_stock);
+                        $this->updateAttr($id, $correct_qty, $correct_price, $attr_id->attribute_id, $itemId, $request->manage_stock,$count);
+                        $count++;
                     }
                 } else {
-                    $value = AttributeValue::where('attributes.name', 'Stock')->where('attribute_values.value', 'Automático')->join('attributes', 'attributes.id', '=', 'attribute_values.attribute_id')->select('attributes.id as attr_id', 'attribute_values.id as value_id')->first();
-                    $this->updateAttr($id, $request->stock, $request->price, $value->attr_id, $value->value_id, $request->manage_stock);
+                    if ($updateAttr) {
+                        $value = AttributeValue::where('attributes.name', 'Stock')->where('attribute_values.value', 'Automático')->join('attributes', 'attributes.id', '=', 'attribute_values.attribute_id')->select('attributes.id as attr_id', 'attribute_values.id as value_id')->first();
+                        $this->updateAttr($id, $request->stock, $request->price, $value->attr_id, $value->value_id, $request->manage_stock,1);
+                    }
                 }
             } else {
                 $value = AttributeValue::where('attributes.name', 'Stock')->where('attribute_values.value', 'Automático')->join('attributes', 'attributes.id', '=', 'attribute_values.attribute_id')->select('attributes.id as attr_id', 'attribute_values.id as value_id')->first();
-                $this->updateAttr($id, $request->stock, $request->price, $value->attr_id, $value->value_id, $request->manage_stock);
+                $this->updateAttr($id, $request->stock, $request->price, $value->attr_id, $value->value_id, $request->manage_stock,1);
             }
 
             DB::commit();
@@ -443,7 +452,8 @@ class ClothingCategoryController extends Controller
                     ]);
                     // Si la validación falla, redirecciona de vuelta al formulario con los errores
                     if (!$validator_attr->fails()) {
-                        foreach ($prices_attr as $itemId => $precio) {
+                        $count = 1;
+                        foreach ($prices_attr as $itemId => $precio) {                           
                             $cantidad = $cantidades_attr[$itemId];
                             $correct_price = 0;
                             $attr_id = AttributeValue::where('attribute_values.id', $itemId)->join('attributes', 'attributes.id', '=', 'attribute_values.attribute_id')->select('attributes.id as attribute_id', 'attribute_values.id as value_id', 'attributes.main as main')->first();
@@ -451,15 +461,16 @@ class ClothingCategoryController extends Controller
                                 $correct_price = $precio > 0 ? $precio : $request->price;
                             }
                             $correct_qty = $cantidad > 0 ? $cantidad : $request->stock;
-                            $this->processAttr($clothingId, $correct_qty, $correct_price, $attr_id->attribute_id, $itemId, $request->manage_stock);
+                            $this->processAttr($clothingId, $correct_qty, $correct_price, $attr_id->attribute_id, $itemId, $request->manage_stock,$count);
+                            $count++;
                         }
                     } else {
                         $value = AttributeValue::where('attributes.name', 'Stock')->where('attribute_values.value', 'Automático')->join('attributes', 'attributes.id', '=', 'attribute_values.attribute_id')->select('attributes.id as attr_id', 'attribute_values.id as value_id')->first();
-                        $this->processAttr($clothingId, $request->stock, $request->price, $value->attr_id, $value->value_id, $request->manage_stock);
+                        $this->processAttr($clothingId, $request->stock, $request->price, $value->attr_id, $value->value_id, $request->manage_stock,1);
                     }
                 } else {
                     $value = AttributeValue::where('attributes.name', 'Stock')->where('attribute_values.value', 'Automático')->join('attributes', 'attributes.id', '=', 'attribute_values.attribute_id')->select('attributes.id as attr_id', 'attribute_values.id as value_id')->first();
-                    $this->processAttr($clothingId, $request->stock, $request->price, $value->attr_id, $value->value_id, $request->manage_stock);
+                    $this->processAttr($clothingId, $request->stock, $request->price, $value->attr_id, $value->value_id, $request->manage_stock,1);
                 }
 
                 if ($break) {
@@ -483,11 +494,11 @@ class ClothingCategoryController extends Controller
             $clothing_category->clothing_id = $clothingId;
             $clothing_category->save();
             $masive = $request->filled('masive') ? 1 : 0;
-            $this->processAttr($clothingId, $request->stock, $request->price, $value->attr_id, $value->value_id, $request->manage_stock);
+            $this->processAttr($clothingId, $request->stock, $request->price, $value->attr_id, $value->value_id, $request->manage_stock,1);
         }
         return $msg;
     }
-    public function processAttr($clothingId, $stock, $price = null, $attr_id, $value, $manage_stock)
+    public function processAttr($clothingId, $stock, $price = null, $attr_id, $value, $manage_stock,$order)
     {
         $stock_size = new Stock();
         $stock_size->clothing_id = $clothingId;
@@ -495,9 +506,10 @@ class ClothingCategoryController extends Controller
         $stock_size->attr_id = $attr_id;
         $stock_size->value_attr = $value;
         $stock_size->price = $price;
+        $stock_size->order = $order;
         $stock_size->save();
     }
-    public function updateAttr($id, $stock, $price = null, $attr_id, $value, $manage_stock)
+    public function updateAttr($id, $stock, $price = null, $attr_id, $value, $manage_stock,$order)
     {
         $stock_size = Stock::where('clothing_id', $id)->where('attr_id', $attr_id)->where('value_attr', $value)->first();
         if ($stock_size === null) {
@@ -507,6 +519,7 @@ class ClothingCategoryController extends Controller
             $stock_size->value_attr = $value;
             $stock_size->price = $price;
             $stock_size->clothing_id = $id;
+            $stock_size->order = $order;
             $stock_size->save();
         } else {
             Stock::where('clothing_id', $id)
@@ -517,6 +530,7 @@ class ClothingCategoryController extends Controller
                     'price' => $price,
                     'attr_id' => $attr_id,
                     'value_attr' => $value,
+                    'order' => $order
                 ]);
         }
     }
@@ -579,13 +593,13 @@ class ClothingCategoryController extends Controller
     public function getCartDetail($code)
     {
         $clothes = ClothingCategory::where('clothing.code', $code)
-            ->where('clothing.status', 1)            
+            ->where('clothing.status', 1)
             ->join('clothing_details', 'clothing.id', 'clothing_details.clothing_id')
             ->join('product_images', 'clothing.id', '=', 'product_images.clothing_id')
-            ->select(               
-                'clothing.id as id',                
-                'clothing.name as name',                
-                'clothing.price as price',                
+            ->select(
+                'clothing.id as id',
+                'clothing.name as name',
+                'clothing.price as price',
                 'clothing_details.distancia_suelo as distance',
                 'clothing_details.peso as weight',
                 'clothing_details.capacidad_tanque as tank_capacity',
@@ -601,8 +615,8 @@ class ClothingCategoryController extends Controller
                 'clothing_details.transmision as transmission',
                 'clothing_details.largo as length',
                 'clothing_details.ancho as width',
-                'product_images.image as image'              
-            )           
+                'product_images.image as image'
+            )
             ->get();
         return response()->json(['status' => 'success', 'results' => $clothes]);
     }
