@@ -25,9 +25,9 @@
                 <div class="col-lg-8 ftco-animate">
                     <div class="text w-100 text-center mb-md-5 pb-md-5">
                         <h1 class="mb-4">
-                            {{ isset($tenantcarousel[0]->text1) ? $tenantcarousel[0]->text1 : 'Autos Grecia' }}</h1>
+                            {{ isset($tenantcarousel[0]->text1) ? $tenantcarousel[0]->text1 : '' }}</h1>
                         <p style="font-size: 18px;">
-                            {{ isset($tenantcarousel[0]->text2) ? $tenantcarousel[0]->text2 : 'Lo mejor en autos' }}</p>
+                            {{ isset($tenantcarousel[0]->text2) ? $tenantcarousel[0]->text2 : '' }}</p>
 
                     </div>
                 </div>
