@@ -9,7 +9,7 @@
     switch ($tenantinfo->tenant) {
         case 'abril7cr':
         case 'aycfashion':
-            $address_tenant = '(Envío dentro de la GAM ₡2500)';
+            $address_tenant = '';
             $sinpe_name = 'Ariel Valdivia';
             break;
 
@@ -247,7 +247,7 @@
                                     <p class="ms-auto"></span>₡<span
                                             id="totalIva">{{ number_format($total_price) }}</span></p>
                                 </div>
-                                <p class="fw-bold h7">Tarifa de envío por medio de correos C.R ₡{{ $delivery }}
+                                <p class="fw-bold h7">Tarifa de envío por medio de correos. ₡{{ $delivery }}
                                     {{ $address_tenant }}</p>
                                 <p class="fw-bold h7">SINPE Móvil:
                                     {{ isset($tenantinfo->sinpe) ? $tenantinfo->sinpe : '' }}
