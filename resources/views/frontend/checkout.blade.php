@@ -9,7 +9,7 @@
     switch ($tenantinfo->tenant) {
         case 'abril7cr':
         case 'aycfashion':
-            $address_tenant = '(Envío dentro de la GAM ₡2500)';
+            $address_tenant = '';
             $sinpe_name = 'Ariel Valdivia';
             break;
 
@@ -63,7 +63,7 @@
                                 <div class="row checkout-form">
                                     <div class="col-md-6">
                                         <div class="input-group input-group-static mb-4">
-                                            <label>Nombre</label>
+                                            <label>Nombre Completo</label>
                                             <input value="{{ isset(Auth::user()->name) ? Auth::user()->name : '' }}"
                                                 required type="text" name="name"
                                                 class="form-control float-left w-100">
@@ -86,37 +86,14 @@
                                                 required type="text" name="telephone"
                                                 class="form-control float-left w-100">
                                         </div>
-                                    </div>
+                                    </div>                                                                   
                                     <div class="col-md-6 mt-2">
                                         <div class="input-group input-group-static mb-4">
-                                            <label>
-                                                @if ($tenant == 'mandicr')
-                                                    Dirección Exacta
-                                                @else
-                                                    Dirección 1
-                                                @endif
-                                            </label>
-                                            <input value="{{ isset($user_info->address) ? $user_info->address : '' }}"
-                                                required type="text" name="address"
+                                            <label>País</label>
+                                            <input
+                                                value="{{ isset($user_info->country) ? $user_info->country : 'Costa Rica' }}"
+                                                required readonly value="Costa Rica" type="text" name="country"
                                                 class="form-control float-left w-100">
-                                        </div>
-                                    </div>
-                                    @if ($tenant != 'mandicr')
-                                        <div class="col-md-6 mt-2">
-                                            <div class="input-group input-group-static mb-4">
-                                                <label>Dirección 2</label>
-                                                <input
-                                                    value="{{ isset($user_info->address_two) ? $user_info->address_two : '' }}"
-                                                    type="text" name="address_two" class="form-control float-left w-100">
-                                            </div>
-                                        </div>
-                                    @endif
-
-                                    <div class="col-md-6 mt-2">
-                                        <div class="input-group input-group-static mb-4">
-                                            <label>Ciudad</label>
-                                            <input value="{{ isset($user_info->city) ? $user_info->city : '' }}" required
-                                                type="text" name="city" class="form-control float-left w-100">
                                         </div>
                                     </div>
                                     <div class="col-md-6 mt-2">
@@ -129,13 +106,31 @@
                                     </div>
                                     <div class="col-md-6 mt-2">
                                         <div class="input-group input-group-static mb-4">
-                                            <label>País</label>
-                                            <input
-                                                value="{{ isset($user_info->country) ? $user_info->country : 'Costa Rica' }}"
-                                                required readonly value="Costa Rica" type="text" name="country"
-                                                class="form-control float-left w-100">
+                                            <label>Cantón</label>
+                                            <input value="{{ isset($user_info->city) ? $user_info->city : '' }}" required
+                                                type="text" name="city" class="form-control float-left w-100">
                                         </div>
                                     </div>
+                                    @if ($tenant != 'mandicr')
+                                        <div class="col-md-6 mt-2">
+                                            <div class="input-group input-group-static mb-4">
+                                                <label>Distrito</label>
+                                                <input
+                                                    value="{{ isset($user_info->address_two) ? $user_info->address_two : '' }}"
+                                                    type="text" name="address_two" class="form-control float-left w-100">
+                                            </div>
+                                        </div>
+                                    @endif    
+                                    <div class="col-md-6 mt-2">
+                                        <div class="input-group input-group-static mb-4">
+                                            <label>
+                                                Dirección Exacta
+                                            </label>
+                                            <input value="{{ isset($user_info->address) ? $user_info->address : '' }}"
+                                                required type="text" name="address"
+                                                class="form-control float-left w-100">
+                                        </div>
+                                    </div>                                   
                                     <div class="col-md-6 mt-2">
                                         <div class="input-group input-group-static mb-4">
                                             <label>Código Postal</label>
@@ -252,7 +247,7 @@
                                     <p class="ms-auto"></span>₡<span
                                             id="totalIva">{{ number_format($total_price) }}</span></p>
                                 </div>
-                                <p class="fw-bold h7">Tarifa de envío por correos de C.R ₡{{ $delivery }}
+                                <p class="fw-bold h7">Tarifa de envío por medio de correos. ₡{{ $delivery }}
                                     {{ $address_tenant }}</p>
                                 <p class="fw-bold h7">SINPE Móvil:
                                     {{ isset($tenantinfo->sinpe) ? $tenantinfo->sinpe : '' }}
@@ -355,34 +350,45 @@
     </script>
     <script>
         /*  paypal.Buttons({
-                                                                                                                                                                            locale: 'es',
-                                                                                                                                                                            fundingSource: paypal.FUNDING.CARD,
-                                                                                                                                                                            createOrder: function(data, actions) {
-                                                                                                                                                                                return actions.order.create({
+                                                                                                                                                                                locale: 'es',
+                                                                                                                                                                                fundingSource: paypal.FUNDING.CARD,
+                                                                                                                                                                                createOrder: function(data, actions) {
+                                                                                                                                                                                    return actions.order.create({
 
-                                                                                                                                                                                    payer: {
-                                                                                                                                                                                        email_address: '{{ isset(Auth::user()->email) ? Auth::user()->email : '' }}',
-                                                                                                                                                                                        name: {
-                                                                                                                                                                                            given_name: '{{ isset(Auth::user()->name) ? Auth::user()->name : '' }}',
-                                                                                                                                                                                            surname: ''
+                                                                                                                                                                                        payer: {
+                                                                                                                                                                                            email_address: '{{ isset(Auth::user()->email) ? Auth::user()->email : '' }}',
+                                                                                                                                                                                            name: {
+                                                                                                                                                                                                given_name: '{{ isset(Auth::user()->name) ? Auth::user()->name : '' }}',
+                                                                                                                                                                                                surname: ''
+                                                                                                                                                                                            },
+                                                                                                                                                                                            address: {
+                                                                                                                                                                                                country_code: "CR",
+                                                                                                                                                                                            }
                                                                                                                                                                                         },
-                                                                                                                                                                                        address: {
-                                                                                                                                                                                            country_code: "CR",
-                                                                                                                                                                                        }
-                                                                                                                                                                                    },
-                                                                                                                                                                                    purchase_units: [{
-                                                                                                                                                                                        amount: {
-                                                                                                                                                                                            value: {{ $paypal_amount }}
-                                                                                                                                                                                        }
-                                                                                                                                                                                    }]
-                                                                                                                                                                                });
-                                                                                                                                                                            },
+                                                                                                                                                                                        purchase_units: [{
+                                                                                                                                                                                            amount: {
+                                                                                                                                                                                                value: {{ $paypal_amount }}
+                                                                                                                                                                                            }
+                                                                                                                                                                                        }]
+                                                                                                                                                                                    });
+                                                                                                                                                                                },
 
-                                                                                                                                                                            onApprove(data) {
-                                                                                                                                                                                return fetch("/paypal/process/" + data.orderID)
-                                                                                                                                                                                    .then((response) => response.json())
-                                                                                                                                                                                    .then((orderData) => {
-                                                                                                                                                                                        if (!orderData.success) {
+                                                                                                                                                                                onApprove(data) {
+                                                                                                                                                                                    return fetch("/paypal/process/" + data.orderID)
+                                                                                                                                                                                        .then((response) => response.json())
+                                                                                                                                                                                        .then((orderData) => {
+                                                                                                                                                                                            if (!orderData.success) {
+                                                                                                                                                                                                swal({
+                                                                                                                                                                                                    title: orderData.status,
+                                                                                                                                                                                                    icon: orderData.icon,
+                                                                                                                                                                                                }).then((value) => {
+                                                                                                                                                                                                    // Esta función se ejecuta cuando el usuario hace clic en el botón "Ok"
+                                                                                                                                                                                                    if (value) {
+                                                                                                                                                                                                        // Recargar la página
+                                                                                                                                                                                                        window.location.href = '{{ url('/') }}';
+                                                                                                                                                                                                    }
+                                                                                                                                                                                                });
+                                                                                                                                                                                            }
                                                                                                                                                                                             swal({
                                                                                                                                                                                                 title: orderData.status,
                                                                                                                                                                                                 icon: orderData.icon,
@@ -393,23 +399,12 @@
                                                                                                                                                                                                     window.location.href = '{{ url('/') }}';
                                                                                                                                                                                                 }
                                                                                                                                                                                             });
-                                                                                                                                                                                        }
-                                                                                                                                                                                        swal({
-                                                                                                                                                                                            title: orderData.status,
-                                                                                                                                                                                            icon: orderData.icon,
-                                                                                                                                                                                        }).then((value) => {
-                                                                                                                                                                                            // Esta función se ejecuta cuando el usuario hace clic en el botón "Ok"
-                                                                                                                                                                                            if (value) {
-                                                                                                                                                                                                // Recargar la página
-                                                                                                                                                                                                window.location.href = '{{ url('/') }}';
-                                                                                                                                                                                            }
                                                                                                                                                                                         });
-                                                                                                                                                                                    });
-                                                                                                                                                                            },
-                                                                                                                                                                            onError: function(err) {
-                                                                                                                                                                                alert(err);
-                                                                                                                                                                            }
-                                                                                                                                                                        }).render('#paypal-button-container'); */
+                                                                                                                                                                                },
+                                                                                                                                                                                onError: function(err) {
+                                                                                                                                                                                    alert(err);
+                                                                                                                                                                                }
+                                                                                                                                                                            }).render('#paypal-button-container'); */
 
         function togglePaypalButton() {
             var checkBox = document.getElementById("sinpe");
@@ -516,10 +511,10 @@
                 Swal.fire({
                     title: "Activaste un cupón, si deseas gestionar el envío, debe cancelar el cupón",
                     icon: "warning",
-                });                
+                });
                 if (checkBox.checked) {
                     checkBox.checked = false;
-                }else{
+                } else {
                     checkBox.checked = true;
                 }
             } else {

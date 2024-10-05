@@ -859,9 +859,6 @@ class CheckOutController extends Controller
                 DB::commit();
                 return redirect()->back()->with(['status' => 'Venta exitosa!', 'icon' => 'success']);
             }
-
-
-            //dd($request->has('telephone'));
             if ($request->has('telephone')) {
                 $this->sendEmail($cartItems, $total_price, $request->delivery);
                 return redirect('/')->with(['status' => 'Compra exitosa!', 'icon' => 'success']);
@@ -912,7 +909,7 @@ class CheckOutController extends Controller
                 $details = [
                     'cartItems' => $cartItems,
                     'total_price' => $total_price,
-                    'title' => 'Se realizó una venta por medio del sitio web - ' . $tenantinfo->title
+                    'title' => 'Se ha realizado una venta por medio del sitio web - ' . $tenantinfo->title
                 ];
 
                 Mail::send('emails.sale', $details, function ($message) use ($details, $email) {
@@ -922,7 +919,8 @@ class CheckOutController extends Controller
             }
             return true;
         } catch (Exception $th) {
-            dd($th->getMessage());
+            //dd($th->getMessage());
+            return false;
         }
     }
     public function process($orderId)

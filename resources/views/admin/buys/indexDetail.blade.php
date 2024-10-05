@@ -44,7 +44,7 @@
 
         <center>
             <div class="row row-cols-1 row-cols-md-2 g-4 align-content-center card-group">
-                <div class="bg-transparent {{ $kind_of_buy == "F" ? 'col-lg-12' : 'col-lg-8' }}">
+                <div class="bg-transparent {{ isset($kind_of_buy) && $kind_of_buy == 'F' ? 'col-lg-12' : 'col-lg-8' }}">
                     <div class="card w-100 mb-4">
                         <div class="table-responsive">
                             <table id="buysDetails" class="table align-items-center mb-0">
@@ -188,21 +188,13 @@
                                             Provincia:
                                             {{ isset($item->province) ? $item->province : $item->province_b }}<br>
                                             <i class="material-icons my-auto">done</i>
-                                            Ciudad: {{ isset($item->city) ? $item->city : $item->city_b }}<br>
-                                            @if ($tenant != 'mandicr')
-                                                <i class="material-icons my-auto">done</i>
-                                                Dirección:
-                                                {{ isset($item->address) ? $item->address : $item->address_b }}<br>
-                                            @else
-                                                <i class="material-icons my-auto">done</i>
-                                                Dirección Exacta:
-                                                {{ isset($item->address) ? $item->address : $item->address_b }}<br>
-                                            @endif
-                                            @if ($tenant != 'mandicr')
-                                                <i class="material-icons my-auto">done</i>
-                                                Dirección 2:
-                                                {{ isset($item->address_two) ? $item->address_two : $item->address_two_b }}<br>
-                                            @endif
+                                            Cantón: {{ isset($item->city) ? $item->city : $item->city_b }}<br>
+                                            <i class="material-icons my-auto">done</i>
+                                            Distrito:
+                                            {{ isset($item->address_two) ? $item->address_two : $item->address_two_b }}<br>
+                                            <i class="material-icons my-auto">done</i>
+                                            Dirección Exacta:
+                                            {{ isset($item->address) ? $item->address : $item->address_b }}<br>                                          
 
                                             <i class="material-icons my-auto">done</i>
                                             Código Postal:
