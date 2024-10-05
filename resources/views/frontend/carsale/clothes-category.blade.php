@@ -169,7 +169,7 @@
                                         <h2 class="mb-0"><a href="#">{{ $item->name }}</a></h2>
                                         <div class="d-flex mb-3">
                                             <span class="cat">Tendencia</span>
-                                            <p class="price ml-auto">₡{{ number_format($precioConDescuento) }}</p>
+                                            <!-- <p class="price ml-auto">₡{{ number_format($precioConDescuento) }}</p> -->
                                         </div>
                                         <p class="d-flex mb-0 d-block"><a
                                                 href="{{ url('detail-clothing/' . $item->id . '/' . $category_id) }}"

@@ -7,6 +7,7 @@
         $descuento_mas_alto = max($descuentos);
     }
 @endphp
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
     <div class="container">
         <a class="navbar-brand" href="{{ url('/') }}">
@@ -20,10 +21,13 @@
             <span class="oi oi-menu"></span> Menu
         </button>
 
+
+
+
         <div class="collapse navbar-collapse" id="ftco-nav">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item {{$view_name == 'frontend_carsale_index' ? 'active' : ''}}"><a href="{{ url('/') }}" class="nav-link">Inicio</a></li>
-                <li class="nav-item"><a href="{{ url('#about_us') }}" class="nav-link">Acerca De</a></li>
+                <li class="nav-item"><a href="{{ url('#about_us') }}" class="nav-link">Acerca de</a></li>
                 <li class="nav-item {{$view_name == 'frontend_blog_carsale_index' || $view_name == 'frontend_blog_carsale_show-articles' ? 'active' : ''}}"><a href="{{ url('blog/index') }}" class="nav-link">Blog</a></li>
                 @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
                     <li class="nav-item {{$view_name == 'frontend_carsale_category' || $view_name == 'frontend_carsale_clothes-category' ? 'active' : ''}} dropdown">
@@ -31,7 +35,7 @@
                             Categorías
                         </a>
                         <div class="dropdown-menu" aria-labelledby="categoriesDropdown">
-                            <a class="dropdown-item" href="{{ url('category/') }}">Todas las Categorías</a>
+                            <a class="dropdown-item" href="{{ url('category/') }}">Todas las categorías</a>
                             @foreach ($categories as $item)
                                 <a class="dropdown-item" href="{{ url('clothes-category/' . $item->category_id . '/' . $item->department_id) }}">{{ $item->name }}</a>
                             @endforeach
@@ -59,16 +63,23 @@
                         </div>
                     </li>
                 @endif
+                <li class="nav-item"><a href="{{ url('compare/vehicles') }}" class="nav-link">Comparar Vehículos</a></li>
                 @guest
-                    <li class="nav-item"><a href="{{ route('login') }}" class="nav-link">Ingresar</a></li>
-                    <li class="nav-item"><a href="{{ route('register') }}" class="nav-link">Registrarse</a></li>
+                
+
+                <li class="nav-item">
+    <a href="{{ route('login') }}" class="nav-link">
+        <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+    </a>
+</li>
+
                 @else
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             {{ Auth::user()->name }} {{ Auth::user()->last_name }}
                         </a>
                         <div class="dropdown-menu" aria-labelledby="userDropdown">
-                            <a class="dropdown-item" href="{{ url('/category') }}">Categorías</a>
+                            <a class="dropdown-item" href="{{ url('/category') }}">Todas las categorías</a>
                             <a class="dropdown-item" href="{{ route('logout') }}"
                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                 Salir
@@ -79,14 +90,7 @@
                         </div>
                     </li>
                 @endguest
-                <li class="nav-item {{$view_name == 'frontend_carsale_compare' ? 'active' : ''}} dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="toolsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Herramientas
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="toolsDropdown">
-                        <a class="dropdown-item" href="{{ url('compare/vehicles') }}">Comparar vehículos</a>
-                    </div>
-                </li>
+                    
             </ul>
         </div>
     </div>

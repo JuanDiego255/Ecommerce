@@ -7,7 +7,7 @@
                     <script>
                         document.write(new Date().getFullYear())
                     </script>,
-                    Desarrollado con <i class="fa fa-heart"></i> para
+                    Desarrollado para
                     <a href="#" class="font-weight-bold" target="_blank">{{ isset($tenantinfo->title) ? $tenantinfo->title : '' }}.</a>
                 </div>
             </div>

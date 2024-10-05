@@ -411,3 +411,98 @@ $(document).ready(function () {
     });
 });
 
+/*Funcionalidad boton Whatsapp*/ 
+  // Lista de números de WhatsApp
+	document.addEventListener('DOMContentLoaded', function() {
+		const phoneNumbers = ['50689481108', '50685307943', '50686182152'];
+		let remainingNumbers = [];
+	
+		// Cargar el estado desde localStorage
+		function loadState() {
+			const storedNumbers = localStorage.getItem('remainingNumbers');
+			if (storedNumbers) {
+				remainingNumbers = JSON.parse(storedNumbers);
+			} else {
+				remainingNumbers = [...phoneNumbers];
+			}
+		}
+	
+		// Guardar el estado en localStorage
+		function saveState() {
+			localStorage.setItem('remainingNumbers', JSON.stringify(remainingNumbers));
+		}
+	
+		// Obtener un número aleatorio y actualizar el estado
+		function getRandomNumber() {
+			if (remainingNumbers.length === 0) {
+				// Si ya se han usado todos los números, reiniciar la lista
+				remainingNumbers = [...phoneNumbers];
+			}
+	
+			// Seleccionar un índice aleatorio
+			const randomIndex = Math.floor(Math.random() * remainingNumbers.length);
+			const selectedNumber = remainingNumbers[randomIndex];
+	
+			// Eliminar el número seleccionado de la lista
+			remainingNumbers.splice(randomIndex, 1);
+	
+			// Guardar el estado actualizado
+			saveState();
+	
+			return selectedNumber;
+		}
+	
+		const whatsappButton = document.getElementById('whatsappButton');
+		
+		// Verificar si el botón existe en la página
+		if (!whatsappButton) {
+			console.log("Botón de WhatsApp no encontrado");
+			return;
+		}
+		
+		// Cargar el estado inicial de los números restantes
+		loadState();
+	
+		// Maneja el clic en el botón
+		whatsappButton.addEventListener('click', function(event) {
+			event.preventDefault();
+	
+			console.log("Botón clicado");
+	
+			const number = getRandomNumber();
+	
+			console.log("Número seleccionado: ", number);
+	
+			// Abre WhatsApp en una nueva pestaña
+			window.open(`https://wa.me/${number}`, '_blank');
+		});
+	});
+	
+
+	document.addEventListener('DOMContentLoaded', function() {
+		// Simulamos la carga de los datos
+		setTimeout(() => {
+			// Transición suave para ocultar el skeleton
+			document.querySelectorAll('.skeleton-loader').forEach(loader => {
+				loader.style.transition = 'opacity 0.5s ease';
+				loader.style.opacity = '0';
+				setTimeout(() => loader.style.display = 'none', 500); // Ocultarlo después de la transición
+			});
+	
+			// Transición suave para mostrar el contenido real
+			document.querySelectorAll('.blog-entry').forEach(entry => {
+				entry.style.display = 'block';
+				entry.style.transition = 'opacity 0.5s ease';
+				setTimeout(() => entry.style.opacity = '1', 50); // Pequeña espera antes de mostrar
+			});
+		}, 500); // Simula 2 segundos de carga, ajusta según sea necesario
+	});
+	
+
+
+
+
+
+
+
+	

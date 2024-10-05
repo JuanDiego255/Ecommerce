@@ -4,6 +4,7 @@
     {!! OpenGraph::generate() !!}
 @endsection
 @section('content')
+sec
     {{-- <div class="container mt-4">
         <div class="breadcrumb-nav bc3x">
             <li class="home"><a href="{{ url('/') }}"><i class="fas fa-{{ $icon->home }} me-1"></i></a></li>
@@ -49,12 +50,24 @@
             <div class="row no-gutters slider-text justify-content-start align-items-center justify-content-center">
                 <div class="col-lg-8 ftco-animate">
                     <div class="text w-100 text-center mb-md-5 pb-md-5">
-                        <h1 class="mb-4">Blog de Autos Grecia</h1>
+                        <!-- Titulo Banner Blog Autos Grecia -->
+                        <h1 class="mb-4"></h1>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+            <!-- Skeleton loader HTML para un blog -->
+<div class="skeleton-loader">
+    <div class="skeleton-img"></div>
+    <div class="skeleton-text">
+        <div class="skeleton-line short"></div>
+        <div class="skeleton-line"></div>
+        <div class="skeleton-line"></div>
+        <div class="skeleton-btn"></div>
+    </div>
+</div>
+
     @if (count($blogs) != 0)
         <section class="ftco-section">
             <div class="container">

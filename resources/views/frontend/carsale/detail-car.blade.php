@@ -31,18 +31,13 @@
                             <h1 class="mb-2">
                                 {{ $item->name }}</h1>
                             <p style="font-size: 36px;">
-                                <strong id="text_price">₡{{ number_format($precioConDescuento) }}</strong>
-                                @if ($item->discount)
-                                    <s class="text-danger"><span class="text-danger"><strong
-                                                id="text_price_discount">₡{{ number_format(Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0 ? $item->mayor_price : $item->price) }}</strong>
-                                        </span></s>
-                                @endif
                             </p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        
         <div class="container mt-5">
             <div class="row">
                 <div class="col-md-12 pills">

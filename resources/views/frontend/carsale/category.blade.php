@@ -78,7 +78,8 @@
             <div class="row no-gutters slider-text justify-content-start align-items-center justify-content-center">
                 <div class="col-lg-8 ftco-animate">
                     <div class="text w-100 text-center mb-md-5 pb-md-5">
-                        <h1 class="mb-4">Nuestras categorías</h1>
+                        <!-- Titulo Banner Categorias Autos Grecia -->
+                        <h1 class="mb-4"></h1>
                     </div>
                 </div>
             </div>

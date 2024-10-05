@@ -61,7 +61,7 @@
                 <div class="col-lg-8 ftco-animate">
                     <div class="text w-100 text-center mb-md-5 pb-md-5">
                         <h1 class="mb-4">Compara vehículos</h1>
-                        <p style="font-size: 18px;">En busca de la mejor decisión</p>
+                        <p style="font-size: 18px;"></p>
                     </div>
                 </div>
                 <input type="hidden" name="code" id="code">
