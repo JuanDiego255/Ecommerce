@@ -194,8 +194,9 @@
                                             $precioConDescuento = $precio - $descuento;
                                         @endphp
 
-                                        <div class="price"><strong
-                                                id="text_price">₡{{ number_format($precioConDescuento) }}</strong>
+                                        <div
+                                            class="price {{ $item->can_buy != 1 && $precioConDescuento <= 0 ? 'd-none' : '' }}">
+                                            <strong id="text_price">₡{{ number_format($precioConDescuento) }}</strong>
                                             @if ($item->discount)
                                                 <s class="text-danger"><span class="text-danger"><strong
                                                             id="text_price_discount">₡{{ number_format(Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0 ? $item->mayor_price : $item->price) }}</strong>
@@ -210,7 +211,7 @@
                                         {!! $item->description !!}
                                     </p>
 
-                                    <div class="row mb-3">
+                                    <div class="row mb-3 {{ $item->can_buy != 1 ? 'd-none' : '' }}">
                                         <div class="col-md-6 col-12">
                                             <div class="input-group input-group-static w-25">
                                                 <label>Cantidad</label>
@@ -328,8 +329,11 @@
                             <h3 class="title clothing-name"><a href="#">({{ $item->category }})</a>
                             </h3>
                             <h3 class="title clothing-name"><a
-                                    href="{{ url('detail-clothing/' . $item->id . '/' . $category_id) }}">{{ $item->name }}<s
-                                        class="text-danger">{{ $item->total_stock > 0 ? '' : ' Agotado' }}</s></a>
+                                    href="{{ url('detail-clothing/' . $item->id . '/' . $category_id) }}">{{ $item->name }}
+                                    @if ($item->total_stock == 0 && $item->can_buy == 1 && $item->manage_stock == 1)
+                                        <s class="text-danger"> Agotado</s>
+                                    @endif
+                                </a>
                             </h3>
                             @if (isset($tenantinfo->show_stock) && $tenantinfo->show_stock != 0)
                                 <h4 class="title">Stock: @if ($item->total_stock > 0)
@@ -357,7 +361,7 @@
                                 // Calcular el precio con el descuento aplicado
                                 $precioConDescuento = $precio - $descuento;
                             @endphp
-                            <div class="price">
+                            <div class="price {{ $item->can_buy != 1 && $precioConDescuento <= 0 ? 'd-none' : '' }}">
                                 ₡{{ number_format($precioConDescuento) }}
                                 @if ($item->discount)
                                     <s class="text-danger"><span
@@ -441,8 +445,10 @@
                         if (porcDescuento > 0) {
                             var descuento = (perPrice * porcDescuento) / 100;
                             var precioConDescuento = perPrice - descuento;
-                            price.textContent = `₡${precioConDescuento.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
-                            price_discount.textContent = `₡${perPrice.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
+                            price.textContent =
+                                `₡${precioConDescuento.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
+                            price_discount.textContent =
+                                `₡${perPrice.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
                         } else {
                             price.textContent =
                                 `₡${perPrice.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
