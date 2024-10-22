@@ -195,7 +195,7 @@
                                     <span class="product-hot-label">
                                         {{ $item->name }}
                                         @if ($item->can_buy == 1)
-                                            @if ($item->total_stock == 0)
+                                            @if ($item->total_stock == 0 && $item->can_buy != 1 && $precioConDescuento <= 0 && $item->manage_stock == 1)
                                                 <s class="text-danger">Agotado</s>
                                             @endif
                                         @endif
@@ -243,11 +243,15 @@
                                     @endphp
                                     <h3 class="title"><a
                                             href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}">
-                                            ₡{{ number_format($precioConDescuento) }}
-                                            @if ($item->discount)
-                                                <s class="text-danger"><span
-                                                        class="text-danger">₡{{ number_format(Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0 ? $item->mayor_price : $item->price) }}
-                                                    </span></s>
+                                            @if ($item->can_buy != 1 && $precioConDescuento <= 0)
+                                                Precio no establecido
+                                            @else
+                                                ₡{{ number_format($precioConDescuento) }}
+                                                @if ($item->discount)
+                                                    <s class="text-danger"><span
+                                                            class="text-danger">₡{{ number_format(Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0 ? $item->mayor_price : $item->price) }}
+                                                        </span></s>
+                                                @endif
                                             @endif
 
                                         </a>

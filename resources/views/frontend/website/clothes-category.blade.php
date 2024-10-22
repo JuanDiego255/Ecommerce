@@ -106,7 +106,7 @@
                                     <h3
                                         class="{{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'text-muted' : 'title-frags' }}">
                                         <a href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}">{{ $item->name }}
-                                            @if ($item->total_stock == 0)
+                                            @if ($item->total_stock == 0 && $item->can_buy == 1 && $item->manage_stock == 1)
                                                 <s class="text-danger"> Agotado</s>
                                             @endif
                                         </a>
@@ -143,7 +143,7 @@
                                         // Calcular el precio con el descuento aplicado
                                         $precioConDescuento = $precio - $descuento;
                                     @endphp
-                                    <div class="price">₡{{ number_format($precioConDescuento) }}
+                                    <div class="price {{ $item->can_buy != 1 && $precioConDescuento <= 0 ? 'd-none' : '' }}">₡{{ number_format($precioConDescuento) }}
                                         @if ($item->discount)
                                             <s class="text-danger"><span
                                                     class="text-danger">₡{{ number_format(Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0 ? $item->mayor_price : $item->price) }}
