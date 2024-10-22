@@ -477,32 +477,3 @@ $(document).ready(function () {
 			window.open(`https://wa.me/${number}`, '_blank');
 		});
 	});
-	
-
-	document.addEventListener('DOMContentLoaded', function() {
-		// Simulamos la carga de los datos
-		setTimeout(() => {
-			// Transición suave para ocultar el skeleton
-			document.querySelectorAll('.skeleton-loader').forEach(loader => {
-				loader.style.transition = 'opacity 0.5s ease';
-				loader.style.opacity = '0';
-				setTimeout(() => loader.style.display = 'none', 500); // Ocultarlo después de la transición
-			});
-	
-			// Transición suave para mostrar el contenido real
-			document.querySelectorAll('.blog-entry').forEach(entry => {
-				entry.style.display = 'block';
-				entry.style.transition = 'opacity 0.5s ease';
-				setTimeout(() => entry.style.opacity = '1', 50); // Pequeña espera antes de mostrar
-			});
-		}, 500); // Simula 2 segundos de carga, ajusta según sea necesario
-	});
-	
-
-
-
-
-
-
-
-	

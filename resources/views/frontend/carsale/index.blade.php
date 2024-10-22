@@ -47,16 +47,6 @@
     </a>
 </div>
 
-        <!-- Skeleton loader HTML para un blog -->
-<div class="skeleton-loader">
-    <div class="skeleton-img"></div>
-    <div class="skeleton-text">
-        <div class="skeleton-line short"></div>
-        <div class="skeleton-line"></div>
-        <div class="skeleton-line"></div>
-        <div class="skeleton-btn"></div>
-    </div>
-</div>
 
     <!-- Botón flotante de WhatsApp -->
     <div class="whatsapp-button" id="whatsappButton">

@@ -10725,18 +10725,23 @@ h5,
     padding-top: 1px;
     padding-bottom: 1px;
     left: 0;
+    padding: 0.5rem 1rem; /* Agrega espacio alrededor */
     right: 0;
     z-index: 3;
+    max-height: 5rem;
 }
+
 @media (max-width: 991.98px) {
     .ftco-navbar-light {
         background: #fff !important;
         position: relative;
-        top: 0;
+        margin-top: -30px; /* Ajusta la posición superior */
     }
 }
+
 .ftco-navbar-light .navbar-brand {
     color: #fff;
+    margin-right: auto; /* Alinea el logo a la izquierda */
 }
 .ftco-navbar-light .navbar-brand span {
     color: #023b9d;
@@ -13340,85 +13345,4 @@ textarea.form-control {
 .whatsapp-button:hover .whatsapp-label {
     opacity: 0; /* La etiqueta desaparecerá al hacer hover */
 }
-
-
-
-
-
-
-/* Estructura del skeleton */
-.skeleton-loader {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    margin: 20px;
-    background-color: #f0f0f0;
-    border-radius: 5px;
-    overflow: hidden;
-    padding: 20px;
-}
-
-.skeleton-img {
-    width: 100%;
-    height: 200px;
-    background-color: #ddd;
-    margin-bottom: 15px;
-    border-radius: 5px;
-    position: relative;
-    overflow: hidden;
-}
-
-.skeleton-text {
-    display: flex;
-    flex-direction: column;
-}
-
-.skeleton-line {
-    height: 20px;
-    background-color: #ddd;
-    margin-bottom: 10px;
-    border-radius: 4px;
-    position: relative;
-    overflow: hidden;
-}
-
-.skeleton-line.short {
-    width: 50%;
-}
-
-.skeleton-btn {
-    width: 100px;
-    height: 40px;
-    background-color: #ddd;
-    border-radius: 5px;
-    position: relative;
-    overflow: hidden;
-}
-
-/* Efecto de animación mejorado (shimmer) */
-.skeleton-loader, .skeleton-img, .skeleton-line, .skeleton-btn {
-    background: linear-gradient(100deg, #f0f0f0 20%, #e0e0e0 40%, #f0f0f0 60%);
-    background-size: 200% 100%;
-    animation: shimmer 1.5s infinite;
-}
-
-@keyframes shimmer {
-    0% {
-        background-position: -200% 0;
-    }
-    100% {
-        background-position: 200% 0;
-    }
-}
-
-
-
-
-
-
-
-
-
-
-
 

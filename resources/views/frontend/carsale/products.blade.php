@@ -19,6 +19,12 @@
                                         class="form-control form-control-lg" name="searchfor">
                                 </div>
                             </div>
+                              <!-- Botón flotante de WhatsApp -->
+    <div class="whatsapp-button" id="whatsappButton">
+    <span class="whatsapp-label">¡Contáctanos!</span> <!-- Etiqueta -->
+    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" width="40" height="40">
+    </div>
+    
                             <div id="icon-list">
                                 <div class="table-responsive">
                                     <table class="table align-items-center mb-0">
