@@ -7154,7 +7154,7 @@ button.bg-danger:focus {
 }
 
 .bg-light {
-    background-color: #f8f9fa !important;
+    background-color: #fff !important;
 }
 
 a.bg-light:hover,
@@ -11253,7 +11253,7 @@ h5,
 }
 
 .bg-light {
-    background: #f8f9fa !important;
+    background: #fff !important;
 }
 
 .bg-primary {
