@@ -58,7 +58,7 @@
                                     id="show_cintillo" @if ($item->show_cintillo == 1) checked @endif>
                                 <label class="form-check-label"
                                     for="show_cintillo">{{ __('Mostrar Cintillo (Cinta arriba del menu
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                principal)') }}</label>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    principal)') }}</label>
                             </div>
                             <div class="form-check form-switch col-md-6">
                                 <input value="1" class="form-check-input" type="checkbox" name="show_mision"
@@ -91,7 +91,7 @@
             <div class="card-header">
                 <h4 class="text-dark">
                     {{ __('Personaliza los colores del sitio web (Si conoce el valor hexadecimal del color en
-                                                                                                                                                                                                                                                                                                                                                                                                                específico, puedes ingresarlo en el campo de texto.)') }}
+                                                                                                                                                                                                                                                                                                                                                                                                                                    específico, puedes ingresarlo en el campo de texto.)') }}
                 </h4>
             </div>
             <form action="{{ url('tenant-components/color-save/') }}" method="post" enctype="multipart/form-data">
@@ -269,8 +269,8 @@
                                     data-bs-target="#add-icons-modal" data-name="home"
                                     class="form-control form-control-color icon-button">
                                 <!-- Campo de texto para mostrar el icono seleccionado -->
-                                <input type="text" value="{{isset($icon->home) ? $icon->home : '' }}" name="home" id="selected-icon-home"
-                                    class="form-control color-code icon-input">
+                                <input type="text" value="{{ isset($icon->home) ? $icon->home : '' }}" name="home"
+                                    id="selected-icon-home" class="form-control color-code icon-input">
                             </div>
                         </div>
 
@@ -281,7 +281,8 @@
                                     data-bs-target="#add-icons-modal" data-name="categories"
                                     class="form-control form-control-color icon-button">
                                 <!-- Campo de texto para mostrar el icono seleccionado -->
-                                <input type="text" value="{{isset($icon->categories) ? $icon->categories : '' }}" name="categories" id="selected-icon-categories"
+                                <input type="text" value="{{ isset($icon->categories) ? $icon->categories : '' }}"
+                                    name="categories" id="selected-icon-categories"
                                     class="form-control color-code icon-input">
                             </div>
                         </div>
@@ -292,8 +293,8 @@
                                     data-bs-target="#add-icons-modal" data-name="cart"
                                     class="form-control form-control-color icon-button">
                                 <!-- Campo de texto para mostrar el icono seleccionado -->
-                                <input type="text" value="{{isset($icon->cart) ? $icon->cart : '' }}" name="cart" id="selected-icon-cart"
-                                    class="form-control color-code icon-input">
+                                <input type="text" value="{{ isset($icon->cart) ? $icon->cart : '' }}" name="cart"
+                                    id="selected-icon-cart" class="form-control color-code icon-input">
                             </div>
                         </div>
                         <div class="col-md-3 mt-3">
@@ -303,7 +304,8 @@
                                     data-bs-target="#add-icons-modal" data-name="shopping"
                                     class="form-control form-control-color icon-button">
                                 <!-- Campo de texto para mostrar el icono seleccionado -->
-                                <input type="text" value="{{isset($icon->shopping) ? $icon->shopping : '' }}" name="shopping" id="selected-icon-shopping"
+                                <input type="text" value="{{ isset($icon->shopping) ? $icon->shopping : '' }}"
+                                    name="shopping" id="selected-icon-shopping"
                                     class="form-control color-code icon-input">
                             </div>
                         </div>
@@ -314,8 +316,8 @@
                                     data-bs-target="#add-icons-modal" data-name="address"
                                     class="form-control form-control-color icon-button">
                                 <!-- Campo de texto para mostrar el icono seleccionado -->
-                                <input type="text" value="{{isset($icon->address) ? $icon->address : '' }}" name="address" id="selected-icon-address"
-                                    class="form-control color-code icon-input">
+                                <input type="text" value="{{ isset($icon->address) ? $icon->address : '' }}"
+                                    name="address" id="selected-icon-address" class="form-control color-code icon-input">
                             </div>
                         </div>
                         <div class="col-md-3 mt-3">
@@ -325,8 +327,8 @@
                                     data-bs-target="#add-icons-modal" data-name="user"
                                     class="form-control form-control-color icon-button">
                                 <!-- Campo de texto para mostrar el icono seleccionado -->
-                                <input type="text" value="{{isset($icon->user) ? $icon->user : '' }}" name="user" id="selected-icon-user"
-                                    class="form-control color-code icon-input">
+                                <input type="text" value="{{ isset($icon->user) ? $icon->user : '' }}" name="user"
+                                    id="selected-icon-user" class="form-control color-code icon-input">
                             </div>
                         </div>
                         <div class="col-md-3 mt-3">
@@ -336,7 +338,8 @@
                                     data-bs-target="#add-icons-modal" data-name="services"
                                     class="form-control form-control-color icon-button">
                                 <!-- Campo de texto para mostrar el icono seleccionado -->
-                                <input type="text" value="{{isset($icon->services) ? $icon->services : '' }}" name="services" id="selected-icon-services"
+                                <input type="text" value="{{ isset($icon->services) ? $icon->services : '' }}"
+                                    name="services" id="selected-icon-services"
                                     class="form-control color-code icon-input">
                             </div>
                         </div>
@@ -347,7 +350,8 @@
                                     data-bs-target="#add-icons-modal" data-name="products"
                                     class="form-control form-control-color icon-button">
                                 <!-- Campo de texto para mostrar el icono seleccionado -->
-                                <input type="text" value="{{isset($icon->products) ? $icon->products : '' }}" name="products" id="selected-icon-products"
+                                <input type="text" value="{{ isset($icon->products) ? $icon->products : '' }}"
+                                    name="products" id="selected-icon-products"
                                     class="form-control color-code icon-input">
                             </div>
                         </div>
@@ -358,8 +362,8 @@
                                     data-bs-target="#add-icons-modal" data-name="detail"
                                     class="form-control form-control-color icon-button">
                                 <!-- Campo de texto para mostrar el icono seleccionado -->
-                                <input type="text" value="{{isset($icon->detail) ? $icon->detail : '' }}" name="detail" id="selected-icon-detail"
-                                    class="form-control color-code icon-input">
+                                <input type="text" value="{{ isset($icon->detail) ? $icon->detail : '' }}"
+                                    name="detail" id="selected-icon-detail" class="form-control color-code icon-input">
                             </div>
                         </div>
 
@@ -383,10 +387,12 @@
                         <div class="carousel-inner mb-4">
                             @foreach ($tenantcarousel as $key => $carousel)
                                 <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
-                                    <div class="page-header min-vh-75 m-3"
-                                        style="background-image: url('{{ route('file', $carousel->image) }}');">
-                                        <span class="mask bg-gradient-dark"></span>
-                                        <div class="container">
+                                    <div class="page-header m-3 position-relative">
+                                        <img src="{{ route('file', $carousel->image) }}" class="w-100 h-100"
+                                            alt="carousel image">
+                                        <span
+                                            class="mask bg-gradient-dark position-absolute top-0 start-0 w-100 h-100"></span>
+                                        <div class="container position-absolute top-50 start-50 translate-middle">
                                             <div class="row">
                                                 <div class="col-lg-6 my-auto">
                                                     <h4 class="text-white mb-0 fadeIn1 fadeInBottom">
@@ -396,8 +402,9 @@
                                                 </div>
                                                 <div class="text-center">
                                                     <a data-bs-toggle="modal"
-                                                        data-bs-target="#edit-tenant-carousel-modal{{ $carousel->id }}"><i
-                                                            class="fa fa-pencil me-3 text-white cursor-pointer"></i></a>
+                                                        data-bs-target="#edit-tenant-carousel-modal{{ $carousel->id }}">
+                                                        <i class="fab fa-facebook me-3 text-white cursor-pointer"></i>
+                                                    </a>
                                                 </div>
                                             </div>
                                         </div>
@@ -423,6 +430,7 @@
                     </div>
                 @endif
             </div>
+
         </div>
         @include('admin.tenant-info.icons')
 
@@ -430,7 +438,7 @@
 @endsection
 @section('script')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-colorpicker/2.5.3/js/bootstrap-colorpicker.min.js">
-    </script>    
+    </script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             // Obtener todos los controles de color

@@ -4,7 +4,6 @@
     {!! OpenGraph::generate() !!}
 @endsection
 @section('content')
-sec
     {{-- <div class="container mt-4">
         <div class="breadcrumb-nav bc3x">
             <li class="home"><a href="{{ url('/') }}"><i class="fas fa-{{ $icon->home }} me-1"></i></a></li>
@@ -76,13 +75,12 @@ sec
                         <span class="subheading">Explora nuestros artículos, conoce más acerca de tu auto</span>
                     </div>
                 </div>
-                <div class="row d-flex">
+                <div class="row d-flex ">
                     @foreach ($blogs as $item)
-                        <div class="col-md-4 d-flex ftco-animate">
+                        <div class="col-md-4 d-flex ftco-animate card shadow-sm mr-5 card-blog">
                             <div class="blog-entry justify-content-end">
                                 <a href="blog-single.html" class="block-20"
-                                    style="background-image: url('{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}');">
-                                </a>
+                                    style="background-image: url('{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}');"></a>
                                 <div class="text pt-4">
                                     <div class="meta mb-3">
                                         <div><a href="#">{{ $item->fecha_post }}</a></div>

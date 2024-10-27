@@ -152,12 +152,27 @@
                             </div>
                             @if (isset($tenantinfo->kind_business) && $tenantinfo->kind_business == 1)
                                 @if ($clothing->horizontal_image)
-                                    <img class="img-fluid img-thumbnail" src="{{ route('file', $clothing->horizontal_image) }}"
+                                    <img class="img-fluid img-thumbnail"
+                                        src="{{ route('file', $clothing->horizontal_image) }}"
                                         style="width: 150px; height:150px;" alt="image">
                                 @endif
-                                <label>{{ __('Imagen horizontal') }}</label>
-                                <div class="input-group input-group-static mb-4">
-                                    <input class="form-control form-control-lg" type="file" name="horizontal_image">
+                                <div class="col-md-12 mb-3">
+                                    <label>{{ __('Imagen horizontal') }}</label>
+                                    <div class="input-group input-group-static mb-4">
+                                        <input class="form-control form-control-lg" type="file"
+                                            name="horizontal_image">
+                                    </div>
+                                </div>
+                                @if ($clothing->main_image)
+                                    <img class="img-fluid img-thumbnail" src="{{ route('file', $clothing->main_image) }}"
+                                        style="width: 150px; height:150px;" alt="image">
+                                @endif
+                                <div class="col-md-12 mb-3">
+                                    <div class="input-group input-group-static mb-4">
+                                        <label>{{ __('Imagen Principal') }}</label>
+                                        <input required class="form-control form-control-lg" type="file"
+                                            name="main_image">
+                                    </div>
                                 </div>
                             @endif
                             <div class="col-md-12 mb-3">
@@ -258,105 +273,105 @@
                                 <div class="input-group input-group-static mb-4">
                                     <label>{{ __('distancia al suelo (mm)') }}</label>
                                     <input type="text" class="form-control form-control-lg" name="distancia_suelo"
-                                        value="{{ isset($details->distancia_suelo) ? $details->distancia_suelo : ''  }}">
+                                        value="{{ isset($details->distancia_suelo) ? $details->distancia_suelo : '' }}">
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <div class="input-group input-group-static mb-4">
                                     <label>{{ __('Peso (Kg)') }}</label>
                                     <input type="text" class="form-control form-control-lg" name="peso"
-                                        value="{{ isset($details->peso) ? $details->peso : ''  }}">
+                                        value="{{ isset($details->peso) ? $details->peso : '' }}">
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <div class="input-group input-group-static mb-4">
                                     <label>{{ __('Color') }}</label>
                                     <input type="text" class="form-control form-control-lg" name="color"
-                                        value="{{ isset($details->color) ? $details->color : ''  }}">
+                                        value="{{ isset($details->color) ? $details->color : '' }}">
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <div class="input-group input-group-static mb-4">
                                     <label>{{ __('Modelo o Año') }}</label>
                                     <input type="text" class="form-control form-control-lg" name="modelo"
-                                        value="{{ isset($details->modelo) ? $details->modelo : ''  }}">
+                                        value="{{ isset($details->modelo) ? $details->modelo : '' }}">
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <div class="input-group input-group-static mb-4">
                                     <label>{{ __('Kilometraje MI') }}</label>
                                     <input type="text" class="form-control form-control-lg" name="kilometraje"
-                                        value="{{ isset($details->kilometraje) ? $details->kilometraje : ''  }}">
+                                        value="{{ isset($details->kilometraje) ? $details->kilometraje : '' }}">
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <div class="input-group input-group-static mb-4">
                                     <label>{{ __('Capacidad del tanque (L)') }}</label>
                                     <input type="text" class="form-control form-control-lg" name="capacidad_tanque"
-                                        value="{{ isset($details->kilometraje) ? $details->kilometraje : ''  }}">
+                                        value="{{ isset($details->kilometraje) ? $details->kilometraje : '' }}">
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <div class="input-group input-group-static mb-4">
                                     <label>{{ __('Tipo combustible') }}</label>
                                     <input type="text" class="form-control form-control-lg" name="combustible"
-                                        value="{{ isset($details->combustible) ? $details->combustible : ''  }}">
+                                        value="{{ isset($details->combustible) ? $details->combustible : '' }}">
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <div class="input-group input-group-static mb-4">
                                     <label>{{ __('Motor (CC)') }}</label>
                                     <input type="text" class="form-control form-control-lg" name="motor"
-                                        value="{{ isset($details->motor) ? $details->motor : ''  }}">
+                                        value="{{ isset($details->motor) ? $details->motor : '' }}">
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <div class="input-group input-group-static mb-4">
-                                    <label>{{ __('Potencia') }}</label>
+                                    <label>{{ __('Puertas') }}</label>
                                     <input type="text" class="form-control form-control-lg" name="potencia"
-                                        value="{{ isset($details->potencia) ? $details->potencia : ''  }}">
+                                        value="{{ isset($details->potencia) ? $details->potencia : '' }}">
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <div class="input-group input-group-static mb-4">
                                     <label>{{ __('Pasajeros') }}</label>
                                     <input type="text" class="form-control form-control-lg" name="pasajeros"
-                                        value="{{ isset($details->pasajeros) ? $details->pasajeros : ''  }}">
+                                        value="{{ isset($details->pasajeros) ? $details->pasajeros : '' }}">
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <div class="input-group input-group-static mb-4">
                                     <label>{{ __('Llantas') }}</label>
                                     <input type="text" class="form-control form-control-lg" name="llantas"
-                                        value="{{ isset($details->llantas) ? $details->llantas : ''  }}">
+                                        value="{{ isset($details->llantas) ? $details->llantas : '' }}">
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <div class="input-group input-group-static mb-4">
                                     <label>{{ __('Tracción') }}</label>
                                     <input type="text" class="form-control form-control-lg" name="traccion"
-                                        value="{{ isset($details->traccion) ? $details->traccion : ''  }}">
+                                        value="{{ isset($details->traccion) ? $details->traccion : '' }}">
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <div class="input-group input-group-static mb-4">
                                     <label>{{ __('Transmisión') }}</label>
                                     <input type="text" class="form-control form-control-lg" name="transmision"
-                                        value="{{ isset($details->transmision) ? $details->transmision : ''  }}">
+                                        value="{{ isset($details->transmision) ? $details->transmision : '' }}">
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <div class="input-group input-group-static mb-4">
                                     <label>{{ __('Largo (mm)') }}</label>
                                     <input type="text" class="form-control form-control-lg" name="largo"
-                                        value="{{ isset($details->largo) ? $details->largo : ''  }}">
+                                        value="{{ isset($details->largo) ? $details->largo : '' }}">
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <div class="input-group input-group-static mb-4">
                                     <label>{{ __('Ancho (mm)') }}</label>
                                     <input type="text" class="form-control form-control-lg" name="ancho"
-                                        value="{{ isset($details->ancho) ? $details->ancho : ''  }}">
+                                        value="{{ isset($details->ancho) ? $details->ancho : '' }}">
                                 </div>
                             </div>
                         </div>
@@ -380,9 +395,9 @@
             const manageStockCheckbox = document.getElementById('manage_stock');
             const manageSize = document.getElementById('manage_size');
             const stockQuantityField = document.getElementById('stock');
-            if(manageSize.value != 0){
+            if (manageSize.value != 0) {
                 createHtml(true, false);
-            }            
+            }
 
             $('.size-checkbox').change(function(e) {
                 createHtml(true, false);

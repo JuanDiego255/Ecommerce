@@ -109,10 +109,19 @@
                                 </div>
                             </div>
                             @if (isset($tenantinfo->kind_business) && $tenantinfo->kind_business == 1)
-                                <div class="input-group input-group-static mb-4">
-                                    <label>{{ __('Imagen horizontal') }}</label>
-                                    <input required class="form-control form-control-lg" type="file"
-                                        name="horizontal_image">
+                                <div class="col-md-12 mb-3">
+                                    <div class="input-group input-group-static mb-4">
+                                        <label>{{ __('Imagen horizontal') }}</label>
+                                        <input required class="form-control form-control-lg" type="file"
+                                            name="horizontal_image">
+                                    </div>
+                                </div>
+                                <div class="col-md-12 mb-3">
+                                    <div class="input-group input-group-static mb-4">
+                                        <label>{{ __('Imagen Principal') }}</label>
+                                        <input required class="form-control form-control-lg" type="file"
+                                            name="main_image">
+                                    </div>
                                 </div>
                             @endif
 
@@ -291,7 +300,7 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <div class="input-group input-group-static mb-4">
-                                    <label>{{ __('Potencia') }}</label>
+                                    <label>{{ __('Puertas') }}</label>
                                     <input type="text" class="form-control form-control-lg" name="potencia"
                                         value="{{ old('potencia') }}">
                                 </div>

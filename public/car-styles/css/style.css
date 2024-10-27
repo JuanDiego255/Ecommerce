@@ -47,7 +47,7 @@ btn-sectext/*!
 }
 
 html {
-    font-family: "Roboto", sans-serif;;
+    font-family: "Roboto", sans-serif;
     line-height: 1.15;
     -webkit-text-size-adjust: 100%;
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
@@ -180,6 +180,10 @@ a:hover {
     color: #0056b3;
     text-decoration: underline;
 }
+.card-blog:hover{
+    box-shadow: 0 1rem 2rem rgba(23, 23, 23, 0.175) !important;
+    transition: all 1s;
+}
 
 a:not([href]):not([tabindex]) {
     color: inherit;
@@ -198,7 +202,7 @@ pre,
 code,
 kbd,
 samp {
-    font-family:"Roboto", sans-serif;
+    font-family: "Roboto", sans-serif;
     font-size: 1em;
 }
 
@@ -610,7 +614,6 @@ pre code {
     margin-right: auto;
     margin-left: auto;
 }
-
 
 .row {
     display: -webkit-box;
@@ -4486,7 +4489,6 @@ input[type="button"].btn-block {
     display: block;
 }
 
-
 .navbar {
     position: relative;
     display: -webkit-box;
@@ -4514,7 +4516,6 @@ input[type="button"].btn-block {
     align-items: center;
     -webkit-box-pack: justify;
     -ms-flex-pack: justify;
-   
 }
 
 .navbar-brand {
@@ -4525,7 +4526,6 @@ input[type="button"].btn-block {
     font-size: 1.25rem;
     line-height: inherit;
     white-space: nowrap;
-   
 }
 .navbar-brand:hover,
 .navbar-brand:focus {
@@ -6775,7 +6775,7 @@ a.close.disabled {
 .carousel {
     position: sticky;
 }
-    
+
 .carousel.pointer-event {
     -ms-touch-action: pan-y;
     touch-action: pan-y;
@@ -10472,7 +10472,7 @@ button.bg-dark:focus {
 }
 
 .text-white {
-    color: #000 !important;
+    color: #fff !important;
 }
 
 .text-primary {
@@ -10671,7 +10671,7 @@ a.text-dark:focus {
         border-color: #dee2e6;
     }
 }
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;400&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@100;400&display=swap");
 body {
     font-family: "Roboto", sans-serif;
     background: #fff;
@@ -10725,17 +10725,14 @@ h5,
     padding-top: 1px;
     padding-bottom: 1px;
     left: 0;
-    padding: 0.5rem 1rem; /* Agrega espacio alrededor */
     right: 0;
     z-index: 3;
-    max-height: 5rem;
 }
 
 @media (max-width: 991.98px) {
     .ftco-navbar-light {
         background: #fff !important;
         position: relative;
-        margin-top: -30px; /* Ajusta la posición superior */
     }
 }
 
@@ -10757,15 +10754,17 @@ h5,
     }
 }
 .ftco-navbar-light .navbar-nav > .nav-item > .nav-link {
-    font-size: 15px;
+    font-size: 18px;
+    font-weight: 400;
     padding-top: 0.9rem;
     padding-bottom: 0.9rem;
     padding-left: 20px;
     padding-right: 20px;
     color: #023b9d;
-    font-weight: 400;
+    font: normal "ProximaNova-Regular", "Open Sans", sans-serif;
     opacity: 1 !important;
 }
+
 .ftco-navbar-light .navbar-nav > .nav-item > .nav-link:hover {
     color: #007bff;
 }
@@ -10836,7 +10835,9 @@ h5,
     background: #01d28e !important;
 }
 .ftco-navbar-light .navbar-nav > .nav-item.active > a {
-    color: #007bff;
+    color: #007bff;    
+    border-bottom: 4px solid;
+    border-radius: 0;
 }
 @media (max-width: 991.98px) {
     .ftco-navbar-light .navbar-nav > .nav-item.active > a {
@@ -11045,7 +11046,7 @@ h5,
     background: #fff;
 }
 .slider-text .icon-wrap .heading-title span {
-    font-family: "Roboto", sans-serif;;
+    font-family: "Roboto", sans-serif;
     color: #000;
 }
 .slider-text p {
@@ -11149,7 +11150,6 @@ h5,
     color: #fff;
     margin-bottom: 5px;
 }
-
 
 .owl-carousel {
     position: relative;
@@ -11368,9 +11368,7 @@ h5,
 /* General style for the car-wrap */
 .car-wrap {
     margin-bottom: 40px;
-    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1); /* Stronger shadow */
-    background: #fff;
-    border-radius: 15px; /* Slightly more rounded corners */
+    background: transparent;
     overflow: hidden;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     position: relative; /* For layered elements */
@@ -11380,19 +11378,16 @@ h5,
 /* Hover effect for car wrap */
 .car-wrap:hover {
     transform: translateY(-15px); /* More dramatic hover lift */
-    box-shadow: 0px 15px 30px rgba(0, 0, 0, 0.2); /* Enhanced shadow on hover */
 }
 
 /* Highlight border effect on hover */
 .car-wrap:hover::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    border: 3px solid #1089ff; /* Highlight border */
-    border-radius: 15px;
     box-sizing: border-box;
     opacity: 0.6;
     transition: all 0.3s ease;
@@ -11401,7 +11396,7 @@ h5,
 /* Image style */
 .car-wrap .img {
     width: 100%;
-    height: 350px; /* Taller image for more emphasis */
+    height: 500px; /* Taller image for more emphasis */
     object-fit: cover; /* Ensure the image fits within bounds */
     transition: transform 0.4s ease; /* Slightly slower zoom effect */
 }
@@ -11413,11 +11408,17 @@ h5,
 
 /* Text container */
 .car-wrap .text {
-    padding: 25px 35px;
-    background: linear-gradient(145deg, #ffffff, #f4f4f4); /* Subtle gradient background */
+    padding-top: 25px;
+    text-align: center;
     border-top: 1px solid #eee;
 }
-
+.title {
+    font: normal 37px/44px "ProximaNova-Regular", "Open Sans", sans-serif;
+    text-transform: uppercase;
+}
+.align-text-center {
+    text-align: center;
+}
 /* Price style */
 .car-wrap .text .price {
     color: #1089ff;
@@ -11497,7 +11498,6 @@ h5,
     }
 }
 
-
 .ftco-car-details .services .media-body .icon span {
     color: #1089ff;
 }
@@ -11539,8 +11539,10 @@ h5,
     color: rgba(0, 0, 0, 0.4) !important;
 }
 .nav-pills li a.active {
-    color: #1089ff !important;
+    color: #023b9d  !important;
     background: transparent !important;
+    border-bottom: 4px solid;
+    border-radius: 0;
 }
 
 .pills {
@@ -12043,7 +12045,7 @@ textarea.form-control {
 
 .ftco-footer {
     font-size: 16px;
-    background: #fff    ;
+    background: #fff;
     padding: 1em 0;
 }
 .ftco-footer .logo {
@@ -12073,10 +12075,10 @@ textarea.form-control {
 }
 .ftco-footer .ftco-footer-widget .btn-primary:hover {
     background: #000;
-    border: 2px solid #000!important;
+    border: 2px solid #000 !important;
 }
 .ftco-footer p {
-    color: #000
+    color: #000;
 }
 .ftco-footer a {
     color: #023b9d;
@@ -12484,7 +12486,6 @@ textarea.form-control {
     }
 }
 
-
 .blog-entry {
     overflow: hidden;
     width: 100%;
@@ -12523,7 +12524,6 @@ textarea.form-control {
     margin-bottom: 0;
     font-size: 14px;
     font-weight: 500;
-    
 }
 .blog-entry .meta > div a {
     color: #023b9d;
@@ -13299,17 +13299,11 @@ textarea.form-control {
     margin-left: -1rem;
 }
 
-
-
-
-
-
-
 .whatsapp-button {
     position: fixed; /* Fijo sobre todo el contenido */
     bottom: 20px; /* A 20px del borde inferior */
     right: 20px; /* A 20px del borde derecho */
-    background-color: #25D366;
+    background-color: #25d366;
     color: white;
     border-radius: 50%;
     padding: 15px;
@@ -13346,3 +13340,89 @@ textarea.form-control {
     opacity: 0; /* La etiqueta desaparecerá al hacer hover */
 }
 
+.line {
+    text-transform: uppercase;
+    font-family: "ProximaNova-Bold", "Open Sans", sans-serif;
+    display: block;
+}
+
+.line span {
+    display: inline-block;
+    position: relative;
+}
+
+.line span::before,
+.line span::after {
+    content: "";
+    position: absolute;
+    height: 1px;
+    background-color: #2e2d34;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    width: 24px;
+}
+
+.line span::before {
+    right: 100%;
+    margin-right: 7px;
+}
+
+.line span::after {
+    left: 100%;
+    margin-left: 7px;
+}
+/* Efecto de parpadeo */
+.animacion {
+    animation-name: parpadeo;
+    animation-duration: 1s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+
+    -webkit-animation-name: parpadeo;
+    -webkit-animation-duration: 1s;
+    -webkit-animation-timing-function: linear;
+    -webkit-animation-iteration-count: infinite;
+}
+
+@-moz-keyframes parpadeo {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@-webkit-keyframes parpadeo {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes parpadeo {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+.badge-date {
+    color: #212529;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background-color: red;
+}

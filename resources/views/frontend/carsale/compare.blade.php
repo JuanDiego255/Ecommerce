@@ -201,7 +201,7 @@
                                                         <td class="price" id="engine3"></td>
                                                     </tr>
                                                     <tr>
-                                                        <td>Potencia</td>
+                                                        <td>Puertas</td>
                                                         <td class="price" id="power1"></td>
                                                         <td class="price" id="power2"></td>
                                                         <td class="price" id="power3"></td>

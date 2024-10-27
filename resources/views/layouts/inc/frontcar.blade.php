@@ -17,7 +17,8 @@
                 {{ isset($tenantinfo->title) ? $tenantinfo->title : 'Car<span>Book</span>' }}
             @endif
         </a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav"
+            aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="oi oi-menu"></span> Menu
         </button>
 
@@ -26,10 +27,13 @@
 
         <div class="collapse navbar-collapse" id="ftco-nav">
             <ul class="navbar-nav ml-auto">
-                <li class="nav-item {{$view_name == 'frontend_carsale_index' ? 'active' : ''}}"><a href="{{ url('/') }}" class="nav-link">Inicio</a></li>
+                <li class="nav-item {{ $view_name == 'frontend_carsale_index' ? 'active' : '' }}"><a
+                        href="{{ url('/') }}" class="nav-link">Inicio</a></li>
                 <li class="nav-item"><a href="{{ url('#about_us') }}" class="nav-link">Acerca de</a></li>
-                <li class="nav-item {{$view_name == 'frontend_blog_carsale_index' || $view_name == 'frontend_blog_carsale_show-articles' ? 'active' : ''}}"><a href="{{ url('blog/index') }}" class="nav-link">Blog</a></li>
-                @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
+                <li
+                    class="nav-item {{ $view_name == 'frontend_blog_carsale_index' || $view_name == 'frontend_blog_carsale_show-articles' ? 'active' : '' }}">
+                    <a href="{{ url('blog/index') }}" class="nav-link">Blog</a></li>
+                {{--  @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
                     <li class="nav-item {{$view_name == 'frontend_carsale_category' || $view_name == 'frontend_carsale_clothes-category' ? 'active' : ''}} dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="categoriesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Categorías
@@ -62,26 +66,27 @@
                             @endforeach
                         </div>
                     </li>
-                @endif
-                <li class="nav-item"><a href="{{ url('compare/vehicles') }}" class="nav-link">Comparar Vehículos</a></li>
+                @endif --}}
+                <li class="nav-item {{ $view_name == 'frontend_carsale_compare' ? 'active' : '' }}"><a href="{{ url('compare/vehicles') }}" class="nav-link">Comparar Vehículos</a>
+                </li>
                 @guest
-                
 
-                <li class="nav-item">
-    <a href="{{ route('login') }}" class="nav-link">
-        <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
-    </a>
-</li>
 
+                    <li class="nav-item">
+                        <a href="{{ route('login') }}" class="nav-link">
+                            <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                        </a>
+                    </li>
                 @else
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             {{ Auth::user()->name }} {{ Auth::user()->last_name }}
                         </a>
                         <div class="dropdown-menu" aria-labelledby="userDropdown">
                             <a class="dropdown-item" href="{{ url('/category') }}">Todas las categorías</a>
                             <a class="dropdown-item" href="{{ route('logout') }}"
-                               onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                 Salir
                             </a>
                             <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
@@ -90,7 +95,7 @@
                         </div>
                     </li>
                 @endguest
-                    
+
             </ul>
         </div>
     </div>

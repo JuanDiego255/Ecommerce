@@ -45,12 +45,16 @@ class FrontendController extends Controller
             return ClothingCategory::where('clothing.trending', 1)
                 ->leftJoin('pivot_clothing_categories', 'clothing.id', '=', 'pivot_clothing_categories.clothing_id')
                 ->leftJoin('categories', 'pivot_clothing_categories.category_id', '=', 'categories.id')
+                ->join('clothing_details', 'clothing.id', 'clothing_details.clothing_id')
                 ->leftJoin('stocks', 'clothing.id', 'stocks.clothing_id')
                 ->select(
                     'categories.name as category',
                     'categories.id as category_id',
                     'clothing.id as id',
                     'clothing.trending as trending',
+                    'clothing.main_image as main_image',
+                    'clothing.created_at as created_at',
+                    'clothing_details.modelo as model',
                     'clothing.discount as discount',
                     'clothing.name as name',
                     'clothing.casa as casa',
@@ -64,6 +68,9 @@ class FrontendController extends Controller
                 ->groupBy(
                     'clothing.id',
                     'categories.name',
+                    'clothing.main_image',
+                    'clothing.created_at',
+                    'clothing_details.modelo',
                     'clothing.casa',
                     'categories.id',
                     'clothing.name',
@@ -127,6 +134,7 @@ class FrontendController extends Controller
                     'clothing.id as id',
                     'clothing.trending as trending',
                     'clothing.discount as discount',
+                    'clothing.main_image as main_image',
                     'clothing.name as name',
                     'clothing.casa as casa',
                     'clothing.description as description',
@@ -140,6 +148,7 @@ class FrontendController extends Controller
                     'clothing.id',
                     'categories.name',
                     'categories.id',
+                    'clothing.main_image',
                     'clothing.name',
                     'clothing.casa',
                     'clothing.discount',
@@ -179,6 +188,57 @@ class FrontendController extends Controller
         $comment_count = Testimonial::where('approve', 1)->count();
         switch ($tenantinfo->kind_business) {
             case (1):
+                $clothings = Cache::remember('clothings_cars', $this->expirationTime, function () {
+                    return ClothingCategory::leftJoin('pivot_clothing_categories', 'clothing.id', '=', 'pivot_clothing_categories.clothing_id')
+                        ->leftJoin('categories', 'pivot_clothing_categories.category_id', '=', 'categories.id')
+                        ->leftJoin('clothing_details', 'clothing.id', 'clothing_details.clothing_id')
+                        ->leftJoin('stocks', 'clothing.id', 'stocks.clothing_id')
+                        ->select(
+                            'categories.name as category',
+                            'categories.id as category_id',
+                            'clothing.id as id',
+                            'clothing.trending as trending',
+                            'clothing.created_at as created_at',
+                            'clothing_details.modelo as model',
+                            'clothing.discount as discount',
+                            'clothing.main_image as main_image',
+                            'clothing.name as name',
+                            'clothing.casa as casa',
+                            'clothing.description as description',
+                            'clothing.price as price',
+                            'clothing.mayor_price as mayor_price',
+                            DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE 0 END) as total_stock'),
+                            DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'),
+                            DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
+                        )
+                        ->groupBy(
+                            'clothing.id',
+                            'categories.name',
+                            'clothing.created_at',
+                            'clothing.main_image',
+                            'clothing_details.modelo',
+                            'clothing.casa',
+                            'categories.id',
+                            'clothing.name',
+                            'clothing.discount',
+                            'clothing.trending',
+                            'clothing.description',
+                            'clothing.price',
+                            'clothing.mayor_price',
+                        )->orderByRaw('CASE WHEN clothing.casa IS NOT NULL AND clothing.casa != "" THEN 0 ELSE 1 END')
+                        ->orderBy('clothing.casa', 'asc')
+                        ->orderBy('clothing.name', 'asc')
+                        ->take(15)
+                        ->get();
+                });
+                foreach ($clothings as $clothing) {
+                    $firstImage = ProductImage::where('clothing_id', $clothing->id)
+                        ->orderBy('id')
+                        ->first();
+                    // Asignar la imagen al objeto $clothing
+                    $clothing->image = $firstImage ? $firstImage->image : null;
+                }
+
                 return view('frontend.carsale.index', compact('clothings', 'car_count', 'comment_count', 'showModal', 'advert', 'blogs', 'social', 'clothings_offer', 'category', 'sellers', 'comments'));
                 break;
             case (2):
@@ -351,6 +411,7 @@ class FrontendController extends Controller
                     'categories.id as category_id',
                     'clothing.id as id',
                     'clothing.trending as trending',
+                    'clothing.created_at as created_at',
                     'clothing.manage_stock as manage_stock',
                     'clothing.discount as discount',
                     'clothing.name as name',
@@ -366,6 +427,7 @@ class FrontendController extends Controller
                     'clothing.id',
                     'categories.name',
                     'clothing.casa',
+                    'clothing.created_at',
                     'categories.id',
                     'clothing.name',
                     'clothing.discount',
@@ -403,6 +465,7 @@ class FrontendController extends Controller
                 'departments.department as department_name',
                 'clothing.discount as discount',
                 'clothing.horizontal_image as horizontal_image',
+                'clothing.main_image as main_image',
                 'clothing.description as description',
                 'clothing.price as price',
                 'clothing.mayor_price as mayor_price',
@@ -413,7 +476,7 @@ class FrontendController extends Controller
                 DB::raw('GROUP_CONCAT(stocks.price) AS price_per_size'),
                 DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
             )
-            ->groupBy('clothing.id', 'clothing.meta_keywords', 'clothing.manage_stock', 'clothing.horizontal_image', 'clothing.can_buy', 'clothing.casa', 'departments.id', 'departments.department', 'clothing.mayor_price', 'clothing.discount', 'categories.name', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
+            ->groupBy('clothing.id', 'clothing.meta_keywords','clothing.main_image', 'clothing.manage_stock', 'clothing.horizontal_image', 'clothing.can_buy', 'clothing.casa', 'departments.id', 'departments.department', 'clothing.mayor_price', 'clothing.discount', 'categories.name', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
             ->orderByRaw('CASE WHEN clothing.casa IS NOT NULL AND clothing.casa != "" THEN 0 ELSE 1 END')
             ->orderBy('clothing.casa', 'asc')
             ->orderBy('clothing.name', 'asc')

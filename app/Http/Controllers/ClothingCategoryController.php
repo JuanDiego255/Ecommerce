@@ -97,6 +97,7 @@ class ClothingCategoryController extends Controller
                     'clothing.manage_stock as manage_stock',
                     'clothing.can_buy as can_buy',
                     'clothing.horizontal_image as horizontal_image',
+                    'clothing.main_image as main_image',
                     'clothing.code as code',
                     'clothing.discount as discount',
                     'clothing.trending as trending',
@@ -107,7 +108,7 @@ class ClothingCategoryController extends Controller
                     DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE 0 END) as total_stock'),
                     'product_images.image as image', // Obtener la primera imagen del producto
                 )
-                ->groupBy('clothing.id', 'clothing.horizontal_image', 'clothing.casa', 'clothing.name', 'clothing.manage_stock', 'clothing.code', 'clothing.can_buy', 'pivot_clothing_categories.category_id', 'categories.name', 'clothing.description', 'clothing.trending', 'clothing.price', 'clothing.mayor_price', 'clothing.meta_keywords', 'product_images.image', 'clothing.discount')
+                ->groupBy('clothing.id','clothing.main_image', 'clothing.horizontal_image', 'clothing.casa', 'clothing.name', 'clothing.manage_stock', 'clothing.code', 'clothing.can_buy', 'pivot_clothing_categories.category_id', 'categories.name', 'clothing.description', 'clothing.trending', 'clothing.price', 'clothing.mayor_price', 'clothing.meta_keywords', 'product_images.image', 'clothing.discount')
                 ->first();
         });
 
@@ -199,6 +200,10 @@ class ClothingCategoryController extends Controller
             if ($request->hasFile('horizontal_image')) {
                 $image = $request->file('horizontal_image');
                 $clothing->horizontal_image = $image->store('uploads', 'public');
+            }
+            if ($request->hasFile('main_image')) {
+                $image = $request->file('main_image');
+                $clothing->main_image = $image->store('uploads', 'public');
             }
 
             $clothing->update();
@@ -376,6 +381,10 @@ class ClothingCategoryController extends Controller
                 if ($request->hasFile('horizontal_image')) {
                     $image = $request->file('horizontal_image');
                     $clothing->horizontal_image = $image->store('uploads', 'public');
+                }
+                if ($request->hasFile('main_image')) {
+                    $image = $request->file('main_image');
+                    $clothing->main_image = $image->store('uploads', 'public');
                 }
                 if ($tenantinfo->tenant === 'torres') {
                     $clothing->mayor_price = $request->mayor_price;

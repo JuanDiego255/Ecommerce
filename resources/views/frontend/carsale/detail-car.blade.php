@@ -37,7 +37,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="container mt-5">
             <div class="row">
                 <div class="col-md-12 pills">
@@ -126,7 +126,7 @@
                                                     <div class="icon d-flex align-items-center justify-content-center"><span
                                                             class="flaticon-dashboard"></span></div>
                                                     <div class="text w-100">
-                                                        <h3 class="heading mb-2">Potencia:
+                                                        <h3 class="heading mb-2">Puertas:
                                                             {{ $details->potencia != '' ? $details->potencia : '--' }}</h3>
                                                     </div>
                                                 </div>
@@ -272,8 +272,8 @@
     <section class="ftco-section ftco-no-pt bg-light mt-5">
         <div class="container mt-5">
             <div class="row justify-content-center">
-                <div class="col-md-12 heading-section text-center ftco-animate mb-5">
-                    <h2 class="mb-2">Otros vehículos que pueden interesarte</h2>
+                <div class="col-md-12 text-center ftco-animate mt-5 mb-5">
+                    <h2 class="title align-text-center">Otros vehículos que pueden interesarte</h2>
                 </div>
             </div>
             <div class="row">
@@ -295,21 +295,21 @@
                                 $precioConDescuento = $precio - $descuento;
                             @endphp
                             <div class="item">
-                                <div class="car-wrap rounded ftco-animate">
-                                    <div class="img rounded d-flex align-items-end"
-                                        style="background-image: url('{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}');">
-                                    </div>
-                                    <div class="text">
-                                        <h2 class="mb-0"><a href="#">{{ $item->name }}</a></h2>
-                                        <div class="d-flex mb-3">
-                                            <span class="cat">Tendencia</span>
-                                            <p class="price ml-auto">₡{{ number_format($precioConDescuento) }}</p>
+                                <a href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}">
+                                    <div class="car-wrap rounded ftco-animate">
+                                        <div class="img rounded d-flex align-items-end"
+                                            style="background-image: url('{{ isset($item->main_image) ? route('file', $item->main_image) : url('images/producto-sin-imagen.PNG') }}');">
                                         </div>
-                                        <p class="d-flex mb-0 d-block"><a
-                                                href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}"
-                                                class="btn btn-secondary py-2 ml-1">Detallar</a></p>
+                                        <div class="text">
+                                            <h2 class="mb-0"><a href="#">{{ $item->name }}</a></h2>
+                                            <div class="d-flex mb-3">
+
+                                                <!-- <p class="price ml-auto">₡{{ number_format($precioConDescuento) }}</p> -->
+                                            </div>
+                                            <span class="line"><span>Tendencia</span></span>
+                                        </div>
                                     </div>
-                                </div>
+                                </a>
                             </div>
                         @endforeach
                     </div>
