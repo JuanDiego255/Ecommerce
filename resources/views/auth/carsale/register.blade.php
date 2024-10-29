@@ -14,7 +14,7 @@
                 <div class="col-lg-8 ftco-animate">
                     <div class="text w-100 text-center mb-md-5 pb-md-5">
                         <h1 class="mb-4">Formulario de registro</h1>
-                        <p style="font-size: 18px;">Al formar parte de Autos Grecia puede recibir noticias, sobre nuevas
+                        <p style="font-size: 18px;">Al formar parte de AUTOS GRECIA puede recibir noticias, sobre nuevas
                             tendencias y demás.</p>
                     </div>
                 </div>

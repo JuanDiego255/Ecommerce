@@ -92,7 +92,7 @@
                         </div>
                         <div class="col-md-8 d-flex align-items-center">
                             <div class="services-wrap rounded-right w-100">
-                                <h3 class="heading-section mb-4">En autos Grecia contamos con los mejores precios</h3>
+                                <h3 class="heading-section mb-4">En AUTOS GRECIA contamos con los mejores precios</h3>
                                 <div class="row d-flex mb-4">
                                     <div class="col-md-4 d-flex align-self-stretch ftco-animate">
                                         <div class="services w-100 text-center">

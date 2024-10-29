@@ -48,7 +48,7 @@
             <div class="row no-gutters slider-text justify-content-start align-items-center justify-content-center">
                 <div class="col-lg-8 ftco-animate">
                     <div class="text w-100 text-center mb-md-5 pb-md-5">
-                        <!-- Titulo Banner Blog Autos Grecia -->
+                        <!-- Titulo Banner Blog AUTOS GRECIA -->
                         <h1 class="mb-4"></h1>
                     </div>
                 </div>
