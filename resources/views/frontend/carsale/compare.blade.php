@@ -116,7 +116,7 @@
 
                 $.ajax({
                     method: "GET",
-                    url: "/get-cart-details/"+code,
+                    url: "/get-cart-details/" + code,
                     success: function(response) {
                         if (response.status != "success") {
                             Swal.fire({
@@ -146,12 +146,7 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody id="vehicle-rows">
-                                                    <tr>
-                                                        <td>Precio</td>
-                                                        <td class="price" id="price1"></td>
-                                                        <td class="price" id="price2"></td>
-                                                        <td class="price" id="price3"></td>
-                                                    </tr>
+                                                   
                                                     <tr>
                                                         <td>Distancia al suelo (mm)</td>
                                                         <td class="price" id="distance1"></td>
@@ -268,12 +263,17 @@
                             // Actualizar el nombre del vehículo en el encabezado y llenar la tabla
                             if (vehicleCount === 0) {
                                 $('#header-vehicle1').text(results[0].name); // Nombre del vehículo 1
-                                $('#price1').text('₡ '+results[0].price.toLocaleString()); // Mostrar precio en la primera fila
+                                //$('#price1').text('₡ ' + results[0].price.toLocaleString()); // Mostrar precio en la primera fila
                                 $('#distance1').text(results[0].distance + " mm");
                                 $('#weight1').text(results[0].weight);
                                 $('#color1').text(results[0].color);
                                 $('#model1').text(results[0].model);
-                                $('#mileage1').text(number_format(results[0].mileage.toLocaleString()));
+                                if (results[0].mileage != null && results[0].mileage !== '') {
+                                    $('#mileage1').text(number_format(results[0].mileage.toLocaleString()));
+                                } else {
+                                    $('#mileage1').text(
+                                        'N/A'); // O cualquier otro valor por defecto que quieras mostrar
+                                }
                                 $('#tank_capacity1').text(results[0].tank_capacity);
                                 $('#fuel_type1').text(results[0].fuel_type);
                                 $('#engine1').text(results[0].engine + " CC");
@@ -286,12 +286,17 @@
                                 $('#width1').text(results[0].width + " mm");
                             } else if (vehicleCount === 1) {
                                 $('#header-vehicle2').text(results[0].name); // Nombre del vehículo 2
-                                $('#price2').text('₡ '+results[0].price.toLocaleString()); // Mostrar precio en la primera fila
+                                //$('#price2').text('₡ ' + results[0].price.toLocaleString()); // Mostrar precio en la primera fila
                                 $('#distance2').text(results[0].distance + " mm");
                                 $('#weight2').text(results[0].weight);
                                 $('#color2').text(results[0].color);
                                 $('#model2').text(results[0].model);
-                                $('#mileage2').text(number_format(results[0].mileage.toLocaleString()));
+                                if (results[0].mileage != null && results[0].mileage !== '') {
+                                    $('#mileage2').text(number_format(results[0].mileage.toLocaleString()));
+                                } else {
+                                    $('#mileage2').text(
+                                        'N/A'); // O cualquier otro valor por defecto que quieras mostrar
+                                }
                                 $('#tank_capacity2').text(results[0].tank_capacity);
                                 $('#fuel_type2').text(results[0].fuel_type);
                                 $('#engine2').text(results[0].engine + " CC");
@@ -304,12 +309,17 @@
                                 $('#width2').text(results[0].width + " mm");
                             } else if (vehicleCount === 2) {
                                 $('#header-vehicle3').text(results[0].name); // Nombre del vehículo 3
-                                $('#price3').text('₡ '+results[0].price.toLocaleString()); // Mostrar precio en la primera fila
+                                //$('#price3').text('₡ ' + results[0].price.toLocaleString()); // Mostrar precio en la primera fila
                                 $('#distance3').text(results[0].distance + " mm");
                                 $('#weight3').text(results[0].weight);
                                 $('#color3').text(results[0].color);
                                 $('#model3').text(results[0].model);
-                                $('#mileage3').text(number_format(results[0].mileage.toLocaleString()));
+                                if (results[0].mileage != null && results[0].mileage !== '') {
+                                    $('#mileage3').text(number_format(results[0].mileage.toLocaleString()));
+                                } else {
+                                    $('#mileage3').text(
+                                    'N/A'); // O cualquier otro valor por defecto que quieras mostrar
+                                }
                                 $('#tank_capacity3').text(results[0].tank_capacity);
                                 $('#fuel_type3').text(results[0].fuel_type);
                                 $('#engine3').text(results[0].engine + " CC");
@@ -334,7 +344,7 @@
                                 $('#vehicle-button').text('Restablecer');
                             } else {
                                 $('#vehicle-button')
-                            .hide(); // Ocultar el botón si ya se seleccionaron tres vehículos
+                                    .hide(); // Ocultar el botón si ya se seleccionaron tres vehículos
                             }
                         }
                     }
