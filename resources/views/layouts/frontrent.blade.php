@@ -58,12 +58,18 @@
 @endif
 
 
+<input type="hidden" value="{{ $tenantinfo->whatsapp }}" id="random_whats" name="random_whats">
 
 <body class="g-sidenav-show  bg-gray-200">
     @include('frontend.website.add-comment')
     <div class="{{ $view_name == 'frontend_blog_carsale_show-articles' ? 'main-container-front' : '' }}">
         <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
-
+            <!-- Botón flotante de WhatsApp -->
+            <div class="whatsapp-button whatsapp-button-click">
+                <span class="whatsapp-label">¡Contáctanos!</span> <!-- Etiqueta -->
+                <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp"
+                    width="40" height="40">
+            </div>
             <div>
                 @if (isset($tenantinfo->tenant) && $tenantinfo->tenant != 'main')
                     @switch($tenantinfo->kind_business)

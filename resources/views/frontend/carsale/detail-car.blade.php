@@ -68,14 +68,14 @@
                                     {!! $item->description !!}
                                 </p>
 
-                                <a target="blank" href="{{ url('https://wa.me/506' . $tenantinfo->whatsapp) }}"
-                                    class="btn btn-secondary py-2 ml-1"> <i class="me-1 fa fa-user"></i>
+                                <button type="button"
+                                    class="btn btn-secondary py-2 ml-1 whatsapp-button-click"> <i class="me-1 fa fa-user"></i>
                                     @if ($item->total_stock > 0)
                                         Contactar al vendedor
                                     @else
                                         Vendido!
                                     @endif
-                                </a>
+                                </button>
                             </div>
                             <div class="tab-pane fade" id="pills-details" role="tabpanel"
                                 aria-labelledby="pills-details-tab">

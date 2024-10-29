@@ -19,24 +19,21 @@
                                         class="form-control form-control-lg" name="searchfor">
                                 </div>
                             </div>
-                              <!-- Botón flotante de WhatsApp -->
-    <div class="whatsapp-button" id="whatsappButton">
-    <span class="whatsapp-label">¡Contáctanos!</span> <!-- Etiqueta -->
-    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" width="40" height="40">
-    </div>
-    
+
                             <div id="icon-list">
                                 <div class="table-responsive">
                                     <table class="table align-items-center mb-0">
                                         <thead>
                                             <tr>
-                                                <th class="text-secondary font-weight-bolder opacity-7">{{ __('Producto') }}</th>
+                                                <th class="text-secondary font-weight-bolder opacity-7">
+                                                    {{ __('Producto') }}</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             @foreach ($clothings as $item)
-                                                <tr onclick="selectIcon('{{ $item->code }}')" class="icon-item" data-code="{{ $item->code }}" data-name="{{ $item->name }}">
-                                                   
+                                                <tr onclick="selectIcon('{{ $item->code }}')" class="icon-item"
+                                                    data-code="{{ $item->code }}" data-name="{{ $item->name }}">
+
                                                     <td class="w-100">
                                                         <div class="d-flex px-2 py-1">
                                                             <div>
@@ -47,7 +44,8 @@
                                                                 </a>
                                                             </div>
                                                             <div class="d-flex flex-column justify-content-center">
-                                                                <h4 class="mb-0 text-lg">{{ $item->name }} - {{ $item->code }}</h4>
+                                                                <h4 class="mb-0 text-lg">{{ $item->name }} -
+                                                                    {{ $item->code }}</h4>
                                                             </div>
                                                         </div>
                                                     </td>
@@ -59,8 +57,8 @@
                             </div>
                         </div>
                     </div>
-                    
-                    
+
+
                 </div>
             </div>
         </div>

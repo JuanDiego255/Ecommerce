@@ -214,7 +214,7 @@ is-invalid
                                 <div
                                     class="input-group input-group-lg input-group-outline {{ isset($item->whatsapp) ? 'is-filled' : '' }}">
                                     <label class="form-label">WhatsApp</label>
-                                    <input onkeypress="return (event.charCode >= 48 && event.charCode <= 57)" required
+                                    <input required
                                         value="{{ isset($item->whatsapp) ? $item->whatsapp : '' }}" type="text"
                                         class="form-control form-control-lg @error('whatsapp')
 is-invalid

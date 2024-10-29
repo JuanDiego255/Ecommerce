@@ -39,8 +39,8 @@
                         <h5 class="text-muted">Fecha de publicación: {{ $fecha_letter }}</h5>
                     </div>
 
-                    <a target="blank" href="{{ url('https://wa.me/506' . $tenantinfo->whatsapp) }}"
-                        class="btn btn-secondary py-2 ml-1">
+                    <button type="button"
+                        class="btn btn-secondary py-2 ml-1 whatsapp-button-click">
                         <span class="btn-inner--text">
                             @if ($tenantinfo->kind_business != 0)
                                 {{ __('Solicitar una cita') }}
@@ -48,7 +48,7 @@
                                 {{ __('Ir a WhatsApp') }}
                             @endif
                         </span>
-                    </a>
+                    </button>
                 </div>
                 <div class="col-md-4">
                     <div class="product-grid product_data">

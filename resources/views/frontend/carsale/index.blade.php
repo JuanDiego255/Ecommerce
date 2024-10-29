@@ -7,8 +7,6 @@
 
     {{-- Main Banner --}}
     <!-- Incluye la versión más reciente de Bootstrap 4 o 5 si no está ya incluida -->
-
-
     <div id="carouselExampleFade" class="carousel slide carousel-fade" data-ride="carousel">
         <div class="carousel-inner">
             @if (isset($tenantcarousel) && count($tenantcarousel) > 0)
@@ -45,15 +43,6 @@
             <span class="sr-only">Next</span>
         </a>
     </div>
-
-
-    <!-- Botón flotante de WhatsApp -->
-    <div class="whatsapp-button" id="whatsappButton">
-        <span class="whatsapp-label">¡Contáctanos!</span> <!-- Etiqueta -->
-        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" width="40"
-            height="40">
-    </div>
-
     {{-- Contact form --}}
     <section class="ftco-section ftco-no-pt bg-light mt-large-mobile">
         <div class="container">
@@ -130,9 +119,6 @@
                 </div>
             </div>
     </section>
-
-
-
     {{-- Trending --}}
     @if (isset($tenantinfo->show_trending) && $tenantinfo->show_trending == 1)
         <section class="ftco-section ftco-no-pt bg-light">
@@ -223,8 +209,6 @@
             </div>
         </section>
     @endif
-
-
     {{-- About Us --}}
     @if (isset($tenantinfo->about) && $tenantinfo->about != '')
         <section class="ftco-section ftco-about" id="about_us">
@@ -238,15 +222,14 @@
                             <span class="subheading">Nosotros</span>
                             <h2 class="mb-4">Bienvenido a {{ isset($tenantinfo->title) ? $tenantinfo->title : '' }}</h2>
                             <p class="text-justify">{{ $tenantinfo->about }}</p>
-                            <p><a href="{{ url('https://wa.me/506' . $tenantinfo->whatsapp) }}"
-                                    class="btn btn-primary py-3 px-4">Agendar cita</a></p>
+                            <p><button type="button"
+                                    class="whatsapp-button-click btn btn-primary py-3 px-4">Agendar cita</button></p>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
     @endif
-
     {{-- Comments --}}
     @if (count($comments) != 0)
         <hr class="dark horizontal text-danger my-0">
@@ -287,7 +270,6 @@
             </div>
         </section>
     @endif
-
     {{-- blogs --}}
     @if (count($blogs) != 0)
         <section class="ftco-section">
@@ -323,7 +305,6 @@
             </div>
         </section>
     @endif
-
     {{-- Counter --}}
     <section class="ftco-counter ftco-section img bg-light" id="section-counter">
         <div class="overlay"></div>
@@ -356,13 +337,10 @@
             </div>
         </div>
     </section>
-
     @include('layouts.inc.carsale.footer')
 @endsection
 
 @section('scripts')
-    <script></script>
-
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             var showMoreButtons = document.querySelectorAll('.show-more');

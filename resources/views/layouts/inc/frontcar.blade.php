@@ -30,7 +30,7 @@
                 <li class="nav-item {{ $view_name == 'frontend_carsale_index' ? 'active' : '' }}"><a
                         href="{{ url('/') }}" class="nav-link">Inicio</a></li>
                 <li class="nav-item"><a href="{{ url('#about_us') }}" class="nav-link">Acerca de</a></li>
-                <li class="nav-item {{ $view_name == 'frontend_carsale_category' ? 'active' : '' }}"><a href="{{ url('category/') }}" class="nav-link">Categorías</a></li>
+                <li class="nav-item {{ $view_name == 'frontend_carsale_category' || $view_name == 'frontend_carsale_detail-car' ? 'active' : '' }}"><a href="{{ url('category/') }}" class="nav-link">Categorías</a></li>
                 <li
                     class="nav-item {{ $view_name == 'frontend_blog_carsale_index' || $view_name == 'frontend_blog_carsale_show-articles' ? 'active' : '' }}">
                     <a href="{{ url('blog/index') }}" class="nav-link">Blog</a>
