@@ -11001,10 +11001,11 @@ h5,
     }
 }
 .slider-text h1 {
-    font-size: 44px;
+    font-size: 60px;
     color: #fff;
     line-height: 1.1;
     font-weight: 700;
+    text-align: center;
 }
 .slider-text h1 span {
     display: block;
@@ -12191,7 +12192,9 @@ textarea.form-control {
 .ftco-media.text-center .ftco-icon {
     margin: 0 auto;
 }
-
+.text-center{
+    text-align: center;
+}
 .ftco-overflow-hidden {
     overflow: hidden;
 }

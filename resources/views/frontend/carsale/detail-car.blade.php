@@ -21,7 +21,7 @@
             $precioConDescuento = $precio - $descuento;
         @endphp
         <div class="hero-wrap ftco-degree-bg"
-            style="background-image: url('{{ isset($item->horizontal_image) && $item->horizontal_image != '' ? route('file', $item->horizontal_image) : url('images/producto-sin-imagen.PNG') }}');"
+            style="background-image: url('{{ isset($item->main_image) && $item->main_image != '' ? route('file', $item->main_image) : url('images/producto-sin-imagen.PNG') }}');"
             data-stellar-background-ratio="0.5">
             <div class="overlay"></div>
             <div class="container">
@@ -85,7 +85,7 @@
                                 <h4 class="title text-center text-dark">
                                     {{ $item->name }}
                                 </h4>
-                                <div class="col-md-12 d-flex align-items-center">
+                                <div class="col-md-12 d-flex align-items-center text-center">
                                     <div class="services-wrap rounded-right w-100">
                                         <div class="row d-flex mb-4">
                                             <div class="col-md-4 d-flex align-self-stretch ftco-animate">

@@ -583,6 +583,7 @@ class FrontendController extends Controller
                 'clothing.trending as trending',
                 'clothing.discount as discount',
                 'clothing.name as name',
+                'clothing.main_image as main_image',
                 'clothing.casa as casa',
                 'clothing.description as description',
                 'clothing.price as price',
@@ -593,7 +594,7 @@ class FrontendController extends Controller
                 DB::raw('GROUP_CONCAT(stocks.price) AS price_per_size'),
                 DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
             )
-            ->groupBy('clothing.id', 'clothing.casa', 'clothing.mayor_price', 'clothing.discount', 'categories.name', 'categories.id', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
+            ->groupBy('clothing.id', 'clothing.casa','clothing.main_image', 'clothing.mayor_price', 'clothing.discount', 'categories.name', 'categories.id', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
             ->orderByRaw('CASE WHEN clothing.casa IS NOT NULL AND clothing.casa != "" THEN 0 ELSE 1 END')
             ->orderBy('clothing.casa', 'asc')
             ->orderBy('clothing.name', 'asc')
