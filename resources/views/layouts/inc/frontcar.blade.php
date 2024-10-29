@@ -8,7 +8,7 @@
     }
 @endphp
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-<nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
+<nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light shadow-sm" id="ftco-navbar">
     <div class="container">
         <a class="navbar-brand" href="{{ url('/') }}">
             @if (isset($tenantinfo->show_logo) && $tenantinfo->show_logo != 0)
@@ -30,44 +30,14 @@
                 <li class="nav-item {{ $view_name == 'frontend_carsale_index' ? 'active' : '' }}"><a
                         href="{{ url('/') }}" class="nav-link">Inicio</a></li>
                 <li class="nav-item"><a href="{{ url('#about_us') }}" class="nav-link">Acerca de</a></li>
+                <li class="nav-item {{ $view_name == 'frontend_carsale_category' ? 'active' : '' }}"><a href="{{ url('category/') }}" class="nav-link">Categorías</a></li>
                 <li
                     class="nav-item {{ $view_name == 'frontend_blog_carsale_index' || $view_name == 'frontend_blog_carsale_show-articles' ? 'active' : '' }}">
-                    <a href="{{ url('blog/index') }}" class="nav-link">Blog</a></li>
-                {{--  @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
-                    <li class="nav-item {{$view_name == 'frontend_carsale_category' || $view_name == 'frontend_carsale_clothes-category' ? 'active' : ''}} dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="categoriesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Categorías
-                        </a>
-                        <div class="dropdown-menu" aria-labelledby="categoriesDropdown">
-                            <a class="dropdown-item" href="{{ url('category/') }}">Todas las categorías</a>
-                            @foreach ($categories as $item)
-                                <a class="dropdown-item" href="{{ url('clothes-category/' . $item->category_id . '/' . $item->department_id) }}">{{ $item->name }}</a>
-                            @endforeach
-                        </div>
-                    </li>
-                @else
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="departmentsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Departamentos
-                        </a>
-                        <div class="dropdown-menu" aria-labelledby="departmentsDropdown">
-                            <a class="dropdown-item" href="{{ url('departments/index') }}">Todos los Departamentos</a>
-                            @foreach ($departments as $department)
-                                <a class="dropdown-item" href="{{ url('category/' . $department->id) }}">{{ $department->department }}</a>
-                                <div class="dropdown-submenu">
-                                    <ul>
-                                        @foreach ($department->categories as $categoria)
-                                            <li>
-                                                <a class="dropdown-item" href="{{ url('clothes-category/' . $categoria->id . '/' . $department->id) }}">{{ $categoria->name }}</a>
-                                            </li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                            @endforeach
-                        </div>
-                    </li>
-                @endif --}}
-                <li class="nav-item {{ $view_name == 'frontend_carsale_compare' ? 'active' : '' }}"><a href="{{ url('compare/vehicles') }}" class="nav-link">Comparar Vehículos</a>
+                    <a href="{{ url('blog/index') }}" class="nav-link">Blog</a>
+                </li>
+
+                <li class="nav-item {{ $view_name == 'frontend_carsale_compare' ? 'active' : '' }}"><a
+                        href="{{ url('compare/vehicles') }}" class="nav-link">Comparar Vehículos</a>
                 </li>
                 @guest
 

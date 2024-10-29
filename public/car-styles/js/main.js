@@ -84,6 +84,27 @@
 				}
 			}
 		});
+		$('.carousel-car-category').owlCarousel({
+			center: false,
+			loop: true,
+			autoplay: true,
+			items:1,
+			margin: 30,
+			stagePadding: 50,
+			nav: false,
+			navText: ['<span class="ion-ios-arrow-back">', '<span class="ion-ios-arrow-forward">'],
+			responsive:{
+				0:{
+					items: 1
+				},
+				600:{
+					items: 4
+				},
+				1000:{
+					items: 4
+				}
+			}
+		});
 		$('.carousel-testimony').owlCarousel({
 			center: true,
 			loop: true,

@@ -287,7 +287,58 @@ class FrontendController extends Controller
         });
         switch ($tenantinfo->kind_business) {
             case (1):
-                return view('frontend.carsale.category', compact('category', 'department_name', 'department_id'));
+                $clothings = Cache::remember('clothings_cars', $this->expirationTime, function () {
+                    return ClothingCategory::leftJoin('pivot_clothing_categories', 'clothing.id', '=', 'pivot_clothing_categories.clothing_id')
+                        ->leftJoin('categories', 'pivot_clothing_categories.category_id', '=', 'categories.id')
+                        ->leftJoin('clothing_details', 'clothing.id', 'clothing_details.clothing_id')
+                        ->leftJoin('stocks', 'clothing.id', 'stocks.clothing_id')
+                        ->select(
+                            'categories.name as category',
+                            'categories.id as category_id',
+                            'clothing.id as id',
+                            'clothing.trending as trending',
+                            'clothing.created_at as created_at',
+                            'clothing_details.modelo as model',
+                            'clothing.discount as discount',
+                            'clothing.main_image as main_image',
+                            'clothing.name as name',
+                            'clothing.casa as casa',
+                            'clothing.description as description',
+                            'clothing.price as price',
+                            'clothing.mayor_price as mayor_price',
+                            DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE 0 END) as total_stock'),
+                            DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'),
+                            DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
+                        )
+                        ->groupBy(
+                            'clothing.id',
+                            'categories.name',
+                            'clothing.created_at',
+                            'clothing.main_image',
+                            'clothing_details.modelo',
+                            'clothing.casa',
+                            'categories.id',
+                            'clothing.name',
+                            'clothing.discount',
+                            'clothing.trending',
+                            'clothing.description',
+                            'clothing.price',
+                            'clothing.mayor_price',
+                        )->orderByRaw('CASE WHEN clothing.casa IS NOT NULL AND clothing.casa != "" THEN 0 ELSE 1 END')
+                        ->orderBy('clothing.casa', 'asc')
+                        ->orderBy('clothing.name', 'asc')
+                        ->take(15)
+                        ->get();
+                });
+                foreach ($clothings as $clothing) {
+                    $firstImage = ProductImage::where('clothing_id', $clothing->id)
+                        ->orderBy('id')
+                        ->first();
+                    // Asignar la imagen al objeto $clothing
+                    $clothing->image = $firstImage ? $firstImage->image : null;
+                }
+
+                return view('frontend.carsale.category', compact('clothings', 'department_name', 'department_id'));
                 break;
             default:
                 return view('frontend.category', compact('category', 'department_name', 'department_id'));
@@ -476,7 +527,7 @@ class FrontendController extends Controller
                 DB::raw('GROUP_CONCAT(stocks.price) AS price_per_size'),
                 DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
             )
-            ->groupBy('clothing.id', 'clothing.meta_keywords','clothing.main_image', 'clothing.manage_stock', 'clothing.horizontal_image', 'clothing.can_buy', 'clothing.casa', 'departments.id', 'departments.department', 'clothing.mayor_price', 'clothing.discount', 'categories.name', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
+            ->groupBy('clothing.id', 'clothing.meta_keywords', 'clothing.main_image', 'clothing.manage_stock', 'clothing.horizontal_image', 'clothing.can_buy', 'clothing.casa', 'departments.id', 'departments.department', 'clothing.mayor_price', 'clothing.discount', 'categories.name', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
             ->orderByRaw('CASE WHEN clothing.casa IS NOT NULL AND clothing.casa != "" THEN 0 ELSE 1 END')
             ->orderBy('clothing.casa', 'asc')
             ->orderBy('clothing.name', 'asc')

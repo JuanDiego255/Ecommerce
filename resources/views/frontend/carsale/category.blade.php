@@ -70,49 +70,90 @@
     </div> --}}
     {{-- Trending --}}
     {{-- Main Banner --}}
-    <div class="hero-wrap ftco-degree-bg"
-        style="background-image: url('{{ url('images/bg_1.jpg') }}');"
-        data-stellar-background-ratio="0.5">
-        <div class="overlay"></div>
-        <div class="container">
-            <div class="row no-gutters slider-text justify-content-start align-items-center justify-content-center">
-                <div class="col-lg-8 ftco-animate">
-                    <div class="text w-100 text-center mb-md-5 pb-md-5">
-                        <!-- Titulo Banner Categorias Autos Grecia -->
-                        <h1 class="mb-4"></h1>
-                    </div>
-                </div>
+
+    <br>
+    <section class="ftco-section ftco-no-pt bg-light pt-5">
+
+        <!-- Header -->
+        <div class="row justify-content-center bg-gray-200">
+            <div class="col-md-12 text-center ftco-animate pt-3">
+                <h3 class="mb-2 title align-text-center">Explora nuestra amplia variedad de categorías</h3>
             </div>
         </div>
-    </div>
 
-    <section class="ftco-section ftco-no-pt bg-light">
-        <div class="container-fluid mt-5">
-            <div class="row justify-content-center">
-                <div class="col-md-12 heading-section text-center ftco-animate mb-5">
-                    <span class="subheading">Explora en la categoría de su preferencia</span>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="carousel-car owl-carousel">
-                        @foreach ($category as $item)
-                            <div class="item">
-                                <div class="car-wrap rounded ftco-animate">
-                                    <div class="img rounded d-flex align-items-end"
-                                        style="background-image: url('{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}');">
-                                    </div>
-                                    <div class="text">
-                                        <h2 class="mb-0"><a href="#">{{ $item->name }}</a></h2>                                        
-                                        <p class="d-flex mb-0 d-block"><a
-                                                href="{{ url('clothes-category/' . $item->id . '/' . $department_id) }}"
-                                                class="btn btn-secondary py-2 ml-1">Ver vehículos</a></p>
-                                    </div>
+
+        <!-- Categorías como tabs -->
+        <div class="d-flex justify-content-center bg-gray-200">
+            <ul class="nav nav-pills mb-0" id="pills-tab" role="tablist">
+                @foreach ($clothings->groupBy('category_id') as $categoryId => $vehicles)
+                    <li class="nav-item">
+                        <a class="nav-link {{ $loop->first ? 'active' : '' }}" id="pills-{{ $categoryId }}-tab"
+                            data-toggle="pill" href="#pills-{{ $categoryId }}" role="tab"
+                            aria-controls="pills-{{ $categoryId }}">
+                            {{ $vehicles->first()->category }}
+                        </a>
+                    </li>
+                @endforeach
+            </ul>
+        </div>
+        <div class="container-fluid">
+            <div class="tab-content" id="pills-tabContent">
+                @foreach ($clothings->groupBy('category_id') as $categoryId => $vehicles)
+                    <div class="tab-pane fade {{ $loop->first ? 'show active' : '' }}" id="pills-{{ $categoryId }}"
+                        role="tabpanel" aria-labelledby="pills-{{ $categoryId }}-tab">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="carousel-car-category owl-carousel">
+                                    @foreach ($vehicles as $item)
+                                        @php
+                                            $precio = $item->price;
+                                            if (isset($tenantinfo->custom_size) && $tenantinfo->custom_size == 1) {
+                                                $precio = $item->first_price;
+                                            }
+                                            if (Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0) {
+                                                $precio = $item->mayor_price;
+                                            }
+                                            $descuentoPorcentaje = $item->discount;
+                                            $descuento = ($precio * $descuentoPorcentaje) / 100;
+                                            $precioConDescuento = $precio - $descuento;
+                                        @endphp
+
+                                        <div class="item">
+                                            <a href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}">
+                                                <div class="car-wrap rounded ftco-animate">
+                                                    <img class="img-category rounded d-flex align-items-end"
+                                                        src="{{ isset($item->main_image) ? route('file', $item->main_image) : url('images/producto-sin-imagen.PNG') }}"
+                                                        alt="Imagen del producto">
+
+                                                    <div class="text">
+                                                        @if ($item->created_at->diffInDays(now()) <= 7)
+                                                            <span
+                                                                class="badge badge-pill ml-2 badge-date text-white animacion"
+                                                                id="comparison-count">
+                                                                Nuevo Ingreso
+                                                            </span>
+                                                        @endif
+                                                        <h2 class="mb-0">
+                                                            <a href="#">
+                                                                {{ $item->name . ' (' . $item->model . ')' }}
+                                                            </a>
+                                                        </h2>
+
+                                                        <div class="d-flex mb-3">
+
+                                                            <!-- <p class="price ml-auto">₡{{ number_format($precioConDescuento) }}</p> -->
+                                                        </div>
+                                                        {{--  <span class="line"><span>Tendencia</span></span> --}}
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    @endforeach
                                 </div>
                             </div>
-                        @endforeach
+                        </div>
                     </div>
-                </div>
+                @endforeach
             </div>
         </div>
     </section>

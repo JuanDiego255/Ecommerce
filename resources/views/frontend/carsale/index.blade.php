@@ -55,7 +55,7 @@
     </div>
 
     {{-- Contact form --}}
-    <section class="ftco-section ftco-no-pt bg-light">
+    <section class="ftco-section ftco-no-pt bg-light mt-large-mobile">
         <div class="container">
             <div class="row no-gutters">
                 <div class="col-md-12	featured-top">
@@ -99,7 +99,7 @@
                                             <div class="icon d-flex align-items-center justify-content-center"><span
                                                     class="flaticon-route"></span></div>
                                             <div class="text w-100">
-                                                <h3 class="heading mb-2">Ubicación estratégica</h3>
+                                                <h3 class="heading mb-2 text-service-center">Ubicación estratégica</h3>
                                             </div>
                                         </div>
                                     </div>
@@ -108,7 +108,7 @@
                                             <div class="icon d-flex align-items-center justify-content-center"><span
                                                     class="flaticon-handshake"></span></div>
                                             <div class="text w-100">
-                                                <h3 class="heading mb-2">Trámite rápido y sencillo</h3>
+                                                <h3 class="heading mb-2 text-service-center">Trámite rápido y sencillo</h3>
                                             </div>
                                         </div>
                                     </div>
@@ -117,13 +117,13 @@
                                             <div class="icon d-flex align-items-center justify-content-center"><span
                                                     class="flaticon-car"></span></div>
                                             <div class="text w-100">
-                                                <h3 class="heading mb-2">Te ayudamos a escoger el carro ideal</h3>
+                                                <h3 class="heading mb-2 text-service-center">Te ayudamos a escoger el carro ideal</h3>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <p><a href="{{ url('compare/vehicles') }}" class="btn btn-primary py-3 px-4">Comparar
-                                        vehículos</a></p>
+                               <a href="{{ url('compare/vehicles') }}" class="btn btn-primary py-3 px-4 align-service-center">Comparar
+                                        vehículos</a>
                             </div>
                         </div>
                     </div>
@@ -301,7 +301,7 @@
                 {{-- Condición para centrado si hay dos o menos blogs --}}
                 <div class="row d-flex ">
                     @foreach ($blogs as $item)
-                        <div class="col-md-4 d-flex ftco-animate card shadow-sm mr-5 card-blog">
+                        <div class="col-md-4 d-flex ftco-animate card shadow-sm mr-3 mb-5 ml-3 card-blog">
                             <div class="blog-entry justify-content-end">
                                 <a href="blog-single.html" class="block-20"
                                     style="background-image: url('{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}');"></a>

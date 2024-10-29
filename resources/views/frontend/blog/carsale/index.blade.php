@@ -41,8 +41,7 @@
     </div> --}}
     {{-- blogs --}}
     {{-- Main Banner --}}
-    <div class="hero-wrap ftco-degree-bg"
-        style="background-image: url('{{ url('images/main-banner.jpg') }}');"
+    <div class="hero-wrap ftco-degree-bg" style="background-image: url('{{ url('images/main-banner.jpg') }}');"
         data-stellar-background-ratio="0.5">
         <div class="overlay"></div>
         <div class="container">
@@ -56,16 +55,16 @@
             </div>
         </div>
     </div>
-            <!-- Skeleton loader HTML para un blog -->
-<div class="skeleton-loader">
-    <div class="skeleton-img"></div>
-    <div class="skeleton-text">
-        <div class="skeleton-line short"></div>
-        <div class="skeleton-line"></div>
-        <div class="skeleton-line"></div>
-        <div class="skeleton-btn"></div>
+    <!-- Skeleton loader HTML para un blog -->
+    <div class="skeleton-loader">
+        <div class="skeleton-img"></div>
+        <div class="skeleton-text">
+            <div class="skeleton-line short"></div>
+            <div class="skeleton-line"></div>
+            <div class="skeleton-line"></div>
+            <div class="skeleton-btn"></div>
+        </div>
     </div>
-</div>
 
     @if (count($blogs) != 0)
         <section class="ftco-section">
@@ -77,7 +76,7 @@
                 </div>
                 <div class="row d-flex ">
                     @foreach ($blogs as $item)
-                        <div class="col-md-4 d-flex ftco-animate card shadow-sm mr-5 card-blog">
+                        <div class="col-md-4 d-flex ftco-animate card shadow-sm mr-3 mb-5 ml-3 card-blog">
                             <div class="blog-entry justify-content-end">
                                 <a href="blog-single.html" class="block-20"
                                     style="background-image: url('{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}');"></a>

@@ -180,7 +180,7 @@ a:hover {
     color: #0056b3;
     text-decoration: underline;
 }
-.card-blog:hover{
+.card-blog:hover {
     box-shadow: 0 1rem 2rem rgba(23, 23, 23, 0.175) !important;
     transition: all 1s;
 }
@@ -10835,7 +10835,7 @@ h5,
     background: #01d28e !important;
 }
 .ftco-navbar-light .navbar-nav > .nav-item.active > a {
-    color: #007bff;    
+    color: #007bff;
     border-bottom: 4px solid;
     border-radius: 0;
 }
@@ -11401,8 +11401,18 @@ h5,
     transition: transform 0.4s ease; /* Slightly slower zoom effect */
 }
 
+.img-category {
+    width: 100%;
+    height: 300px; /* Taller image for more emphasis */
+    object-fit: cover; /* Ensure the image fits within bounds */
+    transition: transform 0.4s ease; /* Slightly slower zoom effect */
+}
+
 /* Image zoom on hover */
 .car-wrap:hover .img {
+    transform: scale(1.08); /* More pronounced zoom */
+}
+.car-wrap:hover .img-category {
     transform: scale(1.08); /* More pronounced zoom */
 }
 
@@ -11413,7 +11423,7 @@ h5,
     border-top: 1px solid #eee;
 }
 .title {
-    font: normal 37px/44px "ProximaNova-Regular", "Open Sans", sans-serif;
+    font: normal 24px "ProximaNova-Regular", "Open Sans", sans-serif;
     text-transform: uppercase;
 }
 .align-text-center {
@@ -11488,6 +11498,9 @@ h5,
     .car-wrap .img {
         height: 250px; /* Reduced height for smaller screens */
     }
+    .car-wrap .img-category {
+        height: 250px; /* Reduced height for smaller screens */
+    }
 
     .car-wrap .text h2 {
         font-size: 20px; /* Slightly smaller titles on mobile */
@@ -11495,6 +11508,15 @@ h5,
 
     .car-wrap .text .price {
         font-size: 22px;
+    }
+    .mt-large-mobile {
+        margin-top: 200px; /* Puedes ajustar el valor según lo necesites */
+    }
+    .text-service-center {
+        text-align: center;
+    }
+    .align-service-center {
+        align-items: center;
     }
 }
 
@@ -11539,7 +11561,7 @@ h5,
     color: rgba(0, 0, 0, 0.4) !important;
 }
 .nav-pills li a.active {
-    color: #023b9d  !important;
+    color: #023b9d !important;
     background: transparent !important;
     border-bottom: 4px solid;
     border-radius: 0;
@@ -11844,7 +11866,7 @@ h5,
 }
 .services-wrap .heading-section {
     font-size: 24px;
-    font-weight: 600;
+    font: normal "ProximaNova-Regular", "Open Sans", sans-serif;
 }
 
 .services .icon {
@@ -13425,4 +13447,41 @@ textarea.form-control {
     padding-top: 10px;
     padding-bottom: 10px;
     background-color: red;
+}
+/* Estilos para el menú fullscreen */
+.fullscreen-menu {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+/* Mostrar el menú cuando tiene la clase 'active' */
+.fullscreen-menu.active {
+    display: block;
+    opacity: 1;
+}
+
+/* Estilo para el botón de cerrar */
+.close-button {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    font-size: 30px;
+    cursor: pointer;
+}
+
+/* Estilos para el contenido del menú */
+.menu-content {
+    padding: 50px;
+    text-align: center;
+}
+.bg-gray-200 {
+    background-color: #f0f2f5 !important;
 }
