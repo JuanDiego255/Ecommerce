@@ -88,17 +88,7 @@
                                 <div class="col-md-12 d-flex align-items-center text-center">
                                     <div class="services-wrap rounded-right w-100">
                                         <div class="row d-flex mb-4">
-                                            <div class="col-md-4 d-flex align-self-stretch ftco-animate">
-                                                <div class="services w-100 text-center">
-                                                    <div class="icon d-flex align-items-center justify-content-center"><span
-                                                            class="flaticon-diesel"></span></div>
-                                                    <div class="text w-100">
-                                                        <h3 class="heading mb-2">Tamaño del tanque:
-                                                            {{ $details->capacidad_tanque != '' ? $details->capacidad_tanque . ' L' : '--' }}
-                                                        </h3>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            
                                             <div class="col-md-4 d-flex align-self-stretch ftco-animate">
                                                 <div class="services w-100 text-center">
                                                     <div class="icon d-flex align-items-center justify-content-center"><span
@@ -131,17 +121,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 d-flex align-self-stretch ftco-animate">
-                                                <div class="services w-100 text-center">
-                                                    <div class="icon d-flex align-items-center justify-content-center">
-                                                        <span class="flaticon-suv"></span>
-                                                    </div>
-                                                    <div class="text w-100">
-                                                        <h3 class="heading mb-2">Llantas:
-                                                            {{ $details->llantas != '' ? $details->llantas : '--' }}</h3>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            
                                             <div class="col-md-4 d-flex align-self-stretch ftco-animate">
                                                 <div class="services w-100 text-center">
                                                     <div class="icon d-flex align-items-center justify-content-center">
@@ -174,6 +154,30 @@
                                                     <div class="text w-100">
                                                         <h3 class="heading mb-2">Modelo o año:
                                                             {{ $details->modelo != '' ? $details->modelo : '--' }}
+                                                        </h3>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 d-flex align-self-stretch ftco-animate">
+                                                <div class="services w-100 text-center">
+                                                    <div class="icon d-flex align-items-center justify-content-center">
+                                                        <span class="flaticon-pistons"></span>
+                                                    </div>
+                                                    <div class="text w-100">
+                                                        <h3 class="heading mb-2">Transmisión:
+                                                            {{ $details->transmision != '' ? $details->transmision : '--' }}
+                                                        </h3>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 d-flex align-self-stretch ftco-animate">
+                                                <div class="services w-100 text-center">
+                                                    <div class="icon d-flex align-items-center justify-content-center">
+                                                        <span class="flaticon-suv"></span>
+                                                    </div>
+                                                    <div class="text w-100">
+                                                        <h3 class="heading mb-2">Tracción:
+                                                            {{ $details->traccion != '' ? $details->traccion : '--' }}
                                                         </h3>
                                                     </div>
                                                 </div>

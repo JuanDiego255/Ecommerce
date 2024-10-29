@@ -28893,6 +28893,14 @@ input.card {
   background-color: #FAAA0B;
   background-position: center;
 }
+.main-container-ag::before {
+  content: "";
+  height: 235px;
+  width: 100%;
+  position: fixed;
+  background-color: #023b9d;
+  background-position: center;
+}
 
 .main-container-front::before {
   content: "";
