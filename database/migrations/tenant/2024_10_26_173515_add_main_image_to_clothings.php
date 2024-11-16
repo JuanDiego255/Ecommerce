@@ -13,7 +13,7 @@ class AddMainImageToClothings extends Migration
      */
     public function up()
     {
-        Schema::table('clothings', function (Blueprint $table) {
+        Schema::table('clothing', function (Blueprint $table) {
             //
             $table->string('main_image')->nullable();
         });

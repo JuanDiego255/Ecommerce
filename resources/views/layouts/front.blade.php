@@ -57,210 +57,268 @@
     </style>
 @endif
 
-
-
-<body class="g-sidenav-show  bg-gray-200">
-    @include('frontend.website.add-comment')
-    <div class="{{ $view_name == 'frontend_blog_show-articles' ? 'main-container-front' : '' }}">
-        <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
-
-            <div>
-                @if (isset($tenantinfo->tenant) && $tenantinfo->tenant != 'main')
-                    @switch($tenantinfo->kind_business)
-                        @case(1)
-                            @include('layouts.inc.frontcar')
-                        @break
-
-                        @case(2)
-                        @case(3)
-                            @include('layouts.inc.websites.frontnavbar')
-                        @break
-
-                        @default
-                            @include('layouts.inc.frontnavbar')
-                    @endswitch
-                @else
-                    @include('layouts.inc.centralnavbar')
-                @endif
-
-                @yield('content')
-                @include('layouts.inc.social-footer')
-            </div>
-        </main>
+    <div class="initial-snow">
+        <div class="snow">&#10052;</div>
+        <div class="snow">&#10052;</div>
+        <div class="snow">&#10052;</div>
+        <div class="snow">&#10052;</div>
+        <div class="snow">&#10052;</div>
+        <div class="snow">&#10052;</div>
+        <div class="snow">&#10052;</div>
+        <div class="snow">&#10052;</div>
+        <div class="snow">&#10052;</div>
+        <div class="snow">&#10052;</div>
+        <div class="snow">&#10052;</div>
+        <div class="snow">&#10052;</div>
+        <div class="snow">&#10052;</div>
+        <div class="snow">&#10052;</div>
+        <div class="snow">&#10052;</div>
+        <div class="snow">&#10052;</div>
+        <div class="snow">&#10052;</div>
+        <div class="snow">&#10052;</div>
+        <div class="snow">&#10052;</div>
+        <div class="snow">&#10052;</div>
+        <div class="snow">&#10052;</div>
+        <div class="snow">&#10052;</div>
+        <div class="snow">&#10052;</div>
+        <div class="snow">&#10052;</div>
+        <div class="snow">&#10052;</div>
+        <div class="snow">&#10052;</div>
+        <div class="snow">&#10052;</div>
+        <div class="snow">&#10052;</div>
+        <div class="snow">&#10052;</div>
+        <div class="snow">&#10052;</div>
+        <div class="snow">&#10052;</div>
+        <div class="snow">&#10052;</div>
+        <div class="snow">&#10052;</div>
+        <div class="snow">&#10052;</div>
+        <div class="snow">&#10052;</div>
+        <div class="snow">&#10052;</div>
+        <div class="snow">&#10052;</div>
+        <div class="snow">&#10052;</div>
+        <div class="snow">&#10052;</div>
+        <div class="snow">&#10052;</div>
+        <div class="snow">&#10052;</div>
+        <div class="snow">&#10052;</div>
+        <div class="snow">&#10052;</div>
+        <div class="snow">&#10052;</div>
+        <div class="snow">&#10052;</div>
+        <div class="snow">&#10052;</div>
+        <div class="snow">&#10052;</div>
+        <div class="snow">&#10052;</div>
+        <div class="snow">&#10052;</div>
+        <div class="snow">&#10052;</div>
     </div>
 
+    <body class="g-sidenav-show  bg-gray-200">
+        @include('frontend.website.add-comment')
+        <div class="{{ $view_name == 'frontend_blog_show-articles' ? 'main-container-front' : '' }}">
+            <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
 
-    <script src="{{ asset('js/popper.min.js') }}" defer></script>
-    <script src="{{ asset('js/bootstrap.min.js') }}" defer></script>
-    <script src="{{ asset('js/perfect-scrollbar.min.js') }}" defer></script>
-    <script src="{{ asset('js/smooth-scrollbar.min.js') }}" defer></script>
-    <script src="{{ asset('js/chartjs.min.js') }}" defer></script>
-    <script async defer src="https://buttons.github.io/buttons.js"></script>
+                <div>
+                    @if (isset($tenantinfo->tenant) && $tenantinfo->tenant != 'main')
+                        @switch($tenantinfo->kind_business)
+                            @case(1)
+                                @include('layouts.inc.frontcar')
+                            @break
 
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="{{ asset('frontend/js/jquery-3.6.0.min.js') }}"></script>
-    <script src="{{ asset('frontend/js/owl.carousel.min.js') }}"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+                            @case(2)
+                            @case(3)
+                                @include('layouts.inc.websites.frontnavbar')
+                            @break
 
-    <script src="{{ asset('js/jquery.js') }}" defer></script>
-    @if (session('status'))
-        <script>
-            Swal.fire({
-                title: "{{ session('status') }}",
-                icon: "{{ session('icon') }}",
-            });
-        </script>
-    @endif
-    @if ($view_name != 'frontend_view-cart')
-        <script>
-            $(document).ready(function() {
-                $(document).on('click', '.btnQuantity', function(e) {
-                    e.preventDefault();
+                            @default
+                                @include('layouts.inc.frontnavbar')
+                        @endswitch
+                    @else
+                        @include('layouts.inc.centralnavbar')
+                    @endif
 
-                    var quantity = $(this).val();
-                    var itemId = $(this).data('cart-id');
+                    @yield('content')
+                    @include('layouts.inc.social-footer')
+                </div>
+            </main>
+        </div>
 
-                    $.ajaxSetup({
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        }
+
+        <script src="{{ asset('js/popper.min.js') }}" defer></script>
+        <script src="{{ asset('js/bootstrap.min.js') }}" defer></script>
+        <script src="{{ asset('js/perfect-scrollbar.min.js') }}" defer></script>
+        <script src="{{ asset('js/smooth-scrollbar.min.js') }}" defer></script>
+        <script src="{{ asset('js/chartjs.min.js') }}" defer></script>
+        <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="{{ asset('frontend/js/jquery-3.6.0.min.js') }}"></script>
+        <script src="{{ asset('frontend/js/owl.carousel.min.js') }}"></script>
+        <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+        <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
+        <script src="{{ asset('js/jquery.js') }}" defer></script>
+        @if (session('status'))
+            <script>
+                Swal.fire({
+                    title: "{{ session('status') }}",
+                    icon: "{{ session('icon') }}",
+                });
+            </script>
+        @endif
+        @if ($view_name != 'frontend_view-cart')
+            <script>
+                $(document).ready(function() {
+                    $(document).on('click', '.btnQuantity', function(e) {
+                        e.preventDefault();
+
+                        var quantity = $(this).val();
+                        var itemId = $(this).data('cart-id');
+
+                        $.ajaxSetup({
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            }
+                        });
+
+                        $.ajax({
+                            method: "POST",
+                            url: "/edit-quantity",
+                            data: {
+                                'quantity': quantity,
+                                'cart_id': itemId,
+                            },
+                            success: function(response) {
+                                calcularTotal();
+                            }
+                        });
                     });
 
-                    $.ajax({
-                        method: "POST",
-                        url: "/edit-quantity",
-                        data: {
-                            'quantity': quantity,
-                            'cart_id': itemId,
-                        },
-                        success: function(response) {
-                            calcularTotal();
-                        }
-                    });
-                });
+                    $(document).on('click', '.btnDelete', function(e) {
+                        e.preventDefault();
 
-                $(document).on('click', '.btnDelete', function(e) {
-                    e.preventDefault();
+                        var itemId = $(this).data('item-id');
+                        let view_name = document.getElementById("view_name").value;
 
-                    var itemId = $(this).data('item-id');
-                    let view_name = document.getElementById("view_name").value;
-
-                    $.ajax({
-                        method: "POST",
-                        url: "/delete-item-cart/" + itemId,
-                        data: {
-                            _token: '{{ csrf_token() }}',
-                            _method: 'DELETE',
-                        },
-                        success: function(response) {
-                            getCart();
-                            var newCartNumber = response.cartNumber
-                            $('.badge').text(newCartNumber);
-                            $('.cartIcon').text(' ' + newCartNumber);
-                            if (response.refresh == true && view_name == "frontend_view-cart") {
-                                window.location.href = "{{ url('/') }}";
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            // Manejar errores si es necesario
-                            console.error(xhr.responseText);
-                        }
-                    });
-                });
-            });
-
-            function calcularTotal() {
-                let total = 0;
-                let total_cloth = 0;
-                let iva = parseFloat(document.getElementById("iva_tenant").value);
-                let total_iva = 0;
-                let you_save = 0;
-                // Obtener todos los elementos li que contienen los productos
-                const items = document.querySelectorAll('.py-3.border-bottom');
-
-                items.forEach((item) => {
-                    const precio = parseFloat(item.querySelector('.price').value);
-                    const discount = parseFloat(item.querySelector('.discount').value);
-                    const cantidad = parseInt(item.querySelector('.quantity').value);
-
-                    const subtotal = precio * cantidad;
-                    const subtotal_discount = discount * cantidad;
-                    you_save += subtotal_discount;
-                    total += subtotal;
-                });
-
-                total_iva = total * iva;
-                total_cloth = total;
-                total = total + total_iva;
-
-                // Mostrar el total actualizado en los elementos correspondientes
-                var divDescuento = $(
-                    '#descuento'
-                );
-                const totalElement = document.getElementById('totalPriceElement');
-                const totalIvaElement = document.getElementById('totalIvaElement');
-                const totalDiscountElement = document.getElementById('totalDiscountElement');
-                const totalCloth = document.getElementById('totalCloth');
-
-                totalElement.textContent = `₡${total.toLocaleString()}`;
-                if (total_iva > 0) {
-                    totalIvaElement.textContent = `₡${total_iva.toLocaleString()}`;
-                }
-                if (you_save > 0) {
-                    divDescuento.removeClass('d-none');
-                    totalDiscountElement.textContent = `₡${you_save.toLocaleString()}`;
-                } else {
-                    divDescuento.addClass('d-none');
-                }
-                totalCloth.textContent = `₡${total_cloth.toLocaleString()}`;
-            }
-
-            var isAuthenticated = {{ Auth::check() ? 'true' : 'false' }};
-            var isMayor = {{ Auth::check() && Auth::user()->mayor == '1' ? 'true' : 'false' }};
-
-            function getCart() {
-                // Nueva solicitud AJAX para cargar el contenido del carrito actualizado
-                $.ajax({
-                    method: "GET",
-                    url: "/get-cart-items", // Cambia esto por la ruta que devuelve los elementos del carrito
-                    success: function(cartItems) {
-                        // Limpiar la lista actual
-                        $('.productsList').empty();
-                        var imageBaseUrl = $('#modalMiniCart').data('image-base-url');
-
-                        // Recorrer los elementos del carrito y agregarlos al modal
-                        cartItems.forEach(function(item) {
-                            var precio = item.price;
-                            if (item.custom_size && item.stock_price > 0) {
-                                precio = item.stock_price;
-                            }
-                            if (isAuthenticated === 'true' && isMayor === 'true' && item.user_mayor &&
-                                item.mayor_price > 0) {
-                                precio = item.mayor_price;
-                            }
-                            var descuentoPorcentaje = item.discount;
-                            // Calcular el descuento
-                            var descuento = (precio * descuentoPorcentaje) / 100;
-                            // Calcular el precio con el descuento aplicado
-                            var precioConDescuento = precio - descuento;
-                            var imageUrl = imageBaseUrl + '/' + item.image;
-
-                            // Separar los atributos y valores
-                            var attributesValues = item.attributes_values.split(', ');
-                            var attributesHtml = attributesValues.map(function(attributeValue) {
-                                var [attribute, value] = attributeValue.split(': ');
-                                var result;
-                                if (attribute === 'Stock') {
-                                    result = 'Predeterminado';
-                                } else {
-                                    result = `${attribute}: ${value}`;
+                        $.ajax({
+                            method: "POST",
+                            url: "/delete-item-cart/" + itemId,
+                            data: {
+                                _token: '{{ csrf_token() }}',
+                                _method: 'DELETE',
+                            },
+                            success: function(response) {
+                                getCart();
+                                var newCartNumber = response.cartNumber
+                                $('.badge').text(newCartNumber);
+                                $('.cartIcon').text(' ' + newCartNumber);
+                                if (response.refresh == true && view_name == "frontend_view-cart") {
+                                    window.location.href = "{{ url('/') }}";
                                 }
-                                return `<span>${result}</span><br>`;
+                            },
+                            error: function(xhr, status, error) {
+                                // Manejar errores si es necesario
+                                console.error(xhr.responseText);
+                            }
+                        });
+                    });
+                });
+                setTimeout(() => {
+                    document.querySelector('.initial-snow').classList.add('fade-out');
+                    setTimeout(() => {
+                        document.querySelector('.initial-snow').classList.add('stop-animation');
+                    }, 5000); // Espera 5 segundos para detener la animación completamente
+                }, 20000); // 20 segundos
 
-                            }).join('');
 
-                            var listItem = `<li class="py-3 border-bottom">
+                function calcularTotal() {
+                    let total = 0;
+                    let total_cloth = 0;
+                    let iva = parseFloat(document.getElementById("iva_tenant").value);
+                    let total_iva = 0;
+                    let you_save = 0;
+                    // Obtener todos los elementos li que contienen los productos
+                    const items = document.querySelectorAll('.py-3.border-bottom');
+
+                    items.forEach((item) => {
+                        const precio = parseFloat(item.querySelector('.price').value);
+                        const discount = parseFloat(item.querySelector('.discount').value);
+                        const cantidad = parseInt(item.querySelector('.quantity').value);
+
+                        const subtotal = precio * cantidad;
+                        const subtotal_discount = discount * cantidad;
+                        you_save += subtotal_discount;
+                        total += subtotal;
+                    });
+
+                    total_iva = total * iva;
+                    total_cloth = total;
+                    total = total + total_iva;
+
+                    // Mostrar el total actualizado en los elementos correspondientes
+                    var divDescuento = $(
+                        '#descuento'
+                    );
+                    const totalElement = document.getElementById('totalPriceElement');
+                    const totalIvaElement = document.getElementById('totalIvaElement');
+                    const totalDiscountElement = document.getElementById('totalDiscountElement');
+                    const totalCloth = document.getElementById('totalCloth');
+
+                    totalElement.textContent = `₡${total.toLocaleString()}`;
+                    if (total_iva > 0) {
+                        totalIvaElement.textContent = `₡${total_iva.toLocaleString()}`;
+                    }
+                    if (you_save > 0) {
+                        divDescuento.removeClass('d-none');
+                        totalDiscountElement.textContent = `₡${you_save.toLocaleString()}`;
+                    } else {
+                        divDescuento.addClass('d-none');
+                    }
+                    totalCloth.textContent = `₡${total_cloth.toLocaleString()}`;
+                }
+
+                var isAuthenticated = {{ Auth::check() ? 'true' : 'false' }};
+                var isMayor = {{ Auth::check() && Auth::user()->mayor == '1' ? 'true' : 'false' }};
+
+                function getCart() {
+                    // Nueva solicitud AJAX para cargar el contenido del carrito actualizado
+                    $.ajax({
+                        method: "GET",
+                        url: "/get-cart-items", // Cambia esto por la ruta que devuelve los elementos del carrito
+                        success: function(cartItems) {
+                            // Limpiar la lista actual
+                            $('.productsList').empty();
+                            var imageBaseUrl = $('#modalMiniCart').data('image-base-url');
+
+                            // Recorrer los elementos del carrito y agregarlos al modal
+                            cartItems.forEach(function(item) {
+                                var precio = item.price;
+                                if (item.custom_size && item.stock_price > 0) {
+                                    precio = item.stock_price;
+                                }
+                                if (isAuthenticated === 'true' && isMayor === 'true' && item.user_mayor &&
+                                    item.mayor_price > 0) {
+                                    precio = item.mayor_price;
+                                }
+                                var descuentoPorcentaje = item.discount;
+                                // Calcular el descuento
+                                var descuento = (precio * descuentoPorcentaje) / 100;
+                                // Calcular el precio con el descuento aplicado
+                                var precioConDescuento = precio - descuento;
+                                var imageUrl = imageBaseUrl + '/' + item.image;
+
+                                // Separar los atributos y valores
+                                var attributesValues = item.attributes_values.split(', ');
+                                var attributesHtml = attributesValues.map(function(attributeValue) {
+                                    var [attribute, value] = attributeValue.split(': ');
+                                    var result;
+                                    if (attribute === 'Stock') {
+                                        result = 'Predeterminado';
+                                    } else {
+                                        result = `${attribute}: ${value}`;
+                                    }
+                                    return `<span>${result}</span><br>`;
+
+                                }).join('');
+
+                                var listItem = `<li class="py-3 border-bottom">
                                 <input type="hidden" name="prod_id" value="${item.id}" class="prod_id">
                                 <input type="hidden" class="price" value="${item.discount > 0 ? precioConDescuento : (isAuthenticated === 'true' && isMayor === 'true' && item.mayor_price > 0  ? item.mayor_price : (item.stock_price ? item.stock_price : item.price))}">
                          
@@ -296,25 +354,25 @@
                                 </div>
                             </li>`;
 
-                            $('.productsList').append(listItem);
-                        });
+                                $('.productsList').append(listItem);
+                            });
 
-                        calcularTotal();
-                        // Actualizar cualquier otro dato del carrito en el modal (subtotal, descuento, total, etc.)
-                    }
-                });
+                            calcularTotal();
+                            // Actualizar cualquier otro dato del carrito en el modal (subtotal, descuento, total, etc.)
+                        }
+                    });
 
-            }
+                }
+            </script>
+        @endif
+
+        @yield('scripts')
+
+        <script>
+            window.companyName = "{{ isset($tenantinfo->title) ? $tenantinfo->title : '' }}";
         </script>
-    @endif
-
-    @yield('scripts')
-
-    <script>
-        window.companyName = "{{ isset($tenantinfo->title) ? $tenantinfo->title : '' }}";
-    </script>
 
 
-</body>
+    </body>
 
 </html>
