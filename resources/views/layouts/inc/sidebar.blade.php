@@ -102,54 +102,48 @@
                         <span class="nav-link-text ms-1">Ventas</span>
                     </a>
                 </li>
-                <li class="nav-item {{ $tenantinfo->tenant == 'rutalimon' ? 'd-none' : 'd-block' }}">
-                    <a @if ($view_name == 'admin_buys_index-total') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
-                        href="{{ url('total-buys') }}">
+                <li class="nav-item">
+                    <a class="nav-link text-sidebar" href="javascript:void(0);">
                         <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
-                            <i class="material-icons opacity-10">savings</i>
+                            <i class="material-icons opacity-10">store</i>
                         </div>
-                        <span
-                            class="nav-link-text ms-1">{{ $tenantinfo->tenant == 'rutalimon' ? __('Reportes') : __('Registro de Ventas') }}</span>
+                        <span class="nav-link-text ms-1">Reportes</span>
                     </a>
+
+                    <!-- Lista desplegable de "Mi Negocio" -->
+                    <ul class="submenu">
+                        <li class="nav-item">
+                            <a href="{{ url('total-buys') }}" class="nav-link">
+                                <div
+                                    class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                                    <i class="material-icons opacity-10">arrow_right_alt</i>
+                                </div>
+                                Reporte Ventas
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ url('/report/stock') }}" class="nav-link">
+                                <div
+                                    class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                                    <i class="material-icons opacity-10">arrow_right_alt</i>
+                                </div>
+                                Reporte Inventario
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="{{ url('#') }}" class="nav-link">
+                                <div
+                                    class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                                    <i class="material-icons opacity-10">arrow_right_alt</i>
+                                </div>
+                                Rep. Categorías / Prod
+                            </a>
+                        </li>
+                    </ul>
                 </li>
             @endif
-            <li class="nav-item {{ $tenantinfo->tenant == 'rutalimon' ? 'd-block' : 'd-none' }}">
-                <a class="nav-link text-sidebar" href="javascript:void(0);">
-                    <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
-                        <i class="material-icons opacity-10">store</i>
-                    </div>
-                    <span class="nav-link-text ms-1">Reportes</span>
-                </a>
 
-                <!-- Lista desplegable de "Mi Negocio" -->
-                <ul class="submenu">
-                    <li class="nav-item">
-                        <a href="{{ url('total-buys') }}" class="nav-link">
-                            <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
-                                <i class="material-icons opacity-10">arrow_right_alt</i>
-                            </div>
-                            Reporte Ventas
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ url('/report/stock') }}" class="nav-link">
-                            <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
-                                <i class="material-icons opacity-10">arrow_right_alt</i>
-                            </div>
-                            Reporte Inventario
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a href="{{ url('#') }}" class="nav-link">
-                            <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
-                                <i class="material-icons opacity-10">arrow_right_alt</i>
-                            </div>
-                            Rep. Categorías / Prod
-                        </a>
-                    </li>
-                </ul>
-            </li>
             <li class="nav-item">
                 <a class="nav-link text-sidebar" href="javascript:void(0);">
                     <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
@@ -248,7 +242,8 @@
                 <ul class="submenu">
                     <li class="nav-item">
                         <a href="{{ url('#') }}" class="nav-link">
-                            <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                            <div
+                                class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
                                 <i class="material-icons opacity-10">arrow_right_alt</i>
                             </div>
                             Ingresos y Salidas
@@ -256,10 +251,11 @@
                     </li>
                     <li class="nav-item">
                         <a href="{{ url('#') }}" class="nav-link">
-                            <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                            <div
+                                class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
                                 <i class="material-icons opacity-10">arrow_right_alt</i>
                             </div>
-                           Movimientos usuarios
+                            Movimientos usuarios
                         </a>
                     </li>
                 </ul>

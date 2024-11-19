@@ -57,7 +57,7 @@
     </style>
 @endif
 
-    <div class="initial-snow">
+    {{-- <div class="initial-snow">
         <div class="snow">&#10052;</div>
         <div class="snow">&#10052;</div>
         <div class="snow">&#10052;</div>
@@ -108,7 +108,7 @@
         <div class="snow">&#10052;</div>
         <div class="snow">&#10052;</div>
         <div class="snow">&#10052;</div>
-    </div>
+    </div> --}}
 
     <body class="g-sidenav-show  bg-gray-200">
         @include('frontend.website.add-comment')
