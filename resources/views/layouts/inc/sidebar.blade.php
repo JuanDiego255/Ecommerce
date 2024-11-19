@@ -105,7 +105,7 @@
                 <li class="nav-item">
                     <a class="nav-link text-sidebar" href="javascript:void(0);">
                         <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
-                            <i class="material-icons opacity-10">store</i>
+                            <i class="material-icons opacity-10">description</i>
                         </div>
                         <span class="nav-link-text ms-1">Reportes</span>
                     </a>
@@ -225,7 +225,7 @@
                 <a @if ($view_name == 'admin_roles_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
                     href="{{ url('/roles') }}">
                     <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
-                        <i class="material-icons opacity-10">chat</i>
+                        <i class="material-icons opacity-10">admin_panel_settings</i>
                     </div>
                     <span class="nav-link-text ms-1">Mantenimiento de Roles</span>
                 </a>
@@ -233,7 +233,7 @@
             <li class="nav-item {{ $tenantinfo->tenant == 'rutalimon' ? 'd-block' : 'd-none' }}">
                 <a class="nav-link text-sidebar" href="javascript:void(0);">
                     <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
-                        <i class="material-icons opacity-10">store</i>
+                        <i class="material-icons opacity-10">history</i>
                     </div>
                     <span class="nav-link-text ms-1">Bitácoras</span>
                 </a>
@@ -264,7 +264,7 @@
                 <a @if ($view_name == 'admin_testimonial_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
                     href="{{ url('#') }}">
                     <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
-                        <i class="material-icons opacity-10">chat</i>
+                        <i class="material-icons opacity-10">info</i>
                     </div>
                     <span class="nav-link-text ms-1">Acerca De</span>
                 </a>
@@ -285,7 +285,7 @@
                 <a @if ($view_name == 'admin_testimonial_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
                     href="{{ url('#') }}">
                     <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
-                        <i class="material-icons opacity-10">chat</i>
+                        <i class="material-icons opacity-10">help</i>
                     </div>
                     <span class="nav-link-text ms-1">Ayuda</span>
                 </a>
