@@ -19,6 +19,7 @@ use App\Http\Controllers\GiftCardController;
 use App\Http\Controllers\MedicineResultController;
 use App\Http\Controllers\MetaTagsController;
 use App\Http\Controllers\PersonalUserController;
+use App\Http\Controllers\RolesController;
 use App\Http\Controllers\SellerController;
 use App\Http\Controllers\SizeController;
 use App\Http\Controllers\SocialNetworkController;
@@ -29,6 +30,7 @@ use App\Http\Controllers\TestimonialController;
 use App\Models\Attribute;
 use App\Models\MedicineResult;
 use App\Models\PersonalUser;
+use App\Models\Roles;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
@@ -172,6 +174,9 @@ Route::middleware([
             //Rutas para usuarios
             Route::get('/users', [UserController::class, 'index']);
             Route::post('user/mayor/{id}', [UserController::class, 'mayor']);
+            Route::put('user/{id}', [UserController::class, 'update']);            
+            Route::delete('delete-user/{id}', [UserController::class, 'destroy']);            
+            Route::get('user/{id}/edit', [UserController::class, 'edit']);
             //Rutas para departamentos
             Route::get('/departments', [DepartmentController::class, 'index']);
             Route::post('department/store', [DepartmentController::class, 'store']);
@@ -246,6 +251,15 @@ Route::middleware([
             Route::delete('delete-gift/{id}', [GiftCardController::class, 'destroy']);            
             Route::get('gift/{id}/edit', [GiftCardController::class, 'edit']); 
             Route::put('/approve-gift/{id}/{approved}', [GiftCardController::class, 'approve']);
+            //Rutas para roles
+            Route::get('/roles', [RolesController::class, 'index']);
+            Route::put('role/update/{id}', [RolesController::class, 'update']);            
+            Route::delete('delete/role/{id}', [RolesController::class, 'destroy']);            
+            Route::get('role/{id}/edit', [RolesController::class, 'edit']);
+            Route::get('/new-role/', [RolesController::class, 'add']);
+            Route::post('/role/store', [RolesController::class, 'store']);
+            //Rutas para reportes
+            Route::get('/report/stock', [ClothingCategoryController::class, 'reportStock']);
         });
     });
 

@@ -61,6 +61,29 @@ class ClothingCategoryController extends Controller
 
         return view('admin.clothing.index', compact('clothings', 'category_name', 'category_id', 'department_id'));
     }
+    public function reportStock()
+    {
+        $clothings = Cache::remember('clothings_report', $this->expirationTime, function () {
+            return DB::table('clothing')
+                ->join('pivot_clothing_categories', 'clothing.id', '=', 'pivot_clothing_categories.clothing_id')
+                ->join('categories', 'pivot_clothing_categories.category_id', '=', 'categories.id')
+                ->where('clothing.status', 1)
+                ->leftJoin('stocks', 'clothing.id', '=', 'stocks.clothing_id')
+                ->leftJoin('attributes', 'stocks.attr_id', '=', 'attributes.id')
+                ->leftJoin('product_images', function ($join) {
+                    $join->on('clothing.id', '=', 'product_images.clothing_id')->whereRaw('product_images.id = (
+                            SELECT MIN(id) FROM product_images
+                            WHERE product_images.clothing_id = clothing.id
+                        )');
+                })
+                ->select('categories.name as category', 'clothing.id as id', 'clothing.trending as trending', 'clothing.name as name', 'clothing.casa as casa', 'clothing.code as code', 'clothing.status as status', 'clothing.manage_stock as manage_stock', 'clothing.discount as discount', 'clothing.description as description', 'clothing.price as price', 'clothing.mayor_price as mayor_price', DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE 0 END) as total_stock'), DB::raw('GROUP_CONCAT(COALESCE(attributes.name, "")) AS available_attr'), DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'), DB::raw('GROUP_CONCAT(COALESCE(stocks.attr_id, "")) AS attr_id_per_size'), 'product_images.image as image')
+                ->groupBy('clothing.id', 'clothing.casa', 'clothing.mayor_price', 'clothing.discount', 'categories.name', 'clothing.code', 'clothing.status', 'clothing.manage_stock', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
+                ->orderBy('name', 'asc')
+                ->get();
+        });
+
+        return view('admin.reports.stock', compact('clothings'));
+    }
     public function add($id)
     {
         $category = Categories::find($id);
@@ -108,7 +131,7 @@ class ClothingCategoryController extends Controller
                     DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE 0 END) as total_stock'),
                     'product_images.image as image', // Obtener la primera imagen del producto
                 )
-                ->groupBy('clothing.id','clothing.main_image', 'clothing.horizontal_image', 'clothing.casa', 'clothing.name', 'clothing.manage_stock', 'clothing.code', 'clothing.can_buy', 'pivot_clothing_categories.category_id', 'categories.name', 'clothing.description', 'clothing.trending', 'clothing.price', 'clothing.mayor_price', 'clothing.meta_keywords', 'product_images.image', 'clothing.discount')
+                ->groupBy('clothing.id', 'clothing.main_image', 'clothing.horizontal_image', 'clothing.casa', 'clothing.name', 'clothing.manage_stock', 'clothing.code', 'clothing.can_buy', 'pivot_clothing_categories.category_id', 'categories.name', 'clothing.description', 'clothing.trending', 'clothing.price', 'clothing.mayor_price', 'clothing.meta_keywords', 'product_images.image', 'clothing.discount')
                 ->first();
         });
 
@@ -310,7 +333,7 @@ class ClothingCategoryController extends Controller
                 // Si la validación falla, redirecciona de vuelta al formulario con los errores
                 if (!$validator_attr->fails()) {
                     $count = 1;
-                    foreach ($prices_attr as $itemId => $precio) {                        
+                    foreach ($prices_attr as $itemId => $precio) {
                         $cantidad = $cantidades_attr[$itemId];
                         $correct_price = 0;
                         $attr_id = AttributeValue::where('attribute_values.id', $itemId)->join('attributes', 'attributes.id', '=', 'attribute_values.attribute_id')->select('attributes.id as attribute_id', 'attribute_values.id as value_id', 'attributes.main as main')->first();
@@ -318,18 +341,18 @@ class ClothingCategoryController extends Controller
                             $correct_price = $precio > 0 ? $precio : $request->price;
                         }
                         $correct_qty = $cantidad > 0 ? $cantidad : $request->stock;
-                        $this->updateAttr($id, $correct_qty, $correct_price, $attr_id->attribute_id, $itemId, $request->manage_stock,$count);
+                        $this->updateAttr($id, $correct_qty, $correct_price, $attr_id->attribute_id, $itemId, $request->manage_stock, $count);
                         $count++;
                     }
                 } else {
                     if ($updateAttr) {
                         $value = AttributeValue::where('attributes.name', 'Stock')->where('attribute_values.value', 'Automático')->join('attributes', 'attributes.id', '=', 'attribute_values.attribute_id')->select('attributes.id as attr_id', 'attribute_values.id as value_id')->first();
-                        $this->updateAttr($id, $request->stock, $request->price, $value->attr_id, $value->value_id, $request->manage_stock,1);
+                        $this->updateAttr($id, $request->stock, $request->price, $value->attr_id, $value->value_id, $request->manage_stock, 1);
                     }
                 }
             } else {
                 $value = AttributeValue::where('attributes.name', 'Stock')->where('attribute_values.value', 'Automático')->join('attributes', 'attributes.id', '=', 'attribute_values.attribute_id')->select('attributes.id as attr_id', 'attribute_values.id as value_id')->first();
-                $this->updateAttr($id, $request->stock, $request->price, $value->attr_id, $value->value_id, $request->manage_stock,1);
+                $this->updateAttr($id, $request->stock, $request->price, $value->attr_id, $value->value_id, $request->manage_stock, 1);
             }
 
             DB::commit();
@@ -462,7 +485,7 @@ class ClothingCategoryController extends Controller
                     // Si la validación falla, redirecciona de vuelta al formulario con los errores
                     if (!$validator_attr->fails()) {
                         $count = 1;
-                        foreach ($prices_attr as $itemId => $precio) {                           
+                        foreach ($prices_attr as $itemId => $precio) {
                             $cantidad = $cantidades_attr[$itemId];
                             $correct_price = 0;
                             $attr_id = AttributeValue::where('attribute_values.id', $itemId)->join('attributes', 'attributes.id', '=', 'attribute_values.attribute_id')->select('attributes.id as attribute_id', 'attribute_values.id as value_id', 'attributes.main as main')->first();
@@ -470,16 +493,16 @@ class ClothingCategoryController extends Controller
                                 $correct_price = $precio > 0 ? $precio : $request->price;
                             }
                             $correct_qty = $cantidad > 0 ? $cantidad : $request->stock;
-                            $this->processAttr($clothingId, $correct_qty, $correct_price, $attr_id->attribute_id, $itemId, $request->manage_stock,$count);
+                            $this->processAttr($clothingId, $correct_qty, $correct_price, $attr_id->attribute_id, $itemId, $request->manage_stock, $count);
                             $count++;
                         }
                     } else {
                         $value = AttributeValue::where('attributes.name', 'Stock')->where('attribute_values.value', 'Automático')->join('attributes', 'attributes.id', '=', 'attribute_values.attribute_id')->select('attributes.id as attr_id', 'attribute_values.id as value_id')->first();
-                        $this->processAttr($clothingId, $request->stock, $request->price, $value->attr_id, $value->value_id, $request->manage_stock,1);
+                        $this->processAttr($clothingId, $request->stock, $request->price, $value->attr_id, $value->value_id, $request->manage_stock, 1);
                     }
                 } else {
                     $value = AttributeValue::where('attributes.name', 'Stock')->where('attribute_values.value', 'Automático')->join('attributes', 'attributes.id', '=', 'attribute_values.attribute_id')->select('attributes.id as attr_id', 'attribute_values.id as value_id')->first();
-                    $this->processAttr($clothingId, $request->stock, $request->price, $value->attr_id, $value->value_id, $request->manage_stock,1);
+                    $this->processAttr($clothingId, $request->stock, $request->price, $value->attr_id, $value->value_id, $request->manage_stock, 1);
                 }
 
                 if ($break) {
@@ -503,11 +526,11 @@ class ClothingCategoryController extends Controller
             $clothing_category->clothing_id = $clothingId;
             $clothing_category->save();
             $masive = $request->filled('masive') ? 1 : 0;
-            $this->processAttr($clothingId, $request->stock, $request->price, $value->attr_id, $value->value_id, $request->manage_stock,1);
+            $this->processAttr($clothingId, $request->stock, $request->price, $value->attr_id, $value->value_id, $request->manage_stock, 1);
         }
         return $msg;
     }
-    public function processAttr($clothingId, $stock, $price = null, $attr_id, $value, $manage_stock,$order)
+    public function processAttr($clothingId, $stock, $price = null, $attr_id, $value, $manage_stock, $order)
     {
         $stock_size = new Stock();
         $stock_size->clothing_id = $clothingId;
@@ -518,7 +541,7 @@ class ClothingCategoryController extends Controller
         $stock_size->order = $order;
         $stock_size->save();
     }
-    public function updateAttr($id, $stock, $price = null, $attr_id, $value, $manage_stock,$order)
+    public function updateAttr($id, $stock, $price = null, $attr_id, $value, $manage_stock, $order)
     {
         $stock_size = Stock::where('clothing_id', $id)->where('attr_id', $attr_id)->where('value_attr', $value)->first();
         if ($stock_size === null) {

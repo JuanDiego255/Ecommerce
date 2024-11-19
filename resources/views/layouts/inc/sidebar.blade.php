@@ -1,3 +1,7 @@
+@php
+    $name_category = $tenantinfo->tenant == 'rutalimon' ? 'Mant. Categorías' : 'Categorías';
+    $name_atributos = $tenantinfo->tenant == 'rutalimon' ? 'Mant. Atributos' : 'Atributos';
+@endphp
 <aside
     class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3 bg-gradient-velvet"
     id="sidenav-main">
@@ -29,7 +33,8 @@
                         <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
                             <i class="material-icons opacity-10">inventory_2</i>
                         </div>
-                        <span class="nav-link-text ms-1">{{ __('Catálogo') }}</span>
+                        <span
+                            class="nav-link-text ms-1">{{ $tenantinfo->tenant == 'rutalimon' ? __('Mant. Catálogo / Inventario') : __('Catálogo') }}</span>
                     </a>
 
                     <!-- Lista desplegable de "Mi Negocio" -->
@@ -41,7 +46,7 @@
                                     class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
                                     <i class="material-icons opacity-10">arrow_right_alt</i>
                                 </div>
-                                {{ isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1 ? 'Categorías' : 'Departamentos' }}
+                                {{ isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1 ? $name_category : 'Departamentos' }}
                             </a>
                         </li>
                         <li class="nav-item">
@@ -50,7 +55,7 @@
                                     class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
                                     <i class="material-icons opacity-10">arrow_right_alt</i>
                                 </div>
-                                {{ __('Atributos') }}
+                                {{ $name_atributos }}
                             </a>
                         </li>
 
@@ -63,12 +68,12 @@
                         <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
                             <i class="material-icons opacity-10">photo_library</i>
                         </div>
-                        <span class="nav-link-text ms-1">Redes Sociales</span>
+                        <span
+                            class="nav-link-text ms-1">{{ $tenantinfo->tenant == 'rutalimon' ? __('Manejo de Redes Sociales') : __('Redes Sociales') }}</span>
                     </a>
                 </li>
             @endif
             @if (isset($tenantinfo->kind_business) && $tenantinfo->kind_business != 1)
-               
                 <li class="nav-item">
                     <a @if ($view_name == 'admin_buys_index' || $view_name == 'admin_buys_indexDetail') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
                         href="{{ url('buys-admin') }}">
@@ -84,7 +89,8 @@
                         <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
                             <i class="material-icons opacity-10">redeem</i>
                         </div>
-                        <span class="nav-link-text ms-1">Tarjetas de regalo</span>
+                        <span
+                            class="nav-link-text ms-1">{{ $tenantinfo->tenant == 'rutalimon' ? __('Gestión de Tarjetas de Regalo') : __('Tarjetas de Regalo') }}</span>
                     </a>
                 </li>
                 <li class="nav-item">
@@ -96,22 +102,61 @@
                         <span class="nav-link-text ms-1">Ventas</span>
                     </a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item {{ $tenantinfo->tenant == 'rutalimon' ? 'd-none' : 'd-block' }}">
                     <a @if ($view_name == 'admin_buys_index-total') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
                         href="{{ url('total-buys') }}">
                         <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
                             <i class="material-icons opacity-10">savings</i>
                         </div>
-                        <span class="nav-link-text ms-1">Registro de ventas</span>
+                        <span
+                            class="nav-link-text ms-1">{{ $tenantinfo->tenant == 'rutalimon' ? __('Reportes') : __('Registro de Ventas') }}</span>
                     </a>
                 </li>
             @endif
+            <li class="nav-item {{ $tenantinfo->tenant == 'rutalimon' ? 'd-block' : 'd-none' }}">
+                <a class="nav-link text-sidebar" href="javascript:void(0);">
+                    <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                        <i class="material-icons opacity-10">store</i>
+                    </div>
+                    <span class="nav-link-text ms-1">Reportes</span>
+                </a>
+
+                <!-- Lista desplegable de "Mi Negocio" -->
+                <ul class="submenu">
+                    <li class="nav-item">
+                        <a href="{{ url('total-buys') }}" class="nav-link">
+                            <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                                <i class="material-icons opacity-10">arrow_right_alt</i>
+                            </div>
+                            Reporte Ventas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url('/report/stock') }}" class="nav-link">
+                            <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                                <i class="material-icons opacity-10">arrow_right_alt</i>
+                            </div>
+                            Reporte Inventario
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="{{ url('#') }}" class="nav-link">
+                            <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                                <i class="material-icons opacity-10">arrow_right_alt</i>
+                            </div>
+                            Rep. Categorías / Prod
+                        </a>
+                    </li>
+                </ul>
+            </li>
             <li class="nav-item">
                 <a class="nav-link text-sidebar" href="javascript:void(0);">
                     <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="material-icons opacity-10">store</i>
                     </div>
-                    <span class="nav-link-text ms-1">Mi Negocio</span>
+                    <span
+                        class="nav-link-text ms-1">{{ $tenantinfo->tenant == 'rutalimon' ? __('Gestión del Negocio') : __('Mi Negocio') }}</span>
                 </a>
 
                 <!-- Lista desplegable de "Mi Negocio" -->
@@ -145,8 +190,6 @@
                     @endif
                 </ul>
             </li>
-
-
             <li class="nav-item">
                 <a @if ($view_name == 'admin_blog_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
                     href="{{ url('blog/indexadmin') }}">
@@ -162,10 +205,10 @@
                     <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="material-icons opacity-10">chat</i>
                     </div>
-                    <span class="nav-link-text ms-1">Testimonios</span>
+                    <span class="nav-link-text ms-1">Testimonios Clientes</span>
                 </a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item {{ $tenantinfo->tenant == 'rutalimon' ? 'd-none' : 'd-block' }}">
                 <a @if ($view_name == 'admin_adverts_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
                     href="{{ url('adverts') }}">
                     <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
@@ -180,10 +223,57 @@
                     <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="material-icons opacity-10">group</i>
                     </div>
-                    <span class="nav-link-text ms-1">Usuarios</span>
+                    <span
+                        class="nav-link-text ms-1">{{ $tenantinfo->tenant == 'rutalimon' ? __('Mantenimiento de usuarios') : __('Usuarios') }}</span>
                 </a>
             </li>
             <li class="nav-item">
+                <a @if ($view_name == 'admin_roles_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
+                    href="{{ url('/roles') }}">
+                    <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                        <i class="material-icons opacity-10">chat</i>
+                    </div>
+                    <span class="nav-link-text ms-1">Mantenimiento de Roles</span>
+                </a>
+            </li>
+            <li class="nav-item {{ $tenantinfo->tenant == 'rutalimon' ? 'd-block' : 'd-none' }}">
+                <a class="nav-link text-sidebar" href="javascript:void(0);">
+                    <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                        <i class="material-icons opacity-10">store</i>
+                    </div>
+                    <span class="nav-link-text ms-1">Bitácoras</span>
+                </a>
+
+                <!-- Lista desplegable de "Mi Negocio" -->
+                <ul class="submenu">
+                    <li class="nav-item">
+                        <a href="{{ url('#') }}" class="nav-link">
+                            <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                                <i class="material-icons opacity-10">arrow_right_alt</i>
+                            </div>
+                            Ingresos y Salidas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url('#') }}" class="nav-link">
+                            <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                                <i class="material-icons opacity-10">arrow_right_alt</i>
+                            </div>
+                           Movimientos usuarios
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item">
+                <a @if ($view_name == 'admin_testimonial_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
+                    href="{{ url('#') }}">
+                    <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                        <i class="material-icons opacity-10">chat</i>
+                    </div>
+                    <span class="nav-link-text ms-1">Acerca De</span>
+                </a>
+            </li>
+            <li class="nav-item {{ $tenantinfo->tenant == 'rutalimon' ? 'd-none' : 'd-block' }}">
                 <a @if (
                     $view_name == 'admin_metatags_index' ||
                         $view_name == 'admin_metatags_agregar' ||
@@ -195,7 +285,15 @@
                     <span class="nav-link-text ms-1">SEO Tools</span>
                 </a>
             </li>
-
+            <li class="nav-item">
+                <a @if ($view_name == 'admin_testimonial_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
+                    href="{{ url('#') }}">
+                    <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                        <i class="material-icons opacity-10">chat</i>
+                    </div>
+                    <span class="nav-link-text ms-1">Ayuda</span>
+                </a>
+            </li>
             @if (isset($tenantinfo->kind_business) && $tenantinfo->kind_business == 1)
                 <li class="nav-item">
                     <a @if ($view_name == 'admin_sellers_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
@@ -227,7 +325,6 @@
                     </a>
                 </li>
             @endif
-
         </ul>
     </div>
     <div class="sidenav-footer position-absolute w-100 bottom-0 ">

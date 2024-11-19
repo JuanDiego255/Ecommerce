@@ -258,18 +258,20 @@
                 @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
                     <div class="nav-menu-item">
                         <i class="fas fa-{{ $icon->categories }} me-3"></i><a class="color-menu"
-                            href="javascript:void(0);" id="toggleCategories">CATEGORIAS <i
-                                class="fa fa-arrow-circle-down ml-3"></i></a>
+                            href="javascript:void(0);"
+                            id="toggleCategories">{{ $tenantinfo->tenant == 'rutalimon' ? 'CATÁLOGO / CATEGORÍAS' : 'CATEGORÍAS' }}
+                            <i class="fa fa-arrow-circle-down ml-3"></i></a>
                         <div class="subcategories" id="categoriesDropdown">
                             <ul>
                                 <li class="item-submenu"><a href="{{ url('category/') }}" class="nav-submenu-item">
                                         <span class="alert-icon align-middle">
                                             <span class="material-icons text-md">label</span>
-                                        </span>TODAS LAS CATEGORIAS</a>
+                                        </span>{{ $tenantinfo->tenant == 'rutalimon' ? 'CATEGORÍAS' : 'TODAS LAS CATEGORIAS' }}</a>
                                 </li>
                                 @foreach ($categories as $item)
-                                    <li class="item-submenu"><a
-                                            href="{{ url('clothes-category/' . $item->category_id . '/' . $item->department_id) }}"
+                                    <li
+                                        class="item-submenu {{ $tenantinfo->tenant == 'rutalimon' ? 'd-none' : 'd-block' }}">
+                                        <a href="{{ url('clothes-category/' . $item->category_id . '/' . $item->department_id) }}"
                                             class="nav-submenu-item">
                                             <span class="alert-icon align-middle">
                                                 <span class="material-icons text-md">label</span>
@@ -294,7 +296,8 @@
                                         </span>TODOS LOS DEPARTAMENTOS</a>
                                 </li>
                                 @foreach ($departments as $department)
-                                    <li class="item-submenu">
+                                    <li
+                                        class="item-submenu {{ $tenantinfo->tenant == 'rutalimon' ? 'd-none' : 'd-block' }}">
                                         <a href="{{ url('category/' . $department->id) }}" class="nav-submenu-item">
                                             <span class="alert-icon align-middle">
                                                 <span class="material-icons text-md">label</span>
@@ -335,18 +338,20 @@
                 @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
                     <div class="nav-menu-item">
                         <i class="fa fa-{{ $icon->categories }} me-3"></i><a class="color-menu"
-                            href="javascript:void(0);" id="toggleCategories">CATEGORIAS <i
-                                class="fa fa-arrow-circle-down ml-3"></i></a>
+                            href="javascript:void(0);"
+                            id="toggleCategories">{{ $tenantinfo->tenant == 'rutalimon' ? 'CATÁLOGO / CATEGORÍAS' : 'CATEGORÍAS' }}
+                            <i class="fa fa-arrow-circle-down ml-3"></i></a>
                         <div class="subcategories" id="categoriesDropdown">
                             <ul>
                                 <li class="item-submenu"><a href="{{ url('category/') }}" class="nav-submenu-item">
                                         <span class="alert-icon align-middle">
                                             <span class="material-icons text-md">label</span>
-                                        </span>TODAS LAS CATEGORIAS</a>
+                                        </span>{{ $tenantinfo->tenant == 'rutalimon' ? 'CATEGORÍAS' : 'TODAS LAS CATEGORÍAS' }}</a>
                                 </li>
                                 @foreach ($categories as $item)
-                                    <li class="item-submenu"><a
-                                            href="{{ url('clothes-category/' . $item->category_id . '/' . $item->department_id) }}"
+                                    <li
+                                        class="item-submenu {{ $tenantinfo->tenant == 'rutalimon' ? 'd-none' : 'd-block' }}">
+                                        <a href="{{ url('clothes-category/' . $item->category_id . '/' . $item->department_id) }}"
                                             class="nav-submenu-item">
                                             <span class="alert-icon align-middle">
                                                 <span class="material-icons text-md">label</span>
@@ -405,16 +410,22 @@
                 <a href="{{ url('buys') }}" class="nav-menu-item"><i
                         class="fas fa-{{ $icon->shopping }} me-3"></i>MIS
                     COMPRAS</a>
-                <a href="{{ url('/index-gifts') }}" class="nav-menu-item"><i
-                        class="fas fa-gift me-3"></i>MIS
-                    TARJETAS</a>
-                <a href="{{ url('/address') }}" class="nav-menu-item"><i
+                <a href="{{ url('/index-gifts') }}" class="nav-menu-item"><i class="fas fa-gift me-3"></i>MIS
+                    TARJETAS DE REGALO</a>
+                <a href="{{ url('/address') }}"
+                    class="nav-menu-item {{ $tenantinfo->tenant == 'rutalimon' ? 'd-none' : 'd-block' }}"><i
                         class="fas fa-{{ $icon->address }} me-3"></i>DIRECCIONES</a>
+                <a href="{{ url('#') }}"
+                    class="nav-menu-item {{ $tenantinfo->tenant == 'rutalimon' ? 'd-block' : 'd-none' }}"><i
+                        class="fas fa-{{ $icon->address }} me-3"></i>ACERCA DE</a>
+                <a href="{{ url('#') }}"
+                    class="nav-menu-item {{ $tenantinfo->tenant == 'rutalimon' ? 'd-block' : 'd-none' }}"><i
+                        class="fas fa-{{ $icon->address }} me-3"></i>AYUDA</a>
 
                 <div class="nav-menu-item">
                     <a class="color-menu" href="javascript:void(0);" id="toggleLogout"><i
-                            class="fas fa-user-minus me-3"></i>{{ Auth::user()->name }} {{ Auth::user()->last_name }} <i
-                            class="fa fa-arrow-circle-down me-3"></i></a>
+                            class="fas fa-user-minus me-3"></i>{{ Auth::user()->name }} {{ Auth::user()->last_name }}
+                        <i class="fa fa-arrow-circle-down me-3"></i></a>
                     <div class="subLogout" id="logoutDropdown">
                         <ul>
                             <li class="item-submenu">

@@ -36,12 +36,16 @@
             <table id="table" class="table align-items-center mb-0">
                 <thead>
                     <tr>
+                        <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
+                            Acciones</th>
                         <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                             Usuario</th>
                         <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                             E-mail</th>
                         <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                             Teléfono</th>
+                        <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
+                            Rol</th>
                         @if (isset($tenantinfo->tenant) && $tenantinfo->tenant === 'torres')
                             <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                 Al por mayor</th>
@@ -51,7 +55,24 @@
                 <tbody>
                     @foreach ($users as $user)
                         <tr>
-
+                            <td class="align-middle">
+                                <form name="delete-user{{ $user->id }}" id="delete-user{{ $user->id }}"
+                                    method="post" action="{{ url('/delete-user/' . $user->id) }}">
+                                    {{ csrf_field() }}
+                                    {{ method_field('DELETE') }}
+                                </form>
+                                <button form="delete-user{{ $user->id }}" type="submit"
+                                    onclick="return confirm('Deseas borrar este usuario?')"
+                                    class="btn btn-link text-velvet ms-auto border-0" data-bs-toggle="tooltip"
+                                    data-bs-placement="bottom" title="Eliminar">
+                                    <i class="material-icons text-lg">delete</i>
+                                </button>
+                                <a class="btn btn-link text-velvet me-auto border-0"
+                                    href="{{ url('/user/' . $user->id . '/edit') }}" data-bs-toggle="tooltip"
+                                    data-bs-placement="bottom" title="Editar">
+                                    <i class="material-icons text-lg">edit</i>
+                                </a>
+                            </td>
                             <td class="align-middle text-xxs text-center">
                                 <p class=" font-weight-bold mb-0">{{ $user->name }}</p>
                             </td>
@@ -60,6 +81,9 @@
                             </td>
                             <td class="align-middle text-xxs text-center">
                                 <p class=" font-weight-bold mb-0">{{ $user->telephone }}</p>
+                            </td>
+                            <td class="align-middle text-xxs text-center">
+                                <p class=" font-weight-bold mb-0">{{ $user->role_as == 1 ? 'Admin' : 'Cliente' }}</p>
                             </td>
                             @if (isset($tenantinfo->tenant) && $tenantinfo->tenant === 'torres')
                                 <form id="myForm" action="{{ url('user/mayor/' . $user->id) }}" method="POST">

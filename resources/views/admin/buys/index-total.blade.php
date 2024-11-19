@@ -152,6 +152,25 @@
                                 @endforeach
 
                             </tbody>
+                            <tfoot class="bg-light">
+                                <tr>
+                                    <th class="align-middle text-xxs text-center">
+                                        <p class=" font-weight-bold mb-0">Total:</p>
+                                    </th>
+                                    <th class="align-middle text-center">
+                                        <p class=" font-weight-bold mb-0" id="totalSales"></p>
+                                    </th>
+                                    <th class="align-middle text-center">
+                                        <p class=" font-weight-bold mb-0" id="totalShipping"></p>
+                                    </th>
+                                    <th class="align-middle text-center">                                        
+                                    </th>
+                                    <th class="align-middle text-center">                                        
+                                    </th>
+                                    <th class="align-middle text-center">                                        
+                                    </th>
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
                 </div>
@@ -206,45 +225,106 @@
                     text: '<i class="fas fa-file-excel"></i> Excel',
                     titleAttr: 'Exportar a Excel',
                     className: 'btn btn-table',
-                    messageTop: 'Mi reporte personalizado de Excel',
-                    title: 'Reporte Excel'
+                    messageTop: 'Reporte de Ventas - Detalla todas las ventas, y el ingreso total.',
+                    title: 'Reporte de Ventas',
+                    footer: true
                 },
                 {
                     extend: 'pdfHtml5',
                     text: '<i class="fas fa-file-pdf"></i> PDF',
                     titleAttr: 'Exportar a PDF',
                     className: 'btn btn-table',
-                    messageTop: 'Mi reporte personalizado de PDF',
-                    // Opcionalmente, puedes agregar más configuración como la personalización del título:
-                    title: 'Reporte PDF'
+                    messageTop: 'Reporte de Ventas - Detalla todas las ventas, y el ingreso total.',
+                    title: 'Reporte de Ventas',
+                    footer: true,
+                    customize: function(doc) {
+                        // Verificar que doc.content existe
+                        if (doc.content && Array.isArray(doc.content)) {
+                            // Buscar la tabla en el contenido
+                            doc.content.forEach(function(contentItem) {
+                                if (contentItem.table && contentItem.table.body) {
+                                    // Reemplazar el símbolo ₡ con el equivalente Unicode
+                                    contentItem.table.body.forEach(function(row) {
+                                        row.forEach(function(cell, index) {
+                                            if (typeof cell.text === 'string') {
+                                                cell.text = cell.text.replace(/₡/g,
+                                                    ''
+                                                    ); // Reemplazar ₡ con Unicode
+                                            }
+                                        });
+                                    });
+                                }
+                            });
+                        }
+                    }
                 }
             ],
             dom: 'Bfrtip', // Para colocar los botones
-            "language": {
-                "sProcessing": "Procesando...",
-                "sLengthMenu": "Mostrar _MENU_ registros",
-                "sZeroRecords": "No se encontraron resultados",
-                "sEmptyTable": "Ningún dato disponible en esta tabla",
-                "sInfo": "Mostrando _START_ a _END_ de _TOTAL_ registros",
-                "sInfoEmpty": "Mostrando 0 a 0 de 0 registros",
-                "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
-                "sInfoPostFix": "",
-                "sSearch": "Buscar:",
-                "sUrl": "",
-                "sInfoThousands": ",",
-                "sLoadingRecords": "Cargando...",
-                "oPaginate": {
-                    "sFirst": "<<",
-                    "sLast": "Último",
-                    "sNext": ">>",
-                    "sPrevious": "<<"
-                },
-                "oAria": {
-                    "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
-                    "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+            language: {
+                sProcessing: "Procesando...",
+                sLengthMenu: "Mostrar _MENU_ registros",
+                sZeroRecords: "No se encontraron resultados",
+                sEmptyTable: "Ningún dato disponible en esta tabla",
+                sInfo: "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                sInfoEmpty: "Mostrando 0 a 0 de 0 registros",
+                sInfoFiltered: "(filtrado de un total de _MAX_ registros)",
+                sSearch: "Buscar:",
+                oPaginate: {
+                    sFirst: "<<",
+                    sLast: "Último",
+                    sNext: ">>",
+                    sPrevious: "<<"
                 }
+            },
+            footerCallback: function(row, data, start, end, display) {
+                var api = this.api();
+
+                // Función para limpiar el símbolo de colones y separadores
+                var cleanNumber = function(value) {
+                    if (!value) {
+                        return 0; // Si el valor es nulo, indefinido o vacío, retornar 0
+                    }
+                    if (typeof value !== 'string') {
+                        value = value.toString(); // Asegurarse de que sea una cadena
+                    }
+                    // Eliminar símbolo de colones y separadores de miles
+                    return parseFloat(value.replace(/[₡,]/g, '')) || 0;
+                };
+
+                // Calcula el total de la columna de ventas (extrae texto y limpia)
+                var totalSales = api
+                    .column(1, {
+                        page: 'current'
+                    })
+                    .data()
+                    .map(function(data) {
+                        // Extraer solo el texto, sin etiquetas HTML
+                        return $(data).text();
+                    })
+                    .reduce(function(a, b) {
+                        return cleanNumber(a) + cleanNumber(b);
+                    }, 0);
+
+                // Calcula el total de la columna de envíos (extrae texto y limpia)
+                var totalShipping = api
+                    .column(2, {
+                        page: 'current'
+                    })
+                    .data()
+                    .map(function(data) {
+                        // Extraer solo el texto, sin etiquetas HTML
+                        return $(data).text();
+                    })
+                    .reduce(function(a, b) {
+                        return cleanNumber(a) + cleanNumber(b);
+                    }, 0);
+
+                // Actualiza los valores en el footer con formato
+                $(api.column(1).footer()).html(`₡${totalSales.toLocaleString()}`);
+                $(api.column(2).footer()).html(`₡${totalShipping.toLocaleString()}`);
             }
         });
+
 
         $('#recordsPerPage').on('change', function() {
             var recordsPerPage = parseInt($(this).val());
