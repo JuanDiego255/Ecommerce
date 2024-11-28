@@ -7,7 +7,8 @@
     <input type="hidden" value="{{ $showModal }}" name="showModalComment" id="showModalComment">
     @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
         @if ($category_black_friday)
-            <a href="{{ url('clothes-category/' . $category_black_friday->category_id . '/' . $category_black_friday->department_id) }}">
+            <a
+                href="{{ url('clothes-category/' . $category_black_friday->category_id . '/' . $category_black_friday->department_id) }}">
                 <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
                     <div class="carousel-inner mb-1 foto">
                         <div class="carousel-item active">
@@ -21,8 +22,9 @@
             </a>
         @endif
     @else
-        @if ($department_black_friday)
-            <a href="{{ url('category/' . $department_black_friday->id) }}">
+        @if ($department_black_friday && $category_black_friday)
+            <a
+                href="{{ url('clothes-category/' . $category_black_friday->category_id . '/' . $department_black_friday->id) }}">
                 <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
                     <div class="carousel-inner mb-1 foto">
                         <div class="carousel-item active">
