@@ -95,6 +95,7 @@ class FrontendController extends Controller
                     'categories.id as category_id',
                     'categories.image as image',
                     'categories.name as name',
+                    'categories.black_friday as black_friday'
                 )->orderBy('categories.name', 'asc')
                 ->take(7)
                 ->get();

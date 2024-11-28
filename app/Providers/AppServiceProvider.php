@@ -63,6 +63,7 @@ class AppServiceProvider extends ServiceProvider
                     'departments.id as department_id',
                     'categories.id as category_id',
                     'categories.name as name',
+                    'categories.black_friday as black_friday'
                 )
                 ->orderBy('categories.name', 'asc')
                 ->get();
@@ -93,6 +94,18 @@ class AppServiceProvider extends ServiceProvider
             $department_black_friday = Department::where('department', '!=', 'Default')
                 ->where('black_friday', 1)
                 ->with('categories')
+                ->first();
+
+
+            $category_black_friday = Categories::where('categories.black_friday', 1)
+                ->join('departments', 'categories.department_id', 'departments.id')
+                ->select(
+                    'departments.id as department_id',
+                    'categories.id as category_id',
+                    'categories.image as image',
+                    'categories.name as name',
+                    'categories.black_friday as black_friday'
+                )
                 ->first();
 
             $clothings_offer = ClothingCategory::where('categories.name', 'Sale')
@@ -323,7 +336,8 @@ class AppServiceProvider extends ServiceProvider
                 'iva' => $iva,
                 'total_price' => $total_price,
                 'you_save' => $you_save,
-                'department_black_friday' => $department_black_friday
+                'department_black_friday' => $department_black_friday,
+                'category_black_friday' => $category_black_friday
             ]);
         });
     }

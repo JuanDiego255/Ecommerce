@@ -5,20 +5,38 @@
 @endsection
 @section('content')
     <input type="hidden" value="{{ $showModal }}" name="showModalComment" id="showModalComment">
-    @if ($department_black_friday)
-        <a href="{{ url('category/' . $department_black_friday->id) }}">
-            <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
-                <div class="carousel-inner mb-1 foto">
-                    <div class="carousel-item active">
-                        <div class="page-header min-vh-75 m-3"
-                            style="background-image: url('{{ tenant_asset('/') . '/' . $department_black_friday->image }}');">
-                            <span class="bg-gradient-dark"></span>
+    @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
+        @if ($category_black_friday)
+            <a href="{{ url('clothes-category/' . $category_black_friday->category_id . '/' . $category_black_friday->department_id) }}">
+                <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner mb-1 foto">
+                        <div class="carousel-item active">
+                            <div class="page-header min-vh-75 m-3"
+                                style="background-image: url('{{ tenant_asset('/') . '/' . $category_black_friday->image }}');">
+                                <span class="bg-gradient-dark"></span>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </a>
+            </a>
+        @endif
+    @else
+        @if ($department_black_friday)
+            <a href="{{ url('category/' . $department_black_friday->id) }}">
+                <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner mb-1 foto">
+                        <div class="carousel-item active">
+                            <div class="page-header min-vh-75 m-3"
+                                style="background-image: url('{{ tenant_asset('/') . '/' . $department_black_friday->image }}');">
+                                <span class="bg-gradient-dark"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        @endif
     @endif
+
     @if (count($tenantcarousel) != 0)
         <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
             <div class="carousel-inner mb-1 foto">
