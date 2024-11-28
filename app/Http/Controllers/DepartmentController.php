@@ -38,6 +38,7 @@ class DepartmentController extends Controller
             }
             
             $department->department = $request->department;
+            $department->black_friday = $request->black_friday == "1" ? '1' : '0';
             
             $department->save();
             DB::commit();
@@ -59,6 +60,7 @@ class DepartmentController extends Controller
                 $image = $request->file('image')->store('uploads', 'public');
                 $department->image = $image;
             }
+            $department->black_friday = $request->black_friday == "1" ? '1' : '0';
             $department->update();
             DB::commit();
             return redirect('departments')->with(['status', 'Departamento Editado Exitosamente!', 'icon' => 'success']);

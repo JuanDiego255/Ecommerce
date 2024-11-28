@@ -5,6 +5,20 @@
 @endsection
 @section('content')
     <input type="hidden" value="{{ $showModal }}" name="showModalComment" id="showModalComment">
+    @if ($department_black_friday)
+        <a href="{{ url('category/' . $department_black_friday->id) }}">
+            <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner mb-1 foto">
+                    <div class="carousel-item active">
+                        <div class="page-header min-vh-75 m-3"
+                            style="background-image: url('{{ tenant_asset('/') . '/' . $department_black_friday->image }}');">
+                            <span class="bg-gradient-dark"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </a>
+    @endif
     @if (count($tenantcarousel) != 0)
         <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
             <div class="carousel-inner mb-1 foto">
@@ -42,21 +56,23 @@
         @if (count($categories) != 0)
             <div class="row g-4 align-content-center card-group container-fluid mt-2 mb-5">
                 @foreach ($category as $key => $item)
-                    <div class="{{ $key + 1 > 3 ? 'col-md-3' : 'col-md-4' }} col-sm-6 mb-2">
-                        <div class="product-grid product_data">
-                            <div class="product-image">
-                                <img
-                                    src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
-                                <ul class="product-links">
-                                    <li><a target="blank" href="{{ tenant_asset('/') . '/' . $item->image }}"><i
-                                                class="fas fa-eye"></i></a></li>
-                                </ul>
-                                <a href="{{ url('clothes-category/' . $item->category_id . '/' . $item->department_id) }}"
-                                    class="add-to-cart">{{ $item->name }}</a>
-                            </div>
+                    @if ($item->black_friday != 1)
+                        <div class="{{ $key + 1 > 3 ? 'col-md-3' : 'col-md-4' }} col-sm-6 mb-2">
+                            <div class="product-grid product_data">
+                                <div class="product-image">
+                                    <img
+                                        src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
+                                    <ul class="product-links">
+                                        <li><a target="blank" href="{{ tenant_asset('/') . '/' . $item->image }}"><i
+                                                    class="fas fa-eye"></i></a></li>
+                                    </ul>
+                                    <a href="{{ url('clothes-category/' . $item->category_id . '/' . $item->department_id) }}"
+                                        class="add-to-cart">{{ $item->name }}</a>
+                                </div>
 
+                            </div>
                         </div>
-                    </div>
+                    @endif
                 @endforeach
             </div>
         @endif
@@ -64,21 +80,23 @@
         @if (count($departments) != 0)
             <div class="row row-cols-1 row-cols-md-3 g-4 align-content-center card-group container-fluid mt-2 mb-5">
                 @foreach ($departments as $item)
-                    <div class="col-md-4 col-sm-6 mb-2">
-                        <div class="product-grid product_data">
-                            <div class="product-image">
-                                <img
-                                    src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
-                                <ul class="product-links">
-                                    <li><a target="blank" href="{{ tenant_asset('/') . '/' . $item->image }}"><i
-                                                class="fas fa-eye"></i></a></li>
-                                </ul>
-                                <a href="{{ url('category/' . $item->id) }}" class="add-to-cart">Categorías -
-                                    {{ $item->department }}</a>
-                            </div>
+                    @if ($item->black_friday != 1)
+                        <div class="col-md-4 col-sm-6 mb-2">
+                            <div class="product-grid product_data">
+                                <div class="product-image">
+                                    <img
+                                        src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
+                                    <ul class="product-links">
+                                        <li><a target="blank" href="{{ tenant_asset('/') . '/' . $item->image }}"><i
+                                                    class="fas fa-eye"></i></a></li>
+                                    </ul>
+                                    <a href="{{ url('category/' . $item->id) }}" class="add-to-cart">Categorías -
+                                        {{ $item->department }}</a>
+                                </div>
 
+                            </div>
                         </div>
-                    </div>
+                    @endif
                 @endforeach
             </div>
         @endif
@@ -86,7 +104,8 @@
     {{-- Gift Cards --}}
     <div class="gift-card">
         <h1>Disfruta de la flexibilidad de nuestras tarjetas de regalo para canjear en cualquier producto.</h1>
-        <button type="button" data-bs-toggle="modal" data-bs-target="#gift-card-modal">Obtener Tarjeta de Regalo</button>
+        <button class="gift-button" type="button" data-bs-toggle="modal" data-bs-target="#gift-card-modal">Obtener Tarjeta
+            de Regalo</button>
     </div>
     @include('frontend.modals.gift-card')
     {{-- Trending --}}

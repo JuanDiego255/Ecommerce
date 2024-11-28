@@ -90,6 +90,11 @@ class AppServiceProvider extends ServiceProvider
                 ->orderBy('departments.department', 'asc')
                 ->get();
 
+            $department_black_friday = Department::where('department', '!=', 'Default')
+                ->where('black_friday', 1)
+                ->with('categories')
+                ->first();
+
             $clothings_offer = ClothingCategory::where('categories.name', 'Sale')
                 ->join('pivot_clothing_categories', 'clothing.id', '=', 'pivot_clothing_categories.clothing_id')
                 ->join('categories', 'pivot_clothing_categories.category_id', '=', 'categories.id')
@@ -317,7 +322,8 @@ class AppServiceProvider extends ServiceProvider
                 'cloth_price' => $cloth_price,
                 'iva' => $iva,
                 'total_price' => $total_price,
-                'you_save' => $you_save
+                'you_save' => $you_save,
+                'department_black_friday' => $department_black_friday
             ]);
         });
     }

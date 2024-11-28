@@ -74,6 +74,14 @@
                     </div> --}}
 
                 </div>
+                <div class="col-md-12 mb-3">
+                    <label>{{ __('Black Friday?') }}</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="1" id="black_friday"
+                            name="black_friday" {{ old('black_friday') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="customCheck1">{{ __('Black Friday') }}</label>
+                    </div>
+                </div>
                 <input type="hidden" value="0" id="status" name="status">
                 <input type="hidden" value="0" id="status" name="popular">
 

@@ -29716,7 +29716,7 @@ animation-iteration-count: infinite;
   margin-bottom: 20px;
   color: var(--title_text);
 }
-.gift-card button, .gift-button {
+.gift-button {
   background-color: var(--btn_cart);
   color: white;
   padding: 15px 30px;

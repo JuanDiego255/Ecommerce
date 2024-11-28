@@ -66,6 +66,7 @@ class CategoryController extends Controller
             $category->slug = $request->name;
             $category->description = $request->description;
             $category->status = $request->status == "1" ? '1' : '0';
+            $category->black_friday = $request->black_friday == "1" ? '1' : '0';
             $category->popular = $request->popular == "1" ? '1' : '0';
             $category->meta_title = $request->meta_title;
             $category->meta_descrip = $request->meta_descrip;
@@ -91,6 +92,7 @@ class CategoryController extends Controller
             $category->description = $request->description;
             $category->status = $request->status == "1" ? '1' : '0';
             $category->popular = $request->popular == "1" ? '1' : '0';
+            $category->black_friday = $request->black_friday == "1" ? '1' : '0';
             $category->meta_title = $request->meta_title;
             $category->meta_descrip = $request->meta_descrip;
             $category->meta_keywords = $request->meta_keywords;

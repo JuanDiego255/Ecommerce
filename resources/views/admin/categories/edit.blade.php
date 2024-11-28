@@ -65,6 +65,14 @@
                             <input class="form-control" type="file" name="image">
                         </div>
                     </div>
+                    <div class="col-md-12 mb-3">
+                        <label>{{ __('Black Friday?') }}</label>
+                        <div class="form-check">
+                            <input {{ $categories->black_friday == 1 ? 'checked' : '' }} class="form-check-input"
+                                type="checkbox" value="1" id="black_friday" name="black_friday">
+                            <label class="custom-control-label" for="customCheck1">{{ __('Black Friday') }}</label>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="col-md-12">
