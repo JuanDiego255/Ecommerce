@@ -45,7 +45,7 @@ class FrontendController extends Controller
             return ClothingCategory::where('clothing.trending', 1)
                 ->leftJoin('pivot_clothing_categories', 'clothing.id', '=', 'pivot_clothing_categories.clothing_id')
                 ->leftJoin('categories', 'pivot_clothing_categories.category_id', '=', 'categories.id')
-                ->join('clothing_details', 'clothing.id', 'clothing_details.clothing_id')
+                ->leftJoin('clothing_details', 'clothing.id', 'clothing_details.clothing_id')
                 ->leftJoin('stocks', 'clothing.id', 'stocks.clothing_id')
                 ->select(
                     'categories.name as category',
