@@ -8,7 +8,7 @@
         $firstBuy = $buysDetails->first();
 
         if ($firstBuy) {
-            $kind_of_buy = $firstBuy->kind_of_buy;
+            $show = ($firstBuy->address != "" || $firstBuy->address_b != "") ? 'S' : 'N';
         }
     @endphp
     <h1 class="font-title text-center">
@@ -44,7 +44,7 @@
 
         <center>
             <div class="row row-cols-1 row-cols-md-2 g-4 align-content-center card-group">
-                <div class="bg-transparent {{ isset($kind_of_buy) && $kind_of_buy == 'F' ? 'col-lg-12' : 'col-lg-8' }}">
+                <div class="bg-transparent {{ $show == "N" ? 'col-lg-12' : 'col-lg-8' }}">
                     <div class="card w-100 mb-4">
                         <div class="table-responsive">
                             <table id="buysDetails" class="table align-items-center mb-0">
@@ -172,7 +172,7 @@
                     </div>
                 </div>
                 @foreach ($buysDetails as $item)
-                    <div class="col-lg-4 bg-transparent {{ $buy->kind_of_buy == 'F' ? 'd-none' : 'col-lg-4' }}">
+                    <div class="col-lg-4 bg-transparent {{ $show == "N" ? 'd-none' : 'd-block' }}">
                         <div class="card card-frame">
                             <h3 class="ps-3 mt-2">
                                 Detalles Del Envío

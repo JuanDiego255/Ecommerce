@@ -28060,6 +28060,15 @@ pre[class*="language-"] {
   align-items: center
 }
 
+@media (max-width: 768px) {
+  .search-flex {
+      display: none;
+  }
+}
+
+.flex0 {
+  flex: none;
+}
 .flex1 {
   flex: 1
 }
@@ -30356,5 +30365,71 @@ animation-iteration-count: infinite;
   to {
     opacity: 0;
   }
+}
+.search {
+  width: 100%; /* Ocupa todo el ancho disponible */
+  height: 100px; /* Altura fija */
+  background-color: #fff; /* Fondo blanco */
+  border-radius: 6px; /* Bordes redondeados */
+  display: flex; /* Alinear contenido */
+  align-items: center; /* Centrar verticalmente */
+  overflow: hidden; /* Evitar que elementos sobresalgan */
+  margin-bottom: auto; /* Margen inferior */
+}
+/* Contenedor principal */
+.select2-container--default .select2-selection--single {
+  background-color: #fdfdfd; /* Fondo blanco */
+  border: none; /* Borde gris claro */
+  border-radius: 6px; /* Bordes redondeados */
+  height: 100%;
+  display: flex;
+  align-items: center; /* Centrar verticalmente */
+  padding: 0 12px; /* Espaciado interno */
+  font-size: 14px; /* Tamaño de fuente */
+  color: #333; /* Color de texto */
+  transition: border-color 0.3s ease; /* Transición suave para hover */
+}
+
+/* Hover y focus */
+.select2-container--default .select2-selection--single:hover,
+.select2-container--default .select2-selection--single:focus {
+  border-color: #007bff; /* Azul al pasar el ratón o enfocar */
+}
+
+/* Placeholder */
+.select2-container--default .select2-selection--single .select2-selection__placeholder {
+  color: #888; /* Color gris para el placeholder */
+  font-style: italic; /* Placeholder en cursiva */
+}
+
+/* Icono de flecha */
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+  height: 100%; /* Alinear con la altura del select */
+  top: 0;
+  right: 12px; /* Espaciado con el borde */
+  color: #007bff; /* Color azul para el ícono */
+}
+
+/* Menú desplegable */
+.select2-container--default .select2-dropdown {
+  background-color: #ffffff; /* Fondo blanco */
+  border: 0.5px solid #dcdcdc; /* Borde gris claro */
+  border-radius: 6px; /* Bordes redondeados */
+  margin-top: 4px; /* Espaciado con el campo */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra ligera */
+}
+
+/* Opciones del menú */
+.select2-container--default .select2-results__option {
+  padding: 8px 12px; /* Espaciado interno */
+  font-size: 14px; /* Tamaño de fuente */
+  color: #333; /* Color de texto */
+  transition: background-color 0.2s ease; /* Transición para hover */
+}
+
+/* Hover sobre una opción */
+.select2-container--default .select2-results__option--highlighted {
+  background-color: #007bff; /* Fondo azul al pasar el ratón */
+  color: #fff; /* Texto blanco */
 }
 

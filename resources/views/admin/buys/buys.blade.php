@@ -7,53 +7,51 @@
     <h1 class="font-title text-center">Ventas</h1>
     <div class="container">
         @include('admin.buys.products')
-        <div class="row row-cols-1 row-cols-md-2 g-4 align-content-center card-group mt-1">
-            <div class="row w-100">
-                <div class="card mt-3 mb-3">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="input-group input-group-lg input-group-static my-3 w-100">
-                                    <label>Mostrar</label>
-                                    <select id="recordsPerPage" name="recordsPerPage" class="form-control form-control-lg"
-                                        autocomplete="recordsPerPage">
-                                        <option value="5">5 Registros</option>
-                                        <option value="10">10 Registros</option>
-                                        <option selected value="15">15 Registros</option>
-                                        <option value="50">50 Registros</option>
-                                    </select>
-
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="input-group input-group-lg input-group-static my-3 w-100">
-                                    <label>Código</label>
-                                    <input value="" placeholder="Código del producto...." type="text"
-                                        class="form-control form-control-lg" name="code" id="code">
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <button type="button" data-bs-toggle="modal" data-bs-target="#add-products-modal"
-                                    data-name="products" class="btn btn-velvet icon-button">
-                                    Productos
-                                </button>
-                            </div>
-                            <input type="hidden" value="{{ $tenantinfo->manage_size }}" id="manage_size">
-
-                        </div>
-                        <div class="row" id="container" class="d-none">
-                            <div id="select-container" class="d-none">
+        <div class="row">
+            <div class="card mt-3 mb-3">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="input-group input-group-lg input-group-static my-3 w-100">
+                                <label>Mostrar</label>
+                                <select id="recordsPerPage" name="recordsPerPage" class="form-control form-control-lg"
+                                    autocomplete="recordsPerPage">
+                                    <option value="5">5 Registros</option>
+                                    <option value="10">10 Registros</option>
+                                    <option selected value="15">15 Registros</option>
+                                    <option value="50">50 Registros</option>
+                                </select>
 
                             </div>
                         </div>
-
+                        <div class="col-md-4">
+                            <div class="input-group input-group-lg input-group-static my-3 w-100">
+                                <label>Código</label>
+                                <input value="" placeholder="Código del producto...." type="text"
+                                    class="form-control form-control-lg" name="code" id="code">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <button type="button" data-bs-toggle="modal" data-bs-target="#add-products-modal"
+                                data-name="products" class="btn btn-velvet icon-button">
+                                Productos
+                            </button>
+                        </div>
+                        <input type="hidden" value="{{ $tenantinfo->manage_size }}" id="manage_size">
 
                     </div>
+                    <div class="row" id="container" class="d-none">
+                        <div id="select-container" class="d-none">
+
+                        </div>
+                    </div>
+
+
                 </div>
             </div>
         </div>
         <div class="row">
-            <div class="col-md-8">
+            <div class="col-md-12">
                 <div class="card p-2">
                     <div class="table-responsive">
                         <input type="hidden" name="iva_tenant" id="iva_tenant" value="{{ $iva_tenant }}">
@@ -153,7 +151,98 @@
                 </div>
 
             </div>
-            <div class="col-lg-4 bg-transparent">
+        </div>
+        <div class="row mt-3">
+            <div class="col-md-8">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <form action="{{ url('payment') }}" method="POST" enctype="multipart/form-data">
+                            @csrf
+                            <input type="hidden" value="F" name="kind_of" id="kind_of">
+                            <div class="row">
+                                <div class="col-md-6 text-center  mb-3">
+                                    <div class="input-group input-group-lg input-group-outline">
+                                        <label class="form-label">Nombre (Opcional)</label>
+                                        <input type="text" class="form-control form-control-lg" name="name">
+                                    </div>
+                                </div>
+                                <div class="col-md-6 text-center  mb-3">
+                                    <div class="input-group input-group-lg input-group-outline">
+                                        <label class="form-label">E-mail (Opcional)</label>
+                                        <input type="text" class="form-control form-control-lg" name="email">
+                                    </div>
+                                </div>
+                                <div class="col-md-6 text-center  mb-3">
+                                    <div class="input-group input-group-lg input-group-outline">
+                                        <label class="form-label">Teléfono (Opcional)</label>
+                                        <input type="text" class="form-control form-control-lg" name="telephone">
+                                    </div>
+                                </div>
+                                <div class="col-md-6 text-center  mb-3">
+                                    <div class="input-group input-group-lg input-group-outline is-filled">
+                                        <label class="form-label">País (Opcional)</label>
+                                        <input type="text" value="Costa Rica" class="form-control form-control-lg"
+                                            name="country">
+                                    </div>
+                                </div>
+                                <div class="col-md-6 text-center  mb-3">
+                                    <div class="input-group input-group-lg input-group-outline">
+                                        <label class="form-label">Provincia (Opcional)</label>
+                                        <input type="text" value="" class="form-control form-control-lg"
+                                            name="province">
+                                    </div>
+                                </div>
+                                <div class="col-md-6 text-center  mb-3">
+                                    <div class="input-group input-group-lg input-group-outline">
+                                        <label class="form-label">Ciudad (Opcional)</label>
+                                        <input type="text" value="" class="form-control form-control-lg"
+                                            name="city">
+                                    </div>
+                                </div>
+                                <div class="col-md-6 text-center  mb-3">
+                                    <div class="input-group input-group-lg input-group-outline">
+                                        <label class="form-label">Distrito (Opcional)</label>
+                                        <input type="text" value="" class="form-control form-control-lg"
+                                            name="address_two">
+                                    </div>
+                                </div>
+                                <div class="col-md-6 text-center">
+                                    <div class="input-group input-group-lg input-group-outline">
+                                        <label class="form-label">Dirección Exacta (Opcional)</label>
+                                        <input type="text" value="" class="form-control form-control-lg"
+                                            name="address">
+                                    </div>
+                                </div>
+                                <div class="col-md-6 text-center">
+                                    <div class="input-group input-group-lg input-group-outline">
+                                        <label class="form-label">Código Postal (Opcional)</label>
+                                        <input type="text" value="" class="form-control form-control-lg"
+                                            name="postal_code">
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="col-md-6 text-center ">
+                                    <div class="input-group input-group-lg input-group-outline">
+                                        <label class="form-label">Detalle (Opcional)</label>
+                                        <input type="text" class="form-control form-control-lg" name="detail">
+                                    </div>
+                                </div>
+                                <div class="col-md-6 text-center">
+                                    <div class="input-group input-group-lg input-group-outline">
+                                        <label class="form-label">Envío (Opcional)</label>
+                                        <input type="number" class="form-control form-control-lg" name="delivery">
+                                    </div>
+                                </div>
+                            </div>
+                            <button @if ($total_price == 0) disabled @endif id="btnSinpe" type="submit"
+                                class="btn btn-add_to_cart w-100 d-block h8 mt-3">Realizar
+                                Venta
+                                ₡<span id="btnPay">{{ number_format($total_price) }}</span></button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 bg-transparent">
                 <div class="card mb-4">
                     <div class="card-body">
                         <ul class="list-group list-group-flush">
@@ -183,30 +272,6 @@
                                 <span><strong id="totalPriceElement">₡{{ number_format($total_price) }}</strong></span>
                             </li>
                         </ul>
-                        <center>
-                            <form action="{{ url('payment') }}" method="POST" enctype="multipart/form-data">
-                                @csrf
-                                <input type="hidden" value="F" name="kind_of" id="kind_of">
-                                <div class="row checkout-form">
-                                    <div class="col-md-12 text-center w-100">
-                                        <div class="input-group input-group-lg input-group-outline">
-                                            <label class="form-label">Detalle (Opcional)</label>
-                                            <input type="text" class="form-control form-control-lg" name="detail">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-12 text-center w-100 mb-3">
-                                        <div class="input-group input-group-lg input-group-outline my-3">
-                                            <label class="form-label">Envío (Opcional)</label>
-                                            <input type="number" class="form-control form-control-lg" name="delivery">
-                                        </div>
-                                    </div>
-                                </div>
-                                <button @if ($total_price == 0) disabled @endif id="btnSinpe" type="submit"
-                                    class="btn btn-add_to_cart w-75 d-block h8">Realizar
-                                    Venta
-                                    ₡<span id="btnPay">{{ number_format($total_price) }}</span></button>
-                            </form>
-                        </center>
                     </div>
                 </div>
             </div>
@@ -635,14 +700,18 @@
             const totalCloth = document.getElementById('totalCloth');
             const btnPay = document.getElementById('btnPay');
 
-            totalElement.textContent = `₡${total.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
+            totalElement.textContent =
+                `₡${total.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
             if (total_iva > 0) {
-                totalIvaElement.textContent = `₡${total_iva.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
+                totalIvaElement.textContent =
+                    `₡${total_iva.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
             }
             if (you_save > 0) {
-                totalDiscountElement.textContent = `₡${you_save.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
+                totalDiscountElement.textContent =
+                    `₡${you_save.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
             }
-            totalCloth.textContent = `₡${total_cloth.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
+            totalCloth.textContent =
+                `₡${total_cloth.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
         }
     </script>
 @endsection

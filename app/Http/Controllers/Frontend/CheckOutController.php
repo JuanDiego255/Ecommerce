@@ -793,7 +793,6 @@ class CheckOutController extends Controller
                 }
                 $iva = $cloth_price * $tenantinfo->iva;
                 $total_price = $cloth_price + $iva;
-
                 $buy = new Buy();
                 $buy->user_id = null;
                 $buy->total_iva =  $iva;
@@ -804,6 +803,33 @@ class CheckOutController extends Controller
                 $buy->total_delivery = $request->delivery;
                 $buy->kind_of_buy = $request->kind_of;
                 $buy->detail = $request->detail;
+                if ($request->has('name')) {
+                    $buy->name = $request->name;
+                }
+                if ($request->has('email')) {
+                    $buy->email = $request->email;
+                }
+                if ($request->has('address')) {
+                    $buy->address = $request->address;
+                }
+                if ($request->has('address_two')) {
+                    $buy->address_two = $request->address_two;
+                }
+                if ($request->has('telephone')) {
+                    $buy->telephone = $request->telephone;
+                }
+                if ($request->has('city')) {
+                    $buy->city = $request->city;
+                }
+                if ($request->has('province')) {
+                    $buy->province = $request->province;
+                }
+                if ($request->has('country')) {
+                    $buy->country = $request->country;
+                }
+                if ($request->has('postal_code')) {
+                    $buy->postal_code = $request->postal_code;
+                }
                 $buy->save();
                 $buy_id = $buy->id;
 
@@ -882,7 +908,8 @@ class CheckOutController extends Controller
                     'grant_type' => 'client_credentials'
                 ],
                 'auth' => [
-                    $this->clientId, $this->secret
+                    $this->clientId,
+                    $this->secret
                 ]
             ]);
 
