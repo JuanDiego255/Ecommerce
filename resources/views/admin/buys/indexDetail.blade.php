@@ -8,7 +8,7 @@
         $firstBuy = $buysDetails->first();
 
         if ($firstBuy) {
-            $show = ($firstBuy->address != "" || $firstBuy->address_b != "") ? 'S' : 'N';
+            $show = $firstBuy->address != '' || $firstBuy->address_b != '' ? 'S' : 'N';
         }
     @endphp
     <h1 class="font-title text-center">
@@ -44,7 +44,7 @@
 
         <center>
             <div class="row row-cols-1 row-cols-md-2 g-4 align-content-center card-group">
-                <div class="bg-transparent {{ $show == "N" ? 'col-lg-12' : 'col-lg-8' }}">
+                <div class="bg-transparent {{ $show == 'N' ? 'col-lg-12' : 'col-lg-8' }}">
                     <div class="card w-100 mb-4">
                         <div class="table-responsive">
                             <table id="buysDetails" class="table align-items-center mb-0">
@@ -172,7 +172,7 @@
                     </div>
                 </div>
                 @foreach ($buysDetails as $item)
-                    <div class="col-lg-4 bg-transparent {{ $show == "N" ? 'd-none' : 'd-block' }}">
+                    <div class="col-lg-4 bg-transparent {{ $show == 'N' ? 'd-none' : 'd-block' }}">
                         <div class="card card-frame">
                             <h3 class="ps-3 mt-2">
                                 Detalles Del Envío
@@ -182,6 +182,12 @@
                                     <div class="d-flex justify-content-center p-2">
 
                                         <h4 class="text-muted">
+                                            <i class="material-icons my-auto">done</i>
+                                            Nombre: {{ isset($item->person_name) ? $item->person_name : $item->person_name_b }}<br>
+                                            <i class="material-icons my-auto">done</i>
+                                            E-mail: {{ isset($item->email) ? $item->email : $item->email_b }}<br>
+                                            <i class="material-icons my-auto">done</i>
+                                            Teléfono: {{ isset($item->telephone) ? $item->telephone : $item->telephone_b }}<br>
                                             <i class="material-icons my-auto">done</i>
                                             País: {{ isset($item->country) ? $item->country : $item->country_b }}<br>
                                             <i class="material-icons my-auto">done</i>
@@ -194,7 +200,7 @@
                                             {{ isset($item->address_two) ? $item->address_two : $item->address_two_b }}<br>
                                             <i class="material-icons my-auto">done</i>
                                             Dirección Exacta:
-                                            {{ isset($item->address) ? $item->address : $item->address_b }}<br>                                          
+                                            {{ isset($item->address) ? $item->address : $item->address_b }}<br>
 
                                             <i class="material-icons my-auto">done</i>
                                             Código Postal:
@@ -218,8 +224,25 @@
         </div>
 </div>
 </center>
+<div class="d-flex justify-content-between mb-3">
+    <div>
+        @if ($previousBuy)
+            <a href="{{ url('buy/details/admin/' . $previousBuy->id) }}" class="btn btn-velvet">
+                <i class="material-icons">arrow_back</i> Anterior
+            </a>
+        @endif
+    </div>
+    <div>
+        @if ($nextBuy)
+            <a href="{{ url('buy/details/admin/' . $nextBuy->id) }}" class="btn btn-velvet">
+                Siguiente <i class="material-icons">arrow_forward</i>
+            </a>
+        @endif
+    </div>
+</div>
 </div>
 <center>
+
 
     <div class="col-md-12 mt-3">
         <a href="{{ url('buys-admin') }}" class="btn btn-velvet">Volver</a>

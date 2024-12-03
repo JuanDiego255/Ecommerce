@@ -62,7 +62,7 @@ class BuyController extends Controller
                 'buys.total_iva as total_iva',
                 'buys.total_buy as total_buy',
                 'buys.credit_used',
-                'buys.kind_of_buy',                
+                'buys.kind_of_buy',
                 'buys.total_delivery as total_delivery',
                 'buys.delivered as delivered',
                 'buys.approved as approved',
@@ -76,7 +76,8 @@ class BuyController extends Controller
                 'buys.telephone as telephone_b',
                 'buys.email as email_b',
                 'buys.cancel_buy as cancel_buy'
-            )->get();
+            )->orderBy('buys.kind_of_buy','desc')
+            ->get();
         });
         $iva = $tenantinfo->iva;
 
@@ -128,7 +129,7 @@ class BuyController extends Controller
                         WHERE attribute_value_buys.buy_detail_id = buy_details.id
                     ) as attributes_values'),
                 )
-                ->groupBy('clothing.id','buys.kind_of_buy', 'clothing.name', 'clothing.casa', 'clothing.description', 'buy_details.total', 'buy_details.iva', 'buy_details.id', 'buy_details.buy_id', 'buy_details.cancel_item', 'clothing.status', 'buy_details.quantity', 'buys.approved', 'product_images.image')
+                ->groupBy('clothing.id', 'buys.kind_of_buy', 'clothing.name', 'clothing.casa', 'clothing.description', 'buy_details.total', 'buy_details.iva', 'buy_details.id', 'buy_details.buy_id', 'buy_details.cancel_item', 'clothing.status', 'buy_details.quantity', 'buys.approved', 'product_images.image')
                 ->get();
         });
         $iva = $tenantinfo->iva;
@@ -149,6 +150,15 @@ class BuyController extends Controller
     public function buyDetailsAdmin($id)
     {
         $tenantinfo = TenantInfo::first();
+        $currentBuy = Buy::find($id);
+
+        if (!$currentBuy) {
+            return redirect()->back()->with(['status' => 'El pedido no existe!', 'icon' => 'warning']);
+        }
+
+        $previousBuy = Buy::where('id', '<', $id)->orderBy('id', 'desc')->first();
+        $nextBuy = Buy::where('id', '>', $id)->orderBy('id', 'asc')->first();
+
         $buysDetails = Cache::remember('buy_details_' . $id, $this->expirationTime, function () use ($id) {
             return BuyDetail::where('buy_details.buy_id', $id)
                 ->join('buys', 'buy_details.buy_id', '=', 'buys.id')
@@ -184,6 +194,9 @@ class BuyController extends Controller
                     'address_users.province as province',
                     'address_users.postal_code as postal_code',
                     'buys.address as address_b',
+                    'buys.name as person_name_b',
+                    'buys.email as email_b',
+                    'buys.telephone as telephone_b',
                     'buys.address_two as address_two_b',
                     'buys.city as city_b',
                     'buys.country as country_b',
@@ -198,13 +211,13 @@ class BuyController extends Controller
                         WHERE attribute_value_buys.buy_detail_id = buy_details.id
                     ) as attributes_values'),
                 )
-                ->groupBy('clothing.id','buys.kind_of_buy', 'clothing.name', 'clothing.casa', 'clothing.description', 'buy_details.total', 'buy_details.iva', 'buy_details.id', 'buy_details.buy_id', 'buy_details.cancel_item', 'clothing.status', 'buy_details.quantity', 'buys.approved', 'address_users.user_id', 'address_users.address', 'address_users.address_two', 'address_users.city', 'address_users.country', 'address_users.province', 'address_users.postal_code', 'buys.address', 'buys.address_two', 'buys.city', 'buys.country', 'buys.province', 'buys.postal_code', 'product_images.image')
+                ->groupBy('clothing.id', 'buys.kind_of_buy', 'clothing.name', 'clothing.casa', 'clothing.description', 'buy_details.total', 'buy_details.iva', 'buy_details.id', 'buy_details.buy_id', 'buy_details.cancel_item', 'clothing.status', 'buy_details.quantity', 'buys.approved', 'address_users.user_id', 'address_users.address', 'address_users.address_two', 'address_users.city', 'address_users.country', 'address_users.province', 'address_users.postal_code','buys.name','buys.telephone','buys.email', 'buys.address', 'buys.address_two', 'buys.city', 'buys.country', 'buys.province', 'buys.postal_code', 'product_images.image')
                 ->get();
         });
         $iva = $tenantinfo->iva;
         $tenant = $tenantinfo->tenant;
 
-        return view('admin.buys.indexDetail', compact('buysDetails', 'iva', 'tenant'));
+        return view('admin.buys.indexDetail', compact('buysDetails', 'iva', 'tenant','previousBuy', 'nextBuy'));
     }
     public function approve($id, $approved)
     {
