@@ -65,6 +65,7 @@ class BuyController extends Controller
                 'buys.kind_of_buy',
                 'buys.total_delivery as total_delivery',
                 'buys.delivered as delivered',
+                'buys.ready_to_give as ready_to_give',
                 'buys.approved as approved',
                 'buys.created_at as created_at',
                 'buys.image as image',
@@ -76,8 +77,8 @@ class BuyController extends Controller
                 'buys.telephone as telephone_b',
                 'buys.email as email_b',
                 'buys.cancel_buy as cancel_buy'
-            )->orderBy('buys.kind_of_buy','desc')
-            ->get();
+            )->orderBy('buys.kind_of_buy', 'desc')
+                ->get();
         });
         $iva = $tenantinfo->iva;
 
@@ -88,6 +89,29 @@ class BuyController extends Controller
         }
 
         return view('admin.buys.index', compact('buys', 'iva'));
+    }
+    public function getBuys($id)
+    {
+        $buys = Buy::leftJoin('users', 'buys.user_id', 'users.id')
+            ->select(
+                'buys.id as id',
+                DB::raw('IF(users.name IS NOT NULL AND users.name != "", users.name, buys.name) as display_name')
+            )
+            ->where(function ($query) {
+                $query->whereNotNull('users.name')
+                    ->where('users.name', '!=', '')
+                    ->orWhere(function ($subQuery) {
+                        $subQuery->whereNotNull('buys.name')
+                            ->where('buys.name', '!=', '');
+                    });
+            })
+            ->where('delivered', 0)
+            ->where('buys.id', '!=', $id)
+            ->where('ready_to_give', 0)
+            ->orderBy('buys.kind_of_buy', 'desc')
+            ->get();
+
+        return response()->json($buys);
     }
     public function buyDetails($id)
     {
@@ -211,13 +235,13 @@ class BuyController extends Controller
                         WHERE attribute_value_buys.buy_detail_id = buy_details.id
                     ) as attributes_values'),
                 )
-                ->groupBy('clothing.id', 'buys.kind_of_buy', 'clothing.name', 'clothing.casa', 'clothing.description', 'buy_details.total', 'buy_details.iva', 'buy_details.id', 'buy_details.buy_id', 'buy_details.cancel_item', 'clothing.status', 'buy_details.quantity', 'buys.approved', 'address_users.user_id', 'address_users.address', 'address_users.address_two', 'address_users.city', 'address_users.country', 'address_users.province', 'address_users.postal_code','buys.name','buys.telephone','buys.email', 'buys.address', 'buys.address_two', 'buys.city', 'buys.country', 'buys.province', 'buys.postal_code', 'product_images.image')
+                ->groupBy('clothing.id', 'buys.kind_of_buy', 'clothing.name', 'clothing.casa', 'clothing.description', 'buy_details.total', 'buy_details.iva', 'buy_details.id', 'buy_details.buy_id', 'buy_details.cancel_item', 'clothing.status', 'buy_details.quantity', 'buys.approved', 'address_users.user_id', 'address_users.address', 'address_users.address_two', 'address_users.city', 'address_users.country', 'address_users.province', 'address_users.postal_code', 'buys.name', 'buys.telephone', 'buys.email', 'buys.address', 'buys.address_two', 'buys.city', 'buys.country', 'buys.province', 'buys.postal_code', 'product_images.image')
                 ->get();
         });
         $iva = $tenantinfo->iva;
         $tenant = $tenantinfo->tenant;
 
-        return view('admin.buys.indexDetail', compact('buysDetails', 'iva', 'tenant','previousBuy', 'nextBuy'));
+        return view('admin.buys.indexDetail', compact('buysDetails', 'iva', 'tenant', 'previousBuy', 'nextBuy','id'));
     }
     public function approve($id, $approved)
     {
@@ -249,6 +273,23 @@ class BuyController extends Controller
             return redirect()
                 ->back()
                 ->with(['status' => 'Se ha cambiado el estado de la entrega!', 'icon' => 'success']);
+        } catch (Exception $th) {
+            DB::rollBack();
+        }
+    }
+    public function readyToGive($id, $ready)
+    {
+        DB::beginTransaction();
+        try {
+            $status = 1;
+            if ($ready == 1) {
+                $status = 0;
+            }
+            Buy::where('id', $id)->update(['ready_to_give' => $status]);
+            DB::commit();
+            return redirect()
+                ->back()
+                ->with(['status' => 'Se ha cambiado el estado del empaque!', 'icon' => 'success']);
         } catch (Exception $th) {
             DB::rollBack();
         }

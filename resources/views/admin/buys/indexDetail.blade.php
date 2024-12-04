@@ -11,20 +11,21 @@
             $show = $firstBuy->address != '' || $firstBuy->address_b != '' ? 'S' : 'N';
         }
     @endphp
+    <input type="hidden" id="buy_id" name="buy_id" value="{{ $id }}">
     <h1 class="font-title text-center">
         {{ __('Detalles de la compra') }}</h1>
     <div class="container-fluid">
         <div class="card mt-3 mb-3">
             <div class="card-body">
                 <div class="row w-100">
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <div class="input-group input-group-lg input-group-static my-3 w-100">
                             <label>Filtrar</label>
                             <input value="" placeholder="Escribe para filtrar...." type="text"
                                 class="form-control form-control-lg" name="searchfor" id="searchfor">
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <div class="input-group input-group-lg input-group-static my-3 w-100">
                             <label>Mostrar</label>
                             <select id="recordsPerPage" name="recordsPerPage" class="form-control form-control-lg"
@@ -35,6 +36,14 @@
                                 <option value="50">50 Registros</option>
                             </select>
 
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="input-group input-group-lg input-group-static my-3 w-100">
+                            <label class="mb-3">Buscar pedido por nombre</label>
+                            <select id="search-select" class="form-control  form-control-lg select2" placeholder="Search..." name="search">
+
+                            </select>
                         </div>
                     </div>
 
@@ -183,11 +192,13 @@
 
                                         <h4 class="text-muted">
                                             <i class="material-icons my-auto">done</i>
-                                            Nombre: {{ isset($item->person_name) ? $item->person_name : $item->person_name_b }}<br>
+                                            Nombre:
+                                            {{ isset($item->person_name) ? $item->person_name : $item->person_name_b }}<br>
                                             <i class="material-icons my-auto">done</i>
                                             E-mail: {{ isset($item->email) ? $item->email : $item->email_b }}<br>
                                             <i class="material-icons my-auto">done</i>
-                                            Teléfono: {{ isset($item->telephone) ? $item->telephone : $item->telephone_b }}<br>
+                                            Teléfono:
+                                            {{ isset($item->telephone) ? $item->telephone : $item->telephone_b }}<br>
                                             <i class="material-icons my-auto">done</i>
                                             País: {{ isset($item->country) ? $item->country : $item->country_b }}<br>
                                             <i class="material-icons my-auto">done</i>
@@ -224,7 +235,7 @@
         </div>
 </div>
 </center>
-<div class="d-flex justify-content-between mb-3">
+<div class="d-flex justify-content-between mb-3 mt-3">
     <div>
         @if ($previousBuy)
             <a href="{{ url('buy/details/admin/' . $previousBuy->id) }}" class="btn btn-velvet">
@@ -251,4 +262,36 @@
 @endsection
 @section('script')
 <script src="{{ asset('js/datatables.js') }}"></script>
+<script>
+    $(document).ready(function() {
+        var buyId = $('#buy_id').val();
+        $('#search-select').select2({
+            placeholder: "BUSCAR PEDIDOS...",
+            allowClear: true,
+            width: '100%',
+            ajax: {
+                url: '/get/buys/select/' + buyId, // La URL que devuelve los datos
+                dataType: 'json',
+                delay: 250, // Retardo para evitar sobrecarga al buscar
+                processResults: function(data) {
+                    return {
+                        results: data.map(function(buy) {
+                            return {
+                                id: buy.id, // El valor del select
+                                text: buy.display_name // El texto del select
+                            };
+                        })
+                    };
+                },
+                cache: true
+            }
+        });
+        $('#search-select').on('change', function(e) {
+            var selectedId = $(this).val();
+            if (selectedId) {
+                window.location.href = '/buy/details/admin/' + selectedId;
+            }
+        });
+    });
+</script>
 @endsection

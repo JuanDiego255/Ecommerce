@@ -406,6 +406,7 @@ class CheckOutController extends Controller
                     $buy->total_iva =  $iva;
                     $buy->total_delivery =  $request->delivery;
                     $buy->delivered = 0;
+                    $buy->ready_to_give = 0;
                     $buy->approved = 0;
                     $buy->cancel_buy = 0;
                     $buy->kind_of_buy = $request->kind_of;
@@ -647,6 +648,7 @@ class CheckOutController extends Controller
                     //Codigo para registrar cupones
                     $buy->total_delivery =  $request->delivery;
                     $buy->delivered = 0;
+                    $buy->ready_to_give = 0;
                     $buy->approved = 0;
                     $buy->cancel_buy = 0;
                     $buy->kind_of_buy = $request->kind_of;
@@ -797,8 +799,9 @@ class CheckOutController extends Controller
                 $buy->user_id = null;
                 $buy->total_iva =  $iva;
                 $buy->total_buy =  $total_price;
-                $buy->delivered = 1;
+                $buy->delivered = 0;
                 $buy->approved = 1;
+                $buy->ready_to_give = 0;
                 $buy->cancel_buy = 0;
                 $buy->total_delivery = $request->delivery;
                 $buy->kind_of_buy = $request->kind_of;

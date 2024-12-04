@@ -135,9 +135,11 @@ Route::middleware([
             Route::get('/total-buys', [BuyController::class, 'indexTotalBuys']);
             Route::get('/new-buy', [BuyController::class, 'indexBuy']);
             Route::get('/buy/details/admin/{id}', [BuyController::class, 'buyDetailsAdmin']);
-            Route::put('/approve/{id}/{approved}', [BuyController::class, 'approve']);
+            Route::put('/approve/{id}/{ready}', [BuyController::class, 'approve']);
+            Route::put('/ready/{id}/{approved}', [BuyController::class, 'readyToGive']);
             Route::put('/delivery/{id}/{delivery}', [BuyController::class, 'delivery']);
             Route::delete('delete-buy/{id}', [BuyController::class, 'destroy']);
+            Route::get('/get/buys/select/{id}', [BuyController::class, 'getBuys']);
             //Rutas para anuncios
             Route::post('advert/store', [AdvertController::class, 'store']);
             Route::get('/adverts', [AdvertController::class, 'index']);

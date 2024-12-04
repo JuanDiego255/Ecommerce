@@ -30,6 +30,7 @@
         rel="stylesheet">
     <link href="{{ asset('css/material-dashboard.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/fontawesome.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 </head>
 <style>
     :root {
@@ -81,6 +82,7 @@
 
     <script src="{{ asset('js/material-dashboard.min.js') }}" defer></script>
     <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     @if (session('status'))
         <script>
@@ -98,6 +100,7 @@
             }
             Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
         }
+      
     </script>
     @yield('script')
 

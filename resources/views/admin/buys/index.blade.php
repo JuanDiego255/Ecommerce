@@ -106,7 +106,7 @@
                                                     class="material-icons opacity-10">visibility</i></a>
                                         @endif
 
-                                        @if ($buy->cancel_buy == 0 && $buy->kind_of_buy != 'F')
+                                        @if ($buy->cancel_buy == 0)
                                             <form style="display:inline"
                                                 action="{{ url('approve/' . $buy->id . '/' . $buy->approved) }}"
                                                 method="POST" enctype="multipart/form-data">
@@ -119,6 +119,25 @@
                                                     data-container="body" data-animation="true" type="submit"> <i
                                                         class="material-icons opacity-10">
                                                         @if ($buy->approved == 1)
+                                                            cancel
+                                                        @else
+                                                            check_circle
+                                                        @endif
+                                                    </i>
+                                                </button>
+                                            </form>
+                                            <form style="display:inline"
+                                                action="{{ url('ready/' . $buy->id . '/' . $buy->ready_to_give) }}"
+                                                method="POST" enctype="multipart/form-data">
+                                                @csrf
+                                                @method('PUT')
+
+                                                <button class="btn btn-velvet text-white btn-tooltip"
+                                                    data-bs-toggle="tooltip" data-bs-placement="top"
+                                                    title="{{ $buy->ready_to_give == 1 ? 'Procesando paquete...' : 'Listo para enviar' }}"
+                                                    data-container="body" data-animation="true" type="submit"> <i
+                                                        class="material-icons opacity-10">
+                                                        @if ($buy->ready_to_give == 1)
                                                             cancel
                                                         @else
                                                             check_circle
