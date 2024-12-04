@@ -90,20 +90,20 @@ class BuyController extends Controller
 
         return view('admin.buys.index', compact('buys', 'iva'));
     }
-    public function getBuys($id)
+    public function getBuys(Request $request, $id)
     {
-        $buys = Buy::leftJoin('users', 'buys.user_id', 'users.id')
+        $search = $request->input('search'); // Captura el término de búsqueda
+
+        $buys = Buy::leftJoin('users', 'buys.user_id', '=', 'users.id')
             ->select(
                 'buys.id as id',
-                DB::raw('IF(users.name IS NOT NULL AND users.name != "", users.name, buys.name) as display_name')
+                DB::raw('COALESCE(users.name, buys.name) as display_name')
             )
-            ->where(function ($query) {
-                $query->whereNotNull('users.name')
-                    ->where('users.name', '!=', '')
-                    ->orWhere(function ($subQuery) {
-                        $subQuery->whereNotNull('buys.name')
-                            ->where('buys.name', '!=', '');
-                    });
+            ->where(function ($query) use ($search) {
+                if ($search) {
+                    $query->where('users.name', 'like', "%{$search}%")
+                        ->orWhere('buys.name', 'like', "%{$search}%");
+                }
             })
             ->where('delivered', 0)
             ->where('buys.id', '!=', $id)
@@ -113,6 +113,7 @@ class BuyController extends Controller
 
         return response()->json($buys);
     }
+
     public function buyDetails($id)
     {
         $tenantinfo = TenantInfo::first();
@@ -241,7 +242,7 @@ class BuyController extends Controller
         $iva = $tenantinfo->iva;
         $tenant = $tenantinfo->tenant;
 
-        return view('admin.buys.indexDetail', compact('buysDetails', 'iva', 'tenant', 'previousBuy', 'nextBuy','id'));
+        return view('admin.buys.indexDetail', compact('buysDetails', 'iva', 'tenant', 'previousBuy', 'nextBuy', 'id'));
     }
     public function approve($id, $approved)
     {

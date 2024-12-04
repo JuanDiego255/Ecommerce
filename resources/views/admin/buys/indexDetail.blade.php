@@ -41,7 +41,8 @@
                     <div class="col-md-4">
                         <div class="input-group input-group-lg input-group-static my-3 w-100">
                             <label class="mb-3">Buscar pedido por nombre</label>
-                            <select id="search-select" class="form-control  form-control-lg select2" placeholder="Search..." name="search">
+                            <select id="search-select" class="form-control  form-control-lg select2" placeholder="Search..."
+                                name="search">
 
                             </select>
                         </div>
@@ -270,22 +271,27 @@
             allowClear: true,
             width: '100%',
             ajax: {
-                url: '/get/buys/select/' + buyId, // La URL que devuelve los datos
+                url: '/get/buys/select/' + buyId,
                 dataType: 'json',
-                delay: 250, // Retardo para evitar sobrecarga al buscar
+                delay: 250,
+                data: function(params) {
+                    return {
+                        search: params.term // Envía el término de búsqueda al servidor
+                    };
+                },
                 processResults: function(data) {
                     return {
                         results: data.map(function(buy) {
                             return {
-                                id: buy.id, // El valor del select
-                                text: buy.display_name // El texto del select
+                                id: buy.id,
+                                text: buy.display_name
                             };
                         })
                     };
-                },
-                cache: true
+                }
             }
         });
+
         $('#search-select').on('change', function(e) {
             var selectedId = $(this).val();
             if (selectedId) {
