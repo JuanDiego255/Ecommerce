@@ -91,6 +91,7 @@ Route::middleware([
         Route::get('/get-stock/{cloth_id}/{attr_id}/{value_attr}', [FrontendController::class, 'getStock']);
         Route::get('/gift-code/{id}', [GiftCardController::class, 'applyCode']);
         Route::post('gift/store', [GiftCardController::class, 'store']);
+        Route::get('/get/products/select/', [ClothingCategoryController::class, 'getProductsToSelect']);
         Auth::routes();
 
         Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

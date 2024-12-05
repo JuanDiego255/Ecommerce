@@ -680,4 +680,34 @@ class ClothingCategoryController extends Controller
             ->get();
         return response()->json(['status' => 'success', 'results' => $clothes]);
     }
+    public function getProductsToSelect(Request $request)
+    {
+        $search = $request->input('search'); // Captura el término de búsqueda
+
+        $clothings = ClothingCategory::leftJoin('pivot_clothing_categories', 'clothing.id', '=', 'pivot_clothing_categories.clothing_id')
+            ->leftJoin('categories', 'pivot_clothing_categories.category_id', '=', 'categories.id')
+            ->leftJoin('clothing_details', 'clothing.id', 'clothing_details.clothing_id')
+            ->leftJoin('stocks', 'clothing.id', 'stocks.clothing_id')
+            ->select(
+                DB::raw('CONCAT(clothing.name, " (", categories.name, ")") as name'),
+                DB::raw('CONCAT("/", clothing.id, "/", categories.id, "/") as url')
+            )
+            ->where(function ($query) use ($search) {
+                if ($search) {
+                    $query->where('clothing.name', 'like', "%{$search}%");
+                }
+            })
+            ->where('clothing.status',1)
+            ->groupBy(
+                'clothing.id',
+                'categories.id',
+                'clothing.name',
+                'categories.name'
+            )->orderByRaw('CASE WHEN clothing.casa IS NOT NULL AND clothing.casa != "" THEN 0 ELSE 1 END')
+            ->orderBy('clothing.casa', 'asc')
+            ->orderBy('clothing.name', 'asc')
+            ->get();
+
+        return response()->json($clothings);
+    }
 }

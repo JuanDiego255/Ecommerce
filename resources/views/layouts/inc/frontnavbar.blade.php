@@ -178,13 +178,13 @@
         </nav>
 
         <div class="flexMain">
-            <div class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'solociclismocrc' ) ? 'flex0' : 'flex2' }}">
+            <div class="flex0">
                 <button
                     class="{{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'mandicr' || $tenantinfo->tenant === 'marylu') ? 'whiteLink-mandi' : 'whiteLink' }} siteLink"
                     id="btnMenu" style="color: var(--navbar_text); border-right:1px solid #eaeaea"
                     onclick="menuToggle()"><i class="fas fa-bars me-2"></i> MENU</button>
             </div>
-            <div class="flex1 px-5 search-flex {{ isset($tenantinfo->tenant) && ($tenantinfo->tenant === 'solociclismocrc' ) ? 'd-block' : 'd-none' }}">
+            <div class="flex1 px-5 search-flex ">
                 <div class="search">
                     <select id="search-select" class="form-control select2" placeholder="Search..." name="search">
                         <option value="">Select an option</option>

@@ -171,7 +171,34 @@
                 $('#search-select').select2({
                     placeholder: "BUSCAR PRODUCTOS...",
                     allowClear: true,
-                    width: '100%' // Para asegurar que se ajuste al contenedor
+                    width: '100%',
+                    ajax: {
+                        url: '/get/products/select/',
+                        dataType: 'json',
+                        delay: 250,
+                        data: function(params) {
+                            return {
+                                search: params.term // Envía el término de búsqueda al servidor
+                            };
+                        },
+                        processResults: function(data) {
+                            return {
+                                results: data.map(function(buy) {
+                                    return {
+                                        id: buy.url,
+                                        text: buy.name
+                                    };
+                                })
+                            };
+                        }
+                    }
+                });
+
+                $('#search-select').on('change', function(e) {
+                    var selectedId = $(this).val();
+                    if (selectedId) {
+                        window.location.href = '/detail-clothing' + selectedId;
+                    }
                 });
 
 
