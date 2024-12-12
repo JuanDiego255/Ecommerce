@@ -181,8 +181,8 @@
                                 <div class="col-md-6 text-center  mb-3">
                                     <div class="input-group input-group-lg input-group-outline is-filled">
                                         <label class="form-label">País (Opcional)</label>
-                                        <input type="text" value="Costa Rica" class="form-control form-control-lg"
-                                            name="country">
+                                        <input type="text" readonly value="Costa Rica"
+                                            class="form-control form-control-lg" name="country">
                                     </div>
                                 </div>
                                 <div class="col-md-6 text-center  mb-3">
@@ -227,10 +227,25 @@
                                         <input type="text" class="form-control form-control-lg" name="detail">
                                     </div>
                                 </div>
-                                <div class="col-md-6 text-center">
+                                <div class="col-md-6 text-center mb-3">
                                     <div class="input-group input-group-lg input-group-outline">
                                         <label class="form-label">Envío (Opcional)</label>
                                         <input type="number" class="form-control form-control-lg" name="delivery">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="1" id="apartado"
+                                            name="apartado" {{ old('apartado') ? 'checked' : '' }}>
+                                        <label class="custom-control-label"
+                                            for="customCheck1">{{ __('Apartado') }}</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 text-center d-none" id="monto_apartado">
+                                    <div class="input-group input-group-lg input-group-outline">
+                                        <label class="form-label">Monto Apartado</label>
+                                        <input type="number" required class="form-control form-control-lg"
+                                            name="monto_apartado">
                                     </div>
                                 </div>
                             </div>
@@ -281,6 +296,17 @@
 @section('script')
     <script>
         $(document).ready(function() {
+            //Ocultar monto apartado
+            const checkbox = document.getElementById("apartado");
+            const montoDiv = document.getElementById("monto_apartado");
+
+            checkbox.addEventListener("click", function() {
+                if (this.checked) {
+                    montoDiv.classList.remove("d-none");
+                } else {
+                    montoDiv.classList.add("d-none");
+                }
+            });
             var $container = $(
                 '#container'
             ); // Suponiendo que hay un contenedor con id "container"

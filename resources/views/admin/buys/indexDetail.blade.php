@@ -52,9 +52,10 @@
             </div>
         </div>
 
-        <center>
-            <div class="row row-cols-1 row-cols-md-2 g-4 align-content-center card-group">
-                <div class="bg-transparent {{ $show == 'N' ? 'col-lg-12' : 'col-lg-8' }}">
+
+        <div class="row row-cols-1 row-cols-md-2 g-4 align-content-center card-group">
+            <div class="bg-transparent {{ $show == 'N' ? 'col-lg-12' : 'col-lg-8' }}">
+                <center>
                     <div class="card w-100 mb-4">
                         <div class="table-responsive">
                             <table id="buysDetails" class="table align-items-center mb-0">
@@ -179,63 +180,102 @@
                                 </tbody>
                             </table>
                         </div>
+
                     </div>
-                </div>
-                @foreach ($buysDetails as $item)
-                    <div class="col-lg-4 bg-transparent {{ $show == 'N' ? 'd-none' : 'd-block' }}">
-                        <div class="card card-frame">
-                            <h3 class="ps-3 mt-2">
-                                Detalles Del Envío
-                            </h3>
-                            <div class="card-body text-center">
-                                <div class="row checkout-form">
-                                    <div class="d-flex justify-content-center p-2">
-
-                                        <h4 class="text-muted">
-                                            <i class="material-icons my-auto">done</i>
-                                            Nombre:
-                                            {{ isset($item->person_name) ? $item->person_name : $item->person_name_b }}<br>
-                                            <i class="material-icons my-auto">done</i>
-                                            E-mail: {{ isset($item->email) ? $item->email : $item->email_b }}<br>
-                                            <i class="material-icons my-auto">done</i>
-                                            Teléfono:
-                                            {{ isset($item->telephone) ? $item->telephone : $item->telephone_b }}<br>
-                                            <i class="material-icons my-auto">done</i>
-                                            País: {{ isset($item->country) ? $item->country : $item->country_b }}<br>
-                                            <i class="material-icons my-auto">done</i>
-                                            Provincia:
-                                            {{ isset($item->province) ? $item->province : $item->province_b }}<br>
-                                            <i class="material-icons my-auto">done</i>
-                                            Cantón: {{ isset($item->city) ? $item->city : $item->city_b }}<br>
-                                            <i class="material-icons my-auto">done</i>
-                                            Distrito:
-                                            {{ isset($item->address_two) ? $item->address_two : $item->address_two_b }}<br>
-                                            <i class="material-icons my-auto">done</i>
-                                            Dirección Exacta:
-                                            {{ isset($item->address) ? $item->address : $item->address_b }}<br>
-
-                                            <i class="material-icons my-auto">done</i>
-                                            Código Postal:
-                                            {{ isset($item->postal_code) ? $item->postal_code : $item->postal_code_b }}
-
-                                        </h4>
-
-
+                </center>
+                @if (
+                    $currentBuy->apartado == 1 &&
+                        $currentBuy->total_buy + $currentBuy->total_delivery - $currentBuy->monto_apartado > 0)
+                    <div class="card w-50 col-md-6">
+                        <div class="card-body">
+                            <h5 class="ps-3 text-center">
+                                Cancelar apartado
+                            </h5>
+                            <form action="{{ url('payment/apartado/' . $currentBuy->id) }}" method="POST"
+                                enctype="multipart/form-data">
+                                @csrf
+                                <div class="row">
+                                    <div class="col-md-6 text-center  mb-3 mt-3">
+                                        <div class="input-group input-group-lg input-group-outline is-filled">
+                                            <label class="form-label">Monto pendiente</label>
+                                            <input type="text" readonly
+                                                value="₡{{ number_format($currentBuy->total_buy + $currentBuy->total_delivery - $currentBuy->monto_apartado) }}"
+                                                class="form-control form-control-lg" name="country">
+                                        </div>
                                     </div>
-                                    <hr class="dark horizontal my-0">
 
-                                    <div class="card-footer d-flex">
-
+                                    <div class="col-md-6 text-center  mb-3 mt-3">
+                                        <div class="input-group input-group-lg is-filled input-group-outline">
+                                            <label class="form-label">Abonar</label>
+                                            <input type="number" min="1000"
+                                                max="{{ $currentBuy->total_buy + $currentBuy->total_delivery - $currentBuy->monto_apartado }}"
+                                                value="{{ $currentBuy->total_buy + $currentBuy->total_delivery - $currentBuy->monto_apartado }}"
+                                                required class="form-control form-control-lg" name="monto_apartado">
+                                        </div>
                                     </div>
                                 </div>
-
-                            </div>
+                                <button type="submit" class="btn btn-add_to_cart w-100 d-block h8 mt-3">Realizar
+                                    pago</button>
+                            </form>
                         </div>
-                    @break
-            @endforeach
-        </div>
+                    </div>
+                @endif
+            </div>
+            @foreach ($buysDetails as $item)
+                <div class="col-lg-4 bg-transparent {{ $show == 'N' ? 'd-none' : 'd-block' }}">
+                    <div class="card card-frame">
+                        <h3 class="ps-3 mt-2 text-center">
+                            Detalles Del Envío
+                        </h3>
+                        <div class="card-body text-center">
+                            <div class="row checkout-form">
+                                <div class="d-flex justify-content-center p-2">
+
+                                    <h4 class="text-muted">
+                                        <i class="material-icons my-auto">done</i>
+                                        Nombre:
+                                        {{ isset($item->person_name) ? $item->person_name : $item->person_name_b }}<br>
+                                        <i class="material-icons my-auto">done</i>
+                                        E-mail: {{ isset($item->email) ? $item->email : $item->email_b }}<br>
+                                        <i class="material-icons my-auto">done</i>
+                                        Teléfono:
+                                        {{ isset($item->telephone) ? $item->telephone : $item->telephone_b }}<br>
+                                        <i class="material-icons my-auto">done</i>
+                                        País: {{ isset($item->country) ? $item->country : $item->country_b }}<br>
+                                        <i class="material-icons my-auto">done</i>
+                                        Provincia:
+                                        {{ isset($item->province) ? $item->province : $item->province_b }}<br>
+                                        <i class="material-icons my-auto">done</i>
+                                        Cantón: {{ isset($item->city) ? $item->city : $item->city_b }}<br>
+                                        <i class="material-icons my-auto">done</i>
+                                        Distrito:
+                                        {{ isset($item->address_two) ? $item->address_two : $item->address_two_b }}<br>
+                                        <i class="material-icons my-auto">done</i>
+                                        Dirección Exacta:
+                                        {{ isset($item->address) ? $item->address : $item->address_b }}<br>
+
+                                        <i class="material-icons my-auto">done</i>
+                                        Código Postal:
+                                        {{ isset($item->postal_code) ? $item->postal_code : $item->postal_code_b }}
+
+                                    </h4>
+
+
+                                </div>
+                                <hr class="dark horizontal my-0">
+
+                                <div class="card-footer d-flex">
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                @break
+        @endforeach
+    </div>
 </div>
-</center>
+
 <div class="d-flex justify-content-between mb-3 mt-3">
     <div>
         @if ($previousBuy)

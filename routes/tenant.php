@@ -86,6 +86,7 @@ Route::middleware([
         Route::get('/get-cart-items', [CartController::class, 'getCart']);
         Route::delete('/delete-item-cart/{id}', [CartController::class, 'delete']);
         Route::post('/payment', [CheckOutController::class, 'payment']);
+        Route::post('/payment/apartado/{id}', [CheckOutController::class, 'paymentApartado']);
         Route::get('/paypal/process/{orderId}', [CheckOutController::class, 'process']);
         Route::post('/comments/store/', [TestimonialController::class, 'store']);
         Route::get('/get-stock/{cloth_id}/{attr_id}/{value_attr}', [FrontendController::class, 'getStock']);

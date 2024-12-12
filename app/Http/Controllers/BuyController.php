@@ -76,7 +76,9 @@ class BuyController extends Controller
                 'buys.name as name_b',
                 'buys.telephone as telephone_b',
                 'buys.email as email_b',
-                'buys.cancel_buy as cancel_buy'
+                'buys.cancel_buy as cancel_buy',
+                'buys.apartado as apartado',
+                'buys.monto_apartado as monto_apartado'
             )->orderBy('buys.kind_of_buy', 'desc')
                 ->get();
         });
@@ -242,7 +244,7 @@ class BuyController extends Controller
         $iva = $tenantinfo->iva;
         $tenant = $tenantinfo->tenant;
 
-        return view('admin.buys.indexDetail', compact('buysDetails', 'iva', 'tenant', 'previousBuy', 'nextBuy', 'id'));
+        return view('admin.buys.indexDetail', compact('buysDetails', 'iva', 'tenant', 'previousBuy', 'nextBuy', 'id','currentBuy'));
     }
     public function approve($id, $approved)
     {

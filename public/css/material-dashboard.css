@@ -3721,6 +3721,11 @@ fieldset:disabled .btn {
   --bs-btn-disabled-bg: #194DA3;
   --bs-btn-disabled-border-color: #194DA3;
 }
+.btn-velvet-outline {
+  color: #194DA3;
+  border-color: #194DA3 !important;
+  border: 1px solid !important;
+}
 
 .btn-google {
   --bs-btn-color: #fff;

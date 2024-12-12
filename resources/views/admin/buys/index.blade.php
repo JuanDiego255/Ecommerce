@@ -36,6 +36,7 @@
                                 autocomplete="recordsPerStatus">
                                 <option value="Pendiente" selected>Pendiente</option>
                                 <option value="Entregado">Entregado</option>
+                                <option value="Apartado">Apartado</option>
                                 <option value="Venta Interna">Venta Interna</option>
                             </select>
                         </div>
@@ -66,6 +67,8 @@
                                 @endif {{ __('+ Envío') }}</th>
                             <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                 {{ __('Envío') }}</th>
+                            <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
+                                {{ __('Monto a cancelar') }}</th>
                             <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                 {{ __('Cupón Aplicado') }}</th>
                             <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
@@ -100,8 +103,8 @@
 
                                         @if ($buy->cancel_buy == 0)
                                             <a data-bs-toggle="tooltip" data-bs-placement="top" title="Ver Detalle"
-                                                data-container="body" data-animation="true" class="btn btn-velvet"
-                                                style="text-decoration: none;"
+                                                data-container="body" data-animation="true"
+                                                class="btn btn-velvet text-white" style="text-decoration: none;"
                                                 href="{{ url('buy/details/admin/' . $buy->id) }}"><i
                                                     class="material-icons opacity-10">visibility</i></a>
                                         @endif
@@ -113,7 +116,8 @@
                                                 @csrf
                                                 @method('PUT')
 
-                                                <button class="btn btn-velvet text-white btn-tooltip"
+                                                <button
+                                                    class="btn btn-tooltip {{ $buy->approved == 1 ? 'btn-velvet text-white' : 'btn-velvet-outline' }}"
                                                     data-bs-toggle="tooltip" data-bs-placement="top"
                                                     title="{{ $buy->approved == 1 ? 'Desaprobar Compra' : 'Aprobar Compra' }}"
                                                     data-container="body" data-animation="true" type="submit"> <i
@@ -132,7 +136,8 @@
                                                 @csrf
                                                 @method('PUT')
 
-                                                <button class="btn btn-velvet text-white btn-tooltip"
+                                                <button
+                                                    class="btn btn-tooltip {{ $buy->ready_to_give == 1 ? 'btn-velvet text-white' : 'btn-velvet-outline' }}"
                                                     data-bs-toggle="tooltip" data-bs-placement="top"
                                                     title="{{ $buy->ready_to_give == 1 ? 'Procesando paquete...' : 'Listo para enviar' }}"
                                                     data-container="body" data-animation="true" type="submit"> <i
@@ -152,7 +157,8 @@
                                                 @csrf
                                                 @method('PUT')
 
-                                                <button class="btn btn-velvet text-white btn-tooltip"
+                                                <button
+                                                    class="btn btn-tooltip {{ $buy->delivered == 1 ? 'btn-velvet text-white' : 'btn-velvet-outline' }}"
                                                     data-bs-toggle="tooltip" data-bs-placement="top"
                                                     title="{{ $buy->delivered == 1 ? 'No Entregado' : 'Entregado' }}"
                                                     data-container="body" data-animation="true" type="submit"> <i
@@ -239,6 +245,15 @@
                                 </td>
                                 <td class="align-middle text-xxs text-center">
                                     <p class=" font-weight-bold mb-0">₡{{ number_format($buy->total_delivery) }}</p>
+                                </td>
+                                <td class="align-middle text-xxs text-center">
+                                    <p class=" font-weight-bold mb-0">
+                                        @if ($buy->apartado == 1)
+                                            ₡{{ number_format($buy->total_buy + $buy->total_delivery - $buy->monto_apartado) }}
+                                        @else
+                                            ₡{{ number_format(0) }}
+                                        @endif
+                                    </p>
                                 </td>
                                 <td class="align-middle text-xxs text-center">
                                     <p class=" font-weight-bold mb-0">₡{{ number_format($buy->credit_used) }}</p>

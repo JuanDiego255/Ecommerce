@@ -805,6 +805,8 @@ class CheckOutController extends Controller
                 $buy->cancel_buy = 0;
                 $buy->total_delivery = $request->delivery;
                 $buy->kind_of_buy = $request->kind_of;
+                $buy->apartado = $request->apartado ? 1 : 0;
+                $buy->monto_apartado =  $request->monto_apartado;
                 $buy->detail = $request->detail;
                 if ($request->has('name')) {
                     $buy->name = $request->name;
@@ -994,6 +996,21 @@ class CheckOutController extends Controller
         } catch (\Exception $e) {
             // Manejo de errores
             return 'Error al procesar la solicitud: ' . $e->getMessage();
+        }
+    }
+
+    public function paymentApartado(Request $request,$id)
+    {
+        try {
+            DB::beginTransaction();
+            $buy = Buy::findOrfail($id);
+            $buy->monto_apartado = $buy->monto_apartado + $request->monto_apartado;
+            $buy->update();
+            DB::commit();
+            return redirect()->back()->with(['status' => 'Se realizó el pago con éxito!', 'icon' => 'success']);
+        } catch (Exception $th) {
+            DB::rollBack();
+            return redirect()->back()->with(['status' => $th->getMessage(), 'icon' => 'success']);
         }
     }
 }
