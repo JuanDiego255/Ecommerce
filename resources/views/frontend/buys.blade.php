@@ -116,7 +116,7 @@
                                         </p>
                                     </td>
                                     <td class="align-middle text-xxs text-center">
-                                        <p class=" font-weight-bold mb-0">{{ $buy->guide_number }}</p>
+                                        <a class="text-info" href="https://correos.go.cr/rastreo/" target="blank"><p class=" font-weight-bold mb-0">{{ $buy->guide_number }}</p></a>
                                     </td>
                                     <td class="align-middle text-xxs text-center">
                                         <p class=" font-weight-bold mb-0">{{ $buy->created_at }}</p>
