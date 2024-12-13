@@ -133,7 +133,8 @@ Route::middleware([
             Route::get('/get-total-categories/{id}', [ClothingCategoryController::class, 'getTotalCategories']);
             //Routes for Buys
             Route::get('/buys-admin', [BuyController::class, 'indexAdmin']);
-            Route::post('/size-by-cloth', [BuyController::class, 'sizeByCloth']);            
+            Route::post('/size-by-cloth', [BuyController::class, 'sizeByCloth']);        
+            Route::post('/save/guide-number/{id}', [BuyController::class, 'updateGuideNumber']);            
             Route::get('/total-buys', [BuyController::class, 'indexTotalBuys']);
             Route::get('/new-buy', [BuyController::class, 'indexBuy']);
             Route::get('/buy/details/admin/{id}', [BuyController::class, 'buyDetailsAdmin']);

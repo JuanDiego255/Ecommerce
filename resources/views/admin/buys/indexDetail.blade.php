@@ -18,14 +18,14 @@
         <div class="card mt-3 mb-3">
             <div class="card-body">
                 <div class="row w-100">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="input-group input-group-lg input-group-static my-3 w-100">
                             <label>Filtrar</label>
                             <input value="" placeholder="Escribe para filtrar...." type="text"
                                 class="form-control form-control-lg" name="searchfor" id="searchfor">
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="input-group input-group-lg input-group-static my-3 w-100">
                             <label>Mostrar</label>
                             <select id="recordsPerPage" name="recordsPerPage" class="form-control form-control-lg"
@@ -38,7 +38,28 @@
 
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
+                        <form action="{{ url('save/guide-number/' . $currentBuy->id) }}" method="POST"
+                            enctype="multipart/form-data">
+                            <div class="row align-items-end">
+
+                                @csrf
+                                <div class="col-md-9">
+                                    <div class="input-group input-group-lg input-group-static my-3 w-100">
+                                        <label>Número de guía</label>
+                                        <input value="{{$currentBuy->guide_number}}" type="text" class="form-control form-control-lg"
+                                            name="guide_number" id="guide_number">
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <button type="submit" class="btn btn-add_to_cart w-100 d-block h8 mt-3"><i
+                                            class="material-icons opacity-10">save</i>
+                                    </button>
+                                </div>                                
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-md-3">
                         <div class="input-group input-group-lg input-group-static my-3 w-100">
                             <label class="mb-3">Buscar pedido por nombre</label>
                             <select id="search-select" class="form-control  form-control-lg select2" placeholder="Search..."
@@ -47,7 +68,6 @@
                             </select>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -183,10 +203,11 @@
 
                     </div>
                 </center>
+
                 @if (
                     $currentBuy->apartado == 1 &&
                         $currentBuy->total_buy + $currentBuy->total_delivery - $currentBuy->monto_apartado > 0)
-                    <div class="card w-50 col-md-6">
+                    <div class="card w-50 col-md-6 ml-1">
                         <div class="card-body">
                             <h5 class="ps-3 text-center">
                                 Cancelar apartado

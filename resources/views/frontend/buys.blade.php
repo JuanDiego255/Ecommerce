@@ -56,6 +56,8 @@
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                     Compra</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
+                                    Número de guía</th>
+                                <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                     Fecha</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                     Acciones</th>
@@ -112,6 +114,9 @@
                                                     Cancelada
                                             @endswitch
                                         </p>
+                                    </td>
+                                    <td class="align-middle text-xxs text-center">
+                                        <p class=" font-weight-bold mb-0">{{ $buy->guide_number }}</p>
                                     </td>
                                     <td class="align-middle text-xxs text-center">
                                         <p class=" font-weight-bold mb-0">{{ $buy->created_at }}</p>

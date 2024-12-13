@@ -566,4 +566,18 @@ class BuyController extends Controller
             DB::rollBack();
         }
     }
+    public function updateGuideNumber(Request $request,$id)
+    {
+        try {
+            DB::beginTransaction();
+            $buy = Buy::findOrfail($id);
+            $buy->guide_number = $request->guide_number;
+            $buy->update();
+            DB::commit();
+            return redirect()->back()->with(['status' => 'Se ha modificado el número de guía', 'icon' => 'success']);
+        } catch (Exception $th) {
+            DB::rollBack();
+            return redirect()->back()->with(['status' => $th->getMessage(), 'icon' => 'success']);
+        }
+    }
 }
