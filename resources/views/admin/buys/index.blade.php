@@ -209,8 +209,22 @@
 
                                 </td>
                                 <td class="align-middle text-xxs text-center">
-                                    <p class=" font-weight-bold mb-0">
-                                        {{ $buy->kind_of_buy == 'V' ? 'Sitio Web' : 'Venta Interna' }}
+                                    <p class=" font-weight-bold mb-0">                                        
+                                        @switch($buy->kind_of_buy)
+                                            @case("V")
+                                                Sitio Web
+                                            @break
+
+                                            @case("F")
+                                                @if ($buy->apartado == 1)
+                                                    Venta Interna (Apartado)
+                                                @else
+                                                    Venta Interna
+                                                @endif
+                                            @break
+
+                                            @default
+                                        @endswitch
                                     </p>
                                 </td>
                                 <td>
