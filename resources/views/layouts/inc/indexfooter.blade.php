@@ -56,13 +56,21 @@
                 <div>
                     <p class="text-footer text-uppercase text-lg">
                         <a style="text-decoration: none;" class="mr-5 text-footer" href="#">
-                            <i class="fa fa-envelope"></i> Envíos por correos de C.R
+                            <i class="{{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'muebleriasarchi' ? 'fa fa-envelope' : 'fa fa-truck' }}"></i>
+                            {{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'muebleriasarchi' ? 'Envíos por correos de C.R' : 'Se realizan entregas por medio de encomiendas.' }}
                         </a><br>
                         <a target="blank" href="{{ url('https://wa.me/506' . $tenantinfo->whatsapp) }}"
                             class="text-footer">
                             <i class="fab fa-whatsapp"></i>
                             {{ isset($tenantinfo->whatsapp) ? $tenantinfo->whatsapp : '' }}
                         </a>
+                        @if (isset($tenantinfo->tenant) && $tenantinfo->tenant == 'muebleriasarchi')
+                            <br>
+                            <a target="blank" href="{{ url('https://wa.me/50689420339') }}" class="text-footer">
+                                <i class="fab fa-whatsapp"></i>
+                                89420339
+                            </a>
+                        @endif
                     </p>
                 </div>
             </div>
