@@ -351,7 +351,31 @@
             <h3
                 class="text-center {{ isset($tenantinfo->tenant) && $tenantinfo->tenant === 'mandicr' ? 'text-title-mandi' : 'text-title' }} mt-3">
                 {{ isset($tenantinfo->title) ? $tenantinfo->title : '' }}</h3>
-            <span class="text-center text-muted">{{ isset($tenantinfo->mision) ? $tenantinfo->mision : '' }}</span>
+            <span class="text-center text-muted">
+                @if (isset($tenantinfo->tenant) && $tenantinfo->tenant != 'muebleriasarchi')
+                    {{ isset($tenantinfo->mision) ? $tenantinfo->mision : '' }}
+                @else
+                    Mueblería Sarchí tiene sus raíces en una tradición familiar que comenzó hace más de 50 años, en los años
+                    70, cuando Don Armando Salazar Chaverri, un pionero de la zona, fundó el taller que daría origen a una
+                    de las empresas más reconocidas de la zona. Con una visión clara de ofrecer muebles de alta calidad
+                    elaborados con maderas finas y acabados excepcionales, Don Armando se destacó por ser uno de los
+                    primeros en la zona en especializarse en la fabricación de muebles de madera, dando forma a la identidad
+                    del lugar como un referente en la carpintería y el diseño.
+                    Desde sus inicios, el taller estuvo situado junto a la casa de Don Armando, un espacio donde sus hijos
+                    crecieron aprendiendo las técnicas de fabricación que definieron el estilo clásico de la mueblería. A lo
+                    largo de los años, la pasión y el conocimiento sobre la madera fueron transmitidos de generación en
+                    generación, asegurando la continuidad de la tradición y la calidad que caracteriza a Mueblería Sarchi.
+                    Hoy en día, los nietos de Don Armando siguen preservando el legado familiar, mientras incorporan un
+                    enfoque moderno en los diseños. A lo largo de los años, han logrado un balance perfecto entre la
+                    tradición artesanal y la innovación, manteniendo el nivel de calidad que representa a Sarchí, pero al
+                    mismo tiempo, adaptándose a las nuevas tendencias del mercado para satisfacer las necesidades de los
+                    clientes más exigentes.
+                    Mueblería Sarchí sigue evolucionando, buscando siempre mejorar sus procesos y diseños para ofrecer lo
+                    mejor a sus clientes, manteniendo la esencia de la empresa: una fusión de tradición, calidad y
+                    modernidad.
+                @endif
+
+            </span>
 
 
         </div>
