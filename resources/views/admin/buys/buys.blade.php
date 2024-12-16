@@ -244,7 +244,7 @@
                                 <div class="col-md-6 text-center d-none" id="monto_apartado">
                                     <div class="input-group input-group-lg input-group-outline">
                                         <label class="form-label">Monto Apartado</label>
-                                        <input type="number" required class="form-control form-control-lg"
+                                        <input type="number" class="form-control form-control-lg"
                                             name="monto_apartado">
                                     </div>
                                 </div>

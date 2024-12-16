@@ -30374,7 +30374,7 @@ animation-iteration-count: infinite;
 .search {
   width: 100%; /* Ocupa todo el ancho disponible */
   height: 100px; /* Altura fija */
-  background-color: #fff; /* Fondo blanco */
+  background-color: var(--navbar) !important; /* Fondo blanco */
   border-radius: 6px; /* Bordes redondeados */
   display: flex; /* Alinear contenido */
   align-items: center; /* Centrar verticalmente */
