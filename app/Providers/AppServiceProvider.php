@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Blog;
 use App\Models\ButtonIcon;
 use App\Models\Buy;
 use App\Models\Cart;
@@ -13,11 +14,13 @@ use App\Models\Settings;
 use App\Models\TenantCarousel;
 use App\Models\TenantInfo;
 use App\Models\TenantSocialNetwork;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
+use App\Observers\GeneralObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -38,6 +41,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        ClothingCategory::observe(GeneralObserver::class);
+        Categories::observe(GeneralObserver::class);
+        Buy::observe(GeneralObserver::class);
+        Blog::observe(GeneralObserver::class);
+        User::observe(GeneralObserver::class);
         Schema::defaultStringLength(191);
         view()->composer('*', function ($view) {
             $view_name = str_replace('.', '_', $view->getName());

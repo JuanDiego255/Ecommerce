@@ -78,7 +78,8 @@ class CategoryController extends Controller
         } catch (\Exception $th) {
             //dd($th->getMessage());
             DB::rollBack();
-            return redirect()->back()->with(['status' => 'Ocurrió un error al agregar la categoría, verifique que no hayan campos en blanco', 'icon' => 'error'])
+            dd($th->getMessage());
+            return redirect()->back()->with(['status' => $th->getMessage(), 'icon' => 'error'])
             ->withInput();
         }
     }

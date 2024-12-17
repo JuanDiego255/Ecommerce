@@ -697,7 +697,7 @@ class ClothingCategoryController extends Controller
                     $query->where('clothing.name', 'like', "%{$search}%");
                 }
             })
-            ->where('clothing.status',1)
+            ->where('clothing.status', 1)
             ->groupBy(
                 'clothing.id',
                 'categories.id',
@@ -709,5 +709,57 @@ class ClothingCategoryController extends Controller
             ->get();
 
         return response()->json($clothings);
+    }
+    public function reportCatProd($type)
+    {
+        $clothings = Cache::remember('clothings_report', $this->expirationTime, function () {
+            return DB::table('clothing')
+                ->where('clothing.status', 1)
+                ->leftJoin('stocks', 'clothing.id', '=', 'stocks.clothing_id')
+                ->leftJoin('attributes', 'stocks.attr_id', '=', 'attributes.id')
+                ->leftJoin('product_images', function ($join) {
+                    $join->on('clothing.id', '=', 'product_images.clothing_id')->whereRaw('product_images.id = (
+                            SELECT MIN(id) FROM product_images
+                            WHERE product_images.clothing_id = clothing.id
+                        )');
+                })
+                ->select(
+                    'clothing.id as id',
+                    'clothing.trending as trending',
+                    'clothing.name as name',
+                    'clothing.casa as casa',
+                    'clothing.code as code',
+                    'clothing.status as status',
+                    'clothing.manage_stock as manage_stock',
+                    'clothing.discount as discount',
+                    'clothing.description as description',
+                    'clothing.price as price',
+                    'clothing.mayor_price as mayor_price',
+                    DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE 0 END) as total_stock'),
+                    DB::raw('GROUP_CONCAT(COALESCE(attributes.name, "")) AS available_attr'),
+                    DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'),
+                    DB::raw('GROUP_CONCAT(COALESCE(stocks.attr_id, "")) AS attr_id_per_size'),
+                    'product_images.image as image'
+                )
+                ->groupBy(
+                    'clothing.id',
+                    'clothing.casa',
+                    'clothing.mayor_price',
+                    'clothing.discount',
+                    'clothing.code',
+                    'clothing.status',
+                    'clothing.manage_stock',
+                    'clothing.name',
+                    'clothing.trending',
+                    'clothing.description',
+                    'clothing.price',
+                    'product_images.image'
+                )
+                ->orderBy('name', 'asc')
+                ->get();
+        });
+        $categories = Categories::get();
+
+        return view('admin.reports.catprod', compact('clothings', 'categories','type'));
     }
 }

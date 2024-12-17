@@ -132,7 +132,7 @@
                         </li>
 
                         <li class="nav-item">
-                            <a href="{{ url('#') }}" class="nav-link">
+                            <a href="{{ url('/report/cat-prod/1') }}" class="nav-link">
                                 <div
                                     class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
                                     <i class="material-icons opacity-10">arrow_right_alt</i>
@@ -241,7 +241,7 @@
                 <!-- Lista desplegable de "Mi Negocio" -->
                 <ul class="submenu">
                     <li class="nav-item">
-                        <a href="{{ url('#') }}" class="nav-link">
+                        <a href="{{ url('/report/logs/log') }}" class="nav-link">
                             <div
                                 class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
                                 <i class="material-icons opacity-10">arrow_right_alt</i>
@@ -250,7 +250,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="{{ url('#') }}" class="nav-link">
+                        <a href="{{ url('/report/logs/movement') }}" class="nav-link">
                             <div
                                 class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
                                 <i class="material-icons opacity-10">arrow_right_alt</i>

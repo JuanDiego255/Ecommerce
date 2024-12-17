@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\GeneralCategory;
+use App\Models\Log;
 use App\Models\Roles;
 use App\Models\Routine;
 use App\Models\RoutineDays;
@@ -30,13 +31,13 @@ class UserController extends Controller
     {
         //
         DB::beginTransaction();
-        try {         
-            if($request->status=="1"){
+        try {
+            if ($request->status == "1") {
                 User::where('id', $id)->update(['mayor' => 1]);
-            }else{
+            } else {
                 User::where('id', $id)->update(['mayor' => 0]);
             }
-            
+
             DB::commit();
             return redirect('/users')->with(['status' => 'Se cambio el estado (Al por mayor) para este usuario', 'icon' => 'success']);
         } catch (\Exception $th) {
@@ -57,8 +58,8 @@ class UserController extends Controller
     public function edit($id)
     {
         $user = User::findOrfail($id);
-        $roles = Roles::where('status',1)->get();
-        return view('admin.users.edit', compact('user','roles'));
+        $roles = Roles::where('status', 1)->get();
+        return view('admin.users.edit', compact('user', 'roles'));
     }
     /**
 
@@ -118,5 +119,11 @@ class UserController extends Controller
             return redirect('/users')->with(['status' => 'No se pudo eliminar el usuario', 'icon' => 'error']);
         }
     }
-   
+    public function reportLogs($type)
+    {
+        $logs = Log::join('users', 'logs.user_id', 'users.id')
+            ->select('users.name','logs.*')
+            ->where('logs.type', $type)->get();
+        return view('admin.reports.logs', compact('logs', 'type'));
+    }
 }

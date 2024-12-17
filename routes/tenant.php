@@ -265,6 +265,8 @@ Route::middleware([
             Route::post('/role/store', [RolesController::class, 'store']);
             //Rutas para reportes
             Route::get('/report/stock', [ClothingCategoryController::class, 'reportStock']);
+            Route::get('/report/cat-prod/{type}', [ClothingCategoryController::class, 'reportCatProd']);
+            Route::get('/report/logs/{type}', [UserController::class, 'reportLogs']);
         });
     });
 
