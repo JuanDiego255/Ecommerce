@@ -233,21 +233,24 @@
                                         <input type="number" class="form-control form-control-lg" name="delivery">
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" value="1" id="apartado"
-                                            name="apartado" {{ old('apartado') ? 'checked' : '' }}>
-                                        <label class="custom-control-label"
-                                            for="customCheck1">{{ __('Apartado') }}</label>
+                                @if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'rutalimon')
+                                    <div class="col-md-6">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="1"
+                                                id="apartado" name="apartado" {{ old('apartado') ? 'checked' : '' }}>
+                                            <label class="custom-control-label"
+                                                for="customCheck1">{{ __('Apartado') }}</label>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-md-6 text-center d-none" id="monto_apartado">
-                                    <div class="input-group input-group-lg input-group-outline">
-                                        <label class="form-label">Monto Apartado</label>
-                                        <input type="number" class="form-control form-control-lg"
-                                            name="monto_apartado">
+
+                                    <div class="col-md-6 text-center d-none" id="monto_apartado">
+                                        <div class="input-group input-group-lg input-group-outline">
+                                            <label class="form-label">Monto Apartado</label>
+                                            <input type="number" class="form-control form-control-lg"
+                                                name="monto_apartado">
+                                        </div>
                                     </div>
-                                </div>
+                                @endif
                             </div>
                             <button @if ($total_price == 0) disabled @endif id="btnSinpe" type="submit"
                                 class="btn btn-add_to_cart w-100 d-block h8 mt-3">Realizar

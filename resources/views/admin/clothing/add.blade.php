@@ -61,14 +61,17 @@
                                         id="stock" value="{{ old('stock') }}">
                                 </div>
                             </div>
-                            <div class="col-md-12 mb-3">
-                                <div class="input-group input-group-static mb-4">
-                                    <label>
-                                        {{ __('SKU o Código (Si dejas el campo en blanco o el código digitado ya existe, el sistema sugerirá un código random, compuesto por la letra P indicando que es un producto, y una secuencia de 13 números aleatorios)') }}</label>
-                                    <input type="text" placeholder="Puedes digitar el código deseado..."
-                                        class="form-control form-control-lg" name="code" value="{{ old('code') }}">
+                            @if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'rutalimon')
+                                <div class="col-md-12 mb-3">
+                                    <div class="input-group input-group-static mb-4">
+                                        <label>
+                                            {{ __('SKU o Código (Si dejas el campo en blanco o el código digitado ya existe, el sistema sugerirá un código random, compuesto por la letra P indicando que es un producto, y una secuencia de 13 números aleatorios)') }}</label>
+                                        <input type="text" placeholder="Puedes digitar el código deseado..."
+                                            class="form-control form-control-lg" name="code"
+                                            value="{{ old('code') }}">
+                                    </div>
                                 </div>
-                            </div>
+                            @endif
                             <div class="col-md-12 mb-3">
                                 <div class="input-group input-group-static mb-4">
                                     <textarea id="editor" type="text" class="form-control form-control-lg" name="description"
@@ -145,32 +148,35 @@
                                     </div>
                                 </div>
                             @endif
+                            @if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'rutalimon')
+                                <div class="col-md-12 mb-3">
+                                    <label>{{ __('Es tendencia?') }}</label>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="1" id="trending"
+                                            name="trending" {{ old('trending') ? 'checked' : '' }}>
+                                        <label class="custom-control-label"
+                                            for="customCheck1">{{ __('Tendencia') }}</label>
+                                    </div>
+                                </div>
 
-                            <div class="col-md-12 mb-3">
-                                <label>{{ __('Es tendencia?') }}</label>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="1" id="trending"
-                                        name="trending" {{ old('trending') ? 'checked' : '' }}>
-                                    <label class="custom-control-label" for="customCheck1">{{ __('Tendencia') }}</label>
+                                <div class="col-md-12 mb-3">
+                                    <label
+                                        class="form-label">{{ __('Meta Keywords (Opcional - Presione enter para agregar la palabra clave)') }}</label><br>
+                                    <div class="tags-input">
+                                        <ul id="tags">
+                                            @if (old('meta_keywords'))
+                                                @foreach (explode(',', old('meta_keywords')) as $keyword)
+                                                    <li>{{ $keyword }}<span class="tag-remove"
+                                                            onclick="removeTag(this)">&times;</span></li>
+                                                @endforeach
+                                            @endif
+                                        </ul>
+                                        <input type="text" id="input-tag" placeholder="Escriba la palabra clave.." />
+                                        <input type="hidden" value="{{ old('meta_keywords') }}" id="meta_keywords"
+                                            name="meta_keywords">
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-md-12 mb-3">
-                                <label
-                                    class="form-label">{{ __('Meta Keywords (Opcional - Presione enter para agregar la palabra clave)') }}</label><br>
-                                <div class="tags-input">
-                                    <ul id="tags">
-                                        @if (old('meta_keywords'))
-                                            @foreach (explode(',', old('meta_keywords')) as $keyword)
-                                                <li>{{ $keyword }}<span class="tag-remove"
-                                                        onclick="removeTag(this)">&times;</span></li>
-                                            @endforeach
-                                        @endif
-                                    </ul>
-                                    <input type="text" id="input-tag" placeholder="Escriba la palabra clave.." />
-                                    <input type="hidden" value="{{ old('meta_keywords') }}" id="meta_keywords"
-                                        name="meta_keywords">
-                                </div>
-                            </div>
+                            @endif
                         </div>
 
                         <div class="col-md-12">

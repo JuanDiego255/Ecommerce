@@ -47,18 +47,20 @@
                                 <label class="form-check-label"
                                     for="show_insta">{{ __('Mostrar Sección Instagram') }}</label>
                             </div>
-                            <div class="form-check form-switch col-md-6">
-                                <input value="1" class="form-check-input" type="checkbox" name="show_trending"
-                                    id="show_trending" @if ($item->show_trending == 1) checked @endif>
-                                <label class="form-check-label"
-                                    for="show_trending">{{ __('Mostrar productos en tendencia') }}</label>
-                            </div>
+                            @if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'rutalimon')
+                                <div class="form-check form-switch col-md-6">
+                                    <input value="1" class="form-check-input" type="checkbox" name="show_trending"
+                                        id="show_trending" @if ($item->show_trending == 1) checked @endif>
+                                    <label class="form-check-label"
+                                        for="show_trending">{{ __('Mostrar productos en tendencia') }}</label>
+                                </div>
+                            @endif
                             <div class="form-check form-switch col-md-6">
                                 <input value="1" class="form-check-input" type="checkbox" name="show_cintillo"
                                     id="show_cintillo" @if ($item->show_cintillo == 1) checked @endif>
                                 <label class="form-check-label"
                                     for="show_cintillo">{{ __('Mostrar Cintillo (Cinta arriba del menu
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    principal)') }}</label>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        principal)') }}</label>
                             </div>
                             <div class="form-check form-switch col-md-6">
                                 <input value="1" class="form-check-input" type="checkbox" name="show_mision"
@@ -91,7 +93,7 @@
             <div class="card-header">
                 <h4 class="text-dark">
                     {{ __('Personaliza los colores del sitio web (Si conoce el valor hexadecimal del color en
-                                                                                                                                                                                                                                                                                                                                                                                                                                    específico, puedes ingresarlo en el campo de texto.)') }}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        específico, puedes ingresarlo en el campo de texto.)') }}
                 </h4>
             </div>
             <form action="{{ url('tenant-components/color-save/') }}" method="post" enctype="multipart/form-data">

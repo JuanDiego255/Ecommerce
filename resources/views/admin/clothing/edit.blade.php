@@ -131,15 +131,17 @@
                                     </div>
                                 </div>
                             @endif
-
-                            <div class="col-md-12 mb-3">
-                                <label>{{ __('Es tendencia?') }}</label>
-                                <div class="form-check">
-                                    <input {{ $clothing->trending == 1 ? 'checked' : '' }} class="form-check-input"
-                                        type="checkbox" value="1" id="trending" name="trending">
-                                    <label class="custom-control-label" for="customCheck1">{{ __('Tendencia') }}</label>
+                            @if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'rutalimon')
+                                <div class="col-md-12 mb-3">
+                                    <label>{{ __('Es tendencia?') }}</label>
+                                    <div class="form-check">
+                                        <input {{ $clothing->trending == 1 ? 'checked' : '' }} class="form-check-input"
+                                            type="checkbox" value="1" id="trending" name="trending">
+                                        <label class="custom-control-label"
+                                            for="customCheck1">{{ __('Tendencia') }}</label>
+                                    </div>
                                 </div>
-                            </div>
+                            @endif
                             <div class="col-md-12 mb-3">
                                 @if ($clothing->image)
                                     <img class="img-fluid img-thumbnail" src="{{ route('file', $clothing->image) }}"
@@ -175,17 +177,19 @@
                                     </div>
                                 </div>
                             @endif
-                            <div class="col-md-12 mb-3">
+                            @if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'rutalimon')
+                                <div class="col-md-12 mb-3">
 
-                                <label>{{ __('Meta Keywords (Opcional - Presione enter para agregar la palabra clave)') }}</label><br>
-                                <div class="tags-input">
-                                    <ul id="tags"></ul>
-                                    <input type="text" id="input-tag" placeholder="Escriba la palabra clave.." />
+                                    <label>{{ __('Meta Keywords (Opcional - Presione enter para agregar la palabra clave)') }}</label><br>
+                                    <div class="tags-input">
+                                        <ul id="tags"></ul>
+                                        <input type="text" id="input-tag" placeholder="Escriba la palabra clave.." />
+                                    </div>
+                                    <input id="meta_keywords" type="hidden" name="meta_keywords"
+                                        value="{{ $clothing->meta_keywords }}">
+
                                 </div>
-                                <input id="meta_keywords" type="hidden" name="meta_keywords"
-                                    value="{{ $clothing->meta_keywords }}">
-
-                            </div>
+                            @endif
 
                         </div>
 

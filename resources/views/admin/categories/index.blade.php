@@ -18,12 +18,14 @@
         <div class="col-md-3">
             <a href="{{ url('add-category/' . $department_id) }}" class="btn btn-velvet">{{ __('Nueva categoría') }}</a>
         </div>
-        <div class="col-md-3">
-            <button type="button" data-bs-toggle="modal" data-bs-target="#import-product-modal"
-                class="btn btn-icon btn-3 btn-success">Importar Productos
-                <i class="fas fa-file-excel"></i>
-            </button>
-        </div>
+        @if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'rutalimon')
+            <div class="col-md-3">
+                <button type="button" data-bs-toggle="modal" data-bs-target="#import-product-modal"
+                    class="btn btn-icon btn-3 btn-success">Importar Productos
+                    <i class="fas fa-file-excel"></i>
+                </button>
+            </div>
+        @endif
     </div>
 
     <div class="card mt-3">
@@ -144,7 +146,7 @@
             if (confirmDelete) {
                 form.submit();
             }
-        }       
+        }
     </script>
     <script src="{{ asset('js/datatables.js') }}"></script>
 @endsection

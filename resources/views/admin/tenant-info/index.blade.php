@@ -48,39 +48,43 @@
                                     @enderror
                                 </div>
                             </div>
-                            <div class="col-md-12">
-                                <label class="form-label">Descuento (Esta descripción se mostrará en la sección de
-                                    descuentos en la página de inicio)</label>
-                                <div
-                                    class="input-group input-group-lg input-group-outline {{ isset($item->title_discount) ? 'is-filled' : '' }} my-3">
+                            @if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'rutalimon')
+                                <div class="col-md-12">
+                                    <label class="form-label">Descuento (Esta descripción se mostrará en la sección de
+                                        descuentos en la página de inicio)</label>
+                                    <div
+                                        class="input-group input-group-lg input-group-outline {{ isset($item->title_discount) ? 'is-filled' : '' }} my-3">
 
-                                    <textarea placeholder="Descripción descuento: Esta descripción se mostrará en la sección de descuentos del cliente"
-                                        type="text" class="form-control form-control-lg @error('title_discount') is-invalid @enderror"
-                                        name="title_discount" id="title_discount">{{ isset($item->title_discount) ? $item->title_discount : '' }}</textarea>
-                                    @error('title_discount')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>Campo Requerido</strong>
-                                        </span>
-                                    @enderror
+                                        <textarea placeholder="Descripción descuento: Esta descripción se mostrará en la sección de descuentos del cliente"
+                                            type="text" class="form-control form-control-lg @error('title_discount') is-invalid @enderror"
+                                            name="title_discount" id="title_discount">{{ isset($item->title_discount) ? $item->title_discount : '' }}</textarea>
+                                        @error('title_discount')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>Campo Requerido</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-md-12">
-                                <label class="form-label">Instagram (Esta descripción se mostrará en la sección de Instagram
-                                    en la página de inicio)</label>
-                                <div
-                                    class="input-group input-group-lg input-group-outline {{ isset($item->title_instagram) ? 'is-filled' : '' }} my-3">
 
-                                    <textarea
-                                        placeholder="Descripción instagram: Esta descripción se mostrará en la sección de Instagram en la página principal"
-                                        type="text" class="form-control form-control-lg @error('title_instagram') is-invalid @enderror"
-                                        name="title_instagram" id="title_instagram">{{ isset($item->title_instagram) ? $item->title_instagram : '' }}</textarea>
-                                    @error('title_instagram')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>Campo Requerido</strong>
-                                        </span>
-                                    @enderror
+                                <div class="col-md-12">
+                                    <label class="form-label">Instagram (Esta descripción se mostrará en la sección de
+                                        Instagram
+                                        en la página de inicio)</label>
+                                    <div
+                                        class="input-group input-group-lg input-group-outline {{ isset($item->title_instagram) ? 'is-filled' : '' }} my-3">
+
+                                        <textarea
+                                            placeholder="Descripción instagram: Esta descripción se mostrará en la sección de Instagram en la página principal"
+                                            type="text" class="form-control form-control-lg @error('title_instagram') is-invalid @enderror"
+                                            name="title_instagram" id="title_instagram">{{ isset($item->title_instagram) ? $item->title_instagram : '' }}</textarea>
+                                        @error('title_instagram')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>Campo Requerido</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
                                 </div>
-                            </div>
+                            @endif
                             <div class="col-md-12">
                                 <label class="form-label">Misión (Esta descripción se mostrará en la sección Misión en la
                                     página de inicio)</label>
@@ -97,23 +101,26 @@
                                     @enderror
                                 </div>
                             </div>
-                            <div class="col-md-12">
-                                <label class="form-label">Tendencia (Esta descripción se mostrará en la sección de productos
-                                    en tendencia en la página de inicio)</label>
-                                <div
-                                    class="input-group input-group-lg input-group-outline {{ isset($item->title_trend) ? 'is-filled' : '' }} my-3">
+                            @if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'rutalimon')
+                                <div class="col-md-12">
+                                    <label class="form-label">Tendencia (Esta descripción se mostrará en la sección de
+                                        productos
+                                        en tendencia en la página de inicio)</label>
+                                    <div
+                                        class="input-group input-group-lg input-group-outline {{ isset($item->title_trend) ? 'is-filled' : '' }} my-3">
 
-                                    <textarea
-                                        placeholder="Descripción Tendencia: Esta descripción se mostrará en la sección de artículos en tendencia en la página principal"
-                                        type="text" class="form-control form-control-lg @error('title_trend') is-invalid @enderror" name="title_trend"
-                                        id="title_trend">{{ isset($item->title_trend) ? $item->title_trend : '' }}</textarea>
-                                    @error('title_trend')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>Campo Requerido</strong>
-                                        </span>
-                                    @enderror
+                                        <textarea
+                                            placeholder="Descripción Tendencia: Esta descripción se mostrará en la sección de artículos en tendencia en la página principal"
+                                            type="text" class="form-control form-control-lg @error('title_trend') is-invalid @enderror" name="title_trend"
+                                            id="title_trend">{{ isset($item->title_trend) ? $item->title_trend : '' }}</textarea>
+                                        @error('title_trend')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>Campo Requerido</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
                                 </div>
-                            </div>
+                            @endif
                             @if ($item->kind_business == 1)
                                 <div class="col-md-12">
                                     <label class="form-label">Acerca de (Esta descripción se mostrará en la sección de
@@ -121,10 +128,8 @@
                                     <div
                                         class="input-group input-group-lg input-group-outline {{ isset($item->about) ? 'is-filled' : '' }} my-3">
 
-                                        <textarea
-                                            placeholder="Acerca de la empresa..."
-                                            type="text" class="form-control form-control-lg @error('about') is-invalid @enderror" name="about"
-                                            id="about">{{ isset($item->about) ? $item->about : '' }}</textarea>
+                                        <textarea placeholder="Acerca de la empresa..." type="text"
+                                            class="form-control form-control-lg @error('about') is-invalid @enderror" name="about" id="about">{{ isset($item->about) ? $item->about : '' }}</textarea>
                                         @error('about')
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>Campo Requerido</strong>
@@ -133,41 +138,44 @@
                                     </div>
                                 </div>
                             @endif
-                            <div class="col-md-12">
-                                <div
-                                    class="input-group input-group-lg input-group-outline {{ isset($item->title_suscrib_a) ? 'is-filled' : '' }} my-3">
-                                    <label class="form-label">Título suscripción: este título es el enlace directo para ir a
-                                        suscribirse</label>
-                                    <input value="{{ isset($item->title_suscrib_a) ? $item->title_suscrib_a : '' }}"
-                                        type="text"
-                                        class="form-control form-control-lg @error('title_suscrib_a') is-invalid @enderror"
-                                        name="title_suscrib_a" id="title_suscrib_a">
-                                    @error('title_suscrib_a')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>Campo Requerido</strong>
-                                        </span>
-                                    @enderror
+                            @if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'rutalimon')
+                                <div class="col-md-12">
+                                    <div
+                                        class="input-group input-group-lg input-group-outline {{ isset($item->title_suscrib_a) ? 'is-filled' : '' }} my-3">
+                                        <label class="form-label">Título suscripción: este título es el enlace directo para
+                                            ir a
+                                            suscribirse</label>
+                                        <input value="{{ isset($item->title_suscrib_a) ? $item->title_suscrib_a : '' }}"
+                                            type="text"
+                                            class="form-control form-control-lg @error('title_suscrib_a') is-invalid @enderror"
+                                            name="title_suscrib_a" id="title_suscrib_a">
+                                        @error('title_suscrib_a')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>Campo Requerido</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-md-12">
-                                <div
-                                    class="input-group input-group-lg input-group-outline {{ isset($item->description_suscrib) ? 'is-filled' : '' }} my-3">
-                                    <label class="form-label">Descripción suscripción: esta descripción es el cuerpo del
-                                        mensaje
-                                        que incita al
-                                        usuario a suscribirse</label>
-                                    <input
-                                        value="{{ isset($item->description_suscrib) ? $item->description_suscrib : '' }}"
-                                        type="text"
-                                        class="form-control form-control-lg @error('description_suscrib') is-invalid @enderror"
-                                        name="description_suscrib" id="description_suscrib">
-                                    @error('description_suscrib')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>Campo Requerido</strong>
-                                        </span>
-                                    @enderror
+                                <div class="col-md-12">
+                                    <div
+                                        class="input-group input-group-lg input-group-outline {{ isset($item->description_suscrib) ? 'is-filled' : '' }} my-3">
+                                        <label class="form-label">Descripción suscripción: esta descripción es el cuerpo del
+                                            mensaje
+                                            que incita al
+                                            usuario a suscribirse</label>
+                                        <input
+                                            value="{{ isset($item->description_suscrib) ? $item->description_suscrib : '' }}"
+                                            type="text"
+                                            class="form-control form-control-lg @error('description_suscrib') is-invalid @enderror"
+                                            name="description_suscrib" id="description_suscrib">
+                                        @error('description_suscrib')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>Campo Requerido</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
                                 </div>
-                            </div>
+                            @endif
                             <div class="col-md-12">
                                 <div
                                     class="input-group input-group-lg input-group-outline {{ isset($item->footer) ? 'is-filled' : '' }} my-3">
@@ -214,8 +222,8 @@ is-invalid
                                 <div
                                     class="input-group input-group-lg input-group-outline {{ isset($item->whatsapp) ? 'is-filled' : '' }}">
                                     <label class="form-label">WhatsApp</label>
-                                    <input required
-                                        value="{{ isset($item->whatsapp) ? $item->whatsapp : '' }}" type="text"
+                                    <input required value="{{ isset($item->whatsapp) ? $item->whatsapp : '' }}"
+                                        type="text"
                                         class="form-control form-control-lg @error('whatsapp')
 is-invalid
 @enderror"

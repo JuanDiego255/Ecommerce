@@ -16,22 +16,27 @@
                     <div class="col-md-6 mb-3">
                         <div class="input-group input-group-lg input-group-outline my-3">
                             <label class="form-label">{{ __('Categoría (*)') }}</label>
-                            <input value="{{ old('name') }}" required type="text" class="form-control form-control-lg" name="name">
+                            <input value="{{ old('name') }}" required type="text" class="form-control form-control-lg"
+                                name="name">
                         </div>
                     </div>
+                    @if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'rutalimon')
+                        <div class="col-md-6 mb-3">
+                            <div class="input-group input-group-lg input-group-outline my-3">
+                                <label class="form-label">{{ __('Meta title (Opcional)') }}</label>
+                                <input value="{{ old('meta_title') }}" type="text" class="form-control form-control-lg"
+                                    name="meta_title">
+                            </div>
+                        </div>
 
-                    <div class="col-md-6 mb-3">
-                        <div class="input-group input-group-lg input-group-outline my-3">
-                            <label class="form-label">{{ __('Meta title (Opcional)') }}</label>
-                            <input value="{{ old('meta_title') }}" type="text" class="form-control form-control-lg" name="meta_title">
+                        <div class="col-md-6 mb-3">
+                            <div class="input-group input-group-lg input-group-outline my-3">
+                                <label class="form-label">{{ __('Meta description (Opcional)') }}</label>
+                                <input value="{{ old('meta_descrip') }}" type="text" class="form-control form-control-lg"
+                                    name="meta_descrip">
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <div class="input-group input-group-lg input-group-outline my-3">
-                            <label class="form-label">{{ __('Meta description (Opcional)') }}</label>
-                            <input value="{{ old('meta_descrip') }}" type="text" class="form-control form-control-lg" name="meta_descrip">
-                        </div>
-                    </div>
+                    @endif
 
                     {{-- <div class="col-md-6 mb-3">
                         <div class="input-group input-group-lg input-group-outline my-3">
@@ -41,20 +46,22 @@
                     </div> --}}
                     <div class="col-md-12 mb-3">
                         <div class="input-group input-group-dynamic">
-                            <textarea required spellcheck="false" placeholder="Escriba aquí la descripción" name="description" class="form-control" rows="3">{{ old('description') }}</textarea>
+                            <textarea required spellcheck="false" placeholder="Escriba aquí la descripción" name="description" class="form-control"
+                                rows="3">{{ old('description') }}</textarea>
                         </div>
                     </div>
-                    
-                    <div class="col-md-12 mb-3">
-                        <label
-                            class="form-label">{{ __('Meta Keywords (Opcional - Presione enter para agregar la palabra
-                                                        clave)') }}</label><br>
-                        <div class="tags-input">
-                            <ul id="tags"></ul>
-                            <input type="text" id="input-tag" placeholder="Escriba la palabra clave.." />
-                            <input type="hidden" value="" id="meta_keywords" name="meta_keywords">
+                    @if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'rutalimon')
+                        <div class="col-md-12 mb-3">
+                            <label
+                                class="form-label">{{ __('Meta Keywords (Opcional - Presione enter para agregar la palabra
+                                                                                                                                                    clave)') }}</label><br>
+                            <div class="tags-input">
+                                <ul id="tags"></ul>
+                                <input type="text" id="input-tag" placeholder="Escriba la palabra clave.." />
+                                <input type="hidden" value="" id="meta_keywords" name="meta_keywords">
+                            </div>
                         </div>
-                    </div>
+                    @endif
                     <div class="col-md-6 mb-3">
                         <div class="input-group input-group-lg input-group-outline my-3">
                             <input required class="form-control" type="file" name="image">
@@ -74,14 +81,16 @@
                     </div> --}}
 
                 </div>
-                <div class="col-md-12 mb-3">
-                    <label>{{ __('Black Friday?') }}</label>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="1" id="black_friday"
-                            name="black_friday" {{ old('black_friday') ? 'checked' : '' }}>
-                        <label class="custom-control-label" for="customCheck1">{{ __('Black Friday') }}</label>
+                @if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'rutalimon')
+                    <div class="col-md-12 mb-3">
+                        <label>{{ __('Black Friday?') }}</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="1" id="black_friday"
+                                name="black_friday" {{ old('black_friday') ? 'checked' : '' }}>
+                            <label class="custom-control-label" for="customCheck1">{{ __('Black Friday') }}</label>
+                        </div>
                     </div>
-                </div>
+                @endif
                 <input type="hidden" value="0" id="status" name="status">
                 <input type="hidden" value="0" id="status" name="popular">
 
