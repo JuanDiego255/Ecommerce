@@ -55,7 +55,7 @@ class CheckOutController extends Controller
                 ->join('attribute_value_cars', 'carts.id', 'attribute_value_cars.cart_id')
                 ->join('attributes', 'attribute_value_cars.attr_id', 'attributes.id')
                 ->join('attribute_values', 'attribute_value_cars.value_attr', 'attribute_values.id')
-                ->where('stocks.price', '!=', 0)
+                ->whereRaw('(stocks.price != 0 OR clothing.price != 0)') // Condición adicional
                 ->leftJoin('stocks', function ($join) {
                     $join->on('carts.clothing_id', '=', 'stocks.clothing_id')
                         ->on('attribute_value_cars.attr_id', '=', 'stocks.attr_id')
@@ -72,6 +72,7 @@ class CheckOutController extends Controller
                 ->select(
                     'clothing.id as id',
                     'clothing.name as name',
+                    'clothing.price as price_cloth',
                     'clothing.casa as casa',
                     'clothing.description as description',
                     'clothing.mayor_price as mayor_price',
@@ -96,6 +97,7 @@ class CheckOutController extends Controller
                 ->groupBy(
                     'clothing.id',
                     'clothing.name',
+                    'clothing.price',
                     'clothing.casa',
                     'clothing.description',
                     'stocks.price',
@@ -113,7 +115,7 @@ class CheckOutController extends Controller
             $cloth_price = 0;
 
             foreach ($cartItems as $item) {
-                $precio = $item->price;
+                $precio = $item->price != 0 ? $item->price : $item->price_cloth;
                 if (isset($tenantinfo->custom_size) && $tenantinfo->custom_size == 1 && $item->stock_price > 0) {
                     $precio = $item->stock_price;
                 }
@@ -139,7 +141,7 @@ class CheckOutController extends Controller
                 ->join('attribute_value_cars', 'carts.id', 'attribute_value_cars.cart_id')
                 ->join('attributes', 'attribute_value_cars.attr_id', 'attributes.id')
                 ->join('attribute_values', 'attribute_value_cars.value_attr', 'attribute_values.id')
-                ->where('stocks.price', '!=', 0)
+                ->whereRaw('(stocks.price != 0 OR clothing.price != 0)') // Condición adicional
                 ->leftJoin('stocks', function ($join) {
                     $join->on('carts.clothing_id', '=', 'stocks.clothing_id')
                         ->on('attribute_value_cars.attr_id', '=', 'stocks.attr_id')
@@ -156,6 +158,7 @@ class CheckOutController extends Controller
                 ->select(
                     'clothing.id as id',
                     'clothing.name as name',
+                    'clothing.price as price_cloth',
                     'clothing.casa as casa',
                     'clothing.description as description',
                     'clothing.mayor_price as mayor_price',
@@ -180,6 +183,7 @@ class CheckOutController extends Controller
                 ->groupBy(
                     'clothing.id',
                     'clothing.name',
+                    'clothing.price',
                     'clothing.casa',
                     'clothing.description',
                     'stocks.price',
@@ -196,7 +200,7 @@ class CheckOutController extends Controller
                 ->get();
             $cloth_price = 0;
             foreach ($cartItems as $item) {
-                $precio = $item->price;
+                $precio = $item->price != 0 ? $item->price : $item->price_cloth;
                 if (isset($tenantinfo->custom_size) && $tenantinfo->custom_size == 1 && $item->stock_price > 0) {
                     $precio = $item->stock_price;
                 }
@@ -282,7 +286,7 @@ class CheckOutController extends Controller
                         ->join('attribute_value_cars', 'carts.id', 'attribute_value_cars.cart_id')
                         ->join('attributes', 'attribute_value_cars.attr_id', 'attributes.id')
                         ->join('attribute_values', 'attribute_value_cars.value_attr', 'attribute_values.id')
-                        ->where('stocks.price', '!=', 0)
+                        ->whereRaw('(stocks.price != 0 OR clothing.price != 0)') // Condición adicional
                         ->leftJoin('stocks', function ($join) {
                             $join->on('carts.clothing_id', '=', 'stocks.clothing_id')
                                 ->on('attribute_value_cars.attr_id', '=', 'stocks.attr_id')
@@ -299,6 +303,7 @@ class CheckOutController extends Controller
                         ->select(
                             'clothing.id as clothing_id',
                             'clothing.name as name',
+                            'clothing.price as price_cloth',
                             'clothing.code as code',
                             'clothing.manage_stock as manage_stock',
                             'clothing.casa as casa',
@@ -332,6 +337,7 @@ class CheckOutController extends Controller
                         ->groupBy(
                             'clothing.id',
                             'clothing.name',
+                            'clothing.price',
                             'clothing.casa',
                             'clothing.code',
                             'clothing.manage_stock',
@@ -351,7 +357,7 @@ class CheckOutController extends Controller
                     $cloth_price = 0;
 
                     foreach ($cartItems as $cart) {
-                        $precio = $cart->price;
+                        $precio = $cart->price != 0 ? $cart->price : $cart->price_cloth;
                         if (isset($tenantinfo->custom_size) && $tenantinfo->custom_size == 1 && $cart->stock_price > 0) {
                             $precio = $cart->stock_price;
                         }
@@ -435,7 +441,7 @@ class CheckOutController extends Controller
                     $buy_id = $buy->id;
 
                     foreach ($cartItems as $cart) {
-                        $precio = $cart->price;
+                        $precio = $cart->price != 0 ? $cart->price : $cart->price_cloth;
                         if ($precio > 0) {
                             if (isset($tenantinfo->custom_size) && $tenantinfo->custom_size == 1 && $cart->stock_price > 0) {
                                 $precio = $cart->stock_price;
@@ -494,7 +500,7 @@ class CheckOutController extends Controller
                         ->join('attribute_value_cars', 'carts.id', 'attribute_value_cars.cart_id')
                         ->join('attributes', 'attribute_value_cars.attr_id', 'attributes.id')
                         ->join('attribute_values', 'attribute_value_cars.value_attr', 'attribute_values.id')
-                        ->where('stocks.price', '!=', 0)
+                        ->whereRaw('(stocks.price != 0 OR clothing.price != 0)') // Condición adicional
                         ->leftJoin('stocks', function ($join) {
                             $join->on('carts.clothing_id', '=', 'stocks.clothing_id')
                                 ->on('attribute_value_cars.attr_id', '=', 'stocks.attr_id')
@@ -511,6 +517,7 @@ class CheckOutController extends Controller
                         ->select(
                             'clothing.id as clothing_id',
                             'clothing.name as name',
+                            'clothing.price as price_cloth',
                             'clothing.casa as casa',
                             'clothing.code as code',
                             'clothing.manage_stock as manage_stock',
@@ -544,6 +551,7 @@ class CheckOutController extends Controller
                         ->groupBy(
                             'clothing.id',
                             'clothing.name',
+                            'clothing.price',
                             'clothing.casa',
                             'clothing.code',
                             'clothing.manage_stock',
@@ -564,7 +572,7 @@ class CheckOutController extends Controller
 
 
                     foreach ($cartItems as $cart) {
-                        $precio = $cart->price;
+                        $precio = $cart->price != 0 ? $cart->price : $cart->price_cloth;
                         if (isset($tenantinfo->custom_size) && $tenantinfo->custom_size == 1 && $cart->stock_price > 0) {
                             $precio = $cart->stock_price;
                         }
@@ -656,7 +664,7 @@ class CheckOutController extends Controller
                     $buy_id = $buy->id;
 
                     foreach ($cartItems as $cart) {
-                        $precio = $cart->price;
+                        $precio = $cart->price != 0 ? $cart->price : $cart->price_cloth;
                         if ($precio > 0) {
                             if (isset($tenantinfo->custom_size) && $tenantinfo->custom_size == 1 && $cart->stock_price > 0) {
                                 $precio = $cart->stock_price;
@@ -711,7 +719,7 @@ class CheckOutController extends Controller
                     ->join('attribute_value_cars', 'carts.id', 'attribute_value_cars.cart_id')
                     ->join('attributes', 'attribute_value_cars.attr_id', 'attributes.id')
                     ->join('attribute_values', 'attribute_value_cars.value_attr', 'attribute_values.id')
-                    ->where('stocks.price', '!=', 0)
+                    ->whereRaw('(stocks.price != 0 OR clothing.price != 0)') // Condición adicional
                     ->leftJoin('stocks', function ($join) {
                         $join->on('carts.clothing_id', '=', 'stocks.clothing_id')
                             ->on('attribute_value_cars.attr_id', '=', 'stocks.attr_id')
@@ -728,6 +736,7 @@ class CheckOutController extends Controller
                     ->select(
                         'clothing.id as clothing_id',
                         'clothing.name as name',
+                        'clothing.price as price_cloth',
                         'clothing.casa as casa',
                         'clothing.code as code',
                         'clothing.manage_stock as manage_stock',
@@ -761,6 +770,7 @@ class CheckOutController extends Controller
                     ->groupBy(
                         'clothing.id',
                         'clothing.name',
+                        'clothing.price',
                         'clothing.casa',
                         'clothing.code',
                         'clothing.manage_stock',
@@ -779,7 +789,7 @@ class CheckOutController extends Controller
                     ->get();
                 $cloth_price = 0;
                 foreach ($cartItems as $cart) {
-                    $precio = $cart->price;
+                    $precio = $cart->price != 0 ? $cart->price : $cart->price_cloth;
                     if (isset($tenantinfo->custom_size) && $tenantinfo->custom_size == 1 && $cart->stock_price > 0) {
                         $precio = $cart->stock_price;
                     }
@@ -839,7 +849,7 @@ class CheckOutController extends Controller
                 $buy_id = $buy->id;
 
                 foreach ($cartItems as $cart) {
-                    $precio = $cart->price;
+                    $precio = $cart->price != 0 ? $cart->price : $cart->price_cloth;
                     if ($precio > 0) {
                         if (isset($tenantinfo->custom_size) && $tenantinfo->custom_size == 1 && $cart->stock_price > 0) {
                             $precio = $cart->stock_price;

@@ -244,7 +244,7 @@ class BuyController extends Controller
         $iva = $tenantinfo->iva;
         $tenant = $tenantinfo->tenant;
 
-        return view('admin.buys.indexDetail', compact('buysDetails', 'iva', 'tenant', 'previousBuy', 'nextBuy', 'id','currentBuy'));
+        return view('admin.buys.indexDetail', compact('buysDetails', 'iva', 'tenant', 'previousBuy', 'nextBuy', 'id', 'currentBuy'));
     }
     public function approve($id, $approved)
     {
@@ -443,17 +443,19 @@ class BuyController extends Controller
                 ->join('attribute_value_cars', 'carts.id', 'attribute_value_cars.cart_id')
                 ->join('attributes', 'attribute_value_cars.attr_id', 'attributes.id')
                 ->join('attribute_values', 'attribute_value_cars.value_attr', 'attribute_values.id')
-                ->where('stocks.price', '!=', 0)
                 ->leftJoin('stocks', function ($join) {
-                    $join->on('carts.clothing_id', '=', 'stocks.clothing_id')->on('attribute_value_cars.attr_id', '=', 'stocks.attr_id')->on('attribute_value_cars.value_attr', '=', 'stocks.value_attr');
+                    $join->on('carts.clothing_id', '=', 'stocks.clothing_id')
+                        ->on('attribute_value_cars.attr_id', '=', 'stocks.attr_id')
+                        ->on('attribute_value_cars.value_attr', '=', 'stocks.value_attr');
                 })
                 ->join('clothing', 'carts.clothing_id', 'clothing.id')
                 ->leftJoin('product_images', function ($join) {
                     $join->on('clothing.id', '=', 'product_images.clothing_id')->whereRaw('product_images.id = (
-                                SELECT MIN(id) FROM product_images
-                                WHERE product_images.clothing_id = clothing.id
-                            )');
+                                    SELECT MIN(id) FROM product_images
+                                    WHERE product_images.clothing_id = clothing.id
+                                )');
                 })
+                ->whereRaw('(stocks.price != 0 OR clothing.price != 0)') // Condición adicional
                 ->select(
                     'clothing.id as id',
                     'clothing.name as name',
@@ -463,6 +465,7 @@ class BuyController extends Controller
                     'clothing.mayor_price as mayor_price',
                     'clothing.discount as discount',
                     'clothing.status as status',
+                    'clothing.price as price_cloth',
                     'carts.quantity as quantity',
                     'carts.id as cart_id',
                     'attributes.name as name_attr',
@@ -470,17 +473,33 @@ class BuyController extends Controller
                     'stocks.price as price',
                     'stocks.stock as stock',
                     DB::raw('(
-                            SELECT GROUP_CONCAT(CONCAT(attributes.name, ": ", attribute_values.value) SEPARATOR ", ")
-                            FROM attribute_value_cars
-                            JOIN attributes ON attribute_value_cars.attr_id = attributes.id
-                            JOIN attribute_values ON attribute_value_cars.value_attr = attribute_values.id
-                            WHERE attribute_value_cars.cart_id = carts.id
-                        ) as attributes_values'),
-                    DB::raw('IFNULL(product_images.image, "") as image'), // Obtener la primera imagen del producto
+                                SELECT GROUP_CONCAT(CONCAT(attributes.name, ": ", attribute_values.value) SEPARATOR ", ")
+                                FROM attribute_value_cars
+                                JOIN attributes ON attribute_value_cars.attr_id = attributes.id
+                                JOIN attribute_values ON attribute_value_cars.value_attr = attribute_values.id
+                                WHERE attribute_value_cars.cart_id = carts.id
+                            ) as attributes_values'),
+                    DB::raw('IFNULL(product_images.image, "") as image') // Obtener la primera imagen del producto
                 )
-                ->groupBy('clothing.id', 'clothing.name', 'clothing.casa', 'clothing.code', 'clothing.description', 'stocks.price', 'stocks.stock', 'clothing.mayor_price', 'attributes.name', 'attribute_values.value', 'clothing.status', 'clothing.discount', 'carts.quantity', 'carts.id', 'product_images.image')
+                ->groupBy(
+                    'clothing.id',
+                    'clothing.name',
+                    'clothing.price',
+                    'clothing.casa',
+                    'clothing.code',
+                    'clothing.description',
+                    'stocks.price',
+                    'stocks.stock',
+                    'clothing.mayor_price',
+                    'attributes.name',
+                    'attribute_values.value',
+                    'clothing.status',
+                    'clothing.discount',
+                    'carts.quantity',
+                    'carts.id',
+                    'product_images.image'
+                )
                 ->get();
-            // Resto del código para obtener los artículos del carrito para usuarios autenticados
             return $cart_items;
         });
 
@@ -501,7 +520,7 @@ class BuyController extends Controller
         $cloth_price = 0;
         $you_save = 0;
         foreach ($cart_items as $item) {
-            $precio = $item->price;
+            $precio = $item->price != 0 ? $item->price : $item->price_cloth;
             $descuentoPorcentaje = $item->discount;
             // Calcular el descuento
             $descuento = ($precio * $descuentoPorcentaje) / 100;
@@ -566,7 +585,7 @@ class BuyController extends Controller
             DB::rollBack();
         }
     }
-    public function updateGuideNumber(Request $request,$id)
+    public function updateGuideNumber(Request $request, $id)
     {
         try {
             DB::beginTransaction();

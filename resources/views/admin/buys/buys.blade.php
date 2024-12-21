@@ -74,7 +74,7 @@
                                 @foreach ($cart_items as $item)
                                     <tr>
                                         @php
-                                            $precio = $item->price;
+                                            $precio = $item->price != 0 ? $item->price : $item->price_cloth;
                                             $descuentoPorcentaje = $item->discount;
                                             // Calcular el descuento
                                             $descuento = ($precio * $descuentoPorcentaje) / 100;
@@ -84,7 +84,7 @@
                                         @endphp
                                         <input type="hidden" name="prod_id" value="{{ $item->id }}" class="prod_id">
                                         <input type="hidden" class="price"
-                                            value="{{ $item->discount > 0 ? $precioConDescuento : $item->price }}">
+                                            value="{{ $item->discount > 0 ? $precioConDescuento : $precio }}">
                                         <input type="hidden" value="{{ $descuento }}" class="discount" name="discount">
                                         <td class="w-50">
                                             <div class="d-flex px-2 py-1">
@@ -104,9 +104,9 @@
                                         <td class="align-middle text-center text-sm">
 
                                             <p class="text-success mb-0">₡
-                                                {{ $item->discount > 0 ? $precioConDescuento : $item->price }}
+                                                {{ $item->discount > 0 ? $precioConDescuento : $precio }}
                                                 @if ($item->discount > 0)
-                                                    <s class="text-danger">{{ $item->price }}</s>
+                                                    <s class="text-danger">{{ $precio }}</s>
                                                 @endif
                                             </p>
 
@@ -233,6 +233,7 @@
                                         <input type="number" class="form-control form-control-lg" name="delivery">
                                     </div>
                                 </div>
+                                <input type="hidden" value="{{ $tenantinfo->tenant }}" name="tenant" id="tenant">
                                 @if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'rutalimon')
                                     <div class="col-md-6">
                                         <div class="form-check">
@@ -299,17 +300,21 @@
 @section('script')
     <script>
         $(document).ready(function() {
+            var tenant = $('#tenant').val();
             //Ocultar monto apartado
-            const checkbox = document.getElementById("apartado");
-            const montoDiv = document.getElementById("monto_apartado");
+            if (tenant !== "rutalimon") {
+                const checkbox = document.getElementById("apartado");
+                const montoDiv = document.getElementById("monto_apartado");
 
-            checkbox.addEventListener("click", function() {
-                if (this.checked) {
-                    montoDiv.classList.remove("d-none");
-                } else {
-                    montoDiv.classList.add("d-none");
-                }
-            });
+                checkbox.addEventListener("click", function() {
+                    if (this.checked) {
+                        montoDiv.classList.remove("d-none");
+                    } else {
+                        montoDiv.classList.add("d-none");
+                    }
+                });
+            }
+
             var $container = $(
                 '#container'
             ); // Suponiendo que hay un contenedor con id "container"
