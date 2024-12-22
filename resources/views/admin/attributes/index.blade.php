@@ -136,4 +136,10 @@
 @endsection
 @section('script')
     <script src="{{ asset('js/datatables.js') }}"></script>
+    <script>
+        function submitForm(alias) {
+            var form = document.querySelector('form[name="' + alias + '"]');
+            form.submit();
+        }
+    </script>
 @endsection

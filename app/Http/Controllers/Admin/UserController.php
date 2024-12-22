@@ -24,7 +24,7 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        $users = User::all();
+        $users = User::join('roles','users.role_as','roles.id')->get();
         return view('admin.users.index', compact('users'));
     }
     public function mayor($id, Request $request)

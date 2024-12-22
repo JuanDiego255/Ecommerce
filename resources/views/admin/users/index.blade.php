@@ -83,7 +83,7 @@
                                 <p class=" font-weight-bold mb-0">{{ $user->telephone }}</p>
                             </td>
                             <td class="align-middle text-xxs text-center">
-                                <p class=" font-weight-bold mb-0">{{ $user->role_as == 1 ? 'Admin' : 'Cliente' }}</p>
+                                <p class=" font-weight-bold mb-0">{{ $user->rol }}</p>
                             </td>
                             @if (isset($tenantinfo->tenant) && $tenantinfo->tenant === 'torres')
                                 <form id="myForm" action="{{ url('user/mayor/' . $user->id) }}" method="POST">

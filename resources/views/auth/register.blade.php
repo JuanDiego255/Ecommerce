@@ -68,19 +68,20 @@
                                     </div>
 
                                 </form>
-                                <div class="divider d-flex align-items-center">
-                                    <p class="text-center fw-bold mx-3 text-muted">O INGRESA CON:</p>
-                                </div>
-                                <div class="text-center">
-                                    <a href="{{ url('/facebook-auth/redirect') }}" class="m-5 text-facebook">
-                                        <i class="fab fa-facebook"></i>
-                                    </a>
+                                @if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'rutalimon')
+                                    <div class="divider d-flex align-items-center">
+                                        <p class="text-center fw-bold mx-3 text-muted">O INGRESA CON:</p>
+                                    </div>
+                                    <div class="text-center">
+                                        <a href="{{ url('/facebook-auth/redirect') }}" class="m-5 text-facebook">
+                                            <i class="fab fa-facebook"></i>
+                                        </a>
 
-                                    <a href="{{ url('/google-auth/redirect') }}" class="m-5 text-google">
-                                        <i class="fab fa-google"></i>
-                                    </a>
-                                </div>
-
+                                        <a href="{{ url('/google-auth/redirect') }}" class="m-5 text-google">
+                                            <i class="fab fa-google"></i>
+                                        </a>
+                                    </div>
+                                @endif
                             </div>
                         </div>
                     </div>
