@@ -80,7 +80,7 @@
 
                                             @if($datetoday >= $tenant->payment_date )
                                                 <p class=" font-weight-bold mb-0">
-                                                    <span class="badge badge-pill ml-2 badge-date text-white animacion"
+                                                    <span class="badge badge-pill ml-2 {{ $tenant->cool_pay == 1 ? 'badge-date-cool' : 'badge-date animacion' }} badge-date text-white"
                                                         id="comparison-count">{{ $tenant->payment_date }}</span>
                                                 </p>
                                             @else

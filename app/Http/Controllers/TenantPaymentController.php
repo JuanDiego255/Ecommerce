@@ -24,9 +24,10 @@ class TenantPaymentController extends Controller
         ->select(
             'tenants.id as id',
             'tenants.plan as plan',
+            'tenants.cool_pay as cool_pay',
             DB::raw('SUM(tenant_payments.payment) as total_payment'),
             DB::raw('DATE_ADD(MAX(tenant_payments.payment_date), INTERVAL 1 MONTH) as payment_date')
-        )->groupBy('tenants.id','tenants.plan')
+        )->groupBy('tenants.id','tenants.plan','tenants.cool_pay')
         ->get();
         $bills = Bill::get();
 

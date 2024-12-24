@@ -273,6 +273,12 @@ sub {
   color: #212529;
   background-color: red;
 }
+.badge-date-cool {
+  color: #f8fafa;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  background-color: #21f1ee;
+}
 
 .badge-date-blue {
   color: #212529;

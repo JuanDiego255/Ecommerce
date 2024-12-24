@@ -64,7 +64,7 @@
                                             data-bs-target="#edit-rol-modal{{ $item->id }}" class="btn btn-velvet"
                                             style="text-decoration: none;">Editar</button>
 
-                                        <form method="post" action="{{ url('/delete/rol/' . $item->id) }}"
+                                        <form method="post" action="{{ url('/delete/role/' . $item->id) }}"
                                             style="display:inline">
                                             {{ csrf_field() }}
                                             {{ method_field('DELETE') }}

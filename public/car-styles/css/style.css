@@ -13451,6 +13451,12 @@ textarea.form-control {
     padding-bottom: 10px;
     background-color: red;
 }
+.badge-date-cool {
+    color: #f8fafa;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background-color: #21f1ee;
+  }
 /* Estilos para el menú fullscreen */
 .fullscreen-menu {
     display: none;
