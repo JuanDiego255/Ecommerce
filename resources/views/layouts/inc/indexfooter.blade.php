@@ -57,7 +57,7 @@
                     <p class="text-footer text-uppercase text-lg">
                         <a style="text-decoration: none;" class="mr-5 text-footer" href="#">
                             <i class="{{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'muebleriasarchi' ? 'fa fa-envelope' : 'fa fa-truck' }}"></i>
-                            {{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'muebleriasarchi' ? 'Envíos por correos de C.R' : 'Se realizan entregas por medio de encomiendas.' }}
+                            {{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'muebleriasarchi' ? 'Envíos por correos de C.R' : 'Se realizan entregas en todo Costa Rica.' }}
                         </a><br>
                         <a target="blank" href="{{ url('https://wa.me/506' . $tenantinfo->whatsapp) }}"
                             class="text-footer">
