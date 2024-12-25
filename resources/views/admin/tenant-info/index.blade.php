@@ -329,6 +329,15 @@ is-invalid
                                     <input class="form-control" type="file" name="logo_ico">
                                 </div>
                             </div>
+                            <div class="col-md-12">
+                                <label>{{ __('Eliminar imágenes de esta sección?') }}</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="1" id="delete_image"
+                                        name="delete_image" {{ old('delete_image') ? 'checked' : '' }}>
+                                    <label class="custom-control-label"
+                                        for="customCheck1">{{ __('Eliminar') }}</label>
+                                </div>
+                            </div>
                         </div>
 
                     </div>

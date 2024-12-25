@@ -22,22 +22,24 @@
                                         name="title">
                                 </div>
                             </div>
-
-                            <div class="col-md-6 mb-3">
-                                <div class="input-group input-group-lg input-group-outline my-3">
-                                    <label class="form-label">{{ __('Meta description (Opcional)') }}</label>
-                                    <input type="text" class="form-control form-control-lg" name="meta_description">
+                            @if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'rutalimon')
+                                <div class="col-md-6 mb-3">
+                                    <div class="input-group input-group-lg input-group-outline my-3">
+                                        <label class="form-label">{{ __('Meta description (Opcional)') }}</label>
+                                        <input type="text" class="form-control form-control-lg" name="meta_description">
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-md-12 mb-3">
-                                <label class="form-label">{{ __('Meta Keywords (Opcional - Presione enter para agregar la palabra
-                                    clave)') }}</label><br>
-                                <div class="tags-input">
-                                    <ul id="tags"></ul>
-                                    <input type="text" id="input-tag" placeholder="Escriba la palabra clave.." />
-                                    <input type="hidden" value="" id="meta_keywords" name="meta_keywords">
+                                <div class="col-md-12 mb-3">
+                                    <label
+                                        class="form-label">{{ __('Meta Keywords (Opcional - Presione enter para agregar la palabra
+                                                                            clave)') }}</label><br>
+                                    <div class="tags-input">
+                                        <ul id="tags"></ul>
+                                        <input type="text" id="input-tag" placeholder="Escriba la palabra clave.." />
+                                        <input type="hidden" value="" id="meta_keywords" name="meta_keywords">
+                                    </div>
                                 </div>
-                            </div>
+                            @endif
                             <div class="col-md-12 mb-3">
                                 <div class="input-group input-group-static mb-4">
                                     <textarea id="editor" type="text" class="form-control form-control-lg" name="context"

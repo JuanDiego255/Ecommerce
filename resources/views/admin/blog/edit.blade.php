@@ -40,34 +40,38 @@
                             <div class="col-md-6 mb-3">
                                 <div class="input-group input-group-static mb-4">
                                     <label>{{ __('Video URL Opcional(adjuntar link You Tube)') }}</label>
-                                    <input value="{{ $blog->video_url }}" type="text" class="form-control form-control-lg" name="video_url">
+                                    <input value="{{ $blog->video_url }}" type="text"
+                                        class="form-control form-control-lg" name="video_url">
                                 </div>
                             </div>
-                            <div class="col-md-6 mb-3">
+                            @if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'rutalimon')
+                                <div class="col-md-6 mb-3">
 
-                                <div class="input-group input-group-static">
-                                    <label>Profesionales</label>
-                                    <select id="personal_id" name="personal_id"
-                                        class="form-control form-control-lg @error('personal_id') is-invalid @enderror"
-                                        autocomplete="personal_id" autofocus>
-                                        <option selected value="{{ $blog->personal_id }}">
-                                            {{ $blog->name }}
-                                        </option>
-                                        @foreach ($profesionals as $item)
-                                            <option value="0">Sin profesional</option>
-                                            <option value="{{ $item->id }}">
-                                                {{ $item->name }}
+                                    <div class="input-group input-group-static">
+                                        <label>Profesionales</label>
+                                        <select id="personal_id" name="personal_id"
+                                            class="form-control form-control-lg @error('personal_id') is-invalid @enderror"
+                                            autocomplete="personal_id" autofocus>
+                                            <option selected value="{{ $blog->personal_id }}">
+                                                {{ $blog->name }}
                                             </option>
-                                        @endforeach
+                                            @foreach ($profesionals as $item)
+                                                <option value="0">Sin profesional</option>
+                                                <option value="{{ $item->id }}">
+                                                    {{ $item->name }}
+                                                </option>
+                                            @endforeach
 
-                                    </select>
-                                    @error('personal_id')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
+                                        </select>
+                                        @error('personal_id')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
                                 </div>
-                            </div>
+                            @endif
+
                         </div>
 
 

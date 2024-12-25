@@ -88,7 +88,7 @@ class TenantCarouselController extends Controller
             }
             TenantCarousel::destroy($id);
             DB::commit();
-            return redirect('/tenant-info')->with(['status' => 'Se ha eliminado la imagen del carousel', 'icon' => 'success']);
+            return redirect()->back()->with(['status' => 'Se ha eliminado la imagen del carousel', 'icon' => 'success']);
         } catch (\Exception $th) {
             //throw $th;
             DB::rollBack();

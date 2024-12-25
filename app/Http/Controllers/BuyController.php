@@ -200,6 +200,7 @@ class BuyController extends Controller
                 )');
                 })
                 ->leftJoin('address_users', 'buys.user_id', '=', 'address_users.user_id')
+                ->leftJoin('users', 'buys.user_id', '=', 'users.id')
                 ->select(
                     'clothing.id as id',
                     'clothing.name as name',
@@ -222,6 +223,9 @@ class BuyController extends Controller
                     'address_users.postal_code as postal_code',
                     'buys.address as address_b',
                     'buys.name as person_name_b',
+                    'users.name as person_name',
+                    'users.telephone as telephone',
+                    'users.email as email',
                     'buys.email as email_b',
                     'buys.telephone as telephone_b',
                     'buys.address_two as address_two_b',
@@ -238,7 +242,7 @@ class BuyController extends Controller
                         WHERE attribute_value_buys.buy_detail_id = buy_details.id
                     ) as attributes_values'),
                 )
-                ->groupBy('clothing.id', 'buys.kind_of_buy', 'clothing.name', 'clothing.casa', 'clothing.description', 'buy_details.total', 'buy_details.iva', 'buy_details.id', 'buy_details.buy_id', 'buy_details.cancel_item', 'clothing.status', 'buy_details.quantity', 'buys.approved', 'address_users.user_id', 'address_users.address', 'address_users.address_two', 'address_users.city', 'address_users.country', 'address_users.province', 'address_users.postal_code', 'buys.name', 'buys.telephone', 'buys.email', 'buys.address', 'buys.address_two', 'buys.city', 'buys.country', 'buys.province', 'buys.postal_code', 'product_images.image')
+                ->groupBy('clothing.id', 'buys.kind_of_buy','users.name','users.telephone','users.email', 'clothing.name', 'clothing.casa', 'clothing.description', 'buy_details.total', 'buy_details.iva', 'buy_details.id', 'buy_details.buy_id', 'buy_details.cancel_item', 'clothing.status', 'buy_details.quantity', 'buys.approved', 'address_users.user_id', 'address_users.address', 'address_users.address_two', 'address_users.city', 'address_users.country', 'address_users.province', 'address_users.postal_code', 'buys.name', 'buys.telephone', 'buys.email', 'buys.address', 'buys.address_two', 'buys.city', 'buys.country', 'buys.province', 'buys.postal_code', 'product_images.image')
                 ->get();
         });
         $iva = $tenantinfo->iva;

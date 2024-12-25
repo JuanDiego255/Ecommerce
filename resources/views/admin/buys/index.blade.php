@@ -36,7 +36,9 @@
                                 autocomplete="recordsPerStatus">
                                 <option value="Pendiente" selected>Pendiente</option>
                                 <option value="Entregado">Entregado</option>
-                                <option value="Apartado">Apartado</option>
+                                @if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'rutalimon')
+                                    <option value="Apartado">Apartado</option>
+                                @endif
                                 <option value="Venta Interna">Venta Interna</option>
                             </select>
                         </div>
@@ -209,13 +211,13 @@
 
                                 </td>
                                 <td class="align-middle text-xxs text-center">
-                                    <p class=" font-weight-bold mb-0">                                        
+                                    <p class=" font-weight-bold mb-0">
                                         @switch($buy->kind_of_buy)
-                                            @case("V")
+                                            @case('V')
                                                 Sitio Web
                                             @break
 
-                                            @case("F")
+                                            @case('F')
                                                 @if ($buy->apartado == 1)
                                                     Venta Interna (Apartado)
                                                 @else

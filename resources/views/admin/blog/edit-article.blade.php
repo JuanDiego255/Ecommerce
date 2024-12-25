@@ -23,27 +23,28 @@
                                     <input value="{{ $tag->title }}" id="title" required type="text"
                                         class="form-control form-control-lg" name="title">
                                 </div>
-                            </div>                           
-
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">{{ __('Meta Description (Opcional)') }}</label>
-                                <div class="input-group input-group-static mb-4">
-
-                                    <input value="{{ $tag->meta_description }}" type="text"
-                                        class="form-control form-control-lg" name="meta_description">
-                                </div>
                             </div>
-                            <div class="col-md-12 mb-3">
+                            @if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'rutalimon')
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">{{ __('Meta Description (Opcional)') }}</label>
+                                    <div class="input-group input-group-static mb-4">
 
-                                <label>{{ __('Meta Keywords (Opcional - Presione enter para agregar la palabra clave)') }}</label><br>
-                                <div class="tags-input">
-                                    <ul id="tags"></ul>
-                                    <input type="text" id="input-tag" placeholder="Escriba la palabra clave.." />
+                                        <input value="{{ $tag->meta_description }}" type="text"
+                                            class="form-control form-control-lg" name="meta_description">
+                                    </div>
                                 </div>
-                                <input id="meta_keywords" type="hidden" name="meta_keywords"
-                                    value="{{ $tag->meta_keywords }}">
-        
-                            </div>
+                                <div class="col-md-12 mb-3">
+
+                                    <label>{{ __('Meta Keywords (Opcional - Presione enter para agregar la palabra clave)') }}</label><br>
+                                    <div class="tags-input">
+                                        <ul id="tags"></ul>
+                                        <input type="text" id="input-tag" placeholder="Escriba la palabra clave.." />
+                                    </div>
+                                    <input id="meta_keywords" type="hidden" name="meta_keywords"
+                                        value="{{ $tag->meta_keywords }}">
+
+                                </div>
+                            @endif
                             <div class="col-md-12 mb-3">
                                 <div class="input-group input-group-static mb-4">
                                     <textarea id="editor" type="text" class="form-control form-control-lg" name="context"
@@ -64,7 +65,8 @@
     </form>
     <center>
         <div class="col-md-12 mt-3">
-            <a href="{{ url('blog-show/' . $tag->blog_id . '/show') }}" class="btn btn-velvet w-25">{{ __('Volver') }}</a>
+            <a href="{{ url('blog-show/' . $tag->blog_id . '/show') }}"
+                class="btn btn-velvet w-25">{{ __('Volver') }}</a>
         </div>
     </center>
 @endsection
@@ -115,5 +117,5 @@
                 });
         });
     </script>
-     <script src="{{ asset('js/edit-tag.js') }}"></script>
+    <script src="{{ asset('js/edit-tag.js') }}"></script>
 @endsection

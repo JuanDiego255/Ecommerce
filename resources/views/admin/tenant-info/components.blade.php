@@ -24,12 +24,14 @@
                                     id="manage_size" @if ($item->manage_size == 1) checked @endif>
                                 <label class="form-check-label" for="manage_size">{{ __('Habilitar atributos') }}</label>
                             </div>
-                            <div class="form-check form-switch col-md-6">
-                                <input value="1" class="form-check-input" type="checkbox" name="manage_department"
-                                    id="manage_department" @if ($item->manage_department == 1) checked @endif>
-                                <label class="form-check-label"
-                                    for="manage_department">{{ __('Habilitar departamentos') }}</label>
-                            </div>
+                            @if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'rutalimon')
+                                <div class="form-check form-switch col-md-6">
+                                    <input value="1" class="form-check-input" type="checkbox" name="manage_department"
+                                        id="manage_department" @if ($item->manage_department == 1) checked @endif>
+                                    <label class="form-check-label"
+                                        for="manage_department">{{ __('Habilitar departamentos') }}</label>
+                                </div>
+                            @endif
                             <div class="form-check form-switch col-md-6">
                                 <input value="1" class="form-check-input" type="checkbox" name="show_logo"
                                     id="show_logo" @if ($item->show_logo == 1) checked @endif>
@@ -41,12 +43,14 @@
                                     id="show_stock" @if ($item->show_stock == 1) checked @endif>
                                 <label class="form-check-label" for="show_stock">{{ __('Mostrar stock') }}</label>
                             </div>
-                            <div class="form-check form-switch col-md-6">
-                                <input value="1" class="form-check-input" type="checkbox" name="show_insta"
-                                    id="show_insta" @if ($item->show_insta == 1) checked @endif>
-                                <label class="form-check-label"
-                                    for="show_insta">{{ __('Mostrar Sección Instagram') }}</label>
-                            </div>
+                            @if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'rutalimon')
+                                <div class="form-check form-switch col-md-6">
+                                    <input value="1" class="form-check-input" type="checkbox" name="show_insta"
+                                        id="show_insta" @if ($item->show_insta == 1) checked @endif>
+                                    <label class="form-check-label"
+                                        for="show_insta">{{ __('Mostrar Sección Instagram') }}</label>
+                                </div>
+                            @endif
                             @if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'rutalimon')
                                 <div class="form-check form-switch col-md-6">
                                     <input value="1" class="form-check-input" type="checkbox" name="show_trending"
@@ -60,7 +64,7 @@
                                     id="show_cintillo" @if ($item->show_cintillo == 1) checked @endif>
                                 <label class="form-check-label"
                                     for="show_cintillo">{{ __('Mostrar Cintillo (Cinta arriba del menu
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        principal)') }}</label>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            principal)') }}</label>
                             </div>
                             <div class="form-check form-switch col-md-6">
                                 <input value="1" class="form-check-input" type="checkbox" name="show_mision"
@@ -93,7 +97,7 @@
             <div class="card-header">
                 <h4 class="text-dark">
                     {{ __('Personaliza los colores del sitio web (Si conoce el valor hexadecimal del color en
-                                                                                                                                                                                                                                                                                                                                                                                                                                                        específico, puedes ingresarlo en el campo de texto.)') }}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                            específico, puedes ingresarlo en el campo de texto.)') }}
                 </h4>
             </div>
             <form action="{{ url('tenant-components/color-save/') }}" method="post" enctype="multipart/form-data">
@@ -403,10 +407,21 @@
                                                     </h1>
                                                 </div>
                                                 <div class="text-center">
-                                                    <a data-bs-toggle="modal"
+                                                    <a data-bs-toggle="modal"  class="btn btn-link text-velvet ms-auto border-0"
                                                         data-bs-target="#edit-tenant-carousel-modal{{ $carousel->id }}">
-                                                        <i class="fab fa-facebook me-3 text-white cursor-pointer"></i>
+                                                        <i class="material-icons text-lg  cursor-pointer">edit</i>
                                                     </a>
+                                                    <form name="delete-carousel{{ $carousel->id }}" id="delete-carousel{{ $carousel->id }}"
+                                                        method="post" action="{{ url('/delete/tenant-carousel/' . $carousel->id) }}">
+                                                        {{ csrf_field() }}
+                                                        {{ method_field('DELETE') }}
+                                                    </form>
+                                                    <button form="delete-carousel{{ $carousel->id }}" type="submit"
+                                                        onclick="return confirm('Deseas borrar esta imagen?')"
+                                                        class="btn btn-link text-velvet border-0" data-bs-toggle="tooltip"
+                                                        data-bs-placement="bottom" title="Eliminar">
+                                                        <i class="material-icons text-lg cursor-pointer">delete</i>
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
