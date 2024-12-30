@@ -197,6 +197,21 @@
                 </div>
                 <div class="card mt-4 col-md-12">
                     <div class="card-header">
+                        <h4 class="text-dark">Acerca del negocio</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <div class="input-group input-group-static mb-4">
+                                    <textarea id="editor" type="text" class="form-control form-control-lg" name="about_us"
+                                        placeholder="Aerca de...">{{ $tenantinfo->about_us }}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card mt-4 col-md-12">
+                    <div class="card-header">
                         <h4 class="text-dark">Información Del Negocio</h4>
                     </div>
                     <div class="card-body">
@@ -334,8 +349,7 @@ is-invalid
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" value="1" id="delete_image"
                                         name="delete_image" {{ old('delete_image') ? 'checked' : '' }}>
-                                    <label class="custom-control-label"
-                                        for="customCheck1">{{ __('Eliminar') }}</label>
+                                    <label class="custom-control-label" for="customCheck1">{{ __('Eliminar') }}</label>
                                 </div>
                             </div>
                         </div>
@@ -423,6 +437,34 @@ is-invalid
                 var imageUrl = background.getAttribute('data-background');
                 background.style.backgroundImage = 'url(' + imageUrl + ')';
             });
+        });
+
+        $(document).ready(function() {
+            ClassicEditor
+                .create(document.querySelector('#editor'), {
+                    heading: {
+                        options: [{
+                                model: 'paragraph',
+                                title: 'Párrafo',
+                                class: 'ck-heading_paragraph'
+                            },
+                            {
+                                model: 'heading1',
+                                view: 'h1',
+                                title: 'Título',
+                                class: 'ck-heading_heading1'
+                            }
+                        ]
+                    },
+                    removePlugins: ['Image', 'ImageToolbar', 'ImageCaption', 'ImageStyle', 'ImageResize', 'CKFinder'],
+
+                    fontSize: {
+                        options: [9, 10, 11, 12, 14, 16, 18, 20, 22, 24]
+                    },
+                })
+                .catch(error => {
+                    console.log(error);
+                });
         });
     </script>
 @endsection

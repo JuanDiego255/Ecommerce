@@ -56,6 +56,7 @@ Route::middleware([
     PreventAccessFromCentralDomains::class,
 ])->group(function () {
     Route::get('/', [FrontendController::class, 'index']);
+    Route::get('/about_us', [FrontendController::class, 'aboutUs']);
     Route::get('compare/vehicles', [FrontendController::class, 'compareIndex']);
     Route::get('/get-cart-details/{code}', [ClothingCategoryController::class, 'getCartDetail']);
     Route::get('/comment/{show}', [FrontendController::class, 'index']);

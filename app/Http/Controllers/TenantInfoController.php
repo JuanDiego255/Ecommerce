@@ -273,6 +273,7 @@ class TenantInfoController extends Controller
             }
 
             $tenantinfo->title = $request->title;
+            $tenantinfo->about_us = $request->about_us;
             $tenantinfo->text_cintillo = $request->text_cintillo;
             $tenantinfo->title_discount = $request->title_discount;
             $tenantinfo->title_instagram = $request->title_instagram;
@@ -351,6 +352,7 @@ class TenantInfoController extends Controller
             }
             $tenantinfo->title = $request->title;
             $tenantinfo->text_cintillo = $request->text_cintillo;
+            $tenantinfo->about_us = $request->about_us;
             $tenantinfo->title_discount = $request->title_discount;
             $tenantinfo->title_instagram = $request->title_instagram;
             $tenantinfo->mision = $request->mision;

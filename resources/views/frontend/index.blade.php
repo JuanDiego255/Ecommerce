@@ -370,7 +370,7 @@
     @endif
     {{-- Mision --}}
     @if (isset($tenantinfo->show_mision) && $tenantinfo->show_mision == 1)
-        <div class="bg-footer p-3 mb-3 text-center">
+       {{--  <div class="bg-footer p-3 mb-3 text-center">
             <h3
                 class="text-center {{ isset($tenantinfo->tenant) && $tenantinfo->tenant === 'mandicr' ? 'text-title-mandi' : 'text-title' }} mt-3">
                 {{ isset($tenantinfo->title) ? $tenantinfo->title : '' }}</h3>
@@ -401,7 +401,7 @@
             </span>
 
 
-        </div>
+        </div> --}}
     @endif
     {{-- blogs --}}
     @if (count($blogs) != 0)
