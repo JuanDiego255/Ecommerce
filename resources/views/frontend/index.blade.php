@@ -74,7 +74,7 @@
     {{-- Categories --}}
     @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
         @if (count($categories) != 0)
-            <div class="row g-4 align-content-center card-group container-fluid mt-2 mb-5">
+            <div class="row g-4 align-content-center card-group container-fluid mt-2 mb-5 foto">
                 @foreach ($category as $key => $item)
                     @if ($item->black_friday != 1)
                         <div class="{{ $key + 1 > 3 ? 'col-md-3' : 'col-md-4' }} col-sm-6 mb-2">
@@ -130,7 +130,7 @@
     @include('frontend.modals.gift-card')
     {{-- Trending --}}
     @if (isset($tenantinfo->show_trending) && $tenantinfo->show_trending == 1)
-        <div class="mt-3 mb-5">
+        <div class="mt-3 mb-5 animado">
             <div class="container-fluid">
                 @if (count($clothings) != 0)
                     <div class="text-center">
@@ -221,7 +221,7 @@
     {{-- Offer --}}
     @if (count($clothings_offer) != 0)
         <hr class="dark horizontal text-danger mb-3">
-        <div class="container-fluid mb-5 offer">
+        <div class="container-fluid mb-5 offer animado">
             <div class="text-center">
                 <h3 class="text-center text-muted mt-5 mb-4">
                     {{ isset($tenantinfo->title_discount) ? $tenantinfo->title_discount : '' }}</h3>
@@ -316,30 +316,53 @@
     {{-- Insta --}}
     @if (isset($tenantinfo->show_insta) && $tenantinfo->show_insta == 1)
         <hr class="text-dark">
-        <div class="text-center">
-            <span class="text-muted text-center"><a href="{{ isset($instagram) ? $instagram : '' }}">Instagram</a> |
-                {{ isset($tenantinfo->title_instagram) ? $tenantinfo->title_instagram : '' }}</span>
-        </div>
-        <div class="row mb-5 container-fluid">
-            @foreach ($social as $item)
-                <div class="col-md-6 mt-4">
-                    <div class="card text-center">
-                        <div class="overflow-hidden position-relative bg-cover p-3"
-                            style="background-image: url('{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}'); height:700px;  background-position: center;">
-                            <span class="mask bg-gradient-dark opacity-6"></span>
-                            <div class="card-body position-relative z-index-1 d-flex flex-column mt-5">
-                                <h3 class="text-white">{{ $item->description }}.</h3>
-                                <a target="blank" class="text-white text-sm mb-0 icon-move-right mt-4"
-                                    href="{{ $item->url }}">
-                                    <h3 class="text-white"> Ver fotografía
-                                        <i class="material-icons text-sm ms-1 position-relative"
-                                            aria-hidden="true">arrow_forward</i>
-                                    </h3>
+        <div class="text-center animado">
+            <span class="text-muted text-center">
+                @if ($instagram)
+                    <a href="{{ isset($instagram) ? $instagram : '' }}">Siguenos en nuestras redes sociales <i class="fab fa-instagram"></i></a>
+                    @if ($facebook)
+                        | <a href="{{ isset($facebook) ? $facebook : '' }}"><i class="fab fa-facebook"></i></a>
+                    @endif
+                @endif
 
-                                </a>
+                {{ isset($tenantinfo->title_instagram) ? $tenantinfo->title_instagram : '' }}
+            </span>
+        </div>
+        <div class="row mb-5 container-fluid animado">
+            @foreach ($social as $item)
+                @php
+                    $social_logo = null;
+                    if (stripos($item->url, 'Facebook') !== false) {
+                        $social_logo = 'fab fa-facebook';
+                    } elseif (stripos($item->url, 'Instagram') !== false) {
+                        $social_logo = 'fab fa-instagram';
+                    }
+                    if (stripos($item->url, 'Twitter') !== false) {
+                        $social_logo = 'fab fa-twitter';
+                    }
+                    if (stripos($item->url, 'You tube') !== false) {
+                        $social_logo = 'fab fa-youtube';
+                    }
+                    if (stripos($item->url, 'Wordpress') !== false) {
+                        $social_logo = 'fab fa-wordpress';
+                    }
+                    if (stripos($item->url, 'Tik tok') !== false) {
+                        $social_logo = 'fab fa-tiktok';
+                    }
+                @endphp
+                <div class="col-md-4 mt-4">
+                    <a target="blank" class="text-white text-sm mb-0 icon-move-right mt-4" href="{{ $item->url }}">
+                        <div class="card text-center">
+                            <div class="overflow-hidden position-relative bg-cover p-3"
+                                style="background-image: url('{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}'); height:700px; background-position: center;">
+                                <span class="post-insta">
+                                    <h3>
+                                        <i class="{{ $social_logo }}"></i>
+                                    </h3>
+                                </span>
                             </div>
                         </div>
-                    </div>
+                    </a>
                 </div>
             @endforeach
 
@@ -383,7 +406,7 @@
     {{-- blogs --}}
     @if (count($blogs) != 0)
         <hr class="dark horizontal text-danger my-0">
-        <div class="mt-3 mb-5">
+        <div class="mt-3 mb-5 animado">
             <div class="container-fluid">
                 <div class="text-center">
                     <h3 class="text-center text-muted mt-5 mb-3">Blog de
@@ -429,7 +452,7 @@
     {{-- Comentarios --}}
     @if (count($comments) != 0)
         <hr class="dark horizontal text-danger my-0">
-        <div class="mt-3 mb-5">
+        <div class="mt-3 mb-5 animado">
             <div class="container">
                 <div class="text-center">
                     <h3 class="text-center text-muted mt-5 mb-3">Testimonios de nuestros clientes</h3>

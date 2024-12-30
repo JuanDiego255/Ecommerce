@@ -10848,6 +10848,35 @@ fieldset:disabled .btn {
   font-family: "Metropolis", Arial, Helvetica, sans-serif;
   font-weight: 300;
 }
+.text-footer-col {
+  color: var(--footer_text) !important;
+  font-size: 14px;
+  font-family: "Metropolis", Arial, Helvetica, sans-serif;
+  font-weight: 300;
+}
+.post-insta {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6); /* Máscara oscura */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0; /* Oculto por defecto */
+  transition: opacity 0.3s ease; /* Animación suave */
+}
+
+.post-insta:hover {
+  opacity: 1; /* Aparece al hacer hover */
+}
+
+.post-insta h3 {
+  font-size: 2rem; /* Tamaño del ícono */
+  color: white;
+}
+
 
 .text-muted-title {
   color: #60676C !important;

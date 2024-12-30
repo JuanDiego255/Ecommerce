@@ -39,11 +39,11 @@
                         </div>
                     </div>
                     <div class="col-md-12 mb-3">
-                        <label>{{ __('Black Friday?') }}</label>
+                        <label>{{ __('Promocionar categoría?') }}</label>
                         <div class="form-check">
                             <input {{ $item->black_friday == 1 ? 'checked' : '' }} class="form-check-input"
                                 type="checkbox" value="1" id="black_friday" name="black_friday">
-                            <label class="custom-control-label" for="customCheck1">{{ __('Black Friday') }}</label>
+                            <label class="custom-control-label" for="customCheck1">{{ __('Promocionar categoría') }}</label>
                         </div>
                     </div>
 
