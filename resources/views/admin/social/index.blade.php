@@ -50,13 +50,13 @@
                     <thead>
                         <tr>
                             <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                {{ __('Acciones') }}</th>
+                                {{ __('Imagen') }}</th>{{-- 
                             <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                {{ __('Imagen') }}</th>
-                            <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                {{ __('Descripción') }}</th>
+                                {{ __('Descripción') }}</th> --}}
                             <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                 {{ __('URL') }}</th>
+                            <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
+                                {{ __('Acciones') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -70,10 +70,10 @@
                                             class="text-center img-fluid shadow border-radius-lg w-25"></a>
 
 
-                                </td>
+                                </td>{{-- 
                                 <td class="align-middle text-xxs text-center">
                                     <p class=" font-weight-bold mb-0">{{ $item->description }}</p>
-                                </td>
+                                </td> --}}
                                 <td class="align-middle text-xxs text-center">
                                     <p class=" font-weight-bold mb-0">{{ $item->url }}</p>
                                 </td>

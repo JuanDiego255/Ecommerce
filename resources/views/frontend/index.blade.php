@@ -98,7 +98,7 @@
         @endif
     @else
         @if (count($departments) != 0)
-            <div class="row row-cols-1 row-cols-md-3 g-4 align-content-center card-group container-fluid mt-2 mb-5">
+            <div class="row row-cols-1 row-cols-md-3 g-4 align-content-center card-group container-fluid mt-2 mb-5 foto">
                 @foreach ($departments as $item)
                     @if ($item->black_friday != 1)
                         <div class="col-md-4 col-sm-6 mb-2">
