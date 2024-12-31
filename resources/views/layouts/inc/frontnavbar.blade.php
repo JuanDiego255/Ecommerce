@@ -265,9 +265,9 @@
                         class="fa fa-arrow-circle-left me-3"></i>CERRAR MENU</a>
 
                 <a href="{{ url('/') }}" class="nav-menu-item"><i
-                        class="fas fa-eye me-3"></i>INICIO</a>
+                        class="fas fa-{{ $icon->home }} me-3"></i>INICIO</a>
                 <a href="{{ url('/about_us') }}" class="nav-menu-item"><i
-                        class="fas fa-{{ $icon->home }} me-3"></i>ACERCA DE</a>
+                        class="fas fa-eye me-3"></i>ACERCA DE</a>
                 @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
                     <div class="nav-menu-item">
                         <i class="fas fa-{{ $icon->categories }} me-3"></i><a class="color-menu"
