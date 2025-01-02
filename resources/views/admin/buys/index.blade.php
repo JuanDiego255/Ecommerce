@@ -86,6 +86,14 @@
                     </thead>
                     <tbody>
                         @foreach ($buys as $buy)
+                            @php
+                                $createdAt = $buy->created_at;
+                                $isOlderThanMonth =
+                                    $createdAt &&
+                                    \Carbon\Carbon::parse($createdAt)
+                                        ->setTimezone('America/Costa_Rica') // Asegúrate de establecer la zona horaria
+                                        ->lt(\Carbon\Carbon::now('America/Costa_Rica')->subMonth());
+                            @endphp
                             <tr>
                                 <td class="align-middle">
                                     <center>
@@ -219,7 +227,9 @@
 
                                             @case('F')
                                                 @if ($buy->apartado == 1)
-                                                    Venta Interna (Apartado)
+                                                    Venta Interna <span
+                                                        class="badge badge-pill text-xxs ml-2 {{ $isOlderThanMonth ?  'badge-date animacion' : 'badge-date-cool' }} badge-date text-white"
+                                                        id="comparison-count">Apartado</span>
                                                 @else
                                                     Venta Interna
                                                 @endif
