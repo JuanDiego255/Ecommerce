@@ -56,7 +56,7 @@
                             <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                 {{ __('Origen') }}</th>
                             <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                {{ __('Comporbante') }}</th>
+                                {{ __('Comprobante') }}</th>
                             <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                 {{ __('Nombre') }}</th>
                             <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
@@ -253,9 +253,9 @@
                                     </div>
                                 </td>
                                 <td class="align-middle text-xxs text-center">
-                                    <p class=" font-weight-bold mb-0">
-                                        {{ isset($buy->name) ? $buy->name : $buy->name_b }}
-                                        {{ isset($buy->last_name) ? $buy->last_name : $buy->last_name_b }}</p>
+                                    <p class="font-weight-bold mb-0">
+                                        {{ isset($buy->name) ? $buy->name : (isset($buy->name_b) ? $buy->name_b : (isset($buy->last_name) ? $buy->last_name : (isset($buy->last_name_b) ? $buy->last_name_b : $buy->detail))) }}
+                                    </p>                                    
                                 </td>
                                 <td class="align-middle text-xxs text-center">
                                     <p class=" font-weight-bold mb-0">
