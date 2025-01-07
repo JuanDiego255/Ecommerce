@@ -567,6 +567,7 @@ class FrontendController extends Controller
 
         $clothings_trending = ClothingCategory::where('clothing.trending', 1)
             ->where('clothing.id', '!=', $id)
+            ->where('categories.id', $category_id)
             ->leftJoin('pivot_clothing_categories', 'clothing.id', '=', 'pivot_clothing_categories.clothing_id')
             ->leftJoin('categories', 'pivot_clothing_categories.category_id', '=', 'categories.id')
             ->leftJoin('stocks', 'clothing.id', 'stocks.clothing_id')
