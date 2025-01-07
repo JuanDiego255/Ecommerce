@@ -120,7 +120,7 @@
                                     <h4 class="title text-dark">
                                         {{ $item->name }}
                                     </h4>
-                                    <div class="d-flex flex-row my-3">
+                                    <div class="d-flex flex-row my-3 {{ $item->can_buy != 1 ? 'd-none' : '' }}">
                                         @if ($item->trending == 1)
                                             <div class="text-warning mb-1 me-2">
 
@@ -175,8 +175,9 @@
                                             $precioConDescuento = $precio - $descuento;
                                         @endphp
 
-                                        <div class="price"><strong
-                                                id="text_price">₡{{ number_format($precioConDescuento) }}</strong>
+                                        <div
+                                            class="price {{ $item->can_buy != 1 && $precioConDescuento <= 0 ? 'd-none' : '' }}">
+                                            <strong id="text_price">₡{{ number_format($precioConDescuento) }}</strong>
                                             @if ($item->discount)
                                                 <s class="text-danger"><span class="text-danger"><strong
                                                             id="text_price_discount">₡{{ number_format(Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0 ? $item->mayor_price : $item->price) }}</strong>
@@ -191,7 +192,7 @@
                                         {!! $item->description !!}
                                     </p>
 
-                                    <div class="row mb-3">
+                                    <div class="row mb-3 {{ $item->can_buy != 1 ? 'd-none' : '' }}">
                                         <div class="col-md-6 col-12">
                                             <div class="qty-cont">
                                                 <button class="button-plus" type="button"
@@ -263,19 +264,26 @@
                                         <!-- col.// -->
                                         <input type="hidden" class="cloth_item" value="{{ $item->id }}">
                                     </div>
+                                    @if ($item->can_buy == 1)
+                                        <button
+                                            @if ($item->total_stock > 0 || ($item->manage_stock = 1)) @else 
+                                        disabled @endif
+                                            class="btn btn-add_to_cart shadow-0 btnAddToCart">
+                                            <i class="me-1 fa fa-shopping-basket"></i>
+                                            @if ($item->total_stock > 0)
+                                                Agregar Al Carrito
+                                            @elseif ($item->total_stock == 0)
+                                                Vendido!
+                                            @else
+                                                Agregar Al Carrito
+                                            @endif
+                                        </button>
+                                    @else
+                                        <a class="btn btn-add_to_cart shadow-0" href="{{ url('https://wa.me/506' . $tenantinfo->whatsapp) }}"> <i
+                                                class="me-1 fa fas fa-clock"></i>Agendar cita
+                                        </a>
+                                    @endif
 
-                                    <button @if ($item->total_stock > 0 || ($item->manage_stock = 1)) @else 
-        disabled @endif
-                                        class="btn btn-add_to_cart shadow-0 btnAddToCart">
-                                        <i class="me-1 fa fa-shopping-basket"></i>
-                                        @if ($item->total_stock > 0)
-                                            Agregar Al Carrito
-                                        @elseif ($item->total_stock == 0)
-                                            Vendido!
-                                        @else
-                                            Agregar Al Carrito
-                                        @endif
-                                    </button>
 
                                 </div>
                             </main>
@@ -290,7 +298,9 @@
 
 
     <div class="text-center">
-        <h3 class="text-center text-muted-title mt-5">{{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'muebleriasarchi' ? 'Potencia tu outfit con estas opciones' : 'Encuentra más muebles para tu hogar' }}</h3>
+        <h3 class="text-center text-muted-title mt-5">
+            {{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'muebleriasarchi' ? 'Potencia tu outfit con estas opciones' : 'Encuentra más muebles para tu hogar' }}
+        </h3>
     </div>
     <hr class="dark horizontal text-danger mb-3">
     <div class="row mt-4">
@@ -314,7 +324,7 @@
                         <h3
                             class="{{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'text-muted' : 'title-frags' }}">
                             <a href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}">{{ $item->name }}
-                                @if ($item->total_stock == 0)
+                                @if ($item->total_stock == 0 && $item->can_buy == 1 && $item->manage_stock == 1)
                                     <s class="text-danger"> Agotado</s>
                                 @endif
                             </a>
@@ -350,7 +360,7 @@
                             // Calcular el precio con el descuento aplicado
                             $precioConDescuento = $precio - $descuento;
                         @endphp
-                        <div class="price">
+                        <div class="price {{ $item->can_buy != 1 && $precioConDescuento <= 0 ? 'd-none' : '' }}">
                             ₡{{ number_format($precioConDescuento) }}
                             @if ($item->discount)
                                 <s class="text-danger"><span
@@ -431,10 +441,13 @@
                         if (porcDescuento > 0) {
                             var descuento = (perPrice * porcDescuento) / 100;
                             var precioConDescuento = perPrice - descuento;
-                            price.textContent = `₡${precioConDescuento.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
-                            price_discount.textContent = `₡${perPrice.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
+                            price.textContent =
+                                `₡${precioConDescuento.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
+                            price_discount.textContent =
+                                `₡${perPrice.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
                         } else {
-                            price.textContent = `₡${perPrice.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
+                            price.textContent =
+                                `₡${perPrice.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
                         }
                     }
                 }

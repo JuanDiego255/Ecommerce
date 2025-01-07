@@ -150,6 +150,7 @@
                                                 <span class="text-danger my-auto">Tendencia</span>
 
                                             </div>
+                                            
                                         @endif
                                         @if (isset($tenantinfo->show_stock) && $tenantinfo->show_stock != 0)
                                             <span class="text-muted-normal"><i

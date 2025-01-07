@@ -138,7 +138,7 @@
                                     </div>
                                 </div>
                             @endif
-                            @if (isset($tenantinfo->kind_business) && ($tenantinfo->kind_business == 2 || $tenantinfo->kind_business == 3))
+                            @if (isset($tenantinfo->kind_business) && ($tenantinfo->kind_business == 2 || $tenantinfo->kind_business == 3 || $tenantinfo->tenant === 'muebleriasarchi'))
                                 <div class="col-md-12 mb-3">
                                     <label>{{ __('Se puede comprar?') }}</label>
                                     <div class="form-check">
