@@ -24,7 +24,7 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        $users = User::join('roles','users.role_as','roles.id')->select(
+        $users = User::leftJoin('roles','users.role_as','roles.id')->select(
             'users.*',
             'roles.rol'
 

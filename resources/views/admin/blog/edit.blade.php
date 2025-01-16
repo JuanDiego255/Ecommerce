@@ -37,14 +37,14 @@
                                         class="form-control form-control-lg" name="name_url">
                                 </div>
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <div class="input-group input-group-static mb-4">
-                                    <label>{{ __('Video URL Opcional(adjuntar link You Tube)') }}</label>
-                                    <input value="{{ $blog->video_url }}" type="text"
-                                        class="form-control form-control-lg" name="video_url">
-                                </div>
-                            </div>
                             @if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'rutalimon')
+                                <div class="col-md-6 mb-3">
+                                    <div class="input-group input-group-static mb-4">
+                                        <label>{{ __('Video URL Opcional(adjuntar link You Tube)') }}</label>
+                                        <input value="{{ $blog->video_url }}" type="text"
+                                            class="form-control form-control-lg" name="video_url">
+                                    </div>
+                                </div>
                                 <div class="col-md-6 mb-3">
 
                                     <div class="input-group input-group-static">

@@ -195,7 +195,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="card mt-4 col-md-12">
+                <div class="card mt-4 col-md-12" id="about_us">
                     <div class="card-header">
                         <h4 class="text-dark">Acerca del negocio</h4>
                     </div>

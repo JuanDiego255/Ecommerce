@@ -89,11 +89,13 @@
                                             data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ver tarjetas">
                                             <i class="material-icons text-lg">book</i>
                                         </a>
-                                        <a class="btn btn-link text-velvet me-auto border-0"
-                                            href="{{ url('/results/' . $item->id) }}" data-bs-toggle="tooltip"
-                                            data-bs-placement="bottom" title="Ver resultados">
-                                            <i class="material-icons text-lg">medical_services</i>
-                                        </a>
+                                        @if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'rutalimon')
+                                            <a class="btn btn-link text-velvet me-auto border-0"
+                                                href="{{ url('/results/' . $item->id) }}" data-bs-toggle="tooltip"
+                                                data-bs-placement="bottom" title="Ver resultados">
+                                                <i class="material-icons text-lg">medical_services</i>
+                                            </a>
+                                        @endif
                                     </td>
                                     <td class="w-50">
                                         <div class="d-flex px-2 py-1">
