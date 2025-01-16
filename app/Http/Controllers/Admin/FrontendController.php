@@ -246,6 +246,9 @@ class FrontendController extends Controller
             case (3):
                 return view('frontend.website.index', compact('clothings', 'showModal', 'advert', 'blogs', 'social', 'clothings_offer', 'category', 'sellers', 'comments'));
                 break;
+            case (5):
+                return view('frontend.barber.index', compact('clothings', 'showModal', 'advert', 'blogs', 'social', 'clothings_offer', 'category', 'sellers', 'comments'));
+                break;
             default:
                 return view('frontend.index', compact('clothings', 'advert', 'showModal', 'blogs', 'social', 'clothings_offer', 'category', 'comments'));
                 break;

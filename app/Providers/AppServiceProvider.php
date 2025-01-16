@@ -319,12 +319,14 @@ class AppServiceProvider extends ServiceProvider
             if ($tenantinfo->tenant != "main") {
                 $profesional_info = PersonalUser::first();
             }
+            $profesionals = PersonalUser::get();
 
 
             $iva = $cloth_price * $tenantinfo->iva;
             $total_price = $cloth_price + $iva;
             view()->share([
                 'view_name' => $view_name,
+                'profesionals' => $profesionals,
                 'profesional_info' => $profesional_info,
                 'cartNumber' => $cartNumber,
                 'categories' => $categories,

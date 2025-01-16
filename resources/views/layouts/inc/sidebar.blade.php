@@ -171,7 +171,7 @@
                             Componentes
                         </a>
                     </li>
-                    @if (isset($tenantinfo->kind_business) && $tenantinfo->kind_business == 3)
+                    @if (isset($tenantinfo->kind_business) && $tenantinfo->kind_business == 3 || $tenantinfo->kind_business == 5)
                         <li class="nav-item">
                             <a href="{{ url('user-info') }}" class="nav-link">
                                 <div
