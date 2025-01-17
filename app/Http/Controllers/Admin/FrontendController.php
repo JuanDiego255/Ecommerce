@@ -458,6 +458,7 @@ class FrontendController extends Controller
         });
         $clothings = Cache::remember('clothings_trending', $this->expirationTime, function () {
             return ClothingCategory::where('clothing.trending', 1)
+                ->where('clothing.status', 1)
                 ->leftJoin('pivot_clothing_categories', 'clothing.id', '=', 'pivot_clothing_categories.clothing_id')
                 ->leftJoin('categories', 'pivot_clothing_categories.category_id', '=', 'categories.id')
                 ->join('stocks', 'clothing.id', 'stocks.clothing_id')
@@ -570,6 +571,7 @@ class FrontendController extends Controller
 
         $clothings_trending = ClothingCategory::where('clothing.trending', 1)
             ->where('clothing.id', '!=', $id)
+            ->where('clothing.status', 1)
             ->where('categories.id', $category_id)
             ->leftJoin('pivot_clothing_categories', 'clothing.id', '=', 'pivot_clothing_categories.clothing_id')
             ->leftJoin('categories', 'pivot_clothing_categories.category_id', '=', 'categories.id')

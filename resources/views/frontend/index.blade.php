@@ -318,11 +318,11 @@
         <hr class="text-dark">
         <div class="text-center animado">
             <span class="text-muted text-center">
-                @if ($instagram)
-                    <a href="{{ isset($instagram) ? $instagram : '' }}">Siguenos en nuestras redes sociales <i class="fab fa-instagram"></i></a>
-                    @if ($facebook)
-                        | <a href="{{ isset($facebook) ? $facebook : '' }}"><i class="fab fa-facebook"></i></a>
-                    @endif
+
+                <a href="{{ isset($instagram) ? $instagram : '' }}">Siguenos en nuestras redes sociales <i
+                        class="fab fa-instagram"></i></a>
+                @if ($facebook)
+                    | <a href="{{ isset($facebook) ? $facebook : '' }}"><i class="fab fa-facebook"></i></a>
                 @endif
 
                 {{ isset($tenantinfo->title_instagram) ? $tenantinfo->title_instagram : '' }}
@@ -370,7 +370,7 @@
     @endif
     {{-- Mision --}}
     @if (isset($tenantinfo->show_mision) && $tenantinfo->show_mision == 1)
-       {{--  <div class="bg-footer p-3 mb-3 text-center">
+        {{--  <div class="bg-footer p-3 mb-3 text-center">
             <h3
                 class="text-center {{ isset($tenantinfo->tenant) && $tenantinfo->tenant === 'mandicr' ? 'text-title-mandi' : 'text-title' }} mt-3">
                 {{ isset($tenantinfo->title) ? $tenantinfo->title : '' }}</h3>

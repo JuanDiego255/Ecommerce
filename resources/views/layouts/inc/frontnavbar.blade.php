@@ -429,10 +429,7 @@
                     TARJETAS DE REGALO</a>
                 <a href="{{ url('/address') }}"
                     class="nav-menu-item {{ $tenantinfo->tenant == 'rutalimon' ? 'd-none' : 'd-block' }}"><i
-                        class="fas fa-{{ $icon->address }} me-3"></i>DIRECCIONES</a>
-                <a href="{{ url('#') }}"
-                    class="nav-menu-item {{ $tenantinfo->tenant == 'rutalimon' ? 'd-block' : 'd-none' }}"><i
-                        class="fas fa-{{ $icon->address }} me-3"></i>ACERCA DE</a>
+                        class="fas fa-{{ $icon->address }} me-3"></i>DIRECCIONES</a>               
                 <a href="{{ url('#') }}"
                     class="nav-menu-item {{ $tenantinfo->tenant == 'rutalimon' ? 'd-block' : 'd-none' }}"><i
                         class="fas fa-{{ $icon->address }} me-3"></i>AYUDA</a>

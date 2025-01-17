@@ -248,7 +248,7 @@ class TenantInfoController extends Controller
     {
         DB::beginTransaction();
         try {
-            $campos = [
+            /* $campos = [
                 'title' => 'required|string|max:1000',
                 'mision' => 'required|string|max:1000',
                 'title_suscrib_a' => 'required|string|max:1000',
@@ -259,7 +259,7 @@ class TenantInfoController extends Controller
             ];
 
             $mensaje = ["required" => 'El :attribute es requerido store'];
-            $this->validate($request, $campos, $mensaje);
+            $this->validate($request, $campos, $mensaje); */
 
             $tenantinfo =  new TenantInfo();
             if ($request->hasFile('logo')) {
@@ -309,7 +309,7 @@ class TenantInfoController extends Controller
         //
         DB::beginTransaction();
         try {
-            $campos = [
+           /*  $campos = [
                 'title' => 'required|string|max:1000',
                 'mision' => 'required|string|max:1000',
                 'title_suscrib_a' => 'required|string|max:1000',
@@ -321,7 +321,7 @@ class TenantInfoController extends Controller
             ];
 
             $mensaje = ["required" => 'El :attribute es requerido ' . $id . ' update'];
-            $this->validate($request, $campos, $mensaje);
+            $this->validate($request, $campos, $mensaje); */
             $tenantinfo = TenantInfo::first();
             if (!isset($tenantinfo)) {
                 $this->store($request);

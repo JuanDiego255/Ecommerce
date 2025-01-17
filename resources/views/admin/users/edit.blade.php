@@ -49,7 +49,7 @@
                                             @if ($user->role_as == 1)
                                                 Admin
                                             @else
-                                                Cliente
+                                                Usuario
                                             @endif
                                         </option>
                                         @foreach ($roles as $item)
