@@ -112,6 +112,13 @@ Route::middleware([
         });
 
         Route::group(['middleware' => 'isAdmin'], function () {
+            //Acerca de y ayuda
+            Route::get('/software/about_us', function () {
+                return view('admin.about_us.index', ['titulo' => 'Información Importante']);
+            });
+            Route::get('/help', function () {
+                return view('admin.about_us.help', ['titulo' => 'Información Importante']);
+            });
             //Routes for Categories
             Route::get('/dashboard', [FrontendController::class, 'index']);
             Route::get('/categories/{id}', [CategoryController::class, 'index']);
@@ -134,8 +141,8 @@ Route::middleware([
             Route::get('/get-total-categories/{id}', [ClothingCategoryController::class, 'getTotalCategories']);
             //Routes for Buys
             Route::get('/buys-admin', [BuyController::class, 'indexAdmin']);
-            Route::post('/size-by-cloth', [BuyController::class, 'sizeByCloth']);        
-            Route::post('/save/guide-number/{id}', [BuyController::class, 'updateGuideNumber']);            
+            Route::post('/size-by-cloth', [BuyController::class, 'sizeByCloth']);
+            Route::post('/save/guide-number/{id}', [BuyController::class, 'updateGuideNumber']);
             Route::get('/total-buys', [BuyController::class, 'indexTotalBuys']);
             Route::get('/new-buy', [BuyController::class, 'indexBuy']);
             Route::get('/buy/details/admin/{id}', [BuyController::class, 'buyDetailsAdmin']);
@@ -180,8 +187,8 @@ Route::middleware([
             //Rutas para usuarios
             Route::get('/users', [UserController::class, 'index']);
             Route::post('user/mayor/{id}', [UserController::class, 'mayor']);
-            Route::put('user/{id}', [UserController::class, 'update']);            
-            Route::delete('delete-user/{id}', [UserController::class, 'destroy']);            
+            Route::put('user/{id}', [UserController::class, 'update']);
+            Route::delete('delete-user/{id}', [UserController::class, 'destroy']);
             Route::get('user/{id}/edit', [UserController::class, 'edit']);
             //Rutas para departamentos
             Route::get('/departments', [DepartmentController::class, 'index']);
@@ -231,15 +238,15 @@ Route::middleware([
             Route::get('/comments/', [TestimonialController::class, 'indexAdmin']);
             Route::put('comments/{id}', [TestimonialController::class, 'update']);
             Route::post('approve-comment/{id}', [TestimonialController::class, 'updateStatus']);
-            Route::delete('delete-comments/{id}', [TestimonialController::class, 'destroy']);            
+            Route::delete('delete-comments/{id}', [TestimonialController::class, 'destroy']);
             Route::get('comments/{id}/edit', [TestimonialController::class, 'edit']);
             Route::get('comments/add', [TestimonialController::class, 'add']);
             //Rutas para atributos de productos
             Route::get('/attributes/', [AttributeController::class, 'indexAdmin']);
-            Route::put('attribute/{id}', [AttributeController::class, 'update']);            
-            Route::delete('delete-attribute/{id}', [AttributeController::class, 'destroy']);            
+            Route::put('attribute/{id}', [AttributeController::class, 'update']);
+            Route::delete('delete-attribute/{id}', [AttributeController::class, 'destroy']);
             Route::get('attribute/{id}/edit', [AttributeController::class, 'edit']);
-            Route::get('attribute/add', [AttributeController::class, 'add']);            
+            Route::get('attribute/add', [AttributeController::class, 'add']);
             Route::post('attribute/store', [AttributeController::class, 'store']);
             Route::post('main-attribute/{id}', [AttributeController::class, 'mainAttribute']);
             //Rutas para valores de los atributos
@@ -248,19 +255,19 @@ Route::middleware([
             Route::get('get-attr_id/{id}', [AttributeController::class, 'getAttrId']);
             Route::put('value/{id}/{attr_id}', [AttributeController::class, 'updateValue']);
             Route::delete('delete-value/{id}', [AttributeController::class, 'destroyValue']);
-            Route::post('/value/store/{id}', [AttributeController::class, 'storeValue']);           
+            Route::post('/value/store/{id}', [AttributeController::class, 'storeValue']);
             Route::get('value/{attr_id}/{id}/edit', [AttributeController::class, 'editValue']);
             //Rutas para tarjetas de regalo
             Route::get('/gifts/', [GiftCardController::class, 'indexAdmin']);
             Route::get('/index-gifts/', [GiftCardController::class, 'index']);
-            Route::put('gift/{id}', [GiftCardController::class, 'update']);            
-            Route::delete('delete-gift/{id}', [GiftCardController::class, 'destroy']);            
-            Route::get('gift/{id}/edit', [GiftCardController::class, 'edit']); 
+            Route::put('gift/{id}', [GiftCardController::class, 'update']);
+            Route::delete('delete-gift/{id}', [GiftCardController::class, 'destroy']);
+            Route::get('gift/{id}/edit', [GiftCardController::class, 'edit']);
             Route::put('/approve-gift/{id}/{approved}', [GiftCardController::class, 'approve']);
             //Rutas para roles
             Route::get('/roles', [RolesController::class, 'index']);
-            Route::put('role/update/{id}', [RolesController::class, 'update']);            
-            Route::delete('delete/role/{id}', [RolesController::class, 'destroy']);            
+            Route::put('role/update/{id}', [RolesController::class, 'update']);
+            Route::delete('delete/role/{id}', [RolesController::class, 'destroy']);
             Route::get('role/{id}/edit', [RolesController::class, 'edit']);
             Route::get('/new-role/', [RolesController::class, 'add']);
             Route::post('/role/store', [RolesController::class, 'store']);

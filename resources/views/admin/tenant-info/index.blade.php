@@ -195,21 +195,23 @@
                         </div>
                     </div>
                 </div>
-                <div class="card mt-4 col-md-12" id="about_us">
-                    <div class="card-header">
-                        <h4 class="text-dark">Acerca del negocio</h4>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-12 mb-3">
-                                <div class="input-group input-group-static mb-4">
-                                    <textarea id="editor" type="text" class="form-control form-control-lg" name="about_us"
-                                        placeholder="Aerca de...">{{ $tenantinfo->about_us }}</textarea>
+                @if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'rutalimon')
+                    <div class="card mt-4 col-md-12" id="about_us">
+                        <div class="card-header">
+                            <h4 class="text-dark">Acerca del negocio</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12 mb-3">
+                                    <div class="input-group input-group-static mb-4">
+                                        <textarea id="editor" type="text" class="form-control form-control-lg" name="about_us"
+                                            placeholder="Aerca de...">{{ $tenantinfo->about_us }}</textarea>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                @endif
                 <div class="card mt-4 col-md-12">
                     <div class="card-header">
                         <h4 class="text-dark">Información Del Negocio</h4>
@@ -456,7 +458,9 @@ is-invalid
                             }
                         ]
                     },
-                    removePlugins: ['Image', 'ImageToolbar', 'ImageCaption', 'ImageStyle', 'ImageResize', 'CKFinder'],
+                    removePlugins: ['Image', 'ImageToolbar', 'ImageCaption', 'ImageStyle', 'ImageResize',
+                        'CKFinder'
+                    ],
 
                     fontSize: {
                         options: [9, 10, 11, 12, 14, 16, 18, 20, 22, 24]

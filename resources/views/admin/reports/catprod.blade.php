@@ -185,5 +185,9 @@
                 }
             });
         });
+        $('#recordsPerPage').on('change', function() {
+            var recordsPerPage = parseInt($(this).val());
+            dataTable.page.len(recordsPerPage).draw();
+        });
     </script>
 @endsection

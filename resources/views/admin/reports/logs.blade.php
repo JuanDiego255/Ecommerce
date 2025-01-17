@@ -32,7 +32,7 @@
 
                         </div>
                     </div>
-                   {{--  <div class="col-md-4">
+                    {{--  <div class="col-md-4">
                         <div class="input-group input-group-lg input-group-static my-3 w-100">
                             <label>Reporte</label>
                             <select id="selectType" name="selectType" class="form-control form-control-lg"
@@ -107,7 +107,7 @@
                                     @foreach ($logs as $item)
                                         @php
                                             $detail = json_decode($item->detail, true); // Decodifica el JSON en un array
-                                            $model = "";
+                                            $model = '';
                                             // Verifica que 'model' exista y extrae el valor
                                             if (isset($detail['model'])) {
                                                 $model = basename(str_replace('\\', '/', $detail['model']));
@@ -205,6 +205,10 @@
         $('#searchfor').on('input', function() {
             var searchTerm = $(this).val();
             dataTable.search(searchTerm).draw();
+        });
+        $('#recordsPerPage').on('change', function() {
+            var recordsPerPage = parseInt($(this).val());
+            dataTable.page.len(recordsPerPage).draw();
         });
         $(document).ready(function() {
             $('#selectType').on('change', function(e) {

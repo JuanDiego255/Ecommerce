@@ -262,7 +262,7 @@
             </li>
             <li class="nav-item">
                 <a @if ($view_name == 'admin_testimonial_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
-                    href="{{ url('/tenant-info#about_us') }}">
+                    href="{{ $tenantinfo->tenant == 'rutalimon' ? url('/software/about_us') : url('/tenant-info#about_us') }}">
                     <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="material-icons opacity-10">info</i>
                     </div>
@@ -283,7 +283,7 @@
             </li>
             <li class="nav-item">
                 <a @if ($view_name == 'admin_testimonial_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
-                    href="{{ url('#') }}">
+                    href="{{ url('/help') }}">
                     <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="material-icons opacity-10">help</i>
                     </div>

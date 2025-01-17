@@ -205,5 +205,9 @@
                 $(api.column(3).footer()).html(`${totalSales}`);
             }
         });
+        $('#recordsPerPage').on('change', function() {
+            var recordsPerPage = parseInt($(this).val());
+            dataTable.page.len(recordsPerPage).draw();
+        });
     </script>
 @endsection
