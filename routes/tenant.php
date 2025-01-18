@@ -109,6 +109,7 @@ Route::middleware([
             Route::put('/address/update/{id}', [AddressUserController::class, 'update']);
             Route::get('/address', [AddressUserController::class, 'index']);
             Route::delete('/delete/address/{id}', [AddressUserController::class, 'destroy']);
+            Route::get('/index-gifts/', [GiftCardController::class, 'index']);
         });
 
         Route::group(['middleware' => 'isAdmin'], function () {
@@ -258,8 +259,7 @@ Route::middleware([
             Route::post('/value/store/{id}', [AttributeController::class, 'storeValue']);
             Route::get('value/{attr_id}/{id}/edit', [AttributeController::class, 'editValue']);
             //Rutas para tarjetas de regalo
-            Route::get('/gifts/', [GiftCardController::class, 'indexAdmin']);
-            Route::get('/index-gifts/', [GiftCardController::class, 'index']);
+            Route::get('/gifts/', [GiftCardController::class, 'indexAdmin']);           
             Route::put('gift/{id}', [GiftCardController::class, 'update']);
             Route::delete('delete-gift/{id}', [GiftCardController::class, 'destroy']);
             Route::get('gift/{id}/edit', [GiftCardController::class, 'edit']);
