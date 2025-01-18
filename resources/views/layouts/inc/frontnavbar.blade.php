@@ -265,9 +265,7 @@
                         class="fa fa-arrow-circle-left me-3"></i>CERRAR MENU</a>
 
                 <a href="{{ url('/') }}" class="nav-menu-item"><i
-                        class="fas fa-{{ $icon->home }} me-3"></i>INICIO</a>
-                <a href="{{ url('/about_us') }}" class="nav-menu-item"><i
-                        class="fas fa-eye me-3"></i>ACERCA DE</a>
+                        class="fas fa-{{ $icon->home }} me-3"></i>INICIO</a>                
                 @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
                     <div class="nav-menu-item">
                         <i class="fas fa-{{ $icon->categories }} me-3"></i><a class="color-menu"
@@ -340,16 +338,17 @@
                     <span
                         class="badge badge-sm text-pill-menu badge-info border-pill-menu border-2 text-xxs">{{ $cartNumber }}</span></a>
                 <a href="{{ url('blog/index') }}" class="nav-menu-item"><i class="fa fa-book me-3"></i>BLOG</a>
+                <a href="{{ url('/about_us') }}" class="nav-menu-item"><i
+                    class="fas fa-eye me-3"></i>ACERCA DE</a>
                 <a href="{{ route('register') }}" class="nav-menu-item"><i
                         class="fa fa-user-plus me-3"></i>REGISTRARSE</a>
+
                 <a href="{{ route('login') }}" class="nav-menu-item"><i class="fa fa-sign-in me-3"></i>INGRESAR</a>
             @else
                 <a class="nav-menu-item" href="javascript:void(0);" onclick="menuToggle()"><i
                         class="fa fa-arrow-circle-left me-3"></i>CERRAR MENU</a>
                 <a href="{{ url('/') }}" class="nav-menu-item"><i
-                        class="fas fa-{{ $icon->home }} me-3"></i>INICIO</a>
-                <a href="{{ url('/about_us') }}" class="nav-menu-item"><i
-                        class="fas fa-eye me-3"></i>ACERCA DE</a>
+                        class="fas fa-{{ $icon->home }} me-3"></i>INICIO</a>               
                 @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
                     <div class="nav-menu-item">
                         <i class="fa fa-{{ $icon->categories }} me-3"></i><a class="color-menu"
@@ -429,10 +428,8 @@
                     TARJETAS DE REGALO</a>
                 <a href="{{ url('/address') }}"
                     class="nav-menu-item {{ $tenantinfo->tenant == 'rutalimon' ? 'd-none' : 'd-block' }}"><i
-                        class="fas fa-{{ $icon->address }} me-3"></i>DIRECCIONES</a>               
-                <a href="{{ url('#') }}"
-                    class="nav-menu-item {{ $tenantinfo->tenant == 'rutalimon' ? 'd-block' : 'd-none' }}"><i
-                        class="fas fa-{{ $icon->address }} me-3"></i>AYUDA</a>
+                        class="fas fa-{{ $icon->address }} me-3"></i>DIRECCIONES</a>
+                <a href="{{ url('/about_us') }}" class="nav-menu-item"><i class="fas fa-eye me-3"></i>ACERCA DE</a>
 
                 <div class="nav-menu-item">
                     <a class="color-menu" href="javascript:void(0);" id="toggleLogout"><i

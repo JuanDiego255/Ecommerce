@@ -15,7 +15,7 @@
                 <div class="col-12 col-lg-6 col-xl-7">
                     <div class="row justify-content-xl-center">
                         <div class="col-12 col-xl-11">
-                            <h2 class="mb-3">QUIENES SOMOS?</h2>
+                            <h2 class="mb-3">{{ $tenantinfo->tenant == 'rutalimon' ? 'ACERCA DE' : '¿QUIENES SOMOS?' }}</h2>
                             {!! isset($tenantinfo->about_us) ? $tenantinfo->about_us : '' !!}
                           {{--   @if (isset($tenantinfo->tenant) && $tenantinfo->tenant == 'muebleriasarchi')
                                 <div class="row gy-4 gy-md-0 gx-xxl-5X">
