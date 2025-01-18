@@ -10,14 +10,14 @@
             <div class="col-md-12 mb-3">
                 <div class="card">
                     <div class="card-header">
-                        <h4 class="text-dark">Editar Artículo</h4>
+                        <h4 class="text-dark">Editar Tarjeta</h4>
                     </div>
                     <div class="card-body">
 
                         @method('PUT')
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label class="form-label">Título</label>
+                                <label class="form-label">{{ __('Título') }}</label>
                                 <div class="input-group input-group-static mb-4">
 
                                     <input value="{{ $card->title }}" id="title" required type="text"
@@ -25,21 +25,23 @@
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label class="form-label">Descripción</label>
+                                <label class="form-label">{{ __('Descripción') }}</label>
                                 <div class="input-group input-group-static mb-4">
 
                                     <input value="{{ $card->description }}" id="description" required type="text"
                                         class="form-control form-control-lg" name="description">
                                 </div>
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Descripción 2 (Opcional)</label>
-                                <div class="input-group input-group-static mb-4">
+                            @if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'rutalimon')
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Descripción 2 (Opcional)</label>
+                                    <div class="input-group input-group-static mb-4">
 
-                                    <input value="{{ $card->opcional_description }}" id="opcional_description"
-                                        type="text" class="form-control form-control-lg" name="opcional_description">
+                                        <input value="{{ $card->opcional_description }}" id="opcional_description"
+                                            type="text" class="form-control form-control-lg" name="opcional_description">
+                                    </div>
                                 </div>
-                            </div>
+                            @endif
 
                             <div class="col-md-12 mb-3">
                                 @if ($card->image)

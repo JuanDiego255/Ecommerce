@@ -125,7 +125,7 @@
                                         <td class="align-middle text-center text-sm">
                                             <div class="input-group text-center input-group-static w-100">
 
-                                                <input min="1" max="{{ $item->stock }}"
+                                                <input min="1" max="{{ $item->stock > 0 ? $item->stock : '' }}"
                                                     data-cart-id="{{ $item->cart_id }}" value="{{ $item->quantity }}"
                                                     type="number" name="quantity" id="quantity{{ $item->quantity }}"
                                                     class="form-control btnQuantity text-center w-100 quantity">
@@ -722,10 +722,13 @@
                 you_save += subtotal_discount;
                 total += subtotal;
             });
-
             total_iva = total * iva;
             total_cloth = total;
-            total = total + total_iva;
+            if (total_iva < 0) {
+                total = total + total_iva;
+            }
+
+
 
             // Mostrar el total actualizado en el elemento correspondiente
             const totalElement = document.getElementById('totalPriceElement');
@@ -736,6 +739,8 @@
 
             totalElement.textContent =
                 `₡${total.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
+            btnPay.textContent =
+                `${total.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
             if (total_iva > 0) {
                 totalIvaElement.textContent =
                     `₡${total_iva.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;

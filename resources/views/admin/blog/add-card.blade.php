@@ -24,24 +24,26 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <div class="input-group input-group-lg input-group-outline my-3">
-                                    <label class="form-label">Descripción</label>
+                                    <label class="form-label">{{ __('Descripción') }}</label>
                                     <input id="description" required type="text" class="form-control form-control-lg"
                                         name="description">
                                 </div>
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <div class="input-group input-group-lg input-group-outline my-3">
-                                    <label class="form-label">Descripción 2(Opcional)</label>
-                                    <input id="opcional_description" type="text" class="form-control form-control-lg"
-                                        name="opcional_description">
+                            @if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'rutalimon')
+                                <div class="col-md-6 mb-3">
+                                    <div class="input-group input-group-lg input-group-outline my-3">
+                                        <label class="form-label">Descripción 2(Opcional)</label>
+                                        <input id="opcional_description" type="text" class="form-control form-control-lg"
+                                            name="opcional_description">
+                                    </div>
                                 </div>
-                            </div>
+                            @endif
                             <div class="col-md-12 mb-3">
                                 <label>Imagen</label>
                                 <div class="input-group input-group-lg input-group-outline my-3">
                                     <input required class="form-control" type="file" name="image">
                                 </div>
-                            </div>      
+                            </div>
 
                         </div>
 
@@ -57,7 +59,7 @@
 
     <center>
         <div class="col-md-12 mt-3">
-            <a href="{{ url('blog-cards/'.$blog_id.'/view-cards') }}" class="btn btn-velvet w-25">Volver</a>
+            <a href="{{ url('blog-cards/' . $blog_id . '/view-cards') }}" class="btn btn-velvet w-25">Volver</a>
         </div>
     </center>
 @endsection

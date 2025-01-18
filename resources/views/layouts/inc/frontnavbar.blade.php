@@ -171,11 +171,13 @@
 
 <div id="menuHolder" class="bg-menu-velvet sticky-top">
     <div role="navigation" class="border-bottom bg-menu-velvet" id="mainNavigation">
-        <nav class="navbar-cintillo navbar-expand-lg bg-cintillo d-lg-block" id="templatemo_nav_top">
-            <div class="container text-cintillo text-center">
-                {{ isset($tenantinfo->text_cintillo) ? $tenantinfo->text_cintillo : '' }}
-            </div>
-        </nav>
+        @if (isset($tenantinfo->show_cintillo) && $tenantinfo->show_cintillo == 1)
+            <nav class="navbar-cintillo navbar-expand-lg bg-cintillo d-lg-block" id="templatemo_nav_top">
+                <div class="container text-cintillo text-center">
+                    {{ isset($tenantinfo->text_cintillo) ? $tenantinfo->text_cintillo : '' }}
+                </div>
+            </nav>
+        @endif
 
         <div class="flexMain">
             <div class="flex0">
@@ -265,7 +267,7 @@
                         class="fa fa-arrow-circle-left me-3"></i>CERRAR MENU</a>
 
                 <a href="{{ url('/') }}" class="nav-menu-item"><i
-                        class="fas fa-{{ $icon->home }} me-3"></i>INICIO</a>                
+                        class="fas fa-{{ $icon->home }} me-3"></i>INICIO</a>
                 @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
                     <div class="nav-menu-item">
                         <i class="fas fa-{{ $icon->categories }} me-3"></i><a class="color-menu"
@@ -338,8 +340,7 @@
                     <span
                         class="badge badge-sm text-pill-menu badge-info border-pill-menu border-2 text-xxs">{{ $cartNumber }}</span></a>
                 <a href="{{ url('blog/index') }}" class="nav-menu-item"><i class="fa fa-book me-3"></i>BLOG</a>
-                <a href="{{ url('/about_us') }}" class="nav-menu-item"><i
-                    class="fas fa-eye me-3"></i>ACERCA DE</a>
+                <a href="{{ url('/about_us') }}" class="nav-menu-item"><i class="fas fa-eye me-3"></i>ACERCA DE</a>
                 <a href="{{ route('register') }}" class="nav-menu-item"><i
                         class="fa fa-user-plus me-3"></i>REGISTRARSE</a>
 
@@ -348,7 +349,7 @@
                 <a class="nav-menu-item" href="javascript:void(0);" onclick="menuToggle()"><i
                         class="fa fa-arrow-circle-left me-3"></i>CERRAR MENU</a>
                 <a href="{{ url('/') }}" class="nav-menu-item"><i
-                        class="fas fa-{{ $icon->home }} me-3"></i>INICIO</a>               
+                        class="fas fa-{{ $icon->home }} me-3"></i>INICIO</a>
                 @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
                     <div class="nav-menu-item">
                         <i class="fa fa-{{ $icon->categories }} me-3"></i><a class="color-menu"
