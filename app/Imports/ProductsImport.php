@@ -72,6 +72,7 @@ class ProductsImport implements ToCollection
                             'name' => trim($row[2]),
                             'description' => trim($row[3]),
                             'stock' => trim($row[4]),
+                            'manage_stock' => 1,
                             'price' => trim($row[5]),
                             'mayor_price' => trim($row[6]),
                             'trending' => trim($row[7]),
