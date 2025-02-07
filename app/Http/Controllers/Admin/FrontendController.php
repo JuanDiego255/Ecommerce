@@ -98,7 +98,7 @@ class FrontendController extends Controller
                     'categories.meta_title as meta_title',
                     'categories.black_friday as black_friday'
                 )->orderBy('categories.name', 'asc')
-                ->take(15)
+                ->take(7)
                 ->get();
         });
 
