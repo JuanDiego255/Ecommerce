@@ -38,7 +38,7 @@ class GenerateTenantSitemaps extends Command
             $sitemap = Sitemap::create();
 
             // Define the base URL for the tenant
-            $tenantBaseUrl = "https://{$tenant->id}.safeworsolutions.com";
+            $tenantBaseUrl = $tenant->id == "muebleriasarchi" || $tenant->id == "avelectromecanica" ? "https://{$tenant->id}.com" : "https://{$tenant->id}.safeworsolutions.com";
             // Add static URLs with higher priority
             $sitemap->add(Url::create("{$tenantBaseUrl}/")->setPriority(1.0)); // Highest priority
             $sitemap->add(Url::create("{$tenantBaseUrl}/category")->setPriority(0.5));

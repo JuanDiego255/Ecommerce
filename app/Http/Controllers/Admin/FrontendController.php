@@ -95,9 +95,10 @@ class FrontendController extends Controller
                     'categories.id as category_id',
                     'categories.image as image',
                     'categories.name as name',
+                    'categories.meta_title as meta_title',
                     'categories.black_friday as black_friday'
                 )->orderBy('categories.name', 'asc')
-                ->take(7)
+                ->take(15)
                 ->get();
         });
 
@@ -248,6 +249,9 @@ class FrontendController extends Controller
                 break;
             case (5):
                 return view('frontend.barber.index', compact('clothings', 'showModal', 'advert', 'blogs', 'social', 'clothings_offer', 'category', 'sellers', 'comments'));
+                break;
+            case (6):
+                return view('frontend.av.index', compact('clothings', 'showModal', 'advert', 'blogs', 'social', 'clothings_offer', 'category', 'sellers', 'comments'));
                 break;
             default:
                 return view('frontend.index', compact('clothings', 'advert', 'showModal', 'blogs', 'social', 'clothings_offer', 'category', 'comments'));
