@@ -133,14 +133,15 @@
                                         <button class="btn btn-link collapsed" data-toggle="collapse"
                                             data-target="#collapseThree" aria-expanded="false"
                                             aria-controls="collapseThree">
-                                           Compromiso
+                                            Compromiso
                                         </button>
                                     </h5>
                                 </div>
                                 <div id="collapseThree" class="collapse" aria-labelledby="headingThree"
                                     data-parent="#accordion" style="">
                                     <div class="card-body">
-                                        Tomamos consciencia de la importancia que tiene cumplir con el desarrollo de nuestro trabajo dentro del tiempo estipulado.
+                                        Tomamos consciencia de la importancia que tiene cumplir con el desarrollo de nuestro
+                                        trabajo dentro del tiempo estipulado.
                                     </div>
                                 </div>
                             </div>
@@ -150,14 +151,15 @@
                                         <button class="btn btn-link collapsed" data-toggle="collapse"
                                             data-target="#collapseThree" aria-expanded="false"
                                             aria-controls="collapseThree">
-                                           Calidad
+                                            Calidad
                                         </button>
                                     </h5>
                                 </div>
                                 <div id="collapseThree" class="collapse" aria-labelledby="headingThree"
                                     data-parent="#accordion" style="">
                                     <div class="card-body">
-                                        Nuestros productos y servicios cumplen con los requisitos establecidos para lograr la satisfacción de nuestros clientes.
+                                        Nuestros productos y servicios cumplen con los requisitos establecidos para lograr
+                                        la satisfacción de nuestros clientes.
                                     </div>
                                 </div>
                             </div>
@@ -167,6 +169,62 @@
             </div>
         </div>
     </div>
+    <!-- logos clientes y proveedores  -->
+    @if (count($logos) != 0)
+        <div class="case_study_area">
+            <div class="container">
+                <div class="border_bottom">
+                    <div class="row">
+                        <div class="col-xl-12">
+                            <div class="section_title text-center mb-40">
+                                <h3>Clientes</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-12">
+                            <div class="case_active_logos owl-carousel">
+                                @foreach ($logos as $key => $item)
+                                    @if ($item->is_supplier == 0)
+                                        <div class="single_case">
+                                            <div class="case_thumb">
+                                                <img src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"
+                                                    alt="" />
+                                            </div>
+                                        </div>
+                                    @endif
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-12">
+                            <div class="section_title text-center mb-40">
+                                <h3>Equipos de calidad, marcas de confianza</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-12">
+                            <div class="case_active_logos owl-carousel">
+                                @foreach ($logos as $key => $item)
+                                    @if ($item->is_supplier == 1)
+                                        <div class="single_case">
+                                            <div class="case_thumb">
+                                                <img src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"
+                                                    alt="" />
+                                            </div>
+                                        </div>
+                                    @endif
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+    <!-- logos clientes y proveedores  -->
     <!-- accordion  -->
     <!-- counter_area  -->
     <div class="counter_area counter_bg_1 mt-5 overlay_03">

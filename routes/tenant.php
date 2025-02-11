@@ -16,6 +16,7 @@ use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\Frontend\CartController;
 use App\Http\Controllers\Frontend\CheckOutController;
 use App\Http\Controllers\GiftCardController;
+use App\Http\Controllers\LogosController;
 use App\Http\Controllers\MedicineResultController;
 use App\Http\Controllers\MetaTagsController;
 use App\Http\Controllers\PersonalUserController;
@@ -275,6 +276,13 @@ Route::middleware([
             Route::get('/report/stock', [ClothingCategoryController::class, 'reportStock']);
             Route::get('/report/cat-prod/{type}', [ClothingCategoryController::class, 'reportCatProd']);
             Route::get('/report/logs/{type}', [UserController::class, 'reportLogs']);
+            //Rutas para logos de clientes
+            Route::get('/logos', [LogosController::class, 'index']);
+            Route::put('logos/update/{id}', [LogosController::class, 'update']);
+            Route::delete('delete/logos/{id}', [LogosController::class, 'destroy']);
+            Route::get('logos/{id}/edit', [LogosController::class, 'edit']);
+            Route::get('/new-logo/', [LogosController::class, 'add']);
+            Route::post('/logos/store', [LogosController::class, 'store']);
         });
     });
 

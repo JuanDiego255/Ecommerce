@@ -174,6 +174,41 @@
             }
         });
 
+        $('.case_active_logos').owlCarousel({
+            loop: true,
+            margin: 30,
+            items: 1,
+            autoplay: true,
+            navText: ['<i class="ti-angle-left"></i>', '<i class="ti-angle-right"></i>'],
+            nav: true,
+            dots: true,
+            autoplayHoverPause: true,
+            autoplaySpeed: 800,
+            // dotsData: true,
+            center: false,
+            responsive: {
+                0: {
+                    items: 1,
+                    nav: false
+                },
+                767: {
+                    items: 2,
+                    nav: false
+                },
+                992: {
+                    items: 4,
+                    nav: false
+                },
+                1200: {
+                    items: 6,
+                    nav: false
+                },
+                1500: {
+                    items: 6,
+                    nav: true
+                }
+            }
+        });
         // for filter
         // init Isotope
         var $grid = $('.grid').isotope({
@@ -376,7 +411,76 @@
         });
     });
 
-
+    document.addEventListener('DOMContentLoaded', function () {
+        var whatsappValue = document.getElementById("random_whats").value.trim();
+        var phoneNumbers = whatsappValue.split(',').map(function (item) {
+            return item.trim();
+        });
+        console.log(phoneNumbers);
+        let remainingNumbers = [];
+   
+        // Cargar el estado desde localStorage
+        function loadState() {
+            const storedNumbers = localStorage.getItem('remainingNumbers');
+            if (storedNumbers) {
+                remainingNumbers = JSON.parse(storedNumbers);
+            } else {
+                remainingNumbers = [...phoneNumbers];
+            }
+        }
+   
+        // Guardar el estado en localStorage
+        function saveState() {
+            localStorage.setItem('remainingNumbers', JSON.stringify(remainingNumbers));
+        }
+   
+        // Obtener un número aleatorio y actualizar el estado
+        function getRandomNumber() {
+            if (remainingNumbers.length === 0) {
+                // Si ya se han usado todos los números, reiniciar la lista
+                remainingNumbers = [...phoneNumbers];
+            }
+   
+            // Seleccionar un índice aleatorio
+            const randomIndex = Math.floor(Math.random() * remainingNumbers.length);
+            const selectedNumber = remainingNumbers[randomIndex];
+   
+            // Eliminar el número seleccionado de la lista
+            remainingNumbers.splice(randomIndex, 1);
+   
+            // Guardar el estado actualizado
+            saveState();
+   
+            return selectedNumber;
+        }
+   
+        // Seleccionar todos los botones de WhatsApp por clase
+        const whatsappButtons = document.querySelectorAll('.whatsapp-button-click');
+   
+        // Verificar si hay al menos un botón en la página
+        if (whatsappButtons.length > 0) {
+            // Cargar el estado inicial de los números restantes
+            loadState();
+   
+            // Función para obtener el número y abrir WhatsApp
+            function openWhatsApp() {
+                const number = getRandomNumber();
+                console.log("Número seleccionado: ", number);
+                window.open(`https://wa.me/${number}`, '_blank');
+            }
+   
+            // Asignar el evento de clic a cada botón
+            whatsappButtons.forEach(button => {
+                button.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    openWhatsApp();
+                });
+            });
+        } else {
+            console.log("Botones de WhatsApp no encontrados");
+        }
+   
+    });
 
     //------- Mailchimp js --------//  
     function mailChimp() {

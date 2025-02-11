@@ -9,6 +9,7 @@ use App\Models\Categories;
 use App\Models\ClothingCategory;
 use App\Models\ClothingDetails;
 use App\Models\Department;
+use App\Models\Logos;
 use App\Models\MetaTags;
 use App\Models\ProductImage;
 use App\Models\Seller;
@@ -251,7 +252,8 @@ class FrontendController extends Controller
                 return view('frontend.barber.index', compact('clothings', 'showModal', 'advert', 'blogs', 'social', 'clothings_offer', 'category', 'sellers', 'comments'));
                 break;
             case (6):
-                return view('frontend.av.index', compact('clothings', 'showModal', 'advert', 'blogs', 'social', 'clothings_offer', 'category', 'sellers', 'comments'));
+                $logos = Logos::all();
+                return view('frontend.av.index', compact('clothings','logos', 'showModal', 'advert', 'blogs', 'social', 'clothings_offer', 'category', 'sellers', 'comments'));
                 break;
             default:
                 return view('frontend.index', compact('clothings', 'advert', 'showModal', 'blogs', 'social', 'clothings_offer', 'category', 'comments'));

@@ -72,7 +72,7 @@
 </nav> --}}
 <header>
     <div class="header-area">
-       {{--  <div class="header-top_area d-none d-lg-block">
+        {{--  <div class="header-top_area d-none d-lg-block">
             <div class="container">
                 <div class="row">
                     <div class="col-xl-5 col-md-5">
@@ -110,6 +110,7 @@
                 </div>
             </div>
         </div> --}}
+       
         <div id="sticky-header" class="main-header-area">
             <div class="container">
                 <div class="header_bottom_border">
@@ -152,7 +153,7 @@
                         <div class="col-xl-3 col-lg-3 d-none d-lg-block">
                             <div class="Appointment">
                                 <div class="book_btn d-none d-lg-block">
-                                    <a href="#">Contáctanos</a>
+                                    <a type="button" href="javascript:void(0);">WhatsApp</a>
                                 </div>
                             </div>
                         </div>
