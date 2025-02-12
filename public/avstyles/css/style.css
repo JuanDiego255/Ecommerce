@@ -1031,13 +1031,13 @@ h3 {
 /* line 113, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_header.scss */
 .header-area .main-header-area .Appointment .book_btn a {
     /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#0181f5+0,5db2ff+100 */
-    background: #92bb57;
+    background: #72a6e2;
     /* Old browsers */
-    background: -moz-linear-gradient(left, #92bb57 0%, #9cbc6f 100%);
+    background: #72a6e2;
     /* FF3.6-15 */
-    background: -webkit-linear-gradient(left, #92bb57 0%, #9cbc6f 100%);
+    background: #72a6e2;
     /* Chrome10-25,Safari5.1-6 */
-    background: linear-gradient(to right, #92bb57 0%, #9cbc6f 100%);
+    background: #72a6e2;
     /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#0181f5', endColorstr='#5db2ff',GradientType=1 );
     /* IE6-9 */
@@ -1061,11 +1061,11 @@ h3 {
 /* line 130, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_header.scss */
 .header-area .main-header-area .Appointment .book_btn a:hover {
     /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#0181f5+0,5db2ff+100&0.96+0,0.96+100 */
-    background: -moz-linear-gradient(right, #92bb57 0%, #9cbc6f 100%);
+    background: #72a6e2;
     /* FF3.6-15 */
-    background: -webkit-linear-gradient(right, #92bb57 0%, #9cbc6f 100%);
+    background: #72a6e2;
     /* Chrome10-25,Safari5.1-6 */
-    background: linear-gradient(to left, #455c25 0%, #2e4015 100%);
+    background: #72a6e2;
     /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f50181f5', endColorstr='#f55db2ff',GradientType=0 );
     /* IE6-9 */
@@ -1555,7 +1555,7 @@ h3 {
 
 /* line 27, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_counter.scss */
 .counter_bg_1 {
-    background-image: url(../img/about/counter.png);
+    background-image: url(../img/banner/counter.png);
 }
 
 /* line 31, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_counter.scss */

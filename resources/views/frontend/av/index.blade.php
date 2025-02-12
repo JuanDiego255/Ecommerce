@@ -233,7 +233,7 @@
                 <div class="col-xl-3 col-lg-3 col-md-3">
                     <div class="single_counter text-center">
                         <div class="counter_icon">
-                            <img src="img/svg_icon/cart.svg" alt="" />
+                            <img src="{{asset('avstyles/img/svg_icon/cart.svg')}}" alt="" />
                         </div>
                         <h3><span class="counter">100</span> <span>%</span></h3>
                         <p>Proyectos Exitosos</p>
@@ -242,7 +242,7 @@
                 <div class="col-xl-3 col-lg-3 col-md-3">
                     <div class="single_counter text-center">
                         <div class="counter_icon">
-                            <img src="img/svg_icon/heart.svg" alt="" />
+                            <img src="{{asset('avstyles/img/svg_icon/group.svg')}}" alt="" />
                         </div>
                         <h3><span class="counter">91600</span></h3>
                         <p>Metros Cuadrados de Proyectos</p>
@@ -251,7 +251,7 @@
                 <div class="col-xl-3 col-lg-3 col-md-3">
                     <div class="single_counter text-center">
                         <div class="counter_icon">
-                            <img src="img/svg_icon/respect.svg" alt="" />
+                            <img src="{{asset('avstyles/img/svg_icon/respect.svg')}}" alt="" />
                         </div>
                         <h3><span class="counter">+400</span></h3>
                         <p>Proyectos Completados</p>
@@ -260,7 +260,7 @@
                 <div class="col-xl-3 col-lg-3 col-md-3">
                     <div class="single_counter text-center">
                         <div class="counter_icon">
-                            <img src="img/svg_icon/cart.svg" alt="" />
+                            <img src="{{asset('avstyles/img/svg_icon/heart.svg')}}" alt="" />
                         </div>
                         <h3><span class="counter">12</span> <span></span></h3>
                         <p>Años de Experiencia</p>

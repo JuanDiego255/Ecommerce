@@ -156,7 +156,8 @@
                         <div class="col-xl-3 col-lg-3 d-none d-lg-block">
                             <div class="Appointment">
                                 <div class="book_btn d-none d-lg-block">
-                                    <a type="button" href="javascript:void(0);">WhatsApp</a>
+                                    <a type="button" href="javascript:void(0);">¡Visita ACLIMATE! <i class="fa fa-snowflake"></i>
+                                    </a>
                                 </div>
                             </div>
                         </div>
