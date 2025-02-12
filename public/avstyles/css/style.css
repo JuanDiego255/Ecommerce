@@ -499,16 +499,15 @@ h3 {
 /* line 52, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_btn.scss */
 .boxed-btn3:hover {
     /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#0181f5+0,5db2ff+100&0.96+0,0.96+100 */
-    background: -moz-linear-gradient(right, #455c25 0%, #2e4015 100%);
+    background: -moz-linear-gradient(top, #b1d979 0%, #b1d979 100%);
     /* FF3.6-15 */
-    background: -webkit-linear-gradient(right, #455c25 0%, #2e4015 100%);
+    background: -moz-linear-gradient(top, #b1d979 0%, #b1d979 100%);
     /* Chrome10-25,Safari5.1-6 */
-    background: linear-gradient(to left, #455c25 0%, #2e4015 100%);
+    background: -moz-linear-gradient(top, #b1d979 0%, #b1d979 100%);
     /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f50181f5', endColorstr='#f55db2ff',GradientType=0 );
     /* IE6-9 */
     color: #fff !important;
-    border: 1px solid #92bb57;
 }
 
 /* line 62, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_btn.scss */
@@ -913,7 +912,7 @@ h3 {
 
 /* line 28, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_header.scss */
 .header-area .main-header-area.details_nav {
-    background: #001d38;
+    background: #fff;
 }
 
 /* line 45, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_header.scss */
@@ -2289,8 +2288,7 @@ h3 {
 
 /* line 1, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_case_details.scss */
 .case_details_area {
-    padding-top: 100px;
-    margin-top: 138px;
+    padding-top: 200px;
 }
 
 @media (max-width: 767px) {
@@ -3770,6 +3768,34 @@ h3 {
     -moz-box-shadow: 0 6px 10px rgba(0, 0, 0, 0.04);
     box-shadow: 0 6px 10px rgba(0, 0, 0, 0.04);
 }
+.shadow-lg {
+    -webkit-box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175) !important;
+    box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175) !important;
+}
+.shadow-sm {
+    -webkit-box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+}
+.ck-content p {
+    margin-bottom: 1rem;
+    color: #6c757d!important;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+    font-size: 16px !important;
+}
+.ck-content ul li{
+    list-style-type: disc !important;
+    padding-left: 20px !important;
+}
+.ck-content ul{
+    padding-left: 40px !important;
+    color: #6c757d!important;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+    font-size: 16px !important;
+}
+.ck-content strong {
+    font-weight: bold;
+}
+
 
 /* line 9, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_department.scss */
 .our_department_area .single_department .department_thumb {

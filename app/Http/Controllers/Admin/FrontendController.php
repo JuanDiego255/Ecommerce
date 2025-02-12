@@ -253,7 +253,7 @@ class FrontendController extends Controller
                 break;
             case (6):
                 $logos = Logos::all();
-                return view('frontend.av.index', compact('clothings','logos', 'showModal', 'advert', 'blogs', 'social', 'clothings_offer', 'category', 'sellers', 'comments'));
+                return view('frontend.av.index', compact('clothings', 'logos', 'showModal', 'advert', 'blogs', 'social', 'clothings_offer', 'category', 'sellers', 'comments'));
                 break;
             default:
                 return view('frontend.index', compact('clothings', 'advert', 'showModal', 'blogs', 'social', 'clothings_offer', 'category', 'comments'));
@@ -360,7 +360,21 @@ class FrontendController extends Controller
         $category = Cache::remember('category_' . $id, $this->expirationTime, function () use ($id) {
             return Categories::find($id);
         });
-
+        $categories = Cache::remember('categories', $this->expirationTime, function () {
+            return Categories::where('departments.department', 'Default')
+                ->where('categories.status', 0)
+                ->join('departments', 'categories.department_id', 'departments.id')
+                ->select(
+                    'departments.id as department_id',
+                    'categories.id as category_id',
+                    'categories.image as image',
+                    'categories.name as name',
+                    'categories.meta_title as meta_title',
+                    'categories.black_friday as black_friday'
+                )->orderBy('categories.name', 'asc')
+                ->take(7)
+                ->get();
+        });
         $category_name = $category->name;
         $category_id = $category->id;
 
@@ -427,7 +441,7 @@ class FrontendController extends Controller
             OpenGraph::setDescription($tag->meta_og_description);
         }
 
-        if (count($clothings) == 0 && ($tenantinfo->kind_business != 2 && $tenantinfo->kind_business != 3)) {
+        if (count($clothings) == 0 && ($tenantinfo->kind_business != 2 && $tenantinfo->kind_business != 3 && $tenantinfo->kind_business != 6)) {
             return redirect()->back()->with(['status' => 'No hay artículos en esta categoría', 'icon' => 'warning']);
         }
         switch ($tenantinfo->kind_business) {
@@ -437,6 +451,9 @@ class FrontendController extends Controller
             case (2):
             case (3):
                 return view('frontend.website.clothes-category', compact('clothings', 'category_name', 'category_id', 'department_id', 'department_name', 'category'));
+                break;
+            case (6):
+                return view('frontend.av.clothes-category', compact('clothings', 'categories', 'category_name', 'category_id', 'department_id', 'department_name', 'category'));
                 break;
             default:
                 return view('frontend.clothes-category', compact('clothings', 'category_name', 'category_id', 'department_id', 'department_name'));
@@ -675,6 +692,16 @@ class FrontendController extends Controller
     }
     public function aboutUs()
     {
-        return view('frontend.about_us');
+        $tenantinfo = Cache::remember('tenant_info', $this->expirationTime, function () {
+            return TenantInfo::first();
+        });
+        switch ($tenantinfo->kind_business) {
+
+            case (6):
+                return view('frontend.av.about_us');
+                break;
+            default:
+                return view('frontend.about_us');
+        }
     }
 }

@@ -45,16 +45,16 @@
                         </div>
                     </div> --}}
                     <div class="col-md-12 mb-3">
-                        <div class="input-group input-group-dynamic">
-                            <textarea required spellcheck="false" placeholder="Escriba aquí la descripción" name="description" class="form-control"
-                                rows="3">{{ old('description') }}</textarea>
+                        <div class="input-group input-group-static mb-4">
+                            <textarea id="editor" type="text" class="form-control form-control-lg" name="description"
+                                placeholder="Descripción de la categoría">{{ old('description') }}</textarea>
                         </div>
                     </div>
                     @if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'rutalimon')
                         <div class="col-md-12 mb-3">
                             <label
                                 class="form-label">{{ __('Meta Keywords (Opcional - Presione enter para agregar la palabra
-                                                                                                                                                    clave)') }}</label><br>
+                                                                                                                                                                                                                    clave)') }}</label><br>
                             <div class="tags-input">
                                 <ul id="tags"></ul>
                                 <input type="text" id="input-tag" placeholder="Escriba la palabra clave.." />
@@ -87,7 +87,8 @@
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" value="1" id="black_friday"
                                 name="black_friday" {{ old('black_friday') ? 'checked' : '' }}>
-                            <label class="custom-control-label" for="customCheck1">{{ __('Promocionar categoría') }}</label>
+                            <label class="custom-control-label"
+                                for="customCheck1">{{ __('Promocionar categoría') }}</label>
                         </div>
                     </div>
                 @endif
@@ -108,5 +109,14 @@
     </center>
 @endsection
 @section('script')
+    <script>
+        $(document).ready(function() {
+            ClassicEditor
+                .create(document.querySelector('#editor'))
+                .catch(error => {
+                    console.error(error);
+                });
+        });
+    </script>
     <script src="{{ asset('js/add-tag.js') }}"></script>
 @endsection

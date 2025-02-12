@@ -66,9 +66,9 @@
                                 <th class="text-center text-secondary font-weight-bolder opacity-7">
                                     {{ __('Acciones') }}</th>
                                 <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Categoría') }}
-                                </th>
+                                </th>{{-- 
                                 <th class="text-secondary font-weight-bolder opacity-7">
-                                    {{ __('Descripción') }}</th>
+                                    {{ __('Descripción') }}</th> --}}
                             </tr>
                         </thead>
                         <tbody>
@@ -115,10 +115,10 @@
                                         </div>
                                     </td>
 
-                                    <td class="align-middle text-sm">
-                                        <p class="mb-0">{{ $item->description }}
+                                    {{-- <td class="align-middle text-sm">
+                                        <p class="mb-0">{!! $item->description !!}
                                         </p>
-                                    </td>
+                                    </td> --}}
                                 </tr>
                             @endforeach
                         </tbody>

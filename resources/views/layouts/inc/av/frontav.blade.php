@@ -110,8 +110,9 @@
                 </div>
             </div>
         </div> --}}
-       
-        <div id="sticky-header" class="main-header-area">
+
+        <div id="sticky-header"
+            class="main-header-area {{ $view_name == 'frontend_av_clothes-category' ? 'details_nav shadow-sm' : '' }}">
             <div class="container">
                 <div class="header_bottom_border">
                     <div class="row align-items-center">
@@ -126,18 +127,20 @@
                             <div class="main-menu d-none d-lg-block">
                                 <nav>
                                     <ul id="navigation">
-                                        <li><a class="active" href="{{ url('/') }}">Inicio</a></li>
+                                        <li><a class="{{ $view_name == 'frontend_av_index' ? 'active' : '' }}"
+                                                href="{{ url('/') }}">Inicio</a></li>
                                         <li>
-                                            <a href="#">Nosotros <i class="ti-angle-down"></i></a>
+                                            <a class="{{ $view_name == 'frontend_av_about_us' ? 'active' : '' }}" href="#">Nosotros <i class="ti-angle-down"></i></a>
                                             <ul class="submenu">
                                                 <li>
-                                                    <a href="case_details.html">Acerca de</a>
+                                                    <a href="{{ url('/about_us') }}">Acerca de</a>
                                                 </li>
                                                 {{-- <li><a href="about.html">about</a></li>
                                                 <li><a href="elements.html">elements</a></li> --}}
                                             </ul>
                                         </li>
-                                        <li><a href="services.html">Servicios</a></li>
+                                        <li><a class="{{ $view_name == 'frontend_av_clothes-category' ? 'active' : '' }}"
+                                                href="services.html">Servicios</a></li>
                                         <li>
                                             <a href="#">blog <i class="ti-angle-down"></i></a>
                                             <ul class="submenu">

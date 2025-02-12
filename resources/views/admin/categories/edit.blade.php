@@ -40,10 +40,9 @@
                     @endif
 
                     <div class="col-md-12 mb-3">
-                        <div class="input-group input-group-dynamic">
-                            <textarea required spellcheck="false" placeholder="Escriba aquí la descripción..." name="description"
-                                class="form-control" rows="3">{{ $categories->description }}</textarea>
-                        </div>
+
+                        <label>{{ __('Descripción') }}</label><br>
+                        <textarea id="editor" type="text" class="form-control form-control-lg" name="description">{!! $categories->description !!}</textarea>
                     </div>
                     @if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'rutalimon')
                         <div class="col-md-12 mb-3">
@@ -76,7 +75,8 @@
                             <div class="form-check">
                                 <input {{ $categories->black_friday == 1 ? 'checked' : '' }} class="form-check-input"
                                     type="checkbox" value="1" id="black_friday" name="black_friday">
-                                <label class="custom-control-label" for="customCheck1">{{ __('Promocionar categoría') }}</label>
+                                <label class="custom-control-label"
+                                    for="customCheck1">{{ __('Promocionar categoría') }}</label>
                             </div>
                         </div>
                     @endif
@@ -96,5 +96,14 @@
     </center>
 @endsection
 @section('script')
+    <script>
+        $(document).ready(function() {
+            ClassicEditor
+                .create(document.querySelector('#editor'))
+                .catch(error => {
+                    console.error(error);
+                });
+        });
+    </script>
     <script src="{{ asset('js/edit-tag.js') }}"></script>
 @endsection

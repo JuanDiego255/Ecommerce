@@ -60,7 +60,7 @@
                                         </div>
                                         <div class="case_heading">
                                             <span>{{ $item->meta_title }}</span>
-                                            <h3><a href="#">{{ $item->name }}</a></h3>
+                                            <h3><a href="{{ url('clothes-category/' . $item->category_id . '/' . $item->department_id) }}">{{ $item->name }}</a></h3>
                                         </div>
                                     </div>
                                 @endforeach
@@ -253,7 +253,7 @@
                         <div class="counter_icon">
                             <img src="img/svg_icon/respect.svg" alt="" />
                         </div>
-                        <h3><span class="counter">197</span></h3>
+                        <h3><span class="counter">+400</span></h3>
                         <p>Proyectos Completados</p>
                     </div>
                 </div>
@@ -262,7 +262,7 @@
                         <div class="counter_icon">
                             <img src="img/svg_icon/cart.svg" alt="" />
                         </div>
-                        <h3><span class="counter">11</span> <span></span></h3>
+                        <h3><span class="counter">12</span> <span></span></h3>
                         <p>Años de Experiencia</p>
                     </div>
                 </div>
