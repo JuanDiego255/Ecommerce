@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 use Stancl\Tenancy\Database\Models\Domain;
+use Stancl\Tenancy\Facades\Tenancy; // O el método propio de tu paquete de tenancy
 
 class TenantController extends Controller
 {
@@ -27,7 +28,7 @@ class TenantController extends Controller
     public function __construct()
     {
         // Define el tiempo de expiración en minutos
-        $this->expirationTime = 60; // Por ejemplo, 60 minutos
+        $this->expirationTime = 60;
     }
     /**
      * Display a listing of the resource.
@@ -123,7 +124,7 @@ class TenantController extends Controller
 
         $comments = Testimonial::where('approve', 1)->inRandomOrder()->orderBy('name', 'asc')
             ->get();
-        return view('frontend.central.index',compact('blogs', 'social', 'category','comments'));
+        return view('frontend.central.index', compact('blogs', 'social', 'category', 'comments'));
     }
     public function getData($tenant)
     {
@@ -194,7 +195,7 @@ class TenantController extends Controller
             Artisan::call('tenants:sitemap:generate ');
             return redirect()->back()->with(['status' => 'Se crearon los sitemaps con éxito', 'icon' => 'success']);
         } catch (\Exception $th) {
-            return redirect()->back()->with(['status' => 'Hubo un error al crear los sitemaps. Error: '. $th->getMessage(), 'icon' => 'error']);
+            return redirect()->back()->with(['status' => 'Hubo un error al crear los sitemaps. Error: ' . $th->getMessage(), 'icon' => 'error']);
         }
     }
     public function generateMigrate()
@@ -204,6 +205,17 @@ class TenantController extends Controller
             return redirect()->back()->with(['status' => 'Se ejecutaron las migraciones con éxito', 'icon' => 'success']);
         } catch (\Exception $th) {
             return redirect()->back()->with(['status' => 'Hubo un error al ejecutar las migraciones', 'icon' => 'error']);
+        }
+    }
+    public function switchTenant($identifier)
+    {
+        $tenant = Tenant::where('id', $identifier)->firstOrFail();
+        try {            
+            Tenancy::initialize($tenant);
+            session(['current_tenant' => $tenant->id]);
+            return redirect()->back()->with('success', "Se ha cambiado al tenant: {$tenant->identifier}");
+        } catch (\Exception $th) {
+            return redirect()->back()->with('success', "Fallo al cambiar de tenant: {$tenant->identifier}. " . $th->getMessage());
         }
     }
 }

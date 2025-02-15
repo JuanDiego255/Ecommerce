@@ -25,6 +25,7 @@ use App\Http\Controllers\SellerController;
 use App\Http\Controllers\SizeController;
 use App\Http\Controllers\SocialNetworkController;
 use App\Http\Controllers\TenantCarouselController;
+use App\Http\Controllers\TenantController;
 use App\Http\Controllers\TenantInfoController;
 use App\Http\Controllers\TenantSocialNetworkController;
 use App\Http\Controllers\TestimonialController;
@@ -61,6 +62,15 @@ Route::middleware([
     Route::get('compare/vehicles', [FrontendController::class, 'compareIndex']);
     Route::get('/get-cart-details/{code}', [ClothingCategoryController::class, 'getCartDetail']);
     Route::get('/comment/{show}', [FrontendController::class, 'index']);
+    //Con prefijo aclimate
+    Route::prefix('aclimate')->middleware('setTenantDatabase')->group(function () {
+        Route::get('/', [FrontendController::class, 'index']);
+        Route::get('/about_us', [FrontendController::class, 'aboutUs']);
+        Route::get('compare/vehicles', [FrontendController::class, 'compareIndex']);
+        Route::get('/get-cart-details/{code}', [ClothingCategoryController::class, 'getCartDetail']);
+        Route::get('/comment/{show}', [FrontendController::class, 'index']);
+    });
+    //Con prefijo aclimate
     Route::group(['middleware' => 'isLicense'], function () {
 
         //Google authentication ----->
@@ -98,6 +108,39 @@ Route::middleware([
         Auth::routes();
 
         Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+        //Con prefijo aclimate
+        Route::prefix('aclimate')->middleware('setTenantDatabase')->group(function () {
+            // Rutas de autenticación de Google
+            Route::get('/google-auth/redirect', [AuthController::class, 'redirectGoogle']);
+            Route::get('/google-auth/callback', [AuthController::class, 'callbackGoogle']);
+
+            // Rutas de autenticación de Facebook
+            Route::get('/facebook-auth/redirect', [AuthController::class, 'redirectFacebook']);
+            Route::get('/facebook-auth/callback', [AuthController::class, 'callbackFacebook']);
+
+            // Otras rutas de tu aplicación
+            Route::get('category', [FrontendController::class, 'category']);
+            Route::get('/blog/index',  [BlogController::class, 'index']);
+            Route::get('blog/{blog}/{name_url}', [BlogController::class, 'showArticles']);
+            Route::post('send-email/blog', [BlogController::class, 'sendEmail']);
+            Route::get('departments/index', [FrontendController::class, 'departments']);
+            Route::get('category/{id}', [FrontendController::class, 'category']);
+            Route::get('clothes-category/{id}/{department_id}', [FrontendController::class, 'clothesByCategory']);
+            Route::get('detail-clothing/{id}/{cat_id}', [FrontendController::class, 'DetailClothingById']);
+            Route::post('/add-to-cart', [CartController::class, 'store']);
+            Route::post('/edit-quantity', [CartController::class, 'updateQuantity']);
+            Route::get('/view-cart', [CartController::class, 'viewCart']);
+            Route::get('/get-cart-items', [CartController::class, 'getCart']);
+            Route::delete('/delete-item-cart/{id}', [CartController::class, 'delete']);
+            Route::post('/payment', [CheckOutController::class, 'payment']);
+            Route::post('/payment/apartado/{id}', [CheckOutController::class, 'paymentApartado']);
+            Route::get('/paypal/process/{orderId}', [CheckOutController::class, 'process']);
+            Route::post('/comments/store/', [TestimonialController::class, 'store']);
+            Route::get('/get-stock/{cloth_id}/{attr_id}/{value_attr}', [FrontendController::class, 'getStock']);
+            Route::get('/gift-code/{id}', [GiftCardController::class, 'applyCode']);
+            Route::post('gift/store', [GiftCardController::class, 'store']);
+            Route::get('/get/products/select/', [ClothingCategoryController::class, 'getProductsToSelect']);
+        });
         Route::group(['auth'], function () {
 
             Route::get('checkout', [CheckOutController::class, 'index']);
@@ -260,7 +303,7 @@ Route::middleware([
             Route::post('/value/store/{id}', [AttributeController::class, 'storeValue']);
             Route::get('value/{attr_id}/{id}/edit', [AttributeController::class, 'editValue']);
             //Rutas para tarjetas de regalo
-            Route::get('/gifts/', [GiftCardController::class, 'indexAdmin']);           
+            Route::get('/gifts/', [GiftCardController::class, 'indexAdmin']);
             Route::put('gift/{id}', [GiftCardController::class, 'update']);
             Route::delete('delete-gift/{id}', [GiftCardController::class, 'destroy']);
             Route::get('gift/{id}/edit', [GiftCardController::class, 'edit']);
@@ -283,6 +326,7 @@ Route::middleware([
             Route::get('logos/{id}/edit', [LogosController::class, 'edit']);
             Route::get('/new-logo/', [LogosController::class, 'add']);
             Route::post('/logos/store', [LogosController::class, 'store']);
+            Route::get('/switch-tenant/{identifier}', [TenantController::class, 'switchTenant'])->name('tenant.switch');
         });
     });
 

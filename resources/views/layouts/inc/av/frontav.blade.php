@@ -130,7 +130,8 @@
                                         <li><a class="{{ $view_name == 'frontend_av_index' ? 'active' : '' }}"
                                                 href="{{ url('/') }}">Inicio</a></li>
                                         <li>
-                                            <a class="{{ $view_name == 'frontend_av_about_us' ? 'active' : '' }}" href="#">Nosotros <i class="ti-angle-down"></i></a>
+                                            <a class="{{ $view_name == 'frontend_av_about_us' ? 'active' : '' }}"
+                                                href="#">Nosotros <i class="ti-angle-down"></i></a>
                                             <ul class="submenu">
                                                 <li>
                                                     <a href="{{ url('/about_us') }}">Acerca de</a>
@@ -156,7 +157,8 @@
                         <div class="col-xl-3 col-lg-3 d-none d-lg-block">
                             <div class="Appointment">
                                 <div class="book_btn d-none d-lg-block">
-                                    <a type="button" href="javascript:void(0);">¡Visita ACLIMATE! <i class="fa fa-snowflake"></i>
+                                    <a type="button" href="{{ url('/aclimate') }}">¡Visita ACLIMATE! <i
+                                            class="fa fa-snowflake"></i>
                                     </a>
                                 </div>
                             </div>

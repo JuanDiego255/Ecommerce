@@ -52,6 +52,18 @@
     <div class="{{ $tenantinfo->tenant === 'autosgreciacr' ? 'main-container-ag' : 'main-container' }}">
         @include('layouts.inc.sidebar')
         <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
+            @if ($tenantinfo->kind_business == 6 || $tenantinfo->kind_business == 7)
+                <a href="{{ route('tenant.switch', ['identifier' => $tenantinfo->tenant == 'avelectromecanica' ? 'aclimate' : 'avelectromecanica']) }}"
+                    class="tenant-button {{ $tenantinfo->tenant == 'avelectromecanica' ? 'tenant-ac-color' : 'tenant-av-color' }}">
+                    <span class="tenant-label">
+                        {{ $tenantinfo->tenant == 'avelectromecanica' ? 'AClimate' : 'AV Electromecanica' }}
+                    </span>
+                    <img src="{{ $tenantinfo->tenant == 'avelectromecanica' ? asset('avstyles/img/svg_icon/copo.svg') : asset('avstyles/img/svg_icon/av.svg') }}"
+                        alt="Icono" width="40" height="40">
+                </a>
+            @endif
+
+
             @include('layouts.inc.adminnav')
             <div class="container-fluid py-4">
                 @yield('content')
@@ -99,8 +111,7 @@
                 damping: '0.5'
             }
             Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
-        }
-      
+        }      
     </script>
     @yield('script')
 

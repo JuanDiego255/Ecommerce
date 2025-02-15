@@ -290,6 +290,15 @@
                     <span class="nav-link-text ms-1">Ayuda</span>
                 </a>
             </li>
+            <li class="nav-item {{ $tenantinfo->kind_business == 6 ? 'd-block' : 'd-none' }}">
+                <a @if ($view_name == 'admin_logos_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
+                    href="{{ url('logos') }}">
+                    <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                        <i class="material-icons opacity-10">campaign</i>
+                    </div>
+                    <span class="nav-link-text ms-1">Logos</span>
+                </a>
+            </li>
             @if (isset($tenantinfo->kind_business) && $tenantinfo->kind_business == 1)
                 <li class="nav-item">
                     <a @if ($view_name == 'admin_sellers_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif

@@ -37,6 +37,7 @@ class Kernel extends HttpKernel
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            \App\Http\Middleware\TenantMiddleware::class,
         ],
 
         'api' => [
@@ -67,5 +68,6 @@ class Kernel extends HttpKernel
         'isAdmin' => \App\Http\Middleware\AdminMiddleware::class,
         'isLicense' => \App\Http\Middleware\LicenseMiddleware::class,
         'isKindBusiness' => \App\Http\Middleware\CarSaleMiddleware::class,
+        'setTenantDatabase' => \App\Http\Middleware\SetTenantDatabase::class,
     ];
 }
