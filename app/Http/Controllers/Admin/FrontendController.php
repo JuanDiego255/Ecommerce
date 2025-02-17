@@ -256,6 +256,9 @@ class FrontendController extends Controller
                 return view('frontend.av.index', compact('clothings', 'logos', 'showModal', 'advert', 'blogs', 'social', 'clothings_offer', 'category', 'sellers', 'comments'));
                 break;
             default:
+                if($tenantinfo->kind_of_features == 1){
+                    return view('frontend.design_ecommerce.index', compact('clothings', 'advert', 'showModal', 'blogs', 'social', 'clothings_offer', 'category', 'comments'));
+                }
                 return view('frontend.index', compact('clothings', 'advert', 'showModal', 'blogs', 'social', 'clothings_offer', 'category', 'comments'));
                 break;
         }
