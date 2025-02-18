@@ -15,7 +15,7 @@ class AddCodeLoveToUsers extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             //
-            $table->tinyInteger('code_love')->nullable();
+            $table->string('code_love', 20)->nullable();
         });
     }
 

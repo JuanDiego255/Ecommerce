@@ -49,7 +49,7 @@
         --cintillo_text: {{ $settings->cintillo_text }};
     }
 </style>
-
+<input hidden type="user_id" value="{{ isset(Auth::user()->id) ? Auth::user()->id : '' }}" name="user_id" id="user_id">
 @if ($view_name == 'frontend_blog_show-articles')
     <style>
         :root {
@@ -113,6 +113,7 @@
 
 <body class="g-sidenav-show  bg-gray-200">
     @include('frontend.website.add-comment')
+    @include('layouts.form-fav')
     <div class="{{ $view_name == 'frontend_blog_show-articles' ? 'main-container-front' : '' }}">
         <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
 
@@ -399,6 +400,34 @@
                 });
 
             }
+
+            $(document).on('click', '.add_favorite', function(event) {
+                event.preventDefault();
+
+                let clothing_id = $(this).data('clothing-id'); // Obtener ID desde <a>
+                var user_id = document.getElementById('user_id').value;
+                let token = $('meta[name="csrf-token"]').attr('content');
+                let icon = $(this).find('i');
+                $.ajax({
+                    url: '/add-favorite',
+                    method: 'POST',
+                    data: {
+                        user_id: user_id,
+                        clothing_id: clothing_id,
+                        _token: token
+                    },
+                    success: function(response) {
+                        if (response.status === 'added') {
+                            icon.addClass('text-danger'); // Agregar ambas clases
+                        } else {
+                            icon.removeClass('text-danger'); // Remover ambas clases
+                        }
+                    },
+                    error: function(xhr) {
+                        console.error('Error al añadir a favoritos', xhr.responseText);
+                    }
+                });
+            });
         </script>
     @endif
 

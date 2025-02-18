@@ -13,6 +13,8 @@ use App\Http\Controllers\BlogController;
 use App\Http\Controllers\BuyController;
 use App\Http\Controllers\ClothingCategoryController;
 use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\FavoriteController;
+use App\Http\Controllers\FavoritesController;
 use App\Http\Controllers\Frontend\CartController;
 use App\Http\Controllers\Frontend\CheckOutController;
 use App\Http\Controllers\GiftCardController;
@@ -62,6 +64,8 @@ Route::middleware([
     Route::get('compare/vehicles', [FrontendController::class, 'compareIndex']);
     Route::get('/get-cart-details/{code}', [ClothingCategoryController::class, 'getCartDetail']);
     Route::get('/comment/{show}', [FrontendController::class, 'index']);
+    Route::post('/add-favorite', [FavoriteController::class, 'store']);
+    Route::post('/check/list-fav', [FavoriteController::class, 'checkCode']);
     //Con prefijo aclimate
     Route::prefix('aclimate')->middleware('setTenantDatabase')->group(function () {
         Route::get('/', [FrontendController::class, 'index']);
@@ -69,6 +73,8 @@ Route::middleware([
         Route::get('compare/vehicles', [FrontendController::class, 'compareIndex']);
         Route::get('/get-cart-details/{code}', [ClothingCategoryController::class, 'getCartDetail']);
         Route::get('/comment/{show}', [FrontendController::class, 'index']);
+        Route::post('/add-favorite', [FavoriteController::class, 'store']);
+        Route::post('/check/list-fav', [FavoriteController::class, 'checkCode']);
     });
     //Con prefijo aclimate
     Route::group(['middleware' => 'isLicense'], function () {

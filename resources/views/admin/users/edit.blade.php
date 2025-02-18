@@ -23,21 +23,28 @@
                                     <input value="{{ $user->name }}" required type="text"
                                         class="form-control form-control-lg" name="name">
                                 </div>
-                            </div>   
+                            </div>
                             <div class="col-md-6 mb-3">
                                 <div class="input-group input-group-static mb-4">
                                     <label>{{ __('Teléfono') }}</label>
                                     <input value="{{ $user->telephone }}" required type="text"
                                         class="form-control form-control-lg" name="telephone">
                                 </div>
-                            </div>      
+                            </div>
                             <div class="col-md-6 mb-3">
                                 <div class="input-group input-group-static mb-4">
                                     <label>{{ __('E-mail') }}</label>
                                     <input value="{{ $user->email }}" required type="text"
                                         class="form-control form-control-lg" name="email">
                                 </div>
-                            </div> 
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="input-group input-group-static mb-4">
+                                    <label>{{ __('Código (Favoritos)') }}</label>
+                                    <input value="{{ $user->code_love }}" required type="text"
+                                        class="form-control form-control-lg" name="code">
+                                </div>
+                            </div>
                             <div class="col-md-6 mb-3">
 
                                 <div class="input-group input-group-static">
@@ -45,7 +52,7 @@
                                     <select id="role_id" name="role_id"
                                         class="form-control form-control-lg @error('role_id') is-invalid @enderror"
                                         autocomplete="role_id" autofocus>
-                                        <option selected value="{{$user->role_as}}">
+                                        <option selected value="{{ $user->role_as }}">
                                             @if ($user->role_as == 1)
                                                 Admin
                                             @else
@@ -65,7 +72,7 @@
                                         </span>
                                     @enderror
                                 </div>
-                            </div>                         
+                            </div>
                         </div>
 
 

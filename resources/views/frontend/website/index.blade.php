@@ -219,6 +219,15 @@
                                     <ul class="product-links-offer">
                                         <li><a href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}"
                                                 data-tip="Detallar"><i class="fa fa-eye"></i></a></li>
+                                        @if (Auth::check())
+                                            <li>
+                                                <a class="add_favorite" data-clothing-id="{{ $item->id }}"
+                                                    href="#">
+                                                    <i
+                                                        class="fas fa-heart {{ $clothing_favs->contains('clothing_id', $item->id) ? 'text-danger' : '' }}"></i>
+                                                </a>
+                                            </li>
+                                        @endif
 
                                     </ul>
                                 </div>
@@ -301,6 +310,15 @@
                                 <ul class="product-links-offer">
                                     <li><a href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}"
                                             data-tip="Detallar"><i class="fa fa-eye"></i></a></li>
+                                    @if (Auth::check())
+                                        <li>
+                                            <a class="add_favorite" data-clothing-id="{{ $item->id }}"
+                                                href="#">
+                                                <i
+                                                    class="fas fa-heart {{ $clothing_favs->contains('clothing_id', $item->id) ? 'text-danger' : '' }}"></i>
+                                            </a>
+                                        </li>
+                                    @endif
 
                                 </ul>
                             </div>

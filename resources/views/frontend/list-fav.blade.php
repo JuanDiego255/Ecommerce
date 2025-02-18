@@ -5,29 +5,7 @@
 @endsection
 @section('content')
     <div class="container mt-4">
-        <div class="breadcrumb-nav bc3x">
-            @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
-                <li class="home"><a href="{{ url('/') }}"><i class="fas fa-{{ $icon->home }} me-1"></i></a></li>
-                <li class="bread-standard"><a href="{{ url('category/') }}"><i
-                            class="fas fa-{{ $icon->categories }} me-1"></i>Categorías</a>
-                </li>
-                <li class="bread-standard"><a href="#"><i
-                            class="fas fa-{{ $icon->services }} me-1"></i>{{ $category_name }}</a>
-                </li>
-            @else
-                <li class="home"><a href="{{ url('/') }}"><i class="fas fa-{{ $icon->home }} me-1"></i></a></li>
-                </li>
-                <li class="bread-standard"><a href="{{ url('departments/index') }}"><i
-                            class="fas fa-shapes me-1"></i>Departamentos</a></li>
-                <li class="bread-standard"><a href="{{ url('category/' . $department_id) }}"><i
-                            class="fas fa-{{ $icon->categories }} me-1"></i>{{ $department_name }}</a>
-                </li>
-                <li class="bread-standard"><a href="#"><i
-                            class="fas fa-{{ $icon->services }} me-1"></i>{{ $category_name }}</a>
-                </li>
-            @endif
-
-        </div>
+        <h3 class="text-title text-center">Lista seleccionada por {{ $user->name }}</h3>
         <div class="row w-75">
             <div class="col-md-6">
                 <div class="input-group input-group-lg input-group-static my-3 w-100">
@@ -62,7 +40,7 @@
                                     </li>
                                 @endif
                             </ul>
-                            <a href="{{ url('detail-clothing/' . $item->id . '/' . $category_id) }}"
+                            <a href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}"
                                 class="add-to-cart">Detallar</a>
                         </div>
                         <div class="product-content">
@@ -70,9 +48,11 @@
                                 class="text-muted text-uppercase {{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'd-none' : '' }}">
                                 {{ $item->casa }}
                             </h3>
+                            <h3 class="title clothing-name"><a href="#">({{ $item->category }})</a>
+                            </h3>
                             <h3
                                 class="{{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'text-muted' : 'text-muted' }}">
-                                <a href="{{ url('detail-clothing/' . $item->id . '/' . $category_id) }}">{{ $item->name }}
+                                <a href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}">{{ $item->name }}
                                     @if ($item->total_stock == 0)
                                         <s class="text-danger"> Agotado</s>
                                     @endif
@@ -121,7 +101,6 @@
                     </div>
                 </div>
             @endforeach
-
         </div>
         <center>
             <div class="container mb-5">

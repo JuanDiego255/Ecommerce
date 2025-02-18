@@ -9,6 +9,7 @@ use App\Models\Cart;
 use App\Models\Categories;
 use App\Models\ClothingCategory;
 use App\Models\Department;
+use App\Models\Favorite;
 use App\Models\PersonalUser;
 use App\Models\Settings;
 use App\Models\TenantCarousel;
@@ -324,8 +325,13 @@ class AppServiceProvider extends ServiceProvider
 
             $iva = $cloth_price * $tenantinfo->iva;
             $total_price = $cloth_price + $iva;
+            $clothing_favs = null;
+            if (Auth::check()) {
+                $clothing_favs = Favorite::where('user_id', Auth::user()->id)->get();
+            }
             view()->share([
                 'view_name' => $view_name,
+                'clothing_favs' => $clothing_favs,
                 'profesionals' => $profesionals,
                 'profesional_info' => $profesional_info,
                 'cartNumber' => $cartNumber,

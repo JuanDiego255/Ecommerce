@@ -5,6 +5,7 @@
 @endsection
 @section('content')
     <input type="hidden" value="{{ $showModal }}" name="showModalComment" id="showModalComment">
+
     @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
         @if ($category_black_friday)
             <a
@@ -153,6 +154,15 @@
                                             <li><a target="blank"
                                                     href="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"><i
                                                         class="fas fa-eye"></i></a></li>
+                                            @if (Auth::check())
+                                                <li>
+                                                    <a class="add_favorite" data-clothing-id="{{ $item->id }}"
+                                                        href="#">
+                                                        <i
+                                                            class="fas fa-heart {{ $clothing_favs->contains('clothing_id', $item->id) ? 'text-danger' : '' }}"></i>
+                                                    </a>
+                                                </li>
+                                            @endif
                                         </ul>
                                         <a href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}"
                                             class="add-to-cart">Detallar</a>
@@ -166,7 +176,8 @@
                                         </h3>
                                         <h3
                                             class="{{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'text-muted' : 'title-frags' }}">
-                                            <a href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}">{{ $item->name }}
+                                            <a
+                                                href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}">{{ $item->name }}
                                                 @if ($item->total_stock == 0)
                                                     <s class="text-danger"> Agotado</s>
                                                 @endif
@@ -252,6 +263,15 @@
                                 <ul class="product-links-offer">
                                     <li><a href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}"
                                             data-tip="Detallar"><i class="fa fa-eye"></i></a></li>
+                                    @if (Auth::check())
+                                        <li>
+                                            <a class="add_favorite" data-clothing-id="{{ $item->id }}"
+                                                href="#">
+                                                <i
+                                                    class="fas fa-heart {{ $clothing_favs->contains('clothing_id', $item->id) ? 'text-danger' : '' }}"></i>
+                                            </a>
+                                        </li>
+                                    @endif
 
                                 </ul>
                             </div>
@@ -559,7 +579,6 @@
                     }
                 });
             });
-
             var showModal = document.getElementById('showModalComment');
             var showModalValue = showModal.value;
             if (showModalValue == "add-comment") {

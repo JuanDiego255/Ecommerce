@@ -91,6 +91,7 @@ class UserController extends Controller
             $user->name = $request->name;
             $user->telephone = $request->telephone;
             $user->email = $request->email;
+            $user->code_love = $request->code;
             $user->role_as = $request->role_id;
             $user->update();
             db::commit();

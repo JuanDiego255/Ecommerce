@@ -279,7 +279,8 @@
                                             @endif
                                         </button>
                                     @else
-                                        <a class="btn btn-add_to_cart shadow-0" href="{{ url('https://wa.me/506' . $tenantinfo->whatsapp) }}"> <i
+                                        <a class="btn btn-add_to_cart shadow-0"
+                                            href="{{ url('https://wa.me/506' . $tenantinfo->whatsapp) }}"> <i
                                                 class="me-1 fa fas fa-clock"></i>Agendar cita
                                         </a>
                                     @endif
@@ -314,6 +315,14 @@
                             <li><a target="blank"
                                     href="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"><i
                                         class="fas fa-eye"></i></a></li>
+                            @if (Auth::check())
+                                <li>
+                                    <a class="add_favorite" data-clothing-id="{{ $item->id }}" href="#">
+                                        <i
+                                            class="fas fa-heart {{ $clothing_favs->contains('clothing_id', $item->id) ? 'text-danger' : '' }}"></i>
+                                    </a>
+                                </li>
+                            @endif
                         </ul>
                         <a href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}"
                             class="add-to-cart">Detallar</a>

@@ -150,7 +150,6 @@
                                                 <span class="text-danger my-auto">Tendencia</span>
 
                                             </div>
-                                            
                                         @endif
                                         @if (isset($tenantinfo->show_stock) && $tenantinfo->show_stock != 0)
                                             <span class="text-muted-normal"><i
@@ -322,6 +321,15 @@
                                 <li><a target="blank"
                                         href="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"><i
                                             class="fas fa-eye"></i></a></li>
+                                @if (Auth::check())
+                                    <li>
+                                        <a class="add_favorite" data-clothing-id="{{ $item->id }}"
+                                            href="#">
+                                            <i
+                                                class="fas fa-heart {{ $clothing_favs->contains('clothing_id', $item->id) ? 'text-danger' : '' }}"></i>
+                                        </a>
+                                    </li>
+                                @endif
                             </ul>
                             <a href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}"
                                 class="add-to-cart">Detallar</a>

@@ -339,6 +339,7 @@
                 <a href="{{ url('view-cart') }}" class="nav-menu-item"><i class="fa fa-shopping-cart me-3"></i>CARRITO
                     <span
                         class="badge badge-sm text-pill-menu badge-info border-pill-menu border-2 text-xxs">{{ $cartNumber }}</span></a>
+                <a href="#" class="nav-menu-item"><i class="fas fa-heart me-3"></i>LISTA DE FAVORITOS</a>
                 <a href="{{ url('blog/index') }}" class="nav-menu-item"><i class="fa fa-book me-3"></i>BLOG</a>
                 <a href="{{ url('/about_us') }}" class="nav-menu-item"><i class="fas fa-eye me-3"></i>ACERCA DE</a>
                 <a href="{{ route('register') }}" class="nav-menu-item"><i
@@ -422,9 +423,8 @@
                     <span
                         class="badge badge-sm text-pill-menu badge-info border-pill-menu border-2 text-xxs">{{ $cartNumber }}</span></a>
                 <a href="{{ url('blog/index') }}" class="nav-menu-item"><i class="fa fa-book me-3"></i>BLOG</a>
-                <a href="{{ url('buys') }}" class="nav-menu-item"><i
-                        class="fas fa-{{ $icon->shopping }} me-3"></i>MIS
-                    COMPRAS</a>
+                <a type="button" href="#" data-bs-toggle="modal" data-bs-target="#form-fav-modal" href="#" class="nav-menu-item"><i class="fas fa-heart me-3"></i>LISTA DE
+                    FAVORITOS</a>
                 <a href="{{ url('/index-gifts') }}" class="nav-menu-item"><i class="fas fa-gift me-3"></i>MIS
                     TARJETAS DE REGALO</a>
                 <a href="{{ url('/address') }}"
