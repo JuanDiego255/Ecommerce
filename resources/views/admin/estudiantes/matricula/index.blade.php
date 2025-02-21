@@ -6,12 +6,13 @@
 @section('content')
     <center>
         <h2 class="text-center font-title">
-            <strong>{{ __('Gestión de estudiantes') }}</strong>
+            <strong>{{ __('Gestión de matriculas del estudiante ') . $item->nombre }}</strong>
         </h2>
     </center>
-    <button type="button" data-bs-toggle="modal" data-bs-target="#add-estudiante-modal" class="btn btn-velvet">
-        {{ __('Nuevo estudiante') }}</button>
-    @include('admin.estudiantes.add')
+    <button type="button" data-bs-toggle="modal" data-bs-target="#matricula-estudiante-modal{{ $item->id }}"
+        class="btn btn-velvet">
+        {{ __('Nueva matricula') }}</button>
+    @include('admin.estudiantes.matricula')
     <div class="card mt-3">
         <div class="card-body">
             <div class="row w-100">
@@ -49,57 +50,44 @@
                                 <th class="text-secondary font-weight-bolder opacity-7">
                                     {{ __('Acciones') }}
                                 </th>
-                                <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Nombre') }}</th>
-                                <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Telefono') }}</th>
-                                <th class="text-secondary font-weight-bolder opacity-7">{{ __('Edad') }}</th>
-                                <th class="text-secondary font-weight-bolder opacity-7">{{ __('Email') }}</th>
-                                <th class="text-secondary font-weight-bolder opacity-7">{{ __('Fecha Pago') }}</th>
+                                <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Curso') }}</th>
+                                <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Monto Pagado') }}</th>
+                                <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Monto del curso') }}</th>
+                                <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Fecha Matricula') }}</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($estudiantes as $item)
+                            @foreach ($matriculas as $matricula)
                                 <tr>
                                     <td class="align-middle">
                                         <button type="button" data-bs-toggle="modal"
-                                            data-bs-target="#edit-estudiante-modal{{ $item->id }}"
+                                            data-bs-target="#edit-matricula-modal{{ $matricula->id }}"
                                             class="btn btn-velvet" style="text-decoration: none;">Editar</button>
 
-                                        <form method="post" action="{{ url('/delete/estudiantes/' . $item->id) }}"
+                                        <form method="post" action="{{ url('/delete/matricula/' . $matricula->id) }}"
                                             style="display:inline">
                                             {{ csrf_field() }}
                                             {{ method_field('DELETE') }}
                                             <button type="submit" data-bs-toggle="modal"
-                                                onclick="return confirm('Deseas borrar este estudiante?')"
+                                                onclick="return confirm('Deseas borrar esta matrícula?')"
                                                 class="btn btn-admin-delete" style="text-decoration: none;">Borrar</button>
                                         </form>
-                                        <button type="button" data-bs-toggle="modal"
-                                            data-bs-target="#matricula-estudiante-modal{{ $item->id }}"
-                                            class="btn btn-admin-open" style="text-decoration: none;">Matricular</button>
-                                        <a href="{{ url('list/matricula/' . $item->id) }}" class="btn btn-velvet"
-                                            style="text-decoration: none;">Gestionar</a>
                                     </td>
                                     <td class="align-middle text-sm">
-                                        <p class="text-success mb-0">{{ $item->nombre }}
+                                        <p class="mb-0">{{ $matricula->curso }}
                                         </p>
                                     </td>
                                     <td class="align-middle text-sm">
-                                        <p class="text-success mb-0">{{ $item->telefono }}
-                                        </p>
+                                        <p class="text-success font-weight-bold mb-0">₡{{ number_format($matricula->monto_pago) }}</p>
                                     </td>
                                     <td class="align-middle text-sm">
-                                        <p class="text-success mb-0">{{ $item->edad }}
-                                        </p>
+                                        <p class="text-success font-weight-bold mb-0">₡{{ number_format($matricula->monto_curso) }}</p>
                                     </td>
                                     <td class="align-middle text-sm">
-                                        <p class="text-success mb-0">{{ $item->email }}
+                                        <p class="mb-0">{{ $matricula->fecha_matricula }}
                                         </p>
                                     </td>
-                                    <td class="align-middle text-sm">
-                                        <p class="text-success mb-0">{{ $item->fecha_pago }} de cada mes
-                                        </p>
-                                    </td>
-                                    @include('admin.estudiantes.edit')
-                                    @include('admin.estudiantes.matricula')
+                                    @include('admin.estudiantes.matricula.edit')
                                 </tr>
                             @endforeach
                         </tbody>
@@ -109,6 +97,11 @@
 
         </div>
     </div>
+    <center>
+        <div class="col-md-12 mt-3">
+            <a href="{{ url('estudiantes/') }}" class="btn btn-velvet w-25">{{ __('Volver') }}</a>
+        </div>
+    </center>
 @endsection
 @section('script')
     <script src="{{ asset('js/datatables.js') }}"></script>

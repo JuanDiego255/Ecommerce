@@ -22,6 +22,7 @@ use App\Http\Controllers\Frontend\CartController;
 use App\Http\Controllers\Frontend\CheckOutController;
 use App\Http\Controllers\GiftCardController;
 use App\Http\Controllers\LogosController;
+use App\Http\Controllers\MatriculaEstudianteController;
 use App\Http\Controllers\MedicineResultController;
 use App\Http\Controllers\MetaTagsController;
 use App\Http\Controllers\PersonalUserController;
@@ -352,11 +353,15 @@ Route::middleware([
             Route::get('/services/specialists/{id}', [EspecialistaController::class, 'indexServices']);
             Route::get('/get/products/select/{id}', [EspecialistaController::class, 'getProductsToSelect']);
             Route::get('/especialistas/service/list/{id}', [EspecialistaController::class, 'listServices']);
-            //Rutas para gestionar estudiantes
+            //Rutas para gestionar estudiantes y sus matriculas
             Route::get('/estudiantes', [EstudianteController::class, 'index']);
-            Route::put('estudiantes/update/{id}', [EstudianteController::class, 'update']);
+            Route::put('estudiantes/update/{id}', [EstudianteController::class, 'update']);            
             Route::delete('delete/estudiantes/{id}', [EstudianteController::class, 'destroy']);
             Route::post('/estudiantes/store', [EstudianteController::class, 'store']);
+            Route::post('matricula/estudiante/{id}', [MatriculaEstudianteController::class, 'matriculaEstudiante']);
+            Route::get('/list/matricula/{id}', [MatriculaEstudianteController::class, 'index']);
+            Route::put('matricula/update/{id}', [MatriculaEstudianteController::class, 'update']);  
+            Route::delete('delete/matricula/{id}', [MatriculaEstudianteController::class, 'destroy']);
         });
     });
     //images Tenant
