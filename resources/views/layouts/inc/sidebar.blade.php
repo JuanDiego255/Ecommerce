@@ -211,6 +211,22 @@
                     <span class="nav-link-text ms-1">Anuncios</span>
                 </a>
             </li>
+            <li class="nav-item {{ $tenantinfo->tenant == 'clinicare' ? 'd-block' : 'd-none' }}">
+                <a @if ($view_name == 'admin_cajas_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
+                    href="{{ url('/cajas') }}">
+                    <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                        <i class="material-icons opacity-10">point_of_sale</i>
+                    </div>
+                    <span class="nav-link-text ms-1">Cajas</span>
+                </a>
+                <a @if ($view_name == 'admin_especialistas_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
+                    href="{{ url('/especialistas') }}">
+                    <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                        <i class="material-icons opacity-10">group</i>
+                    </div>
+                    <span class="nav-link-text ms-1">Especialistas</span>
+                </a>
+            </li>
             <li class="nav-item">
                 <a @if ($view_name == 'admin_users_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
                     href="{{ url('users') }}">

@@ -3766,6 +3766,22 @@ fieldset:disabled .btn {
   --bs-btn-disabled-bg: #C22B1F;
   --bs-btn-disabled-border-color: #C22B1F;
 }
+.btn-admin-open {
+  --bs-btn-color: #fff;
+  --bs-btn-bg: #0b9812;
+  --bs-btn-border-color: #0b9812;
+  --bs-btn-hover-color: #000;
+  --bs-btn-hover-bg: #0b9812;
+  --bs-btn-hover-border-color: #0b9812;
+  --bs-btn-focus-shadow-rgb: 198, 26, 84;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: #0b9812;
+  --bs-btn-active-border-color: #0b9812;
+  --bs-btn-active-shadow: none;
+  --bs-btn-disabled-color: #000;
+  --bs-btn-disabled-bg: #0b9812;
+  --bs-btn-disabled-border-color: #0b9812;
+}
 
 
 .btn-facebook {

@@ -11,8 +11,10 @@ use App\Http\Controllers\AdvertController;
 use App\Http\Controllers\AttributeController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\BuyController;
+use App\Http\Controllers\CajasController;
 use App\Http\Controllers\ClothingCategoryController;
 use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\EspecialistaController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\FavoritesController;
 use App\Http\Controllers\Frontend\CartController;
@@ -329,13 +331,28 @@ Route::middleware([
             Route::get('/logos', [LogosController::class, 'index']);
             Route::put('logos/update/{id}', [LogosController::class, 'update']);
             Route::delete('delete/logos/{id}', [LogosController::class, 'destroy']);
-            Route::get('logos/{id}/edit', [LogosController::class, 'edit']);
-            Route::get('/new-logo/', [LogosController::class, 'add']);
             Route::post('/logos/store', [LogosController::class, 'store']);
+            //Cambiar de TENANT AV
             Route::get('/switch-tenant/{identifier}', [TenantController::class, 'switchTenant'])->name('tenant.switch');
+            //Rutas para gestionar cajas
+            Route::get('/cajas', [CajasController::class, 'index']);
+            Route::put('cajas/update/{id}', [CajasController::class, 'update']);
+            Route::delete('delete/cajas/{id}', [CajasController::class, 'destroy']);
+            Route::post('/cajas/store', [CajasController::class, 'store']);
+            Route::post('/open/cajas/{id}', [CajasController::class, 'open']);
+            Route::post('/close/cajas/{id}', [CajasController::class, 'close']);
+            //Rutas para gestionar especialistas
+            Route::get('/especialistas', [EspecialistaController::class, 'index']);
+            Route::put('especialistas/update/{id}', [EspecialistaController::class, 'update']);
+            Route::delete('/especialistas/destroy/{id}', [EspecialistaController::class, 'destroy']);
+            Route::delete('/especialistas/destroy/service/{id}/{especialista_id}', [EspecialistaController::class, 'destroyService']);
+            Route::post('/especialistas/store', [EspecialistaController::class, 'store']);
+            Route::post('/especialistas/service/store/', [EspecialistaController::class, 'storeService']);
+            Route::get('/services/specialists/{id}', [EspecialistaController::class, 'indexServices']);
+            Route::get('/get/products/select/{id}', [EspecialistaController::class, 'getProductsToSelect']);
+            Route::get('/especialistas/service/list/{id}', [EspecialistaController::class, 'listServices']);
         });
     });
-
     //images Tenant
     Route::get('/file/{path}', function ($path) {
         $path = Storage::path($path);

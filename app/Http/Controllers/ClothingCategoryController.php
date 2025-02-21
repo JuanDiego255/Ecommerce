@@ -689,6 +689,7 @@ class ClothingCategoryController extends Controller
             ->leftJoin('clothing_details', 'clothing.id', 'clothing_details.clothing_id')
             ->leftJoin('stocks', 'clothing.id', 'stocks.clothing_id')
             ->select(
+                'clothing.id as service_id',
                 DB::raw('CONCAT(clothing.name, " (", categories.name, ")") as name'),
                 DB::raw('CONCAT("/", clothing.id, "/", categories.id, "/") as url')
             )
