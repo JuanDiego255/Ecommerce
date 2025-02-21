@@ -15,6 +15,7 @@ use App\Http\Controllers\CajasController;
 use App\Http\Controllers\ClothingCategoryController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\EspecialistaController;
+use App\Http\Controllers\EstudianteController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\FavoritesController;
 use App\Http\Controllers\Frontend\CartController;
@@ -351,6 +352,12 @@ Route::middleware([
             Route::get('/services/specialists/{id}', [EspecialistaController::class, 'indexServices']);
             Route::get('/get/products/select/{id}', [EspecialistaController::class, 'getProductsToSelect']);
             Route::get('/especialistas/service/list/{id}', [EspecialistaController::class, 'listServices']);
+             //Rutas para gestionar estudiantes
+             Route::get('/estudiantes', [EstudianteController::class, 'index']);
+             Route::put('estudiantes/update/{id}', [EstudianteController::class, 'update']);
+             Route::delete('delete/estudiantes/{id}', [EstudianteController::class, 'destroy']);
+             Route::post('/estudiantes/store', [EstudianteController::class, 'store']);
+
         });
     });
     //images Tenant
