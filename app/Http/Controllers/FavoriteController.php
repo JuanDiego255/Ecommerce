@@ -44,7 +44,10 @@ class FavoriteController extends Controller
         try {
             $user_id = $request->user_id;
             $clothing_id = $request->clothing_id;
-
+            $attributes = json_decode($request->input('attributes'), true);
+            foreach ($attributes as $attr) {
+                [$value_attr, $attr_id_val, $cloth_id] = explode('-', $attr);
+            }
             // Verificar si ya existe el favorito
             $favorite = Favorite::where('user_id', $user_id)
                 ->where('clothing_id', $clothing_id)
@@ -58,7 +61,9 @@ class FavoriteController extends Controller
                 // Si no existe, agregarlo
                 Favorite::create([
                     'user_id' => $user_id,
-                    'clothing_id' => $clothing_id
+                    'clothing_id' => $clothing_id,
+                    'attr_id' => $attr_id_val ?? null,
+                    'value_attr' => $value_attr ?? null
                 ]);
                 return response()->json(['status' => 'added']);
             }
@@ -81,7 +86,7 @@ class FavoriteController extends Controller
                 ->where('favorites.user_id', $user->id)
                 ->leftJoin('pivot_clothing_categories', 'clothing.id', '=', 'pivot_clothing_categories.clothing_id')
                 ->leftJoin('categories', 'pivot_clothing_categories.category_id', '=', 'categories.id')
-                ->join('favorites', 'clothing.id', '=', 'favorites.clothing_id')
+                ->join('favorites', 'clothing.id', '=', 'favorites.clothing_id')      
                 ->leftJoin('stocks', 'clothing.id', 'stocks.clothing_id')
                 ->leftJoin('product_images', function ($join) {
                     $join->on('clothing.id', '=', 'product_images.clothing_id')
@@ -90,11 +95,13 @@ class FavoriteController extends Controller
                                 WHERE product_images.clothing_id = clothing.id
                             )');
                 })
+                ->leftJoin('attribute_values', 'favorites.value_attr', '=', 'attribute_values.id')
                 ->select(
                     'categories.name as category',
                     'categories.id as category_id',
                     'clothing.id as id',
                     'clothing.name as name',
+                    'attribute_values.value',
                     'clothing.casa as casa',
                     'clothing.can_buy as can_buy',
                     'clothing.discount as discount',
@@ -106,7 +113,7 @@ class FavoriteController extends Controller
                     DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'), // Obtener stock por talla
                     DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
                 )
-                ->groupBy('clothing.id','categories.id', 'clothing.can_buy', 'clothing.casa', 'clothing.mayor_price', 'categories.name', 'clothing.discount', 'clothing.name', 'clothing.description', 'clothing.price', 'product_images.image')
+                ->groupBy('clothing.id','categories.id','attribute_values.value', 'clothing.can_buy', 'clothing.casa', 'clothing.mayor_price', 'categories.name', 'clothing.discount', 'clothing.name', 'clothing.description', 'clothing.price', 'product_images.image')
                 ->orderByRaw('CASE WHEN clothing.casa IS NOT NULL AND clothing.casa != "" THEN 0 ELSE 1 END')
                 ->orderBy('clothing.casa', 'asc')
                 ->orderBy('clothing.name', 'asc')

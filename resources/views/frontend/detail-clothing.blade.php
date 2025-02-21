@@ -278,6 +278,9 @@
                                                 Agregar Al Carrito
                                             @endif
                                         </button>
+                                        <a class="add_favorite btn btn-add_to_cart shadow-0" data-clothing-id="{{ $item->id }}" href="#">
+                                            <i class="fas fa-heart {{ $clothing_favs->contains('clothing_id', $item->id) ? 'text-danger' : '' }}"></i>
+                                        </a>
                                     @else
                                         <a class="btn btn-add_to_cart shadow-0"
                                             href="{{ url('https://wa.me/506' . $tenantinfo->whatsapp) }}"> <i

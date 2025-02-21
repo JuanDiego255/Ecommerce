@@ -53,6 +53,7 @@
                             <h3
                                 class="{{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'text-muted' : 'text-muted' }}">
                                 <a href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}">{{ $item->name }}
+                                    {{ isset($item->value) ? '(' . $item->value . ')' : '' }}
                                     @if ($item->total_stock == 0)
                                         <s class="text-danger"> Agotado</s>
                                     @endif

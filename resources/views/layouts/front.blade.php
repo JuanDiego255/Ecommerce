@@ -49,7 +49,8 @@
         --cintillo_text: {{ $settings->cintillo_text }};
     }
 </style>
-<input hidden type="user_id" value="{{ isset(Auth::user()->id) ? Auth::user()->id : '' }}" name="user_id" id="user_id">
+<input hidden type="user_id" value="{{ isset(Auth::user()->id) ? Auth::user()->id : '' }}" name="user_id"
+    id="user_id">
 @if ($view_name == 'frontend_blog_show-articles')
     <style>
         :root {
@@ -403,8 +404,18 @@
 
             $(document).on('click', '.add_favorite', function(event) {
                 event.preventDefault();
-
-                let clothing_id = $(this).data('clothing-id'); // Obtener ID desde <a>
+                var selected_attributes = [];
+                $('input[type="hidden"][name$="_id"]').each(function() {
+                    var selected_value = $(this).val();
+                    var regex = /^\d+-\d+-\d+$/;
+                    if (selected_value && regex.test(selected_value)) {
+                        selected_attributes.push(selected_value);
+                    }
+                });
+                var attributes = JSON.stringify(selected_attributes);
+                let clothing_id = $(this).data('clothing-id');
+                let attr_id = $(this).data('attr_id');
+                let value_attr = $(this).data('value_attr');
                 var user_id = document.getElementById('user_id').value;
                 let token = $('meta[name="csrf-token"]').attr('content');
                 let icon = $(this).find('i');
@@ -414,7 +425,8 @@
                     data: {
                         user_id: user_id,
                         clothing_id: clothing_id,
-                        _token: token
+                        _token: token,
+                        attributes: attributes
                     },
                     success: function(response) {
                         if (response.status === 'added') {
