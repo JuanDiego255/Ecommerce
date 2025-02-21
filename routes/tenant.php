@@ -348,16 +348,15 @@ Route::middleware([
             Route::delete('/especialistas/destroy/{id}', [EspecialistaController::class, 'destroy']);
             Route::delete('/especialistas/destroy/service/{id}/{especialista_id}', [EspecialistaController::class, 'destroyService']);
             Route::post('/especialistas/store', [EspecialistaController::class, 'store']);
-            Route::post('/especialistas/service/store/', [EspecialistaController::class, 'storeService']);
+            Route::post('/especialistas/service/store-new', [EspecialistaController::class, 'storeService']);
             Route::get('/services/specialists/{id}', [EspecialistaController::class, 'indexServices']);
             Route::get('/get/products/select/{id}', [EspecialistaController::class, 'getProductsToSelect']);
             Route::get('/especialistas/service/list/{id}', [EspecialistaController::class, 'listServices']);
-             //Rutas para gestionar estudiantes
-             Route::get('/estudiantes', [EstudianteController::class, 'index']);
-             Route::put('estudiantes/update/{id}', [EstudianteController::class, 'update']);
-             Route::delete('delete/estudiantes/{id}', [EstudianteController::class, 'destroy']);
-             Route::post('/estudiantes/store', [EstudianteController::class, 'store']);
-
+            //Rutas para gestionar estudiantes
+            Route::get('/estudiantes', [EstudianteController::class, 'index']);
+            Route::put('estudiantes/update/{id}', [EstudianteController::class, 'update']);
+            Route::delete('delete/estudiantes/{id}', [EstudianteController::class, 'destroy']);
+            Route::post('/estudiantes/store', [EstudianteController::class, 'store']);
         });
     });
     //images Tenant

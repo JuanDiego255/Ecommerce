@@ -171,7 +171,10 @@
                             Componentes
                         </a>
                     </li>
-                    @if (isset($tenantinfo->kind_business) && $tenantinfo->kind_business == 3 || $tenantinfo->kind_business == 5 || $tenantinfo->kind_business == 6)
+                    @if (
+                        (isset($tenantinfo->kind_business) && $tenantinfo->kind_business == 3) ||
+                            $tenantinfo->kind_business == 5 ||
+                            $tenantinfo->kind_business == 6)
                         <li class="nav-item">
                             <a href="{{ url('user-info') }}" class="nav-link">
                                 <div
@@ -219,12 +222,23 @@
                     </div>
                     <span class="nav-link-text ms-1">Cajas</span>
                 </a>
+            </li>
+            <li class="nav-item {{ $tenantinfo->tenant == 'clinicare' ? 'd-block' : 'd-none' }}">
                 <a @if ($view_name == 'admin_especialistas_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
                     href="{{ url('/especialistas') }}">
                     <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="material-icons opacity-10">group</i>
                     </div>
                     <span class="nav-link-text ms-1">Especialistas</span>
+                </a>
+            </li>
+            <li class="nav-item {{ $tenantinfo->tenant == 'clinicare' ? 'd-block' : 'd-none' }}">
+                <a @if ($view_name == 'admin_estudiantes_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
+                    href="{{ url('/estudiantes') }}">
+                    <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                        <i class="material-icons opacity-10">group</i>
+                    </div>
+                    <span class="nav-link-text ms-1">Estudiantes</span>
                 </a>
             </li>
             <li class="nav-item">

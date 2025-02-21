@@ -222,7 +222,7 @@
                 });
                 $.ajax({
                     method: "POST",
-                    url: "/especialistas/service/store/",
+                    url: "/especialistas/service/store-new",
                     data: {
                         'clothing_id': selectedId,
                         'especialista_id': especialista_id,
