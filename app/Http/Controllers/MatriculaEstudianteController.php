@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ArqueoCaja;
 use App\Models\Estudiante;
 use App\Models\MatriculaEstudiante;
 use Illuminate\Http\Request;
@@ -27,8 +28,14 @@ class MatriculaEstudianteController extends Controller
         //
         DB::beginTransaction();
         try {
+            $cajaAbierta = ArqueoCaja::cajaAbiertaHoy()->first();
+
+            if (!$cajaAbierta) {
+                return redirect()->back()->with(['status' => 'No hay ninguna caja abierta para el día de hoy', 'icon' => 'warning']);
+            }
             $matricula =  new  MatriculaEstudiante();
             $matricula->estudiante_id = $id;
+            $matricula->arqueo_id = $cajaAbierta->id;
             $matricula->curso = $request->curso;
             $matricula->monto_pago = $request->monto_pago;
             $matricula->monto_curso = $request->monto_curso;

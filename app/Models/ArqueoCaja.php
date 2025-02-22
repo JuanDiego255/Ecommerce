@@ -2,10 +2,18 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class ArqueoCaja extends Model
 {
-    use HasFactory;
+    protected $table = 'arqueo_cajas';
+
+    public function scopeCajaAbiertaHoy(Builder $query)
+    {
+        $hoy = Carbon::today('America/Costa_Rica');
+        return $query->whereDate('fecha_ini', $hoy)
+                     ->where('estado', 1);
+    }
 }

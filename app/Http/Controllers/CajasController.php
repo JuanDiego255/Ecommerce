@@ -33,6 +33,23 @@ class CajasController extends Controller
 
         return view('admin.cajas.index', compact('cajas'));
     }
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function indexArqueos($id)
+    {
+        //
+        $arqueos = ArqueoCaja::join('users', 'arqueo_cajas.user_id', 'users.id')
+            ->where('caja_id', $id)
+            ->select(
+                'arqueo_cajas.*',
+                'users.name as name'
+            )
+            ->get();
+        return view('admin.cajas.arqueos.index', compact('arqueos'));
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -133,7 +150,7 @@ class CajasController extends Controller
             return redirect()->back()->with(['status' => 'Se ha abierto la caja con éxito', 'icon' => 'success']);
         } catch (\Exception $th) {
             DB::rollBack();
-            return redirect()->back()->with(['status' => 'No se pudo abrir la caja: '.$th->getMessage(), 'icon' => 'error']);
+            return redirect()->back()->with(['status' => 'No se pudo abrir la caja: ' . $th->getMessage(), 'icon' => 'error']);
         }
     }
     /**
@@ -147,16 +164,14 @@ class CajasController extends Controller
         DB::beginTransaction();
         try {
             $fechaCostaRica = Carbon::now('America/Costa_Rica')->toDateString(); // Obtiene la fecha sin hora
-
             // Verificar si ya hay una caja abierta hoy
             $cajaAbierta = DB::table('arqueo_cajas')
-                ->whereDate('fecha_ini', $fechaCostaRica)
                 ->where('estado', 1)
                 ->where('caja_id', $id)
-                ->exists();
+                ->first();
 
             if ($cajaAbierta) {
-                $caja = ArqueoCaja::find($id);
+                $caja = ArqueoCaja::find($cajaAbierta->id);
                 $caja->fecha_fin = $fechaCostaRica;
                 $caja->estado = 0;
                 $caja->update();
@@ -166,7 +181,7 @@ class CajasController extends Controller
             return redirect()->back()->with(['status' => 'Se ha cerrado la caja con éxito', 'icon' => 'success']);
         } catch (\Exception $th) {
             DB::rollBack();
-            return redirect()->back()->with(['status' => 'No se pudo cerrar la caja: '.$th->getMessage(), 'icon' => 'error']);
+            return redirect()->back()->with(['status' => 'No se pudo cerrar la caja: ' . $th->getMessage(), 'icon' => 'error']);
         }
     }
 }

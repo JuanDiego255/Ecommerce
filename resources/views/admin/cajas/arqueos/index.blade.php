@@ -6,12 +6,9 @@
 @section('content')
     <center>
         <h2 class="text-center font-title">
-            <strong>{{ __('Administrar Cajas') }}</strong>
+            <strong>{{ __('Administrar arqueos') }}</strong>
         </h2>
     </center>
-    <button type="button" data-bs-toggle="modal" data-bs-target="#add-caja-modal" class="btn btn-velvet">
-        {{ __('Nueva caja') }}</button>
-    @include('admin.cajas.add')
     <div class="card mt-3">
         <div class="card-body">
             <div class="row w-100">
@@ -50,36 +47,22 @@
                             <tr>
                                 <th class="text-secondary font-weight-bolder opacity-7">
                                     {{ __('Acciones') }}</th>
-                                <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Caja') }}
+                                <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Fecha Apertura') }}
+                                </th>
+                                <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Fecha Final') }}
+                                </th>
+                                <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Estado') }}
+                                </th>
+                                <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Abierta Por') }}
                                 </th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($cajas as $item)
+                            @foreach ($arqueos as $item)
                                 <tr>
                                     <td class="align-middle">
-                                        <button type="button" data-bs-toggle="modal"
-                                            data-bs-target="#edit-caja-modal{{ $item->id }}" class="btn btn-velvet"
-                                            style="text-decoration: none;">Editar</button>
-
-                                        <form method="post" action="{{ url('/delete/cajas/' . $item->id) }}"
-                                            style="display:inline">
-                                            {{ csrf_field() }}
-                                            {{ method_field('DELETE') }}
-                                            <button type="submit" data-bs-toggle="modal"
-                                                onclick="return confirm('Deseas borrar esta caja?')"
-                                                class="btn btn-admin-delete" style="text-decoration: none;">Borrar</button>
-                                        </form>
-                                        @if (!isset($item->estado) || $item->estado == 0)
-                                            <form method="post" action="{{ url('/open/cajas/' . $item->id) }}"
-                                                style="display:inline">
-                                                {{ csrf_field() }}
-                                                <button type="submit" data-bs-toggle="modal"
-                                                    onclick="return confirm('Deseas abrir esta caja?')"
-                                                    class="btn btn-admin-open" style="text-decoration: none;">Abrir</button>
-                                            </form>
-                                        @else
-                                            <form method="post" action="{{ url('/close/cajas/' . $item->id) }}"
+                                        @if (!$item->estado == 0)
+                                            <form method="post" action="{{ url('/close/cajas/' . $item->caja_id) }}"
                                                 style="display:inline">
                                                 {{ csrf_field() }}
                                                 <button type="submit" data-bs-toggle="modal"
@@ -88,15 +71,23 @@
                                                     style="text-decoration: none;">Cerrar</button>
                                             </form>
                                         @endif
-                                        <a href="{{ url('cajas/arqueos/' . $item->id) }}" class="btn btn-velvet"
-                                            style="text-decoration: none;">Arqueos</a>
                                     </td>
                                     <td class="align-middle text-sm">
-                                        <p class="text-success mb-0">{{ $item->nombre }}
+                                        <p class="text-success mb-0">{{ $item->fecha_ini }}
                                         </p>
                                     </td>
-
-                                    @include('admin.cajas.edit')
+                                    <td class="align-middle text-sm">
+                                        <p class="text-success mb-0">{{ $item->fecha_fin }}
+                                        </p>
+                                    </td>
+                                    <td class="align-middle text-sm">
+                                        <p class="text-success mb-0">{{ $item->estado == 1 ? 'Abierta' : 'Cerrada' }}
+                                        </p>
+                                    </td>
+                                    <td class="align-middle text-sm">
+                                        <p class="text-success mb-0">{{ $item->name }}
+                                        </p>
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -106,6 +97,11 @@
 
         </div>
     </div>
+    <center>
+        <div class="col-md-12 mt-3">
+            <a href="{{ url('/cajas/') }}" class="btn btn-velvet w-25">{{ __('Volver') }}</a>
+        </div>
+    </center>
 @endsection
 @section('script')
     <script src="{{ asset('js/datatables.js') }}"></script>

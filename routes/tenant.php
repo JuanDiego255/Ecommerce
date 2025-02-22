@@ -17,7 +17,6 @@ use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\EspecialistaController;
 use App\Http\Controllers\EstudianteController;
 use App\Http\Controllers\FavoriteController;
-use App\Http\Controllers\FavoritesController;
 use App\Http\Controllers\Frontend\CartController;
 use App\Http\Controllers\Frontend\CheckOutController;
 use App\Http\Controllers\GiftCardController;
@@ -28,17 +27,12 @@ use App\Http\Controllers\MetaTagsController;
 use App\Http\Controllers\PersonalUserController;
 use App\Http\Controllers\RolesController;
 use App\Http\Controllers\SellerController;
-use App\Http\Controllers\SizeController;
 use App\Http\Controllers\SocialNetworkController;
 use App\Http\Controllers\TenantCarouselController;
 use App\Http\Controllers\TenantController;
 use App\Http\Controllers\TenantInfoController;
 use App\Http\Controllers\TenantSocialNetworkController;
 use App\Http\Controllers\TestimonialController;
-use App\Models\Attribute;
-use App\Models\MedicineResult;
-use App\Models\PersonalUser;
-use App\Models\Roles;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
@@ -69,7 +63,7 @@ Route::middleware([
     Route::get('/get-cart-details/{code}', [ClothingCategoryController::class, 'getCartDetail']);
     Route::get('/comment/{show}', [FrontendController::class, 'index']);
     Route::post('/add-favorite', [FavoriteController::class, 'store']);
-    Route::post('/check/list-fav', [FavoriteController::class, 'checkCode']);
+    Route::get('/check/list-fav/{id}', [FavoriteController::class, 'checkCode']);
     //Con prefijo aclimate
     Route::prefix('aclimate')->middleware('setTenantDatabase')->group(function () {
         Route::get('/', [FrontendController::class, 'index']);
@@ -78,7 +72,7 @@ Route::middleware([
         Route::get('/get-cart-details/{code}', [ClothingCategoryController::class, 'getCartDetail']);
         Route::get('/comment/{show}', [FrontendController::class, 'index']);
         Route::post('/add-favorite', [FavoriteController::class, 'store']);
-        Route::post('/check/list-fav', [FavoriteController::class, 'checkCode']);
+        Route::get('/check/list-fav/{id}', [FavoriteController::class, 'checkCode']);
     });
     //Con prefijo aclimate
     Route::group(['middleware' => 'isLicense'], function () {
@@ -343,6 +337,7 @@ Route::middleware([
             Route::post('/cajas/store', [CajasController::class, 'store']);
             Route::post('/open/cajas/{id}', [CajasController::class, 'open']);
             Route::post('/close/cajas/{id}', [CajasController::class, 'close']);
+            Route::get('/cajas/arqueos/{id}', [CajasController::class, 'indexArqueos']);
             //Rutas para gestionar especialistas
             Route::get('/especialistas', [EspecialistaController::class, 'index']);
             Route::put('especialistas/update/{id}', [EspecialistaController::class, 'update']);

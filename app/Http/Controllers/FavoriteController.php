@@ -71,17 +71,16 @@ class FavoriteController extends Controller
             return response()->json(['status' => 'falló: ' . $th->getMessage()]);
         }
     }
-    public function checkCode(Request $request)
+    public function checkCode($id)
     {
         try {
-            $code = $request->code;
-            $check_user = User::where('code_love', $code)->exists();
+            $check_user = User::where('code_love', $id)->exists();
             if (!$check_user) {
                 return redirect()
                     ->back()
                     ->with(['status' => 'No hay ningún usuario vinculado con el código ingresado', 'icon' => 'warning']);
             }
-            $user = User::where('code_love', $code)->first();
+            $user = User::where('code_love', $id)->first();
             $clothings = ClothingCategory::where('clothing.status', 1)
                 ->where('favorites.user_id', $user->id)
                 ->leftJoin('pivot_clothing_categories', 'clothing.id', '=', 'pivot_clothing_categories.clothing_id')
