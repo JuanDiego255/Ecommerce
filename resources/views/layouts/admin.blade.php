@@ -9,7 +9,12 @@
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    @yield('metatag')
+    {{-- @yield('metatag') --}}
+    <title>@yield('title', isset($tenantinfo->title) ? $tenantinfo->title . ' - Admin' : '')</title>
+    <meta name="description" content="@yield('description', 'Gestiona el sitio web desde el módulo administrativo')">
+    <meta property="og:title" content="@yield('og_title', isset($tenantinfo->title) ? $tenantinfo->title . ' - Admin' : '')">
+    <meta property="og:description" content="@yield('og_description', 'Gestiona el sitio web desde el módulo administrativo')">
+    <meta property="og:image" content="@yield('og_image', isset($tenantinfo->logo_ico) ? route('file', $tenantinfo->logo_ico) : '')">
     <!--     Fonts and icons     -->
     <link rel="stylesheet" type="text/css"
         href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
@@ -111,7 +116,7 @@
                 damping: '0.5'
             }
             Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
-        }      
+        }
     </script>
     @yield('script')
 
