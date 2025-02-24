@@ -24,6 +24,7 @@ use App\Http\Controllers\LogosController;
 use App\Http\Controllers\MatriculaEstudianteController;
 use App\Http\Controllers\MedicineResultController;
 use App\Http\Controllers\MetaTagsController;
+use App\Http\Controllers\PagosMatriculaController;
 use App\Http\Controllers\PersonalUserController;
 use App\Http\Controllers\RolesController;
 use App\Http\Controllers\SellerController;
@@ -33,6 +34,8 @@ use App\Http\Controllers\TenantController;
 use App\Http\Controllers\TenantInfoController;
 use App\Http\Controllers\TenantSocialNetworkController;
 use App\Http\Controllers\TestimonialController;
+use App\Http\Controllers\TipoPagoController;
+use App\Http\Controllers\VentaEspecialistaController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
@@ -357,6 +360,22 @@ Route::middleware([
             Route::get('/list/matricula/{id}', [MatriculaEstudianteController::class, 'index']);
             Route::put('matricula/update/{id}', [MatriculaEstudianteController::class, 'update']);  
             Route::delete('delete/matricula/{id}', [MatriculaEstudianteController::class, 'destroy']);
+            //Rutas para los pagos de las matriculas
+            Route::get('/pagos/matricula/{id}', [PagosMatriculaController::class, 'index']);
+            Route::put('pago/matricula/update/{id}', [PagosMatriculaController::class, 'update']);
+            Route::delete('delete/matricula/pago/{id}', [PagosMatriculaController::class, 'destroy']);
+            Route::post('/pago/matricula/store/{id}', [PagosMatriculaController::class, 'store']);
+            //Rutas para tipos de pago
+            Route::get('/tipo_pagos', [TipoPagoController::class, 'index']);
+            Route::put('tipo_pago/update/{id}', [TipoPagoController::class, 'update']);
+            Route::delete('delete/tipo_pago/{id}', [TipoPagoController::class, 'destroy']);
+            Route::post('/tipo_pago/store', [TipoPagoController::class, 'store']);
+            //Rutas para ventas de especialstas
+            Route::get('/ventas/especialistas', [VentaEspecialistaController::class, 'index']);
+            Route::put('tipo_pago/update/{id}', [TipoPagoController::class, 'update']);
+            Route::delete('delete/tipo_pago/{id}', [TipoPagoController::class, 'destroy']);
+            Route::post('venta/especialista/store', [VentaEspecialistaController::class, 'store']);
+            Route::get('get-list/especialistas/service/', [VentaEspecialistaController::class, 'getServices']);
         });
     });
     //images Tenant

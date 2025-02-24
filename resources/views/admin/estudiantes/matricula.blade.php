@@ -74,11 +74,31 @@
                             </div>
                         </div>
                         <div class="col-md-12 mb-3">
-                            <div
-                                class="input-group input-group-lg input-group-outline is-filled  my-3">
+                            <div class="input-group input-group-static">
+                                <label>Tipo de pago</label>
+                                <select id="tipo_pago" name="tipo_pago"
+                                    class="form-control form-control-lg @error('tipo_pago') is-invalid @enderror"
+                                    autocomplete="tipo_pago" autofocus>
+                                    @foreach ($tipo_pagos as $key => $item)
+                                        <option @if ($key == 0) selected @endif
+                                            value="{{ $item->id }}">
+                                            {{ $item->tipo }}
+                                        </option>
+                                    @endforeach
+
+                                </select>
+                                @error('tipo_pago')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <div class="input-group input-group-lg input-group-outline is-filled  my-3">
                                 <label class="form-label">Fecha Matricula</label>
-                                <input value="{{ isset($item->fecha_matricula) ? $item->fecha_matricula : '' }}" required
-                                    type="date"
+                                <input value="{{ isset($item->fecha_matricula) ? $item->fecha_matricula : '' }}"
+                                    required type="date"
                                     class="form-control form-control-lg @error('fecha_matricula') is-invalid @enderror"
                                     name="fecha_matricula" id="fecha_matricula">
                                 @error('fecha_matricula')

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Estudiante;
+use App\Models\TipoPago;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -11,7 +12,8 @@ class EstudianteController extends Controller
 {
     public function index(){
         $estudiantes = Estudiante::all();
-        return view('admin.estudiantes.index', compact('estudiantes'));
+        $tipo_pagos = TipoPago::get();
+        return view('admin.estudiantes.index', compact('estudiantes','tipo_pagos'));
     }
     
         /**

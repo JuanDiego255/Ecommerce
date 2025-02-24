@@ -10,7 +10,7 @@ class ArqueoCaja extends Model
 {
     protected $table = 'arqueo_cajas';
 
-    public function scopeCajaAbiertaHoy(Builder $query)
+    public function scopeCajaAbiertaHoy(Builder $query, $fecha)
     {
         $hoy = Carbon::today('America/Costa_Rica');
         return $query->whereDate('fecha_ini', $hoy)

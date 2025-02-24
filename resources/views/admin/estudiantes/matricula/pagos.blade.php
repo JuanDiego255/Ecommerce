@@ -6,13 +6,12 @@
 @section('content')
     <center>
         <h2 class="text-center font-title">
-            <strong>{{ __('Gestión de matriculas del estudiante ') . $item->nombre }}</strong>
+            <strong>{{ __('Gestión de pagos del curso ') . $info_estudiante->curso . __(' del estudiante ') . $info_estudiante->nombre_estudiante }}</strong>
         </h2>
     </center>
-    <button type="button" data-bs-toggle="modal" data-bs-target="#matricula-estudiante-modal{{ $item->id }}"
-        class="btn btn-velvet">
-        {{ __('Nueva matricula') }}</button>
-    @include('admin.estudiantes.matricula')
+    <button type="button" data-bs-toggle="modal" data-bs-target="#add-pago-modal" class="btn btn-velvet">
+        {{ __('Nuevo pago') }}</button>
+    @include('admin.estudiantes.matricula.pagos.add')
     <div class="card mt-3">
         <div class="card-body">
             <div class="row w-100">
@@ -50,66 +49,47 @@
                                 <th class="text-secondary font-weight-bolder opacity-7">
                                     {{ __('Acciones') }}
                                 </th>
-                                <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Curso') }}</th>
-                                <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Monto Pagado') }}</th>
-                                <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Monto del curso') }}
-                                </th>
-                                <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Fecha Matricula') }}
-                                </th>
-                                <th class="text-secondary font-weight-bolder opacity-7 ps-2">
-                                    {{ __('Próxima fecha de pago') }}</th>
+                                <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Monto pagado') }}</th>
+                                <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Descuento') }}</th>
+                                <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Tipo de pago') }}</th>
+                                <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Fecha pago') }}</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($matriculas as $matricula)
+                            @foreach ($pagos_matricula as $item)
                                 <tr>
                                     <td class="align-middle">
                                         <button type="button" data-bs-toggle="modal"
-                                            data-bs-target="#edit-matricula-modal{{ $matricula->id }}"
-                                            class="btn btn-velvet" style="text-decoration: none;">Editar</button>
+                                            data-bs-target="#edit-pago-modal{{ $item->id }}" class="btn btn-velvet"
+                                            style="text-decoration: none;">Editar</button>
 
-                                        <form method="post" action="{{ url('/delete/matricula/' . $matricula->id) }}"
+                                        <form method="post" action="{{ url('/delete/matricula/pago/' . $item->id) }}"
                                             style="display:inline">
                                             {{ csrf_field() }}
                                             {{ method_field('DELETE') }}
                                             <button type="submit" data-bs-toggle="modal"
-                                                onclick="return confirm('Deseas borrar esta matrícula?')"
+                                                onclick="return confirm('Deseas borrar este pago?')"
                                                 class="btn btn-admin-delete" style="text-decoration: none;">Borrar</button>
                                         </form>
-                                        <a href="{{ url('/pagos/matricula/' . $matricula->id) }}" class="btn btn-admin-open"
-                                            style="text-decoration: none;">Gestión de pagos</a>
-                                    </td>
-                                    <td class="align-middle text-sm">
-                                        <p class="mb-0">{{ $matricula->curso }}
-                                        </p>
                                     </td>
                                     <td class="align-middle text-sm">
                                         <p class="text-success font-weight-bold mb-0">
-                                            ₡{{ number_format($matricula->monto_pago) }}</p>
+                                            ₡{{ number_format($item->monto_pago) }}</p>
                                     </td>
                                     <td class="align-middle text-sm">
                                         <p class="text-success font-weight-bold mb-0">
-                                            ₡{{ number_format($matricula->monto_curso) }}</p>
+                                            ₡{{ number_format($item->descuento) }}</p>
                                     </td>
+                                    
                                     <td class="align-middle text-sm">
-                                        <p class="mb-0">{{ $matricula->fecha_matricula }}
+                                        <p class="mb-0">{{ $item->tipo_pago }}
                                         </p>
                                     </td>
                                     <td class="align-middle text-sm">
-                                        @if ($matricula->proxima_fecha_pago <= $fechaCostaRica)
-                                            <p class=" font-weight-bold mb-0">
-                                                <span
-                                                    class="badge badge-pill ml-2 badge-date animacion badge-date text-white"
-                                                    id="comparison-count">{{ $matricula->proxima_fecha_pago }}</span>
-                                            </p>
-                                        @else
-                                            <p class=" font-weight-bold mb-0">
-                                                <span class="badge badge-pill ml-2 badge-date-blue text-white"
-                                                    id="comparison-count">{{ $matricula->proxima_fecha_pago }}</span>
-                                            </p>
-                                        @endif
+                                        <p class="mb-0">{{ $item->fecha_pago }}
+                                        </p>
                                     </td>
-                                    @include('admin.estudiantes.matricula.edit')
+                                    @include('admin.estudiantes.matricula.pagos.edit')
                                 </tr>
                             @endforeach
                         </tbody>
@@ -121,7 +101,7 @@
     </div>
     <center>
         <div class="col-md-12 mt-3">
-            <a href="{{ url('estudiantes/') }}" class="btn btn-velvet w-25">{{ __('Volver') }}</a>
+            <a href="{{ url('/list/matricula') . '/' . $info_estudiante->estudiante_id }}" class="btn btn-velvet w-25">{{ __('Volver') }}</a>
         </div>
     </center>
 @endsection
