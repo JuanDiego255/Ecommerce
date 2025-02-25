@@ -32,13 +32,54 @@ class VentaEspecialistaController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function indexVentas()
+    public function indexVentas($fecha = null)
     {
         $fechaCostaRica = Carbon::now('America/Costa_Rica')->toDateString();
+        $fechaCostaRica = $fecha ?? $fechaCostaRica;
         $ventas = VentaEspecialista::join('arqueo_cajas', 'venta_especialistas.arqueo_id', 'arqueo_cajas.id')
+            ->join('especialistas', 'venta_especialistas.especialista_id', 'especialistas.id')
+            ->join('clothing', 'venta_especialistas.clothing_id', 'clothing.id')
+            ->join('tipo_pagos', 'venta_especialistas.tipo_pago_id', 'tipo_pagos.id')
             ->whereDate('arqueo_cajas.fecha_ini', $fechaCostaRica)
+            ->select(
+                'venta_especialistas.*',
+                'especialistas.nombre as nombre',
+                'clothing.name as servicio',
+                'tipo_pagos.tipo as tipo'
+            )
+            ->orderBy('especialistas.nombre', 'asc')
+            ->orderBy('clothing.name', 'asc')
             ->get();
-        return view('admin.ventas.index-ventas', compact('ventas'));
+        $ventasEntrada = VentaEspecialista::join('arqueo_cajas', 'venta_especialistas.arqueo_id', 'arqueo_cajas.id')
+            ->join('especialistas', 'venta_especialistas.especialista_id', 'especialistas.id')
+            ->join('clothing', 'venta_especialistas.clothing_id', 'clothing.id')
+            ->join('tipo_pagos', 'venta_especialistas.tipo_pago_id', 'tipo_pagos.id')
+            ->whereDate('arqueo_cajas.fecha_ini', $fechaCostaRica)
+            ->select(
+                'especialistas.nombre as especialista',
+                'tipo_pagos.tipo as tipo_pago',
+                DB::raw('SUM(venta_especialistas.monto_venta) as total_venta'),
+                DB::raw('SUM(venta_especialistas.monto_especialista) as total_especialista')
+            )
+            ->groupBy('especialistas.nombre', 'tipo_pagos.tipo')
+            ->orderBy('especialistas.nombre', 'asc')
+            ->orderBy('tipo_pagos.tipo', 'asc')
+            ->get();
+
+        $ventasPorEspecialista = VentaEspecialista::join('arqueo_cajas', 'venta_especialistas.arqueo_id', 'arqueo_cajas.id')
+            ->join('especialistas', 'venta_especialistas.especialista_id', 'especialistas.id')
+            ->whereDate('arqueo_cajas.fecha_ini', $fechaCostaRica)
+            ->select(
+                'especialistas.nombre as especialista',
+                DB::raw('SUM(venta_especialistas.monto_venta) as total_venta'),
+                DB::raw('SUM(venta_especialistas.monto_especialista) as total_especialista')
+            )
+            ->groupBy('especialistas.nombre')
+            ->orderBy('especialistas.nombre', 'asc')
+            ->get();
+
+
+        return view('admin.ventas.index-ventas', compact('ventas', 'fechaCostaRica', 'ventasEntrada','ventasPorEspecialista'));
     }
     public function getServices(Request $request)
     {

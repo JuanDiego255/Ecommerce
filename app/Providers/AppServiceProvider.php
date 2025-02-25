@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 use App\Observers\GeneralObserver;
+use Carbon\Carbon;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -326,11 +327,13 @@ class AppServiceProvider extends ServiceProvider
             $iva = $cloth_price * $tenantinfo->iva;
             $total_price = $cloth_price + $iva;
             $clothing_favs = null;
+            $fechaCostaRica = Carbon::now('America/Costa_Rica')->toDateString();
             if (Auth::check()) {
                 $clothing_favs = Favorite::where('user_id', Auth::user()->id)->get();
             }
             view()->share([
                 'view_name' => $view_name,
+                'fechaCostaRica' => $fechaCostaRica,
                 'clothing_favs' => $clothing_favs,
                 'profesionals' => $profesionals,
                 'profesional_info' => $profesional_info,

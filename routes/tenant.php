@@ -377,7 +377,7 @@ Route::middleware([
             Route::post('venta/especialista/store', [VentaEspecialistaController::class, 'store']);
             Route::get('get-list/especialistas/service/', [VentaEspecialistaController::class, 'getServices']);
             //Rutas para ver los movimientos de las cuentas
-            Route::get('list-esp/ventas/', [VentaEspecialistaController::class, 'indexVentas']);
+            Route::get('list-esp/ventas/{fecha}', [VentaEspecialistaController::class, 'indexVentas']);
         });
     });
     //images Tenant
