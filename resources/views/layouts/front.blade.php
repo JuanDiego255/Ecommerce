@@ -414,6 +414,7 @@
                 });
                 var attributes = JSON.stringify(selected_attributes);
                 let clothing_id = $(this).data('clothing-id');
+                let category_id = $(this).data('category-id');
                 let attr_id = $(this).data('attr_id');
                 let value_attr = $(this).data('value_attr');
                 var user_id = document.getElementById('user_id').value;
@@ -425,6 +426,7 @@
                     data: {
                         user_id: user_id,
                         clothing_id: clothing_id,
+                        category_id: category_id,
                         _token: token,
                         attributes: attributes
                     },

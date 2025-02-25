@@ -48,7 +48,7 @@
                                 class="text-muted text-uppercase {{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'd-none' : '' }}">
                                 {{ $item->casa }}
                             </h3>
-                            <h3 class="title clothing-name"><a href="#">({{ $item->category }})</a>
+                            <h3 class="title clothing-name"><a href="#">({{ $item->category_name }})</a>
                             </h3>
                             <h3
                                 class="{{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'text-muted' : 'text-muted' }}">

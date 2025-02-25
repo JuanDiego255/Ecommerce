@@ -62,6 +62,7 @@ class FavoriteController extends Controller
                 Favorite::create([
                     'user_id' => $user_id,
                     'clothing_id' => $clothing_id,
+                    'category_id' => $request->category_id,
                     'attr_id' => $attr_id_val ?? null,
                     'value_attr' => $value_attr ?? null
                 ]);
@@ -84,21 +85,24 @@ class FavoriteController extends Controller
             $clothings = ClothingCategory::where('clothing.status', 1)
                 ->where('favorites.user_id', $user->id)
                 ->leftJoin('pivot_clothing_categories', 'clothing.id', '=', 'pivot_clothing_categories.clothing_id')
-                ->leftJoin('categories', 'pivot_clothing_categories.category_id', '=', 'categories.id')
-                ->join('favorites', 'clothing.id', '=', 'favorites.clothing_id')      
+                
+                ->join('favorites', 'clothing.id', '=', 'favorites.clothing_id')
+                ->leftJoin('categories', 'favorites.category_id', '=', 'categories.id')
                 ->leftJoin('stocks', 'clothing.id', 'stocks.clothing_id')
                 ->leftJoin('product_images', function ($join) {
                     $join->on('clothing.id', '=', 'product_images.clothing_id')
                         ->whereRaw('product_images.id = (
-                                SELECT MIN(id) FROM product_images 
-                                WHERE product_images.clothing_id = clothing.id
-                            )');
+                    SELECT MIN(id) FROM product_images 
+                    WHERE product_images.clothing_id = clothing.id
+                )');
                 })
                 ->leftJoin('attribute_values', 'favorites.value_attr', '=', 'attribute_values.id')
                 ->select(
-                    'categories.name as category',
-                    'categories.id as category_id',
+                    DB::raw('GROUP_CONCAT(DISTINCT categories.name SEPARATOR ", ") as categories'), // Agrupar nombres de categorías
+                    DB::raw('GROUP_CONCAT(DISTINCT categories.id SEPARATOR ", ") as category_ids'), // Agrupar IDs de categorías
                     'clothing.id as id',
+                    'categories.id as category_id',
+                    'categories.name as category_name',
                     'clothing.name as name',
                     'attribute_values.value',
                     'clothing.casa as casa',
@@ -107,12 +111,12 @@ class FavoriteController extends Controller
                     'clothing.description as description',
                     'clothing.price as price',
                     'clothing.mayor_price as mayor_price',
-                    'product_images.image as image', // Obtener la primera imagen del producto
+                    'product_images.image as image',
                     DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE 0 END) as total_stock'),
-                    DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'), // Obtener stock por talla
+                    DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'),
                     DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
                 )
-                ->groupBy('clothing.id','categories.id','attribute_values.value', 'clothing.can_buy', 'clothing.casa', 'clothing.mayor_price', 'categories.name', 'clothing.discount', 'clothing.name', 'clothing.description', 'clothing.price', 'product_images.image')
+                ->groupBy('clothing.id','categories.id','categories.name', 'attribute_values.value', 'clothing.can_buy', 'clothing.casa', 'clothing.mayor_price', 'clothing.discount', 'clothing.name', 'clothing.description', 'clothing.price', 'product_images.image')
                 ->orderByRaw('CASE WHEN clothing.casa IS NOT NULL AND clothing.casa != "" THEN 0 ELSE 1 END')
                 ->orderBy('clothing.casa', 'asc')
                 ->orderBy('clothing.name', 'asc')
@@ -122,7 +126,7 @@ class FavoriteController extends Controller
                     ->back()
                     ->with(['status' => 'No hay productos favoritos en la lista del usuario', 'icon' => 'warning']);
             }
-            return view('frontend.list-fav', compact('clothings','user'));
+            return view('frontend.list-fav', compact('clothings', 'user'));
         } catch (\Exception $th) {
             return redirect()
                 ->back()

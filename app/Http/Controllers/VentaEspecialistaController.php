@@ -7,12 +7,12 @@ use App\Models\Especialista;
 use App\Models\PivotServiciosEspecialista;
 use App\Models\TipoPago;
 use App\Models\VentaEspecialista;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class VentaEspecialistaController extends Controller
 {
-    //
     //
     /**
      * Display a listing of the resource.
@@ -25,6 +25,20 @@ class VentaEspecialistaController extends Controller
         $tipos = TipoPago::get();
         $especialistas = Especialista::get();
         return view('admin.ventas.index', compact('tipos', 'especialistas'));
+    }
+    //
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function indexVentas()
+    {
+        $fechaCostaRica = Carbon::now('America/Costa_Rica')->toDateString();
+        $ventas = VentaEspecialista::join('arqueo_cajas', 'venta_especialistas.arqueo_id', 'arqueo_cajas.id')
+            ->whereDate('arqueo_cajas.fecha_ini', $fechaCostaRica)
+            ->get();
+        return view('admin.ventas.index-ventas', compact('ventas'));
     }
     public function getServices(Request $request)
     {
