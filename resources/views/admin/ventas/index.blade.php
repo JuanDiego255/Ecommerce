@@ -148,9 +148,10 @@
 
                             </div>
                             <div class="col-md-4 mb-3">
-                                <div id="div_sal_serv" class="input-group is-filled input-group-lg input-group-outline my-3">
+                                <div id="div_sal_serv"
+                                    class="input-group is-filled input-group-lg input-group-outline my-3">
                                     <label class="form-label">Monto por servicio o salario (Opcional)</label>
-                                    <input value="" type="number"
+                                    <input value="" type="number" readonly
                                         class="form-control form-control-lg @error('monto_por_servicio_o_salario') is-invalid @enderror"
                                         name="monto_por_servicio_o_salario" id="monto_por_servicio_o_salario">
                                     @error('monto_por_servicio_o_salario')
@@ -161,7 +162,8 @@
                                 </div>
                             </div>
                             <div class="col-md-4 mb-3">
-                                <div id="div_monto_cli" class="input-group is-filled input-group-lg input-group-outline my-3">
+                                <div id="div_monto_cli"
+                                    class="input-group is-filled input-group-lg input-group-outline my-3">
                                     <label class="form-label">Monto Clínica</label>
                                     <input value="" type="number" required
                                         class="form-control form-control-lg @error('monto_clinica') is-invalid @enderror"
@@ -174,7 +176,8 @@
                                 </div>
                             </div>
                             <div class="col-md-4 mb-3">
-                                <div id="div_monto_esp" class="input-group is-filled input-group-lg input-group-outline my-3">
+                                <div id="div_monto_esp"
+                                    class="input-group is-filled input-group-lg input-group-outline my-3">
                                     <label class="form-label">Monto Especialista</label>
                                     <input value="" type="number" required
                                         class="form-control form-control-lg @error('monto_especialista') is-invalid @enderror"
@@ -198,7 +201,7 @@
                                                 {{ $item->tipo }}
                                             </option>
                                         @endforeach
-    
+
                                     </select>
                                     @error('tipo_pago')
                                         <span class="invalid-feedback" role="alert">
@@ -276,7 +279,7 @@
             $('#select_especialista').change(function() {
                 cargarServicios($(this));
                 $('#especialista_id').val($(this).val());
-                $('#monto_clinica').val(0);                
+                $('#monto_clinica').val(0);
                 $('#monto_venta').val('');
                 $('#monto_producto_venta').val(0);
                 $('#monto_especialista').val(0);
@@ -303,6 +306,7 @@
                 var monto_calc_prod_sin_iva = 0;
                 var monto_calc_prod = 0;
                 var monto_calc_total = 0;
+                var monto_max = 0;
                 if (monto_venta <= 0) {
                     Swal.fire({
                         title: "El monto venta no puede ser menor o igual a 0",
@@ -316,19 +320,25 @@
                     });
                     return;
                 }
+                if (monto_producto > 0) {
+                    monto_calc_prod_sin_iva = monto_producto - (monto_producto * (13 / 100));
+                    monto_calc_prod = (monto_calc_prod_sin_iva * (10 / 100));
+                    monto_max = monto_calc_prod_sin_iva - monto_calc_prod;
+                    $('#monto_clinica').val(monto_max);
+                }
                 if (porcentaje > 0) {
-                    //Calculo para el producto
                     monto_venta_con_porc = (monto_venta * (porcentaje / 100));
-                    if(monto_producto > 0){
-                        monto_calc_prod_sin_iva = monto_producto - (monto_producto * (13 / 100));
-                        monto_calc_prod = (monto_calc_prod_sin_iva * (10/100));
-                    }
-                    $('#monto_clinica').val(monto_venta_con_porc + (monto_calc_prod_sin_iva - monto_calc_prod));
-                    $('#monto_especialista').val((monto_venta - monto_venta_con_porc) + monto_calc_prod);
-                } else {
-                    $('#monto_clinica').val(0);
-                    $('#monto_especialista').val(0);
+                    monto_max = monto_venta_con_porc + monto_max;
+                    $('#monto_clinica').val(monto_max);
+                    $('#monto_especialista').val((monto_venta - monto_venta_con_porc - monto_serv_sal) +
+                    monto_calc_prod);
+                }
+                if (monto_serv_sal > 0) {                    
+                    monto_max = monto_max + (monto_venta - monto_serv_sal);
+                    $('#monto_clinica').val(monto_max);
+                    $('#monto_especialista').val((monto_venta - (monto_venta - monto_serv_sal)) + monto_calc_prod);
                 }               
+                
             });
         });
     </script>
