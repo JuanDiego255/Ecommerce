@@ -220,7 +220,7 @@
                                 <span class="nav-link-text ms-1">Pedidos</span>
                             </a>
                         </li>
-                        <li class="nav-item {{ $tenantinfo->tenant == 'clinicare' ? 'd-block' : 'd-none' }}">
+                        <li class="nav-item {{ $tenantinfo->tenant == 'gestionarecr' ? 'd-block' : 'd-none' }}">
                             <a class="nav-link text-sidebar" href="javascript:void(0);">
                                 <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
                                     <i class="material-icons opacity-10">work</i>
@@ -283,7 +283,7 @@
                                 </li>
                             </ul>
                         </li>
-                        <li class="nav-item {{ $tenantinfo->tenant == 'clinicare' ? 'd-block' : 'd-none' }}">
+                        <li class="nav-item {{ $tenantinfo->tenant == 'gestionarecr' ? 'd-block' : 'd-none' }}">
                             <a @if ($view_name == 'admin_buys_index' || $view_name == 'admin_buys_indexDetail') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
                                 href="{{ url('list-esp/ventas/' . $fechaCostaRica) }}">
                                 <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
