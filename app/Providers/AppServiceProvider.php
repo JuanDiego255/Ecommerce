@@ -43,11 +43,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        ClothingCategory::observe(GeneralObserver::class);
+        /* ClothingCategory::observe(GeneralObserver::class);
         Categories::observe(GeneralObserver::class);
         Buy::observe(GeneralObserver::class);
         Blog::observe(GeneralObserver::class);
-        User::observe(GeneralObserver::class);
+        User::observe(GeneralObserver::class); */
         Schema::defaultStringLength(191);
         view()->composer('*', function ($view) {
             $view_name = str_replace('.', '_', $view->getName());
