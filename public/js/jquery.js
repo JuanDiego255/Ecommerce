@@ -1,4 +1,3 @@
-
 /* jQuery(window).scroll(function () {
     var windowScrollPosTop = jQuery(window).scrollTop();
 
@@ -94,6 +93,15 @@
 
 var animado = document.querySelectorAll(".animado");
 
+/* $(window).on('scroll', function () {
+    var scroll = $(window).scrollTop();
+    if (scroll < 400) {
+        $(".header-sticky").removeClass("sticky-bar");
+    } else {
+        $(".header-sticky").addClass("sticky-bar");
+    }
+}); */
+
 function mostrarScroll() {
     let scrollTop = document.documentElement.scrollTop;
 
@@ -108,6 +116,7 @@ function mostrarScroll() {
 window.addEventListener('scroll', mostrarScroll);
 //********************************Mostrar Foto********************************* */
 var foto = document.querySelectorAll(".foto");
+
 function mostrarFoto() {
     for (var i = 0; i < foto.length; i++) {
         let altura = 0;
@@ -187,7 +196,7 @@ $(document).ready(function () {
         })
         .owlCarousel({
             items: 4,
-            dots: false,           
+            dots: false,
             smartSpeed: 200,
             slideSpeed: 500,
             slideBy: 4,
@@ -254,8 +263,3 @@ function obtenerPrimerasDosLetras(nombreEmpresa) {
     var primerasDosLetras = nombreLimpio.substring(0, 2);
     return primerasDosLetras.toUpperCase(); // Convertir a mayúsculas si es necesario
 }
-
-
-
-
-

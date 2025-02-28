@@ -72,7 +72,6 @@ class CartController extends Controller
         // Retorna true si no se encontró una coincidencia, false en caso contrario
         return $found;
     }
-
     public function store(Request $request)
     {
         DB::beginTransaction();

@@ -278,9 +278,16 @@
                                                 Agregar Al Carrito
                                             @endif
                                         </button>
-                                        <a class="add_favorite btn btn-add_to_cart shadow-0" data-category-id="{{$item->category_id}}" data-clothing-id="{{ $item->id }}" href="#">
-                                            <i class="fas fa-heart {{ $clothing_favs->contains('clothing_id', $item->id) ? 'text-danger' : '' }}"></i>
-                                        </a>
+                                        @guest
+                                            
+                                        @else
+                                            <a class="add_favorite btn btn-add_to_cart shadow-0"
+                                                data-category-id="{{ $item->category_id }}"
+                                                data-clothing-id="{{ $item->id }}" href="#">
+                                                <i
+                                                    class="fas fa-heart {{ $clothing_favs->contains('clothing_id', $item->id) ? 'text-danger' : '' }}"></i>
+                                            </a>
+                                        @endguest
                                     @else
                                         <a class="btn btn-add_to_cart shadow-0"
                                             href="{{ url('https://wa.me/506' . $tenantinfo->whatsapp) }}"> <i
