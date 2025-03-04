@@ -86,12 +86,16 @@
         </div>
         <div class="col-md-8">
             <div class="card p-2">
+                <div class="card-header">
+                    <h6 class="text-muted">Al realizar el pago con tarjeta, se aplica el 13% sobre el monto del
+                        especialista. (Se aplica al calcular)</h6>
+                </div>
                 <div class="card-body">
                     <form class="form-horizontal" action="{{ url('venta/especialista/store') }}" method="post"
                         enctype="multipart/form-data">
                         {{ csrf_field() }}
                         <div class="row">
-                            <div class="col-md-4 mb-3">
+                            <div class="col-md-3 mb-3">
                                 <input type="hidden" name="clothing_id" id="clothing_id">
                                 <input type="hidden" name="especialista_id" id="especialista_id">
                                 <div id="div_porc" class="input-group input-group-lg input-group-outline is-filled my-3">
@@ -106,7 +110,7 @@
                                     @enderror
                                 </div>
                             </div>
-                            <div class="col-md-4 mb-3">
+                            <div class="col-md-3 mb-3">
                                 <div class="row">
                                     <div class="col-md-12">
                                         <div class="input-group input-group-lg input-group-outline is-filled my-3">
@@ -124,9 +128,9 @@
                                 </div>
 
                             </div>
-                            <div class="col-md-4 mb-3">
+                            <div class="col-md-3 mb-3">
                                 <div class="row">
-                                    <div class="col-md-9">
+                                    <div class="col-md-12">
                                         <div class="input-group is-filled input-group-lg input-group-outline my-3">
                                             <label class="form-label">Monto venta de producto</label>
                                             <input value="" type="number"
@@ -139,14 +143,36 @@
                                             @enderror
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
-                                        <button type="button" id="btnCalculate" class="btn btn-admin-open w-100 h8 mt-3"><i
-                                                class="material-icons opacity-10 pr-1">calculate</i>
-                                        </button>
-                                    </div>
+
                                 </div>
 
                             </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="d-flex align-items-end">
+                                    <div
+                                        class="input-group is-filled input-group-lg input-group-outline my-3 me-2 flex-grow-1">
+                                        <label class="form-label">Tipo pago</label>
+                                        <select id="tipo_pago" name="tipo_pago"
+                                            class="form-control form-control-lg @error('tipo_pago') is-invalid @enderror"
+                                            autocomplete="tipo_pago" autofocus>
+                                            @foreach ($tipos as $key => $item)
+                                                <option @if ($key == 0) selected @endif
+                                                    value="{{ $item->id }}">{{ $item->tipo }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        @error('tipo_pago')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
+                                    <button type="button" id="btnCalculate" class="btn btn-admin-open h-100">
+                                        <i class="material-icons opacity-10">calculate</i>
+                                    </button>
+                                </div>
+                            </div>
+
                             <div class="col-md-4 mb-3">
                                 <div id="div_sal_serv"
                                     class="input-group is-filled input-group-lg input-group-outline my-3">
@@ -185,27 +211,6 @@
                                     @error('monto_especialista')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>Campo Requerido</strong>
-                                        </span>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <div class="input-group input-group-static">
-                                    <label>Tipo de pago</label>
-                                    <select id="tipo_pago" name="tipo_pago"
-                                        class="form-control form-control-lg @error('tipo_pago') is-invalid @enderror"
-                                        autocomplete="tipo_pago" autofocus>
-                                        @foreach ($tipos as $key => $item)
-                                            <option @if ($key == 0) selected @endif
-                                                value="{{ $item->id }}">
-                                                {{ $item->tipo }}
-                                            </option>
-                                        @endforeach
-
-                                    </select>
-                                    @error('tipo_pago')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
                                         </span>
                                     @enderror
                                 </div>
@@ -302,11 +307,13 @@
                 var porcentaje = parseFloat($('#input_porcentaje').val());
                 var monto_producto = parseFloat($('#monto_producto_venta').val());
                 var monto_serv_sal = $('#monto_por_servicio_o_salario').val();
+                var tipo_pago = $('#tipo_pago option:selected').text();
                 var monto_venta_con_porc = 0;
                 var monto_calc_prod_sin_iva = 0;
                 var monto_calc_prod = 0;
                 var monto_calc_total = 0;
                 var monto_max = 0;
+                var iva = 0;
                 if (monto_venta <= 0) {
                     Swal.fire({
                         title: "El monto venta no puede ser menor o igual a 0",
@@ -320,6 +327,10 @@
                     });
                     return;
                 }
+                if (tipo_pago.trim().toUpperCase() === "TARJETA") {
+                    monto_venta = monto_venta - (monto_venta * (13 / 100));
+                }
+
                 if (monto_producto > 0) {
                     monto_calc_prod_sin_iva = monto_producto - (monto_producto * (13 / 100));
                     monto_calc_prod = (monto_calc_prod_sin_iva * (10 / 100));
@@ -331,14 +342,15 @@
                     monto_max = monto_venta_con_porc + monto_max;
                     $('#monto_clinica').val(monto_max);
                     $('#monto_especialista').val((monto_venta - monto_venta_con_porc - monto_serv_sal) +
-                    monto_calc_prod);
+                        monto_calc_prod);
                 }
-                if (monto_serv_sal > 0) {                    
+                if (monto_serv_sal > 0) {
                     monto_max = monto_max + (monto_venta - monto_serv_sal);
                     $('#monto_clinica').val(monto_max);
-                    $('#monto_especialista').val((monto_venta - (monto_venta - monto_serv_sal)) + monto_calc_prod);
-                }               
-                
+                    $('#monto_especialista').val((monto_venta - (monto_venta - monto_serv_sal)) +
+                        monto_calc_prod);
+                }
+
             });
         });
     </script>

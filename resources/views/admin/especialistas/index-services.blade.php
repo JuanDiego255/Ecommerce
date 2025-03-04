@@ -111,6 +111,12 @@
 
         </div>
     </div>
+    
+    <center>
+        <div class="col-md-12 mt-3">
+            <a href="{{ url('/especialistas/') }}" class="btn btn-velvet w-25">{{ __('Volver') }}</a>
+        </div>
+    </center>
 @endsection
 @section('script')
     <script src="{{ asset('js/datatables.js') }}"></script>

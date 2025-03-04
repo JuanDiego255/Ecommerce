@@ -49,19 +49,18 @@
                                         </div>
                                         {{ isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1 ? 'Servicios' : 'Departamentos' }}
                                     </a>
-                                </li>       
+                                </li>
                             </ul>
-                        </li>                       
+                        </li>
                     @endif
                     @if (isset($tenantinfo->kind_business) && $tenantinfo->kind_business != 1)
-                        
                         <li class="nav-item">
                             <a class="nav-link text-sidebar" href="javascript:void(0);">
                                 <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
                                     <i class="material-icons opacity-10">work</i>
                                 </div>
                                 <span
-                                    class="nav-link-text ms-1">{{ $tenantinfo->tenant == 'rutalimon' ? __('Gestión del Negocio') : __('Gestión Clininca Are') }}</span>
+                                    class="nav-link-text ms-1">{{ $tenantinfo->tenant == 'rutalimon' ? __('Gestión del Negocio') : __('Gestión de ventas') }}</span>
                             </a>
 
                             <!-- Lista desplegable de "Clinica Are CR" -->
@@ -95,39 +94,39 @@
                                         </div>
                                         <span class="nav-link-text ms-1">Venta Especialistas</span>
                                     </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a @if ($view_name == 'admin_estudiantes_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
-                                        href="{{ url('/estudiantes') }}">
-                                        <div
-                                            class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
-                                            <i class="material-icons opacity-10">arrow_right_alt</i>
-                                        </div>
-                                        <span class="nav-link-text ms-1">Estudiantes</span>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a @if ($view_name == 'admin_tipo_pagos_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
-                                        href="{{ url('/tipo_pagos') }}">
-                                        <div
-                                            class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
-                                            <i class="material-icons opacity-10">arrow_right_alt</i>
-                                        </div>
-                                        <span class="nav-link-text ms-1">Tipos de pago</span>
-                                    </a>
-                                </li>
+                                </li>                                
                             </ul>
-                        </li>
-                        <li class="nav-item">
-                            <a @if ($view_name == 'admin_buys_index' || $view_name == 'admin_buys_indexDetail') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
-                                href="{{ url('list-esp/ventas/' . $fechaCostaRica) }}">
-                                <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
-                                    <i class="material-icons opacity-10">local_mall</i>
-                                </div>
-                                <span class="nav-link-text ms-1">Informe Clínica Are</span>
-                            </a>
-                        </li>    
-                    @endif    
+                        </li>                        
+                    @endif
+                    <li class="nav-item">
+                        <a @if ($view_name == 'admin_estudiantes_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
+                            href="{{ url('/estudiantes') }}">
+                            <div
+                                class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                                <i class="material-icons opacity-10">school</i>
+                            </div>
+                            <span class="nav-link-text ms-1">Estudiantes y matrículas</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a @if ($view_name == 'admin_buys_index' || $view_name == 'admin_buys_indexDetail') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
+                            href="{{ url('list-esp/ventas/' . $fechaCostaRica) }}">
+                            <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                                <i class="material-icons opacity-10">local_mall</i>
+                            </div>
+                            <span class="nav-link-text ms-1">Informe Clínica Are</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a @if ($view_name == 'admin_tipo_pagos_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
+                            href="{{ url('/tipo_pagos') }}">
+                            <div
+                                class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                                <i class="material-icons opacity-10">credit_card</i>
+                            </div>
+                            <span class="nav-link-text ms-1">Tipos de pago</span>
+                        </a>
+                    </li>
                     <li class="nav-item">
                         <a @if ($view_name == 'admin_users_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
                             href="{{ url('users') }}">
@@ -146,7 +145,7 @@
                             </div>
                             <span class="nav-link-text ms-1">Mantenimiento de Roles</span>
                         </a>
-                    </li>   
+                    </li>                    
                 </ul>
             </div>
         @break
@@ -546,6 +545,7 @@
                     @endif
                 </ul>
             </div>
+        @break
     @endswitch
     <div class="sidenav-footer position-absolute w-100 bottom-0 ">
         <div class="mx-3">
