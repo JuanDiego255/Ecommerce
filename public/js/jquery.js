@@ -102,6 +102,13 @@ var animado = document.querySelectorAll(".animado");
     }
 }); */
 
+$(window).on('load', function () {
+    $('#preloader-active').delay(450).fadeOut('slow');
+    $('body').delay(450).css({
+        'overflow': 'visible'
+    });
+});
+
 function mostrarScroll() {
     let scrollTop = document.documentElement.scrollTop;
 
@@ -263,3 +270,12 @@ function obtenerPrimerasDosLetras(nombreEmpresa) {
     var primerasDosLetras = nombreLimpio.substring(0, 2);
     return primerasDosLetras.toUpperCase(); // Convertir a mayúsculas si es necesario
 }
+var menu = $('ul#navigation');
+if (menu.length) {
+    menu.slicknav({
+        prependTo: ".mobile_menu",
+        closedSymbol: '',
+        openedSymbol: '-'
+    });
+    console.log(menu);
+};

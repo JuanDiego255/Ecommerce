@@ -10,6 +10,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     @yield('metatag')
     <!--     Fonts and icons     -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css"
         href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
     <!-- Nucleo Icons -->
@@ -20,6 +21,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <!-- CSS Files -->
     <link href="{{ asset('css/material-dashboard.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/slicknav.css') }}" rel="stylesheet">
     <link href="{{ asset('frontend/css/owl.carousel.min.css') }}" rel="stylesheet">
     <link href="{{ asset('frontend/css/owl.theme.default.min.css') }}" rel="stylesheet">
 
@@ -29,9 +31,14 @@
 
     <link href="{{ asset('css/material-dashboard.min.css') }}" rel="stylesheet"> --}}
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-
-
 </head>
+@if ($tenantinfo->tenant == 'sakura318')
+    <style>
+        body {
+            font-family: 'Playfair Display', serif !important;
+        }
+    </style>
+@endif
 <style>
     :root {
         --navbar: {{ $settings->navbar }};
@@ -113,6 +120,16 @@
     </div> --}}
 
 <body class="g-sidenav-show  bg-gray-200">
+    <div id="preloader-active">
+        <div class="preloader d-flex align-items-center justify-content-center">
+            <div class="preloader-inner position-relative">
+                <div class="preloader-circle"></div>
+                <div class="preloader-img pere-text">
+                    <p class="sakura-color">ooo</p>
+                </div>
+            </div>
+        </div>
+    </div>
     @include('frontend.website.add-comment')
     @include('layouts.form-fav')
     <div class="{{ $view_name == 'frontend_blog_show-articles' ? 'main-container-front' : '' }}">
@@ -159,6 +176,7 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <script src="{{ asset('js/jquery.js') }}" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/SlickNav/1.0.10/jquery.slicknav.min.js"></script>
     @if (session('status'))
         <script>
             Swal.fire({
@@ -246,6 +264,7 @@
                             getCart();
                             var newCartNumber = response.cartNumber
                             $('.badge').text(newCartNumber);
+                            $('.badge-sk').text(newCartNumber);
                             $('.cartIcon').text(' ' + newCartNumber);
                             if (response.refresh == true && view_name == "frontend_view-cart") {
                                 window.location.href = "{{ url('/') }}";
@@ -442,6 +461,41 @@
                     }
                 });
             });
+            $('.featured-carousel').owlCarousel({
+                loop: true,
+                margin: 10,
+                dots: true,
+                responsive: {
+                    0: {
+                        items: 2
+                    },
+                    600: {
+                        items: 3
+                    },
+                    1000: {
+                        items: 4
+                    }
+                }
+            })
+            $('.featured-carousel-circle').owlCarousel({
+                loop: true,
+                margin: 10,
+                dots: true,
+                responsive: {
+                    0: {
+                        items: 2
+                    },
+                    600: {
+                        items: 2
+                    },
+                    800: {
+                        items: 5
+                    },
+                    800: {
+                        items: 6
+                    }
+                }
+            })
         </script>
     @endif
 

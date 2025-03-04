@@ -98,7 +98,7 @@ class AppServiceProvider extends ServiceProvider
             $settings = Settings::first();
             $icons = ButtonIcon::first();
             $departments = Department::where('department', '!=', 'Default')->with('categories')
-                ->orderBy('departments.department', 'asc')
+                ->orderBy('departments.order', 'asc')
                 ->get();
 
             $department_black_friday = Department::where('department', '!=', 'Default')

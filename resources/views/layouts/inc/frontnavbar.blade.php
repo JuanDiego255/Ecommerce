@@ -169,35 +169,45 @@
     </div>
 @endif
 @switch($tenantinfo->tenant)
-    @case('sakura318')
+    @case('sakura318')        
+        <!-- Preloader Start-->
         <header>
             <!-- Header Start -->
-            <div class="header-area ">
+            <div class="header-area mb-5">
                 <div class="main-header header-sticky">
                     <div class="container">
                         <div class="menu-wrapper d-flex align-items-center justify-content-between">
                             <div class="header-left d-flex align-items-center">
                                 <!-- Logo -->
                                 <div class="logo">
-                                    <a href="index.html"><img src="{{ route('file', $tenantinfo->logo) }}"
+                                    <a href="{{url('/')}}"><img src="{{ route('file', $tenantinfo->logo) }}"
                                             alt=""></a>
                                 </div>
                                 <!-- Main-menu -->
                                 <div class="main-menu  d-none d-lg-block align-center">
                                     <nav>
                                         <ul id="navigation">
-                                            <li><a href="index.html">Home</a></li> 
-                                            <li><a href="shop.html">shop</a></li>
-                                            <li><a href="about.html">About</a></li>
-                                            <li><a href="blog.html">Blog</a>
-                                                <ul class="submenu">
-                                                    <li><a href="blog.html">Blog</a></li>
-                                                    <li><a href="blog_details.html">Blog Details</a></li>
-                                                    <li><a href="elements.html">Elements</a></li>
-                                                    <li><a href="product_details.html">Product Details</a></li>
-                                                </ul>
-                                            </li>
-                                            <li><a href="contact.html">Contact</a></li>
+                                            @foreach ($departments->take(4) as $department)
+                                                <li>
+                                                    <a href="{{ url('category/' . $department->id) }}" class="nav-link"
+                                                        id="dept-{{ $department->id }}">
+                                                        {{ $department->department }} <i class="fas fa-angle-down me-3"></i>
+                                                    </a>
+                                                    <ul class="submenu-sk" aria-labelledby="dept-{{ $department->id }}">
+                                                        @foreach ($department->categories as $categoria)
+                                                            <li>
+                                                                <a href="{{ url('clothes-category/' . $categoria->id . '/' . $department->id) }}"
+                                                                    class="dropdown-item">
+                                                                    <span class="alert-icon align-middle">
+                                                                        <span class="material-icons text-md">label</span>
+                                                                    </span>{{ $categoria->name }}
+                                                                </a>
+                                                            </li>
+                                                        @endforeach
+                                                    </ul>
+                                                </li>
+                                            @endforeach
+
                                         </ul>
                                     </nav>
                                 </div>
@@ -246,10 +256,11 @@
                                         </div>
                                     </li> --}}
                                         <li>
-                                            <div class="card-stor" data-bs-toggle="modal" data-bs-target="#modalMiniCart" style="cursor: pointer;">
+                                            <div class="card-stor" data-bs-toggle="modal" data-bs-target="#modalMiniCart"
+                                                style="cursor: pointer;">
                                                 <a href="#"><i class="fa fa-shopping-cart card-stor-color"></i></a>
-                                                <span>{{ $cartNumber }}</span>
-                                            </div>                                            
+                                                <span class="badge-sk">{{ $cartNumber }}</span>
+                                            </div>
                                         </li>
                                     </ul>
                                 </div>
@@ -264,6 +275,66 @@
             </div>
             <!-- Header End -->
         </header>
+
+
+        <main>
+            <div class="container">
+                <div class="slider-area">
+                    <div class="header-right2 d-flex align-items-center">
+                        <!-- Social -->
+                        <div class="header-social  d-block d-md-none">
+                            @foreach ($social_network as $social)
+                                @php
+                                    $social_logo = null;
+                                    if (stripos($social->social_network, 'Facebook') !== false) {
+                                        $social_logo = 'fab fa-facebook';
+                                    } elseif (stripos($social->social_network, 'Instagram') !== false) {
+                                        $social_logo = 'fab fa-instagram';
+                                    } elseif (stripos($social->social_network, 'Twitter') !== false) {
+                                        $social_logo = 'fab fa-twitter';
+                                    } elseif (stripos($social->social_network, 'LinkedIn') !== false) {
+                                        $social_logo = 'fab fa-linkedin';
+                                    }
+                                    if (stripos($social->social_network, 'You tube') !== false) {
+                                        $social_logo = 'fab fa-youtube';
+                                    }
+                                    if (stripos($social->social_network, 'Wordpress') !== false) {
+                                        $social_logo = 'fab fa-wordpress';
+                                    }
+                                    if (stripos($social->social_network, 'Tik tok') !== false) {
+                                        $social_logo = 'fab fa-tiktok';
+                                    }
+                                @endphp
+
+                                <a href="{{ url($social->url) }}"><i class="{{ $social_logo }}"></i></a>
+                            @endforeach
+                            @guest
+                                <a href="{{ url('/buys') }}"><i class="fas fa-{{ $icon->shopping }}"></i></a>
+                            @else
+                                <a href="{{ url('/register') }}"><i class="fas fa-user"></i></a>
+                            @endguest
+                        </div>
+                        <!-- Search Box -->
+                        <div class="search-sk d-block d-md-none">
+                            <ul class="d-flex align-items-center">
+                                {{-- <li class="mr-15">
+                                    <div class="nav-search search-switch">
+                                        <i class="ti-search"></i>
+                                    </div>
+                                </li> --}}
+                                <li>
+                                    <div class="card-stor" data-bs-toggle="modal" data-bs-target="#modalMiniCart"
+                                        style="cursor: pointer;">
+                                        <a href="#"><i class="fa fa-shopping-cart card-stor-color"></i></a>
+                                        <span class="badge-sk">{{ $cartNumber }}</span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
     @break
 
     @default

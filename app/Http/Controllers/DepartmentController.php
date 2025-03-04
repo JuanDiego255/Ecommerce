@@ -36,8 +36,10 @@ class DepartmentController extends Controller
             if ($request->hasFile('image')) {
                 $department->image = $request->file('image')->store('uploads', 'public');
             }
+            $order = Department::orderBy('order','desc')->first();
             
             $department->department = $request->department;
+            $department->order = $order->order + 1;
             $department->black_friday = $request->black_friday == "1" ? '1' : '0';
             
             $department->save();
