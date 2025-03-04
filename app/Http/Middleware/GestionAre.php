@@ -25,7 +25,7 @@ class GestionAre
                 return redirect('/login')->with(['status' => 'Esta sección solo permite gestionar las ventas de Clínica Are -  Debes Iniciar Sesión', 'icon' => 'warning']);
             }
             if (Auth::user()->role_as == '1') {
-                return $next($request);
+                return redirect('/categories')->with(['status' => 'Bienvenido', 'icon' => 'success']);
             } else {
                 return redirect('/login')->with(['status' => 'Acceso denegado, no eres administrador', 'icon' => 'warning']);
             }
