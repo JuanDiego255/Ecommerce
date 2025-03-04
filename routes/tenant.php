@@ -60,7 +60,9 @@ Route::middleware([
     InitializeTenancyByDomain::class,
     PreventAccessFromCentralDomains::class,
 ])->group(function () {
-    Route::get('/', [FrontendController::class, 'index']);
+    Route::group(['middleware' => 'isAre'], function () {
+        Route::get('/', [FrontendController::class, 'index']);
+    });
     Route::get('/about_us', [FrontendController::class, 'aboutUs']);
     Route::get('compare/vehicles', [FrontendController::class, 'compareIndex']);
     Route::get('/get-cart-details/{code}', [ClothingCategoryController::class, 'getCartDetail']);
@@ -90,28 +92,29 @@ Route::middleware([
         Route::get('/facebook-auth/callback', [AuthController::class, 'callbackFacebook']);
         //Facebook authentication <------
 
-
-        Route::get('category', [FrontendController::class, 'category']);
-        Route::get('/blog/index',  [BlogController::class, 'index']);
-        Route::get('blog/{blog}/{name_url}', [BlogController::class, 'showArticles']);
-        Route::post('send-email/blog', [BlogController::class, 'sendEmail']);
-        Route::get('departments/index', [FrontendController::class, 'departments']);
-        Route::get('category/{id}', [FrontendController::class, 'category']);
-        Route::get('clothes-category/{id}/{department_id}', [FrontendController::class, 'clothesByCategory']);
-        Route::get('detail-clothing/{id}/{cat_id}', [FrontendController::class, 'DetailClothingById']);
-        Route::post('/add-to-cart', [CartController::class, 'store']);
-        Route::post('/edit-quantity', [CartController::class, 'updateQuantity']);
-        Route::get('/view-cart', [CartController::class, 'viewCart']);
-        Route::get('/get-cart-items', [CartController::class, 'getCart']);
-        Route::delete('/delete-item-cart/{id}', [CartController::class, 'delete']);
-        Route::post('/payment', [CheckOutController::class, 'payment']);
-        Route::post('/payment/apartado/{id}', [CheckOutController::class, 'paymentApartado']);
-        Route::get('/paypal/process/{orderId}', [CheckOutController::class, 'process']);
-        Route::post('/comments/store/', [TestimonialController::class, 'store']);
-        Route::get('/get-stock/{cloth_id}/{attr_id}/{value_attr}', [FrontendController::class, 'getStock']);
-        Route::get('/gift-code/{id}', [GiftCardController::class, 'applyCode']);
-        Route::post('gift/store', [GiftCardController::class, 'store']);
-        Route::get('/get/products/select/', [ClothingCategoryController::class, 'getProductsToSelect']);
+        Route::group(['middleware' => 'isAre'], function () {
+            Route::get('category', [FrontendController::class, 'category']);
+            Route::get('/blog/index',  [BlogController::class, 'index']);
+            Route::get('blog/{blog}/{name_url}', [BlogController::class, 'showArticles']);
+            Route::post('send-email/blog', [BlogController::class, 'sendEmail']);
+            Route::get('departments/index', [FrontendController::class, 'departments']);
+            Route::get('category/{id}', [FrontendController::class, 'category']);
+            Route::get('clothes-category/{id}/{department_id}', [FrontendController::class, 'clothesByCategory']);
+            Route::get('detail-clothing/{id}/{cat_id}', [FrontendController::class, 'DetailClothingById']);
+            Route::post('/add-to-cart', [CartController::class, 'store']);
+            Route::post('/edit-quantity', [CartController::class, 'updateQuantity']);
+            Route::get('/view-cart', [CartController::class, 'viewCart']);
+            Route::get('/get-cart-items', [CartController::class, 'getCart']);
+            Route::delete('/delete-item-cart/{id}', [CartController::class, 'delete']);
+            Route::post('/payment', [CheckOutController::class, 'payment']);
+            Route::post('/payment/apartado/{id}', [CheckOutController::class, 'paymentApartado']);
+            Route::get('/paypal/process/{orderId}', [CheckOutController::class, 'process']);
+            Route::post('/comments/store/', [TestimonialController::class, 'store']);
+            Route::get('/get-stock/{cloth_id}/{attr_id}/{value_attr}', [FrontendController::class, 'getStock']);
+            Route::get('/gift-code/{id}', [GiftCardController::class, 'applyCode']);
+            Route::post('gift/store', [GiftCardController::class, 'store']);
+            Route::get('/get/products/select/', [ClothingCategoryController::class, 'getProductsToSelect']);
+        });
         Auth::routes();
 
         Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
@@ -353,12 +356,12 @@ Route::middleware([
             Route::get('/especialistas/service/list/{id}', [EspecialistaController::class, 'listServices']);
             //Rutas para gestionar estudiantes y sus matriculas
             Route::get('/estudiantes', [EstudianteController::class, 'index']);
-            Route::put('estudiantes/update/{id}', [EstudianteController::class, 'update']);            
+            Route::put('estudiantes/update/{id}', [EstudianteController::class, 'update']);
             Route::delete('delete/estudiantes/{id}', [EstudianteController::class, 'destroy']);
             Route::post('/estudiantes/store', [EstudianteController::class, 'store']);
             Route::post('matricula/estudiante/{id}', [MatriculaEstudianteController::class, 'matriculaEstudiante']);
             Route::get('/list/matricula/{id}', [MatriculaEstudianteController::class, 'index']);
-            Route::put('matricula/update/{id}', [MatriculaEstudianteController::class, 'update']);  
+            Route::put('matricula/update/{id}', [MatriculaEstudianteController::class, 'update']);
             Route::delete('delete/matricula/{id}', [MatriculaEstudianteController::class, 'destroy']);
             //Rutas para los pagos de las matriculas
             Route::get('/pagos/matricula/{id}', [PagosMatriculaController::class, 'index']);
