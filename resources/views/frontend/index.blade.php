@@ -38,10 +38,11 @@
                                         <span class="mask"></span>
                                         <div class="container">
                                             <div class="row">
-                                                <div class="col-lg-6 my-auto">
-                                                    <h4 class="text-white mb-0 fadeIn1 fadeInBottom">{{ $carousel->text1 }}</h4>
-                                                    <h1 class="text-white fadeIn2 fadeInBottom">{{ $carousel->text2 }}</h1>
-                                                </div>
+                                                <div class="text-center">
+                                                    <a href="{{ $carousel->text1 ?? '#' }}" class="btn btn-outline-primary mt-3">
+                                                        Ver producto
+                                                    </a>
+                                                </div>                                               
                                             </div>
                                         </div>
                                     </div>
