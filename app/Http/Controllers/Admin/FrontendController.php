@@ -42,7 +42,7 @@ class FrontendController extends Controller
         $tags = Cache::remember('meta_tags_inicio', $this->expirationTime, function () {
             return MetaTags::where('section', 'Inicio')->get();
         });
-        $clothings = Cache::remember('clothings_trending', $this->expirationTime, function () {
+        $clothings = Cache::remember('clothings_trending', $this->expirationTime, function () use ($tenantinfo) {
             return ClothingCategory::where('clothing.trending', 1)
                 ->leftJoin('pivot_clothing_categories', 'clothing.id', '=', 'pivot_clothing_categories.clothing_id')
                 ->leftJoin('categories', 'pivot_clothing_categories.category_id', '=', 'categories.id')
@@ -66,6 +66,9 @@ class FrontendController extends Controller
                     DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'),
                     DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
                 )
+                ->when($tenantinfo->tenant === 'sakura318', function ($query) {
+                    return $query->where('categories.slug', 'LIKE', '%especial%'); // Ajusta la condición según necesidad
+                })
                 ->groupBy(
                     'clothing.id',
                     'categories.name',
