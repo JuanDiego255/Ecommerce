@@ -326,7 +326,7 @@
                     monto_max = monto_calc_prod_sin_iva - monto_calc_prod;
                     $('#monto_clinica').val(monto_max);
                 }
-                if (porcentaje > 0) {
+                if (porcentaje >= 0) {
                     monto_venta_con_porc = (monto_venta * (porcentaje / 100));
                     monto_max = monto_venta_con_porc + monto_max;
                     $('#monto_clinica').val(monto_max);

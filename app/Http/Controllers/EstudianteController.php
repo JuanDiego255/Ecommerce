@@ -35,10 +35,10 @@ class EstudianteController extends Controller
             $estudiante->fecha_pago = $request->fecha_pago;
             $estudiante->save();
             DB::commit();
-            return redirect()->back()->with(['status' => 'Se ha guardado el logo con éxito', 'icon' => 'success']);
+            return redirect()->back()->with(['status' => 'Se ha guardado el estudiante con éxito', 'icon' => 'success']);
         } catch (\Exception $th) {
             DB::rollBack();
-            return redirect()->back()->with(['status' => 'No se pudo guardar el logo', 'icon' => 'error']);
+            return redirect()->back()->with(['status' => 'No se pudo guardar el estudiante '.$th->getMessage(), 'icon' => 'error']);
         }
     }
 
