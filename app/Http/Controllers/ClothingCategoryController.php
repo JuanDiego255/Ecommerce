@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
+use Yajra\DataTables\Facades\DataTables;
 
 class ClothingCategoryController extends Controller
 {
@@ -32,19 +33,28 @@ class ClothingCategoryController extends Controller
     }
     public function indexById($id)
     {
-        $clothings = Cache::remember('clothings_' . $id, $this->expirationTime, function () use ($id) {
-            return DB::table('clothing')
+        $statusFilter = request()->get('status', 2); // 2 es el valor predeterminado (todos)
+
+        $clothings = Cache::remember('clothings_' . $id . '_' . $statusFilter, $this->expirationTime, function () use ($id, $statusFilter) {
+            $query = DB::table('clothing')
                 ->join('pivot_clothing_categories', 'clothing.id', '=', 'pivot_clothing_categories.clothing_id')
                 ->join('categories', 'pivot_clothing_categories.category_id', '=', 'categories.id')
                 ->leftJoin('stocks', 'clothing.id', '=', 'stocks.clothing_id')
                 ->leftJoin('attributes', 'stocks.attr_id', '=', 'attributes.id')
                 ->leftJoin('product_images', function ($join) {
                     $join->on('clothing.id', '=', 'product_images.clothing_id')->whereRaw('product_images.id = (
-                            SELECT MIN(id) FROM product_images
-                            WHERE product_images.clothing_id = clothing.id
-                        )');
+                        SELECT MIN(id) FROM product_images
+                        WHERE product_images.clothing_id = clothing.id
+                    )');
                 })
-                ->where('pivot_clothing_categories.category_id', $id)
+                ->where('pivot_clothing_categories.category_id', $id);
+
+            // Filtrar por estado si no es "Todos"
+            if ($statusFilter != 2) {
+                $query->where('clothing.status', $statusFilter);
+            }
+
+            return $query
                 ->select('categories.name as category', 'clothing.id as id', 'clothing.trending as trending', 'clothing.name as name', 'clothing.casa as casa', 'clothing.code as code', 'clothing.status as status', 'clothing.manage_stock as manage_stock', 'clothing.discount as discount', 'clothing.description as description', 'clothing.price as price', 'clothing.mayor_price as mayor_price', DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE 0 END) as total_stock'), DB::raw('GROUP_CONCAT(COALESCE(attributes.name, "")) AS available_attr'), DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'), DB::raw('GROUP_CONCAT(COALESCE(stocks.attr_id, "")) AS attr_id_per_size'), 'product_images.image as image')
                 ->groupBy('clothing.id', 'clothing.casa', 'clothing.mayor_price', 'clothing.discount', 'categories.name', 'clothing.code', 'clothing.status', 'clothing.manage_stock', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
                 ->orderBy('name', 'asc')
@@ -58,8 +68,85 @@ class ClothingCategoryController extends Controller
         $category_name = $category->name;
         $category_id = $id;
         $department_id = $category->department_id;
+        if (request()->ajax()) {
+            return DataTables::of($clothings)
+                ->addColumn('status', function ($item) {
+                    return '<td class="align-middle text-center">
+                            <div class="form-check">
+                                <input id="checkLicense' . $item->id . '" class="form-check-input changeStatus"
+                                    type="checkbox" value="' . $item->id . '"
+                                    ' . ($item->status == 1 ? 'checked' : '') . '>
+                            </div>
+                        </td>';
+                })
+                ->addColumn('acciones', function ($item) use ($id) {
+                    return '<td class="align-middle text-center">                                        
+                                <form name="delete-item" id="delete-item" class="delete-form">
+                                    ' . csrf_field() . '
+                                    ' . method_field('DELETE') . '
+                                </form>
+                                <button data-item-id="' . $item->id . '"
+                                    class="btn btn-link text-velvet ms-auto border-0 btnDeleteItem"
+                                    data-toggle="tooltip" data-placement="bottom" title="Eliminar">
+                                    <i class="material-icons text-lg">delete</i>
+                                </button>
+                                <a class="btn btn-link text-velvet me-auto border-0"
+                                    href="' . url('/edit-clothing') . '/' . $item->id . '/' . $id . '"
+                                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="Editar">
+                                    <i class="material-icons text-lg">edit</i>
+                                </a>
+                            </td>';
+                })
+                ->addColumn('name', function ($item) {
+                    return '<td class="w-50">
+                                <div class="d-flex px-2 py-1">
+                                    <div>
+                                        <a target="blank" data-fancybox="gallery"
+                                            href="' . (isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG')) . '">
+                                            <img src="' . (isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG')) . '"
+                                                class="avatar avatar-md me-3">
+                                        </a>
+                                    </div>
+                                    <div class="d-flex flex-column justify-content-center">
+                                        <h4 class="mb-0 text-lg">' . e($item->name) . '</h4>
+                                        <p class="text-xs text-secondary mb-0">Código: ' . e($item->code) . '</p>
+                                    </div>
+                                </div>
+                            </td>';
+                })
+                ->addColumn('price', function ($item) {
+                    return '<td class="align-middle text-center text-sm">
+                                <p class="text-success mb-0">₡' . number_format($item->price) . '</p>
+                            </td>';
+                })
+                ->addColumn('atributos', function ($item) {
+                    // Convertir las cadenas en arreglos
+                    $stockPerSize = explode(',', $item->stock_per_size);
+                    $attrPerItem = explode(',', $item->attr_id_per_size);
+                    $attr = explode(',', $item->available_attr);
 
-        return view('admin.clothing.index', compact('clothings', 'category_name', 'category_id', 'department_id'));
+                    $exist_attr = false;
+                    for ($i = 0; $i < count($attr); $i++) {
+                        if (!empty($attrPerItem[$i]) && $attr[$i] !== 'Stock') {
+                            $exist_attr = true;
+                            break;
+                        }
+                    }
+
+                    return '<td class="align-middle text-center text-sm">
+                                <p class="mb-0">' . ($exist_attr ? __('Con atributos') : __('Sin atributos')) . '</p>
+                            </td>';
+                })
+                ->addColumn('stock', function ($item) {
+                    return '<td class="align-middle text-center text-sm">
+                                <p class="text-success mb-0">' . ($item->manage_stock == 0 ? 'No maneja' : $item->total_stock) . '</p>
+                            </td>';
+                })
+                ->rawColumns(['status', 'acciones', 'name', 'price', 'atributos', 'stock']) // Para renderizar el HTML en la columna "acciones"
+                ->toJson();
+        }
+
+        return view('admin.clothing.index', compact('category_name', 'category_id', 'department_id'));
     }
     public function reportStock()
     {
@@ -614,20 +701,15 @@ class ClothingCategoryController extends Controller
     {
         DB::beginTransaction();
         try {
-            if ($request->status == '1') {
-                ClothingCategory::where('id', $id)->update(['status' => 1]);
-            } else {
-                ClothingCategory::where('id', $id)->update(['status' => 0]);
-            }
+            ClothingCategory::where('id', $id)->update(['status' => $request->status]);
             DB::commit();
-            return redirect()
-                ->back()
-                ->with(['status' => 'Se cambio el estado del producto', 'icon' => 'success']);
+            return response()->json(['message' => 'Estado actualizado con éxito']);
         } catch (\Exception $th) {
-            //throw $th;
             DB::rollBack();
+            return response()->json(['error' => 'Ocurrió un error'], 500);
         }
     }
+
     public function getTotalCategories($id)
     {
         $total = PivotClothingCategory::where('clothing_id', $id)->count();
@@ -761,6 +843,6 @@ class ClothingCategoryController extends Controller
         });
         $categories = Categories::get();
 
-        return view('admin.reports.catprod', compact('clothings', 'categories','type'));
+        return view('admin.reports.catprod', compact('clothings', 'categories', 'type'));
     }
 }

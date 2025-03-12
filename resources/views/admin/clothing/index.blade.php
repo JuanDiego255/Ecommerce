@@ -21,14 +21,14 @@
     <div class="card mt-3">
         <div class="card-body">
             <div class="row w-100">
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="input-group input-group-lg input-group-static my-3 w-100">
                         <label>Filtrar</label>
                         <input value="" placeholder="Escribe para filtrar...." type="text"
                             class="form-control form-control-lg" name="searchfor" id="searchfor">
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="input-group input-group-lg input-group-static my-3 w-100">
                         <label>Mostrar</label>
                         <select id="recordsPerPage" name="recordsPerPage" class="form-control form-control-lg"
@@ -41,7 +41,16 @@
 
                     </div>
                 </div>
-
+                <div class="col-md-4">
+                    <div class="input-group input-group-lg input-group-static my-3 w-100">
+                        <label>Estado</label>
+                        <select id="status" name="status" class="form-control form-control-lg" autocomplete="status">
+                            <option value="2" selected>Todos</option>
+                            <option value="1">Activos</option>
+                            <option value="0">Inactivos</option>
+                        </select>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -51,119 +60,25 @@
             <div class="card p-2">
                 <div class="table-responsive">
 
-                    <table class="table align-items-center mb-0" id="table">
+                    <table class="table align-items-center mb-0" id="clothing_table">
                         <thead>
                             <tr>
-                                <th class="text-center text-secondary font-weight-bolder opacity-7">
+                                <th class="text-secondary font-weight-bolder opacity-7">
                                     {{ __('Activo') }}</th>
-                                <th class="text-center text-secondary font-weight-bolder opacity-7">
+                                <th class=" text-secondary font-weight-bolder opacity-7">
                                     {{ __('Acciones') }}</th>
                                 <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Producto') }}
                                 </th>
-                                <th class="text-center text-secondary font-weight-bolder opacity-7">
+                                <th class=" text-secondary font-weight-bolder opacity-7">
                                     {{ __('Precio') }}</th>
-                                <th class="text-center text-secondary font-weight-bolder opacity-7">
+                                <th class=" text-secondary font-weight-bolder opacity-7">
                                     {{ __('Atributos') }}</th>
-                                <th class="text-center text-secondary font-weight-bolder opacity-7">
+                                <th class=" text-secondary font-weight-bolder opacity-7">
                                     {{ __('Stock') }}</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($clothings as $item)
-                                @php
-                                    $stockPerSize = explode(',', $item->stock_per_size);
-                                    $attrPerItem = explode(',', $item->attr_id_per_size);
-                                    $attr = explode(',', $item->available_attr);
-                                @endphp
-                                <tr>
-                                    <td class="align-middle text-center">
-                                        <form name="formActive{{ $item->id }}" id="formActive" method="post"
-                                            action="{{ url('status/' . $item->id) }}" style="display:inline">
-                                            {{ csrf_field() }}
-                                            <label for="checkLicense">
-                                                <div class="form-check">
-                                                    <input id="checkLicense" class="form-check-input" type="checkbox"
-                                                        value="1" name="status"
-                                                        onchange="submitForm('formActive{{ $item->id }}')"
-                                                        {{ $item->status == 1 ? 'checked' : '' }}>
-                                                </div>
-                                            </label>
 
-                                        </form>
-                                    </td>
-                                    <td class="align-middle text-center">
-                                        {{-- <form name="delete-clothing{{ $item->id }}"
-                                            id="delete-clothing{{ $item->id }}" method="post"
-                                            action="{{ url('/delete-clothing/' . $item->id) }}">
-                                            {{ csrf_field() }}
-                                            {{ method_field('DELETE') }}
-                                        </form>
-                                        <button form="delete-clothing{{ $item->id }}" type="submit"
-                                            onclick="return confirm('Deseas borrar este producto?')"
-                                            class="btn btn-link text-velvet ms-auto border-0" data-bs-toggle="tooltip"
-                                            data-bs-placement="bottom" title="Eliminar">
-                                            <i class="material-icons text-lg">delete</i>
-                                        </button> --}}
-                                        <form name="delete-item" id="delete-item" class="delete-form">
-                                            {{ csrf_field() }}
-                                            {{ method_field('DELETE') }}
-
-                                        </form>
-                                        <button data-item-id="{{ $item->id }}"
-                                            class="btn btn-link text-velvet ms-auto border-0 btnDeleteItem"
-                                            data-bs-toggle="tooltip" data-bs-placement="bottom" title="Eliminar">
-                                            <i class="material-icons text-lg">delete</i>
-                                        </button>
-                                        <a class="btn btn-link text-velvet me-auto border-0"
-                                            href="{{ url('/edit-clothing') . '/' . $item->id . '/' . $category_id }}"
-                                            data-bs-toggle="tooltip" data-bs-placement="bottom" title="Editar">
-                                            <i class="material-icons text-lg">edit</i>
-                                        </a>
-                                    </td>
-                                    <td class="w-50">
-                                        <div class="d-flex px-2 py-1">
-                                            <div>
-                                                <a target="blank" data-fancybox="gallery"
-                                                    href="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
-                                                    <img src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"
-                                                        class="avatar avatar-md me-3">
-                                                </a>
-                                            </div>
-                                            <div class="d-flex flex-column justify-content-center">
-                                                <h4 class="mb-0 text-lg">{{ $item->name }}</h4>
-                                                <p class="text-xs text-secondary mb-0">Código: {{ $item->code }}</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="align-middle text-center text-sm">
-                                        <p class="text-success mb-0">₡{{ number_format($item->price) }}
-                                        </p>
-                                    </td>
-                                    <td class="align-middle text-center text-sm">
-
-                                        @for ($i = 0; $i < count($attr); $i++)
-                                            @if ($attrPerItem[$i] != null && $attrPerItem[$i] != '' && $attr[$i] != 'Stock')
-                                                @php
-                                                    $exist_attr = true;
-                                                @endphp
-                                            @endif
-                                        @endfor
-                                        @if ($exist_attr == true)
-                                            <p class="mb-0">{{ __('Con atributos') }}
-                                            </p>
-                                        @else
-                                            <p class="mb-0">{{ __('Sin atributos') }}
-                                            </p>
-                                        @endif
-
-                                    </td>
-                                    <td class="align-middle text-center text-sm">
-                                        <p class="text-success mb-0">
-                                            {{ $item->manage_stock == 0 ? 'No maneja' : $item->total_stock }}
-                                        </p>
-                                    </td>
-                                </tr>
-                            @endforeach
                         </tbody>
                     </table>
                 </div>
@@ -180,60 +95,169 @@
 @endsection
 @section('script')
     <script>
-        function getTotal(itemId, callback) {
-            $.ajax({
-                method: "GET",
-                url: "/get-total-categories/" + itemId,
-                success: function(total) {
-                    callback(total); // Llama al callback con el total
-                }
-            });
-        }
-
-        $('.btnDeleteItem').click(function(e) {
-            e.preventDefault();
-
-            var itemId = $(this).data('item-id');
-
-            // Llama a getTotal y maneja el resultado en el callback
-            getTotal(itemId, function(total) {
-                let message = (total > 1) ?
-                    'Este producto se encuentra ligado a más de una categoría, ¿desea borrarlo?' :
-                    '¿Deseas borrar este artículo?';
-
-                Swal.fire({
-                    title: 'Confirmación',
-                    text: message,
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Borrar',
-                    cancelButtonText: 'Cancelar'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            method: "POST",
-                            url: "/delete-clothing/" + itemId,
-                            data: {
-                                _token: '{{ csrf_token() }}',
-                                _method: 'DELETE',
-                            },
-                            success: function(response) {
-                                location.reload();
-                            },
-                            error: function(xhr, status, error) {
-                                // Manejar errores si es necesario
-                                console.error(xhr.responseText);
-                            }
-                        });
-                    }
-                });
-            });
-        });
-
         function submitForm(alias) {
             var form = document.querySelector('form[name="' + alias + '"]');
             form.submit();
         }
+        $(document).ready(function() {
+            var tableClothings = $('#clothing_table').DataTable({
+                searching: true,
+                lengthChange: false,
+                pageLength: 15,
+                serverSide: true, // Carga los datos desde el servidor
+                ajax: {
+                    url: "/add-item/{{ $category_id }}", // Ruta en Laravel
+                    type: "GET"
+                },
+                columns: [{
+                        data: "status"
+                    },
+                    {
+                        data: "acciones",
+                        orderable: false,
+                        searchable: false
+                    }, // Acciones
+                    {
+                        data: "name"
+                    }, // Servicio
+                    {
+                        data: "price"
+                    }, // Servicio
+                    {
+                        data: "atributos"
+                    }, // Servicio
+                    {
+                        data: "stock"
+                    }
+
+                ],
+                dom: 'Bfrtip',
+                buttons: [{
+                        extend: 'excelHtml5',
+                        text: '<i class="fas fa-file-excel"></i> Excel',
+                        titleAttr: 'Exportar a Excel',
+                        className: 'btn btn-table',
+                        messageTop: 'Mi reporte personalizado de Excel',
+                        title: 'Reporte Excel'
+                    },
+                    {
+                        extend: 'pdfHtml5',
+                        text: '<i class="fas fa-file-pdf"></i> PDF',
+                        titleAttr: 'Exportar a PDF',
+                        className: 'btn btn-table',
+                        messageTop: 'Mi reporte personalizado de PDF',
+                        title: 'Reporte PDF'
+                    }
+                ],
+                language: {
+                    sProcessing: "Procesando...",
+                    sZeroRecords: "No se encontraron resultados",
+                    sEmptyTable: "Ningún dato disponible en esta tabla",
+                    sInfo: "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                    sInfoEmpty: "Mostrando 0 a 0 de 0 registros",
+                    sInfoFiltered: "(filtrado de un total de _MAX_ registros)",
+                    sSearch: "Buscar:",
+                    oPaginate: {
+                        sFirst: "<<",
+                        sLast: "Último",
+                        sNext: ">>",
+                        sPrevious: "<<"
+                    }
+                }
+            });
+
+            function getTotal(itemId, callback) {
+                $.ajax({
+                    method: "GET",
+                    url: "/get-total-categories/" + itemId,
+                    success: function(total) {
+                        callback(total); // Llama al callback con el total
+                    }
+                });
+            }
+            $('#recordsPerPage').on('change', function() {
+                var recordsPerPage = parseInt($(this).val());
+                tableClothings.page.len(recordsPerPage).draw();
+            });
+            $('#searchfor').on('input', function() {
+                var searchTerm = $(this).val();
+                tableClothings.search(searchTerm).draw();
+            });
+            $(document).on('click', '.btnDeleteItem', function(e) {
+                e.preventDefault();
+
+                var itemId = $(this).data('item-id');
+
+                // Llama a getTotal y maneja el resultado en el callback
+                getTotal(itemId, function(total) {
+                    let message = (total > 1) ?
+                        'Este producto se encuentra ligado a más de una categoría, ¿desea borrarlo?' :
+                        '¿Deseas borrar este artículo?';
+
+                    Swal.fire({
+                        title: 'Confirmación',
+                        text: message,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Borrar',
+                        cancelButtonText: 'Cancelar'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                method: "POST",
+                                url: "/delete-clothing/" + itemId,
+                                data: {
+                                    _token: $('meta[name="csrf-token"]').attr(
+                                        'content'), // Usar meta tag para CSRF token
+                                    _method: 'DELETE',
+                                },
+                                success: function(response) {
+                                    tableClothings.ajax.reload(null, false);
+                                },
+                                error: function(xhr, status, error) {
+                                    console.error(xhr.responseText);
+                                }
+                            });
+                        }
+                    });
+                });
+            });
+            $(document).on('change', '.changeStatus', function() {
+                let itemId = $(this).val();
+                let status = $(this).prop('checked') ? 1 : 0;
+
+                $.ajax({
+                    url: "/status/" + itemId,
+                    method: "POST",
+                    data: {
+                        _token: $('meta[name="csrf-token"]').attr('content'),
+                        status: status
+                    },
+                    success: function(response) {
+                        Swal.fire({
+                            title: "Cambio de estado",
+                            text: response.message,
+                            icon: "success",
+                            timer: 1500,
+                            showConfirmButton: false
+                        });
+                    },
+                    error: function(xhr) {
+                        console.error(xhr.responseText);
+                        Swal.fire({
+                            title: "Error",
+                            text: "No se pudo actualizar el estado",
+                            icon: "error"
+                        });
+                    }
+                });
+            });
+            $(document).on('change', '#status', function() {
+                var status = $(this).val();
+                tableClothings.ajax.url('/add-item/{{ $category_id }}?status=' + status).load();
+            });
+
+        });
     </script>
     <script src="{{ asset('js/datatables.js') }}"></script>
 @endsection
