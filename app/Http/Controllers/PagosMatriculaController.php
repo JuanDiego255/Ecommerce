@@ -54,6 +54,8 @@ class PagosMatriculaController extends Controller
             $pago->arqueo_id = $cajaAbierta->id;
             $pago->user_id = Auth::user()->id;
             $pago->tipo_pago_id = $request->tipo_pago;
+            $pago->tipo_venta = $request->tipo_venta;
+            $pago->detalle = $request->detalle;
             $pago->monto_pago = $request->monto_pago;
             $pago->descuento = $request->descuento;
             $pago->fecha_pago = $request->fecha_pago;
@@ -86,6 +88,8 @@ class PagosMatriculaController extends Controller
             $pago->tipo_pago_id = $request->tipo_pago;
             $pago->monto_pago = $request->monto_pago;
             $pago->descuento = $request->descuento;
+            $pago->tipo_venta = $request->tipo_venta;
+            $pago->detalle = $request->detalle;
             $pago->fecha_pago = $request->fecha_pago;
             $pago->update();
             DB::commit();

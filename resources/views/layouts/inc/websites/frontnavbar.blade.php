@@ -12,7 +12,7 @@
     $btnSize = '';
 
     switch ($tenantinfo->tenant) {
-        case 'draharriscr':
+        case 'clinicaharriscr':
             $logo = 'logo-harris';
             $btnSize = 'siteLink-harris';
             break;

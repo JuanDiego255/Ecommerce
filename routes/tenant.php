@@ -374,7 +374,8 @@ Route::middleware([
             Route::delete('delete/tipo_pago/{id}', [TipoPagoController::class, 'destroy']);
             Route::post('/tipo_pago/store', [TipoPagoController::class, 'store']);
             //Rutas para ventas de especialstas
-            Route::get('/ventas/especialistas', [VentaEspecialistaController::class, 'index']);
+            Route::get('/ventas/especialistas/{id}', [VentaEspecialistaController::class, 'index']);
+            Route::get('/ventas/list/', [VentaEspecialistaController::class, 'listVentas']);
             Route::put('tipo_pago/update/{id}', [TipoPagoController::class, 'update']);
             Route::delete('delete/tipo_pago/{id}', [TipoPagoController::class, 'destroy']);
             Route::post('venta/especialista/store', [VentaEspecialistaController::class, 'store']);

@@ -21,12 +21,34 @@ class VentaEspecialistaController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($id)
     {
         //
         $tipos = TipoPago::get();
+        $especialista = null;
+        if ($id != 0) {
+            $especialista = VentaEspecialista::where('id', $id)->first();
+        }
         $especialistas = Especialista::get();
-        return view('admin.ventas.index', compact('tipos', 'especialistas'));
+        return view('admin.ventas.index', compact('tipos', 'especialistas', 'id', 'especialista'));
+    }
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function listVentas()
+    {
+        //
+        $ventas = VentaEspecialista::join('especialistas', 'venta_especialistas.especialista_id', 'especialistas.id')
+            ->join('clothing', 'venta_especialistas.clothing_id', 'clothing.id')
+            ->select(
+                'especialistas.nombre as nombre',
+                'clothing.name as name',
+                'venta_especialistas.*'
+            )
+            ->get();
+        return view('admin.ventas.list', compact('ventas'));
     }
     //
     /**
@@ -159,23 +181,45 @@ class VentaEspecialistaController extends Controller
         DB::beginTransaction();
         try {
             $cajaAbierta = ArqueoCaja::cajaAbiertaHoy($request->fecha_matricula)->first();
-
-            if (!$cajaAbierta) {
+            $type = $request->type;
+            // Validar si no hay caja abierta y el tipo es "S"
+            if (!$cajaAbierta && $type == "S") {
                 return redirect()->back()->with(['status' => 'No hay ninguna caja abierta para el día de hoy', 'icon' => 'warning']);
             }
-            $venta =  new  VentaEspecialista();
-            $venta->especialista_id = $request->especialista_id;
-            $venta->arqueo_id = $cajaAbierta->id;
-            $venta->clothing_id = $request->clothing_id;
-            $venta->monto_venta = $request->monto_venta;
-            $venta->tipo_pago_id = $request->tipo_pago;
-            $venta->monto_producto_venta = $request->monto_producto_venta;
-            $venta->porcentaje = $request->input_porcentaje;
-            $venta->descuento = $request->descuento;
-            $venta->monto_por_servicio_o_salario = $request->monto_por_servicio_o_salario;
-            $venta->monto_clinica = $request->monto_clinica;
-            $venta->monto_especialista = $request->monto_especialista;
-            $venta->save();
+            // Si viene un ID de venta, hacemos un update, si no, creamos una nueva venta
+            if (!empty($request->venta_id)) {
+                // Buscar la venta existente               
+                $venta = VentaEspecialista::find($request->venta_id);
+                if ($venta) {
+                    // Actualizar los valores (sin modificar arqueo_id)
+                    $venta->especialista_id = $request->especialista_id;
+                    $venta->clothing_id = $request->clothing_id;
+                    $venta->monto_venta = $request->monto_venta;
+                    $venta->tipo_pago_id = $request->tipo_pago;
+                    $venta->monto_producto_venta = $request->monto_producto_venta;
+                    $venta->porcentaje = $request->input_porcentaje;
+                    $venta->descuento = $request->descuento;
+                    $venta->monto_por_servicio_o_salario = $request->monto_por_servicio_o_salario;
+                    $venta->monto_clinica = $request->monto_clinica;
+                    $venta->monto_especialista = $request->monto_especialista;
+                    $venta->update();
+                }
+            } else {
+                // Crear una nueva venta
+                $venta = new VentaEspecialista();
+                $venta->especialista_id = $request->especialista_id;
+                $venta->arqueo_id = $cajaAbierta->id; // Solo se asigna en la creación
+                $venta->clothing_id = $request->clothing_id;
+                $venta->monto_venta = $request->monto_venta;
+                $venta->tipo_pago_id = $request->tipo_pago;
+                $venta->monto_producto_venta = $request->monto_producto_venta;
+                $venta->porcentaje = $request->input_porcentaje;
+                $venta->descuento = $request->descuento;
+                $venta->monto_por_servicio_o_salario = $request->monto_por_servicio_o_salario;
+                $venta->monto_clinica = $request->monto_clinica;
+                $venta->monto_especialista = $request->monto_especialista;
+                $venta->save();
+            }
             DB::commit();
             return redirect()->back()->with(['status' => 'Se ha guardado la venta con éxito', 'icon' => 'success']);
         } catch (\Exception $th) {

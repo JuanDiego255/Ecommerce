@@ -9,7 +9,11 @@
             <strong>{{ __('Gestionar ventas por especialista') }}</strong>
         </h2>
     </center>
-
+    @if (isset($especialista))
+        <div class="col-md-12 mb-2">
+            <a href="{{ url('ventas/especialistas/0') }}" class="btn btn-velvet w-25">{{ __('Nueva venta') }}</a>
+        </div>
+    @endif
     <div class="card mt-3">
         <div class="card-body">
             <div class="row w-100">
@@ -37,6 +41,7 @@
             </div>
         </div>
     </div>
+
     <div class="row row-cols-1 row-cols-md-2 g-4 align-content-center card-group mt-1">
         <div class="col-md-4">
             <div class="card p-2">
@@ -49,12 +54,21 @@
                                     class="form-control form-control-lg @error('select_especialista') is-invalid @enderror"
                                     autocomplete="select_especialista" autofocus>
                                     @foreach ($especialistas as $key => $item)
-                                        <option @if ($key == 0) selected @endif
+                                        @if (isset($especialista) && $especialista->especialista_id == $item->id)
+                                            <option value="{{ $item->id }}" selected
+                                                data-service="{{ $item->monto_por_servicio }}"
+                                                data-salary="{{ $item->salario_base }}">
+                                                {{ $item->nombre }}
+                                            </option>
+                                            @continue
+                                        @endif
+                                        <option @if ($key == 0 && $especialista == null) selected @endif
                                             value="{{ $item->id }}" data-service="{{ $item->monto_por_servicio }}"
                                             data-salary="{{ $item->salario_base }}">
                                             {{ $item->nombre }}
                                         </option>
                                     @endforeach
+
 
                                 </select>
                                 @error('select_especialista')
@@ -97,10 +111,16 @@
                         <div class="row">
                             <div class="col-md-3 mb-3">
                                 <input type="hidden" name="clothing_id" id="clothing_id">
+                                <input type="hidden" name="venta_id" id="venta_id"
+                                    value="{{ isset($especialista->id) ? $especialista->id : '' }}">
+                                <input type="hidden" name="type" id="type"
+                                    value="{{ isset($especialista) ? 'U' : 'S' }}">
                                 <input type="hidden" name="especialista_id" id="especialista_id">
                                 <div id="div_porc" class="input-group input-group-lg input-group-outline is-filled my-3">
                                     <label class="form-label">Porcentaje (Servicio)</label>
-                                    <input readonly value="" type="number"
+                                    <input readonly
+                                        value="{{ isset($especialista->porcentaje) ? $especialista->porcentaje : '' }}"
+                                        type="number"
                                         class="form-control form-control-lg @error('input_porcentaje') is-invalid @enderror"
                                         name="input_porcentaje" id="input_porcentaje">
                                     @error('input_porcentaje')
@@ -115,7 +135,9 @@
                                     <div class="col-md-12">
                                         <div class="input-group input-group-lg input-group-outline is-filled my-3">
                                             <label class="form-label">Monto de venta</label>
-                                            <input value="" required type="number"
+                                            <input
+                                                value="{{ isset($especialista->monto_venta) ? $especialista->monto_venta : '' }}"
+                                                required type="number"
                                                 class="form-control form-control-lg @error('monto_venta') is-invalid @enderror"
                                                 name="monto_venta" id="monto_venta">
                                             @error('monto_venta')
@@ -133,7 +155,9 @@
                                     <div class="col-md-12">
                                         <div class="input-group is-filled input-group-lg input-group-outline my-3">
                                             <label class="form-label">Monto venta de producto</label>
-                                            <input value="" type="number"
+                                            <input
+                                                value="{{ isset($especialista->monto_producto_venta) ? $especialista->monto_producto_venta : '' }}"
+                                                type="number"
                                                 class="form-control form-control-lg @error('monto_producto_venta') is-invalid @enderror"
                                                 name="monto_producto_venta" id="monto_producto_venta">
                                             @error('monto_producto_venta')
@@ -156,7 +180,12 @@
                                             class="form-control form-control-lg @error('tipo_pago') is-invalid @enderror"
                                             autocomplete="tipo_pago" autofocus>
                                             @foreach ($tipos as $key => $item)
-                                                <option @if ($key == 0) selected @endif
+                                                @if (isset($especialista) && $especialista->tipo_pago_id == $item->id)
+                                                    <option value="{{ $item->id }}" selected>
+                                                        {{ $item->tipo }}
+                                                    </option>
+                                                @endif
+                                                <option @if ($key == 0 && $especialista == null) selected @endif
                                                     value="{{ $item->id }}">{{ $item->tipo }}
                                                 </option>
                                             @endforeach
@@ -177,7 +206,9 @@
                                 <div id="div_sal_serv"
                                     class="input-group is-filled input-group-lg input-group-outline my-3">
                                     <label class="form-label">Monto por servicio o salario (Opcional)</label>
-                                    <input value="" type="number" readonly
+                                    <input
+                                        value="{{ isset($especialista->monto_por_servicio_o_salario) ? $especialista->monto_por_servicio_o_salario : '' }}"
+                                        type="number" readonly
                                         class="form-control form-control-lg @error('monto_por_servicio_o_salario') is-invalid @enderror"
                                         name="monto_por_servicio_o_salario" id="monto_por_servicio_o_salario">
                                     @error('monto_por_servicio_o_salario')
@@ -191,7 +222,9 @@
                                 <div id="div_monto_cli"
                                     class="input-group is-filled input-group-lg input-group-outline my-3">
                                     <label class="form-label">Monto Clínica</label>
-                                    <input value="" type="number" required
+                                    <input
+                                        value="{{ isset($especialista->monto_clinica) ? $especialista->monto_clinica : '' }}"
+                                        type="number" required
                                         class="form-control form-control-lg @error('monto_clinica') is-invalid @enderror"
                                         name="monto_clinica" readonly id="monto_clinica">
                                     @error('monto_clinica')
@@ -205,7 +238,9 @@
                                 <div id="div_monto_esp"
                                     class="input-group is-filled input-group-lg input-group-outline my-3">
                                     <label class="form-label">Monto Especialista</label>
-                                    <input value="" type="number" required
+                                    <input
+                                        value="{{ isset($especialista->monto_especialista) ? $especialista->monto_especialista : '' }}"
+                                        type="number" required
                                         class="form-control form-control-lg @error('monto_especialista') is-invalid @enderror"
                                         name="monto_especialista" readonly id="monto_especialista">
                                     @error('monto_especialista')
@@ -217,33 +252,39 @@
                             </div>
                         </div>
                         <center>
-                            <input class="btn btn-velvet" type="submit" value="Realizar venta">
+                            <input class="btn btn-velvet" type="submit"
+                                value="{{ isset($especialista) ? 'Guardar cambios' : 'Realizar venta' }}">
                         </center>
                     </form>
                 </div>
             </div>
         </div>
     </div>
+    <center>
+        <div class="col-md-12 mt-3">
+            <a href="{{ url('ventas/list') }}" class="btn btn-velvet w-25">{{ __('Ventas realizadas') }}</a>
+        </div>
+    </center>
 @endsection
 @section('script')
     <script src="{{ asset('js/datatables.js') }}"></script>
     <script>
         $(document).ready(function() {
-            function cargarServicios(especialistaId) {
-                $('#select_servicios').empty(); // Limpiar servicios
-                $('#input_porcentaje').val(''); // Resetear el input
-                var monto_salario = especialistaId.find(':selected').data(
-                    'salary');
-                var monto_serv = especialistaId.find(':selected').data(
-                    'service');
-                var mont_salary_serv = 0;
-                if (monto_salario > 0) {
-                    mont_salary_serv = monto_salario;
-                } else if (monto_serv > 0) {
-                    mont_salary_serv = monto_serv;
+            var especialistaUpdate = "{{ $especialista->clothing_id ?? 'N' }}";
+
+            function cargarServicios(especialistaId,especialistaUpdate) {
+
+                var monto_salario = especialistaId.find(':selected').data('salary');
+                var monto_serv = especialistaId.find(':selected').data('service');
+                var mont_salary_serv = monto_salario > 0 ? monto_salario : monto_serv > 0 ? monto_serv : 0;
+
+                $('#select_servicios').empty(); // Limpiar 
+                if (especialistaUpdate == 'N') {
+                    $('#input_porcentaje').val(''); // Resetear el input
+                    $('#monto_por_servicio_o_salario').val(mont_salary_serv);
                 }
-                $('#monto_por_servicio_o_salario').val(mont_salary_serv);
                 $('#div_sal_serv').addClass('is-filled');
+
                 $.ajax({
                     url: "/get-list/especialistas/service/",
                     type: 'GET',
@@ -253,18 +294,23 @@
                     success: function(response) {
                         if (response.length > 0) {
                             response.forEach(function(servicio) {
-                                $('#select_servicios').append('<option value="' + servicio
-                                    .servicio_id +
-                                    '" data-porcentaje="' + servicio.porcentaje + '">' +
-                                    servicio.servicio +
-                                    '</option>');
+                                $('#select_servicios').append(
+                                    `<option value="${servicio.servicio_id}" data-porcentaje="${servicio.porcentaje}">
+                            ${servicio.servicio}
+                        </option>`
+                                );
                             });
 
-                            // Seleccionar el primer servicio automáticamente
-                            let firstOption = $('#select_servicios option:first');
-                            let porcentaje = firstOption.data('porcentaje');
-                            $('#input_porcentaje').val(porcentaje);
-                            $('#clothing_id').val(firstOption.val());
+                            // Si hay un servicio preseleccionado en PHP, seleccionarlo
+                            if (especialistaUpdate != 'N') {
+                                $('#select_servicios').val(especialistaUpdate);
+                                let firstOption = $('#select_servicios option:first');
+                                $('#clothing_id').val(firstOption.val());
+                            } else {
+                                let firstOption = $('#select_servicios option:first');
+                                $('#input_porcentaje').val(firstOption.data('porcentaje'));                               
+                                $('#clothing_id').val(firstOption.val());
+                            }
                         } else {
                             $('#select_servicios').append(
                                 '<option value="">No hay servicios disponibles</option>');
@@ -273,16 +319,18 @@
                     }
                 });
             }
-
-            // Cargar servicios al cargar la página
             let especialistaSeleccionado = $('#select_especialista');
             if (especialistaSeleccionado) {
-                cargarServicios(especialistaSeleccionado);
+                cargarServicios(especialistaSeleccionado,especialistaUpdate);
             }
             $('#especialista_id').val($('#select_especialista').val());
             // Cargar servicios al cambiar de especialista
             $('#select_especialista').change(function() {
-                cargarServicios($(this));
+                if(especialistaUpdate != 'N'){
+                    $('#type').val('S');
+                    especialistaUpdate = 'N';
+                }               
+                cargarServicios($(this),especialistaUpdate);
                 $('#especialista_id').val($(this).val());
                 $('#monto_clinica').val(0);
                 $('#monto_venta').val('');
@@ -293,16 +341,24 @@
             // Capturar el cambio en el select de servicios
             $('#select_servicios').change(function() {
                 let porcentaje = $(this).find(':selected').data(
-                    'porcentaje'); // Obtener el porcentaje del servicio seleccionado
+                    'porcentaje');
                 $('#input_porcentaje').val(porcentaje);
                 $('#clothing_id').val($(this).val());
-                $('#monto_clinica').val(0);
-                $('#monto_venta').val('');
-                $('#monto_especialista').val(0);
-                $('#monto_producto_venta').val(0);
+                if (especialistaUpdate == 'N') {                   
+                    $('#monto_clinica').val(0);
+                    $('#monto_venta').val('');
+                    $('#monto_especialista').val(0);
+                    $('#monto_producto_venta').val(0);
+                }else{
+                    calcularMontos();
+                }
             });
             $('#btnCalculate').click(function() {
-                // Aquí va lo que quieres hacer cuando se haga clic
+                // Aquí va lo que quieres hacer cuando se haga clic               
+                calcularMontos();
+            });
+
+            function calcularMontos() {
                 var monto_venta = parseFloat($('#monto_venta').val()); // Convierte a número decimal
                 var porcentaje = parseFloat($('#input_porcentaje').val());
                 var monto_producto = parseFloat($('#monto_producto_venta').val());
@@ -350,8 +406,7 @@
                     $('#monto_especialista').val((monto_venta - (monto_venta - monto_serv_sal)) +
                         monto_calc_prod);
                 }
-
-            });
+            }
         });
     </script>
 @endsection

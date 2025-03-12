@@ -25,6 +25,7 @@ class MatriculaEstudianteController extends Controller
         // Iterar sobre las matrículas para calcular la próxima fecha de pago
         foreach ($matriculas as $matricula) {
             $ultimoPago = PagosMatricula::where('matricula_id', $matricula->id)
+                ->where('tipo_venta', 1)
                 ->orderBy('fecha_pago', 'desc')
                 ->first();
 
@@ -47,7 +48,7 @@ class MatriculaEstudianteController extends Controller
             // Agregar la próxima fecha de pago a cada matrícula
             $matricula->proxima_fecha_pago = $proximaFechaPago->toDateString();
         }
-        return view('admin.estudiantes.matricula.index', compact('item', 'matriculas', 'tipo_pagos','fechaCostaRica'));
+        return view('admin.estudiantes.matricula.index', compact('item', 'matriculas', 'tipo_pagos', 'fechaCostaRica'));
     }
     //
     /**

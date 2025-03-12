@@ -52,6 +52,8 @@
                                 <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Monto pagado') }}</th>
                                 <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Descuento') }}</th>
                                 <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Tipo de pago') }}</th>
+                                <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Tipo Venta') }}</th>
+                                <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Detalle') }}</th>
                                 <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Fecha pago') }}</th>
                             </tr>
                         </thead>
@@ -80,9 +82,17 @@
                                         <p class="text-success font-weight-bold mb-0">
                                             ₡{{ number_format($item->descuento) }}</p>
                                     </td>
-                                    
+
                                     <td class="align-middle text-sm">
                                         <p class="mb-0">{{ $item->tipo_pago }}
+                                        </p>
+                                    </td>
+                                    <td class="align-middle text-sm">
+                                        <p class="mb-0">{{ $item->tipo_venta == 1 ? 'Mensualidad' : 'Otro' }}
+                                        </p>
+                                    </td>
+                                    <td class="align-middle text-sm">
+                                        <p class="mb-0">{{ $item->detalle }}
                                         </p>
                                     </td>
                                     <td class="align-middle text-sm">
@@ -101,10 +111,27 @@
     </div>
     <center>
         <div class="col-md-12 mt-3">
-            <a href="{{ url('/list/matricula') . '/' . $info_estudiante->estudiante_id }}" class="btn btn-velvet w-25">{{ __('Volver') }}</a>
+            <a href="{{ url('/list/matricula') . '/' . $info_estudiante->estudiante_id }}"
+                class="btn btn-velvet w-25">{{ __('Volver') }}</a>
         </div>
     </center>
 @endsection
 @section('script')
     <script src="{{ asset('js/datatables.js') }}"></script>
+    <script>
+        $(document).ready(function() {
+            const tipoVenta = document.getElementById("tipo_venta");
+            const detalleDiv = document.querySelector(".div_detalle");
+
+            tipoVenta.addEventListener("change", function() {
+                if (this.value == "2") {
+                    detalleDiv.classList.remove("d-none");
+                    $('#detalle').val('');
+                    $('#monto_pago').val('');
+                } else {
+                    detalleDiv.classList.add("d-none");
+                }
+            });
+        });
+    </script>
 @endsection
