@@ -78,6 +78,12 @@ Route::middleware([
         Route::get('/comment/{show}', [FrontendController::class, 'index']);
         Route::post('/add-favorite', [FavoriteController::class, 'store']);
         Route::get('/check/list-fav/{id}', [FavoriteController::class, 'checkCode']);
+        Route::get('/file/{path}', function ($path) {
+            $path = Storage::path($path);
+            $path = str_replace('app\\', 'app\\public\\', $path);
+    
+            return response()->file($path);
+        })->where('path', '.*')->name('aclifile');
     });
     //Con prefijo aclimate
     Route::group(['middleware' => 'isLicense'], function () {

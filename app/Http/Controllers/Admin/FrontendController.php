@@ -255,11 +255,12 @@ class FrontendController extends Controller
                 return view('frontend.barber.index', compact('clothings', 'showModal', 'advert', 'blogs', 'social', 'clothings_offer', 'category', 'sellers', 'comments'));
                 break;
             case (6):
+            case (7):
                 $logos = Logos::all();
                 return view('frontend.av.index', compact('clothings', 'logos', 'showModal', 'advert', 'blogs', 'social', 'clothings_offer', 'category', 'sellers', 'comments'));
                 break;
             default:
-                if($tenantinfo->kind_of_features == 1){
+                if ($tenantinfo->kind_of_features == 1) {
                     return view('frontend.design_ecommerce.index', compact('clothings', 'advert', 'showModal', 'blogs', 'social', 'clothings_offer', 'category', 'comments'));
                 }
                 return view('frontend.index', compact('clothings', 'advert', 'showModal', 'blogs', 'social', 'clothings_offer', 'category', 'comments'));
@@ -562,7 +563,7 @@ class FrontendController extends Controller
                 DB::raw('GROUP_CONCAT(stocks.price) AS price_per_size'),
                 DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
             )
-            ->groupBy('clothing.id','categories.id', 'clothing.meta_keywords', 'clothing.main_image', 'clothing.manage_stock', 'clothing.horizontal_image', 'clothing.can_buy', 'clothing.casa', 'departments.id', 'departments.department', 'clothing.mayor_price', 'clothing.discount', 'categories.name', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
+            ->groupBy('clothing.id', 'categories.id', 'clothing.meta_keywords', 'clothing.main_image', 'clothing.manage_stock', 'clothing.horizontal_image', 'clothing.can_buy', 'clothing.casa', 'departments.id', 'departments.department', 'clothing.mayor_price', 'clothing.discount', 'categories.name', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
             ->orderByRaw('CASE WHEN clothing.casa IS NOT NULL AND clothing.casa != "" THEN 0 ELSE 1 END')
             ->orderBy('clothing.casa', 'asc')
             ->orderBy('clothing.name', 'asc')

@@ -3,6 +3,9 @@
     {!! SEOMeta::generate() !!}
     {!! OpenGraph::generate() !!}
 @endsection
+@php
+    $ruta = $tenantinfo->tenant != "aclimate" ? "file" : "aclifile";
+@endphp
 @section('content')
     {{-- @include('layouts.inc.carsale.footer') --}}
     <div class="slider_area mb-5">
@@ -10,12 +13,12 @@
             @if (isset($tenantcarousel) && count($tenantcarousel) > 0)
                 @foreach ($tenantcarousel as $key => $carousel)
                     <div class="single_slider d-flex align-items-center overlay2"
-                        style="background-image: linear-gradient(to right, 
+                        style="background-image:{{$tenantinfo->tenant != 'aclimate' ? ' linear-gradient(to right, 
     rgb(0, 0, 0) 0%, 
     rgb(0, 0, 0) 30%, 
     rgba(0, 0, 0, 0.7) 40%, 
-    rgba(0, 0, 0, 0) 70%), 
-    url('{{ route('file', $carousel->image) }}');
+    rgba(0, 0, 0, 0) 70%), ' : ''}} 
+    url('{{ route($ruta, $carousel->image) }}');
  background-size: cover; background-position: center;">
                         <div class="container">
                             <div class="row">
@@ -55,7 +58,7 @@
                                 @foreach ($category as $key => $item)
                                     <div class="single_case">
                                         <div class="case_thumb">
-                                            <img src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"
+                                            <img src="{{ isset($item->image) ? route($ruta, $item->image) : url('images/producto-sin-imagen.PNG') }}"
                                                 alt="" />
                                         </div>
                                         <div class="case_heading">
@@ -188,7 +191,7 @@
                                     @if ($item->is_supplier == 0)
                                         <div class="single_case">
                                             <div class="case_thumb">
-                                                <img src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"
+                                                <img src="{{ isset($item->image) ? route($ruta, $item->image) : url('images/producto-sin-imagen.PNG') }}"
                                                     alt="" />
                                             </div>
                                         </div>
@@ -211,7 +214,7 @@
                                     @if ($item->is_supplier == 1)
                                         <div class="single_case">
                                             <div class="case_thumb">
-                                                <img src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"
+                                                <img src="{{ isset($item->image) ? route($ruta, $item->image) : url('images/producto-sin-imagen.PNG') }}"
                                                     alt="" />
                                             </div>
                                         </div>
