@@ -1089,7 +1089,7 @@ h3 {
 /* line 156, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_header.scss */
 .header-area .main-header-area .main-menu ul li a {
     color: #92bb57;
-    font-size: 15px;
+    font-size: 18px;
     text-transform: capitalize;
     font-weight: 500;
     display: inline-block;
@@ -1102,14 +1102,14 @@ h3 {
 @media (min-width: 992px) and (max-width: 1200px) {
     /* line 156, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_header.scss */
     .header-area .main-header-area .main-menu ul li a {
-        font-size: 15px;
+        font-size: 18px;
     }
 }
 
 @media (min-width: 1200px) and (max-width: 1500px) {
     /* line 156, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_header.scss */
     .header-area .main-header-area .main-menu ul li a {
-        font-size: 15px;
+        font-size: 18px;
     }
 }
 
@@ -7984,4 +7984,75 @@ h6 {
     }
 }
 /*Fin CSS Modal*/
-/*Form comment*/
+/*Diseños de aclimate*/
+.header-area .main-header-area .Appointment .book_btn_acli {
+    margin-left: 30px;
+}
+
+@media (min-width: 992px) and (max-width: 1200px) {
+    /* line 105, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_header.scss */
+    .header-area .main-header-area .Appointment .book_btn_acli {
+        margin-left: 0;
+    }
+}
+
+@media (min-width: 1200px) and (max-width: 1500px) {
+    /* line 105, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_header.scss */
+    .header-area .main-header-area .Appointment .book_btn_acli {
+        margin-left: 0;
+    }
+}
+
+/* line 113, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_header.scss */
+.header-area .main-header-area .Appointment .book_btn_acli a {
+    /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#0181f5+0,5db2ff+100 */
+    background: #92bb57;
+    /* Old browsers */
+    background: #92bb57;
+    /* FF3.6-15 */
+    background: #92bb57;
+    /* Chrome10-25,Safari5.1-6 */
+    background: #92bb57;
+    /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#0181f5', endColorstr='#5db2ff',GradientType=1 );
+    /* IE6-9 */
+    padding: 13px 26px;
+    font-size: 14px;
+    font-weight: 400;
+    border: 1px solid transparent;
+    color: #fff;
+    -webkit-border-radius: 30px;
+    -moz-border-radius: 30px;
+    border-radius: 30px;
+}
+
+@media (min-width: 992px) and (max-width: 1200px) {
+    /* line 113, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_header.scss */
+    .header-area .main-header-area .Appointment .book_btn_acli a {
+        padding: 12px 20px;
+    }
+}
+
+/* line 130, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_header.scss */
+.header-area .main-header-area .Appointment .book_btn_acli a:hover {
+    /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#0181f5+0,5db2ff+100&0.96+0,0.96+100 */
+    background: #92bb57;
+    /* FF3.6-15 */
+    background: #92bb57;
+    /* Chrome10-25,Safari5.1-6 */
+    background: #92bb57;
+    /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f50181f5', endColorstr='#f55db2ff',GradientType=0 );
+    /* IE6-9 */
+    color: #fff;
+    border: 1px solid #92bb57;
+}
+.text-color-acli{
+    color: #98b9e2 !important;
+}
+.bg-acli{
+    background-color: #fff !important;
+}
+.position-acli{
+    position: relative !important;
+}

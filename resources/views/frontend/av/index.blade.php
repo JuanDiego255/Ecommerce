@@ -12,7 +12,7 @@
         <div class="slider_active owl-carousel">
             @if (isset($tenantcarousel) && count($tenantcarousel) > 0)
                 @foreach ($tenantcarousel as $key => $carousel)
-                    <div class="single_slider d-flex align-items-center overlay2"
+                    <div class="single_slider d-flex align-items-center "
                         style="background-image:{{$tenantinfo->tenant != 'aclimate' ? ' linear-gradient(to right, 
     rgb(0, 0, 0) 0%, 
     rgb(0, 0, 0) 30%, 
