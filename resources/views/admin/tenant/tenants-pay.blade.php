@@ -84,14 +84,14 @@
                                                         <span
                                                             class="badge badge-pill ml-2 {{ $tenant->cool_pay == 1 ? 'badge-date-cool' : 'badge-date animacion' }} badge-date text-white"
                                                             id="comparison-count">{{ isset($tenant->payment_date)
-                                                                ? \Carbon\Carbon::parse($tenant->payment_date)->addMonths($time_to_pay)->format('Y-m-d')
+                                                                ? \Carbon\Carbon::parse($tenant->payment_date)->addMonths($time_to_pay - 1)->format('Y-m-d')
                                                                 : '' }}</span>
                                                     </p>
                                                 @else
                                                     <p class=" font-weight-bold mb-0">
                                                         <span class="badge badge-pill ml-2 badge-date-blue text-white"
                                                             id="comparison-count">{{ isset($tenant->payment_date)
-                                                                ? \Carbon\Carbon::parse($tenant->payment_date)->addMonths($time_to_pay)->format('Y-m-d')
+                                                                ? \Carbon\Carbon::parse($tenant->payment_date)->addMonths($time_to_pay - 1)->format('Y-m-d')
                                                                 : '' }}</span>
                                                     </p>
                                                 @endif
