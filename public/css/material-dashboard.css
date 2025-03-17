@@ -22562,6 +22562,12 @@ body.dark-version {
         height: auto !important; /* Asegura que no tenga altura fija */
     }
 }
+@media screen and (max-width: 1024px) {
+    .min-vh-75 {
+        min-height: 20vh !important; /* Elimina la altura mínima */
+        height: auto !important; /* Asegura que no tenga altura fija */
+    }
+}
 
 
 .page-header .container {
