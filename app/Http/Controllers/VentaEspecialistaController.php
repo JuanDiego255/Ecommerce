@@ -47,6 +47,7 @@ class VentaEspecialistaController extends Controller
                 'clothing.name as name',
                 'venta_especialistas.*'
             )
+            ->orderBy('venta_especialistas.created_at','desc')
             ->get();
         return view('admin.ventas.list', compact('ventas'));
     }
@@ -138,6 +139,8 @@ class VentaEspecialistaController extends Controller
             ->whereDate('arqueo_cajas.fecha_ini', $fechaCostaRica)
             ->select(
                 'especialistas.nombre as especialista',
+                DB::raw('SUM(venta_especialistas.monto_clinica) as total_clinica'),
+                DB::raw('SUM(venta_especialistas.monto_producto_venta) as total_producto'),
                 DB::raw('SUM(venta_especialistas.monto_venta) as total_venta'),
                 DB::raw('SUM(venta_especialistas.monto_especialista) as total_especialista')
             )

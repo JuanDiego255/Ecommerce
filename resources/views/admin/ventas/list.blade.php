@@ -53,6 +53,8 @@
                             Monto Esp</th>
                         <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                             Porcentaje</th>
+                        <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
+                            Fecha</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -71,7 +73,7 @@
                                     <i class="material-icons text-lg">delete</i>
                                 </button> --}}
                                 <a class="btn btn-link text-velvet me-auto border-0"
-                                    href="{{ url('/ventas/especialistas/' . $item->id ) }}" data-bs-toggle="tooltip"
+                                    href="{{ url('/ventas/especialistas/' . $item->id) }}" data-bs-toggle="tooltip"
                                     data-bs-placement="bottom" title="Editar">
                                     <i class="material-icons text-lg">edit</i>
                                 </a>
@@ -84,16 +86,19 @@
                             </td>
                             <td class="align-middle text-xxs text-center">
                                 <p class=" font-weight-bold mb-0">₡{{ number_format($item->monto_venta) }}</p>
-                            </td>       
+                            </td>
                             <td class="align-middle text-xxs text-center">
                                 <p class=" font-weight-bold mb-0">₡{{ number_format($item->monto_clinica) }}</p>
-                            </td>     
+                            </td>
                             <td class="align-middle text-xxs text-center">
                                 <p class=" font-weight-bold mb-0">₡{{ number_format($item->monto_especialista) }}</p>
-                            </td>       
+                            </td>
                             <td class="align-middle text-xxs text-center">
                                 <p class=" font-weight-bold mb-0">%{{ $item->porcentaje }}</p>
-                            </td>                           
+                            </td>
+                            <td class="align-middle text-xxs text-center">
+                                <p class=" font-weight-bold mb-0">{{ $item->created_at->format('d/m/Y') }}                                </p>
+                            </td>
 
                         </tr>
                     @endforeach

@@ -217,7 +217,8 @@
                                         <p class="text-dark mb-0">{{ $item->tipo }}</p>
                                     </td>
                                     <td class="align-middle text-sm">
-                                        <p class="text-dark mb-0">{{ $item->tipo_venta == '1' ? 'Mensualidad' : 'Otro' }}</p>
+                                        <p class="text-dark mb-0">{{ $item->tipo_venta == '1' ? 'Mensualidad' : 'Otro' }}
+                                        </p>
                                     </td>
                                     <td class="align-middle text-sm">
                                         <p class="text-dark mb-0">{{ $item->created_at }}</p>
@@ -274,7 +275,7 @@
 
                         @foreach ($ventasPorEspecialista as $venta)
                             @php
-                                $montoClinica = $venta->total_venta - $venta->total_especialista;
+                                $montoClinica = $venta->total_clinica;
                                 $totalGeneralVenta += $venta->total_venta;
                                 $totalGeneralEspecialista += $venta->total_especialista;
                                 $totalGeneralClinica += $montoClinica;
@@ -282,9 +283,14 @@
                             <li class="list-group-item d-flex justify-content-between align-items-center">
                                 <div>
                                     <strong>{{ $venta->especialista }}</strong>
+
                                 </div>
                                 <div>
-                                    <span class="text-success fw-bold">₡{{ number_format($venta->total_venta) }}</span>
+                                    <span class="text-success fw-bold">₡{{ number_format($venta->total_venta) }}
+                                        @if ($venta->total_producto > 0)
+                                            + P:₡{{ number_format($venta->total_producto) }}
+                                        @endif
+                                    </span>
                                     <br>
                                     <small class="text-primary">Especialista:
                                         ₡{{ number_format($venta->total_especialista) }}</small>
