@@ -45,8 +45,8 @@
                     <div class="input-group input-group-lg input-group-static my-3 w-100">
                         <label>Estado</label>
                         <select id="status" name="status" class="form-control form-control-lg" autocomplete="status">
-                            <option value="2" selected>Todos</option>
-                            <option value="1">Activos</option>
+                            <option value="2">Todos</option>
+                            <option value="1" selected>Activos</option>
                             <option value="0">Inactivos</option>
                         </select>
                     </div>
@@ -106,7 +106,7 @@
                 pageLength: 15,
                 serverSide: true, // Carga los datos desde el servidor
                 ajax: {
-                    url: "/add-item/{{ $category_id }}", // Ruta en Laravel
+                    url: "/add-item/{{ $category_id }}?status=1", // Ruta en Laravel
                     type: "GET"
                 },
                 columns: [{
