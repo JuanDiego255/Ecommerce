@@ -126,6 +126,11 @@
                     @endforeach
                 </div>
             </div>
+            <center>
+                <div class="container mt-3 mb-5">
+                    {{ $clothings ?? ('')->links('pagination::simple-bootstrap-4') }}
+                </div>
+            </center>
         @break
 
         @default

@@ -57,6 +57,7 @@
                                         @if (isset($especialista) && $especialista->especialista_id == $item->id)
                                             <option value="{{ $item->id }}" selected
                                                 data-service="{{ $item->monto_por_servicio }}"
+                                                data-aplica="{{ $item->aplica_calc }}"
                                                 data-salary="{{ $item->salario_base }}">
                                                 {{ $item->nombre }}
                                             </option>
@@ -64,6 +65,7 @@
                                         @endif
                                         <option @if ($key == 0 && $especialista == null) selected @endif
                                             value="{{ $item->id }}" data-service="{{ $item->monto_por_servicio }}"
+                                            data-aplica="{{ $item->aplica_calc }}"
                                             data-salary="{{ $item->salario_base }}">
                                             {{ $item->nombre }}
                                         </option>
@@ -111,6 +113,7 @@
                         <div class="row">
                             <div class="col-md-3 mb-3">
                                 <input type="hidden" name="clothing_id" id="clothing_id">
+                                <input type="hidden" name="aplica" id="aplica">
                                 <input type="hidden" name="venta_id" id="venta_id"
                                     value="{{ isset($especialista->id) ? $especialista->id : '' }}">
                                 <input type="hidden" name="type" id="type"
@@ -272,12 +275,14 @@
         $(document).ready(function() {
             var especialistaUpdate = "{{ $especialista->clothing_id ?? 'N' }}";
 
-            function cargarServicios(especialistaId,especialistaUpdate) {
+            function cargarServicios(especialistaId, especialistaUpdate) {
 
                 var monto_salario = especialistaId.find(':selected').data('salary');
                 var monto_serv = especialistaId.find(':selected').data('service');
+                var aplica_calc = especialistaId.find(':selected').data('aplica');
                 var mont_salary_serv = monto_salario > 0 ? monto_salario : monto_serv > 0 ? monto_serv : 0;
 
+                $('#aplica').val(aplica_calc);
                 $('#select_servicios').empty(); // Limpiar 
                 if (especialistaUpdate == 'N') {
                     $('#input_porcentaje').val(''); // Resetear el input
@@ -308,7 +313,7 @@
                                 $('#clothing_id').val(firstOption.val());
                             } else {
                                 let firstOption = $('#select_servicios option:first');
-                                $('#input_porcentaje').val(firstOption.data('porcentaje'));                               
+                                $('#input_porcentaje').val(firstOption.data('porcentaje'));
                                 $('#clothing_id').val(firstOption.val());
                             }
                         } else {
@@ -321,16 +326,16 @@
             }
             let especialistaSeleccionado = $('#select_especialista');
             if (especialistaSeleccionado) {
-                cargarServicios(especialistaSeleccionado,especialistaUpdate);
+                cargarServicios(especialistaSeleccionado, especialistaUpdate);
             }
             $('#especialista_id').val($('#select_especialista').val());
             // Cargar servicios al cambiar de especialista
             $('#select_especialista').change(function() {
-                if(especialistaUpdate != 'N'){
+                if (especialistaUpdate != 'N') {
                     $('#type').val('S');
                     especialistaUpdate = 'N';
-                }               
-                cargarServicios($(this),especialistaUpdate);
+                }
+                cargarServicios($(this), especialistaUpdate);
                 $('#especialista_id').val($(this).val());
                 $('#monto_clinica').val(0);
                 $('#monto_venta').val('');
@@ -344,12 +349,12 @@
                     'porcentaje');
                 $('#input_porcentaje').val(porcentaje);
                 $('#clothing_id').val($(this).val());
-                if (especialistaUpdate == 'N') {                   
+                if (especialistaUpdate == 'N') {
                     $('#monto_clinica').val(0);
                     $('#monto_venta').val('');
                     $('#monto_especialista').val(0);
                     $('#monto_producto_venta').val(0);
-                }else{
+                } else {
                     calcularMontos();
                 }
             });
@@ -359,6 +364,7 @@
             });
 
             function calcularMontos() {
+                var aplica = $('#aplica').val();
                 var monto_venta = parseFloat($('#monto_venta').val()); // Convierte a número decimal
                 var porcentaje = parseFloat($('#input_porcentaje').val());
                 var monto_producto = parseFloat($('#monto_producto_venta').val());
@@ -370,6 +376,10 @@
                 var monto_calc_total = 0;
                 var monto_max = 0;
                 var iva = 0;
+                var porc_prod = 0;
+                var descuento = 0;
+                var porc_prod = 0;
+                var calc_extra = 0;
                 if (monto_venta <= 0) {
                     Swal.fire({
                         title: "El monto venta no puede ser menor o igual a 0",
@@ -384,27 +394,41 @@
                     return;
                 }
                 if (tipo_pago.trim().toUpperCase() === "TARJETA") {
-                    monto_venta = monto_venta - (monto_venta * (13 / 100));
+                    monto_venta = monto_venta / 1.13;
                 }
-
                 if (monto_producto > 0) {
-                    monto_calc_prod_sin_iva = monto_producto - (monto_producto * (13 / 100));
-                    monto_calc_prod = (monto_calc_prod_sin_iva * (10 / 100));
-                    monto_max = monto_calc_prod_sin_iva - monto_calc_prod;
+                    iva = aplica == 1 ? monto_producto * (13 / 100) : 0;
+                    porc_prod = aplica == 1 ? 10 / 100 : 0;
+                    monto_calc_prod_sin_iva = monto_producto - iva;
+                    monto_calc_prod = (monto_calc_prod_sin_iva * porc_prod);
+                    calc_extra = aplica == 1 ? monto_calc_prod : 0;
+                    monto_max = monto_calc_prod_sin_iva - calc_extra;
                     $('#monto_clinica').val(monto_max);
                 }
+
                 if (porcentaje >= 0) {
                     monto_venta_con_porc = (monto_venta * (porcentaje / 100));
                     monto_max = monto_venta_con_porc + monto_max;
                     $('#monto_clinica').val(monto_max);
-                    $('#monto_especialista').val((monto_venta - monto_venta_con_porc - monto_serv_sal) +
-                        monto_calc_prod);
+                    if (aplica == 1) {
+                        $('#monto_especialista').val((monto_venta - monto_venta_con_porc - monto_serv_sal) +
+                            monto_calc_prod);
+                    } else {
+                        $('#monto_clinica').val(monto_venta + monto_producto);
+                        $('#monto_especialista').val(0);
+                    }
                 }
                 if (monto_serv_sal > 0) {
                     monto_max = monto_max + (monto_venta - monto_serv_sal);
                     $('#monto_clinica').val(monto_max);
-                    $('#monto_especialista').val((monto_venta - (monto_venta - monto_serv_sal)) +
-                        monto_calc_prod);
+                    if (aplica == 1) {
+                        $('#monto_especialista').val((monto_venta - (monto_venta - monto_serv_sal)) +
+                            monto_calc_prod);
+                    } else {
+                        $('#monto_clinica').val((monto_venta - (monto_venta - monto_serv_sal)) +
+                            monto_calc_prod);
+                        $('#monto_especialista').val(0);
+                    }
                 }
             }
         });

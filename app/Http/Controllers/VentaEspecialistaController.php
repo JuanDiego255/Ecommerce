@@ -42,9 +42,11 @@ class VentaEspecialistaController extends Controller
         //
         $ventas = VentaEspecialista::join('especialistas', 'venta_especialistas.especialista_id', 'especialistas.id')
             ->join('clothing', 'venta_especialistas.clothing_id', 'clothing.id')
+            ->join('tipo_pagos', 'venta_especialistas.tipo_pago_id', 'tipo_pagos.id')
             ->select(
                 'especialistas.nombre as nombre',
                 'clothing.name as name',
+                'tipo_pagos.tipo as tipo',
                 'venta_especialistas.*'
             )
             ->orderBy('venta_especialistas.created_at','desc')

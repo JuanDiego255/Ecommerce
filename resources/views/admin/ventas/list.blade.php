@@ -52,7 +52,11 @@
                         <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                             Monto Esp</th>
                         <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
+                            Monto Prod</th>
+                        <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                             Porcentaje</th>
+                        <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
+                            Tipo</th>
                         <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                             Fecha</th>
                     </tr>
@@ -94,10 +98,16 @@
                                 <p class=" font-weight-bold mb-0">₡{{ number_format($item->monto_especialista) }}</p>
                             </td>
                             <td class="align-middle text-xxs text-center">
+                                <p class=" font-weight-bold mb-0">₡{{ number_format($item->monto_producto_venta) }}</p>
+                            </td>
+                            <td class="align-middle text-xxs text-center">
                                 <p class=" font-weight-bold mb-0">%{{ $item->porcentaje }}</p>
                             </td>
                             <td class="align-middle text-xxs text-center">
-                                <p class=" font-weight-bold mb-0">{{ $item->created_at->format('d/m/Y') }}                                </p>
+                                <p class=" font-weight-bold mb-0">{{ $item->tipo }}</p>
+                            </td>
+                            <td class="align-middle text-xxs text-center">
+                                <p class=" font-weight-bold mb-0">{{ $item->created_at->format('d/m/Y') }} </p>
                             </td>
 
                         </tr>
