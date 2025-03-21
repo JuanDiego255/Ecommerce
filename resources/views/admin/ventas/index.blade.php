@@ -58,6 +58,7 @@
                                             <option value="{{ $item->id }}" selected
                                                 data-service="{{ $item->monto_por_servicio }}"
                                                 data-aplica="{{ $item->aplica_calc }}"
+                                                data-apli_tarj="{{ $item->aplica_calc_tarjeta }}"
                                                 data-salary="{{ $item->salario_base }}">
                                                 {{ $item->nombre }}
                                             </option>
@@ -66,6 +67,7 @@
                                         <option @if ($key == 0 && $especialista == null) selected @endif
                                             value="{{ $item->id }}" data-service="{{ $item->monto_por_servicio }}"
                                             data-aplica="{{ $item->aplica_calc }}"
+                                            data-apli_tarj="{{ $item->aplica_porc_tarjeta }}"
                                             data-salary="{{ $item->salario_base }}">
                                             {{ $item->nombre }}
                                         </option>
@@ -114,6 +116,7 @@
                             <div class="col-md-3 mb-3">
                                 <input type="hidden" name="clothing_id" id="clothing_id">
                                 <input type="hidden" name="aplica" id="aplica">
+                                <input type="hidden" name="aplica_calc_tarjeta" id="aplica_calc_tarjeta">
                                 <input type="hidden" name="venta_id" id="venta_id"
                                     value="{{ isset($especialista->id) ? $especialista->id : '' }}">
                                 <input type="hidden" name="type" id="type"
@@ -280,9 +283,11 @@
                 var monto_salario = especialistaId.find(':selected').data('salary');
                 var monto_serv = especialistaId.find(':selected').data('service');
                 var aplica_calc = especialistaId.find(':selected').data('aplica');
+                var aplica_tarj = especialistaId.find(':selected').data('apli_tarj');
                 var mont_salary_serv = monto_salario > 0 ? monto_salario : monto_serv > 0 ? monto_serv : 0;
 
                 $('#aplica').val(aplica_calc);
+                $('#aplica_calc_tarjeta').val(aplica_tarj);
                 $('#select_servicios').empty(); // Limpiar 
                 if (especialistaUpdate == 'N') {
                     $('#input_porcentaje').val(''); // Resetear el input
@@ -365,6 +370,7 @@
 
             function calcularMontos() {
                 var aplica = $('#aplica').val();
+                var aplica_calc_tarjeta = $('#aplica_calc_tarjeta').val();
                 var monto_venta = parseFloat($('#monto_venta').val()); // Convierte a número decimal
                 var porcentaje = parseFloat($('#input_porcentaje').val());
                 var monto_producto = parseFloat($('#monto_producto_venta').val());
@@ -394,7 +400,7 @@
                     return;
                 }
                 if (tipo_pago.trim().toUpperCase() === "TARJETA") {
-                    monto_venta = monto_venta / 1.13;
+                    monto_venta = aplica_calc_tarjeta == 1 ? monto_venta / 1.13 : monto_venta;
                 }
                 if (monto_producto > 0) {
                     iva = aplica == 1 ? monto_producto * (13 / 100) : 0;
