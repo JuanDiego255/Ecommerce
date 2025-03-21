@@ -276,7 +276,7 @@
                         @foreach ($ventasPorEspecialista as $venta)
                             @php
                                 $montoClinica = $venta->total_clinica;
-                                $totalGeneralVenta += $venta->total_venta;
+                                $totalGeneralVenta += $venta->total_venta + $venta->total_producto;
                                 $totalGeneralEspecialista += $venta->total_especialista;
                                 $totalGeneralClinica += $montoClinica;
                             @endphp
