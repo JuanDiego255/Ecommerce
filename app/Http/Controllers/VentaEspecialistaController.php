@@ -27,7 +27,16 @@ class VentaEspecialistaController extends Controller
         $tipos = TipoPago::get();
         $especialista = null;
         if ($id != 0) {
-            $especialista = VentaEspecialista::where('id', $id)->first();
+            $especialista = VentaEspecialista::where('venta_especialistas.id', $id)
+                ->join('especialistas', 'venta_especialistas.especialista_id', 'especialistas.id')
+                ->select(
+                    'venta_especialistas.*',
+                    'especialistas.aplica_porc_tarjeta as aplica_porc_tarjeta',
+                    'especialistas.aplica_porc_113 as aplica_porc_113',
+                    'especialistas.aplica_porc_prod as aplica_porc_prod',
+                    'especialistas.aplica_calc as aplica_calc'                    
+                )
+                ->first();
         }
         $especialistas = Especialista::get();
         return view('admin.ventas.index', compact('tipos', 'especialistas', 'id', 'especialista'));
@@ -49,7 +58,7 @@ class VentaEspecialistaController extends Controller
                 'tipo_pagos.tipo as tipo',
                 'venta_especialistas.*'
             )
-            ->orderBy('venta_especialistas.created_at','desc')
+            ->orderBy('venta_especialistas.created_at', 'desc')
             ->get();
         return view('admin.ventas.list', compact('ventas'));
     }

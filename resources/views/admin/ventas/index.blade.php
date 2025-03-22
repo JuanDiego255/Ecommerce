@@ -58,7 +58,9 @@
                                             <option value="{{ $item->id }}" selected
                                                 data-service="{{ $item->monto_por_servicio }}"
                                                 data-aplica="{{ $item->aplica_calc }}"
-                                                data-apli_tarj="{{ $item->aplica_calc_tarjeta }}"
+                                                data-apli_tarj="{{ $item->aplica_porc_tarjeta }}"
+                                                data-apli_113="{{ $item->aplica_porc_113 }}"
+                                                data-apli_prod="{{ $item->aplica_porc_prod }}"
                                                 data-salary="{{ $item->salario_base }}">
                                                 {{ $item->nombre }}
                                             </option>
@@ -68,6 +70,8 @@
                                             value="{{ $item->id }}" data-service="{{ $item->monto_por_servicio }}"
                                             data-aplica="{{ $item->aplica_calc }}"
                                             data-apli_tarj="{{ $item->aplica_porc_tarjeta }}"
+                                            data-apli_113="{{ $item->aplica_porc_113 }}"
+                                            data-apli_prod="{{ $item->aplica_porc_prod }}"
                                             data-salary="{{ $item->salario_base }}">
                                             {{ $item->nombre }}
                                         </option>
@@ -116,6 +120,8 @@
                             <div class="col-md-3 mb-3">
                                 <input type="hidden" name="clothing_id" id="clothing_id">
                                 <input type="hidden" name="aplica" id="aplica">
+                                <input type="hidden" name="aplica_prod" id="aplica_prod">
+                                <input type="hidden" name="aplica_113" id="aplica_113">
                                 <input type="hidden" name="aplica_calc_tarjeta" id="aplica_calc_tarjeta">
                                 <input type="hidden" name="venta_id" id="venta_id"
                                     value="{{ isset($especialista->id) ? $especialista->id : '' }}">
@@ -284,10 +290,15 @@
                 var monto_serv = especialistaId.find(':selected').data('service');
                 var aplica_calc = especialistaId.find(':selected').data('aplica');
                 var aplica_tarj = especialistaId.find(':selected').data('apli_tarj');
+                var aplica_prod = especialistaId.find(':selected').data('apli_prod');
+                var aplica_113 = especialistaId.find(':selected').data('apli_113');
+ 
                 var mont_salary_serv = monto_salario > 0 ? monto_salario : monto_serv > 0 ? monto_serv : 0;
 
                 $('#aplica').val(aplica_calc);
                 $('#aplica_calc_tarjeta').val(aplica_tarj);
+                $('#aplica_prod').val(aplica_prod);
+                $('#aplica_113').val(aplica_113);
                 $('#select_servicios').empty(); // Limpiar 
                 if (especialistaUpdate == 'N') {
                     $('#input_porcentaje').val(''); // Resetear el input
@@ -370,6 +381,8 @@
 
             function calcularMontos() {
                 var aplica = $('#aplica').val();
+                var aplica_113 = $('#aplica_113').val();
+                var aplica_prod = $('#aplica_prod').val();
                 var aplica_calc_tarjeta = $('#aplica_calc_tarjeta').val();
                 var monto_venta = parseFloat($('#monto_venta').val()); // Convierte a número decimal
                 var porcentaje = parseFloat($('#input_porcentaje').val());
@@ -400,14 +413,16 @@
                     return;
                 }
                 if (tipo_pago.trim().toUpperCase() === "TARJETA") {
-                    monto_venta = aplica_calc_tarjeta == 1 ? monto_venta / 1.13 : monto_venta;
+                    monto_venta = aplica_113 == 1 ? monto_venta / 1.13 : monto_venta;                    
+                    monto_venta = aplica_calc_tarjeta == 1 ? (monto_venta * 0.13) + monto_venta : monto_venta;
+                    //$('#monto_venta').val(monto_venta);
                 }
                 if (monto_producto > 0) {
-                    iva = aplica == 1 ? monto_producto * (13 / 100) : 0;
-                    porc_prod = aplica == 1 ? 10 / 100 : 0;
+                    iva = aplica_prod == 1 ? monto_producto * (13 / 100) : 0;
+                    porc_prod = aplica_prod == 1 ? 10 / 100 : 0;
                     monto_calc_prod_sin_iva = monto_producto - iva;
                     monto_calc_prod = (monto_calc_prod_sin_iva * porc_prod);
-                    calc_extra = aplica == 1 ? monto_calc_prod : 0;
+                    calc_extra = aplica_prod == 1 ? monto_calc_prod : 0;
                     monto_max = monto_calc_prod_sin_iva - calc_extra;
                     $('#monto_clinica').val(monto_max);
                 }
