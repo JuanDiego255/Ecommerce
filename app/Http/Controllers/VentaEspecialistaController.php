@@ -34,7 +34,7 @@ class VentaEspecialistaController extends Controller
                     'especialistas.aplica_porc_tarjeta as aplica_porc_tarjeta',
                     'especialistas.aplica_porc_113 as aplica_porc_113',
                     'especialistas.aplica_porc_prod as aplica_porc_prod',
-                    'especialistas.aplica_calc as aplica_calc'                    
+                    'especialistas.aplica_calc as aplica_calc'
                 )
                 ->first();
         }
@@ -196,10 +196,18 @@ class VentaEspecialistaController extends Controller
         try {
             $cajaAbierta = ArqueoCaja::cajaAbiertaHoy($request->fecha_matricula)->first();
             $type = $request->type;
+            if ($request->monto_venta <= 0 && $request->monto_producto_venta <= 0) {
+                return redirect()->back()->with(['status' => 'Para realizar una venta debes ingresar el monto de la venta, o el monto del producto', 'icon' => 'warning'])->withInput();
+            } else if ($request->monto_venta == null && $request->monto_producto_venta == null) {
+                return redirect()->back()->with(['status' => 'Para realizar una venta debes ingresar el monto de la venta, o el monto del producto', 'icon' => 'warning'])->withInput();
+            }
+            if ($request->monto_clinica <= 0 && $request->monto_especialista <= 0) {
+                return redirect()->back()->with(['status' => 'Debes presionar el botón de calcular para evitar inconsistencias en el informe', 'icon' => 'warning'])->withInput();
+            }
             // Validar si no hay caja abierta y el tipo es "S"
             if (!$cajaAbierta && $type == "S") {
-                return redirect()->back()->with(['status' => 'No hay ninguna caja abierta para el día de hoy', 'icon' => 'warning']);
-            }
+                return redirect()->back()->with(['status' => 'No hay ninguna caja abierta para el día de hoy', 'icon' => 'warning'])->withInput();
+            }           
             // Si viene un ID de venta, hacemos un update, si no, creamos una nueva venta
             if (!empty($request->venta_id)) {
                 // Buscar la venta existente               
@@ -238,7 +246,7 @@ class VentaEspecialistaController extends Controller
             return redirect()->back()->with(['status' => 'Se ha guardado la venta con éxito', 'icon' => 'success']);
         } catch (\Exception $th) {
             DB::rollBack();
-            return redirect()->back()->with(['status' => 'No se pudo guardar la venta', 'icon' => 'error']);
+            return redirect()->back()->with(['status' => 'No se pudo guardar la venta', 'icon' => 'error'])->withInput();
         }
     }
 }

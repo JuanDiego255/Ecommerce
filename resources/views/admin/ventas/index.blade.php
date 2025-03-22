@@ -131,7 +131,7 @@
                                 <div id="div_porc" class="input-group input-group-lg input-group-outline is-filled my-3">
                                     <label class="form-label">Porcentaje (Servicio)</label>
                                     <input readonly
-                                        value="{{ isset($especialista->porcentaje) ? $especialista->porcentaje : '' }}"
+                                        value="{{ old('input_porcentaje', isset($especialista->porcentaje) ? $especialista->porcentaje : '') }}"
                                         type="number"
                                         class="form-control form-control-lg @error('input_porcentaje') is-invalid @enderror"
                                         name="input_porcentaje" id="input_porcentaje">
@@ -148,7 +148,7 @@
                                         <div class="input-group input-group-lg input-group-outline is-filled my-3">
                                             <label class="form-label">Monto de venta</label>
                                             <input
-                                                value="{{ isset($especialista->monto_venta) ? $especialista->monto_venta : '' }}"
+                                                value="{{ old('monto_venta', isset($especialista->monto_venta) ? $especialista->monto_venta : '0') }}"
                                                 required type="number"
                                                 class="form-control form-control-lg @error('monto_venta') is-invalid @enderror"
                                                 name="monto_venta" id="monto_venta">
@@ -168,7 +168,7 @@
                                         <div class="input-group is-filled input-group-lg input-group-outline my-3">
                                             <label class="form-label">Monto venta de producto</label>
                                             <input
-                                                value="{{ isset($especialista->monto_producto_venta) ? $especialista->monto_producto_venta : '' }}"
+                                                value="{{ old('monto_producto_venta', isset($especialista->monto_producto_venta) ? $especialista->monto_producto_venta : '0') }}"
                                                 type="number"
                                                 class="form-control form-control-lg @error('monto_producto_venta') is-invalid @enderror"
                                                 name="monto_producto_venta" id="monto_producto_venta">
@@ -219,7 +219,7 @@
                                     class="input-group is-filled input-group-lg input-group-outline my-3">
                                     <label class="form-label">Monto por servicio o salario (Opcional)</label>
                                     <input
-                                        value="{{ isset($especialista->monto_por_servicio_o_salario) ? $especialista->monto_por_servicio_o_salario : '' }}"
+                                        value="{{ old('monto_por_servicio_o_salario', isset($especialista->monto_por_servicio_o_salario) ? $especialista->monto_por_servicio_o_salario : '0') }}"
                                         type="number" readonly
                                         class="form-control form-control-lg @error('monto_por_servicio_o_salario') is-invalid @enderror"
                                         name="monto_por_servicio_o_salario" id="monto_por_servicio_o_salario">
@@ -235,7 +235,7 @@
                                     class="input-group is-filled input-group-lg input-group-outline my-3">
                                     <label class="form-label">Monto Clínica</label>
                                     <input
-                                        value="{{ isset($especialista->monto_clinica) ? $especialista->monto_clinica : '' }}"
+                                        value="{{ old('monto_clinica', isset($especialista->monto_clinica) ? $especialista->monto_clinica : '0') }}"
                                         type="number" required
                                         class="form-control form-control-lg @error('monto_clinica') is-invalid @enderror"
                                         name="monto_clinica" readonly id="monto_clinica">
@@ -251,7 +251,7 @@
                                     class="input-group is-filled input-group-lg input-group-outline my-3">
                                     <label class="form-label">Monto Especialista</label>
                                     <input
-                                        value="{{ isset($especialista->monto_especialista) ? $especialista->monto_especialista : '' }}"
+                                        value="{{ old('monto_especialista', isset($especialista->monto_especialista) ? $especialista->monto_especialista : '0') }}"
                                         type="number" required
                                         class="form-control form-control-lg @error('monto_especialista') is-invalid @enderror"
                                         name="monto_especialista" readonly id="monto_especialista">
@@ -399,15 +399,9 @@
                 var descuento = 0;
                 var porc_prod = 0;
                 var calc_extra = 0;
-                if (monto_venta <= 0) {
+                if (monto_venta <= 0 && monto_producto <= 0) {
                     Swal.fire({
-                        title: "El monto venta no puede ser menor o igual a 0",
-                        icon: "warning",
-                    });
-                    return;
-                } else if (monto_venta == null || monto_venta == "") {
-                    Swal.fire({
-                        title: "El monto venta no puede quedar vacío",
+                        title: "Para realizar una venta debes ingresar el monto de la venta, o el monto del producto",
                         icon: "warning",
                     });
                     return;
