@@ -602,7 +602,7 @@
                     <div class="row g-4 align-content-center card-group container-fluid mt-2 mb-5 foto">
                         @foreach ($category as $key => $item)
                             @if ($item->black_friday != 1)
-                                <div class="{{ $key + 1 > 3 ? 'col-md-3' : 'col-md-4' }} col-sm-6 mb-2">
+                                <div class="{{ $key > 3 ? 'col-md-3' : 'col-md-4' }} col-sm-6 mb-2">
                                     <div class="product-grid product_data">
                                         <div class="product-image">
                                             <img

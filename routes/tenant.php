@@ -24,6 +24,7 @@ use App\Http\Controllers\LogosController;
 use App\Http\Controllers\MatriculaEstudianteController;
 use App\Http\Controllers\MedicineResultController;
 use App\Http\Controllers\MetaTagsController;
+use App\Http\Controllers\MetricaController;
 use App\Http\Controllers\PagosMatriculaController;
 use App\Http\Controllers\PersonalUserController;
 use App\Http\Controllers\RolesController;
@@ -389,6 +390,11 @@ Route::middleware([
             Route::get('get-list/especialistas/service/', [VentaEspecialistaController::class, 'getServices']);
             //Rutas para ver los movimientos de las cuentas
             Route::get('list-esp/ventas/{fecha}', [VentaEspecialistaController::class, 'indexVentas']);
+            //Rutas para metricas
+            Route::get('metrica/admin', [MetricaController::class, 'index']);
+            Route::put('metrica/update/{id}', [MetricaController::class, 'update']);
+            Route::delete('delete/metrica/{id}', [MetricaController::class, 'destroy']);
+            Route::post('/metrica/store', [MetricaController::class, 'store']);
         });
     });
     //images Tenant

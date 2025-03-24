@@ -4,7 +4,7 @@
     {!! OpenGraph::generate() !!}
 @endsection
 @php
-    $ruta = $tenantinfo->tenant != "aclimate" ? "file" : "aclifile";
+    $ruta = $tenantinfo->tenant != 'aclimate' ? 'file' : 'aclifile';
 @endphp
 @section('content')
     {{-- @include('layouts.inc.carsale.footer') --}}
@@ -13,11 +13,13 @@
             @if (isset($tenantcarousel) && count($tenantcarousel) > 0)
                 @foreach ($tenantcarousel as $key => $carousel)
                     <div class="single_slider d-flex align-items-center "
-                        style="background-image:{{$tenantinfo->tenant != 'aclimate' ? ' linear-gradient(to right, 
-    rgb(0, 0, 0) 0%, 
-    rgb(0, 0, 0) 30%, 
-    rgba(0, 0, 0, 0.7) 40%, 
-    rgba(0, 0, 0, 0) 70%), ' : ''}} 
+                        style="background-image:{{ $tenantinfo->tenant != 'aclimate'
+                            ? ' linear-gradient(to right, 
+                                                    rgb(0, 0, 0) 0%, 
+                                                    rgb(0, 0, 0) 30%, 
+                                                    rgba(0, 0, 0, 0.7) 40%, 
+                                                    rgba(0, 0, 0, 0) 70%), '
+                            : '' }} 
     url('{{ route($ruta, $carousel->image) }}');
  background-size: cover; background-position: center;">
                         <div class="container">
@@ -63,7 +65,9 @@
                                         </div>
                                         <div class="case_heading">
                                             <span>{{ $item->meta_title }}</span>
-                                            <h3><a href="{{ url('clothes-category/' . $item->category_id . '/' . $item->department_id) }}">{{ $item->name }}</a></h3>
+                                            <h3><a
+                                                    href="{{ url('clothes-category/' . $item->category_id . '/' . $item->department_id) }}">{{ $item->name }}</a>
+                                            </h3>
                                         </div>
                                     </div>
                                 @endforeach
@@ -233,42 +237,30 @@
     <div class="counter_area counter_bg_1 mt-5 overlay_03">
         <div class="container">
             <div class="row">
-                <div class="col-xl-3 col-lg-3 col-md-3">
-                    <div class="single_counter text-center">
-                        <div class="counter_icon">
-                            <img src="{{asset('avstyles/img/svg_icon/cart.svg')}}" alt="" />
+                @foreach ($metricas as $key => $item)
+                    @php
+                        // Extraer el valor y verificar si tiene el símbolo de porcentaje
+                        preg_match('/([\d,.]+)\s*(%?)/', $item->valor, $matches);
+                        $numero = $matches[1] ?? '0';
+                        $simbolo = $matches[2] ?? '';
+                    @endphp
+
+                    <div class="col-xl-3 col-lg-3 col-md-3">
+                        <div class="single_counter text-center">
+                            <div class="counter_icon">
+                                <img src="{{ isset($item->image) ? route($ruta, $item->image) : url('images/producto-sin-imagen.PNG') }}"
+                                    alt="" />
+                            </div>
+                            <h3>
+                                <span class="counter">{{ $numero }}</span>
+                                @if ($simbolo)
+                                    <span>{{ $simbolo }}</span>
+                                @endif
+                            </h3>
+                            <p>{{ $item->titulo }}</p>
                         </div>
-                        <h3><span class="counter">100</span> <span>%</span></h3>
-                        <p>Proyectos Exitosos</p>
                     </div>
-                </div>
-                <div class="col-xl-3 col-lg-3 col-md-3">
-                    <div class="single_counter text-center">
-                        <div class="counter_icon">
-                            <img src="{{asset('avstyles/img/svg_icon/group.svg')}}" alt="" />
-                        </div>
-                        <h3><span class="counter">91600</span></h3>
-                        <p>Metros Cuadrados de Proyectos</p>
-                    </div>
-                </div>
-                <div class="col-xl-3 col-lg-3 col-md-3">
-                    <div class="single_counter text-center">
-                        <div class="counter_icon">
-                            <img src="{{asset('avstyles/img/svg_icon/respect.svg')}}" alt="" />
-                        </div>
-                        <h3><span class="counter">+400</span></h3>
-                        <p>Proyectos Completados</p>
-                    </div>
-                </div>
-                <div class="col-xl-3 col-lg-3 col-md-3">
-                    <div class="single_counter text-center">
-                        <div class="counter_icon">
-                            <img src="{{asset('avstyles/img/svg_icon/heart.svg')}}" alt="" />
-                        </div>
-                        <h3><span class="counter">12</span> <span></span></h3>
-                        <p>Años de Experiencia</p>
-                    </div>
-                </div>
+                @endforeach
             </div>
         </div>
     </div>

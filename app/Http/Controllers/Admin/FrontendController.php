@@ -11,6 +11,7 @@ use App\Models\ClothingDetails;
 use App\Models\Department;
 use App\Models\Logos;
 use App\Models\MetaTags;
+use App\Models\Metrica;
 use App\Models\ProductImage;
 use App\Models\Seller;
 use App\Models\SocialNetwork;
@@ -257,7 +258,8 @@ class FrontendController extends Controller
             case (6):
             case (7):
                 $logos = Logos::all();
-                return view('frontend.av.index', compact('clothings', 'logos', 'showModal', 'advert', 'blogs', 'social', 'clothings_offer', 'category', 'sellers', 'comments'));
+                $metricas = Metrica::all();
+                return view('frontend.av.index', compact('clothings','metricas', 'logos', 'showModal', 'advert', 'blogs', 'social', 'clothings_offer', 'category', 'sellers', 'comments'));
                 break;
             default:
                 if ($tenantinfo->kind_of_features == 1) {

@@ -406,6 +406,15 @@
                             <span class="nav-link-text ms-1">Blog</span>
                         </a>
                     </li>
+                    <li class="nav-item {{ $tenantinfo->tenant == 'avelectromecanica' || $tenantinfo->tenant == 'aclimate' ? 'd-block' : 'd-none' }}">
+                        <a @if ($view_name == 'admin_metrica_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
+                            href="{{ url('metrica/admin') }}">
+                            <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                                <i class="material-icons opacity-10">bar_chart</i>
+                            </div>
+                            <span class="nav-link-text ms-1">Métricas</span>
+                        </a>
+                    </li>
                     <li class="nav-item">
                         <a @if ($view_name == 'admin_testimonial_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
                             href="{{ url('comments') }}">
