@@ -1,6 +1,7 @@
 @extends('layouts.admin')
 @section('content')
-    <h2 class="text-center font-title"><strong>Ventas realizadas</strong>
+    <h2 class="text-center font-title">
+        <strong>Ventas realizadas</strong>
     </h2>
 
     <hr class="hr-servicios">
@@ -76,6 +77,12 @@
                                     data-bs-placement="bottom" title="Eliminar">
                                     <i class="material-icons text-lg">delete</i>
                                 </button> --}}
+                                @if ($item->estado != 'A')
+                                    <button type="button" data-bs-toggle="modal"
+                                        data-bs-target="#anular-modal{{ $item->id }}"
+                                        class="btn btn-link text-velvet me-auto border-0" style="text-decoration: none;"> <i
+                                            class="material-icons text-lg">delete</i></button>
+                                @endif
                                 <a class="btn btn-link text-velvet me-auto border-0"
                                     href="{{ url('/ventas/especialistas/' . $item->id) }}" data-bs-toggle="tooltip"
                                     data-bs-placement="bottom" title="Editar">
@@ -86,7 +93,11 @@
                                 <p class=" font-weight-bold mb-0">{{ $item->nombre }}</p>
                             </td>
                             <td class="align-middle text-xxs text-center">
-                                <p class=" font-weight-bold mb-0">{{ $item->name }}</p>
+                                <p class=" font-weight-bold mb-0">{{ $item->name }}
+                                    @if ($item->estado == 'A')
+                                        <span class="badge badge-pill ml-2 text-xxs badge-date text-white">Anulado</span>
+                                    @endif
+                                </p>
                             </td>
                             <td class="align-middle text-xxs text-center">
                                 <p class=" font-weight-bold mb-0">₡{{ number_format($item->monto_venta) }}</p>
@@ -111,6 +122,7 @@
                             </td>
 
                         </tr>
+                        @include('admin.ventas.anular')
                     @endforeach
                 </tbody>
             </table>

@@ -77,6 +77,7 @@ class VentaEspecialistaController extends Controller
             ->join('clothing', 'venta_especialistas.clothing_id', 'clothing.id')
             ->join('tipo_pagos', 'venta_especialistas.tipo_pago_id', 'tipo_pagos.id')
             ->whereDate('arqueo_cajas.fecha_ini', $fechaCostaRica)
+            ->where('venta_especialistas.estado', '!=', 'A')
             ->select(
                 'venta_especialistas.*',
                 'especialistas.nombre as nombre',
@@ -107,6 +108,7 @@ class VentaEspecialistaController extends Controller
                 JOIN arqueo_cajas ON venta_especialistas.arqueo_id = arqueo_cajas.id
                 JOIN tipo_pagos ON venta_especialistas.tipo_pago_id = tipo_pagos.id
                 WHERE DATE(arqueo_cajas.fecha_ini) = ?
+                AND venta_especialistas.estado <> 'A'
                 GROUP BY tipo_pagos.tipo
                 
                 UNION ALL
@@ -148,6 +150,7 @@ class VentaEspecialistaController extends Controller
         $ventasPorEspecialista = VentaEspecialista::join('arqueo_cajas', 'venta_especialistas.arqueo_id', 'arqueo_cajas.id')
             ->join('especialistas', 'venta_especialistas.especialista_id', 'especialistas.id')
             ->whereDate('arqueo_cajas.fecha_ini', $fechaCostaRica)
+            ->where('venta_especialistas.estado', '!=', 'A')
             ->select(
                 'especialistas.nombre as especialista',
                 DB::raw('SUM(venta_especialistas.monto_clinica) as total_clinica'),
@@ -207,7 +210,7 @@ class VentaEspecialistaController extends Controller
             // Validar si no hay caja abierta y el tipo es "S"
             if (!$cajaAbierta && $type == "S") {
                 return redirect()->back()->with(['status' => 'No hay ninguna caja abierta para el día de hoy', 'icon' => 'warning'])->withInput();
-            }           
+            }
             // Si viene un ID de venta, hacemos un update, si no, creamos una nueva venta
             if (!empty($request->venta_id)) {
                 // Buscar la venta existente               
@@ -247,6 +250,28 @@ class VentaEspecialistaController extends Controller
         } catch (\Exception $th) {
             DB::rollBack();
             return redirect()->back()->with(['status' => 'No se pudo guardar la venta', 'icon' => 'error'])->withInput();
+        }
+    }
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function updateStatus($id, Request $request)
+    {
+        //
+        DB::beginTransaction();
+        try {
+            $venta = VentaEspecialista::find($id);
+            $venta->estado = 'A';
+            $venta->nota_anulacion = $request->nota_anulacion;
+            $venta->update();
+            DB::commit();
+            return redirect()->back()->with(['status' => 'Se ha anulado la venta con éxito', 'icon' => 'success']);
+        } catch (\Exception $th) {
+            DB::rollBack();
+            return redirect()->back()->with(['status' => 'No se pudo anular la venta', 'icon' => 'error'])->withInput();
         }
     }
 }

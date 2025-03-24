@@ -283,16 +283,13 @@
     <script>
         $(document).ready(function() {
             var especialistaUpdate = "{{ $especialista->clothing_id ?? 'N' }}";
-
             function cargarServicios(especialistaId, especialistaUpdate) {
-
                 var monto_salario = especialistaId.find(':selected').data('salary');
                 var monto_serv = especialistaId.find(':selected').data('service');
                 var aplica_calc = especialistaId.find(':selected').data('aplica');
                 var aplica_tarj = especialistaId.find(':selected').data('apli_tarj');
                 var aplica_prod = especialistaId.find(':selected').data('apli_prod');
-                var aplica_113 = especialistaId.find(':selected').data('apli_113');
- 
+                var aplica_113 = especialistaId.find(':selected').data('apli_113'); 
                 var mont_salary_serv = monto_salario > 0 ? monto_salario : monto_serv > 0 ? monto_serv : 0;
 
                 $('#aplica').val(aplica_calc);
@@ -358,7 +355,6 @@
                 $('#monto_producto_venta').val(0);
                 $('#monto_especialista').val(0);
             });
-
             // Capturar el cambio en el select de servicios
             $('#select_servicios').change(function() {
                 let porcentaje = $(this).find(':selected').data(
@@ -378,7 +374,6 @@
                 // Aquí va lo que quieres hacer cuando se haga clic               
                 calcularMontos();
             });
-
             function calcularMontos() {
                 var aplica = $('#aplica').val();
                 var aplica_113 = $('#aplica_113').val();
