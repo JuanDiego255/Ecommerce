@@ -268,7 +268,7 @@
                                     <label class="form-label">Nombre Cliente</label>
                                     <input
                                         value="{{ old('nombre_cliente', isset($especialista->nombre_cliente) ? $especialista->nombre_cliente : '') }}"
-                                        type="text" required
+                                        type="text"
                                         class="form-control form-control-lg @error('nombre_cliente') is-invalid @enderror"
                                         name="nombre_cliente" id="nombre_cliente">
                                     @error('nombre_cliente')

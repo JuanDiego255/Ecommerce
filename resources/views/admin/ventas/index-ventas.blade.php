@@ -276,6 +276,7 @@
                             $totalGeneralVenta = 0;
                             $totalGeneralEspecialista = 0;
                             $totalGeneralClinica = 0;
+                            $totalGeneralProducto = 0;
                         @endphp
 
                         @foreach ($ventasPorEspecialista as $venta)
@@ -284,6 +285,7 @@
                                 $totalGeneralVenta += $venta->total_venta + $venta->total_producto;
                                 $totalGeneralEspecialista += $venta->total_especialista;
                                 $totalGeneralClinica += $montoClinica;
+                                $totalGeneralProducto += $venta->total_producto;
                             @endphp
                             <li class="list-group-item d-flex justify-content-between align-items-center">
                                 <div>
@@ -291,16 +293,15 @@
 
                                 </div>
                                 <div>
-                                    <span class="text-success fw-bold">₡{{ number_format($venta->total_venta) }}
-                                        @if ($venta->total_producto > 0)
-                                            + P:₡{{ number_format($venta->total_producto) }}
-                                        @endif
+                                    <span class="text-success fw-bold">₡{{ number_format($venta->total_venta + $venta->total_producto) }}                                        
                                     </span>
                                     <br>
                                     <small class="text-primary">Especialista:
                                         ₡{{ number_format($venta->total_especialista) }}</small>
                                     <br>
                                     <small class="text-danger">Clínica: ₡{{ number_format($montoClinica) }}</small>
+                                    <br>
+                                    <small class="text-info">Prod Vendido: ₡{{ number_format($venta->total_producto) }}</small>
                                 </div>
                             </li>
                         @endforeach
@@ -315,6 +316,8 @@
                                     ₡{{ number_format($totalGeneralEspecialista) }}</small>
                                 <br>
                                 <small class="text-danger">Clínica: ₡{{ number_format($totalGeneralClinica) }}</small>
+                                <br>
+                                <small class="text-info">Productos: ₡{{ number_format($totalGeneralProducto) }}</small>
                             </div>
                         </li>
                     </ul>
