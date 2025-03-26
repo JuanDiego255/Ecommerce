@@ -214,7 +214,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-4 mb-3">
+                            <div class="col-md-3 mb-3">
                                 <div id="div_sal_serv"
                                     class="input-group is-filled input-group-lg input-group-outline my-3">
                                     <label class="form-label">Monto por servicio o salario (Opcional)</label>
@@ -230,7 +230,7 @@
                                     @enderror
                                 </div>
                             </div>
-                            <div class="col-md-4 mb-3">
+                            <div class="col-md-3 mb-3">
                                 <div id="div_monto_cli"
                                     class="input-group is-filled input-group-lg input-group-outline my-3">
                                     <label class="form-label">Monto Clínica</label>
@@ -246,7 +246,7 @@
                                     @enderror
                                 </div>
                             </div>
-                            <div class="col-md-4 mb-3">
+                            <div class="col-md-3 mb-3">
                                 <div id="div_monto_esp"
                                     class="input-group is-filled input-group-lg input-group-outline my-3">
                                     <label class="form-label">Monto Especialista</label>
@@ -256,6 +256,22 @@
                                         class="form-control form-control-lg @error('monto_especialista') is-invalid @enderror"
                                         name="monto_especialista" readonly id="monto_especialista">
                                     @error('monto_especialista')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>Campo Requerido</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div id="div_monto_esp"
+                                    class="input-group is-filled input-group-lg input-group-outline my-3">
+                                    <label class="form-label">Nombre Cliente</label>
+                                    <input
+                                        value="{{ old('nombre_cliente', isset($especialista->nombre_cliente) ? $especialista->nombre_cliente : '') }}"
+                                        type="text" required
+                                        class="form-control form-control-lg @error('nombre_cliente') is-invalid @enderror"
+                                        name="nombre_cliente" id="nombre_cliente">
+                                    @error('nombre_cliente')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>Campo Requerido</strong>
                                         </span>

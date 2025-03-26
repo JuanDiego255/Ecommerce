@@ -227,6 +227,7 @@ class VentaEspecialistaController extends Controller
                     $venta->monto_por_servicio_o_salario = $request->monto_por_servicio_o_salario;
                     $venta->monto_clinica = $request->monto_clinica;
                     $venta->monto_especialista = $request->monto_especialista;
+                    $venta->nombre_cliente = $request->nombre_cliente;
                     $venta->update();
                 }
             } else {
@@ -243,6 +244,7 @@ class VentaEspecialistaController extends Controller
                 $venta->monto_por_servicio_o_salario = $request->monto_por_servicio_o_salario;
                 $venta->monto_clinica = $request->monto_clinica;
                 $venta->monto_especialista = $request->monto_especialista;
+                $venta->nombre_cliente = $request->nombre_cliente;
                 $venta->save();
             }
             DB::commit();

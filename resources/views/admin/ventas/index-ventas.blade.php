@@ -57,6 +57,7 @@
                                 <th class="text-secondary font-weight-bolder opacity-7">{{ __('Porcentaje') }}</th>
                                 <th class="text-secondary font-weight-bolder opacity-7">{{ __('Monto Venta Producto') }}
                                 </th>
+                                <th class="text-secondary font-weight-bolder opacity-7">{{ __('Cliente') }}</th>
                                 <th class="text-secondary font-weight-bolder opacity-7">{{ __('Tipo Pago') }}</th>
                                 <th class="text-secondary font-weight-bolder opacity-7">{{ __('Fecha') }}</th>
                             </tr>
@@ -82,7 +83,7 @@
                                         <td class="text-success font-weight-bold">
                                             ₡{{ number_format($subtotalMontoProducto) }}</td>
                                         <td></td>
-
+                                        <td></td>
                                         <td></td> <!-- Asegurar el mismo número de columnas -->
                                     </tr>
 
@@ -112,6 +113,9 @@
                                         <p class="text-success mb-0">₡{{ number_format($item->monto_producto_venta) }}</p>
                                     </td>
                                     <td class="align-middle text-sm">
+                                        <p class="text-dark mb-0">{{ $item->nombre_cliente }}</p>
+                                    </td>
+                                    <td class="align-middle text-sm">
                                         <p class="text-dark mb-0">{{ $item->tipo }}</p>
                                     </td>
                                     <td class="align-middle text-sm">
@@ -138,6 +142,7 @@
                                     <td></td>
                                     <td class="text-success font-weight-bold">₡{{ number_format($subtotalMontoProducto) }}
                                     </td>
+                                    <td></td>
                                     <td></td>
                                     <td></td>
                                 </tr>
