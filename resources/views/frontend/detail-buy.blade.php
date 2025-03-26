@@ -55,7 +55,9 @@
                         <tbody>
                             @foreach ($buysDetails as $buy)
                                 @php
-                                    $attributesValues = explode(', ', $buy->attributes_values);
+                                    $attributesValues = !empty($buy->attributes_values)
+                                        ? explode(', ', $buy->attributes_values)
+                                        : [];
                                 @endphp
                                 <tr>
                                     <td class="w-50">
@@ -83,11 +85,15 @@
                                         <p class=" font-weight-bold mb-0">
                                             @foreach ($attributesValues as $attributeValue)
                                                 @php
-                                                    // Separa el atributo del valor por ": "
-                                                    [$attribute, $value] = explode(': ', $attributeValue);
+                                                    // Verifica que el atributo tenga el formato esperado antes de hacer explode
+                                                    $parts = explode(': ', $attributeValue, 2);
+                                                    $attribute = $parts[0] ?? '';
+                                                    $value = $parts[1] ?? '';
                                                 @endphp
 
-                                                {{ $attribute }}: {{ $value }}<br>
+                                                @if ($attribute !== '')
+                                                    {{ $attribute }}: {{ $value }}<br>
+                                                @endif
                                             @endforeach
                                         </p>
                                     </td>

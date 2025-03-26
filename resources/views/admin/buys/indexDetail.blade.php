@@ -47,15 +47,15 @@
                                 <div class="col-md-9">
                                     <div class="input-group input-group-lg input-group-static my-3 w-100">
                                         <label>Número de guía</label>
-                                        <input value="{{$currentBuy->guide_number}}" type="text" class="form-control form-control-lg"
-                                            name="guide_number" id="guide_number">
+                                        <input value="{{ $currentBuy->guide_number }}" type="text"
+                                            class="form-control form-control-lg" name="guide_number" id="guide_number">
                                     </div>
                                 </div>
                                 <div class="col-md-3">
                                     <button type="submit" class="btn btn-add_to_cart w-100 d-block h8 mt-3"><i
                                             class="material-icons opacity-10">save</i>
                                     </button>
-                                </div>                                
+                                </div>
                             </div>
                         </form>
                     </div>
@@ -101,7 +101,9 @@
                                 <tbody>
                                     @foreach ($buysDetails as $buy)
                                         @php
-                                            $attributesValues = explode(', ', $buy->attributes_values);
+                                            $attributesValues = !empty($buy->attributes_values)
+                                                ? explode(', ', $buy->attributes_values)
+                                                : [];
                                         @endphp
                                         <tr>
                                             <td class="align-middle">
@@ -165,11 +167,15 @@
                                                 <p class=" font-weight-bold mb-0">
                                                     @foreach ($attributesValues as $attributeValue)
                                                         @php
-                                                            // Separa el atributo del valor por ": "
-                                                            [$attribute, $value] = explode(': ', $attributeValue);
+                                                            // Verifica que el atributo tenga el formato esperado antes de hacer explode
+                                                            $parts = explode(': ', $attributeValue, 2);
+                                                            $attribute = $parts[0] ?? '';
+                                                            $value = $parts[1] ?? '';
                                                         @endphp
 
-                                                        {{ $attribute }}: {{ $value }}<br>
+                                                        @if ($attribute !== '')
+                                                            {{ $attribute }}: {{ $value }}<br>
+                                                        @endif
                                                     @endforeach
                                                 </p>
                                             </td>

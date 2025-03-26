@@ -255,7 +255,7 @@ class CartController extends Controller
         try {
             $session_id = session()->get('session_id');
             $esVentaInterna = false;
-            if (Auth::check()) {                
+            if (Auth::check()) {
                 $buy_in = Cart::where('id', $id)->first();
                 if ($buy_in->user_id == null && $buy_in->session_id == null) {
                     $esVentaInterna = true;
@@ -306,12 +306,13 @@ class CartController extends Controller
                     ->where('carts.session_id', null)
                     ->where('carts.sold', 0)
                     ->join('users', 'carts.user_id', 'users.id')
-                    ->join('attribute_value_cars', 'carts.id', 'attribute_value_cars.cart_id')
-                    ->join('attributes', 'attribute_value_cars.attr_id', 'attributes.id')
-                    ->join('attribute_values', 'attribute_value_cars.value_attr', 'attribute_values.id')
-                    ->where('stocks.price', '!=', 0)
+                    ->leftJoin('attribute_value_cars', 'carts.id', 'attribute_value_cars.cart_id')
+                    ->leftJoin('attributes', 'attribute_value_cars.attr_id', 'attributes.id')
+                    ->leftJoin('attribute_values', 'attribute_value_cars.value_attr', 'attribute_values.id')
+
                     ->leftJoin('stocks', function ($join) {
-                        $join->on('carts.clothing_id', '=', 'stocks.clothing_id')->on('attribute_value_cars.attr_id', '=', 'stocks.attr_id')->on('attribute_value_cars.value_attr', '=', 'stocks.value_attr');
+                        $join->on('carts.clothing_id', '=', 'stocks.clothing_id')->on('attribute_value_cars.attr_id', '=', 'stocks.attr_id')->on('attribute_value_cars.value_attr', '=', 'stocks.value_attr')
+                            ->where('stocks.price', '!=', 0);
                     })
                     ->join('clothing', 'carts.clothing_id', 'clothing.id')
                     ->leftJoin('product_images', function ($join) {
@@ -332,8 +333,8 @@ class CartController extends Controller
                         'carts.id as cart_id',
                         'attributes.name as name_attr',
                         'attribute_values.value as value',
-                        'stocks.price as price',
-                        'stocks.stock as stock',
+                        DB::raw('COALESCE(stocks.price, clothing.price) as price'),
+                        DB::raw('COALESCE(stocks.stock, clothing.stock) as stock'),
                         DB::raw('(
                             SELECT GROUP_CONCAT(CONCAT(attributes.name, ": ", attribute_values.value) SEPARATOR ", ")
                             FROM attribute_value_cars
@@ -343,7 +344,24 @@ class CartController extends Controller
                         ) as attributes_values'),
                         DB::raw('IFNULL(product_images.image, "") as image'), // Obtener la primera imagen del producto
                     )
-                    ->groupBy('clothing.id', 'clothing.name', 'clothing.casa', 'clothing.description', 'stocks.price', 'stocks.stock', 'clothing.mayor_price', 'attributes.name', 'attribute_values.value', 'clothing.status', 'clothing.discount', 'carts.quantity', 'carts.id', 'product_images.image')
+                    ->groupBy(
+                        'clothing.id',
+                        'clothing.price',
+                        'clothing.stock',
+                        'clothing.name',
+                        'clothing.casa',
+                        'clothing.description',
+                        'stocks.price',
+                        'stocks.stock',
+                        'clothing.mayor_price',
+                        'attributes.name',
+                        'attribute_values.value',
+                        'clothing.status',
+                        'clothing.discount',
+                        'carts.quantity',
+                        'carts.id',
+                        'product_images.image'
+                    )
                     ->get();
                 // Resto del código para obtener los artículos del carrito para usuarios autenticados
                 return $cart_items;
@@ -352,12 +370,11 @@ class CartController extends Controller
                 $cart_items = Cart::where('carts.session_id', $session_id)
                     ->where('carts.user_id', null)
                     ->where('carts.sold', 0)
-                    ->join('attribute_value_cars', 'carts.id', 'attribute_value_cars.cart_id')
-                    ->join('attributes', 'attribute_value_cars.attr_id', 'attributes.id')
-                    ->join('attribute_values', 'attribute_value_cars.value_attr', 'attribute_values.id')
-                    ->where('stocks.price', '!=', 0)
+                    ->leftJoin('attribute_value_cars', 'carts.id', 'attribute_value_cars.cart_id')
+                    ->leftJoin('attributes', 'attribute_value_cars.attr_id', 'attributes.id')
+                    ->leftJoin('attribute_values', 'attribute_value_cars.value_attr', 'attribute_values.id')
                     ->leftJoin('stocks', function ($join) {
-                        $join->on('carts.clothing_id', '=', 'stocks.clothing_id')->on('attribute_value_cars.attr_id', '=', 'stocks.attr_id')->on('attribute_value_cars.value_attr', '=', 'stocks.value_attr');
+                        $join->on('carts.clothing_id', '=', 'stocks.clothing_id')->on('attribute_value_cars.attr_id', '=', 'stocks.attr_id')->on('attribute_value_cars.value_attr', '=', 'stocks.value_attr')->where('stocks.price', '!=', 0);
                     })
                     ->join('clothing', 'carts.clothing_id', 'clothing.id')
                     ->leftJoin('product_images', function ($join) {
@@ -378,8 +395,8 @@ class CartController extends Controller
                         'carts.id as cart_id',
                         'attributes.name as name_attr',
                         'attribute_values.value as value',
-                        'stocks.price as price',
-                        'stocks.stock as stock',
+                        DB::raw('COALESCE(stocks.price, clothing.price) as price'),
+                        DB::raw('COALESCE(stocks.stock, clothing.stock) as stock'),
                         DB::raw('(
                             SELECT GROUP_CONCAT(CONCAT(attributes.name, ": ", attribute_values.value) SEPARATOR ", ")
                             FROM attribute_value_cars
@@ -389,7 +406,24 @@ class CartController extends Controller
                         ) as attributes_values'),
                         DB::raw('IFNULL(product_images.image, "") as image'), // Obtener la primera imagen del producto
                     )
-                    ->groupBy('clothing.id', 'clothing.name', 'clothing.casa', 'clothing.description', 'stocks.price', 'stocks.stock', 'clothing.mayor_price', 'attributes.name', 'attribute_values.value', 'clothing.status', 'clothing.discount', 'carts.quantity', 'carts.id', 'product_images.image')
+                    ->groupBy(
+                        'clothing.id',
+                        'clothing.price',
+                        'clothing.stock',
+                        'clothing.name',
+                        'clothing.casa',
+                        'clothing.description',
+                        'stocks.price',
+                        'stocks.stock',
+                        'clothing.mayor_price',
+                        'attributes.name',
+                        'attribute_values.value',
+                        'clothing.status',
+                        'clothing.discount',
+                        'carts.quantity',
+                        'carts.id',
+                        'product_images.image'
+                    )
                     ->get();
 
                 return $cart_items;

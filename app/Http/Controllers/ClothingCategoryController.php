@@ -55,7 +55,25 @@ class ClothingCategoryController extends Controller
             }
 
             return $query
-                ->select('categories.name as category', 'clothing.id as id', 'clothing.trending as trending', 'clothing.name as name', 'clothing.casa as casa', 'clothing.code as code', 'clothing.status as status', 'clothing.manage_stock as manage_stock', 'clothing.discount as discount', 'clothing.description as description', 'clothing.price as price', 'clothing.mayor_price as mayor_price', DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE 0 END) as total_stock'), DB::raw('GROUP_CONCAT(COALESCE(attributes.name, "")) AS available_attr'), DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'), DB::raw('GROUP_CONCAT(COALESCE(stocks.attr_id, "")) AS attr_id_per_size'), 'product_images.image as image')
+                ->select(
+                    'categories.name as category',
+                    'clothing.id as id',
+                    'clothing.trending as trending',
+                    'clothing.name as name',
+                    'clothing.casa as casa',
+                    'clothing.code as code',
+                    'clothing.status as status',
+                    'clothing.manage_stock as manage_stock',
+                    'clothing.discount as discount',
+                    'clothing.description as description',
+                    'clothing.price as price',
+                    'clothing.mayor_price as mayor_price',
+                    DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE clothing.stock END) as total_stock'),
+                    DB::raw('GROUP_CONCAT(COALESCE(attributes.name, "")) AS available_attr'),
+                    DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'),
+                    DB::raw('GROUP_CONCAT(COALESCE(stocks.attr_id, "")) AS attr_id_per_size'),
+                    'product_images.image as image'
+                )
                 ->groupBy('clothing.id', 'clothing.casa', 'clothing.mayor_price', 'clothing.discount', 'categories.name', 'clothing.code', 'clothing.status', 'clothing.manage_stock', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
                 ->orderBy('name', 'asc')
                 ->get();
@@ -173,7 +191,7 @@ class ClothingCategoryController extends Controller
                     'clothing.description as description',
                     'clothing.price as price',
                     'clothing.mayor_price as mayor_price',
-                    DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE 0 END) as total_stock'),
+                    DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE clothing.stock END) as total_stock'),
                     DB::raw('GROUP_CONCAT(COALESCE(attributes.name, "")) AS available_attr'),
                     DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'),
                     DB::raw('GROUP_CONCAT(COALESCE(stocks.attr_id, "")) AS attr_id_per_size'),
@@ -243,7 +261,7 @@ class ClothingCategoryController extends Controller
                     'clothing.meta_keywords as meta_keywords',
                     'clothing.price as price',
                     'clothing.mayor_price as mayor_price',
-                    DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE 0 END) as total_stock'),
+                    DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE clothing.stock END) as total_stock'),
                     'product_images.image as image', // Obtener la primera imagen del producto
                 )
                 ->groupBy('clothing.id', 'clothing.main_image', 'clothing.horizontal_image', 'clothing.casa', 'clothing.name', 'clothing.manage_stock', 'clothing.code', 'clothing.can_buy', 'pivot_clothing_categories.category_id', 'categories.name', 'clothing.description', 'clothing.trending', 'clothing.price', 'clothing.mayor_price', 'clothing.meta_keywords', 'product_images.image', 'clothing.discount')
@@ -308,6 +326,7 @@ class ClothingCategoryController extends Controller
             $clothing->name = $request->name;
             $clothing->code = $request->code;
             $clothing->description = $request->description;
+            $clothing->stock = $request->stock;
             $clothing->price = $request->price;
             $prices_attr = $request->input('precios_attr');
             $cantidades_attr = $request->input('cantidades_attr');
@@ -514,6 +533,7 @@ class ClothingCategoryController extends Controller
                 $clothing = new ClothingCategory();
                 $clothing->name = $request->name;
                 $clothing->code = $code;
+                $clothing->stock = $request->stock;
                 $clothing->description = $request->description;
                 $clothing->price = $request->price;
                 if ($request->hasFile('horizontal_image')) {
@@ -612,12 +632,12 @@ class ClothingCategoryController extends Controller
                             $count++;
                         }
                     } else {
-                        $value = AttributeValue::where('attributes.name', 'Stock')->where('attribute_values.value', 'Automático')->join('attributes', 'attributes.id', '=', 'attribute_values.attribute_id')->select('attributes.id as attr_id', 'attribute_values.id as value_id')->first();
-                        $this->processAttr($clothingId, $request->stock, $request->price, $value->attr_id, $value->value_id, $request->manage_stock, 1);
+                        //$value = AttributeValue::where('attributes.name', 'Stock')->where('attribute_values.value', 'Automático')->join('attributes', 'attributes.id', '=', 'attribute_values.attribute_id')->select('attributes.id as attr_id', 'attribute_values.id as value_id')->first();
+                        //$this->processAttr($clothingId, $request->stock, $request->price, $value->attr_id, $value->value_id, $request->manage_stock, 1);
                     }
                 } else {
-                    $value = AttributeValue::where('attributes.name', 'Stock')->where('attribute_values.value', 'Automático')->join('attributes', 'attributes.id', '=', 'attribute_values.attribute_id')->select('attributes.id as attr_id', 'attribute_values.id as value_id')->first();
-                    $this->processAttr($clothingId, $request->stock, $request->price, $value->attr_id, $value->value_id, $request->manage_stock, 1);
+                    //$value = AttributeValue::where('attributes.name', 'Stock')->where('attribute_values.value', 'Automático')->join('attributes', 'attributes.id', '=', 'attribute_values.attribute_id')->select('attributes.id as attr_id', 'attribute_values.id as value_id')->first();
+                    //$this->processAttr($clothingId, $request->stock, $request->price, $value->attr_id, $value->value_id, $request->manage_stock, 1);
                 }
 
                 if ($break) {
@@ -631,6 +651,7 @@ class ClothingCategoryController extends Controller
             $clothing->code = $request->code;
             $clothing->description = $request->description;
             $clothing->price = $request->price;
+            $clothing->stock = $request->stock;
             $clothing->status = 1;
             $clothing->trending = $request->filled('trending') ? 1 : 0;
             $clothing->save();
@@ -818,7 +839,7 @@ class ClothingCategoryController extends Controller
                     'clothing.description as description',
                     'clothing.price as price',
                     'clothing.mayor_price as mayor_price',
-                    DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE 0 END) as total_stock'),
+                    DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE clothing.stock END) as total_stock'),
                     DB::raw('GROUP_CONCAT(COALESCE(attributes.name, "")) AS available_attr'),
                     DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'),
                     DB::raw('GROUP_CONCAT(COALESCE(stocks.attr_id, "")) AS attr_id_per_size'),

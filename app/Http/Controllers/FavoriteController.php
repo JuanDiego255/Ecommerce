@@ -112,7 +112,7 @@ class FavoriteController extends Controller
                     'clothing.price as price',
                     'clothing.mayor_price as mayor_price',
                     'product_images.image as image',
-                    DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE 0 END) as total_stock'),
+                    DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE clothing.stock END) as total_stock'),
                     DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'),
                     DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
                 )

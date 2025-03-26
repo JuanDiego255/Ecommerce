@@ -362,18 +362,23 @@
                             var imageUrl = imageBaseUrl + '/' + item.image;
 
                             // Separar los atributos y valores
-                            var attributesValues = item.attributes_values.split(', ');
-                            var attributesHtml = attributesValues.map(function(attributeValue) {
-                                var [attribute, value] = attributeValue.split(': ');
-                                var result;
-                                if (attribute === 'Stock') {
-                                    result = 'Predeterminado';
-                                } else {
-                                    result = `${attribute}: ${value}`;
-                                }
-                                return `<span>${result}</span><br>`;
+                            var attributesHtml = '';
+                            if (item.attributes_values && item.attributes_values.trim() !== '') {
+                                var attributesValues = item.attributes_values.split(', ');
 
-                            }).join('');
+                                attributesHtml = attributesValues.map(function(attributeValue) {
+                                    var parts = attributeValue.split(': ');
+                                    var attribute = parts[0] || '';
+                                    var value = parts[1] || '';
+
+                                    if (attribute === 'Stock') {
+                                        return '<span>Predeterminado</span><br>';
+                                    } else {
+                                        return `<span>${attribute}: ${value}</span><br>`;
+                                    }
+                                }).join('');
+                            }
+
 
                             var listItem = `<li class="py-3 border-bottom">
                                 <input type="hidden" name="prod_id" value="${item.id}" class="prod_id">

@@ -12,6 +12,7 @@ use App\Models\AttributeValueBuy;
 use App\Models\Buy;
 use App\Models\BuyDetail;
 use App\Models\Cart;
+use App\Models\ClothingCategory;
 use App\Models\GiftCard;
 use App\Models\MetaTags;
 use App\Models\Stock;
@@ -52,14 +53,14 @@ class CheckOutController extends Controller
                 ->where('carts.session_id', null)
                 ->where('carts.sold', 0)
                 ->join('users', 'carts.user_id', 'users.id')
-                ->join('attribute_value_cars', 'carts.id', 'attribute_value_cars.cart_id')
-                ->join('attributes', 'attribute_value_cars.attr_id', 'attributes.id')
-                ->join('attribute_values', 'attribute_value_cars.value_attr', 'attribute_values.id')
-                ->whereRaw('(stocks.price != 0 OR clothing.price != 0)') // Condición adicional
+                ->leftJoin('attribute_value_cars', 'carts.id', 'attribute_value_cars.cart_id')
+                ->leftJoin('attributes', 'attribute_value_cars.attr_id', 'attributes.id')
+                ->leftJoin('attribute_values', 'attribute_value_cars.value_attr', 'attribute_values.id')
                 ->leftJoin('stocks', function ($join) {
                     $join->on('carts.clothing_id', '=', 'stocks.clothing_id')
                         ->on('attribute_value_cars.attr_id', '=', 'stocks.attr_id')
-                        ->on('attribute_value_cars.value_attr', '=', 'stocks.value_attr');
+                        ->on('attribute_value_cars.value_attr', '=', 'stocks.value_attr')
+                        ->whereRaw('(stocks.price != 0)'); // Condición adicional
                 })
                 ->join('clothing', 'carts.clothing_id', 'clothing.id')
                 ->leftJoin('product_images', function ($join) {
@@ -82,8 +83,8 @@ class CheckOutController extends Controller
                     'carts.id as cart_id',
                     'attributes.name as name_attr',
                     'attribute_values.value as value',
-                    'stocks.price as price',
-                    'stocks.stock as stock',
+                    DB::raw('COALESCE(stocks.price, clothing.price) as price'),
+                    DB::raw('COALESCE(stocks.stock, clothing.stock) as stock'),
                     DB::raw('(
                     SELECT GROUP_CONCAT(CONCAT(attributes.name, ": ", attribute_values.value) SEPARATOR ", ")
                     FROM attribute_value_cars
@@ -98,6 +99,7 @@ class CheckOutController extends Controller
                     'clothing.id',
                     'clothing.name',
                     'clothing.price',
+                    'clothing.stock',
                     'clothing.casa',
                     'clothing.description',
                     'stocks.price',
@@ -138,14 +140,14 @@ class CheckOutController extends Controller
             $cartItems = Cart::where('carts.session_id', $session_id)
                 ->where('carts.user_id', null)
                 ->where('carts.sold', 0)
-                ->join('attribute_value_cars', 'carts.id', 'attribute_value_cars.cart_id')
-                ->join('attributes', 'attribute_value_cars.attr_id', 'attributes.id')
-                ->join('attribute_values', 'attribute_value_cars.value_attr', 'attribute_values.id')
-                ->whereRaw('(stocks.price != 0 OR clothing.price != 0)') // Condición adicional
+                ->leftJoin('attribute_value_cars', 'carts.id', 'attribute_value_cars.cart_id')
+                ->leftJoin('attributes', 'attribute_value_cars.attr_id', 'attributes.id')
+                ->leftJoin('attribute_values', 'attribute_value_cars.value_attr', 'attribute_values.id')
                 ->leftJoin('stocks', function ($join) {
                     $join->on('carts.clothing_id', '=', 'stocks.clothing_id')
                         ->on('attribute_value_cars.attr_id', '=', 'stocks.attr_id')
-                        ->on('attribute_value_cars.value_attr', '=', 'stocks.value_attr');
+                        ->on('attribute_value_cars.value_attr', '=', 'stocks.value_attr')
+                        ->whereRaw('(stocks.price != 0)'); // Condición adicional
                 })
                 ->join('clothing', 'carts.clothing_id', 'clothing.id')
                 ->leftJoin('product_images', function ($join) {
@@ -168,8 +170,8 @@ class CheckOutController extends Controller
                     'carts.id as cart_id',
                     'attributes.name as name_attr',
                     'attribute_values.value as value',
-                    'stocks.price as price',
-                    'stocks.stock as stock',
+                    DB::raw('COALESCE(stocks.price, clothing.price) as price'),
+                    DB::raw('COALESCE(stocks.stock, clothing.stock) as stock'),
                     DB::raw('(
                     SELECT GROUP_CONCAT(CONCAT(attributes.name, ": ", attribute_values.value) SEPARATOR ", ")
                     FROM attribute_value_cars
@@ -184,6 +186,7 @@ class CheckOutController extends Controller
                     'clothing.id',
                     'clothing.name',
                     'clothing.price',
+                    'clothing.stock',
                     'clothing.casa',
                     'clothing.description',
                     'stocks.price',
@@ -283,14 +286,14 @@ class CheckOutController extends Controller
                         ->where('carts.session_id', null)
                         ->where('carts.sold', 0)
                         ->join('users', 'carts.user_id', 'users.id')
-                        ->join('attribute_value_cars', 'carts.id', 'attribute_value_cars.cart_id')
-                        ->join('attributes', 'attribute_value_cars.attr_id', 'attributes.id')
-                        ->join('attribute_values', 'attribute_value_cars.value_attr', 'attribute_values.id')
-                        ->whereRaw('(stocks.price != 0 OR clothing.price != 0)') // Condición adicional
+                        ->leftJoin('attribute_value_cars', 'carts.id', 'attribute_value_cars.cart_id')
+                        ->leftJoin('attributes', 'attribute_value_cars.attr_id', 'attributes.id')
+                        ->leftJoin('attribute_values', 'attribute_value_cars.value_attr', 'attribute_values.id')
                         ->leftJoin('stocks', function ($join) {
                             $join->on('carts.clothing_id', '=', 'stocks.clothing_id')
                                 ->on('attribute_value_cars.attr_id', '=', 'stocks.attr_id')
-                                ->on('attribute_value_cars.value_attr', '=', 'stocks.value_attr');
+                                ->on('attribute_value_cars.value_attr', '=', 'stocks.value_attr')
+                                ->where('stocks.price', '!=', 0);
                         })
                         ->join('clothing', 'carts.clothing_id', 'clothing.id')
                         ->leftJoin('product_images', function ($join) {
@@ -315,8 +318,8 @@ class CheckOutController extends Controller
                             'carts.id as cart_id',
                             'attributes.name as name_attr',
                             'attribute_values.value as value',
-                            'stocks.price as price',
-                            'stocks.stock as stock',
+                            DB::raw('COALESCE(stocks.price, clothing.price) as price'),
+                            DB::raw('COALESCE(stocks.stock, clothing.stock) as stock'),
                             DB::raw('(
                                 SELECT GROUP_CONCAT(CONCAT(attributes.id, "-", attribute_values.id) SEPARATOR ", ")
                                 FROM attribute_value_cars
@@ -338,6 +341,7 @@ class CheckOutController extends Controller
                             'clothing.id',
                             'clothing.name',
                             'clothing.price',
+                            'clothing.stock',
                             'clothing.casa',
                             'clothing.code',
                             'clothing.manage_stock',
@@ -463,28 +467,37 @@ class CheckOutController extends Controller
                             $buy_detail->cancel_item = 0;
                             $buy_detail->save();
                             $buy_detail_id = $buy_detail->id;
-                            $attributeValuePairs = explode(',', $cart->attributes_values);
-
-                            foreach ($attributeValuePairs as $pair) {
-                                list($attr_id, $value_attr) = explode('-', $pair);
-                                $attr_val_buy = new AttributeValueBuy();
-                                $attr_val_buy->buy_detail_id = $buy_detail_id;
-                                $attr_val_buy->attr_id = $attr_id;
-                                $attr_val_buy->value_attr = $value_attr;
-                                $attr_val_buy->save();
+                            $attributeValuePairs = !empty($cart->attributes_values) ? explode(',', $cart->attributes_values) : null;
+                            if ($attributeValuePairs) {
+                                foreach ($attributeValuePairs as $pair) {
+                                    list($attr_id, $value_attr) = explode('-', $pair);
+                                    $attr_val_buy = new AttributeValueBuy();
+                                    $attr_val_buy->buy_detail_id = $buy_detail_id;
+                                    $attr_val_buy->attr_id = $attr_id;
+                                    $attr_val_buy->value_attr = $value_attr;
+                                    $attr_val_buy->save();
+                                    if ($cart->manage_stock == 1) {
+                                        $cart_quantity = $cart->quantity;
+                                        $stock = Stock::where('clothing_id', $cart->clothing_id)
+                                            ->where('attr_id', $attr_id)
+                                            ->where('value_attr', $value_attr)
+                                            ->first();
+                                        if ($stock->price == 0) {
+                                            $cart_quantity = 1;
+                                        }
+                                        Stock::where('clothing_id', $cart->clothing_id)
+                                            ->where('attr_id', $attr_id)
+                                            ->where('value_attr', $value_attr)
+                                            ->update(['stock' => ($stock->stock - $cart_quantity)]);
+                                    }
+                                }
+                            } else {
                                 if ($cart->manage_stock == 1) {
                                     $cart_quantity = $cart->quantity;
-                                    $stock = Stock::where('clothing_id', $cart->clothing_id)
-                                        ->where('attr_id', $attr_id)
-                                        ->where('value_attr', $value_attr)
-                                        ->first();
-                                    if ($stock->price == 0) {
-                                        $cart_quantity = 1;
+                                    if ($cart->stock > 0 && $cart->price > 0) {
+                                        ClothingCategory::where('id', $cart->clothing_id)
+                                            ->update(['stock' => DB::raw("stock - $cart_quantity")]);
                                     }
-                                    Stock::where('clothing_id', $cart->clothing_id)
-                                        ->where('attr_id', $attr_id)
-                                        ->where('value_attr', $value_attr)
-                                        ->update(['stock' => ($stock->stock - $cart_quantity)]);
                                 }
                             }
                         }
@@ -497,14 +510,14 @@ class CheckOutController extends Controller
                     $cartItems = Cart::where('carts.session_id', $session_id)
                         ->where('carts.user_id', null)
                         ->where('carts.sold', 0)
-                        ->join('attribute_value_cars', 'carts.id', 'attribute_value_cars.cart_id')
-                        ->join('attributes', 'attribute_value_cars.attr_id', 'attributes.id')
-                        ->join('attribute_values', 'attribute_value_cars.value_attr', 'attribute_values.id')
-                        ->whereRaw('(stocks.price != 0 OR clothing.price != 0)') // Condición adicional
+                        ->leftJoin('attribute_value_cars', 'carts.id', 'attribute_value_cars.cart_id')
+                        ->leftJoin('attributes', 'attribute_value_cars.attr_id', 'attributes.id')
+                        ->leftJoin('attribute_values', 'attribute_value_cars.value_attr', 'attribute_values.id')
                         ->leftJoin('stocks', function ($join) {
                             $join->on('carts.clothing_id', '=', 'stocks.clothing_id')
                                 ->on('attribute_value_cars.attr_id', '=', 'stocks.attr_id')
-                                ->on('attribute_value_cars.value_attr', '=', 'stocks.value_attr');
+                                ->on('attribute_value_cars.value_attr', '=', 'stocks.value_attr')
+                                ->where('stocks.price', '!=', 0);
                         })
                         ->join('clothing', 'carts.clothing_id', 'clothing.id')
                         ->leftJoin('product_images', function ($join) {
@@ -529,8 +542,8 @@ class CheckOutController extends Controller
                             'carts.id as cart_id',
                             'attributes.name as name_attr',
                             'attribute_values.value as value',
-                            'stocks.price as price',
-                            'stocks.stock as stock',
+                            DB::raw('COALESCE(stocks.price, clothing.price) as price'),
+                            DB::raw('COALESCE(stocks.stock, clothing.stock) as stock'),
                             DB::raw('(
                                 SELECT GROUP_CONCAT(CONCAT(attributes.id, "-", attribute_values.id) SEPARATOR ", ")
                                 FROM attribute_value_cars
@@ -552,6 +565,7 @@ class CheckOutController extends Controller
                             'clothing.id',
                             'clothing.name',
                             'clothing.price',
+                            'clothing.stock',
                             'clothing.casa',
                             'clothing.code',
                             'clothing.manage_stock',
@@ -686,24 +700,37 @@ class CheckOutController extends Controller
                             $buy_detail->cancel_item = 0;
                             $buy_detail->save();
                             $buy_detail_id = $buy_detail->id;
-                            $attributeValuePairs = explode(',', $cart->attributes_values);
-
-                            foreach ($attributeValuePairs as $pair) {
-                                list($attr_id, $value_attr) = explode('-', $pair);
-                                $attr_val_buy = new AttributeValueBuy();
-                                $attr_val_buy->buy_detail_id = $buy_detail_id;
-                                $attr_val_buy->attr_id = $attr_id;
-                                $attr_val_buy->value_attr = $value_attr;
-                                $attr_val_buy->save();
+                            $attributeValuePairs = !empty($cart->attributes_values) ? explode(',', $cart->attributes_values) : null;
+                            if ($attributeValuePairs) {
+                                foreach ($attributeValuePairs as $pair) {
+                                    list($attr_id, $value_attr) = explode('-', $pair);
+                                    $attr_val_buy = new AttributeValueBuy();
+                                    $attr_val_buy->buy_detail_id = $buy_detail_id;
+                                    $attr_val_buy->attr_id = $attr_id;
+                                    $attr_val_buy->value_attr = $value_attr;
+                                    $attr_val_buy->save();
+                                    if ($cart->manage_stock == 1) {
+                                        $cart_quantity = $cart->quantity;
+                                        $stock = Stock::where('clothing_id', $cart->clothing_id)
+                                            ->where('attr_id', $attr_id)
+                                            ->where('value_attr', $value_attr)
+                                            ->first();
+                                        if ($stock->price == 0) {
+                                            $cart_quantity = 1;
+                                        }
+                                        Stock::where('clothing_id', $cart->clothing_id)
+                                            ->where('attr_id', $attr_id)
+                                            ->where('value_attr', $value_attr)
+                                            ->update(['stock' => ($stock->stock - $cart_quantity)]);
+                                    }
+                                }
+                            } else {
                                 if ($cart->manage_stock == 1) {
-                                    $stock = Stock::where('clothing_id', $cart->clothing_id)
-                                        ->where('attr_id', $attr_id)
-                                        ->where('value_attr', $value_attr)
-                                        ->first();
-                                    Stock::where('clothing_id', $cart->clothing_id)
-                                        ->where('attr_id', $attr_id)
-                                        ->where('value_attr', $value_attr)
-                                        ->update(['stock' => ($stock->stock - $cart->quantity)]);
+                                    $cart_quantity = $cart->quantity;
+                                    if ($cart->stock > 0 && $cart->price > 0) {
+                                        ClothingCategory::where('id', $cart->clothing_id)
+                                            ->update(['stock' => DB::raw("stock - $cart_quantity")]);
+                                    }
                                 }
                             }
                         }
@@ -716,14 +743,14 @@ class CheckOutController extends Controller
                 $cartItems = Cart::where('user_id', null)
                     ->where('session_id', null)
                     ->where('sold', 0)
-                    ->join('attribute_value_cars', 'carts.id', 'attribute_value_cars.cart_id')
-                    ->join('attributes', 'attribute_value_cars.attr_id', 'attributes.id')
-                    ->join('attribute_values', 'attribute_value_cars.value_attr', 'attribute_values.id')
-                    ->whereRaw('(stocks.price != 0 OR clothing.price != 0)') // Condición adicional
+                    ->leftJoin('attribute_value_cars', 'carts.id', 'attribute_value_cars.cart_id')
+                    ->leftJoin('attributes', 'attribute_value_cars.attr_id', 'attributes.id')
+                    ->leftJoin('attribute_values', 'attribute_value_cars.value_attr', 'attribute_values.id')
                     ->leftJoin('stocks', function ($join) {
                         $join->on('carts.clothing_id', '=', 'stocks.clothing_id')
                             ->on('attribute_value_cars.attr_id', '=', 'stocks.attr_id')
-                            ->on('attribute_value_cars.value_attr', '=', 'stocks.value_attr');
+                            ->on('attribute_value_cars.value_attr', '=', 'stocks.value_attr')
+                            ->where('stocks.price', '!=', 0);
                     })
                     ->join('clothing', 'carts.clothing_id', 'clothing.id')
                     ->leftJoin('product_images', function ($join) {
@@ -748,8 +775,8 @@ class CheckOutController extends Controller
                         'carts.id as cart_id',
                         'attributes.name as name_attr',
                         'attribute_values.value as value',
-                        'stocks.price as price',
-                        'stocks.stock as stock',
+                        DB::raw('COALESCE(stocks.price, clothing.price) as price'),
+                        DB::raw('COALESCE(stocks.stock, clothing.stock) as stock'),
                         DB::raw('(
                             SELECT GROUP_CONCAT(CONCAT(attributes.id, "-", attribute_values.id) SEPARATOR ", ")
                             FROM attribute_value_cars
@@ -771,6 +798,7 @@ class CheckOutController extends Controller
                         'clothing.id',
                         'clothing.name',
                         'clothing.price',
+                        'clothing.stock',
                         'clothing.casa',
                         'clothing.code',
                         'clothing.manage_stock',
@@ -871,24 +899,33 @@ class CheckOutController extends Controller
                         $buy_detail->cancel_item = 0;
                         $buy_detail->save();
                         $buy_detail_id = $buy_detail->id;
-                        $attributeValuePairs = explode(',', $cart->attributes_values);
-
-                        foreach ($attributeValuePairs as $pair) {
-                            list($attr_id, $value_attr) = explode('-', $pair);
-                            $attr_val_buy = new AttributeValueBuy();
-                            $attr_val_buy->buy_detail_id = $buy_detail_id;
-                            $attr_val_buy->attr_id = $attr_id;
-                            $attr_val_buy->value_attr = $value_attr;
-                            $attr_val_buy->save();
+                        $attributeValuePairs = !empty($cart->attributes_values) ? explode(',', $cart->attributes_values) : null;
+                        if ($attributeValuePairs) {
+                            foreach ($attributeValuePairs as $pair) {
+                                list($attr_id, $value_attr) = explode('-', $pair);
+                                $attr_val_buy = new AttributeValueBuy();
+                                $attr_val_buy->buy_detail_id = $buy_detail_id;
+                                $attr_val_buy->attr_id = $attr_id;
+                                $attr_val_buy->value_attr = $value_attr;
+                                $attr_val_buy->save();
+                                if ($cart->manage_stock == 1) {
+                                    $stock = Stock::where('clothing_id', $cart->clothing_id)
+                                        ->where('attr_id', $attr_id)
+                                        ->where('value_attr', $value_attr)
+                                        ->first();
+                                    Stock::where('clothing_id', $cart->clothing_id)
+                                        ->where('attr_id', $attr_id)
+                                        ->where('value_attr', $value_attr)
+                                        ->update(['stock' => ($stock->stock - $cart->quantity)]);
+                                }
+                            }
+                        } else {
                             if ($cart->manage_stock == 1) {
-                                $stock = Stock::where('clothing_id', $cart->clothing_id)
-                                    ->where('attr_id', $attr_id)
-                                    ->where('value_attr', $value_attr)
-                                    ->first();
-                                Stock::where('clothing_id', $cart->clothing_id)
-                                    ->where('attr_id', $attr_id)
-                                    ->where('value_attr', $value_attr)
-                                    ->update(['stock' => ($stock->stock - $cart->quantity)]);
+                                $cart_quantity = $cart->quantity;
+                                if ($cart->stock > 0 && $cart->price > 0) {
+                                    ClothingCategory::where('id', $cart->clothing_id)
+                                        ->update(['stock' => DB::raw("stock - $cart_quantity")]);
+                                }
                             }
                         }
                     }
@@ -907,8 +944,9 @@ class CheckOutController extends Controller
 
             return true;
         } catch (Exception $th) {
+            dd($th->getMessage());
             DB::rollBack();
-            return redirect()->back()->with(['status' => $th->getMessage(), 'icon' => 'success']);
+            return redirect()->back()->with(['status' => $th->getMessage(), 'icon' => 'warning']);
         }
     }
     public function getAccessToken()
@@ -1009,7 +1047,7 @@ class CheckOutController extends Controller
         }
     }
 
-    public function paymentApartado(Request $request,$id)
+    public function paymentApartado(Request $request, $id)
     {
         try {
             DB::beginTransaction();

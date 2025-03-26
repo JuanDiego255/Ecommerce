@@ -63,7 +63,7 @@ class FrontendController extends Controller
                     'clothing.description as description',
                     'clothing.price as price',
                     'clothing.mayor_price as mayor_price',
-                    DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE 0 END) as total_stock'),
+                    DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE clothing.stock END) as total_stock'),
                     DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'),
                     DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
                 )
@@ -147,7 +147,7 @@ class FrontendController extends Controller
                     'clothing.description as description',
                     'clothing.price as price',
                     'clothing.mayor_price as mayor_price',
-                    DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE 0 END) as total_stock'),
+                    DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE clothing.stock END) as total_stock'),
                     DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'),
                     DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
                 )
@@ -214,7 +214,7 @@ class FrontendController extends Controller
                             'clothing.description as description',
                             'clothing.price as price',
                             'clothing.mayor_price as mayor_price',
-                            DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE 0 END) as total_stock'),
+                            DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE clothing.stock END) as total_stock'),
                             DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'),
                             DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
                         )
@@ -325,7 +325,7 @@ class FrontendController extends Controller
                             'clothing.description as description',
                             'clothing.price as price',
                             'clothing.mayor_price as mayor_price',
-                            DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE 0 END) as total_stock'),
+                            DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE clothing.stock END) as total_stock'),
                             DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'),
                             DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
                         )
@@ -420,7 +420,7 @@ class FrontendController extends Controller
                     'clothing.price as price',
                     'clothing.mayor_price as mayor_price',
                     'product_images.image as image', // Obtener la primera imagen del producto
-                    DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE 0 END) as total_stock'),
+                    DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE clothing.stock END) as total_stock'),
                     DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'), // Obtener stock por talla
                     DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
                 )
@@ -560,7 +560,7 @@ class FrontendController extends Controller
                 'clothing.mayor_price as mayor_price',
                 'product_images.image as image', // columna de imagen
                 DB::raw('GROUP_CONCAT(product_images.image ORDER BY product_images.id ASC) AS images'),
-                DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE 0 END) as total_stock'),
+                DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE clothing.stock END) as total_stock'),
                 DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'), // Obtener stock por talla
                 DB::raw('GROUP_CONCAT(stocks.price) AS price_per_size'),
                 DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
@@ -629,7 +629,7 @@ class FrontendController extends Controller
                 'clothing.price as price',
                 'clothing.mayor_price as mayor_price',
                 DB::raw('IFNULL(product_images.image, "") as image'), // Obtener la primera imagen del producto
-                DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE 0 END) as total_stock'),
+                DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE clothing.stock END) as total_stock'),
                 DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'), // Obtener stock por talla
                 DB::raw('GROUP_CONCAT(stocks.price) AS price_per_size'),
                 DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')

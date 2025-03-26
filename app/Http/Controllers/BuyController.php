@@ -124,9 +124,9 @@ class BuyController extends Controller
                 ->where('buy_details.buy_id', $id)
                 ->join('buys', 'buy_details.buy_id', 'buys.id')
                 ->join('clothing', 'buy_details.clothing_id', 'clothing.id')
-                ->join('attribute_value_buys', 'buy_details.id', 'attribute_value_buys.buy_detail_id')
-                ->join('attributes', 'attribute_value_buys.attr_id', 'attributes.id')
-                ->join('attribute_values', 'attribute_value_buys.value_attr', 'attribute_values.id')
+                ->leftJoin('attribute_value_buys', 'buy_details.id', 'attribute_value_buys.buy_detail_id')
+                ->leftJoin('attributes', 'attribute_value_buys.attr_id', 'attributes.id')
+                ->leftJoin('attribute_values', 'attribute_value_buys.value_attr', 'attribute_values.id')
                 ->leftJoin('product_images', function ($join) {
                     $join->on('clothing.id', '=', 'product_images.clothing_id')->whereRaw('product_images.id = (
                         SELECT MIN(id) FROM product_images
@@ -190,9 +190,9 @@ class BuyController extends Controller
             return BuyDetail::where('buy_details.buy_id', $id)
                 ->join('buys', 'buy_details.buy_id', '=', 'buys.id')
                 ->join('clothing', 'buy_details.clothing_id', '=', 'clothing.id')
-                ->join('attribute_value_buys', 'buy_details.id', 'attribute_value_buys.buy_detail_id')
-                ->join('attributes', 'attribute_value_buys.attr_id', 'attributes.id')
-                ->join('attribute_values', 'attribute_value_buys.value_attr', 'attribute_values.id')
+                ->leftJoin('attribute_value_buys', 'buy_details.id', 'attribute_value_buys.buy_detail_id')
+                ->leftJoin('attributes', 'attribute_value_buys.attr_id', 'attributes.id')
+                ->leftJoin('attribute_values', 'attribute_value_buys.value_attr', 'attribute_values.id')
                 ->leftJoin('product_images', function ($join) {
                     $join->on('clothing.id', '=', 'product_images.clothing_id')->whereRaw('product_images.id = (
                     SELECT MIN(id) FROM product_images
@@ -242,7 +242,7 @@ class BuyController extends Controller
                         WHERE attribute_value_buys.buy_detail_id = buy_details.id
                     ) as attributes_values'),
                 )
-                ->groupBy('clothing.id', 'buys.kind_of_buy','users.name','users.telephone','users.email', 'clothing.name', 'clothing.casa', 'clothing.description', 'buy_details.total', 'buy_details.iva', 'buy_details.id', 'buy_details.buy_id', 'buy_details.cancel_item', 'clothing.status', 'buy_details.quantity', 'buys.approved', 'address_users.user_id', 'address_users.address', 'address_users.address_two', 'address_users.city', 'address_users.country', 'address_users.province', 'address_users.postal_code', 'buys.name', 'buys.telephone', 'buys.email', 'buys.address', 'buys.address_two', 'buys.city', 'buys.country', 'buys.province', 'buys.postal_code', 'product_images.image')
+                ->groupBy('clothing.id', 'buys.kind_of_buy', 'users.name', 'users.telephone', 'users.email', 'clothing.name', 'clothing.casa', 'clothing.description', 'buy_details.total', 'buy_details.iva', 'buy_details.id', 'buy_details.buy_id', 'buy_details.cancel_item', 'clothing.status', 'buy_details.quantity', 'buys.approved', 'address_users.user_id', 'address_users.address', 'address_users.address_two', 'address_users.city', 'address_users.country', 'address_users.province', 'address_users.postal_code', 'buys.name', 'buys.telephone', 'buys.email', 'buys.address', 'buys.address_two', 'buys.city', 'buys.country', 'buys.province', 'buys.postal_code', 'product_images.image')
                 ->get();
         });
         $iva = $tenantinfo->iva;
@@ -444,9 +444,9 @@ class BuyController extends Controller
             $cart_items = Cart::where('carts.user_id', null)
                 ->where('carts.session_id', null)
                 ->where('carts.sold', 0)
-                ->join('attribute_value_cars', 'carts.id', 'attribute_value_cars.cart_id')
-                ->join('attributes', 'attribute_value_cars.attr_id', 'attributes.id')
-                ->join('attribute_values', 'attribute_value_cars.value_attr', 'attribute_values.id')
+                ->leftJoin('attribute_value_cars', 'carts.id', 'attribute_value_cars.cart_id')
+                ->leftJoin('attributes', 'attribute_value_cars.attr_id', 'attributes.id')
+                ->leftJoin('attribute_values', 'attribute_value_cars.value_attr', 'attribute_values.id')
                 ->leftJoin('stocks', function ($join) {
                     $join->on('carts.clothing_id', '=', 'stocks.clothing_id')
                         ->on('attribute_value_cars.attr_id', '=', 'stocks.attr_id')
@@ -474,8 +474,8 @@ class BuyController extends Controller
                     'carts.id as cart_id',
                     'attributes.name as name_attr',
                     'attribute_values.value as value',
-                    'stocks.price as price',
-                    'stocks.stock as stock',
+                    DB::raw('COALESCE(stocks.price, clothing.price) as price'),
+                    DB::raw('COALESCE(stocks.stock, clothing.stock) as stock'),
                     DB::raw('(
                                 SELECT GROUP_CONCAT(CONCAT(attributes.name, ": ", attribute_values.value) SEPARATOR ", ")
                                 FROM attribute_value_cars
@@ -489,6 +489,7 @@ class BuyController extends Controller
                     'clothing.id',
                     'clothing.name',
                     'clothing.price',
+                    'clothing.stock',
                     'clothing.casa',
                     'clothing.code',
                     'clothing.description',

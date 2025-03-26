@@ -80,7 +80,9 @@
                                             $descuento = ($precio * $descuentoPorcentaje) / 100;
                                             // Calcular el precio con el descuento aplicado
                                             $precioConDescuento = $precio - $descuento;
-                                            $attributesValues = explode(', ', $item->attributes_values);
+                                            $attributesValues = !empty($item->attributes_values)
+                                                ? explode(', ', $item->attributes_values)
+                                                : [];
                                         @endphp
                                         <input type="hidden" name="prod_id" value="{{ $item->id }}" class="prod_id">
                                         <input type="hidden" class="price"
@@ -115,11 +117,15 @@
                                         <td class="align-middle text-center text-sm">
                                             @foreach ($attributesValues as $attributeValue)
                                                 @php
-                                                    // Separa el atributo del valor por ": "
-                                                    [$attribute, $value] = explode(': ', $attributeValue);
+                                                    // Verifica que el atributo tenga el formato esperado antes de hacer explode
+                                                    $parts = explode(': ', $attributeValue, 2);
+                                                    $attribute = $parts[0] ?? '';
+                                                    $value = $parts[1] ?? '';
                                                 @endphp
 
-                                                {{ $attribute }}: {{ $value }}<br>
+                                                @if ($attribute !== '')
+                                                    {{ $attribute }}: {{ $value }}<br>
+                                                @endif
                                             @endforeach
                                         </td>
                                         <td class="align-middle text-center text-sm">
@@ -598,88 +604,98 @@
                                 icon: response.icon,
                             });
                             $container.removeClass('d-block').addClass('d-none');
-                            $('#select-container').removeClass('d-block').addClass(
-                                'd-none');
+                            $('#select-container').removeClass('d-block').addClass('d-none');
                             $container.empty();
                         } else {
                             $container.empty();
                             var results = response.results;
                             var $currentRow;
-                            $.each(results, function(index, attribute) {
-                                if (index % 2 === 0) {
-                                    // Crear una nueva fila cada dos columnas
-                                    $currentRow = $('<div>', {
-                                        class: 'row'
-                                    });
-                                    $container.append($currentRow);
-                                }
 
-                                var $col = $('<div>', {
-                                    class: 'col-md-6'
-                                });
-                                var $label = $('<label>', {
-                                    text: attribute.columna_atributo
-                                });
-                                var values = attribute.valores.split('/');
-                                var ids = attribute.ids.split('/');
-                                var stock_values = attribute.stock.split('/');
-
-                                var $select = $('<select>', {
-                                    required: true,
-                                    name: 'size_id',
-                                    class: 'size_id form-control form-control-lg mb-2'
-                                });
-
-                                $.each(values, function(key, value) {
-                                    if (ids[key] !== undefined &&
-                                        stock_values[key] != 0) {
-                                        var $option = $('<option>', {
-                                            value: ids[key] + '-' +
-                                                attribute.attr_id +
-                                                '-' + attribute
-                                                .clothing_id,
-                                            id: 'size_' + ids[key],
-                                            text: value
+                            if (results.length > 0) {
+                                $.each(results, function(index, attribute) {
+                                    if (index % 2 === 0) {
+                                        // Crear una nueva fila cada dos columnas
+                                        $currentRow = $('<div>', {
+                                            class: 'row'
                                         });
-                                        if (key === 0) {
-                                            $option.attr('selected',
-                                                'selected');
+                                        $container.append($currentRow);
+                                    }
+
+                                    var $col = $('<div>', {
+                                        class: 'col-md-6'
+                                    });
+                                    var $label = $('<label>', {
+                                        text: attribute.columna_atributo
+                                    });
+                                    var values = attribute.valores.split('/');
+                                    var ids = attribute.ids.split('/');
+                                    var stock_values = attribute.stock.split('/');
+
+                                    var $select = $('<select>', {
+                                        required: true,
+                                        name: 'size_id',
+                                        class: 'size_id form-control form-control-lg mb-2'
+                                    });
+
+                                    $.each(values, function(key, value) {
+                                        if (ids[key] !== undefined && stock_values[key] != 0) {
+                                            var $option = $('<option>', {
+                                                value: ids[key] + '-' + attribute
+                                                    .attr_id + '-' + attribute
+                                                    .clothing_id,
+                                                id: 'size_' + ids[key],
+                                                text: value
+                                            });
+                                            if (key === 0) {
+                                                $option.attr('selected', 'selected');
+                                            }
+                                            $select.append($option);
                                         }
-                                        $select.append($option);
+                                    });
+
+                                    var $inputGroup = $('<div>', {
+                                        class: 'input-group input-group-static'
+                                    }).append($select);
+
+                                    $col.append($label).append('<br>').append($inputGroup).append(
+                                        '<br>');
+                                    $currentRow.append($col);
+
+                                    // Agregar botón después de cada fila completa
+                                    if (index % 2 === 1 || index === results.length - 1) {
+                                        var $buttonCol = $('<div>', {
+                                            class: 'col-md-12'
+                                        });
+                                        var $button = $('<button>', {
+                                            class: 'btn btn-add_to_cart shadow-0 btnAdd'
+                                        }).append(
+                                            '<i class="me-1 fa fa-shopping-basket"></i> Agregar');
+                                        $buttonCol.append($button);
+                                        $currentRow.append($buttonCol);
                                     }
                                 });
+                            } else {
+                                // Si no hay atributos, mostrar solo el botón
+                                var $buttonRow = $('<div>', {
+                                    class: 'row'
+                                });
+                                var $buttonCol = $('<div>', {
+                                    class: 'col-md-12 text-center'
+                                });
+                                var $button = $('<button>', {
+                                    class: 'btn btn-add_to_cart shadow-0 btnAdd'
+                                }).append('<i class="me-1 fa fa-shopping-basket"></i> Agregar');
 
-                                var $inputGroup = $('<div>', {
-                                    class: 'input-group input-group-static'
-                                }).append($select);
-
-                                $col.append($label).append('<br>').append(
-                                    $inputGroup).append('<br>');
-
-                                $currentRow.append($col);
-
-                                // Add the button after every two columns (end of the row)
-                                if (index % 2 === 1 || index === results.length -
-                                    1) {
-                                    var $buttonCol = $('<div>', {
-                                        class: 'col-md-12'
-                                    });
-                                    var $button = $('<button>', {
-                                        class: 'btn btn-add_to_cart shadow-0 btnAdd'
-                                    }).append(
-                                        '<i class="me-1 fa fa-shopping-basket"></i> Agregar'
-                                    );
-                                    $buttonCol.append($button);
-                                    $currentRow.append($buttonCol);
-                                }
-                            });
+                                $buttonCol.append($button);
+                                $buttonRow.append($buttonCol);
+                                $container.append($buttonRow);
+                            }
 
                             $container.removeClass('d-none').addClass('d-block');
-                            $('#select-container').removeClass('d-none').addClass(
-                                'd-block');
+                            $('#select-container').removeClass('d-none').addClass('d-block');
                         }
-
                     }
+
                 });
             }
 

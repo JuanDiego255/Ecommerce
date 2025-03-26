@@ -133,7 +133,7 @@ class AppServiceProvider extends ServiceProvider
                     'clothing.description as description',
                     'clothing.price as price',
                     'clothing.mayor_price as mayor_price',
-                    DB::raw('SUM(stocks.stock) as total_stock'),
+                    DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE clothing.stock END) as total_stock'),
                     DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size')
                 )
                 ->groupBy(
@@ -159,14 +159,14 @@ class AppServiceProvider extends ServiceProvider
                         ->where('carts.session_id', null)
                         ->where('carts.sold', 0)
                         ->join('users', 'carts.user_id', 'users.id')
-                        ->join('attribute_value_cars', 'carts.id', 'attribute_value_cars.cart_id')
-                        ->join('attributes', 'attribute_value_cars.attr_id', 'attributes.id')
-                        ->join('attribute_values', 'attribute_value_cars.value_attr', 'attribute_values.id')
-                        ->where('stocks.price', '!=', 0)
+                        ->leftJoin('attribute_value_cars', 'carts.id', 'attribute_value_cars.cart_id')
+                        ->leftJoin('attributes', 'attribute_value_cars.attr_id', 'attributes.id')
+                        ->leftJoin('attribute_values', 'attribute_value_cars.value_attr', 'attribute_values.id')
                         ->leftJoin('stocks', function ($join) {
                             $join->on('carts.clothing_id', '=', 'stocks.clothing_id')
                                 ->on('attribute_value_cars.attr_id', '=', 'stocks.attr_id')
-                                ->on('attribute_value_cars.value_attr', '=', 'stocks.value_attr');
+                                ->on('attribute_value_cars.value_attr', '=', 'stocks.value_attr')
+                                ->where('stocks.price', '!=', 0);
                         })
                         ->join('clothing', 'carts.clothing_id', 'clothing.id')
                         ->leftJoin('product_images', function ($join) {
@@ -188,8 +188,8 @@ class AppServiceProvider extends ServiceProvider
                             'carts.id as cart_id',
                             'attributes.name as name_attr',
                             'attribute_values.value as value',
-                            'stocks.price as price',
-                            'stocks.stock as stock',
+                            DB::raw('COALESCE(stocks.price, clothing.price) as price'),
+                            DB::raw('COALESCE(stocks.stock, clothing.stock) as stock'),
                             DB::raw('(
                                 SELECT GROUP_CONCAT(CONCAT(attributes.name, ": ", attribute_values.value) SEPARATOR ", ")
                                 FROM attribute_value_cars
@@ -204,6 +204,8 @@ class AppServiceProvider extends ServiceProvider
                             'clothing.id',
                             'clothing.name',
                             'clothing.casa',
+                            'clothing.price',
+                            'clothing.stock',
                             'clothing.description',
                             'stocks.price',
                             'stocks.stock',
@@ -224,14 +226,14 @@ class AppServiceProvider extends ServiceProvider
                     $cart_items = Cart::where('carts.session_id', $session_id)
                         ->where('carts.user_id', null)
                         ->where('carts.sold', 0)
-                        ->join('attribute_value_cars', 'carts.id', 'attribute_value_cars.cart_id')
-                        ->join('attributes', 'attribute_value_cars.attr_id', 'attributes.id')
-                        ->join('attribute_values', 'attribute_value_cars.value_attr', 'attribute_values.id')
-                        ->where('stocks.price', '!=', 0)
+                        ->leftJoin('attribute_value_cars', 'carts.id', 'attribute_value_cars.cart_id')
+                        ->leftJoin('attributes', 'attribute_value_cars.attr_id', 'attributes.id')
+                        ->leftJoin('attribute_values', 'attribute_value_cars.value_attr', 'attribute_values.id')
                         ->leftJoin('stocks', function ($join) {
                             $join->on('carts.clothing_id', '=', 'stocks.clothing_id')
                                 ->on('attribute_value_cars.attr_id', '=', 'stocks.attr_id')
-                                ->on('attribute_value_cars.value_attr', '=', 'stocks.value_attr');
+                                ->on('attribute_value_cars.value_attr', '=', 'stocks.value_attr')
+                                ->where('stocks.price', '!=', 0);
                         })
                         ->join('clothing', 'carts.clothing_id', 'clothing.id')
                         ->leftJoin('product_images', function ($join) {
@@ -253,8 +255,8 @@ class AppServiceProvider extends ServiceProvider
                             'carts.id as cart_id',
                             'attributes.name as name_attr',
                             'attribute_values.value as value',
-                            'stocks.price as price',
-                            'stocks.stock as stock',
+                            DB::raw('COALESCE(stocks.price, clothing.price) as price'),
+                            DB::raw('COALESCE(stocks.stock, clothing.stock) as stock'),
                             DB::raw('(
                                 SELECT GROUP_CONCAT(CONCAT(attributes.name, ": ", attribute_values.value) SEPARATOR ", ")
                                 FROM attribute_value_cars
@@ -269,6 +271,8 @@ class AppServiceProvider extends ServiceProvider
                             'clothing.id',
                             'clothing.name',
                             'clothing.casa',
+                            'clothing.price',
+                            'clothing.stock',
                             'clothing.description',
                             'stocks.price',
                             'stocks.stock',
@@ -286,6 +290,7 @@ class AppServiceProvider extends ServiceProvider
                     return $cart_items;
                 }
             });
+
             $cloth_price = 0;
             $you_save = 0;
             foreach ($cart_items as $item) {

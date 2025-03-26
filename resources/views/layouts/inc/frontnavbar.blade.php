@@ -43,7 +43,7 @@
                                 $descuento = ($precio * $descuentoPorcentaje) / 100;
                                 // Calcular el precio con el descuento aplicado
                                 $precioConDescuento = $precio - $descuento;
-                                $attributesValues = explode(', ', $item->attributes_values);
+                                $attributesValues = !empty($item->attributes_values) ? explode(', ', $item->attributes_values) : [];
                             @endphp
 
                             <li class="py-3 border-bottom">
@@ -70,18 +70,27 @@
                                     <div class="col-8">
                                         <p class="mb-2">
                                             <a class="text-muted fw-500" href="#">{{ $item->name }}</a><br>
-                                            <span class="m-0 text-muted w-100 d-block">
-                                                Atributos
-                                            </span>
-                                            @foreach ($attributesValues as $attributeValue)
-                                                @php
-                                                    // Separa el atributo del valor por ": "
-                                                    [$attribute, $value] = explode(': ', $attributeValue);
-                                                @endphp
 
-                                                <span>{{ $attribute == 'Stock' ? 'Predeterminado' : $attribute . ':' }}
-                                                    {{ $attribute == 'Stock' ? '' : $value }}</span><br>
-                                            @endforeach
+                                            @if (!empty($attributesValues) && count($attributesValues) > 0)
+                                                <span class="m-0 text-muted w-100 d-block">
+                                                    Atributos
+                                                </span>
+                                                @foreach ($attributesValues as $attributeValue)
+                                                    @php
+                                                        // Verifica que el atributo tenga el formato esperado antes de explotar
+                                                        if (strpos($attributeValue, ': ') !== false) {
+                                                            [$attribute, $value] = explode(': ', $attributeValue, 2);
+                                                        } else {
+                                                            $attribute = $attributeValue;
+                                                            $value = '';
+                                                        }
+                                                    @endphp
+
+                                                    <span>{{ $attribute == 'Stock' ? 'Predeterminado' : $attribute . ':' }}
+                                                        {{ $attribute == 'Stock' ? '' : $value }}</span><br>
+                                                @endforeach
+                                            @endif
+
                                             <span class="m-0 text-muted w-100 d-block">
                                                 ₡{{ $item->discount > 0 ? $precioConDescuento : (Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0 ? $item->mayor_price : $item->price) }}
                                             </span>
@@ -169,7 +178,7 @@
     </div>
 @endif
 @switch($tenantinfo->tenant)
-    @case('sakura318')        
+    @case('sakura318')
         <!-- Preloader Start-->
         <header>
             <!-- Header Start -->
@@ -180,7 +189,7 @@
                             <div class="header-left d-flex align-items-center">
                                 <!-- Logo -->
                                 <div class="logo">
-                                    <a href="{{url('/')}}"><img src="{{ route('file', $tenantinfo->logo) }}"
+                                    <a href="{{ url('/') }}"><img src="{{ route('file', $tenantinfo->logo) }}"
                                             alt=""></a>
                                 </div>
                                 <!-- Main-menu -->

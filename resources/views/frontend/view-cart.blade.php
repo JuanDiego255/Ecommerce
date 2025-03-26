@@ -78,7 +78,9 @@
                                                         $descuento = ($precio * $descuentoPorcentaje) / 100;
                                                         // Calcular el precio con el descuento aplicado
                                                         $precioConDescuento = $precio - $descuento;
-                                                        $attributesValues = explode(', ', $item->attributes_values);
+                                                        $attributesValues = !empty($item->attributes_values)
+                                                            ? explode(', ', $item->attributes_values)
+                                                            : [];
                                                     @endphp
                                                     <input type="hidden" name="prod_id" value="{{ $item->id }}"
                                                         class="prod_id">
@@ -130,12 +132,17 @@
                                                     <td class="align-middle text-center text-sm">
                                                         @foreach ($attributesValues as $attributeValue)
                                                             @php
-                                                                // Separa el atributo del valor por ": "
-                                                                [$attribute, $value] = explode(': ', $attributeValue);
+                                                                // Verifica que el atributo tenga el formato esperado antes de hacer explode
+                                                                $parts = explode(': ', $attributeValue, 2);
+                                                                $attribute = $parts[0] ?? '';
+                                                                $value = $parts[1] ?? '';
                                                             @endphp
 
-                                                            {{ $attribute }}: {{ $value }}<br>
+                                                            @if ($attribute !== '')
+                                                                {{ $attribute }}: {{ $value }}<br>
+                                                            @endif
                                                         @endforeach
+
                                                     </td>
                                                     <td class="align-middle text-center text-sm">
                                                         <div class="input-group text-center input-group-static w-100">
@@ -172,26 +179,31 @@
                                         <li
                                             class="list-group-item d-flex sakura-font justify-content-between align-items-center border-0 px-0 pb-0">
                                             Productos
-                                            <span id="totalCloth" class="sakura-color sakura-font">₡{{ number_format($cloth_price) }}</span>
+                                            <span id="totalCloth"
+                                                class="sakura-color sakura-font">₡{{ number_format($cloth_price) }}</span>
                                         </li>
                                         @if ($iva > 0)
-                                            <li class="list-group-item sakura-font d-flex justify-content-between align-items-center px-0">
+                                            <li
+                                                class="list-group-item sakura-font d-flex justify-content-between align-items-center px-0">
                                                 I.V.A
                                                 <span id="totalIvaElement" class="sakura-color">₡{{ number_format($iva) }}</span>
                                             </li>
                                         @endif
 
                                         @if ($you_save > 0)
-                                            <li class="list-group-item sakura-font d-flex justify-content-between align-items-center px-0">
+                                            <li
+                                                class="list-group-item sakura-font d-flex justify-content-between align-items-center px-0">
                                                 Ahorraste
-                                                <span id="totalDiscountElement" class="sakura-color">₡{{ number_format($you_save) }}</span>
+                                                <span id="totalDiscountElement"
+                                                    class="sakura-color">₡{{ number_format($you_save) }}</span>
                                             </li>
                                         @endif
 
                                         <li class="list-group-item sakura-font d-flex justify-content-between border-0 px-0 mb-3">
 
                                             <strong>Total</strong>
-                                            <span class="sakura-color"><strong id="totalPriceElement">₡{{ number_format($total_price) }}</strong></span>
+                                            <span class="sakura-color"><strong
+                                                    id="totalPriceElement">₡{{ number_format($total_price) }}</strong></span>
                                         </li>
                                     </ul>
 
@@ -212,8 +224,10 @@
             <div class="product_data container mb-3 mt-4">
                 <div class="breadcrumb-nav bc3x">
                     @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
-                        <li class="home"><a href="{{ url('/') }}"><i class="fas fa-{{ $icon->home }} me-1"></i></a></li>
-                        <li class="bread-standard"><a href="{{ url('category/') }}"><i class="fas fa-box me-1"></i>Categorías</a>
+                        <li class="home"><a href="{{ url('/') }}"><i class="fas fa-{{ $icon->home }} me-1"></i></a>
+                        </li>
+                        <li class="bread-standard"><a href="{{ url('category/') }}"><i
+                                    class="fas fa-box me-1"></i>Categorías</a>
                         </li>
                         <li class="bread-standard"><a href="#"><i class="fas fa-{{ $icon->cart }} me-1"></i>Carrito</a>
                         </li>

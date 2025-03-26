@@ -14,10 +14,11 @@
                             <li class="home-sk">
                                 <a href="{{ url('/') }}"><i class="fas fa-{{ $icon->home }} me-1"></i> Inicio</a>
                             </li>
-                        
+
                             @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
                                 <li class="bread-sk">
-                                    <a href="{{ url('category/') }}"><i class="fas fa-{{ $icon->categories }} me-1"></i> Categorías</a>
+                                    <a href="{{ url('category/') }}"><i class="fas fa-{{ $icon->categories }} me-1"></i>
+                                        Categorías</a>
                                 </li>
                                 <li class="bread-sk">
                                     <a href="{{ url('clothes-category/' . $category_id . '/' . $item->department_id) }}">
@@ -25,7 +26,8 @@
                                     </a>
                                 </li>
                                 <li class="bread-sk">
-                                    <a class="location-sk" href="#"><i class="fas fa-{{ $icon->detail }} me-1"></i> Detalles</a>
+                                    <a class="location-sk" href="#"><i class="fas fa-{{ $icon->detail }} me-1"></i>
+                                        Detalles</a>
                                 </li>
                             @else
                                 <li class="bread-sk">
@@ -42,10 +44,11 @@
                                     </a>
                                 </li>
                                 <li class="bread-sk">
-                                    <a class="location-sk" href="#"><i class="fas fa-{{ $icon->detail }} me-1"></i> Detalles</a>
+                                    <a class="location-sk" href="#"><i class="fas fa-{{ $icon->detail }} me-1"></i>
+                                        Detalles</a>
                                 </li>
                             @endif
-                        </div>                        
+                        </div>
 
                         @php
                             $sizes = explode(',', $item->available_sizes);
@@ -282,13 +285,16 @@
                                             </div>
                                             @if ($item->can_buy == 1)
                                                 <button
-                                                    @if ($item->total_stock > 0 || ($item->manage_stock = 1)) @else 
-                                            disabled @endif
+                                                    @if ($item->total_stock > 0) 
+                                                    @elseif ($item->total_stock == 0 && $item->manage_stock != 0)
+                                                       disabled
+                                                    @else
+                                                    @endif
                                                     class="btn btn-add_to_cart shadow-0 btnAddToCart">
                                                     <i class="me-1 fa fa-shopping-basket"></i>
                                                     @if ($item->total_stock > 0)
                                                         Agregar Al Carrito
-                                                    @elseif ($item->total_stock == 0)
+                                                    @elseif ($item->total_stock == 0 && $item->manage_stock != 0)
                                                         Vendido!
                                                     @else
                                                         Agregar Al Carrito
@@ -323,7 +329,7 @@
             <div class="text-center">
                 <h1 class="mt-5 sakura-20 sakura-color">
                     {{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'muebleriasarchi' ? 'Productos que podrían interesarte' : 'Encuentra más muebles para tu hogar' }}
-                </h3>
+                    </h3>
             </div>
             <hr class="dark horizontal text-danger mb-3">
             <div class="row mt-4 mb-4">
@@ -350,11 +356,13 @@
                                     class="add-to-cart">Detallar</a>
                             </div>
                             <div class="product-content-sk">
-                                <h3 class="title clothing-name sakura-font sakura-color"><a href="#">({{ $item->category }})</a>
+                                <h3 class="title clothing-name sakura-font sakura-color"><a
+                                        href="#">({{ $item->category }})</a>
                                 </h3>
                                 <h3
                                     class="{{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'text-muted' : 'title-frags' }}">
-                                    <a class="sakura-font sakura-color" href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}">{{ $item->name }}
+                                    <a class="sakura-font sakura-color"
+                                        href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}">{{ $item->name }}
                                         @if ($item->total_stock == 0 && $item->can_buy == 1 && $item->manage_stock == 1)
                                             <s class="text-danger"> Agotado</s>
                                         @endif
@@ -391,7 +399,8 @@
                                     // Calcular el precio con el descuento aplicado
                                     $precioConDescuento = $precio - $descuento;
                                 @endphp
-                                <div class="sakura-font sakura-color {{ $item->can_buy != 1 && $precioConDescuento <= 0 ? 'd-none' : '' }}">
+                                <div
+                                    class="sakura-font sakura-color {{ $item->can_buy != 1 && $precioConDescuento <= 0 ? 'd-none' : '' }}">
                                     ₡{{ number_format($precioConDescuento) }}
                                     @if ($item->discount)
                                         <s class="text-danger"><span

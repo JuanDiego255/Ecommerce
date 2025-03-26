@@ -114,8 +114,7 @@
                                             {{ __('Stock (Inventario)') }}
                                         @endif
                                     </label>
-                                    <input id="stock" min="1" required
-                                        @if ($tenantinfo->manage_size != 0) readonly @endif
+                                    <input id="stock" min="1" required                                       
                                         value="{{ $clothing->total_stock == 0 ? '1' : $clothing->total_stock }}"
                                         type="number" class="form-control form-control-lg" name="stock">
                                 </div>
