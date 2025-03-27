@@ -10,7 +10,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     @yield('metatag')
     <!--     Fonts and icons     -->
-    <link rel="icon" type="image/png" href="images/icons/favicon.png" />
+    {{-- <link rel="icon" type="image/png" href="images/icons/favicon.png" /> --}}
     <link rel="stylesheet" type="text/css"
         href="{{ asset('/design_ecommerce/vendor/bootstrap/css/bootstrap.min.css') }}">
     <link rel="stylesheet" type="text/css"
@@ -35,7 +35,7 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('/design_ecommerce/css/util.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('/design_ecommerce/css/main.css') }}">
 </head>
-{{-- <style>
+<style>
     :root {
         --navbar: {{ $settings->navbar }};
         --navbar_text: {{ $settings->navbar_text }};
@@ -51,29 +51,16 @@
         --cintillo: {{ $settings->cintillo }};
         --cintillo_text: {{ $settings->cintillo_text }};
     }
-</style> --}}
+</style>
 
 <input type="hidden" value="{{ $tenantinfo->whatsapp }}" id="random_whats" name="random_whats">
 
-<body class="g-sidenav-show  bg-gray-200">
+<body class="animsition">
     {{-- @include('frontend.av.add-comment') --}}
-
-    <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
-        <!-- Botón flotante de WhatsApp -->
-        {{--  <div class="whatsapp-button whatsapp-button-click">
-            <span class="whatsapp-label">¡Contáctanos!</span> <!-- Etiqueta -->
-            <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" width="40"
-                height="40">
-        </div>
-        <div class="comment-button comment-button-click">
-            <span class="comment-label">¡Deja un testimonio!</span> <!-- Etiqueta -->
-            <img src="{{ asset('avstyles/img/svg_icon/comment.svg') }}" alt="WhatsApp" width="40" height="40">
-        </div> --}}
-        <div>
-            @include('layouts.inc.design_ecommerce.front')
-            @yield('content')
-        </div>
-    </main>
+    <div>
+        @include('layouts.inc.design_ecommerce.front')
+        @yield('content')
+    </div>
 
     <script src="{{ asset('/design_ecommerce/vendor/jquery/jquery-3.2.1.min.js') }}"></script>
     <script src="{{ asset('/design_ecommerce/vendor/animsition/js/animsition.min.js') }}"></script>
@@ -176,12 +163,174 @@
     @yield('scripts')
 
     <script>
+        $(document).ready(function() {
+            $('#search-select').select2({
+                placeholder: "BUSCAR PRODUCTOS...",
+                allowClear: true,
+                width: '100%',
+                ajax: {
+                    url: '/get/products/select/',
+                    dataType: 'json',
+                    delay: 250,
+                    data: function(params) {
+                        return {
+                            search: params.term // Envía el término de búsqueda al servidor
+                        };
+                    },
+                    processResults: function(data) {
+                        return {
+                            results: data.map(function(buy) {
+                                return {
+                                    id: buy.url,
+                                    text: buy.name
+                                };
+                            })
+                        };
+                    }
+                }
+            });
+            $('#search-select').on('change', function(e) {
+                var selectedId = $(this).val();
+                if (selectedId) {
+                    window.location.href = '/detail-clothing' + selectedId;
+                }
+            });
+            $(document).on('click', '.btnQuantity', function(e) {
+                e.preventDefault();
+
+                var quantity = $(this).val();
+                var itemId = $(this).data('cart-id');
+
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+
+                $.ajax({
+                    method: "POST",
+                    url: "/edit-quantity",
+                    data: {
+                        'quantity': quantity,
+                        'cart_id': itemId,
+                    },
+                    success: function(response) {
+                        calcularTotal();
+                    }
+                });
+            });
+
+            $(document).on('click', '.btnDelete', function(e) {
+                e.preventDefault();
+                let $button = $(this);
+                let cartId = $button.data('item-id');
+                let $form = $button.closest('form.delete-form');
+                $.ajax({
+                    url: "/delete-item-cart/" + cartId,
+                    type: 'POST', // Si usas el método DELETE, puedes sobreescribirlo en los datos o la cabecera según tu configuración
+                    data: $form.serialize() + '&cart_id=' +
+                        cartId, // Se envían los datos del form + el ID del item
+                    success: function(response) {
+                        var newCartNumber = response.cartNumber
+                        const button = document.querySelector('.js-show-cart');
+                        button.dataset.notify = newCartNumber;
+                        $button.closest('.header-cart-item').remove();
+                        calcularTotal();
+                    },
+                    error: function(error) {
+                        console.error('Error eliminando el producto del carrito:', error);
+                    }
+                });
+            });
+            // Función de ejemplo para actualizar los totales. Ajusta esta función según cómo se manejen
+            // los datos en front_new y la respuesta de tu servidor.
+            function calcularTotal() {
+                let total = 0;
+                let total_cloth = 0;
+                let iva = parseFloat(document.getElementById("iva_tenant").value);
+                let total_iva = 0;
+                let you_save = 0;
+                // Obtener todos los elementos li que contienen los productos
+                const items = document.querySelectorAll('.header-cart-item');
+
+                items.forEach((item) => {
+                    const precio = parseFloat(item.querySelector('.price').value);
+                    const discount = parseFloat(item.querySelector('.discount').value);
+                    const cantidad = parseInt(item.querySelector('.quantity').value);
+
+                    const subtotal = precio * cantidad;
+                    const subtotal_discount = discount * cantidad;
+                    you_save += subtotal_discount;
+                    total += subtotal;
+                });
+
+                total_iva = total * iva;
+                total_cloth = total;
+                total = total + total_iva;
+
+                // Mostrar el total actualizado en los elementos correspondientes
+                var divDescuento = $(
+                    '#descuento'
+                );
+                const totalElement = document.getElementById('totalPriceElementDE');
+                const totalIvaElement = document.getElementById('totalIvaElementDE');
+                const totalDiscountElement = document.getElementById('totalDiscountElementDE');
+                const totalCloth = document.getElementById('totalClothDE');
+
+
+                totalElement.innerText = `₡${total.toLocaleString()}`;
+                if (total_iva > 0) {
+                    totalIvaElement.textContent = `₡${total_iva.toLocaleString()}`;
+                }
+                if (you_save > 0) {
+                    divDescuento.removeClass('d-none');
+                    totalDiscountElement.textContent = `₡${you_save.toLocaleString()}`;
+                } else {
+                    divDescuento.addClass('d-none');
+                }
+                totalCloth.textContent = `₡${total_cloth.toLocaleString()}`;
+            }
+        });
         window.companyName = "{{ isset($tenantinfo->title) ? $tenantinfo->title : '' }}";
-        document.addEventListener("DOMContentLoaded", function() {
+       /*  document.addEventListener("DOMContentLoaded", function() {
             document.querySelector(".comment-button").addEventListener("click", function() {
                 var myModal = new bootstrap.Modal(document.getElementById('add-comment-modal'));
                 myModal.show();
             });
+
+        }); */
+        document.getElementById('toggleMenu').addEventListener('click', function() {
+            const menu = document.getElementById('fullScreenMenu');
+            menu.style.display = 'block'; // Se asegura de que el elemento esté visible
+            setTimeout(() => {
+                menu.classList.add('active'); // Agrega la animación
+            }, 10); // Pequeño retraso para activar la transición
+        });
+
+        document.getElementById('closeMenu').addEventListener('click', function() {
+            const menu = document.getElementById('fullScreenMenu');
+            menu.classList.remove('active'); // Quita la animación
+
+            // Espera a que termine la animación para ocultar el menú
+            setTimeout(() => {
+                menu.style.display = 'none';
+            }, 500); // Debe coincidir con la duración de la transición en CSS (0.5s)
+        });
+        document.getElementById('toggleMenuMobile').addEventListener('click', function() {
+            const menu = document.getElementById('fullScreenMenuMobile');
+            menu.style.display = 'block'; // Asegura que se vea antes de la animación
+            setTimeout(() => {
+                menu.classList.add('active'); // Agrega la animación
+            }, 10);
+        });
+
+        document.getElementById('closeMenuMobile').addEventListener('click', function() {
+            const menu = document.getElementById('fullScreenMenuMobile');
+            menu.classList.remove('active'); // Quita la animación
+
+            setTimeout(() => {
+                menu.style.display = 'none';
+            }, 500); // Espera a que termine la animación antes de ocultarlo
         });
     </script>
 </body>

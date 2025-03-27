@@ -423,9 +423,9 @@
                     //$('#monto_venta').val(monto_venta);
                 }
                 if (monto_producto > 0) {
-                    iva = aplica_prod == 1 ? monto_producto * (13 / 100) : 0;
+                    iva = aplica_prod == 1 ? monto_producto / 1.13 : 0;
                     porc_prod = aplica_prod == 1 ? 10 / 100 : 0;
-                    monto_calc_prod_sin_iva = monto_producto - iva;
+                    monto_calc_prod_sin_iva = iva;
                     monto_calc_prod = (monto_calc_prod_sin_iva * porc_prod);
                     calc_extra = aplica_prod == 1 ? monto_calc_prod : 0;
                     monto_max = monto_calc_prod_sin_iva - calc_extra;

@@ -7,7 +7,6 @@
         $descuento_mas_alto = max($descuentos);
     }
 @endphp
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 {{-- <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light shadow-sm" id="ftco-navbar">
     <div class="container">
         <a class="navbar-brand" href="{{ url('/') }}">
@@ -70,6 +69,8 @@
         </div>
     </div>
 </nav> --}}
+<input type="hidden" name="view_name" value="{{ $view_name }}" id="view_name">
+<input type="hidden" name="iva_tenant" id="iva_tenant" value="{{ $iva }}">
 <header>
     <!-- Header desktop -->
     <div class="container-menu-desktop">
@@ -81,7 +82,18 @@
                 </div>
 
                 <div class="right-top-bar flex-w h-full">
-                   
+                    <a href="{{ url('/about_us') }}" class="flex-c-m trans-04 p-lr-25">
+                        Acerca De
+                    </a>
+                    @guest
+                        <a href="{{ route('login') }}" class="flex-c-m trans-04 p-lr-25">
+                            Ingresar <i style="color: var(--navbar_text);" class="fas fa-sign-in"></i>
+                        </a>
+                    @else
+                        <a href="{{ url('buys') }}" class="flex-c-m trans-04 p-lr-25">
+                            Mis Compras
+                        </a>
+                    @endguest
                 </div>
             </div>
         </div>
@@ -91,39 +103,67 @@
 
                 <!-- Logo desktop -->
                 <a href="#" class="logo">
-                    <img src="{{ route('file', $tenantinfo->logo) }}" alt="img-logo"/>
+                    <img src="{{ route('file', $tenantinfo->logo) }}" alt="img-logo" />
                 </a>
 
                 <!-- Menu desktop -->
                 <div class="menu-desktop">
                     <ul class="main-menu">
-                        <li class="active-menu">
-                            <a href="index.html">Home</a>
-                            <ul class="sub-menu">
-                                <li><a href="index.html">Homepage 1</a></li>
-                                <li><a href="home-02.html">Homepage 2</a></li>
-                                <li><a href="home-03.html">Homepage 3</a></li>
-                            </ul>
+                        <li class="{{ $view_name == 'frontend_design_ecommerce_index' ? 'active-menu' : '' }}">
+                            <a href="{{ url('/') }}">Inicio</a>
                         </li>
-
                         <li>
-                            <a href="product.html">Shop</a>
+                            <a href="javascript:void(0);" id="toggleMenu">Explorar</a>
                         </li>
-
-                        <li class="label1" data-label1="hot">
+                        <!-- Menú expandido -->
+                        <div id="fullScreenMenu" class="fullscreen-menu">
+                            <div class="menu-content">
+                                <button id="closeMenu" class="close-menu">&times;</button>
+                                <h2 class="text-center">
+                                    {{ isset($tenantinfo->manage_department) && $tenantinfo->manage_department == 1 ? 'Departamentos' : 'Categorías' }}
+                                </h2>
+                                <div class="departments-container">
+                                    @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department == 1)
+                                        @foreach ($departments as $department)
+                                            <div class="department-section">
+                                                <h3>{{ $department->department }}</h3>
+                                                <ul>
+                                                    @foreach ($department->categories as $categoria)
+                                                        <li>
+                                                            <a
+                                                                href="{{ url('clothes-category/' . $categoria->id . '/' . $department->id) }}">
+                                                                {{ $categoria->name }}
+                                                            </a>
+                                                        </li>
+                                                    @endforeach
+                                                </ul>
+                                            </div>
+                                        @endforeach
+                                    @else
+                                        <ul>
+                                            <li><a href="{{ url('category/') }}" class="nav-submenu-item">Todas las
+                                                    Categorías</a></li>
+                                            @foreach ($categories as $item)
+                                                <li>
+                                                    <a
+                                                        href="{{ url('clothes-category/' . $item->category_id . '/' . $item->department_id) }}">
+                                                        {{ $item->name }}
+                                                    </a>
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                        {{-- <li class="label1" data-label1="hot">
                             <a href="shoping-cart.html">Features</a>
-                        </li>
-
+                        </li> --}}
                         <li>
                             <a href="blog.html">Blog</a>
                         </li>
-
                         <li>
-                            <a href="about.html">About</a>
-                        </li>
-
-                        <li>
-                            <a href="contact.html">Contact</a>
+                            <a href="about.html">Favoritos</a>
                         </li>
                     </ul>
                 </div>
@@ -133,11 +173,10 @@
                     <div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 js-show-modal-search">
                         <i class="zmdi zmdi-search"></i>
                     </div>
-
-                    <div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti js-show-cart"
-                        data-notify="2">
+                    <button class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti js-show-cart"
+                        data-notify="{{ $cartNumber }}">
                         <i class="zmdi zmdi-shopping-cart"></i>
-                    </div>
+                    </button>
 
                     <a href="#"
                         class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti"
@@ -153,7 +192,7 @@
     <div class="wrap-header-mobile">
         <!-- Logo moblie -->
         <div class="logo-mobile">
-            <a href="index.html"><img src="images/icons/logo-01.png" alt="IMG-LOGO"></a>
+            <a href="index.html"><img src="{{ route('file', $tenantinfo->logo) }}" alt="IMG-LOGO"></a>
         </div>
 
         <!-- Icon header -->
@@ -187,47 +226,77 @@
         <ul class="topbar-mobile">
             <li>
                 <div class="left-top-bar">
-                    Free shipping for standard order over $100
+                    {{ isset($tenantinfo->text_cintillo) ? $tenantinfo->text_cintillo : '' }}
                 </div>
             </li>
 
             <li>
                 <div class="right-top-bar flex-w h-full">
-                    <a href="#" class="flex-c-m p-lr-10 trans-04">
-                        Help & FAQs
+                    <a href="{{ url('/about_us') }}" class="flex-c-m trans-04 p-lr-10">
+                        Acerca De
                     </a>
-
-                    <a href="#" class="flex-c-m p-lr-10 trans-04">
-                        My Account
-                    </a>
-
-                    <a href="#" class="flex-c-m p-lr-10 trans-04">
-                        EN
-                    </a>
-
-                    <a href="#" class="flex-c-m p-lr-10 trans-04">
-                        USD
-                    </a>
+                    @guest
+                        <a href="{{ route('login') }}" class="flex-c-m trans-04 p-lr-10">
+                            Ingresar <i style="color: var(--navbar_text);" class="fas fa-sign-in"></i>
+                        </a>
+                    @else
+                        <a href="{{ url('buys') }}" class="flex-c-m trans-04 p-lr-10">
+                            Mis Compras
+                        </a>
+                    @endguest
                 </div>
             </li>
         </ul>
 
         <ul class="main-menu-m">
             <li>
-                <a href="index.html">Home</a>
-                <ul class="sub-menu-m">
-                    <li><a href="index.html">Homepage 1</a></li>
-                    <li><a href="home-02.html">Homepage 2</a></li>
-                    <li><a href="home-03.html">Homepage 3</a></li>
-                </ul>
-                <span class="arrow-main-menu-m">
-                    <i class="fa fa-angle-right" aria-hidden="true"></i>
-                </span>
+                <a href="{{ url('/') }}">Inicio</a>
             </li>
 
             <li>
-                <a href="product.html">Shop</a>
+                <a href="javascript:void(0);" id="toggleMenuMobile">Explorar</a>
             </li>
+
+            <div id="fullScreenMenuMobile" class="fullscreen-menu-mobile">
+                <button id="closeMenuMobile" class="close-menu-mobile">&times;</button>
+                <div class="menu-content">
+                    <h2>{{ isset($tenantinfo->manage_department) && $tenantinfo->manage_department == 1 ? 'Departamentos' : 'Categorías' }}
+                    </h2>
+                    <div class="departments-container">
+                        @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department == 1)
+                            @foreach ($departments as $department)
+                                <div class="department-section">
+                                    <h3>{{ $department->department }}</h3>
+                                    <ul>
+                                        @foreach ($department->categories as $categoria)
+                                            <li>
+                                                <a
+                                                    href="{{ url('clothes-category/' . $categoria->id . '/' . $department->id) }}">
+                                                    {{ $categoria->name }}
+                                                </a>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endforeach
+                        @else
+                            <ul>
+                                <li><a href="{{ url('category/') }}" class="nav-submenu-item">Todas las
+                                        Categorías</a></li>
+                                @foreach ($categories as $item)
+                                    <li>
+                                        <a
+                                            href="{{ url('clothes-category/' . $item->category_id . '/' . $item->department_id) }}">
+                                            {{ $item->name }}
+                                        </a>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        @endif
+                    </div>
+                </div>
+            </div>
+
 
             <li>
                 <a href="shoping-cart.html" class="label1 rs1" data-label1="hot">Features</a>
@@ -251,7 +320,7 @@
     <div class="modal-search-header flex-c-m trans-04 js-hide-modal-search">
         <div class="container-search-header">
             <button class="flex-c-m btn-hide-modal-search trans-04 js-hide-modal-search">
-                <img src="images/icons/icon-close2.png" alt="CLOSE">
+                <img src="design_ecommerce/images/icons/icon-close2.png" alt="CLOSE">
             </button>
 
             <form class="wrap-search-header flex-w p-l-15">
@@ -263,3 +332,144 @@
         </div>
     </div>
 </header>
+<div class="wrap-header-cart js-panel-cart">
+    <div class="s-full js-hide-cart"></div>
+
+    <div class="header-cart flex-col-l p-l-65 p-r-25">
+        <div class="header-cart-title flex-w flex-sb-m p-b-8">
+            <span class="mtext-103 cl2">
+                Tu Carrito
+            </span>
+
+            <div class="fs-35 lh-10 cl2 p-lr-5 pointer hov-cl1 trans-04 js-hide-cart">
+                <i class="zmdi zmdi-close"></i>
+            </div>
+        </div>
+
+        <div class="header-cart-content flex-w js-pscroll">
+            <ul class="header-cart-wrapitem w-full">
+                @foreach ($cart_items as $item)
+                    @php
+                        $precio = $item->price;
+                        if (
+                            isset($tenantinfo->custom_size) &&
+                            $tenantinfo->custom_size == 1 &&
+                            $item->stock_price > 0
+                        ) {
+                            $precio = $item->stock_price;
+                        }
+                        if (Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0) {
+                            $precio = $item->mayor_price;
+                        }
+                        $descuentoPorcentaje = $item->discount;
+                        $descuento = ($precio * $descuentoPorcentaje) / 100;
+                        $precioConDescuento = $precio - $descuento;
+                        $attributesValues = !empty($item->attributes_values)
+                            ? explode(', ', $item->attributes_values)
+                            : [];
+                    @endphp
+
+                    <li class="header-cart-item flex-w flex-t m-b-12">
+                        <input type="hidden" name="prod_id" value="{{ $item->id }}" class="prod_id">
+                        <input type="hidden" class="price"
+                            value="{{ $item->discount > 0
+                                ? $precioConDescuento
+                                : (Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0
+                                    ? $item->mayor_price
+                                    : ($tenantinfo->custom_size == 1
+                                        ? $item->stock_price
+                                        : $item->price)) }}
+                        ">
+                        <input type="hidden" value="{{ $descuento }}" class="discount" name="discount">
+                        <div class="header-cart-item-img">
+                            <img src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"
+                                alt="IMG">
+                        </div>
+
+                        <div class="header-cart-item-txt p-t-8">
+                            <a href="#" class="header-cart-item-name m-b-18 hov-cl1 trans-04">
+                                {{ $item->name }}
+                            </a>
+
+                            @if (!empty($attributesValues) && count($attributesValues) > 0)
+                                <span class="m-0 text-muted w-100 d-block">
+                                    Atributos
+                                </span>
+                                @foreach ($attributesValues as $attributeValue)
+                                    @php
+                                        if (strpos($attributeValue, ': ') !== false) {
+                                            [$attribute, $value] = explode(': ', $attributeValue, 2);
+                                        } else {
+                                            $attribute = $attributeValue;
+                                            $value = '';
+                                        }
+                                    @endphp
+
+                                    <span>{{ $attribute == 'Stock' ? 'Predeterminado' : $attribute . ':' }}
+                                        {{ $attribute == 'Stock' ? '' : $value }}</span><br>
+                                @endforeach
+                            @endif
+
+                            <span class="header-cart-item-info">
+                                ₡{{ $item->discount > 0 ? $precioConDescuento : (Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0 ? $item->mayor_price : $item->price) }}
+                            </span>
+                            <div class="d-flex align-items-center">
+                                <!-- Input para actualizar la cantidad -->
+                                <div class="input-group text-center input-group-static w-100">
+                                    <input min="1" max="{{ $item->stock > 0 ? $item->stock : '' }}"
+                                        value="{{ $item->quantity }}" type="number" name="quantityCart"
+                                        data-cart-id="{{ $item->cart_id }}"
+                                        class="form-control btnQuantity text-center w-100 quantity">
+                                </div>
+
+                                <!-- Formulario para eliminar el producto -->
+                                <form name="delete-item-cart" id="delete-item-cart" class="delete-form">
+                                    {{ csrf_field() }}
+                                    {{ method_field('DELETE') }}
+                                    <button data-item-id="{{ $item->cart_id }}"
+                                        class="btn btn-icon btn-3 btn-danger btnDelete">
+                                        <span class="btn-inner--icon"><i class="fa fa-trash"></i></span>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+
+                    </li>
+                @endforeach
+            </ul>
+
+            <div class="w-full">
+                <div class="header-cart-total w-full pb-2">
+                    Productos: <span id="totalPriceElementDE"
+                        class="ml-auto subtotalValue">₡{{ number_format($cloth_price) }}</span>
+                </div>
+                @if ($iva > 0)
+                    <div class="header-cart-total w-full pb-2">
+                        I.V.A: <span id="totalIvaElementDE"
+                            class="ml-auto subtotalValue">₡{{ number_format($iva) }}</span>
+                    </div>
+                @endif
+                <div class="header-cart-total w-full pb-2">
+                    Descuento: <span id="totalDiscountElementDE"
+                        class="ml-auto descuentoValue">₡{{ number_format($you_save) }}</span>
+                </div>
+                <div class="header-cart-total w-full pb-5">
+                    Total: <span id="totalClothDE" class="ml-auto totalValue">₡{{ number_format($total_price) }}</span>
+                </div>
+
+
+                <div class="header-cart-buttons flex-w w-full">
+                    <a href="{{ url('view-cart') }}"
+                        class="flex-c-m stext-101 cl0 size-107 bg3 bor2 hov-btn3 p-lr-15 trans-04 m-r-8 m-b-10">
+                        Ver Carrito
+                    </a>
+
+                    <a href="{{ url('checkout') }}"
+                        class="flex-c-m stext-101 cl0 size-107 bg3 bor2 hov-btn3 p-lr-15 trans-04 m-b-10">
+                        Finalizar Pedido
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
