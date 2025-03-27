@@ -92,6 +92,7 @@ class BlogController extends Controller
                 'blogs.video_url as video_url',
                 'blogs.title as title',
                 'blogs.image as image',
+                'blogs.is_project as is_project',
                 'blogs.horizontal_images as horizontal_images',
                 'blogs.autor as autor',
                 'blogs.fecha_post as fecha_post',
@@ -147,10 +148,15 @@ class BlogController extends Controller
             case (1):
                 return view('frontend.blog.carsale.show-articles', compact('tags', 'comments', 'cards', 'results', 'another_blogs', 'id', 'fecha_letter', 'blog'));
                 break;
-            default:
-            return view('frontend.blog.show-articles', compact('tags', 'comments', 'cards', 'results', 'another_blogs', 'id', 'fecha_letter', 'blog'));
+            case (6):
+            case (7):
+                $another_blogs = Blog::where('id', '!=', $id)->inRandomOrder()->get();
+                return view('frontend.av.blog.show-articles',  compact('tags', 'comments', 'cards', 'results', 'another_blogs', 'id', 'fecha_letter', 'blog'));
                 break;
-        }        
+            default:
+                return view('frontend.blog.show-articles', compact('tags', 'comments', 'cards', 'results', 'another_blogs', 'id', 'fecha_letter', 'blog'));
+                break;
+        }
     }
     /**
 
@@ -234,6 +240,7 @@ class BlogController extends Controller
         $blog['title_optional'] = $title_optional;
         $blog['personal_id'] = $request->personal_id == "0" ? null : $request->personal_id;
         $blog['autor'] = $auth;
+        $blog['is_project'] = $request->filled('is_project') ? 1 : 0;
         $blog['video_url'] = $request->video_url;
         $blog['name_url'] = $name_url;
         $blog['fecha_post'] = $datetoday;
@@ -308,6 +315,7 @@ class BlogController extends Controller
                 'blogs.title as title',
                 'blogs.horizontal_images as horizontal_images',
                 'blogs.autor as autor',
+                'blogs.is_project as is_project',
                 'blogs.fecha_post as fecha_post',
                 'blogs.name_url as name_url',
                 'blogs.video_url as video_url',
@@ -369,6 +377,7 @@ class BlogController extends Controller
         $blog->name_url = $name_url_mod;
         $blog->video_url = $request->video_url;
         $blog->title = $request->title;
+        $blog->is_project = $request->filled('is_project') ? 1 : 0;
         $blog->title_optional = $request->title_optional;
         $blog->personal_id = $request->personal_id == "0" ? null : $request->personal_id;
         $blog->body = $request->body;

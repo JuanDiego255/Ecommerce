@@ -100,6 +100,17 @@
                                     placeholder="Descripción del blog">{{ $blog->body }}</textarea>
                             </div>
                         </div>
+                        @if (isset($tenantinfo->tenant) && $tenantinfo->tenant == 'avelectromecanica' || isset($tenantinfo->tenant) && $tenantinfo->tenant == 'aclimate')
+                                <div class="col-md-12 mb-3">
+                                    <label>{{ __('Es un proyecto?') }}</label>
+                                    <div class="form-check">
+                                        <input {{ $blog->is_project == 1 ? 'checked' : '' }} class="form-check-input"
+                                            type="checkbox" value="1" id="is_project" name="is_project">
+                                        <label class="custom-control-label"
+                                            for="customCheck1">{{ __('Es un proyecto') }}</label>
+                                    </div>
+                                </div>
+                            @endif
                         <div class="col-md-12 mt-3 text-center">
                             <button type="submit" class="btn btn-velvet">{{ __('Editar Blog') }}</button>
                         </div>

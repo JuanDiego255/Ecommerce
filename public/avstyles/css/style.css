@@ -8056,3 +8056,8 @@ h6 {
 .position-acli{
     position: relative !important;
 }
+.blog_post{
+    width: 80px !important;
+    height: 80px !important;
+    border-radius: 10px;
+}

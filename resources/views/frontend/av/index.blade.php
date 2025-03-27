@@ -15,10 +15,10 @@
                     <div class="single_slider d-flex align-items-center "
                         style="background-image:{{ $tenantinfo->tenant != 'aclimate'
                             ? ' linear-gradient(to right, 
-                                                    rgb(0, 0, 0) 0%, 
-                                                    rgb(0, 0, 0) 30%, 
-                                                    rgba(0, 0, 0, 0.7) 40%, 
-                                                    rgba(0, 0, 0, 0) 70%), '
+                                                                                                    rgb(0, 0, 0) 0%, 
+                                                                                                    rgb(0, 0, 0) 30%, 
+                                                                                                    rgba(0, 0, 0, 0.7) 40%, 
+                                                                                                    rgba(0, 0, 0, 0) 70%), '
                             : '' }} 
     url('{{ route($ruta, $carousel->image) }}');
  background-size: cover; background-position: center;">
@@ -86,6 +86,52 @@
         </div>
     @endif
     <!-- /case_study_area  -->
+    <!-- projects done  -->
+    @if (count($blogs) != 0)
+        <div class="case_study_area">
+            <div class="container">
+                <div class="border_bottom">
+                    <div class="row">
+                        <div class="col-xl-12">
+                            <div class="section_title text-center mb-40">
+                                <h3>Proyectos Ejecutados</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-12">
+                            <div class="case_active owl-carousel">
+                                @foreach ($blogs as $key => $item)
+                                    @if ($item->is_project == 1)
+                                        <div class="single_case">
+                                            <div class="case_thumb">
+                                                <img src="{{ isset($item->image) ? route($ruta, $item->image) : url('images/producto-sin-imagen.PNG') }}"
+                                                    alt="" />
+                                            </div>
+                                            <div class="case_heading">
+                                                <span>Finalizado</span>
+                                                <h3><a
+                                                        href="{{ url('/blog/' . $item->id . '/' . $item->name_url) }}">{{ $item->title }}</a>
+                                                </h3>
+                                            </div>
+                                        </div>
+                                    @endif
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-12">
+                            <div class="more_close_btn text-center">
+                                <a href="#" class="boxed-btn3-line">Explorar más</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+    <!-- /projects done  -->
     <!-- accordion  -->
     <div class="accordion_area">
         <div class="container">
