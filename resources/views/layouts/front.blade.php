@@ -213,15 +213,12 @@
                         }
                     }
                 });
-
                 $('#search-select').on('change', function(e) {
                     var selectedId = $(this).val();
                     if (selectedId) {
                         window.location.href = '/detail-clothing' + selectedId;
                     }
                 });
-
-
                 $(document).on('click', '.btnQuantity', function(e) {
                     e.preventDefault();
 
@@ -246,7 +243,6 @@
                         }
                     });
                 });
-
                 $(document).on('click', '.btnDelete', function(e) {
                     e.preventDefault();
 
@@ -330,10 +326,8 @@
                 }
                 totalCloth.textContent = `₡${total_cloth.toLocaleString()}`;
             }
-
             var isAuthenticated = {{ Auth::check() ? 'true' : 'false' }};
             var isMayor = {{ Auth::check() && Auth::user()->mayor == '1' ? 'true' : 'false' }};
-
             function getCart() {
                 // Nueva solicitud AJAX para cargar el contenido del carrito actualizado
                 $.ajax({
@@ -425,7 +419,6 @@
                 });
 
             }
-
             $(document).on('click', '.add_favorite', function(event) {
                 event.preventDefault();
                 var selected_attributes = [];

@@ -1,5 +1,5 @@
 <!-- footer start -->
-<footer class="footer">
+{{-- <footer class="footer">
     <div class="footer_top">
         <div class="container">
             <div class="row">
@@ -49,7 +49,7 @@
                         <h3 class="footer_title">Servicios</h3>
                         <ul>
                             @foreach ($categories as $key => $item)
-                                <li><a href="#">{{$item->name}}</a></li>
+                                <li><a href="#">{{ $item->name }}</a></li>
                                 @if ($key >= 5)
                                     @break
                                 @endif
@@ -100,6 +100,138 @@
                     </p>
                 </div>
             </div>
+        </div>
+    </div>
+</footer> --}}
+<!-- Footer -->
+<footer class="bg3 p-t-75 p-b-32">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-6 col-lg-3 p-b-50">
+                <h4 class="stext-301 cl0 p-b-30">
+                    Atajos
+                </h4>
+
+                <ul>
+                    @foreach ($categories_all as $key => $item)
+                        <li class="p-b-10">
+                            <a href="#" class="stext-107 cl7 hov-cl1 trans-04">
+                                {{ $item->name }}
+                            </a>
+                        </li>
+                        @if ($key >= 3)
+                            @break
+                        @endif
+                    @endforeach
+                </ul>
+            </div>
+
+            <div class="col-sm-6 col-lg-3 p-b-50">
+                <h4 class="stext-301 cl0 p-b-30">
+                    Ayuda
+                </h4>
+
+                <ul>
+                    <li class="p-b-10">
+                        <a href="{{ url('/buys') }}" class="stext-107 cl7 hov-cl1 trans-04">
+                            Mis Compras
+                        </a>
+                    </li>
+
+                    <li class="p-b-10">
+                        <a href="{{ url('/about_us') }}" class="stext-107 cl7 hov-cl1 trans-04">
+                            Acerca De
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="col-sm-6 col-lg-3 p-b-50">
+                <h4 class="stext-301 cl0 p-b-30">
+                    MAS INFORMACION
+                </h4>
+
+                <p class="stext-107 cl7 size-201">                    
+                    {{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'muebleriasarchi' ? 'Envíos por correos de C.R' : 'Se realizan entregas en todo Costa Rica.' }}<br>
+                    <i class="fa fa-whatsapp"></i> 89420339<br>
+                    <i class="fa fa-envelope"></i> {{ isset($tenantinfo->email) ? $tenantinfo->email : '' }}
+                </p>
+
+                <div class="p-t-27">
+                    @foreach ($social_network as $social)
+                        @php
+                            $social_logo = null;
+                            if (stripos($social->social_network, 'Facebook') !== false) {
+                                $social_logo = 'fa fa-facebook';
+                            } elseif (stripos($social->social_network, 'Instagram') !== false) {
+                                $social_logo = 'fa fa-instagram';
+                            } elseif (stripos($social->social_network, 'Twitter') !== false) {
+                                $social_logo = 'fa fa-twitter';
+                            } elseif (stripos($social->social_network, 'LinkedIn') !== false) {
+                                $social_logo = 'fa fa-linkedin';
+                            }
+                            if (stripos($social->social_network, 'You tube') !== false) {
+                                $social_logo = 'fa fa-youtube';
+                            }
+                            if (stripos($social->social_network, 'Wordpress') !== false) {
+                                $social_logo = 'fa fa-wordpress';
+                            }
+                            if (stripos($social->social_network, 'Tik tok') !== false) {
+                                $social_logo = 'fa fa-tiktok';
+                            }
+                        @endphp
+                        <a href="{{ url($social->url) }}" target="blank" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
+                            <i class="{{ $social_logo }}"></i>
+                        </a>
+                    @endforeach
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-lg-3 p-b-50">
+                <h4 class="stext-301 cl0 p-b-30">
+                    Sobre Nosotros...
+                </h4>
+
+                <p class="stext-107 cl7 size-201">                    
+                    {{ isset($tenantinfo->mision) ? $tenantinfo->mision : '' }}
+                </p>
+            </div>
+        </div>
+
+        <div class="p-t-40">
+            {{-- <div class="flex-c-m flex-w p-b-18">
+                <a href="#" class="m-all-1">
+                    <img src="design_ecommerce/images/icons/icon-pay-01.png" alt="ICON-PAY">
+                </a>
+
+                <a href="#" class="m-all-1">
+                    <img src="design_ecommerce/images/icons/icon-pay-02.png" alt="ICON-PAY">
+                </a>
+
+                <a href="#" class="m-all-1">
+                    <img src="design_ecommerce/images/icons/icon-pay-03.png" alt="ICON-PAY">
+                </a>
+
+                <a href="#" class="m-all-1">
+                    <img src="design_ecommerce/images/icons/icon-pay-04.png" alt="ICON-PAY">
+                </a>
+
+                <a href="#" class="m-all-1">
+                    <img src="design_ecommerce/images/icons/icon-pay-05.png" alt="ICON-PAY">
+                </a>
+            </div> --}}
+
+            <p class="stext-107 cl6 txt-center">
+                <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                ©
+                <script>
+                    document.write(new Date().getFullYear())
+                </script>,
+                <a href="#" class="font-weight-bold text-footer"
+                    target="_blank">{{ isset($tenantinfo->title) ? $tenantinfo->title : '' }}</a>
+                {{ isset($tenantinfo->footer) ? $tenantinfo->footer : '' }}
+
+            </p>
         </div>
     </div>
 </footer>

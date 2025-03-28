@@ -34,6 +34,7 @@ class VentaEspecialistaController extends Controller
                     'especialistas.aplica_porc_tarjeta as aplica_porc_tarjeta',
                     'especialistas.aplica_porc_113 as aplica_porc_113',
                     'especialistas.aplica_porc_prod as aplica_porc_prod',
+                    'especialistas.set_campo_esp as set_campo_esp',
                     'especialistas.aplica_calc as aplica_calc'
                 )
                 ->first();

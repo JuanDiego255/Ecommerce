@@ -58,6 +58,7 @@
                                             <option value="{{ $item->id }}" selected
                                                 data-service="{{ $item->monto_por_servicio }}"
                                                 data-aplica="{{ $item->aplica_calc }}"
+                                                data-set_campo_esp="{{ $item->set_campo_esp }}"
                                                 data-apli_tarj="{{ $item->aplica_porc_tarjeta }}"
                                                 data-apli_113="{{ $item->aplica_porc_113 }}"
                                                 data-apli_prod="{{ $item->aplica_porc_prod }}"
@@ -69,6 +70,7 @@
                                         <option @if ($key == 0 && $especialista == null) selected @endif
                                             value="{{ $item->id }}" data-service="{{ $item->monto_por_servicio }}"
                                             data-aplica="{{ $item->aplica_calc }}"
+                                            data-set_campo_esp="{{ $item->set_campo_esp }}"
                                             data-apli_tarj="{{ $item->aplica_porc_tarjeta }}"
                                             data-apli_113="{{ $item->aplica_porc_113 }}"
                                             data-apli_prod="{{ $item->aplica_porc_prod }}"
@@ -121,6 +123,7 @@
                                 <input type="hidden" name="clothing_id" id="clothing_id">
                                 <input type="hidden" name="aplica" id="aplica">
                                 <input type="hidden" name="aplica_prod" id="aplica_prod">
+                                <input type="hidden" name="set_campo_esp" id="set_campo_esp">
                                 <input type="hidden" name="aplica_113" id="aplica_113">
                                 <input type="hidden" name="aplica_calc_tarjeta" id="aplica_calc_tarjeta">
                                 <input type="hidden" name="venta_id" id="venta_id"
@@ -301,6 +304,7 @@
             var especialistaUpdate = "{{ $especialista->clothing_id ?? 'N' }}";
             function cargarServicios(especialistaId, especialistaUpdate) {
                 var monto_salario = especialistaId.find(':selected').data('salary');
+                var set_campo_esp = especialistaId.find(':selected').data('set_campo_esp');
                 var monto_serv = especialistaId.find(':selected').data('service');
                 var aplica_calc = especialistaId.find(':selected').data('aplica');
                 var aplica_tarj = especialistaId.find(':selected').data('apli_tarj');
@@ -310,6 +314,7 @@
 
                 $('#aplica').val(aplica_calc);
                 $('#aplica_calc_tarjeta').val(aplica_tarj);
+                $('#set_campo_esp').val(set_campo_esp);
                 $('#aplica_prod').val(aplica_prod);
                 $('#aplica_113').val(aplica_113);
                 $('#select_servicios').empty(); // Limpiar 
@@ -367,7 +372,7 @@
                 cargarServicios($(this), especialistaUpdate);
                 $('#especialista_id').val($(this).val());
                 $('#monto_clinica').val(0);
-                $('#monto_venta').val('');
+                $('#monto_venta').val(0);
                 $('#monto_producto_venta').val(0);
                 $('#monto_especialista').val(0);
             });
@@ -393,19 +398,21 @@
             function calcularMontos() {
                 var aplica = $('#aplica').val();
                 var aplica_113 = $('#aplica_113').val();
+                var set_campo_esp = $('#set_campo_esp').val();
                 var aplica_prod = $('#aplica_prod').val();
                 var aplica_calc_tarjeta = $('#aplica_calc_tarjeta').val();
                 var monto_venta = parseFloat($('#monto_venta').val()); // Convierte a número decimal
                 var porcentaje = parseFloat($('#input_porcentaje').val());
                 var monto_producto = parseFloat($('#monto_producto_venta').val());
-                var monto_serv_sal = $('#monto_por_servicio_o_salario').val();
+                var monto_serv_sal =  parseFloat($('#monto_por_servicio_o_salario').val());
                 var tipo_pago = $('#tipo_pago option:selected').text();
                 var monto_venta_con_porc = 0;
                 var monto_calc_prod_sin_iva = 0;
                 var monto_calc_prod = 0;
                 var monto_calc_total = 0;
-                var monto_max = 0;
-                var iva = 0;
+                var monto_total_cli = 0;
+                var monto_total_esp = 0;
+                var monto_iva_aplicado = 0;
                 var porc_prod = 0;
                 var descuento = 0;
                 var porc_prod = 0;
@@ -423,39 +430,62 @@
                     //$('#monto_venta').val(monto_venta);
                 }
                 if (monto_producto > 0) {
-                    iva = aplica_prod == 1 ? monto_producto / 1.13 : 0;
+                    monto_producto = aplica_prod == 1 ? monto_producto / 1.13 : monto_producto;
                     porc_prod = aplica_prod == 1 ? 10 / 100 : 0;
-                    monto_calc_prod_sin_iva = iva;
-                    monto_calc_prod = (monto_calc_prod_sin_iva * porc_prod);
-                    calc_extra = aplica_prod == 1 ? monto_calc_prod : 0;
-                    monto_max = monto_calc_prod_sin_iva - calc_extra;
-                    $('#monto_clinica').val(monto_max);
+                }
+                if(aplica_prod == 1){                    
+                    monto_calc_prod = (monto_producto * porc_prod);
                 }
 
                 if (porcentaje >= 0) {
                     monto_venta_con_porc = (monto_venta * (porcentaje / 100));
-                    monto_max = monto_venta_con_porc + monto_max;
-                    $('#monto_clinica').val(monto_max);
-                    if (aplica == 1) {
-                        $('#monto_especialista').val((monto_venta - monto_venta_con_porc - monto_serv_sal) +
-                            monto_calc_prod);
+                    //$('#monto_clinica').val(monto_max);
+                    if (set_campo_esp == 1) {
+                        //$('#monto_especialista').val((monto_venta - monto_venta_con_porc - monto_serv_sal) + monto_calc_prod);
                     } else {
-                        $('#monto_clinica').val(monto_venta + monto_producto);
-                        $('#monto_especialista').val(0);
+                        //$('#monto_clinica').val(monto_venta + monto_producto);
+                        //$('#monto_especialista').val(0);
                     }
                 }
                 if (monto_serv_sal > 0) {
-                    monto_max = monto_max + (monto_venta - monto_serv_sal);
-                    $('#monto_clinica').val(monto_max);
+                    //monto_max = monto_max + (monto_venta - monto_serv_sal);
+                    //$('#monto_clinica').val(monto_max);
                     if (aplica == 1) {
-                        $('#monto_especialista').val((monto_venta - (monto_venta - monto_serv_sal)) +
-                            monto_calc_prod);
+                        //$('#monto_especialista').val((monto_venta - (monto_venta - monto_serv_sal)) + monto_calc_prod);
                     } else {
-                        $('#monto_clinica').val((monto_venta - (monto_venta - monto_serv_sal)) +
-                            monto_calc_prod);
-                        $('#monto_especialista').val(0);
+                        //$('#monto_clinica').val((monto_venta - (monto_venta - monto_serv_sal)) + monto_calc_prod);
+                        //$('#monto_especialista').val(0);
                     }
                 }
+                if(aplica_prod == 1 && monto_producto > 0){
+                    monto_total_cli = monto_producto - monto_calc_prod;
+                    monto_total_esp = monto_calc_prod;                    
+                }
+                if(aplica == 1){
+                    monto_total_cli = monto_total_cli + monto_venta_con_porc;
+                    monto_total_esp = monto_total_esp + (monto_venta - monto_venta_con_porc);
+                }
+                if (monto_serv_sal > 0) {
+                    monto_total_cli = monto_total_cli + (monto_venta - monto_serv_sal);
+                    monto_total_esp = monto_total_esp + monto_serv_sal;
+                }
+                console.log("Monto Venta Comp: " + monto_venta);
+                console.log("Monto Venta Porc: " + monto_venta_con_porc);               
+                console.log("Monto Producto Comp: " + monto_producto);
+                console.log("Monto Producto Porc: " + monto_calc_prod);
+                console.log("Monto Total Cli: " + monto_total_cli);
+                console.log("Monto Total Esp: " + monto_total_esp);
+                $('#monto_clinica').val(monto_total_cli);
+                if(set_campo_esp == 1){
+                    $('#monto_especialista').val(monto_total_esp);
+                }else{
+                    if(monto_venta == 0 && monto_producto > 0 && aplica_prod){
+                        $('#monto_clinica').val(monto_producto - monto_calc_prod);
+                    }else{
+                        $('#monto_clinica').val(monto_total_esp - monto_calc_prod + monto_producto);
+                    }                   
+                    $('#monto_especialista').val(monto_calc_prod);
+                }                
             }
         });
     </script>

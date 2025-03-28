@@ -52,6 +52,10 @@ class AppServiceProvider extends ServiceProvider
         view()->composer('*', function ($view) {
             $view_name = str_replace('.', '_', $view->getName());
             $session_id = session()->get('session_id');
+            $favNumber = 0;
+            if (Auth::check()) {
+                $favNumber = count(Favorite::where('user_id', Auth::id())->get());
+            }
             if (Auth::check()) {
                 $cartNumber = count(Cart::where('user_id', Auth::id())
                     ->where('session_id', null)
@@ -76,6 +80,16 @@ class AppServiceProvider extends ServiceProvider
                     'categories.black_friday as black_friday'
                 )
                 ->orderBy('categories.name', 'asc')
+                ->get();
+            $categories_all = Categories::where('departments.department', '!=', 'Default')
+                ->join('departments', 'categories.department_id', 'departments.id')
+                ->select(
+                    'departments.id as department_id',
+                    'categories.id as category_id',
+                    'categories.name as name',
+                    'categories.black_friday as black_friday'
+                )
+                ->inRandomOrder()
                 ->get();
             $social_network = TenantSocialNetwork::get();
             $tenantcarousel = TenantCarousel::get();
@@ -343,7 +357,9 @@ class AppServiceProvider extends ServiceProvider
                 'profesionals' => $profesionals,
                 'profesional_info' => $profesional_info,
                 'cartNumber' => $cartNumber,
+                'favNumber' => $favNumber,
                 'categories' => $categories,
+                'categories_all' => $categories_all,
                 'buys' => $buys,
                 'social_network' => $social_network,
                 'tenantinfo' => $tenantinfo,

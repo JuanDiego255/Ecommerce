@@ -26,7 +26,9 @@ class TenantCarouselController extends Controller
             }
 
             $tenant_carousel->text1 = $request->text1;
-            $tenant_carousel->text2 = $request->text2;            
+            $tenant_carousel->text2 = $request->text2; 
+            $tenant_carousel->url = $request->url; 
+            $tenant_carousel->link_text = $request->link_text;            
 
             $tenant_carousel->save();
             DB::commit();
@@ -57,7 +59,9 @@ class TenantCarouselController extends Controller
                 $tenantcarousel->image = $image;
             }
             $tenantcarousel->text1 = $request->text1;
-            $tenantcarousel->text2 = $request->text2;     
+            $tenantcarousel->text2 = $request->text2;  
+            $tenantcarousel->url = $request->url; 
+            $tenantcarousel->link_text = $request->link_text;     
             
             $tenantcarousel->update();
             DB::commit();

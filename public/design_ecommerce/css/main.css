@@ -3725,4 +3725,8 @@ input.num-product::-webkit-inner-spin-button {
   top: 20px;
   cursor: pointer;
 }
+/*Mostrar Modal prod*/
+.show-modal1 {
+    display: block !important;
+}
 

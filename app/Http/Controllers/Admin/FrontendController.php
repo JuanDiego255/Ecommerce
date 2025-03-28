@@ -113,11 +113,31 @@ class FrontendController extends Controller
 
         // Obtener las primeras imágenes de las prendas obtenidas
         foreach ($clothings as $clothing) {
+            // Obtener la primera imagen
             $firstImage = ProductImage::where('clothing_id', $clothing->id)
                 ->orderBy('id')
                 ->first();
-            // Asignar la imagen al objeto $clothing
             $clothing->image = $firstImage ? $firstImage->image : null;
+            $clothing->all_images = ProductImage::where('clothing_id', $clothing->id)
+                ->orderBy('id')
+                ->pluck('image')
+                ->toArray();
+
+            // Obtener atributos
+            $result = DB::table('stocks as s')->where('s.clothing_id', $clothing->id)
+            ->join('attributes as a', 's.attr_id', '=', 'a.id')
+            ->join('attribute_values as v', 's.value_attr', '=', 'v.id')
+            ->select(
+                'a.name as columna_atributo',
+                'a.id as attr_id',
+                DB::raw('GROUP_CONCAT(v.value ORDER BY s.order ASC SEPARATOR "/") as valores'),
+                DB::raw('GROUP_CONCAT(v.id ORDER BY s.order ASC SEPARATOR "/") as ids'),
+                DB::raw('GROUP_CONCAT(s.stock ORDER BY s.order ASC SEPARATOR "/") as stock'),
+            )
+            ->groupBy('a.name', 'a.id')
+            ->orderBy('a.name', 'asc')
+            ->get();
+            $clothing->atributos = $result->toArray();
         }
 
         foreach ($tags as $tag) {
@@ -259,7 +279,7 @@ class FrontendController extends Controller
             case (7):
                 $logos = Logos::all();
                 $metricas = Metrica::all();
-                return view('frontend.av.index', compact('clothings','metricas', 'logos', 'showModal', 'advert', 'blogs', 'social', 'clothings_offer', 'category', 'sellers', 'comments'));
+                return view('frontend.av.index', compact('clothings', 'metricas', 'logos', 'showModal', 'advert', 'blogs', 'social', 'clothings_offer', 'category', 'sellers', 'comments'));
                 break;
             default:
                 if ($tenantinfo->kind_of_features == 1) {

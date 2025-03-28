@@ -40,7 +40,36 @@
                             @enderror
                         </div>
                     </div>
-                   
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="input-group input-group-lg input-group-outline is-filled }} my-3">
+                                <label class="form-label">URL (Opcional)</label>
+                                <input required value="{{ isset($carousel->url) ? $carousel->url : '' }}" type="text"
+                                    placeholder="URL de redirección"
+                                    class="form-control form-control-lg @error('url') is-invalid @enderror"
+                                    name="url" id="url">
+                                @error('url')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>Campo Requerido</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="input-group input-group-lg input-group-outline is-filled my-3">
+                                <label class="form-label">Texto del botón de enlace (Opcional)</label>
+                                <input required value="{{ isset($carousel->link_text) ? $carousel->link_text : '' }}"
+                                    type="text" placeholder="URL de redirección"
+                                    class="form-control form-control-lg @error('link_text') is-invalid @enderror"
+                                    name="link_text" id="link_text">
+                                @error('link_text')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>Campo Requerido</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
                     <div class="col-md-12 mb-3">
                         <label class="form-label">Imagen</label>
                         <div class="input-group input-group-static mb-4">

@@ -54,6 +54,8 @@
 </style>
 
 <input type="hidden" value="{{ $tenantinfo->whatsapp }}" id="random_whats" name="random_whats">
+<input hidden type="user_id" value="{{ isset(Auth::user()->id) ? Auth::user()->id : '' }}" name="user_id"
+    id="user_id">
 
 <body class="animsition">
     {{-- @include('frontend.av.add-comment') --}}
@@ -219,7 +221,6 @@
                     }
                 });
             });
-
             $(document).on('click', '.btnDelete', function(e) {
                 e.preventDefault();
                 let $button = $(this);
@@ -242,8 +243,6 @@
                     }
                 });
             });
-            // Función de ejemplo para actualizar los totales. Ajusta esta función según cómo se manejen
-            // los datos en front_new y la respuesta de tu servidor.
             function calcularTotal() {
                 let total = 0;
                 let total_cloth = 0;
@@ -290,15 +289,58 @@
                 }
                 totalCloth.textContent = `₡${total_cloth.toLocaleString()}`;
             }
+            $(document).on('click', '.add_favorite', function(event) {
+                event.preventDefault();
+                var selected_attributes = [];
+                $('input[type="hidden"][name$="_id"]').each(function() {
+                    var selected_value = $(this).val();
+                    var regex = /^\d+-\d+-\d+$/;
+                    if (selected_value && regex.test(selected_value)) {
+                        selected_attributes.push(selected_value);
+                    }
+                });
+                var attributes = JSON.stringify(selected_attributes);
+                let clothing_id = $(this).data('clothing-id');
+                let category_id = $(this).data('category-id');
+                let attr_id = $(this).data('attr_id');
+                let value_attr = $(this).data('value_attr');
+                var user_id = document.getElementById('user_id').value;
+                let token = $('meta[name="csrf-token"]').attr('content');
+                let icon = $(this).find('i');
+                $.ajax({
+                    url: '/add-favorite',
+                    method: 'POST',
+                    data: {
+                        user_id: user_id,
+                        clothing_id: clothing_id,
+                        category_id: category_id,
+                        _token: token,
+                        attributes: attributes
+                    },
+                    success: function(response) {
+                        const button = document.querySelector('.icon-fav');
+                        if (response.status === 'added') {
+                            icon.addClass('text-danger');
+                            button.dataset.notify = response.favNumber;
+                        } else {
+                            icon.removeClass('text-danger');
+                            button.dataset.notify = response.favNumber;
+                        }
+                    },
+                    error: function(xhr) {
+                        console.error('Error al añadir a favoritos', xhr.responseText);
+                    }
+                });
+            });
         });
         window.companyName = "{{ isset($tenantinfo->title) ? $tenantinfo->title : '' }}";
-       /*  document.addEventListener("DOMContentLoaded", function() {
-            document.querySelector(".comment-button").addEventListener("click", function() {
-                var myModal = new bootstrap.Modal(document.getElementById('add-comment-modal'));
-                myModal.show();
-            });
+        /*  document.addEventListener("DOMContentLoaded", function() {
+             document.querySelector(".comment-button").addEventListener("click", function() {
+                 var myModal = new bootstrap.Modal(document.getElementById('add-comment-modal'));
+                 myModal.show();
+             });
 
-        }); */
+         }); */
         document.getElementById('toggleMenu').addEventListener('click', function() {
             const menu = document.getElementById('fullScreenMenu');
             menu.style.display = 'block'; // Se asegura de que el elemento esté visible
@@ -306,7 +348,6 @@
                 menu.classList.add('active'); // Agrega la animación
             }, 10); // Pequeño retraso para activar la transición
         });
-
         document.getElementById('closeMenu').addEventListener('click', function() {
             const menu = document.getElementById('fullScreenMenu');
             menu.classList.remove('active'); // Quita la animación
@@ -323,7 +364,6 @@
                 menu.classList.add('active'); // Agrega la animación
             }, 10);
         });
-
         document.getElementById('closeMenuMobile').addEventListener('click', function() {
             const menu = document.getElementById('fullScreenMenuMobile');
             menu.classList.remove('active'); // Quita la animación

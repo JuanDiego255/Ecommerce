@@ -56,7 +56,8 @@ class FavoriteController extends Controller
             if ($favorite) {
                 // Si existe, eliminarlo
                 $favorite->delete();
-                return response()->json(['status' => 'removed']);
+                $favNumber = count(Favorite::where('user_id', $user_id)->get());
+                return response()->json(['status' => 'removed','favNumber' => $favNumber]);
             } else {
                 // Si no existe, agregarlo
                 Favorite::create([
@@ -66,7 +67,8 @@ class FavoriteController extends Controller
                     'attr_id' => $attr_id_val ?? null,
                     'value_attr' => $value_attr ?? null
                 ]);
-                return response()->json(['status' => 'added']);
+                $favNumber = count(Favorite::where('user_id', $user_id)->get());
+                return response()->json(['status' => 'added','favNumber' => $favNumber]);
             }
         } catch (\Exception $th) {
             return response()->json(['status' => 'falló: ' . $th->getMessage()]);
