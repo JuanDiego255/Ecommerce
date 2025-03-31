@@ -6,9 +6,6 @@
         }, $clothings_offer_array);
         $descuento_mas_alto = max($descuentos);
     }
-    if(isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1){
-        $categories = $categories_all;
-    }
 @endphp
 {{-- <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light shadow-sm" id="ftco-navbar">
     <div class="container">
