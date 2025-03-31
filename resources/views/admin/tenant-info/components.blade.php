@@ -64,7 +64,7 @@
                                     id="show_cintillo" @if ($item->show_cintillo == 1) checked @endif>
                                 <label class="form-check-label"
                                     for="show_cintillo">{{ __('Mostrar Cintillo (Cinta arriba del menu
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            principal)') }}</label>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    principal)') }}</label>
                             </div>
                             <div class="form-check form-switch col-md-6">
                                 <input value="1" class="form-check-input" type="checkbox" name="show_mision"
@@ -97,7 +97,7 @@
             <div class="card-header">
                 <h4 class="text-dark">
                     {{ __('Personaliza los colores del sitio web (Si conoce el valor hexadecimal del color en
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                            específico, puedes ingresarlo en el campo de texto.)') }}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    específico, puedes ingresarlo en el campo de texto.)') }}
                 </h4>
             </div>
             <form action="{{ url('tenant-components/color-save/') }}" method="post" enctype="multipart/form-data">
@@ -407,12 +407,14 @@
                                                     </h1>
                                                 </div>
                                                 <div class="text-center">
-                                                    <a data-bs-toggle="modal"  class="btn btn-link text-velvet ms-auto border-0"
+                                                    <a data-bs-toggle="modal"
+                                                        class="btn btn-link text-velvet ms-auto border-0"
                                                         data-bs-target="#edit-tenant-carousel-modal{{ $carousel->id }}">
                                                         <i class="material-icons text-lg  cursor-pointer">edit</i>
                                                     </a>
-                                                    <form name="delete-carousel{{ $carousel->id }}" id="delete-carousel{{ $carousel->id }}"
-                                                        method="post" action="{{ url('/delete/tenant-carousel/' . $carousel->id) }}">
+                                                    <form name="delete-carousel{{ $carousel->id }}"
+                                                        id="delete-carousel{{ $carousel->id }}" method="post"
+                                                        action="{{ url('/delete/tenant-carousel/' . $carousel->id) }}">
                                                         {{ csrf_field() }}
                                                         {{ method_field('DELETE') }}
                                                     </form>
@@ -500,6 +502,16 @@
                 var imageUrl = background.getAttribute('data-background');
                 background.style.backgroundImage = 'url(' + imageUrl + ')';
             });
+            ClassicEditor
+                .create(document.querySelector('#editor'))
+                .catch(error => {
+                    console.error(error);
+                });
+            ClassicEditor
+                .create(document.querySelector('#editor_add'))
+                .catch(error => {
+                    console.error(error);
+                });
         });
 
         let currentButtonName = null;

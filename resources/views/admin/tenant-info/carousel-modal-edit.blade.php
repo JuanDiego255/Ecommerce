@@ -18,7 +18,7 @@
                         <div
                             class="input-group input-group-lg input-group-outline {{ isset($carousel->text1) ? 'is-filled' : '' }} my-3">
 
-                            <textarea placeholder="Título de la imagen" type="text"
+                            <textarea placeholder="Título de la imagen" type="text" id="editor"
                                 class="form-control form-control-lg @error('text1') is-invalid @enderror" name="text1" id="text1">{{ isset($carousel->text1) ? $carousel->text1 : '' }}</textarea>
                             @error('text1')
                                 <span class="invalid-feedback" role="alert">
@@ -27,7 +27,7 @@
                             @enderror
                         </div>
                     </div>
-                    <div class="col-md-12">
+                    {{-- <div class="col-md-12">
                         <div
                             class="input-group input-group-lg input-group-outline {{ isset($carousel->text2) ? 'is-filled' : '' }} my-3">
 
@@ -39,7 +39,7 @@
                                 </span>
                             @enderror
                         </div>
-                    </div>
+                    </div> --}}
                     <div class="row">
                         <div class="col-md-6">
                             <div class="input-group input-group-lg input-group-outline is-filled }} my-3">

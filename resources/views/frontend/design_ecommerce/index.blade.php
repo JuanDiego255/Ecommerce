@@ -15,7 +15,7 @@
                             <div class="flex-col-l-m h-full p-t-100 p-b-30 respon5">
                                 <div class="layer-slick1 animated visible-false" data-appear="fadeInDown" data-delay="0">
                                     <span class="ltext-101 cl2 respon2">
-                                        {{ $carousel->text1 }}
+                                        {!! $carousel->text1 !!}
                                     </span>
                                 </div>
 
@@ -100,7 +100,7 @@
                                                 </span>
 
                                                 <span class="block1-info stext-102 trans-04">
-                                                    *Departamento*
+
                                                 </span>
                                             </div>
 
@@ -213,7 +213,8 @@
                             </div>
                             <div class="block2-txt flex-w flex-t p-t-14">
                                 <div class="block2-txt-child1 flex-col-l ">
-                                    <a href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
+                                    <a href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}"
+                                        class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
                                         ({{ $item->category }})
                                         {{ $item->name }}
                                     </a>
@@ -256,10 +257,8 @@
         <span class="symbol-btn-back-to-top">
             <i class="zmdi zmdi-chevron-up"></i>
         </span>
-    </div>   
+    </div>
 @endsection
 @section('scripts')
-    <script>
-        
-    </script>
+    <script></script>
 @endsection
