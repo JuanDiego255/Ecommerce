@@ -873,7 +873,6 @@ h3 {
     top: 0;
     z-index: 9;
     position: absolute;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 @media (max-width: 767px) {
@@ -1089,9 +1088,9 @@ h3 {
 /* line 156, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_header.scss */
 .header-area .main-header-area .main-menu ul li a {
     color: #fff;
-    font-size: 17px;
+    font-size: 16px;
     text-transform: uppercase !important;
-    font-weight: 600;
+    font-weight: 300;
     font-weight: bold;
     display: inline-block;
     padding: 0px 0px 0px 0px;
@@ -7034,8 +7033,7 @@ h6 {
 /* line 1408, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_blog.scss */
 .comment-form {
     border-top: 1px solid #eee;
-    padding-top: 45px;
-    margin-top: 50px;
+    padding-top: 25px;
     margin-bottom: 20px;
 }
 

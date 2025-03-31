@@ -81,8 +81,7 @@ class AppServiceProvider extends ServiceProvider
                 )
                 ->orderBy('categories.name', 'asc')
                 ->get();
-            $categories_all = Categories::where('departments.department', '!=', 'Default')
-                ->join('departments', 'categories.department_id', 'departments.id')
+            $categories_all = Categories::join('departments', 'categories.department_id', 'departments.id')
                 ->select(
                     'departments.id as department_id',
                     'categories.id as category_id',

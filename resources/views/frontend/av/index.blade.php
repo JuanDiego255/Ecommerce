@@ -13,13 +13,7 @@
             @if (isset($tenantcarousel) && count($tenantcarousel) > 0)
                 @foreach ($tenantcarousel as $key => $carousel)
                     <div class="single_slider d-flex align-items-center "
-                        style="background-image:{{ $tenantinfo->tenant != 'aclimate'
-                            ? ' linear-gradient(to right, 
-                                                                                                    rgb(0, 0, 0) 0%, 
-                                                                                                    rgb(0, 0, 0) 30%, 
-                                                                                                    rgba(0, 0, 0, 0.7) 40%, 
-                                                                                                    rgba(0, 0, 0, 0) 70%), '
-                            : '' }} 
+                        style="background-image:
     url('{{ route($ruta, $carousel->image) }}');
  background-size: cover; background-position: center;">
                         <div class="container">

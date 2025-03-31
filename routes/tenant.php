@@ -65,6 +65,7 @@ Route::middleware([
         Route::get('/', [FrontendController::class, 'index']);
     });
     Route::get('/about_us', [FrontendController::class, 'aboutUs']);
+    Route::get('/contact', [FrontendController::class, 'contact']);
     Route::get('compare/vehicles', [FrontendController::class, 'compareIndex']);
     Route::get('/get-cart-details/{code}', [ClothingCategoryController::class, 'getCartDetail']);
     Route::get('/comment/{show}', [FrontendController::class, 'index']);
@@ -74,6 +75,7 @@ Route::middleware([
     Route::prefix('aclimate')->middleware('setTenantDatabase')->group(function () {
         Route::get('/', [FrontendController::class, 'index']);
         Route::get('/about_us', [FrontendController::class, 'aboutUs']);
+        Route::get('/contact', [FrontendController::class, 'contact']);
         Route::get('compare/vehicles', [FrontendController::class, 'compareIndex']);
         Route::get('/get-cart-details/{code}', [ClothingCategoryController::class, 'getCartDetail']);
         Route::get('/comment/{show}', [FrontendController::class, 'index']);

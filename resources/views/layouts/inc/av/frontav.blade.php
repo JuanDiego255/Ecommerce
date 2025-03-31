@@ -150,7 +150,7 @@
                                                 <li><a href="single-blog.html">single-blog</a></li>
                                             </ul>
                                         </li>
-                                        <li><a class="{{$tenantinfo->tenant == "aclimate" ? "text-color-acli" : ""}}" href="contact.html">Contacto</a></li>
+                                        <li><a class="{{$tenantinfo->tenant == "aclimate" ? "text-color-acli" : ""}}" href="{{url('/contact')}}">Contacto</a></li>
                                     </ul>
                                 </nav>
                             </div>

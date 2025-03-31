@@ -813,4 +813,17 @@ class FrontendController extends Controller
                 return view('frontend.about_us');
         }
     }
+    public function contact()
+    {
+        $tenantinfo = Cache::remember('tenant_info', $this->expirationTime, function () {
+            return TenantInfo::first();
+        });
+        switch ($tenantinfo->kind_business) {
+            case (6):
+                return view('frontend.av.contact');
+                break;
+            default:
+                return view('frontend.contact');
+        }
+    }
 }

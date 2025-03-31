@@ -75,22 +75,22 @@
     <!-- Header desktop -->
     <div class="container-menu-desktop">
         <!-- Topbar -->
-        <div class="top-bar">
+        <div class="top-bar bg-cintillo">
             <div class="content-topbar flex-sb-m h-full container">
-                <div class="left-top-bar">
+                <div class="left-top-bar text-cintillo">
                     {{ isset($tenantinfo->text_cintillo) ? $tenantinfo->text_cintillo : '' }}
                 </div>
 
                 <div class="right-top-bar flex-w h-full">
-                    <a href="{{ url('/about_us') }}" class="flex-c-m trans-04 p-lr-25">
+                    <a href="{{ url('/about_us') }}" class="flex-c-m trans-04 p-lr-25 text-cintillo">
                         Acerca De
                     </a>
                     @guest
-                        <a href="{{ route('login') }}" class="flex-c-m trans-04 p-lr-25">
+                        <a href="{{ route('login') }}" class="flex-c-m trans-04 p-lr-25 text-cintillo">
                             Ingresar <i class="m-l-2 fa fa-sign-in"></i>
                         </a>
                     @else
-                        <a href="{{ url('buys') }}" class="flex-c-m trans-04 p-lr-25">
+                        <a href="{{ url('buys') }}" class="flex-c-m trans-04 p-lr-25 text-cintillo">
                             Mis Compras
                         </a>
                     @endguest
@@ -171,17 +171,17 @@
                 <!-- Icon header -->
                 <div class="wrap-icon-header flex-w flex-r-m">
                     <div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 js-show-modal-search">
-                        <i class="zmdi zmdi-search"></i>
+                        <i class="zmdi zmdi-search icon-text-color-desk"></i>
                     </div>
-                    <button class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti js-show-cart"
+                    <button class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti js-show-cart icon-text-color-desk"
                         data-notify="{{ $cartNumber }}">
-                        <i class="zmdi zmdi-shopping-cart"></i>
+                        <i class="zmdi zmdi-shopping-cart icon-text-color-desk"></i>
                     </button>
 
                     <a href="#"
-                        class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti icon-fav"
+                        class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti icon-fav icon-text-color-desk"
                         data-notify="{{ $favNumber }}">
-                        <i class="zmdi zmdi-favorite-outline"></i>
+                        <i class="zmdi zmdi-favorite-outline icon-text-color-desk"></i>
                     </a>
                 </div>
             </nav>
@@ -197,23 +197,23 @@
 
         <!-- Icon header -->
         <div class="wrap-icon-header flex-w flex-r-m m-r-15">
-            <div class="icon-header-item cl2 hov-cl1 trans-04 p-r-11 js-show-modal-search">
+            <div class="icon-header-item cl2 hov-cl1 trans-04 p-r-11 js-show-modal-search icon-text-color-desk">
                 <i class="zmdi zmdi-search"></i>
             </div>
 
-            <div class="icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti js-show-cart"
+            <div class="icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti js-show-cart icon-text-color-desk"
                 data-notify="2">
                 <i class="zmdi zmdi-shopping-cart"></i>
             </div>
 
-            <a href="#" class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti"
+            <a href="#" class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti icon-text-color-desk"
                 data-notify="0">
                 <i class="zmdi zmdi-favorite-outline"></i>
             </a>
         </div>
 
         <!-- Button show menu -->
-        <div class="btn-show-menu-mobile hamburger hamburger--squeeze">
+        <div class="btn-show-menu-mobile hamburger hamburger--squeeze icon-text-color-desk">
             <span class="hamburger-box">
                 <span class="hamburger-inner"></span>
             </span>
@@ -338,7 +338,7 @@
 
         <div class="header-cart flex-col-l p-l-65 p-r-25">
             <div class="header-cart-title flex-w flex-sb-m p-b-8">
-                <span class="mtext-103 cl2">
+                <span class="mtext-103 cl2 title-text">
                     Tu Carrito
                 </span>
 
