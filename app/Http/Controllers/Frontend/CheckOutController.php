@@ -250,8 +250,15 @@ class CheckOutController extends Controller
         }
 
         $advert = Advert::where('section', 'checkout')->latest()->first();
-
-        return view('frontend.checkout', compact('cartItems', 'advert', 'tenant', 'delivery', 'iva', 'total_price', 'cloth_price', 'user_info', 'paypal_amount'));
+        switch ($tenantinfo->kind_business) {
+            default:
+                if ($tenantinfo->kind_of_features == 1) {
+                    return view('frontend.design_ecommerce.checkout', compact('cartItems', 'advert', 'tenant', 'delivery', 'iva', 'total_price', 'cloth_price', 'user_info', 'paypal_amount'));
+                }
+                return view('frontend.checkout', compact('cartItems', 'advert', 'tenant', 'delivery', 'iva', 'total_price', 'cloth_price', 'user_info', 'paypal_amount'));
+                break;
+        }       
+        
     }
 
     public function payment(

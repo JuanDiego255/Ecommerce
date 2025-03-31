@@ -1,4 +1,4 @@
-@extends('layouts.front')
+@extends('layouts.design_ecommerce.frontmain')
 @section('metatag')
     {!! SEOMeta::generate() !!}
     {!! OpenGraph::generate() !!}
@@ -18,271 +18,268 @@
     }
 @endphp
 @section('content')
-    <div class="container mt-4 mb-4">
-        <div class="breadcrumb-nav bc3x">
+    <div class="container m-t-80">
+        <div class="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg">
             @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
-                <li class="home"><a href="{{ url('/') }}"><i class="fas fa-{{ $icon->home }} me-1"></i></a></li>
-                <li class="bread-standard"><a href="{{ url('category/') }}"><i
-                            class="fas fa-{{ $icon->categories }} me-1"></i>Categorías</a></li>
-                <li class="bread-standard"><a href="{{ url('/view-cart') }}"><i
-                            class="fas fa-{{ $icon->cart }} me-1"></i>Carrito</a>
-                </li>
-                <li class="bread-standard"><a href="#"><i class="fab fa-cc-mastercard me-1"></i>Finalizar Compra</a>
-                </li>
+                <a href="{{ url('/') }}" class="stext-109 cl8 hov-cl1 trans-04">
+                    Inicio
+                    <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
+                </a>
+                <a href="{{ url('/category') }}" class="stext-109 cl8 hov-cl1 trans-04">
+                    Categorías
+                    <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
+                </a>
+                <a href="{{ url('/view-cart') }}" class="stext-109 cl8 hov-cl1 trans-04">
+                    Carrito
+                    <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
+                </a>
+                <span class="stext-109 cl4">
+                    Checkout
+                </span>
             @else
-                <li class="home"><a href="{{ url('/') }}"><i class="fas fa-home me-1"></i></a></li>
-                <li class="bread-standard"><a href="{{ url('departments/index') }}"><i
-                            class="fas fa-shapes me-1"></i>Departamentos</a></li>
-                <li class="bread-standard"><a href="{{ url('/view-cart') }}"><i
-                            class="fas fa-{{ $icon->cart }} me-1"></i>Carrito</a>
-                </li>
-                <li class="bread-standard"><a href="#"><i class="fab fa-cc-mastercard me-1"></i>Finalizar Compra</a>
-                </li>
+                <a href="{{ url('/') }}" class="stext-109 cl8 hov-cl1 trans-04">
+                    Inicio
+                    <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
+                </a>
+                <a href="{{ url('departments/index') }}" class="stext-109 cl8 hov-cl1 trans-04">
+                    Departamentos
+                    <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
+                </a>
+                <a href="{{ url('/view-cart') }}" class="stext-109 cl8 hov-cl1 trans-04">
+                    Carrito
+                    <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
+                </a>
+                <span class="stext-109 cl4">
+                    Checkout
+                </span>
             @endif
-
         </div>
+        <div class="row m-t-40">
+            <div id="sinpeContent" class="col-lg-10 col-xl-7 m-lr-auto m-b-50">
+                <div class="bor10 p-lr-40 p-t-30 p-b-40 m-l-20 m-r-10 m-lr-0-xl p-lr-15-sm">
+                    <h4 class="mtext-109 cl2 p-b-30">Formulario de compra</h4>
+                    <form action="{{ url('payment') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <input type="hidden" value="0" name="delivery" id="delivery">
+                        <input type="hidden" value="{{ $delivery }}" name="total_delivery" id="total_delivery">
+                        <input type="hidden" value="V" name="kind_of" id="kind_of">
+                        <input type="hidden" value="" name="apply_code" id="apply_code">
+                        <input type="hidden" value="" name="credit_use" id="credit_use">
 
-
-        <div class="row row-cols-1 row-cols-md-2 g-4 align-content-center card-group mt-1">
-            <div class="col bg-transparent">
-                <div id="sinpeContent" class="bg-transparent">
-                    <div class="card card-frame">
-                        <h3 class="ps-3 mt-2 text-center">
-                            Detalles Básicos
-                        </h3>
-
-                        <div class="card-body">
-                            <form action="{{ url('payment') }}" method="POST" enctype="multipart/form-data">
-                                @csrf
-                                <input type="hidden" value="0" name="delivery" id="delivery">
-                                <input type="hidden" value="{{ $delivery }}" name="total_delivery"
-                                    id="total_delivery">
-                                <input type="hidden" value="V" name="kind_of" id="kind_of">
-                                <input type="hidden" value="" name="apply_code" id="apply_code">
-                                <input type="hidden" value="" name="credit_use" id="credit_use">
-                                <div class="row checkout-form">
-                                    <div class="col-md-6">
-                                        <div class="input-group input-group-static mb-4">
-                                            <label>Nombre Completo</label>
-                                            <input value="{{ isset(Auth::user()->name) ? Auth::user()->name : '' }}"
-                                                required type="text" name="name"
-                                                class="form-control float-left w-100">
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <div class="input-group input-group-static mb-4">
-                                            <label>E-mail</label>
-                                            <input value="{{ isset(Auth::user()->email) ? Auth::user()->email : '' }}"
-                                                required type="text" name="email"
-                                                class="form-control float-left w-100">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6 mt-2">
-                                        <div class="input-group input-group-static mb-4">
-                                            <label>Teléfono (WhatsApp)</label>
-                                            <input
-                                                value="{{ isset(Auth::user()->telephone) ? Auth::user()->telephone : '' }}"
-                                                required type="text" name="telephone"
-                                                class="form-control float-left w-100">
-                                        </div>
-                                    </div>                                                                   
-                                    <div class="col-md-6 mt-2">
-                                        <div class="input-group input-group-static mb-4">
-                                            <label>País</label>
-                                            <input
-                                                value="{{ isset($user_info->country) ? $user_info->country : 'Costa Rica' }}"
-                                                required readonly value="Costa Rica" type="text" name="country"
-                                                class="form-control float-left w-100">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6 mt-2">
-                                        <div class="input-group input-group-static mb-4">
-                                            <label>Provincia</label>
-                                            <input value="{{ isset($user_info->province) ? $user_info->province : '' }}"
-                                                required type="text" name="province"
-                                                class="form-control float-left w-100">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6 mt-2">
-                                        <div class="input-group input-group-static mb-4">
-                                            <label>Cantón</label>
-                                            <input value="{{ isset($user_info->city) ? $user_info->city : '' }}" required
-                                                type="text" name="city" class="form-control float-left w-100">
-                                        </div>
-                                    </div>
-                                    @if ($tenant != 'mandicr')
-                                        <div class="col-md-6 mt-2">
-                                            <div class="input-group input-group-static mb-4">
-                                                <label>Distrito</label>
-                                                <input
-                                                    value="{{ isset($user_info->address_two) ? $user_info->address_two : '' }}"
-                                                    type="text" name="address_two" class="form-control float-left w-100">
-                                            </div>
-                                        </div>
-                                    @endif    
-                                    <div class="col-md-6 mt-2">
-                                        <div class="input-group input-group-static mb-4">
-                                            <label>
-                                                Dirección Exacta
-                                            </label>
-                                            <input value="{{ isset($user_info->address) ? $user_info->address : '' }}"
-                                                required type="text" name="address"
-                                                class="form-control float-left w-100">
-                                        </div>
-                                    </div>                                   
-                                    <div class="col-md-6 mt-2">
-                                        <div class="input-group input-group-static mb-4">
-                                            <label>Código Postal</label>
-                                            <input
-                                                value="{{ isset($user_info->postal_code) ? $user_info->postal_code : '' }}"
-                                                required type="text" name="postal_code"
-                                                class="form-control float-left w-100">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="input-group input-group-static mb-4">
-                                            <label>comprobante (SINPE Móvil)</label>
-                                            <input required class="form-control" type="file" name="image">
-                                        </div>
-                                    </div>
-                                    <span class="text-muted">SINPE Móvil:
-                                        {{ isset($tenantinfo->sinpe) ? $tenantinfo->sinpe : '' }}
-                                        {{ isset($tenantinfo->count) ? '| Cuenta bancaria: ' . $tenantinfo->count : '' }}</span>
-                                    <h5 class="text-muted-normal mt-2">Realiza una transferencia bancaria, o cancela por
-                                        medio de
-                                        SINPE Móvil, debes adjuntar el comprobante para que su compra sea aprobada</h5>
-
-                                    <button id="btnSinpe" type="submit" class="btn btn-add_to_cart d-block h8">Pagar
-                                        ₡<span id="btnPay">{{ number_format($total_price) }}</span></button>
-                                    @if (!Auth::check())
-                                        <h5 class="text-muted-normal">
-                                            Una vez que te <a class="text-info"
-                                                href="{{ route('register') }}">registres</a>
-                                            no
-                                            deberás
-                                            completar los detalles de entrega, e
-                                            información personal. Además de encontrar increíbles descuentos, y promociones.
-
-                                        </h5>
-                                    @else
-                                        <h5 class="text-muted-normal">
-                                            Para cambiar la dirección de entrega ve a
-                                            <a class="text-info" href="{{ url('address') }}">direcciones</a> y selecciona
-                                            la que desees.
-
-                                        </h5>
-                                    @endif
-
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="bor8 dis-flex p-l-15 m-b-20">
+                                    <input class="mtext-107 cl2 size-114 plh2 p-r-15" type="text" name="name"
+                                        value="{{ isset(Auth::user()->name) ? Auth::user()->name : '' }}" id="name"
+                                        placeholder="Nombre Completo" required>
                                 </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-                <div id="cardContent" style="display: none;">
-                    <div class="col col-12 ps-md-5 p-0">
-                        <div class="box-left">
-                            <p class="fw-bold h7">Nuestro método de pago por medio de tarjeta se encuentra deshabilitado.
-                            </p>
-
-                            <div class="">
-
-                                {{-- <div class="btn-add_to_cart" id="paypal-button-container">
-
-                                </div> --}}
                             </div>
+                            <div class="col-md-6">
+                                <div class="bor8 dis-flex p-l-15 m-b-20">
+                                    <input class="mtext-107 cl2 size-114 plh2 p-r-15" type="email" name="email"
+                                        value="{{ isset(Auth::user()->email) ? Auth::user()->email : '' }}" id="email"
+                                        placeholder="Correo Electrónico" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="bor8 dis-flex p-l-15 m-b-20">
+                                    <input class="mtext-107 cl2 size-114 plh2 p-r-15" type="text" name="telephone"
+                                        value="{{ isset(Auth::user()->telephone) ? Auth::user()->telephone : '' }}"
+                                        id="telephone" placeholder="Teléfono (WhatsApp)" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="bor8 dis-flex p-l-15 m-b-20">
+                                    <input class="mtext-107 cl2 size-114 plh2 p-r-15" type="text" name="country"
+                                        id="country" value="Costa Rica" readonly required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="bor8 dis-flex p-l-15 m-b-20">
+                                    <input class="mtext-107 cl2 size-114 plh2 p-r-15" type="text" name="province"
+                                        id="province" placeholder="Provincia" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="bor8 dis-flex p-l-15 m-b-20">
+                                    <input class="mtext-107 cl2 size-114 plh2 p-r-15" type="text" name="city"
+                                        id="city" placeholder="Cantón" required>
+                                </div>
+                            </div>
+                            @if ($tenant != 'mandicr')
+                                <div class="col-md-6">
+                                    <div class="bor8 dis-flex p-l-15 m-b-20">
+                                        <input class="mtext-107 cl2 size-114 plh2 p-r-15" type="text"
+                                            name="address_two" id="address_two" placeholder="Distrito" required>
+                                    </div>
+                                </div>
+                            @endif
+                            <div class="col-md-6">
+                                <div class="bor8 dis-flex p-l-15 m-b-20">
+                                    <input class="mtext-107 cl2 size-114 plh2 p-r-15" type="text" name="address"
+                                        id="address" placeholder="Dirección Exacta" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="bor8 dis-flex p-l-15 m-b-20">
+                                    <input class="mtext-107 cl2 size-114 plh2 p-r-15" type="text" name="postal_code"
+                                        id="postal_code" placeholder="Código Postal" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="">Comprobante</label>
+                                <div class="bor8 dis-flex p-l-15 m-b-20">
+                                    <input class="mtext-107 cl2 size-114 plh2 p-r-15" type="file" name="image"
+                                        id="image" required>
+                                </div>
+                            </div>
+                        </div>
+                        <h6 class="sakura-color sakura-font mt-2 m-b-25">Realiza una transferencia bancaria, o cancela
+                            por
+                            medio de
+                            SINPE Móvil, debes adjuntar el comprobante para que su compra sea aprobada</h6>
+
+                        <button type="submit"
+                            class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer text-white">Pagar
+                            ₡<span id="btnPay">{{ number_format($total_price) }}</span></button>
+                        @if (!Auth::check())
+                            <h6 class="sakura-font m-t-25">
+                                Una vez que te <a class="text-info" href="{{ route('register') }}">registres</a>
+                                no
+                                deberás
+                                completar los detalles de entrega, e
+                                información personal. Además de encontrar increíbles descuentos, y promociones.
+
+                            </h6>
+                        @else
+                            <h6 class="sakura-font m-t-25">
+                                Para cambiar la dirección de entrega ve a
+                                <a class="text-info" href="{{ url('address') }}">direcciones</a> y selecciona
+                                la que desees.
+
+                            </h6>
+                        @endif
+                    </form>
+                </div>
+            </div>
+            <div id="cardContent" class="col-lg-10 col-xl-7 m-lr-auto m-b-50 dis-none">
+                <div class="col col-12 ps-md-5 p-0">
+                    <div class="box-left">
+                        <p class="fw-bold h7">Nuestro método de pago por medio de tarjeta se encuentra deshabilitado.
+                        </p>
+
+                        <div class="">
+
+                            {{-- <div class="btn-add_to_cart" id="paypal-button-container">
+
+                    </div> --}}
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="col bg-transparent">
-                <div>
-                    <div class="col col-12 ps-md-5 p-0">
-                        <div class="box-left">
-                            <p class="fw-bold h7">Detalles de la compra</p>
-                            <div class="h8">
-                                <div class="row m-0 border mb-3">
-                                    @foreach ($cartItems as $item)
+            <div class="col-sm-10 col-lg-5 col-xl-5 m-lr-auto m-b-50">
+                <div class="bor10 p-lr-40 p-t-30 p-b-40 m-l-63 m-r-40 m-lr-0-xl p-lr-15-sm">
+                    <h4 class="mtext-109 cl2 p-b-30">
+                        Detalles
+                    </h4>
+                    <div class="row m-0 border mb-3">
+                        @foreach ($cartItems as $item)
+                            @php
+                                $precio = $item->price;
+                                if (
+                                    isset($tenantinfo->custom_size) &&
+                                    $tenantinfo->custom_size == 1 &&
+                                    $item->stock_price > 0
+                                ) {
+                                    $precio = $item->stock_price;
+                                }
+                                $descuentoPorcentaje = $item->discount;
+                                // Calcular el descuento
+                                $descuento = ($precio * $descuentoPorcentaje) / 100;
+                                // Calcular el precio con el descuento aplicado
+                                $precioConDescuento = $precio - $descuento;
+                                $attributesValues = !empty($item->attributes_values)
+                                    ? explode(', ', $item->attributes_values)
+                                    : [];
+                            @endphp
+                            <div class="d-flex justify-content-lg-start justify-content-center p-2">
+
+                                <span class="ps-3 textmuted"><i class="fa fa-check"></i>
+                                    {{ $item->name }} | Cant: {{ $item->quantity }} | Atributos
+                                    @foreach ($attributesValues as $attributeValue)
                                         @php
-                                            $precio = $item->price;
-                                            if (
-                                                isset($tenantinfo->custom_size) &&
-                                                $tenantinfo->custom_size == 1 &&
-                                                $item->stock_price > 0
-                                            ) {
-                                                $precio = $item->stock_price;
-                                            }
-                                            $descuentoPorcentaje = $item->discount;
-                                            // Calcular el descuento
-                                            $descuento = ($precio * $descuentoPorcentaje) / 100;
-                                            // Calcular el precio con el descuento aplicado
-                                            $precioConDescuento = $precio - $descuento;
-                                            $attributesValues = explode(', ', $item->attributes_values);
+                                            // Verifica que el atributo tenga el formato esperado antes de hacer explode
+                                            $parts = explode(': ', $attributeValue, 2);
+                                            $attribute = $parts[0] ?? '';
+                                            $value = $parts[1] ?? '';
+
+                                            // Solo mostrar si hay un atributo válido
+
                                         @endphp
-                                        <div class="d-flex justify-content-lg-start justify-content-center p-2">
 
-                                            <span class="ps-3 textmuted"><i
-                                                    class="material-icons my-auto textmuted">done</i>
-                                                {{ $item->name }} | Cant: {{ $item->quantity }} | Atributos
-                                                @foreach ($attributesValues as $attributeValue)
-                                                    @php
-                                                        // Separa el atributo del valor por ": "
-                                                        [$attribute, $value] = explode(': ', $attributeValue);
-                                                    @endphp
-
-                                                    {{ $attribute }}: {{ $value }}
-                                                @endforeach
-
-                                                |
-                                                Precio:
-                                                ₡{{ $item->discount > 0 ? $precioConDescuento * $item->quantity : ($tenantinfo->custom_size == 1 ? $item->stock_price * $item->quantity : $item->price * $item->quantity) }}
-                                            </span>
-                                        </div>
-                                        <hr class="dark horizontal my-0">
+                                        @if (!empty($attribute))
+                                            {{ $attribute }}: {{ $value }}<br>
+                                        @endif
                                     @endforeach
-                                </div>
-                                <div class="d-flex h7">
-                                    <p class="">Total + I.V.A</p>
-                                    <p class="ms-auto"></span>₡<span
-                                            id="totalIva">{{ number_format($total_price) }}</span></p>
-                                </div>
-                                <p class="fw-bold h7">Tarifa de envío por medio de correos. ₡{{ $delivery }}
-                                    {{ $address_tenant }}</p>
-                                <p class="fw-bold h7">SINPE Móvil:
-                                    {{ isset($tenantinfo->sinpe) ? $tenantinfo->sinpe : '' }}
-                                    {{ '(' . $sinpe_name . ')' }}
-                                </p>
-                                <div class="h8">
-                                    <label for="checkboxSubmit">
-                                        <div class="form-check">
-                                            <input id="envio" class="form-check-input envio" type="checkbox"
-                                                value="" name="envio" onchange="checkEnvio();">
-                                            <label class="form-check-label mb-2" for="envio">
-                                                Realizar Envío
-                                            </label>
-                                        </div>
-                                    </label>
-                                </div>
 
+
+                                    |
+                                    Precio:
+                                    ₡{{ $item->discount > 0 ? $precioConDescuento * $item->quantity : ($tenantinfo->custom_size == 1 ? $item->stock_price * $item->quantity : $item->price * $item->quantity) }}
+                                </span>
                             </div>
+                            <hr class="dark horizontal my-0">
+                        @endforeach
+                    </div>
+                    <div class="flex-w flex-t bor12 p-b-13">
+                        <div class="size-208">
+                            <span class="stext-110 cl2">
+                                Total + IVA:
+                            </span>
                         </div>
+
+                        <div class="size-209">
+                            <span>₡</span>
+                            <span id="totalIva" class="mtext-110 cl2">
+                                {{ number_format($total_price) }}
+                            </span>
+                        </div>
+                    </div>
+                    <p class="fw-bold h7 sakura-color m-t-5">Tarifa de envío por medio de correos.
+                        ₡{{ $delivery }}
+                        {{ $address_tenant }}</p>
+                    <p class="fw-bold h7 sakura-color">SINPE Móvil:
+                        {{ isset($tenantinfo->sinpe) ? $tenantinfo->sinpe : '' }}
+                        {{ '(' . $sinpe_name . ')' }}
+                    </p>
+                    <div class="h8">
+                        <label for="checkboxSubmit">
+                            <div class="form-check">
+                                <input id="envio" class="form-check-input envio" type="checkbox" value=""
+                                    name="envio" onchange="checkEnvio();">
+                                <label class="form-check-label mb-2" for="envio">
+                                    Realizar Envío
+                                </label>
+                            </div>
+                        </label>
                     </div>
                 </div>
                 <div class=" mt-4">
-                    <div class="col col-12 ps-md-5 p-0">
+                    <div class="bor10 p-lr-40 p-t-30 p-b-40 m-l-63 m-r-40 m-lr-0-xl p-lr-15-sm">
                         <div class="box-left">
                             <p class="fw-bold h7">¿Tienes un cupón? Se aplicará sobre el precio total</p>
                             <div class="h8 row">
-                                <div class="col-md-6">
-                                    <div class="input-group input-group-static mb-4">
+                                <div class="col-md-12">
+                                    <div class="bor8 dis-flex p-l-15 m-b-20">
                                         <input value="" placeholder="Ingrese el código" type="text"
-                                            name="code" id="code" class="form-control float-left w-100 code">
+                                            name="code" id="code"
+                                            class="mtext-107 cl2 size-114 plh2 p-r-15 code">
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-12">
                                     <button id="btnCode" type="submit"
-                                        class="btn btn-add_to_cart d-block h8 btnCode">Canjear</button>
+                                        class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer text-white btnCode">Canjear</button>
                                 </div>
                                 <div class="col-md-3 d-none" id="divCodeCancel">
                                     <button id="btnCodeCancel" type="submit"
@@ -293,7 +290,7 @@
                     </div>
                 </div>
                 <div class=" mt-4">
-                    <div class="col col-12 ps-md-5 p-0">
+                    <div class="bor10 p-lr-40 p-t-30 p-b-40 m-l-63 m-r-40 m-lr-0-xl p-lr-15-sm">
                         <div class="box-left">
                             <p class="fw-bold h7">Métodos de pago</p>
                             <div class="h8">
@@ -316,9 +313,8 @@
                 </div>
             </div>
         </div>
-
     </div>
-    @include('layouts.inc.indexfooter')
+    @include('layouts.inc.design_ecommerce.footer')
 @endsection
 @section('scripts')
     @if (isset($advert))
@@ -350,61 +346,61 @@
     </script>
     <script>
         /*  paypal.Buttons({
-                                                                                                                                                                                locale: 'es',
-                                                                                                                                                                                fundingSource: paypal.FUNDING.CARD,
-                                                                                                                                                                                createOrder: function(data, actions) {
-                                                                                                                                                                                    return actions.order.create({
+                                                                                                                                                                                                                                                                                    locale: 'es',
+                                                                                                                                                                                                                                                                                    fundingSource: paypal.FUNDING.CARD,
+                                                                                                                                                                                                                                                                                    createOrder: function(data, actions) {
+                                                                                                                                                                                                                                                                                        return actions.order.create({
 
-                                                                                                                                                                                        payer: {
-                                                                                                                                                                                            email_address: '{{ isset(Auth::user()->email) ? Auth::user()->email : '' }}',
-                                                                                                                                                                                            name: {
-                                                                                                                                                                                                given_name: '{{ isset(Auth::user()->name) ? Auth::user()->name : '' }}',
-                                                                                                                                                                                                surname: ''
-                                                                                                                                                                                            },
-                                                                                                                                                                                            address: {
-                                                                                                                                                                                                country_code: "CR",
-                                                                                                                                                                                            }
-                                                                                                                                                                                        },
-                                                                                                                                                                                        purchase_units: [{
-                                                                                                                                                                                            amount: {
-                                                                                                                                                                                                value: {{ $paypal_amount }}
-                                                                                                                                                                                            }
-                                                                                                                                                                                        }]
-                                                                                                                                                                                    });
-                                                                                                                                                                                },
+                                                                                                                                                                                                                                                                                            payer: {
+                                                                                                                                                                                                                                                                                                email_address: '{{ isset(Auth::user()->email) ? Auth::user()->email : '' }}',
+                                                                                                                                                                                                                                                                                                name: {
+                                                                                                                                                                                                                                                                                                    given_name: '{{ isset(Auth::user()->name) ? Auth::user()->name : '' }}',
+                                                                                                                                                                                                                                                                                                    surname: ''
+                                                                                                                                                                                                                                                                                                },
+                                                                                                                                                                                                                                                                                                address: {
+                                                                                                                                                                                                                                                                                                    country_code: "CR",
+                                                                                                                                                                                                                                                                                                }
+                                                                                                                                                                                                                                                                                            },
+                                                                                                                                                                                                                                                                                            purchase_units: [{
+                                                                                                                                                                                                                                                                                                amount: {
+                                                                                                                                                                                                                                                                                                    value: {{ $paypal_amount }}
+                                                                                                                                                                                                                                                                                                }
+                                                                                                                                                                                                                                                                                            }]
+                                                                                                                                                                                                                                                                                        });
+                                                                                                                                                                                                                                                                                    },
 
-                                                                                                                                                                                onApprove(data) {
-                                                                                                                                                                                    return fetch("/paypal/process/" + data.orderID)
-                                                                                                                                                                                        .then((response) => response.json())
-                                                                                                                                                                                        .then((orderData) => {
-                                                                                                                                                                                            if (!orderData.success) {
-                                                                                                                                                                                                swal({
-                                                                                                                                                                                                    title: orderData.status,
-                                                                                                                                                                                                    icon: orderData.icon,
-                                                                                                                                                                                                }).then((value) => {
-                                                                                                                                                                                                    // Esta función se ejecuta cuando el usuario hace clic en el botón "Ok"
-                                                                                                                                                                                                    if (value) {
-                                                                                                                                                                                                        // Recargar la página
-                                                                                                                                                                                                        window.location.href = '{{ url('/') }}';
-                                                                                                                                                                                                    }
-                                                                                                                                                                                                });
-                                                                                                                                                                                            }
-                                                                                                                                                                                            swal({
-                                                                                                                                                                                                title: orderData.status,
-                                                                                                                                                                                                icon: orderData.icon,
-                                                                                                                                                                                            }).then((value) => {
-                                                                                                                                                                                                // Esta función se ejecuta cuando el usuario hace clic en el botón "Ok"
-                                                                                                                                                                                                if (value) {
-                                                                                                                                                                                                    // Recargar la página
-                                                                                                                                                                                                    window.location.href = '{{ url('/') }}';
-                                                                                                                                                                                                }
-                                                                                                                                                                                            });
-                                                                                                                                                                                        });
-                                                                                                                                                                                },
-                                                                                                                                                                                onError: function(err) {
-                                                                                                                                                                                    alert(err);
-                                                                                                                                                                                }
-                                                                                                                                                                            }).render('#paypal-button-container'); */
+                                                                                                                                                                                                                                                                                    onApprove(data) {
+                                                                                                                                                                                                                                                                                        return fetch("/paypal/process/" + data.orderID)
+                                                                                                                                                                                                                                                                                            .then((response) => response.json())
+                                                                                                                                                                                                                                                                                            .then((orderData) => {
+                                                                                                                                                                                                                                                                                                if (!orderData.success) {
+                                                                                                                                                                                                                                                                                                    swal({
+                                                                                                                                                                                                                                                                                                        title: orderData.status,
+                                                                                                                                                                                                                                                                                                        icon: orderData.icon,
+                                                                                                                                                                                                                                                                                                    }).then((value) => {
+                                                                                                                                                                                                                                                                                                        // Esta función se ejecuta cuando el usuario hace clic en el botón "Ok"
+                                                                                                                                                                                                                                                                                                        if (value) {
+                                                                                                                                                                                                                                                                                                            // Recargar la página
+                                                                                                                                                                                                                                                                                                            window.location.href = '{{ url('/') }}';
+                                                                                                                                                                                                                                                                                                        }
+                                                                                                                                                                                                                                                                                                    });
+                                                                                                                                                                                                                                                                                                }
+                                                                                                                                                                                                                                                                                                swal({
+                                                                                                                                                                                                                                                                                                    title: orderData.status,
+                                                                                                                                                                                                                                                                                                    icon: orderData.icon,
+                                                                                                                                                                                                                                                                                                }).then((value) => {
+                                                                                                                                                                                                                                                                                                    // Esta función se ejecuta cuando el usuario hace clic en el botón "Ok"
+                                                                                                                                                                                                                                                                                                    if (value) {
+                                                                                                                                                                                                                                                                                                        // Recargar la página
+                                                                                                                                                                                                                                                                                                        window.location.href = '{{ url('/') }}';
+                                                                                                                                                                                                                                                                                                    }
+                                                                                                                                                                                                                                                                                                });
+                                                                                                                                                                                                                                                                                            });
+                                                                                                                                                                                                                                                                                    },
+                                                                                                                                                                                                                                                                                    onError: function(err) {
+                                                                                                                                                                                                                                                                                        alert(err);
+                                                                                                                                                                                                                                                                                    }
+                                                                                                                                                                                                                                                                                }).render('#paypal-button-container'); */
 
         function togglePaypalButton() {
             var checkBox = document.getElementById("sinpe");
@@ -438,20 +434,16 @@
             );
 
             if (code == "") {
-                Swal.fire({
-                    title: "Debe ingresar un código",
-                    icon: "warning",
-                });
+                swal("Proceso...",
+                    "Debe ingresar un código", "warning");
             } else {
                 $.ajax({
                     method: "GET",
                     url: "/gift-code/" + code,
                     success: function(giftCard) {
                         if (typeof giftCard.status === 'undefined') {
-                            Swal.fire({
-                                title: "El código ingresado no es valido, o no está vigente",
-                                icon: "warning",
-                            });
+                            swal("Proceso...",
+                                "El código ingresado no es valido, o no está vigente", "warning");
                         } else {
                             $('.btnCode').prop('disabled', true);
                             $('.code').prop('readonly', true);
@@ -475,32 +467,26 @@
                                         labelBtnPay.textContent =
                                             `${(numericTotalIva - giftCard.credit).toLocaleString()}`;
                                     }
-                                    Swal.fire({
-                                        title: "Se aplicó el cupón por un monto de ₡" +
-                                            credit_use.toLocaleString(),
-                                        icon: "success",
-                                    });
+                                    swal("Proceso...",
+                                        "Se aplicó el cupón por un monto de ₡" +
+                                        credit_use.toLocaleString(), "success");
                                 } else {
-                                    Swal.fire({
-                                        title: "Este cupón ya está en uso",
-                                        icon: "warning",
-                                    });
+                                    swal("Proceso...",
+                                        "Este cupón ya está en uso", "warning");
                                 }
 
 
 
                             } else {
-                                Swal.fire({
-                                    title: "este cupón ya ha sido utilizado y no contiene saldo.",
-                                    icon: "warning",
-                                });
+                                swal("Proceso...",
+                                    "Este cupón ya ha sido utilizado y no contiene saldo.",
+                                    "warning");
                             }
                         }
                     }
                 });
             }
         });
-
         $('.btnCodeCancel').click(function(e) {
             location.reload();
         });
@@ -508,10 +494,8 @@
         function checkEnvio() {
             var code = document.getElementById("code").value;
             if (code != "") {
-                Swal.fire({
-                    title: "Activaste un cupón, si deseas gestionar el envío, debe cancelar el cupón",
-                    icon: "warning",
-                });
+                swal("Proceso...",
+                    "Activaste un cupón, si deseas gestionar el envío, debe cancelar el cupón", "warning");
                 if (checkBox.checked) {
                     checkBox.checked = false;
                 } else {
@@ -520,13 +504,13 @@
             } else {
                 if (checkBox.checked) {
                     var numericTotalIva = convertToNumber(labelTotal.textContent);
-                    labelTotal.textContent = `${(numericTotalIva + envio).toLocaleString()}`;
-                    labelBtnPay.textContent = `${(numericTotalIva + envio).toLocaleString()}`;
+                    labelTotal.textContent = `${(numericTotalIva + envio).toLocaleString('en-US')}`;
+                    labelBtnPay.textContent = `${(numericTotalIva + envio).toLocaleString('en-US')}`;
                     inputTotal.value = envio;
                 } else {
                     var numericTotalIva = convertToNumber(labelTotal.textContent);
-                    labelTotal.textContent = `${(numericTotalIva - envio).toLocaleString()}`;
-                    labelBtnPay.textContent = `${(numericTotalIva - envio).toLocaleString()}`;
+                    labelTotal.textContent = `${(numericTotalIva - envio).toLocaleString('en-US')}`;
+                    labelBtnPay.textContent = `${(numericTotalIva - envio).toLocaleString('en-US')}`;
                     inputTotal.value = 0;
                 }
             }

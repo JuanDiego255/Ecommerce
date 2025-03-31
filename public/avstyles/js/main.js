@@ -5,12 +5,13 @@
         var scroll = $(window).scrollTop();
         if (scroll < 400) {
             $("#sticky-header").removeClass("sticky");
-            $('#back-top').fadeIn(500);
+            $("#sticky-header .main-menu ul li a").removeClass("scrolled"); // Remueve la clase del color al volver arriba
         } else {
             $("#sticky-header").addClass("sticky");
-            $('#back-top').fadeIn(500);
+            $("#sticky-header .main-menu ul li a").addClass("scrolled"); // Agrega la clase al hacer scroll
         }
     });
+
 
 
 
@@ -418,7 +419,7 @@
         });
         console.log(phoneNumbers);
         let remainingNumbers = [];
-   
+
         // Cargar el estado desde localStorage
         function loadState() {
             const storedNumbers = localStorage.getItem('remainingNumbers');
@@ -428,47 +429,47 @@
                 remainingNumbers = [...phoneNumbers];
             }
         }
-   
+
         // Guardar el estado en localStorage
         function saveState() {
             localStorage.setItem('remainingNumbers', JSON.stringify(remainingNumbers));
         }
-   
+
         // Obtener un número aleatorio y actualizar el estado
         function getRandomNumber() {
             if (remainingNumbers.length === 0) {
                 // Si ya se han usado todos los números, reiniciar la lista
                 remainingNumbers = [...phoneNumbers];
             }
-   
+
             // Seleccionar un índice aleatorio
             const randomIndex = Math.floor(Math.random() * remainingNumbers.length);
             const selectedNumber = remainingNumbers[randomIndex];
-   
+
             // Eliminar el número seleccionado de la lista
             remainingNumbers.splice(randomIndex, 1);
-   
+
             // Guardar el estado actualizado
             saveState();
-   
+
             return selectedNumber;
         }
-   
+
         // Seleccionar todos los botones de WhatsApp por clase
         const whatsappButtons = document.querySelectorAll('.whatsapp-button-click');
-   
+
         // Verificar si hay al menos un botón en la página
         if (whatsappButtons.length > 0) {
             // Cargar el estado inicial de los números restantes
             loadState();
-   
+
             // Función para obtener el número y abrir WhatsApp
             function openWhatsApp() {
                 const number = getRandomNumber();
                 console.log("Número seleccionado: ", number);
                 window.open(`https://wa.me/${number}`, '_blank');
             }
-   
+
             // Asignar el evento de clic a cada botón
             whatsappButtons.forEach(button => {
                 button.addEventListener('click', function (event) {
@@ -479,7 +480,7 @@
         } else {
             console.log("Botones de WhatsApp no encontrados");
         }
-   
+
     });
 
     //------- Mailchimp js --------//  

@@ -245,8 +245,14 @@ class CartController extends Controller
 
         $iva = $cloth_price * $tenantinfo->iva;
         $total_price = $cloth_price + $iva;
-
-        return view('frontend.view-cart', compact('cart_items', 'name', 'cloth_price', 'iva', 'total_price', 'you_save'));
+        switch ($tenantinfo->kind_business) {
+            default:
+                if ($tenantinfo->kind_of_features == 1) {
+                    return view('frontend.design_ecommerce.view-cart', compact('cart_items', 'name', 'cloth_price', 'iva', 'total_price', 'you_save'));
+                }
+                return view('frontend.view-cart', compact('cart_items', 'name', 'cloth_price', 'iva', 'total_price', 'you_save'));
+                break;
+        }        
     }
     public function delete($id, Request $request)
     {

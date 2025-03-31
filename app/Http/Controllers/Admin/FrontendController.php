@@ -125,18 +125,18 @@ class FrontendController extends Controller
 
             // Obtener atributos
             $result = DB::table('stocks as s')->where('s.clothing_id', $clothing->id)
-            ->join('attributes as a', 's.attr_id', '=', 'a.id')
-            ->join('attribute_values as v', 's.value_attr', '=', 'v.id')
-            ->select(
-                'a.name as columna_atributo',
-                'a.id as attr_id',
-                DB::raw('GROUP_CONCAT(v.value ORDER BY s.order ASC SEPARATOR "/") as valores'),
-                DB::raw('GROUP_CONCAT(v.id ORDER BY s.order ASC SEPARATOR "/") as ids'),
-                DB::raw('GROUP_CONCAT(s.stock ORDER BY s.order ASC SEPARATOR "/") as stock'),
-            )
-            ->groupBy('a.name', 'a.id')
-            ->orderBy('a.name', 'asc')
-            ->get();
+                ->join('attributes as a', 's.attr_id', '=', 'a.id')
+                ->join('attribute_values as v', 's.value_attr', '=', 'v.id')
+                ->select(
+                    'a.name as columna_atributo',
+                    'a.id as attr_id',
+                    DB::raw('GROUP_CONCAT(v.value ORDER BY s.order ASC SEPARATOR "/") as valores'),
+                    DB::raw('GROUP_CONCAT(v.id ORDER BY s.order ASC SEPARATOR "/") as ids'),
+                    DB::raw('GROUP_CONCAT(s.stock ORDER BY s.order ASC SEPARATOR "/") as stock'),
+                )
+                ->groupBy('a.name', 'a.id')
+                ->orderBy('a.name', 'asc')
+                ->get();
             $clothing->atributos = $result->toArray();
         }
 
@@ -380,6 +380,9 @@ class FrontendController extends Controller
                 return view('frontend.carsale.category', compact('clothings', 'department_name', 'department_id'));
                 break;
             default:
+                if ($tenantinfo->kind_of_features == 1) {
+                    return view('frontend.design_ecommerce.category', compact('category', 'department_name', 'department_id'));
+                }
                 return view('frontend.category', compact('category', 'department_name', 'department_id'));
                 break;
         }
@@ -458,7 +461,33 @@ class FrontendController extends Controller
         $tenantinfo = Cache::remember('tenant_info', $this->expirationTime, function () {
             return TenantInfo::first();
         });
+        foreach ($clothings as $clothing) {
+            // Obtener la primera imagen
+            $firstImage = ProductImage::where('clothing_id', $clothing->id)
+                ->orderBy('id')
+                ->first();
+            $clothing->image = $firstImage ? $firstImage->image : null;
+            $clothing->all_images = ProductImage::where('clothing_id', $clothing->id)
+                ->orderBy('id')
+                ->pluck('image')
+                ->toArray();
 
+            // Obtener atributos
+            $result = DB::table('stocks as s')->where('s.clothing_id', $clothing->id)
+                ->join('attributes as a', 's.attr_id', '=', 'a.id')
+                ->join('attribute_values as v', 's.value_attr', '=', 'v.id')
+                ->select(
+                    'a.name as columna_atributo',
+                    'a.id as attr_id',
+                    DB::raw('GROUP_CONCAT(v.value ORDER BY s.order ASC SEPARATOR "/") as valores'),
+                    DB::raw('GROUP_CONCAT(v.id ORDER BY s.order ASC SEPARATOR "/") as ids'),
+                    DB::raw('GROUP_CONCAT(s.stock ORDER BY s.order ASC SEPARATOR "/") as stock'),
+                )
+                ->groupBy('a.name', 'a.id')
+                ->orderBy('a.name', 'asc')
+                ->get();
+            $clothing->atributos = $result->toArray();
+        }
 
         foreach ($tags as $tag) {
             SEOMeta::setTitle($category_name . " - " . $tenantinfo->title);
@@ -485,6 +514,9 @@ class FrontendController extends Controller
                 return view('frontend.av.clothes-category', compact('clothings', 'categories', 'category_name', 'category_id', 'department_id', 'department_name', 'category'));
                 break;
             default:
+                if ($tenantinfo->kind_of_features == 1) {
+                    return view('frontend.design_ecommerce.clothes-category', compact('clothings', 'category_name', 'category_id', 'department_id', 'department_name'));
+                }
                 return view('frontend.clothes-category', compact('clothings', 'category_name', 'category_id', 'department_id', 'department_name'));
         }
     }
@@ -568,6 +600,7 @@ class FrontendController extends Controller
                 'clothing.name as name',
                 'clothing.meta_keywords as meta_keywords',
                 'clothing.casa as casa',
+                'clothing.code as code',
                 'clothing.manage_stock as manage_stock',
                 'clothing.can_buy as can_buy',
                 'departments.id as department_id',
@@ -585,7 +618,7 @@ class FrontendController extends Controller
                 DB::raw('GROUP_CONCAT(stocks.price) AS price_per_size'),
                 DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
             )
-            ->groupBy('clothing.id', 'categories.id', 'clothing.meta_keywords', 'clothing.main_image', 'clothing.manage_stock', 'clothing.horizontal_image', 'clothing.can_buy', 'clothing.casa', 'departments.id', 'departments.department', 'clothing.mayor_price', 'clothing.discount', 'categories.name', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
+            ->groupBy('clothing.id', 'categories.id', 'clothing.code', 'clothing.meta_keywords', 'clothing.main_image', 'clothing.manage_stock', 'clothing.horizontal_image', 'clothing.can_buy', 'clothing.casa', 'departments.id', 'departments.department', 'clothing.mayor_price', 'clothing.discount', 'categories.name', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
             ->orderByRaw('CASE WHEN clothing.casa IS NOT NULL AND clothing.casa != "" THEN 0 ELSE 1 END')
             ->orderBy('clothing.casa', 'asc')
             ->orderBy('clothing.name', 'asc')
@@ -661,6 +694,33 @@ class FrontendController extends Controller
             ->inRandomOrder()
             ->take(8)
             ->get();
+        foreach ($clothings_trending as $cloth) {
+            // Obtener la primera imagen
+            $firstImage = ProductImage::where('clothing_id', $cloth->id)
+                ->orderBy('id')
+                ->first();
+            $cloth->image = $firstImage ? $firstImage->image : null;
+            $cloth->all_images = ProductImage::where('clothing_id', $cloth->id)
+                ->orderBy('id')
+                ->pluck('image')
+                ->toArray();
+
+            // Obtener atributos
+            $result_trend = DB::table('stocks as s')->where('s.clothing_id', $cloth->id)
+                ->join('attributes as a', 's.attr_id', '=', 'a.id')
+                ->join('attribute_values as v', 's.value_attr', '=', 'v.id')
+                ->select(
+                    'a.name as columna_atributo',
+                    'a.id as attr_id',
+                    DB::raw('GROUP_CONCAT(v.value ORDER BY s.order ASC SEPARATOR "/") as valores'),
+                    DB::raw('GROUP_CONCAT(v.id ORDER BY s.order ASC SEPARATOR "/") as ids'),
+                    DB::raw('GROUP_CONCAT(s.stock ORDER BY s.order ASC SEPARATOR "/") as stock'),
+                )
+                ->groupBy('a.name', 'a.id')
+                ->orderBy('a.name', 'asc')
+                ->get();
+            $cloth->atributos = $result_trend->toArray();
+        }
 
         switch ($tenantinfo->kind_business) {
             case (1):
@@ -672,18 +732,32 @@ class FrontendController extends Controller
                 return view('frontend.website.detail-clothing', compact('clothes', 'result', 'category_id', 'clothings_trending'));
                 break;
             default:
+                if ($tenantinfo->kind_of_features == 1) {
+                    return view('frontend.design_ecommerce.detail-clothing', compact('clothes', 'result', 'category_id', 'clothings_trending'));
+                }
                 return view('frontend.detail-clothing', compact('clothes', 'result', 'category_id', 'clothings_trending'));
         }
     }
     public function departments()
     {
+        $tenantinfo = TenantInfo::first();
         $departments = Cache::remember('departments', $this->expirationTime, function () {
             return Department::where('department', '!=', 'Default')
                 ->orderBy('departments.department', 'asc')
                 ->simplePaginate(8);
         });
-
-        return view('frontend.departments', compact('departments'));
+        switch ($tenantinfo->kind_business) {
+            case (6):
+            case (7):
+                return view('frontend.departments', compact('departments'));
+                break;
+            default:
+                if ($tenantinfo->kind_of_features == 1) {
+                    return view('frontend.design_ecommerce.departments', compact('departments'));
+                }
+                return view('frontend.departments', compact('departments'));
+                break;
+        }
     }
     public function getStock($cloth_id, $attr_id, $value_attr)
     {

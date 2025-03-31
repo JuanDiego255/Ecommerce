@@ -155,16 +155,136 @@
 
     @if (session('status'))
         <script>
-            Swal.fire({
-                title: "{{ session('status') }}",
-                icon: "{{ session('icon') }}",
-            });
+            swal("", "{{ session('status') }}", "{{ session('icon') }}");
         </script>
     @endif
 
     @yield('scripts')
 
     <script>
+        var isAuthenticated = {{ Auth::check() ? 'true' : 'false' }};
+        var isMayor = {{ Auth::check() && Auth::user()->mayor == '1' ? 'true' : 'false' }};
+
+        function calcularTotal() {
+            let total = 0;
+            let total_cloth = 0;
+            let iva = parseFloat(document.getElementById("iva_tenant").value);
+            let total_iva = 0;
+            let you_save = 0;
+            // Obtener todos los elementos li que contienen los productos
+            const items = document.querySelectorAll('.header-cart-item');
+
+            items.forEach((item) => {
+                const precio = parseFloat(item.querySelector('.price').value);
+                const discount = parseFloat(item.querySelector('.discount').value);
+                const cantidad = parseInt(item.querySelector('.quantity').value);
+
+                const subtotal = precio * cantidad;
+                const subtotal_discount = discount * cantidad;
+                you_save += subtotal_discount;
+                total += subtotal;
+            });
+
+            total_iva = total * iva;
+            total_cloth = total;
+            total = total + total_iva;
+
+            // Mostrar el total actualizado en los elementos correspondientes
+            var divDescuento = $(
+                '#descuento'
+            );
+            const totalElement = document.getElementById('totalPriceElementDE');
+            const totalIvaElement = document.getElementById('totalIvaElementDE');
+            const totalDiscountElement = document.getElementById('totalDiscountElementDE');
+            const totalCloth = document.getElementById('totalClothDE');
+
+
+            totalElement.innerText = `₡${total.toLocaleString()}`;
+            if (total_iva > 0) {
+                totalIvaElement.textContent = `₡${total_iva.toLocaleString()}`;
+            }
+            if (you_save > 0) {
+                divDescuento.removeClass('d-none');
+                totalDiscountElement.textContent = `₡${you_save.toLocaleString()}`;
+            } else {
+                divDescuento.addClass('d-none');
+            }
+            totalCloth.textContent = `₡${total_cloth.toLocaleString()}`;
+            if (total == 0 && total_cloth == 0) {
+                totalDiscountElement.textContent = `₡0`;
+            }
+        }
+
+        function getCart() {
+            $.ajax({
+                method: "GET",
+                url: "/get-cart-items",
+                success: function(cartItems) {
+                    $('.productsList').empty();
+                    var imageBaseUrl = $('#modalMiniCart').data('image-base-url');
+
+                    cartItems.forEach(function(item) {
+                        var precio = item.price;
+                        if (item.custom_size && item.stock_price > 0) {
+                            precio = item.stock_price;
+                        }
+                        if (isAuthenticated === 'true' && isMayor === 'true' && item
+                            .user_mayor && item.mayor_price > 0) {
+                            precio = item.mayor_price;
+                        }
+                        var descuento = (precio * item.discount) / 100;
+                        var precioConDescuento = precio - descuento;
+                        var imageUrl = item.image ? `${imageBaseUrl}/${item.image}` :
+                            '/images/producto-sin-imagen.PNG';
+                        var attributesHtml = '';
+
+                        if (item.attributes_values) {
+                            var attributesValues = item.attributes_values.split(', ');
+                            attributesHtml +=
+                                '<span class="m-0 text-muted w-100 d-block">Atributos</span>';
+                            attributesValues.forEach(attributeValue => {
+                                var [attribute, value] = attributeValue.includes(
+                                    ': ') ? attributeValue.split(': ') : [
+                                    attributeValue, ''
+                                ];
+                                attributesHtml +=
+                                    `<span>${attribute === 'Stock' ? 'Predeterminado' : attribute + ':'} ${attribute === 'Stock' ? '' : value}</span><br>`;
+                            });
+                        }
+
+                        var cartItemHtml = `
+                    <li class="header-cart-item flex-w flex-t m-b-12">
+                        <input type="hidden" name="prod_id" value="${item.id}" class="prod_id">
+                        <input type="hidden" class="price" value="${item.discount > 0 ? precioConDescuento : precio}">
+                        <input type="hidden" value="${descuento}" class="discount" name="discount">
+                        <div class="header-cart-item-img">
+                            <img src="${imageUrl}" alt="IMG">
+                        </div>
+                        <div class="header-cart-item-txt p-t-8">
+                            <a href="#" class="header-cart-item-name m-b-18 hov-cl1 trans-04">${item.name}</a>
+                            ${attributesHtml}
+                            <span class="header-cart-item-info">₡${precioConDescuento}</span>
+                            <div class="d-flex align-items-center">
+                                <div class="input-group text-center input-group-static w-100">
+                                    <input min="1" max="${item.stock > 0 ? item.stock : ''}" value="${item.quantity}" type="number" name="quantityCart" data-cart-id="${item.cart_id}" class="form-control btnQuantity text-center w-100 quantity">
+                                </div>
+                                <form name="delete-item-cart" class="delete-form">
+                                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                    <input type="hidden" name="_method" value="DELETE">
+                                    <button data-item-id="${item.cart_id}" class="btn btn-icon btn-3 btn-danger btnDelete">
+                                        <span class="btn-inner--icon"><i class="fa fa-trash"></i></span>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </li>
+                `;
+                        $('.productsList').append(cartItemHtml);
+                    });
+                    calcularTotal();
+                }
+            });
+        }
         $(document).ready(function() {
             $('#search-select').select2({
                 placeholder: "BUSCAR PRODUCTOS...",
@@ -237,58 +357,24 @@
                         button.dataset.notify = newCartNumber;
                         $button.closest('.header-cart-item').remove();
                         calcularTotal();
-                    },
-                    error: function(error) {
-                        console.error('Error eliminando el producto del carrito:', error);
                     }
                 });
             });
-            function calcularTotal() {
-                let total = 0;
-                let total_cloth = 0;
-                let iva = parseFloat(document.getElementById("iva_tenant").value);
-                let total_iva = 0;
-                let you_save = 0;
-                // Obtener todos los elementos li que contienen los productos
-                const items = document.querySelectorAll('.header-cart-item');
-
-                items.forEach((item) => {
-                    const precio = parseFloat(item.querySelector('.price').value);
-                    const discount = parseFloat(item.querySelector('.discount').value);
-                    const cantidad = parseInt(item.querySelector('.quantity').value);
-
-                    const subtotal = precio * cantidad;
-                    const subtotal_discount = discount * cantidad;
-                    you_save += subtotal_discount;
-                    total += subtotal;
+            $('#searchfor').on('keyup', function() {
+                var searchTerm = $(this).val().toLowerCase();
+                $('.isotope-item').each(function() {
+                    var name = $(this).find('.clothing-name').val() ||
+                        ''; // Si es undefined, usa ''
+                    var code = $(this).find('.code').val() || ''; // Si es undefined, usa ''
+                    name = name.toLowerCase();
+                    code = code.toLowerCase();
+                    if (name.includes(searchTerm) || code.includes(searchTerm)) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
                 });
-
-                total_iva = total * iva;
-                total_cloth = total;
-                total = total + total_iva;
-
-                // Mostrar el total actualizado en los elementos correspondientes
-                var divDescuento = $(
-                    '#descuento'
-                );
-                const totalElement = document.getElementById('totalPriceElementDE');
-                const totalIvaElement = document.getElementById('totalIvaElementDE');
-                const totalDiscountElement = document.getElementById('totalDiscountElementDE');
-                const totalCloth = document.getElementById('totalClothDE');
-
-
-                totalElement.innerText = `₡${total.toLocaleString()}`;
-                if (total_iva > 0) {
-                    totalIvaElement.textContent = `₡${total_iva.toLocaleString()}`;
-                }
-                if (you_save > 0) {
-                    divDescuento.removeClass('d-none');
-                    totalDiscountElement.textContent = `₡${you_save.toLocaleString()}`;
-                } else {
-                    divDescuento.addClass('d-none');
-                }
-                totalCloth.textContent = `₡${total_cloth.toLocaleString()}`;
-            }
+            });
             $(document).on('click', '.add_favorite', function(event) {
                 event.preventDefault();
                 var selected_attributes = [];
@@ -371,6 +457,421 @@
             setTimeout(() => {
                 menu.style.display = 'none';
             }, 500); // Espera a que termine la animación antes de ocultarlo
+        });
+        document.addEventListener("DOMContentLoaded", function() {
+            document.querySelectorAll(".js-show-modal1").forEach(button => {
+                button.addEventListener("click", function() {
+                    let productName = this.getAttribute("data-name");
+                    let quantity = 1;
+                    let attr_id = null;
+                    let value_attr = null;
+                    let porcDiscount = this.getAttribute("data-discount");
+                    let productPrice = this.getAttribute("data-price");
+                    let productPriceOrig = this.getAttribute("data-original-price");
+                    let productDesc = this.getAttribute("data-description");
+                    let productId = this.getAttribute("data-id");
+                    let productImages = JSON.parse(this.getAttribute(
+                        "data-images")); // Convertimos a array
+                    let productAttributes = JSON.parse(this.getAttribute(
+                        "data-attributes")); // Atributos en JSON
+
+                    // Actualizar los elementos de texto en el modal
+                    document.querySelector(".js-name-detail").innerText = productName;
+                    document.querySelector(".mtext-106").innerText = `₡${productPrice}`;
+                    document.querySelector(".text-desc").innerHTML = productDesc;
+
+                    // Seleccionar el contenedor del slider
+                    let slickContainer = document.querySelector(".slick3");
+
+                    // Si Slick ya está inicializado, eliminarlo correctamente
+                    if ($(slickContainer).hasClass("slick-initialized")) {
+                        $(slickContainer).slick("unslick");
+                    }
+
+                    // Limpiar completamente el contenedor antes de agregar nuevas imágenes
+                    slickContainer.innerHTML = "";
+
+                    // Generar dinámicamente las imágenes
+                    productImages.forEach(image => {
+                        let slide = `
+                    <div class="item-slick3" data-thumb="${image}">
+                        <div class="wrap-pic-w pos-relative">
+                            <img src="${image}" alt="IMG-PRODUCT">
+                            <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="${image}">
+                                <i class="fa fa-expand"></i>
+                            </a>
+                        </div>
+                    </div>`;
+                        slickContainer.insertAdjacentHTML("beforeend", slide);
+                    });
+
+                    // Generar dinámicamente los select para atributos
+                    let attributesContainer = document.querySelector(".p-t-33");
+
+                    // Limpiar cualquier contenido anterior
+                    attributesContainer.innerHTML = '';
+                    let selectHTML = '';
+                    let quantityHTML = '';
+
+                    productAttributes.forEach(attribute => {
+                        let attributeName = attribute.columna_atributo;
+                        let attributeValues = attribute.valores.split(
+                            "/"); // Valores de los atributos
+                        let attributeIds = attribute.ids.split("/"); // IDs de los valores
+                        let attributeStock = attribute.stock.split(
+                            "/"); // Stock de los valores
+
+                        selectHTML = `
+                <div class="flex-w flex-r-m p-b-10">
+                <div class="size-203 flex-c-m respon6">${attributeName}</div>
+                <div class="size-204 respon6-next">
+                    <div class="rs1-select2 bor8 bg0">
+                        <select class="js-select2" name="${attributeName.toLowerCase()}"
+                                data-attribute="${attributeName}" data-value="${attribute.attr_id}-${attributeName}">
+                            <option>Choose an option</option>`;
+
+                        // Crear opciones dinámicas para el select
+                        attributeValues.forEach((value, index) => {
+                            let optionId = attributeIds[index]; // ID del valor
+                            let selected = index === 0 ? 'selected' :
+                                ''; // Seleccionar la primera opción por defecto
+                            let stock = attributeStock[index]; // Stock del valor
+
+                            // Agregar la opción al select con los atributos adecuados
+                            selectHTML += `
+                    <option value="${optionId}" 
+                            data-stock="${stock}" 
+                            ${selected} 
+                            id="${attributeName}_${attribute.attr_id}">
+                        ${value}
+                    </option>`;
+                        });
+
+                        selectHTML += `
+                        </select>
+                        <div class="dropDownSelect2"></div>
+                    </div>
+                </div>
+                </div>`;
+
+                        // Insertar el select generado al contenedor
+                        attributesContainer.insertAdjacentHTML("beforeend", selectHTML);
+                    });
+                    quantityHTML = `
+                <div class="flex-w flex-r-m p-b-10">
+                <div class="size-204 flex-w flex-m respon6-next">
+                    <div class="wrap-num-product flex-w m-r-20 m-tb-10">
+                        <div class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
+                            <i class="fs-16 zmdi zmdi-minus"></i>
+                        </div>
+
+                        <input class="mtext-104 cl3 txt-center num-product" type="number" min="1" max="1" name="quantity" value="1">
+
+                        <div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
+                            <i class="fs-16 zmdi zmdi-plus"></i>
+                        </div>
+                    </div>
+
+                    <button class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 js-addcart-detail">
+                        Agregar
+                    </button>
+                </div>
+                </div>`;
+
+                    // Insertar el bloque de cantidad al final del contenedor de atributos
+                    attributesContainer.insertAdjacentHTML("beforeend", quantityHTML);
+
+                    // Inicializar select2 después de insertar los select
+                    $(".js-select2").each(function() {
+                        $(this).select2({
+                            minimumResultsForSearch: 20,
+                            dropdownParent: $(this).next('.dropDownSelect2')
+                        });
+                        $(this).on("change", function() {
+                            let selectedValue = $(this)
+                                .val(); // Obtener el valor seleccionado
+                            let selectedOption = $(this).find(
+                                "option:selected"); // Opción seleccionada
+                            let stock = selectedOption.data(
+                                "stock"
+                            ); // Obtener el stock de la opción seleccionada
+                            let partes = selectedOption.attr('id').split("_");
+                            attr_id = partes[1];
+                            value_attr = selectedValue;
+                            if (partes.length === 2) {
+                                // Obtener id del atributo y valor y ejecutar la función getStock
+                                getStock(productId, attr_id,
+                                    selectedValue, porcDiscount
+                                ); // Llamar a getStock con el producto, atributo, y valor seleccionado
+                            }
+                        });
+                    });
+
+                    // Esperar un poco antes de volver a inicializar Slick
+                    setTimeout(() => {
+                        $(slickContainer).slick({
+                            slidesToShow: 1,
+                            slidesToScroll: 1,
+                            fade: true,
+                            infinite: true,
+                            autoplay: false,
+                            autoplaySpeed: 6000,
+
+                            arrows: true,
+                            appendArrows: $(".wrap-slick3-arrows"),
+                            prevArrow: '<button class="arrow-slick3 prev-slick3"><i class="fa fa-angle-left" aria-hidden="true"></i></button>',
+                            nextArrow: '<button class="arrow-slick3 next-slick3"><i class="fa fa-angle-right" aria-hidden="true"></i></button>',
+
+                            dots: true,
+                            appendDots: $(".wrap-slick3-dots"),
+                            dotsClass: 'slick3-dots',
+                            customPaging: function(slick, index) {
+                                var portrait = $(slick.$slides[index]).data(
+                                    'thumb');
+                                return '<img src="' + portrait +
+                                    '"/><div class="slick3-dot-overlay"></div>';
+                            },
+                        });
+                    }, 200);
+                    $(document).on('click', '.btn-num-product-down', function() {
+                        var numProduct = Number($(this).next().val());
+                        let maxStock = Number($(this).prev().attr("max"));
+                        if (numProduct > 1) {
+                            $(this).next().val(numProduct - 1);
+                            quantity = $(this).next().val();
+                        }
+                    });
+
+                    $(document).on('click', '.btn-num-product-up', function() {
+                        var numProduct = Number($(this).prev().val());
+                        let maxStock = Number($(this).prev().attr("max"));
+                        if (numProduct < maxStock) {
+                            $(this).prev().val(numProduct + 1); // Incrementar la cantidad
+                            quantity = $(this).prev().val();
+                        }
+                    });
+                    // Ejecutar la lógica de getStock() para el primer valor seleccionado por defecto
+                    let firstSelect = document.querySelector(".js-select2");
+                    let firstSelectedValue = firstSelect ? firstSelect.value : null;
+
+                    if (firstSelectedValue) {
+                        let selectedOption = firstSelect.selectedOptions[
+                            0]; // Obtener la opción seleccionada
+                        let partes = selectedOption ? selectedOption.id.split("_") : [];
+                        value_attr = firstSelectedValue;
+                        if (partes.length === 2) {
+                            // Ejecutar getStock con el primer valor seleccionado
+                            attr_id = partes[1];
+                            getStock(productId, partes[1],
+                                firstSelectedValue, porcDiscount
+                            ); // Llamar a getStock con el producto, atributo, y valor seleccionado
+                        }
+                    }
+                    //Metodo para agregar al carrito
+                    $(document).on('click', '.js-addcart-detail', function(e) {
+                        e.preventDefault();
+                        var attributes_array = [];
+                        var concat_attr = value_attr + "-" + attr_id + "-" + productId;
+                        attributes_array.push(concat_attr);
+                        var attributes = JSON.stringify(attributes_array);
+                        $.ajaxSetup({
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr(
+                                    'content')
+                            }
+                        });
+                        $.ajax({
+                            method: "POST",
+                            url: "/add-to-cart",
+                            data: {
+                                'clothing_id': productId,
+                                'quantity': quantity,
+                                'attributes': attributes,
+                            },
+                            success: function(response) {
+                                swal(response.status,
+                                    "Producto agregado al carrito", response
+                                    .icon);
+                                if (response.icon === "success") {
+                                    var newCartNumber = response.cartNumber;
+                                    const button = document.querySelector(
+                                        '.js-show-cart');
+                                    button.dataset.notify = newCartNumber;
+                                    getCart();
+                                }
+                            }
+                        });
+
+                        /* const quantityInput = document.getElementById('quantityInput');
+
+                        quantityInput.addEventListener('keydown', function(event) {
+                            if (event.key === 'ArrowUp' || event.key ===
+                                'ArrowDown') {
+                                return true;
+                            } else {
+                                event.preventDefault();
+                                return false;
+                            }
+                        }); */
+                    });
+                });
+            });
+
+            function getStock(cloth_id, attr_id, value_attr, porcDescuento) {
+                $.ajax({
+                    method: "GET",
+                    url: "/get-stock/" + cloth_id + '/' + attr_id + '/' + value_attr,
+                    success: function(stock) {
+                        var maxStock = stock.stock > 0 ? stock.stock : '';
+                        var perPrice = stock.price;
+                        if (perPrice > 0) {
+                            $('input[name="quantity"]').attr('max', maxStock);
+                            $('input[name="quantity"]').val(1);
+                            if (porcDescuento > 0) {
+                                var descuento = (perPrice * porcDescuento) / 100;
+                                var precioConDescuento = perPrice - descuento;
+                                document.querySelector(".mtext-106").innerText =
+                                    `₡${precioConDescuento.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
+                                /* price_discount.textContent =
+                                    `₡${perPrice.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`; */
+                            } else {
+                                document.querySelector(".mtext-106").innerText =
+                                    `₡${perPrice.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
+                            }
+                        }
+                    }
+                });
+            }
+
+            function calcularTotal() {
+                let total = 0;
+                let total_cloth = 0;
+                let iva = parseFloat(document.getElementById("iva_tenant").value);
+                let total_iva = 0;
+                let you_save = 0;
+                // Obtener todos los elementos li que contienen los productos
+                const items = document.querySelectorAll('.header-cart-item');
+
+                items.forEach((item) => {
+                    const precio = parseFloat(item.querySelector('.price').value);
+                    const discount = parseFloat(item.querySelector('.discount').value);
+                    const cantidad = parseInt(item.querySelector('.quantity').value);
+
+                    const subtotal = precio * cantidad;
+                    const subtotal_discount = discount * cantidad;
+                    you_save += subtotal_discount;
+                    total += subtotal;
+                });
+
+                total_iva = total * iva;
+                total_cloth = total;
+                total = total + total_iva;
+
+                // Mostrar el total actualizado en los elementos correspondientes
+                var divDescuento = $(
+                    '#descuento'
+                );
+                const totalElement = document.getElementById('totalPriceElementDE');
+                const totalIvaElement = document.getElementById('totalIvaElementDE');
+                const totalDiscountElement = document.getElementById('totalDiscountElementDE');
+                const totalCloth = document.getElementById('totalClothDE');
+
+
+                totalElement.innerText = `₡${total.toLocaleString()}`;
+                if (total_iva > 0) {
+                    totalIvaElement.textContent = `₡${total_iva.toLocaleString()}`;
+                }
+                if (you_save > 0) {
+                    divDescuento.removeClass('d-none');
+                    totalDiscountElement.textContent = `₡${you_save.toLocaleString()}`;
+                } else {
+                    divDescuento.addClass('d-none');
+                }
+                totalCloth.textContent = `₡${total_cloth.toLocaleString()}`;
+                if (total == 0 && total_cloth == 0) {
+                    totalDiscountElement.textContent = `₡0`;
+                }
+            }
+
+            function getCart() {
+                $.ajax({
+                    method: "GET",
+                    url: "/get-cart-items",
+                    success: function(cartItems) {
+                        $('.productsList').empty();
+                        var imageBaseUrl = $('#modalMiniCart').data('image-base-url');
+
+                        cartItems.forEach(function(item) {
+                            var precio = item.price;
+                            if (item.custom_size && item.stock_price > 0) {
+                                precio = item.stock_price;
+                            }
+                            if (isAuthenticated === 'true' && isMayor === 'true' && item
+                                .user_mayor && item.mayor_price > 0) {
+                                precio = item.mayor_price;
+                            }
+                            var descuento = (precio * item.discount) / 100;
+                            var precioConDescuento = precio - descuento;
+                            var imageUrl = item.image ? `${imageBaseUrl}/${item.image}` :
+                                '/images/producto-sin-imagen.PNG';
+                            var attributesHtml = '';
+
+                            if (item.attributes_values) {
+                                var attributesValues = item.attributes_values.split(', ');
+                                attributesHtml +=
+                                    '<span class="m-0 text-muted w-100 d-block">Atributos</span>';
+                                attributesValues.forEach(attributeValue => {
+                                    var [attribute, value] = attributeValue.includes(
+                                        ': ') ? attributeValue.split(': ') : [
+                                        attributeValue, ''
+                                    ];
+                                    attributesHtml +=
+                                        `<span>${attribute === 'Stock' ? 'Predeterminado' : attribute + ':'} ${attribute === 'Stock' ? '' : value}</span><br>`;
+                                });
+                            }
+
+                            var cartItemHtml = `
+                    <li class="header-cart-item flex-w flex-t m-b-12">
+                        <input type="hidden" name="prod_id" value="${item.id}" class="prod_id">
+                        <input type="hidden" class="price" value="${item.discount > 0 ? precioConDescuento : precio}">
+                        <input type="hidden" value="${descuento}" class="discount" name="discount">
+                        <div class="header-cart-item-img">
+                            <img src="${imageUrl}" alt="IMG">
+                        </div>
+                        <div class="header-cart-item-txt p-t-8">
+                            <a href="#" class="header-cart-item-name m-b-18 hov-cl1 trans-04">${item.name}</a>
+                            ${attributesHtml}
+                            <span class="header-cart-item-info">₡${precioConDescuento}</span>
+                            <div class="d-flex align-items-center">
+                                <div class="input-group text-center input-group-static w-100">
+                                    <input min="1" max="${item.stock > 0 ? item.stock : ''}" value="${item.quantity}" type="number" name="quantityCart" data-cart-id="${item.cart_id}" class="form-control btnQuantity text-center w-100 quantity">
+                                </div>
+                                <form name="delete-item-cart" class="delete-form">
+                                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                    <input type="hidden" name="_method" value="DELETE">
+                                    <button data-item-id="${item.cart_id}" class="btn btn-icon btn-3 btn-danger btnDelete">
+                                        <span class="btn-inner--icon"><i class="fa fa-trash"></i></span>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </li>
+                `;
+                            $('.productsList').append(cartItemHtml);
+                        });
+                        calcularTotal();
+                    }
+                });
+            }
+            // Cerrar modal
+            document.querySelectorAll(".js-hide-modal1").forEach(button => {
+                button.addEventListener("click", function() {
+                    document.querySelector(".js-modal1").classList.remove("show-modal1");
+                    $(document).off("click", ".btn-num-product-up");
+                    $(document).off("click", ".btn-num-product-down");
+                    $(document).off("click", ".js-addcart-detail");
+                });
+            });
         });
     </script>
 </body>
