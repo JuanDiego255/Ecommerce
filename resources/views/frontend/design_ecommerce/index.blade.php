@@ -41,11 +41,11 @@
     {{-- Carousel End --}}
     <!-- Banner Start-->
     @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
-        @if (count($categories) != 0)
+        @if (count($category) != 0)
             <div class="sec-banner bg0 p-t-80 p-b-50">
                 <div class="container">
                     <div class="row">
-                        @foreach ($category as $key => $item)
+                        @foreach ($category->take(4) as $key => $item)
                             @if ($item->black_friday != 1)
                                 <div class="col-md-6 col-xl-4 p-b-30 m-lr-auto">
                                     <!-- Block1 -->

@@ -91,10 +91,9 @@ class FrontendController extends Controller
                 ->get();
         });
 
-        $category = Cache::remember('categories', $this->expirationTime, function () {
-            return Categories::where('departments.department', 'Default')
+        $category = Cache::remember('categories', $this->expirationTime, function () use ($tenantinfo) {
+            $query = Categories::join('departments', 'categories.department_id', 'departments.id')
                 ->where('categories.status', 0)
-                ->join('departments', 'categories.department_id', 'departments.id')
                 ->select(
                     'departments.id as department_id',
                     'categories.id as category_id',
@@ -102,10 +101,16 @@ class FrontendController extends Controller
                     'categories.name as name',
                     'categories.meta_title as meta_title',
                     'categories.black_friday as black_friday'
-                )->orderBy('categories.name', 'asc')
+                );
+        
+            if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1) {                
+                $query->where('departments.department', 'Default');
+            }
+        
+            return $query->orderBy('categories.name', 'asc')
                 ->take(7)
                 ->get();
-        });
+        });        
 
         $sellers = Cache::remember('sellers', $this->expirationTime, function () {
             return Seller::get();
