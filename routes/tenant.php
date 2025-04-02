@@ -71,6 +71,7 @@ Route::middleware([
     Route::get('/comment/{show}', [FrontendController::class, 'index']);
     Route::post('/add-favorite', [FavoriteController::class, 'store']);
     Route::get('/check/list-fav/{id}', [FavoriteController::class, 'checkCode']);
+    Route::get('/paginate/{next_page}/{id}', [FrontendController::class, 'paginate'])->name('paginate');
     //Con prefijo aclimate
     Route::prefix('aclimate')->middleware('setTenantDatabase')->group(function () {
         Route::get('/', [FrontendController::class, 'index']);
@@ -81,6 +82,7 @@ Route::middleware([
         Route::get('/comment/{show}', [FrontendController::class, 'index']);
         Route::post('/add-favorite', [FavoriteController::class, 'store']);
         Route::get('/check/list-fav/{id}', [FavoriteController::class, 'checkCode']);
+        Route::get('/paginate/{next_page}/{id}', [FrontendController::class, 'paginate'])->name('paginate');
         Route::get('/file/{path}', function ($path) {
             $path = Storage::path($path);
             $path = str_replace('app\\', 'app\\public\\', $path);

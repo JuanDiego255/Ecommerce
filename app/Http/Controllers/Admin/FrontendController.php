@@ -22,6 +22,7 @@ use Artesaos\SEOTools\Facades\OpenGraph;
 use Artesaos\SEOTools\Facades\SEOMeta;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 
 class FrontendController extends Controller
@@ -102,15 +103,15 @@ class FrontendController extends Controller
                     'categories.meta_title as meta_title',
                     'categories.black_friday as black_friday'
                 );
-        
-            if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1) {                
+
+            if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1) {
                 $query->where('departments.department', 'Default');
             }
-        
+
             return $query->orderBy('categories.name', 'asc')
                 ->take(7)
                 ->get();
-        });        
+        });
 
         $sellers = Cache::remember('sellers', $this->expirationTime, function () {
             return Seller::get();
@@ -424,40 +425,39 @@ class FrontendController extends Controller
         }
         $department_name = $department->department;
 
-        $clothings = Cache::remember('clothings_' . $id, $this->expirationTime, function () use ($id) {
-            return ClothingCategory::where('pivot_clothing_categories.category_id', $id)
-                ->where('clothing.status', 1)
-                ->leftJoin('pivot_clothing_categories', 'clothing.id', '=', 'pivot_clothing_categories.clothing_id')
-                ->leftJoin('categories', 'pivot_clothing_categories.category_id', '=', 'categories.id')
-                ->leftJoin('stocks', 'clothing.id', 'stocks.clothing_id')
-                ->leftJoin('product_images', function ($join) {
-                    $join->on('clothing.id', '=', 'product_images.clothing_id')
-                        ->whereRaw('product_images.id = (
-                            SELECT MIN(id) FROM product_images 
-                            WHERE product_images.clothing_id = clothing.id
-                        )');
-                })
-                ->select(
-                    'categories.name as category',
-                    'clothing.id as id',
-                    'clothing.name as name',
-                    'clothing.casa as casa',
-                    'clothing.can_buy as can_buy',
-                    'clothing.discount as discount',
-                    'clothing.description as description',
-                    'clothing.price as price',
-                    'clothing.mayor_price as mayor_price',
-                    'product_images.image as image', // Obtener la primera imagen del producto
-                    DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE clothing.stock END) as total_stock'),
-                    DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'), // Obtener stock por talla
-                    DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
-                )
-                ->groupBy('clothing.id', 'clothing.can_buy', 'clothing.casa', 'clothing.mayor_price', 'categories.name', 'clothing.discount', 'clothing.name', 'clothing.description', 'clothing.price', 'product_images.image')
-                ->orderByRaw('CASE WHEN clothing.casa IS NOT NULL AND clothing.casa != "" THEN 0 ELSE 1 END')
-                ->orderBy('clothing.casa', 'asc')
-                ->orderBy('clothing.name', 'asc')
-                ->simplePaginate(20);
-        });
+        $clothings = ClothingCategory::where('pivot_clothing_categories.category_id', $id)
+            ->where('clothing.status', 1)
+            ->leftJoin('pivot_clothing_categories', 'clothing.id', '=', 'pivot_clothing_categories.clothing_id')
+            ->leftJoin('categories', 'pivot_clothing_categories.category_id', '=', 'categories.id')
+            ->leftJoin('stocks', 'clothing.id', 'stocks.clothing_id')
+            ->leftJoin('product_images', function ($join) {
+                $join->on('clothing.id', '=', 'product_images.clothing_id')
+                    ->whereRaw('product_images.id = (
+                SELECT MIN(id) FROM product_images 
+                WHERE product_images.clothing_id = clothing.id
+            )');
+            })
+            ->select(
+                'categories.name as category',
+                'clothing.id as id',
+                'clothing.name as name',
+                'clothing.casa as casa',
+                'clothing.can_buy as can_buy',
+                'clothing.discount as discount',
+                'clothing.description as description',
+                'clothing.price as price',
+                'clothing.mayor_price as mayor_price',
+                'product_images.image as image',
+                DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE clothing.stock END) as total_stock'),
+                DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'),
+                DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
+            )
+            ->groupBy('clothing.id', 'clothing.can_buy', 'clothing.casa', 'clothing.mayor_price', 'categories.name', 'clothing.discount', 'clothing.name', 'clothing.description', 'clothing.price', 'product_images.image')
+            ->orderByRaw('CASE WHEN clothing.casa IS NOT NULL AND clothing.casa != "" THEN 0 ELSE 1 END')
+            ->orderBy('clothing.casa', 'asc')
+            ->orderBy('clothing.name', 'asc')
+            ->simplePaginate(20);
+
 
         $tags = Cache::remember('meta_tags_specific_category', $this->expirationTime, function () {
             return MetaTags::where('section', 'Categoría Específica')->get();
@@ -824,6 +824,97 @@ class FrontendController extends Controller
                 break;
             default:
                 return view('frontend.contact');
+        }
+    }
+    public function paginate(Request $request, $next_page, $id)
+    {
+        if ($request->ajax()) {
+            $category_id = $id;
+            try {
+                $clothings = ClothingCategory::where('pivot_clothing_categories.category_id', $id)
+                    ->where('clothing.status', 1)
+                    ->leftJoin('pivot_clothing_categories', 'clothing.id', '=', 'pivot_clothing_categories.clothing_id')
+                    ->leftJoin('categories', 'pivot_clothing_categories.category_id', '=', 'categories.id')
+                    ->leftJoin('stocks', 'clothing.id', 'stocks.clothing_id')
+                    ->leftJoin('product_images', function ($join) {
+                        $join->on('clothing.id', '=', 'product_images.clothing_id')
+                            ->whereRaw('product_images.id = (
+                SELECT MIN(id) FROM product_images 
+                WHERE product_images.clothing_id = clothing.id
+            )');
+                    })
+                    ->select(
+                        'categories.name as category',
+                        'clothing.id as id',
+                        'clothing.name as name',
+                        'clothing.casa as casa',
+                        'clothing.can_buy as can_buy',
+                        'clothing.discount as discount',
+                        'clothing.description as description',
+                        'clothing.price as price',
+                        'clothing.mayor_price as mayor_price',
+                        'product_images.image as image',
+                        DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE clothing.stock END) as total_stock'),
+                        DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'),
+                        DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
+                    )
+                    ->groupBy(
+                        'clothing.id',
+                        'clothing.can_buy',
+                        'clothing.casa',
+                        'clothing.mayor_price',
+                        'categories.name',
+                        'clothing.discount',
+                        'clothing.name',
+                        'clothing.description',
+                        'clothing.price',
+                        'product_images.image'
+                    )
+                    ->orderByRaw('CASE WHEN clothing.casa IS NOT NULL AND clothing.casa != "" THEN 0 ELSE 1 END')
+                    ->orderBy('clothing.casa', 'asc')
+                    ->orderBy('clothing.name', 'asc')
+                    ->simplePaginate(20, ['*'], 'page', $next_page); // <-- Aquí se especifica la página 2
+
+                foreach ($clothings as $clothing) {
+                    // Obtener la primera imagen
+                    $firstImage = ProductImage::where('clothing_id', $clothing->id)
+                        ->orderBy('id')
+                        ->first();
+                    $clothing->image = $firstImage ? $firstImage->image : null;
+                    $clothing->all_images = ProductImage::where('clothing_id', $clothing->id)
+                        ->orderBy('id')
+                        ->pluck('image')
+                        ->toArray();
+
+                    // Obtener atributos
+                    $result = DB::table('stocks as s')->where('s.clothing_id', $clothing->id)
+                        ->join('attributes as a', 's.attr_id', '=', 'a.id')
+                        ->join('attribute_values as v', 's.value_attr', '=', 'v.id')
+                        ->select(
+                            'a.name as columna_atributo',
+                            'a.id as attr_id',
+                            DB::raw('GROUP_CONCAT(v.value ORDER BY s.order ASC SEPARATOR "/") as valores'),
+                            DB::raw('GROUP_CONCAT(v.id ORDER BY s.order ASC SEPARATOR "/") as ids'),
+                            DB::raw('GROUP_CONCAT(s.stock ORDER BY s.order ASC SEPARATOR "/") as stock'),
+                        )
+                        ->groupBy('a.name', 'a.id')
+                        ->orderBy('a.name', 'asc')
+                        ->get();
+                    $clothing->atributos = $result->toArray();
+                }
+
+                return response()->json([
+                    'html' =>  view('frontend.design_ecommerce.partial', compact('clothings','category_id'))->render(),
+                    'next_page_url' => $clothings->nextPageUrl(),
+                    'prev_page_url' => $clothings->previousPageUrl(),
+                    'page' => $next_page
+                ]);
+            } catch (\Exception $th) {
+                return response()->json([
+                    'html' => $th->getMessage(),
+                    'next_page_url' => $th->getMessage()
+                ]);
+            }
         }
     }
 }
