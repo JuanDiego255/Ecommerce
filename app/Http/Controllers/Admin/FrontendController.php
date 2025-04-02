@@ -902,12 +902,14 @@ class FrontendController extends Controller
                         ->get();
                     $clothing->atributos = $result->toArray();
                 }
+                $items = count($clothings);
 
                 return response()->json([
-                    'html' =>  view('frontend.design_ecommerce.partial', compact('clothings','category_id'))->render(),
+                    'html' =>  view('frontend.design_ecommerce.partial', compact('clothings', 'category_id'))->render(),
                     'next_page_url' => $clothings->nextPageUrl(),
                     'prev_page_url' => $clothings->previousPageUrl(),
-                    'page' => $next_page
+                    'page' => $next_page,
+                    'items' => $items
                 ]);
             } catch (\Exception $th) {
                 return response()->json([

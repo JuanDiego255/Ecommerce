@@ -96,7 +96,8 @@
         <div class="flex-c-m flex-w w-full p-t-45">
             <button id="btnPrev" class="lex-c-m stext-101 cl5 m-r-5 size-103 bg2 bor1 hov-btn1 p-lr-15 trans-04"
                 data-prev="{{ $clothings->previousPageUrl() }}" data-id="{{ $category_id }}">Anterior</button>
-            <button id="circleNumber" class="lex-c-m stext-101 m-r-5 cl5 size-103 bg2 bor1 hov-btn1 p-lr-15 w-5 trans-04">1</button>
+            <button id="circleNumber"
+                class="lex-c-m stext-101 m-r-5 cl5 size-103 bg2 bor1 hov-btn1 p-lr-15 w-5 trans-04">1</button>
             <button id="btnNext" class="lex-c-m stext-101 cl5 size-103 bg2 bor1 hov-btn1 p-lr-15 trans-04"
                 data-next="{{ $clothings->nextPageUrl() }}" data-id="{{ $category_id }}">Siguiente</button>
         </div>
@@ -117,6 +118,7 @@
                 method: "GET",
                 url: "/paginate/" + Number(page) + "/" + id,
                 success: function(response) {
+                    var items = response.items;
                     $('#product-container').empty();
                     $('#product-container').append(response.html);
                     $('#circleNumber').text(response.page);
@@ -132,6 +134,23 @@
                     } else {
                         $('#btnPrev').removeData('prev');
                     }
+                    $('#product-container').css('position', 'relative');
+                    if (items <= 4) {
+                        $('#product-container').css('height', '500px');
+                    } else if (items > 4 && items <= 8) {
+                        $('#product-container').css('height', '800px');
+                        $('#product-container').css('margin-bottom', '250px');
+                    } else if (items > 8 && items <= 12) {
+                        $('#product-container').css('height', '1300px');
+                        $('#product-container').css('margin-bottom', '250px');
+                    } else if (items > 12 && items <= 16) {
+                        $('#product-container').css('height', '1800px');
+                        $('#product-container').css('margin-bottom', '250px');
+                    } else {
+                        $('#product-container').css('height', '2372px');
+                        $('#product-container').css('margin-bottom', '300px');
+                    }
+
                 }
             });
         });
