@@ -47,12 +47,12 @@
             <div class="flex-w flex-sb-m p-b-52">
                 <div class="flex-w flex-l-m filter-tope-group m-tb-10">
                     @php
-                        $categories = $clothings->pluck('category')->unique();
+                        $categories_pluck = $clothings->pluck('category')->unique();
                     @endphp
                     <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5 how-active1" data-filter="*">
                         Todos
                     </button>
-                    @foreach ($categories as $category)
+                    @foreach ($categories_pluck as $category)
                         <button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5"
                             data-filter=".{{ strtolower(str_replace(' ', '', $category)) }}">
                             {{ $category }}
