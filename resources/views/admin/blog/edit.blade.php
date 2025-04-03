@@ -100,17 +100,19 @@
                                     placeholder="Descripción del blog">{{ $blog->body }}</textarea>
                             </div>
                         </div>
-                        @if (isset($tenantinfo->tenant) && $tenantinfo->tenant == 'avelectromecanica' || isset($tenantinfo->tenant) && $tenantinfo->tenant == 'aclimate')
-                                <div class="col-md-12 mb-3">
-                                    <label>{{ __('Es un proyecto?') }}</label>
-                                    <div class="form-check">
-                                        <input {{ $blog->is_project == 1 ? 'checked' : '' }} class="form-check-input"
-                                            type="checkbox" value="1" id="is_project" name="is_project">
-                                        <label class="custom-control-label"
-                                            for="customCheck1">{{ __('Es un proyecto') }}</label>
-                                    </div>
+                        @if (
+                            (isset($tenantinfo->tenant) && $tenantinfo->tenant == 'avelectromecanica') ||
+                                (isset($tenantinfo->tenant) && $tenantinfo->tenant == 'aclimate'))
+                            <div class="col-md-12 mb-3">
+                                <label>{{ __('Es un proyecto?') }}</label>
+                                <div class="form-check">
+                                    <input {{ $blog->is_project == 1 ? 'checked' : '' }} class="form-check-input"
+                                        type="checkbox" value="1" id="is_project" name="is_project">
+                                    <label class="custom-control-label"
+                                        for="customCheck1">{{ __('Es un proyecto') }}</label>
                                 </div>
-                            @endif
+                            </div>
+                        @endif
                         <div class="col-md-12 mt-3 text-center">
                             <button type="submit" class="btn btn-velvet">{{ __('Editar Blog') }}</button>
                         </div>
@@ -134,6 +136,13 @@
         $(document).ready(function() {
             ClassicEditor
                 .create(document.querySelector('#editor'), {
+                    fontSize: {
+                        options: [
+                            'tiny',
+                            'default',
+                            'big'
+                        ]
+                    },
                     heading: {
                         options: [{
                                 model: 'paragraph',
@@ -145,9 +154,24 @@
                                 view: 'h1',
                                 title: 'Título',
                                 class: 'ck-heading_heading1'
+                            },
+                            {
+                                model: 'headingFancy',
+                                view: {
+                                    name: 'p',
+                                },
+                                title: 'Párrafo 28px',
+                                class: 'ck-heading_paragraph-p28',
+
+                                // It needs to be converted before the standard 'heading2'.
+                                converterPriority: 'high'
                             }
                         ]
-                    }
+                    },
+                    ckfinder: {
+                        uploadUrl: "{{ route('upload', ['_token' => csrf_token()]) }}"
+                    },
+
                 })
                 .catch(error => {
                     console.log(error);

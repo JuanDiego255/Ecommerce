@@ -118,6 +118,13 @@
         $(document).ready(function() {
             ClassicEditor
                 .create(document.querySelector('#editor'), {
+                    fontSize: {
+                        options: [
+                            'tiny',
+                            'default',
+                            'big'
+                        ]
+                    },
                     heading: {
                         options: [{
                                 model: 'paragraph',
@@ -129,9 +136,24 @@
                                 view: 'h1',
                                 title: 'Título',
                                 class: 'ck-heading_heading1'
+                            },
+                            {
+                                model: 'headingFancy',
+                                view: {
+                                    name: 'p',
+                                },
+                                title: 'Párrafo 28px',
+                                class: 'ck-heading_paragraph-p28',
+
+                                // It needs to be converted before the standard 'heading2'.
+                                converterPriority: 'high'
                             }
                         ]
-                    }
+                    },
+                    ckfinder: {
+                        uploadUrl: "{{ route('upload', ['_token' => csrf_token()]) }}"
+                    },
+
                 })
                 .catch(error => {
                     console.log(error);

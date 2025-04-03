@@ -11,10 +11,10 @@
     <div class="bradcam_area"
         style="background-image:{{ $tenantinfo->tenant != 'aclimate'
             ? ' linear-gradient(to right, 
-                                                                                                                                                                                                                                        rgb(0, 0, 0) 0%, 
-                                                                                                                                                                                                                                        rgb(0, 0, 0) 30%, 
-                                                                                                                                                                                                                                        rgba(0, 0, 0, 0.7) 40%, 
-                                                                                                                                                                                                                                        rgba(0, 0, 0, 0) 70%), '
+                                                                                                                                                                                                                                                rgb(0, 0, 0) 0%, 
+                                                                                                                                                                                                                                                rgb(0, 0, 0) 30%, 
+                                                                                                                                                                                                                                                rgba(0, 0, 0, 0.7) 40%, 
+                                                                                                                                                                                                                                                rgba(0, 0, 0, 0) 70%), '
             : '' }} 
 url('{{ route($ruta, $blog->horizontal_images) }}');
 background-size: cover; background-position: center;">
@@ -56,7 +56,7 @@ background-size: cover; background-position: center;">
                             </div>
                             @foreach ($tags as $tag)
                                 <h3 class="text-title">{{ $tag->title }}</h3>
-                                <p>{!! $tag->context !!}</p>
+                                {!! $tag->context !!}
                             @endforeach
                         </div>
                     </div>
@@ -398,7 +398,7 @@ background-size: cover; background-position: center;">
             </div>
         </div>
     </section>
-    
+
     @include('layouts.inc.av.footer')
 @endsection
 @section('scripts')
@@ -444,12 +444,12 @@ background-size: cover; background-position: center;">
                     let foundElement = null;
 
                     document.querySelectorAll("p, h1, h2, h3, h4, h5, h6, span, div").forEach(
-                    el => {
-                        if (el.textContent.toLowerCase().includes(keyword)) {
-                            foundElement = el;
-                            return false; // Sale del loop al encontrar la primera coincidencia
-                        }
-                    });
+                        el => {
+                            if (el.textContent.toLowerCase().includes(keyword)) {
+                                foundElement = el;
+                                return false; // Sale del loop al encontrar la primera coincidencia
+                            }
+                        });
 
                     if (foundElement) {
                         foundElement.scrollIntoView({
@@ -457,10 +457,10 @@ background-size: cover; background-position: center;">
                             block: "center"
                         });
                         foundElement.style.backgroundColor =
-                        "yellow"; // Resalta el texto encontrado
+                            "yellow"; // Resalta el texto encontrado
                         setTimeout(() => {
                             foundElement.style.backgroundColor =
-                            ""; // Quita el resaltado después de unos segundos
+                                ""; // Quita el resaltado después de unos segundos
                         }, 2000);
                     }
                 });

@@ -6268,8 +6268,22 @@ h6 {
 /* line 537, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_blog.scss */
 .blog_details p {
     margin-bottom: 30px;
+    font-weight: 300;
+    line-height: 1.6;
+    font-size: 20px !important;
+    font-family: "FF Meta Serif", serif;
+    color: #000;
+    text-align: justify;
 }
-
+@font-face {
+    font-family: Poppins-Thin;
+    src: url("../fonts/Poppins/Poppins-Regular.ttf");
+}
+.section-padding img {
+    max-width: 750px;
+    height: auto;
+    cursor: nwse-resize;
+}
 /* line 541, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_blog.scss */
 .blog_details a {
     color: #ff8b23;
@@ -6284,6 +6298,7 @@ h6 {
 .blog_details h2 {
     font-size: 18px;
     font-weight: 600;
+    color: #5d5d60;
     margin-bottom: 8px;
 }
 

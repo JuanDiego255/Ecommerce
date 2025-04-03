@@ -6,7 +6,7 @@
         }, $clothings_offer_array);
         $descuento_mas_alto = max($descuentos);
     }
-    $ruta = $tenantinfo->tenant != "aclimate" ? "file" : "aclifile";
+    $ruta = $tenantinfo->tenant != 'aclimate' ? 'file' : 'aclifile';
 @endphp
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 {{-- <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light shadow-sm" id="ftco-navbar">
@@ -72,7 +72,7 @@
     </div>
 </nav> --}}
 <header>
-    <div class="header-area {{$tenantinfo->tenant == "aclimate" ? "position-acli" : ""}}">
+    <div class="header-area {{ $tenantinfo->tenant == 'aclimate' ? 'position-acli' : '' }}">
         {{--  <div class="header-top_area d-none d-lg-block">
             <div class="container">
                 <div class="row">
@@ -113,14 +113,16 @@
         </div> --}}
 
         <div id="sticky-header"
-            class="main-header-area {{ $view_name == 'frontend_av_clothes-category' ? 'details_nav shadow-sm' : '' }} {{$tenantinfo->tenant == "aclimate" ? "bg-acli" : ""}}">
+            class="main-header-area {{ $view_name == 'frontend_av_clothes-category' ? 'details_nav shadow-sm' : '' }} {{ $tenantinfo->tenant == 'aclimate' ? 'bg-acli' : '' }}">
             <div class="container">
                 <div class="header_bottom_border">
                     <div class="row align-items-center">
                         <div class="col-xl-3 col-lg-2">
                             <div class="logo">
                                 <a href="index.html">
-                                    <img src="{{ route($ruta, $tenantinfo->logo) }}" alt="" />
+                                    <img id="logo-img" src="{{ route($ruta, $tenantinfo->logo) }}"
+                                        data-logo-scroll="{{ asset('avstyles/img/logos/logo-av2.svg') }}"
+                                        data-logo-original="{{ route($ruta, $tenantinfo->logo) }}" alt="Logo" />
                                 </a>
                             </div>
                         </div>
@@ -128,10 +130,10 @@
                             <div class="main-menu d-none d-lg-block">
                                 <nav>
                                     <ul id="navigation">
-                                        <li><a class="{{ $view_name == 'frontend_av_index' ? 'active' : '' }} {{$tenantinfo->tenant == "aclimate" ? "text-color-acli" : ""}}"
+                                        <li><a class="{{ $view_name == 'frontend_av_index' ? 'active' : '' }} {{ $tenantinfo->tenant == 'aclimate' ? 'text-color-acli' : '' }}"
                                                 href="{{ url('/') }}">Inicio</a></li>
                                         <li>
-                                            <a class="{{ $view_name == 'frontend_av_about_us' ? 'active' : '' }} {{$tenantinfo->tenant == "aclimate" ? "text-color-acli" : ""}}"
+                                            <a class="{{ $view_name == 'frontend_av_about_us' ? 'active' : '' }} {{ $tenantinfo->tenant == 'aclimate' ? 'text-color-acli' : '' }}"
                                                 href="#">Nosotros <i class="ti-angle-down"></i></a>
                                             <ul class="submenu">
                                                 <li>
@@ -141,25 +143,29 @@
                                                 <li><a href="elements.html">elements</a></li> --}}
                                             </ul>
                                         </li>
-                                        <li><a class="{{ $view_name == 'frontend_av_clothes-category' ? 'active' : '' }} {{$tenantinfo->tenant == "aclimate" ? "text-color-acli" : ""}}"
+                                        <li><a class="{{ $view_name == 'frontend_av_clothes-category' ? 'active' : '' }} {{ $tenantinfo->tenant == 'aclimate' ? 'text-color-acli' : '' }}"
                                                 href="services.html">Servicios</a></li>
                                         <li>
-                                            <a class="{{$tenantinfo->tenant == "aclimate" ? "text-color-acli" : ""}}" href="#">blog <i class="ti-angle-down"></i></a>
+                                            <a class="{{ $tenantinfo->tenant == 'aclimate' ? 'text-color-acli' : '' }}"
+                                                href="#">blog <i class="ti-angle-down"></i></a>
                                             <ul class="submenu">
                                                 <li><a href="blog.html">blog</a></li>
                                                 <li><a href="single-blog.html">single-blog</a></li>
                                             </ul>
                                         </li>
-                                        <li><a class="{{$tenantinfo->tenant == "aclimate" ? "text-color-acli" : ""}}" href="{{url('/contact')}}">Contacto</a></li>
+                                        <li><a class="{{ $tenantinfo->tenant == 'aclimate' ? 'text-color-acli' : '' }}"
+                                                href="{{ url('/contact') }}">Contacto</a></li>
                                     </ul>
                                 </nav>
                             </div>
                         </div>
                         <div class="col-xl-3 col-lg-3 d-none d-lg-block">
                             <div class="Appointment">
-                                <div class="d-none d-lg-block {{$tenantinfo->tenant == "aclimate" ? "book_btn_acli" : "book_btn"}}">
-                                    <a type="button" href="{{ $tenantinfo->tenant == "aclimate" ? url('/') : url('/aclimate') }}">{{$tenantinfo->tenant == "aclimate" ? "¡Visita AV!" : "¡Visita Aclimate!"}} <i
-                                            class="fa fa-snowflake"></i>
+                                <div
+                                    class="d-none d-lg-block {{ $tenantinfo->tenant == 'aclimate' ? 'book_btn_acli' : 'book_btn' }}">
+                                    <a type="button"
+                                        href="{{ $tenantinfo->tenant == 'aclimate' ? url('/') : url('/aclimate') }}">{{ $tenantinfo->tenant == 'aclimate' ? '¡Visita AV!' : '¡Visita Aclimate!' }}
+                                        <i class="fa fa-snowflake"></i>
                                     </a>
                                 </div>
                             </div>
