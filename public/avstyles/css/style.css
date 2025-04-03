@@ -6279,10 +6279,32 @@ h6 {
     font-family: Poppins-Thin;
     src: url("../fonts/Poppins/Poppins-Regular.ttf");
 }
-.section-padding img {
+.single-post-area img {
     max-width: 750px;
     height: auto;
     cursor: nwse-resize;
+}
+@media (max-width: 1024px) {
+    .single-post-area img {
+        width: 100% !important; /* Ocupa todo el ancho disponible */
+        max-width: 600px; /* Limita el tamaño máximo */
+    }
+}
+
+/* Celulares (pantallas de hasta 768px) */
+@media (max-width: 768px) {
+    .single-post-area img {
+        width: 100% !important; /* Ajuste total al contenedor */
+        max-width: 400px; /* Reducir el tamaño en móviles */
+    }
+}
+
+/* Celulares pequeños (pantallas de hasta 480px) */
+@media (max-width: 480px) {
+    .single-post-area img {
+        width: 100% !important;
+        max-width: 400px;
+    }
 }
 /* line 541, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_blog.scss */
 .blog_details a {
