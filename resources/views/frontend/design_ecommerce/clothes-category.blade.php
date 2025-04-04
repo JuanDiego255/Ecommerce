@@ -37,7 +37,7 @@
                     </span>
                 @endif
             </div>
-            <div class="p-b-10">
+            <div class="p-b-10 m-t-10">
                 <h3 class="ltext-103 cl5 text-center">
                     {{ $category_name }}
                 </h3>
