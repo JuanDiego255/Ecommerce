@@ -231,8 +231,8 @@
                 <div class="block2-txt-child2 flex-r p-t-3">
                     ${item.is_fav ? 
                         `<a href="#" class="dis-block pos-relative add_favorite" data-clothing-id="${item.id}">
-                            <i class="fa fa-heart text-danger"></i>
-                        </a>` : ''
+                                <i class="fa fa-heart text-danger"></i>
+                            </a>` : ''
                     }
                 </div>
             </div>
@@ -256,6 +256,7 @@
                     if ($grid) {
                         $grid.destroy();
                     }
+
                     var $newGrid = $('#product-container').isotope({
                         itemSelector: '.isotope-item',
                         layoutMode: 'fitRows',
@@ -266,14 +267,18 @@
                         }
                     });
 
+                    // Espera a que isotope termine de organizar antes de hacer scroll
+                    $newGrid.on('arrangeComplete', function() {
+                        $('html, body').animate({
+                            scrollTop: 0
+                        }, 600);
+                    });
+
+                    // Trigger layout después de pequeño delay para mayor seguridad
                     setTimeout(function() {
                         $newGrid.isotope('layout');
-                    }, 500);
+                    }, 100);
 
-                    // Desplazarse arriba
-                    $('html, body').animate({
-                        scrollTop: 0
-                    }, 600);
                 }
             });
 
