@@ -221,7 +221,7 @@
                 </a>
             </div> --}}
 
-            <p class="stext-107 cl6 txt-center">
+            <p class="stext-107 cl7 txt-center">
                 <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
                 ©
                 <script>
