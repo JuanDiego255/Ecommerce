@@ -2474,6 +2474,10 @@ input.num-product::-webkit-inner-spin-button {
     min-width: 179px;
     height: 46px;
 }
+.size-103-clothes {
+    min-width: 80px;
+    height: 46px;
+}
 
 .size-104 {
     min-width: 94px;
@@ -3748,3 +3752,13 @@ input.num-product::-webkit-inner-spin-button {
     color: var(--title_text) !important;
 }
 
+.isotope-item {
+    width: 25%; /* 100% / 4 = 25% */
+}
+
+/* 📱 Para móviles: 2 elementos por fila */
+@media (max-width: 768px) {
+    .isotope-item {
+        width: 50%; /* 100% / 2 = 50% */
+    }
+}

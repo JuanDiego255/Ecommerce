@@ -905,12 +905,12 @@ class FrontendController extends Controller
                 $items = count($clothings);
 
                 return response()->json([
-                    'html' =>  view('frontend.design_ecommerce.partial', compact('clothings', 'category_id'))->render(),
+                    'html' => view('frontend.design_ecommerce.partial', compact('clothings', 'category_id'))->render(),
                     'next_page_url' => $clothings->nextPageUrl(),
                     'prev_page_url' => $clothings->previousPageUrl(),
                     'page' => $next_page,
                     'items' => $items
-                ]);
+                ])->header('Cache-Control', 'public, max-age=86400');
             } catch (\Exception $th) {
                 return response()->json([
                     'html' => $th->getMessage(),

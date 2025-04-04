@@ -97,7 +97,7 @@
             <button id="btnPrev" class="lex-c-m stext-101 cl5 m-r-5 size-103 bg2 bor1 hov-btn1 p-lr-15 trans-04"
                 data-prev="{{ $clothings->previousPageUrl() }}" data-id="{{ $category_id }}">Anterior</button>
             <button id="circleNumber"
-                class="lex-c-m stext-101 m-r-5 cl5 size-103 bg2 bor1 hov-btn1 p-lr-15 w-5 trans-04">1</button>
+                class="lex-c-m stext-101 m-r-5 cl5 size-103-clothes bg2 bor1 hov-btn1 p-lr-15 w-5 trans-04">1</button>
             <button id="btnNext" class="lex-c-m stext-101 cl5 size-103 bg2 bor1 hov-btn1 p-lr-15 trans-04"
                 data-next="{{ $clothings->nextPageUrl() }}" data-id="{{ $category_id }}">Siguiente</button>
         </div>
@@ -119,9 +119,33 @@
                 url: "/paginate/" + Number(page) + "/" + id,
                 success: function(response) {
                     var items = response.items;
+
+                    // 🔹 Destruir la instancia anterior de Isotope
+                    var $grid = $('.isotope-grid').data('isotope');
+                    if ($grid) {
+                        $grid.destroy();
+                    }
+
                     $('#product-container').empty();
                     $('#product-container').append(response.html);
                     $('#circleNumber').text(response.page);
+
+                    // 🔹 Volver a inicializar Isotope
+                    var $newGrid = $('#product-container').isotope({
+                        itemSelector: '.isotope-item',
+                        layoutMode: 'fitRows',
+                        percentPosition: true,
+                        animationEngine: 'best-available',
+                        masonry: {
+                            columnWidth: '.isotope-item'
+                        }
+                    });
+                    $('html, body').animate({ scrollTop: 0 }, 600);
+
+                    setTimeout(function() {
+                        $newGrid.isotope('layout');
+                    }, 50);
+
                     // 🔹 Actualizar data-next y data-prev con las nuevas URLs
                     if (response.next_page_url) {
                         $('#btnNext').data('next', response.next_page_url);
@@ -134,26 +158,12 @@
                     } else {
                         $('#btnPrev').removeData('prev');
                     }
-                    $('#product-container').css('position', 'relative');
-                    if (items <= 4) {
-                        $('#product-container').css('height', '500px');
-                    } else if (items > 4 && items <= 8) {
-                        $('#product-container').css('height', '800px');
-                        $('#product-container').css('margin-bottom', '250px');
-                    } else if (items > 8 && items <= 12) {
-                        $('#product-container').css('height', '1300px');
-                        $('#product-container').css('margin-bottom', '250px');
-                    } else if (items > 12 && items <= 16) {
-                        $('#product-container').css('height', '1800px');
-                        $('#product-container').css('margin-bottom', '250px');
-                    } else {
-                        $('#product-container').css('height', '2372px');
-                        $('#product-container').css('margin-bottom', '300px');
-                    }
-
+                   
                 }
             });
         });
+
+
         $(document).on('click', '.js-show-modal1', function(e) {
             e.preventDefault();
             $('.js-modal1').addClass('show-modal1');

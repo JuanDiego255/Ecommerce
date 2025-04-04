@@ -11,13 +11,14 @@
         $descuento = ($precio * $descuentoPorcentaje) / 100;
         $precioConDescuento = $precio - $descuento;
     @endphp
+    <link rel="preload" as="image" href="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
     <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item {{ strtolower(str_replace(' ', '', $item->category)) }}">
         <div class="block2 product_data">
             <input type="hidden" class="code" name="code" value="{{ $item->code }}">
             <input type="hidden" class="clothing-name" name="clothing-name" value="{{ $item->name }}">
             <div class="block2-pic hov-img0">
                 <img src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"
-                    alt="IMG-PRODUCT">
+                    alt="IMG-PRODUCT" loading="lazy">
 
                 <a href="#"
                     class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1"
@@ -34,7 +35,6 @@
                 <div class="block2-txt-child1 flex-col-l ">
                     <a href="{{ url('detail-clothing/' . $item->id . '/' . $category_id) }}"
                         class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-                        ({{ $item->category }})
                         {{ $item->name }}
                     </a>
                     <div class="price">₡{{ number_format($precioConDescuento) }}
