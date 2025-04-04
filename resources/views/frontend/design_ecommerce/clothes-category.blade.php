@@ -90,7 +90,70 @@
 
             <!-- Grid de productos -->
             <div class="row isotope-grid" id="product-container">
-                @include('frontend.design_ecommerce.partial', ['clothings' => $clothings])
+                @foreach ($clothings as $item)
+                    @php
+                        $precio = $item->price;
+                        if (isset($tenantinfo->custom_size) && $tenantinfo->custom_size == 1) {
+                            $precio = $item->first_price;
+                        }
+                        if (Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0) {
+                            $precio = $item->mayor_price;
+                        }
+                        $descuentoPorcentaje = $item->discount;
+                        $descuento = ($precio * $descuentoPorcentaje) / 100;
+                        $precioConDescuento = $precio - $descuento;
+                    @endphp
+                    <link rel="preload" as="image"
+                        href="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
+                    <div
+                        class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item {{ strtolower(str_replace(' ', '', $item->category)) }}">
+                        <div class="block2 product_data">
+                            <input type="hidden" class="code" name="code" value="{{ $item->code }}">
+                            <input type="hidden" class="clothing-name" name="clothing-name" value="{{ $item->name }}">
+                            <div class="block2-pic hov-img0">
+                                <img src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"
+                                    alt="IMG-PRODUCT">
+
+                                <a href="#"
+                                    class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1"
+                                    data-id="{{ $item->id }}" data-name="{{ $item->name }}"
+                                    data-discount="{{ $item->discount }}" data-description="{!! $item->description !!}"
+                                    data-price="{{ number_format($precioConDescuento, 2) }}"
+                                    data-original-price="{{ number_format($item->price, 2) }}"
+                                    data-attributes='@json($item->atributos)' data-category="{{ $item->category }}"
+                                    data-images='@json(array_map(fn($img) => route('file', $img), $item->all_images))'
+                                    data-image="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
+                                    Detallar
+                                </a>
+                            </div>
+                            <div class="block2-txt flex-w flex-t p-t-14">
+                                <div class="block2-txt-child1 flex-col-l ">
+                                    <a href="{{ url('detail-clothing/' . $item->id . '/' . $category_id) }}"
+                                        class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
+                                        {{ $item->name }}
+                                    </a>
+                                    <div class="price">₡{{ number_format($precioConDescuento) }}
+                                        @if ($item->discount)
+                                            <s class="text-danger">
+                                                ₡{{ number_format(Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0 ? $item->mayor_price : $item->price) }}
+                                            </s>
+                                        @endif
+                                    </div>
+                                </div>
+                                <div class="block2-txt-child2 flex-r p-t-3">
+                                    <!-- Puedes mantener el icono del corazón o agregar otra funcionalidad -->
+                                    @if (Auth::check())
+                                        <a href="#" class="dis-block pos-relative add_favorite"
+                                            data-clothing-id="{{ $item->id }}">
+                                            <i
+                                                class="fa fa-heart {{ $clothing_favs->contains('clothing_id', $item->id) ? 'text-danger' : '' }}"></i>
+                                        </a>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
             </div>
         </div>
         <div class="flex-c-m flex-w w-full p-t-45">
@@ -118,19 +181,81 @@
                 method: "GET",
                 url: "/paginate/" + Number(page) + "/" + id,
                 success: function(response) {
-                    var items = response.items;
+                    var items = response.clothings.data;
+                    var category_id = response.category_id;
+                    var html = '';
+                    // Construcción del HTML dinámicamente
+                    items.forEach(function(item) {
+                        let precio = item.price;
+                        if (item.custom_size == 1) {
+                            precio = item.first_price;
+                        }
+                        if (item.mayor_price > 0 && item.is_mayor) {
+                            precio = item.mayor_price;
+                        }
+                        let descuento = (precio * item.discount) / 100;
+                        let precioConDescuento = precio - descuento;
 
-                    // 🔹 Destruir la instancia anterior de Isotope
+                        html += `
+    <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item ${item.category.toLowerCase().replace(/\s/g, '')}">
+        <div class="block2 product_data">
+            <input type="hidden" class="code" name="code" value="${item.code}">
+            <input type="hidden" class="clothing-name" name="clothing-name" value="${item.name}">
+            <div class="block2-pic hov-img0">
+                <img src="${item.image ? `/file/${item.image}` : '/images/producto-sin-imagen.PNG'}" 
+                    alt="IMG-PRODUCT">
+                <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1"
+                    data-id="${item.id}" 
+                    data-name="${item.name}" 
+                    data-discount="${item.discount}" 
+                    data-description="${item.description}"
+                    data-price="${precioConDescuento}"
+                    data-original-price="${item.price}"
+                    data-attributes='${JSON.stringify(item.atributos)}'
+                    data-category="${item.category}"
+                    data-images='${JSON.stringify(item.all_images.map(img => `/file/${img}`))}'
+                    data-image="${item.image ? `/file/${item.image}` : '/images/producto-sin-imagen.PNG'}">
+                    Detallar
+                </a>
+            </div>
+            <div class="block2-txt flex-w flex-t p-t-14">
+                <div class="block2-txt-child1 flex-col-l ">
+                    <a href="/detail-clothing/${item.id}/${category_id}" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
+                        ${item.name}
+                    </a>
+                    <div class="price">
+                        ₡${precioConDescuento}
+                        ${item.discount ? `<s class="text-danger">₡${item.price}</s>` : ''}
+                    </div>
+                </div>
+                <div class="block2-txt-child2 flex-r p-t-3">
+                    ${item.is_fav ? 
+                        `<a href="#" class="dis-block pos-relative add_favorite" data-clothing-id="${item.id}">
+                            <i class="fa fa-heart text-danger"></i>
+                        </a>` : ''
+                    }
+                </div>
+            </div>
+        </div>
+    </div>`;
+
+                    });
+
+                    // Actualizar el contenido del contenedor
+                    $('#product-container').empty().append(html);
+                    $('#circleNumber').text(response.page);
+
+                    // Actualizar paginación
+                    response.next_page_url ? $('#btnNext').data('next', response.next_page_url) : $(
+                        '#btnNext').removeData('next');
+                    response.prev_page_url ? $('#btnPrev').data('prev', response.prev_page_url) : $(
+                        '#btnPrev').removeData('prev');
+
+                    // Reinicializar Isotope
                     var $grid = $('.isotope-grid').data('isotope');
                     if ($grid) {
                         $grid.destroy();
                     }
-
-                    $('#product-container').empty();
-                    $('#product-container').append(response.html);
-                    $('#circleNumber').text(response.page);
-
-                    // 🔹 Volver a inicializar Isotope
                     var $newGrid = $('#product-container').isotope({
                         itemSelector: '.isotope-item',
                         layoutMode: 'fitRows',
@@ -140,27 +265,18 @@
                             columnWidth: '.isotope-item'
                         }
                     });
-                    $('html, body').animate({ scrollTop: 0 }, 600);
 
                     setTimeout(function() {
                         $newGrid.isotope('layout');
-                    }, 50);
+                    }, 500);
 
-                    // 🔹 Actualizar data-next y data-prev con las nuevas URLs
-                    if (response.next_page_url) {
-                        $('#btnNext').data('next', response.next_page_url);
-                    } else {
-                        $('#btnNext').removeData('next');
-                    }
-
-                    if (response.prev_page_url) {
-                        $('#btnPrev').data('prev', response.prev_page_url);
-                    } else {
-                        $('#btnPrev').removeData('prev');
-                    }
-                   
+                    // Desplazarse arriba
+                    $('html, body').animate({
+                        scrollTop: 0
+                    }, 600);
                 }
             });
+
         });
 
 
