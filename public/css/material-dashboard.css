@@ -293,9 +293,17 @@ sub {
 .text-cintillo {
     color: var(--cintillo_text) !important;
 }
-
+.choices {
+    width: 80% !important;
+    min-width: 270px;
+    max-width: 80%;
+}
 sup {
     top: -0.5em;
+}
+.custom-dropdown-scroll {
+    max-height: 200px;
+    overflow-y: auto;
 }
 
 a {

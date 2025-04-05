@@ -88,12 +88,11 @@
                                 @enderror
                             </div>
                         </div>
-                        <div class="col-md-12 mb-3">
+                        <div class="col-md-12 mb-3 w-100">
                             <div class="input-group input-group-static">
-                                <label>Servicios</label>
-                                <select id="select_servicios" name="select_servicios"
+                                <select id="select_servicios" name="select_servicios[]"
                                     class="form-control form-control-lg @error('select_servicios') is-invalid @enderror"
-                                    autocomplete="select_servicios" autofocus>
+                                    autocomplete="select_servicios" autofocus multiple>
 
 
                                 </select>
@@ -302,6 +301,8 @@
     <script>
         $(document).ready(function() {
             var especialistaUpdate = "{{ $especialista->clothing_id ?? 'N' }}";
+            let choicesServicios = null;
+
             function cargarServicios(especialistaId, especialistaUpdate) {
                 var monto_salario = especialistaId.find(':selected').data('salary');
                 var set_campo_esp = especialistaId.find(':selected').data('set_campo_esp');
@@ -309,7 +310,7 @@
                 var aplica_calc = especialistaId.find(':selected').data('aplica');
                 var aplica_tarj = especialistaId.find(':selected').data('apli_tarj');
                 var aplica_prod = especialistaId.find(':selected').data('apli_prod');
-                var aplica_113 = especialistaId.find(':selected').data('apli_113'); 
+                var aplica_113 = especialistaId.find(':selected').data('apli_113');
                 var mont_salary_serv = monto_salario > 0 ? monto_salario : monto_serv > 0 ? monto_serv : 0;
 
                 $('#aplica').val(aplica_calc);
@@ -331,32 +332,56 @@
                         especialista_id: especialistaId.val()
                     },
                     success: function(response) {
+                        const selectElement = document.getElementById('select_servicios');
+                        // 🔁 Destruir instancia anterior si existe
+                        if (choicesServicios) {
+                            choicesServicios.destroy();
+                            choicesServicios = null;
+                        }
+                        // Limpiar opciones previas
+                        selectElement.innerHTML = '';
+
                         if (response.length > 0) {
+                            let selectedIds = [];
+
+                            if (especialistaUpdate != 'N') {
+                                selectedIds = Array.isArray(especialistaUpdate) ?
+                                    especialistaUpdate :
+                                    especialistaUpdate.toString().split(',');
+                            }
+
                             response.forEach(function(servicio) {
-                                $('#select_servicios').append(
-                                    `<option value="${servicio.servicio_id}" data-porcentaje="${servicio.porcentaje}">
-                            ${servicio.servicio}
-                        </option>`
-                                );
+                                const option = document.createElement('option');
+                                option.value = servicio.servicio_id;
+                                option.textContent = servicio.servicio;
+                                option.dataset.porcentaje = servicio.porcentaje;
+                                // ✅ Marcar como seleccionado si corresponde
+                                if (selectedIds.includes(servicio.servicio_id.toString())) {
+                                    option.selected = true;
+                                }
+                                selectElement.appendChild(option);
+                            });
+                            // ✅ Inicializar nuevamente Choices.js
+                            choicesServicios = new Choices(selectElement, {
+                                removeItemButton: true,
+                                placeholder: true,
+                                placeholderValue: especialistaUpdate != 'N' ? null :
+                                    'Selecciona servicios',
+                                shouldSort: false,
+                                searchEnabled: true
                             });
 
-                            // Si hay un servicio preseleccionado en PHP, seleccionarlo
-                            if (especialistaUpdate != 'N') {
-                                $('#select_servicios').val(especialistaUpdate);
-                                let firstOption = $('#select_servicios option:first');
-                                $('#clothing_id').val(firstOption.val());
-                            } else {
-                                let firstOption = $('#select_servicios option:first');
-                                $('#input_porcentaje').val(firstOption.data('porcentaje'));
-                                $('#clothing_id').val(firstOption.val());
-                            }
+                            let selected = $('#select_servicios option:selected').first();
+                            $('#input_porcentaje').val(selected.data('porcentaje'));
+                            $('#clothing_id').val(selected.val());
+
                         } else {
-                            $('#select_servicios').append(
-                                '<option value="">No hay servicios disponibles</option>');
+                            selectElement.innerHTML = '<option>No hay servicios disponibles</option>';
                             $('#input_porcentaje').val('');
                         }
                     }
                 });
+
             }
             let especialistaSeleccionado = $('#select_especialista');
             if (especialistaSeleccionado) {
@@ -380,21 +405,26 @@
             $('#select_servicios').change(function() {
                 let porcentaje = $(this).find(':selected').data(
                     'porcentaje');
+                const selectedValues = $(this).val();
+                const selectedCount = selectedValues ? selectedValues.length : 0;
                 $('#input_porcentaje').val(porcentaje);
                 $('#clothing_id').val($(this).val());
-                if (especialistaUpdate == 'N') {
-                    $('#monto_clinica').val(0);
-                    $('#monto_venta').val('');
-                    $('#monto_especialista').val(0);
-                    $('#monto_producto_venta').val(0);
-                } else {
-                    calcularMontos();
+                if (selectedCount <= 1) {
+                    if (especialistaUpdate == 'N') {
+                        $('#monto_clinica').val(0);
+                        $('#monto_venta').val('');
+                        $('#monto_especialista').val(0);
+                        $('#monto_producto_venta').val(0);
+                    } else {
+                        calcularMontos();
+                    }
                 }
             });
             $('#btnCalculate').click(function() {
                 // Aquí va lo que quieres hacer cuando se haga clic               
                 calcularMontos();
             });
+
             function calcularMontos() {
                 var aplica = $('#aplica').val();
                 var aplica_113 = $('#aplica_113').val();
@@ -404,7 +434,7 @@
                 var monto_venta = parseFloat($('#monto_venta').val()); // Convierte a número decimal
                 var porcentaje = parseFloat($('#input_porcentaje').val());
                 var monto_producto = parseFloat($('#monto_producto_venta').val());
-                var monto_serv_sal =  parseFloat($('#monto_por_servicio_o_salario').val());
+                var monto_serv_sal = parseFloat($('#monto_por_servicio_o_salario').val());
                 var tipo_pago = $('#tipo_pago option:selected').text();
                 var monto_venta_con_porc = 0;
                 var monto_calc_prod_sin_iva = 0;
@@ -425,7 +455,7 @@
                     return;
                 }
                 if (tipo_pago.trim().toUpperCase() === "TARJETA") {
-                    monto_venta = aplica_113 == 1 ? monto_venta / 1.13 : monto_venta;                    
+                    monto_venta = aplica_113 == 1 ? monto_venta / 1.13 : monto_venta;
                     monto_venta = aplica_calc_tarjeta == 1 ? (monto_venta * 0.13) + monto_venta : monto_venta;
                     //$('#monto_venta').val(monto_venta);
                 }
@@ -433,7 +463,7 @@
                     monto_producto = aplica_prod == 1 ? monto_producto / 1.13 : monto_producto;
                     porc_prod = aplica_prod == 1 ? 10 / 100 : 0;
                 }
-                if(aplica_prod == 1){                    
+                if (aplica_prod == 1) {
                     monto_calc_prod = (monto_producto * porc_prod);
                 }
 
@@ -457,11 +487,11 @@
                         //$('#monto_especialista').val(0);
                     }
                 }
-                if(aplica_prod == 1 && monto_producto > 0){
+                if (aplica_prod == 1 && monto_producto > 0) {
                     monto_total_cli = monto_producto - monto_calc_prod;
-                    monto_total_esp = monto_calc_prod;                    
+                    monto_total_esp = monto_calc_prod;
                 }
-                if(aplica == 1){
+                if (aplica == 1) {
                     monto_total_cli = monto_total_cli + monto_venta_con_porc;
                     monto_total_esp = monto_total_esp + (monto_venta - monto_venta_con_porc);
                 }
@@ -469,23 +499,17 @@
                     monto_total_cli = monto_total_cli + (monto_venta - monto_serv_sal);
                     monto_total_esp = monto_total_esp + monto_serv_sal;
                 }
-                console.log("Monto Venta Comp: " + monto_venta);
-                console.log("Monto Venta Porc: " + monto_venta_con_porc);               
-                console.log("Monto Producto Comp: " + monto_producto);
-                console.log("Monto Producto Porc: " + monto_calc_prod);
-                console.log("Monto Total Cli: " + monto_total_cli);
-                console.log("Monto Total Esp: " + monto_total_esp);
                 $('#monto_clinica').val(monto_total_cli);
-                if(set_campo_esp == 1){
+                if (set_campo_esp == 1) {
                     $('#monto_especialista').val(monto_total_esp);
-                }else{
-                    if(monto_venta == 0 && monto_producto > 0 && aplica_prod){
+                } else {
+                    if (monto_venta == 0 && monto_producto > 0 && aplica_prod) {
                         $('#monto_clinica').val(monto_producto - monto_calc_prod);
-                    }else{
+                    } else {
                         $('#monto_clinica').val(monto_total_esp - monto_calc_prod + monto_producto);
-                    }                   
+                    }
                     $('#monto_especialista').val(monto_calc_prod);
-                }                
+                }
             }
         });
     </script>

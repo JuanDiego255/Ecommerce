@@ -35,7 +35,8 @@
         rel="stylesheet">
     <link href="{{ asset('css/material-dashboard.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/fontawesome.css') }}">
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
 </head>
 <style>
     :root {
@@ -100,6 +101,8 @@
     <script src="{{ asset('js/material-dashboard.min.js') }}" defer></script>
     <script src="https://cdn.ckeditor.com/ckeditor5/40.1.0/classic/ckeditor.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+
 
     @if (session('status'))
         <script>

@@ -51,12 +51,15 @@ class VentaEspecialistaController extends Controller
     {
         //
         $ventas = VentaEspecialista::join('especialistas', 'venta_especialistas.especialista_id', 'especialistas.id')
-            ->join('clothing', 'venta_especialistas.clothing_id', 'clothing.id')
             ->join('tipo_pagos', 'venta_especialistas.tipo_pago_id', 'tipo_pagos.id')
             ->select(
                 'especialistas.nombre as nombre',
-                'clothing.name as name',
                 'tipo_pagos.tipo as tipo',
+                DB::raw("(
+                    SELECT GROUP_CONCAT(clothing.name ORDER BY clothing.name SEPARATOR ', ')
+                    FROM clothing
+                    WHERE FIND_IN_SET(clothing.id, venta_especialistas.clothing_id)
+                ) as servicios"),
                 'venta_especialistas.*'
             )
             ->orderBy('venta_especialistas.created_at', 'desc')
@@ -75,18 +78,21 @@ class VentaEspecialistaController extends Controller
         $fechaCostaRica = $fecha ?? $fechaCostaRica;
         $ventas = VentaEspecialista::join('arqueo_cajas', 'venta_especialistas.arqueo_id', 'arqueo_cajas.id')
             ->join('especialistas', 'venta_especialistas.especialista_id', 'especialistas.id')
-            ->join('clothing', 'venta_especialistas.clothing_id', 'clothing.id')
             ->join('tipo_pagos', 'venta_especialistas.tipo_pago_id', 'tipo_pagos.id')
             ->whereDate('arqueo_cajas.fecha_ini', $fechaCostaRica)
             ->where('venta_especialistas.estado', '!=', 'A')
             ->select(
                 'venta_especialistas.*',
                 'especialistas.nombre as nombre',
-                'clothing.name as servicio',
-                'tipo_pagos.tipo as tipo'
+                'tipo_pagos.tipo as tipo',
+                DB::raw("(
+                SELECT GROUP_CONCAT(clothing.name ORDER BY clothing.name SEPARATOR ', ')
+                FROM clothing
+                WHERE FIND_IN_SET(clothing.id, venta_especialistas.clothing_id)
+            ) as servicios")
             )
             ->orderBy('especialistas.nombre', 'asc')
-            ->orderBy('clothing.name', 'asc')
+            ->orderBy('servicios', 'asc')
             ->get();
 
         $ventasEstudiantes = PagosMatricula::join('arqueo_cajas', 'pagos_matriculas.arqueo_id', 'arqueo_cajas.id')

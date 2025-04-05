@@ -101,8 +101,9 @@
                                         <p class="text-dark mb-0">{{ $item->nombre }}</p>
                                     </td>
                                     <td class="align-middle text-sm">
-                                        <p class="text-dark mb-0">{{ $item->servicio }}</p>
+                                        <p class="text-dark mb-0">{!! str_replace(',', '<br>', $item->servicios) !!}</p>
                                     </td>
+                                    
                                     <td class="align-middle text-sm">
                                         <p class="text-success mb-0">₡{{ number_format($item->monto_venta) }}</p>
                                     </td>

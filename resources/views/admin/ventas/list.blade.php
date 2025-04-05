@@ -93,7 +93,7 @@
                                 <p class=" font-weight-bold mb-0">{{ $item->nombre }}</p>
                             </td>
                             <td class="align-middle text-xxs text-center">
-                                <p class=" font-weight-bold mb-0">{{ $item->name }}
+                                <p class=" font-weight-bold mb-0">{!! str_replace(',', '<br>', $item->servicios) !!}
                                     @if ($item->estado == 'A')
                                         <span class="badge badge-pill ml-2 text-xxs badge-date text-white">Anulado</span>
                                     @endif
