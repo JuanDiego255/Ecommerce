@@ -3765,3 +3765,11 @@ input.num-product::-webkit-inner-spin-button {
         width: 50%; /* 100% / 2 = 50% */
     }
 }
+.select2-container .select2-results__option--highlighted {
+    background-color: var(--hover) !important;
+    color: white !important;
+}
+.select2-container .select2-results__option--selected {
+    background-color: var(--hover) !important;
+    color: white !important;
+}

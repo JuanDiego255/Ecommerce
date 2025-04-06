@@ -495,6 +495,11 @@ class CheckOutController extends Controller
                                             ->where('attr_id', $attr_id)
                                             ->where('value_attr', $value_attr)
                                             ->update(['stock' => ($stock->stock - $cart_quantity)]);
+                                        $sumStock =  Stock::where('clothing_id', $cart->clothing_id)->sum('stock');
+                                        if ($sumStock == 0) {
+                                            ClothingCategory::where('id', $cart->clothing_id)
+                                                ->update(['status' => 0]);
+                                        }
                                     }
                                 }
                             } else {
@@ -503,6 +508,11 @@ class CheckOutController extends Controller
                                     if ($cart->stock > 0 && $cart->price > 0) {
                                         ClothingCategory::where('id', $cart->clothing_id)
                                             ->update(['stock' => DB::raw("stock - $cart_quantity")]);
+                                        $sumStock =  ClothingCategory::where('id', $cart->clothing_id)->sum('stock');
+                                        if ($sumStock == 0) {
+                                            ClothingCategory::where('id', $cart->clothing_id)
+                                                ->update(['status' => 0]);
+                                        }
                                     }
                                 }
                             }
@@ -728,6 +738,11 @@ class CheckOutController extends Controller
                                             ->where('attr_id', $attr_id)
                                             ->where('value_attr', $value_attr)
                                             ->update(['stock' => ($stock->stock - $cart_quantity)]);
+                                        $sumStock =  Stock::where('clothing_id', $cart->clothing_id)->sum('stock');
+                                        if ($sumStock == 0) {
+                                            ClothingCategory::where('id', $cart->clothing_id)
+                                                ->update(['status' => 0]);
+                                        }
                                     }
                                 }
                             } else {
@@ -736,6 +751,11 @@ class CheckOutController extends Controller
                                     if ($cart->stock > 0 && $cart->price > 0) {
                                         ClothingCategory::where('id', $cart->clothing_id)
                                             ->update(['stock' => DB::raw("stock - $cart_quantity")]);
+                                        $sumStock =  ClothingCategory::where('id', $cart->clothing_id)->sum('stock');
+                                        if ($sumStock == 0) {
+                                            ClothingCategory::where('id', $cart->clothing_id)
+                                                ->update(['status' => 0]);
+                                        }
                                     }
                                 }
                             }
@@ -964,6 +984,11 @@ class CheckOutController extends Controller
                                                 ->where('attr_id', $attr_id)
                                                 ->where('value_attr', $value_attr)
                                                 ->update(['stock' => ($stock->stock - $cart->quantity)]);
+                                            $sumStock =  Stock::where('clothing_id', $cart->clothing_id)->sum('stock');
+                                            if ($sumStock == 0) {
+                                                ClothingCategory::where('id', $cart->clothing_id)
+                                                    ->update(['status' => 0]);
+                                            }
                                         }
                                     }
                                 }
@@ -971,6 +996,11 @@ class CheckOutController extends Controller
                                 if ($cart->manage_stock == 1 && $cart->stock > 0 && $cart->price > 0) {
                                     ClothingCategory::where('id', $cart->clothing_id)
                                         ->update(['stock' => DB::raw("stock - {$cart->quantity}")]);
+                                    $sumStock =  ClothingCategory::where('id', $cart->clothing_id)->sum('stock');
+                                    if ($sumStock == 0) {
+                                        ClothingCategory::where('id', $cart->clothing_id)
+                                            ->update(['status' => 0]);
+                                    }
                                 }
                             }
                         }
