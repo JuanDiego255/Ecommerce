@@ -527,8 +527,8 @@
                     <div class="rs1-select2 bor8 bg0">
                         <select class="js-select2" name="${attributeName.toLowerCase()}"
                                 data-attribute="${attributeName}" data-value="${attribute.attr_id}-${attributeName}">
-                            <option>Choose an option</option>`;
-
+                                
+                                <option>Selecciona una opción</option>`;
                     // Crear opciones dinámicas para el select
                     attributeValues.forEach((value, index) => {
                         let optionId = attributeIds[index]; // ID del valor

@@ -453,6 +453,7 @@ class FrontendController extends Controller
                 DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
             )
             ->groupBy('clothing.id', 'clothing.can_buy', 'clothing.casa', 'clothing.mayor_price', 'categories.name', 'clothing.discount', 'clothing.name', 'clothing.description', 'clothing.price', 'product_images.image')
+            ->havingRaw('total_stock > 0')
             ->orderByRaw('CASE WHEN clothing.casa IS NOT NULL AND clothing.casa != "" THEN 0 ELSE 1 END')
             ->orderBy('clothing.casa', 'asc')
             ->orderBy('clothing.name', 'asc')
@@ -870,6 +871,7 @@ class FrontendController extends Controller
                         'clothing.price',
                         'product_images.image'
                     )
+                    ->havingRaw('total_stock > 0')
                     ->orderByRaw('CASE WHEN clothing.casa IS NOT NULL AND clothing.casa != "" THEN 0 ELSE 1 END')
                     ->orderBy('clothing.casa', 'asc')
                     ->orderBy('clothing.name', 'asc')
