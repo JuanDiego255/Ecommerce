@@ -243,6 +243,7 @@
                                 </div>
                                 <button type="submit" class="btn btn-add_to_cart w-100 d-block h8 mt-3">Realizar
                                     pago</button>
+                                <a href="{{url('/new-buy/'. $currentBuy->id)}}" class="btn btn-add_to_cart w-100 d-block h8 mt-3">Editar Pedido</a>
                             </form>
                         </div>
                     </div>

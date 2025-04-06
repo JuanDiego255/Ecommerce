@@ -52,7 +52,15 @@
         </div>
         <div class="row">
             <div class="col-md-12">
+                @if ($id != 0)
+                    <p>
+                        Al editar un pedido no puedes modificar la cantidad de la tabla, puede provocar inconsistencias
+                        en el stock, los nuevos productos permiten ingresar la cantidad al seleccionarlos en la secciòn de
+                        arriba
+                    </p>
+                @endif
                 <div class="card p-2">
+
                     <div class="table-responsive">
                         <input type="hidden" name="iva_tenant" id="iva_tenant" value="{{ $iva_tenant }}">
                         <table class="table align-items-center mb-0" id="cartTable">
@@ -131,7 +139,8 @@
                                         <td class="align-middle text-center text-sm">
                                             <div class="input-group text-center input-group-static w-100">
 
-                                                <input min="1" max="{{ $item->stock > 0 ? $item->stock : '' }}"
+                                                <input @if ($id != 0) disabled @endif min="1"
+                                                    max="{{ $item->stock > 0 ? $item->stock : '' }}"
                                                     data-cart-id="{{ $item->cart_id }}" value="{{ $item->quantity }}"
                                                     type="number" name="quantity" id="quantity{{ $item->quantity }}"
                                                     class="form-control btnQuantity text-center w-100 quantity">
@@ -165,100 +174,129 @@
                         <form action="{{ url('payment') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <input type="hidden" value="F" name="kind_of" id="kind_of">
+                            <input type="hidden" name="updateId" value="{{ $id }}" class="updateId"
+                                id="updateId">
                             <div class="row">
-                                <div class="col-md-6 text-center  mb-3">
-                                    <div class="input-group input-group-lg input-group-outline">
+                                <div class="col-md-6 text-center mb-3">
+                                    <div
+                                        class="input-group input-group-lg input-group-outline {{ isset($buy->name) && $buy->name ? 'is-filled' : '' }}">
                                         <label class="form-label">Nombre (Opcional)</label>
-                                        <input type="text" class="form-control form-control-lg" name="name">
+                                        <input value="{{ isset($buy->name) ? $buy->name : '' }}" type="text"
+                                            class="form-control form-control-lg" name="name">
                                     </div>
                                 </div>
-                                <div class="col-md-6 text-center  mb-3">
-                                    <div class="input-group input-group-lg input-group-outline">
+                                <div class="col-md-6 text-center mb-3">
+                                    <div
+                                        class="input-group input-group-lg input-group-outline {{ isset($buy->email) && $buy->email ? 'is-filled' : '' }}">
                                         <label class="form-label">E-mail (Opcional)</label>
-                                        <input type="text" class="form-control form-control-lg" name="email">
+                                        <input value="{{ isset($buy->email) ? $buy->email : '' }}" type="text"
+                                            class="form-control form-control-lg" name="email">
                                     </div>
                                 </div>
-                                <div class="col-md-6 text-center  mb-3">
-                                    <div class="input-group input-group-lg input-group-outline">
+                                <div class="col-md-6 text-center mb-3">
+                                    <div
+                                        class="input-group input-group-lg input-group-outline {{ isset($buy->telephone) && $buy->telephone ? 'is-filled' : '' }}">
                                         <label class="form-label">Teléfono (Opcional)</label>
-                                        <input type="text" class="form-control form-control-lg" name="telephone">
+                                        <input value="{{ isset($buy->telephone) ? $buy->telephone : '' }}" type="text"
+                                            class="form-control form-control-lg" name="telephone">
                                     </div>
                                 </div>
-                                <div class="col-md-6 text-center  mb-3">
+                                <div class="col-md-6 text-center mb-3">
                                     <div class="input-group input-group-lg input-group-outline is-filled">
                                         <label class="form-label">País (Opcional)</label>
                                         <input type="text" readonly value="Costa Rica"
                                             class="form-control form-control-lg" name="country">
                                     </div>
                                 </div>
-                                <div class="col-md-6 text-center  mb-3">
-                                    <div class="input-group input-group-lg input-group-outline">
+                                <div class="col-md-6 text-center mb-3">
+                                    <div
+                                        class="input-group input-group-lg input-group-outline {{ isset($buy->province) && $buy->province ? 'is-filled' : '' }}">
                                         <label class="form-label">Provincia (Opcional)</label>
-                                        <input type="text" value="" class="form-control form-control-lg"
-                                            name="province">
-                                    </div>
-                                </div>
-                                <div class="col-md-6 text-center  mb-3">
-                                    <div class="input-group input-group-lg input-group-outline">
-                                        <label class="form-label">Ciudad (Opcional)</label>
-                                        <input type="text" value="" class="form-control form-control-lg"
-                                            name="city">
-                                    </div>
-                                </div>
-                                <div class="col-md-6 text-center  mb-3">
-                                    <div class="input-group input-group-lg input-group-outline">
-                                        <label class="form-label">Distrito (Opcional)</label>
-                                        <input type="text" value="" class="form-control form-control-lg"
-                                            name="address_two">
-                                    </div>
-                                </div>
-                                <div class="col-md-6 text-center">
-                                    <div class="input-group input-group-lg input-group-outline">
-                                        <label class="form-label">Dirección Exacta (Opcional)</label>
-                                        <input type="text" value="" class="form-control form-control-lg"
-                                            name="address">
-                                    </div>
-                                </div>
-                                <div class="col-md-6 text-center">
-                                    <div class="input-group input-group-lg input-group-outline">
-                                        <label class="form-label">Código Postal (Opcional)</label>
-                                        <input type="text" value="" class="form-control form-control-lg"
-                                            name="postal_code">
-                                    </div>
-                                </div>
-                                <hr>
-                                <div class="col-md-6 text-center ">
-                                    <div class="input-group input-group-lg input-group-outline">
-                                        <label class="form-label">Detalle (Opcional)</label>
-                                        <input type="text" class="form-control form-control-lg" name="detail">
+                                        <input type="text" value="{{ isset($buy->province) ? $buy->province : '' }}"
+                                            class="form-control form-control-lg" name="province">
                                     </div>
                                 </div>
                                 <div class="col-md-6 text-center mb-3">
-                                    <div class="input-group input-group-lg input-group-outline">
-                                        <label class="form-label">Envío (Opcional)</label>
-                                        <input type="number" class="form-control form-control-lg" name="delivery">
+                                    <div
+                                        class="input-group input-group-lg input-group-outline {{ isset($buy->city) && $buy->city ? 'is-filled' : '' }}">
+                                        <label class="form-label">Ciudad (Opcional)</label>
+                                        <input type="text" value="{{ isset($buy->city) ? $buy->city : '' }}"
+                                            class="form-control form-control-lg" name="city">
                                     </div>
                                 </div>
+                                <div class="col-md-6 text-center mb-3">
+                                    <div
+                                        class="input-group input-group-lg input-group-outline {{ isset($buy->address_two) && $buy->address_two ? 'is-filled' : '' }}">
+                                        <label class="form-label">Distrito (Opcional)</label>
+                                        <input type="text"
+                                            value="{{ isset($buy->address_two) ? $buy->address_two : '' }}"
+                                            class="form-control form-control-lg" name="address_two">
+                                    </div>
+                                </div>
+                                <div class="col-md-6 text-center mb-3">
+                                    <div
+                                        class="input-group input-group-lg input-group-outline {{ isset($buy->address) && $buy->address ? 'is-filled' : '' }}">
+                                        <label class="form-label">Dirección Exacta (Opcional)</label>
+                                        <input type="text" value="{{ isset($buy->address) ? $buy->address : '' }}"
+                                            class="form-control form-control-lg" name="address">
+                                    </div>
+                                </div>
+                                <div class="col-md-6 text-center mb-3">
+                                    <div
+                                        class="input-group input-group-lg input-group-outline {{ isset($buy->postal_code) && $buy->postal_code ? 'is-filled' : '' }}">
+                                        <label class="form-label">Código Postal (Opcional)</label>
+                                        <input type="text"
+                                            value="{{ isset($buy->postal_code) ? $buy->postal_code : '' }}"
+                                            class="form-control form-control-lg" name="postal_code">
+                                    </div>
+                                </div>
+
+                                <hr>
+
+                                <div class="col-md-6 text-center mb-3">
+                                    <div
+                                        class="input-group input-group-lg input-group-outline {{ isset($buy->detail) && $buy->detail ? 'is-filled' : '' }}">
+                                        <label class="form-label">Detalle (Opcional)</label>
+                                        <input type="text" value="{{ isset($buy->detail) ? $buy->detail : '' }}"
+                                            class="form-control form-control-lg" name="detail">
+                                    </div>
+                                </div>
+                                <div class="col-md-6 text-center mb-3">
+                                    <div
+                                        class="input-group input-group-lg input-group-outline {{ isset($buy->total_delivery) && $buy->total_delivery ? 'is-filled' : '' }}">
+                                        <label class="form-label">Envío (Opcional)</label>
+                                        <input type="number"
+                                            value="{{ isset($buy->total_delivery) ? $buy->total_delivery : '' }}"
+                                            class="form-control form-control-lg" name="delivery">
+                                    </div>
+                                </div>
+
                                 <input type="hidden" value="{{ $tenantinfo->tenant }}" name="tenant" id="tenant">
+
                                 @if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'rutalimon')
                                     <div class="col-md-6">
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" value="1"
-                                                id="apartado" name="apartado" {{ old('apartado') ? 'checked' : '' }}>
+                                                id="apartado" name="apartado"
+                                                {{ (isset($buy->apartado) && $buy->apartado == 1) || old('apartado') ? 'checked' : '' }}>
                                             <label class="custom-control-label"
                                                 for="customCheck1">{{ __('Apartado') }}</label>
                                         </div>
                                     </div>
 
-                                    <div class="col-md-6 text-center d-none" id="monto_apartado">
-                                        <div class="input-group input-group-lg input-group-outline">
+                                    <div class="col-md-6 text-center {{ isset($buy->monto_apartado) && $buy->monto_apartado ? '' : 'd-none' }}"
+                                        id="monto_apartado">
+                                        <div
+                                            class="input-group input-group-lg input-group-outline {{ isset($buy->monto_apartado) && $buy->monto_apartado ? 'is-filled' : '' }}">
                                             <label class="form-label">Monto Apartado</label>
-                                            <input type="number" class="form-control form-control-lg"
+                                            <input value="{{ isset($buy->monto_apartado) ? $buy->monto_apartado : '' }}"
+                                                type="number" class="form-control form-control-lg"
                                                 name="monto_apartado">
                                         </div>
                                     </div>
                                 @endif
                             </div>
+
                             <button @if ($total_price == 0) disabled @endif id="btnSinpe" type="submit"
                                 class="btn btn-add_to_cart w-100 d-block h8 mt-3">Realizar
                                 Venta
@@ -307,6 +345,7 @@
     <script>
         $(document).ready(function() {
             var tenant = $('#tenant').val();
+            var updateId = document.getElementById('updateId').value;
             //Ocultar monto apartado
             if (tenant !== "rutalimon") {
                 const checkbox = document.getElementById("apartado");
@@ -466,9 +505,15 @@
             $container.on('click', '.btnAdd', function(e) {
                 e.preventDefault();
                 var input_code = document.getElementById('code');
+                var updateId = document.getElementById('updateId').value;
                 var code = input_code.value;
+                var quantity = 1;
+                if(updateId != 0){
+                    var quantityBox = document.getElementById('quantityBox');
+                    quantity = quantityBox.value;
+                }
+                
                 var selected_sizes = [];
-
                 // Recorrer todos los <select> con la clase .size_id y obtener sus valores
                 $('.size_id').each(function() {
                     var selected_value = $(this).val();
@@ -482,7 +527,6 @@
 
                 // Convertir el array filtrado a una cadena JSON
                 var attributes = JSON.stringify(cleaned_sizes);
-                console.log(attributes)
 
                 $.ajaxSetup({
                     headers: {
@@ -494,10 +538,11 @@
                     url: "/add-to-cart",
                     data: {
                         'code': code,
+                        'updateId': updateId,
                         'attributes': attributes,
+                        'quantity': quantity,
                     },
                     success: function(response) {
-                        //swal(response.status);
                         if (response.icon === "success") {
                             location.reload();
                         } else {
@@ -583,6 +628,7 @@
                 var modal = bootstrap.Modal.getInstance(document.getElementById('add-products-modal'));
                 modal.hide();
                 var code = icon;
+                var updateId = document.getElementById('updateId').value;
                 var $container = $(
                     '#container'
                 );
@@ -614,27 +660,24 @@
                             if (results.length > 0) {
                                 $.each(results, function(index, attribute) {
                                     if (index % 2 === 0) {
-                                        // Crear una nueva fila cada dos columnas
                                         $currentRow = $('<div>', {
-                                            class: 'row'
+                                            class: 'row align-items-end mb-3' // alineación vertical y espaciado entre filas
                                         });
                                         $container.append($currentRow);
                                     }
 
-                                    var $col = $('<div>', {
-                                        class: 'col-md-6'
-                                    });
-                                    var $label = $('<label>', {
-                                        text: attribute.columna_atributo
-                                    });
                                     var values = attribute.valores.split('/');
                                     var ids = attribute.ids.split('/');
                                     var stock_values = attribute.stock.split('/');
 
+                                    var $label = $('<label>', {
+                                        text: attribute.columna_atributo
+                                    });
+
                                     var $select = $('<select>', {
                                         required: true,
                                         name: 'size_id',
-                                        class: 'size_id form-control form-control-lg mb-2'
+                                        class: 'size_id form-control form-control-lg'
                                     });
 
                                     $.each(values, function(key, value) {
@@ -653,18 +696,42 @@
                                         }
                                     });
 
-                                    var $inputGroup = $('<div>', {
-                                        class: 'input-group input-group-static'
-                                    }).append($select);
+                                    // Columna para el atributo
+                                    var $colAttr = $('<div>', {
+                                            class: 'col-md-4'
+                                        })
+                                        .append($label)
+                                        .append($select);
 
-                                    $col.append($label).append('<br>').append($inputGroup).append(
-                                        '<br>');
-                                    $currentRow.append($col);
+                                    $currentRow.append($colAttr);
+                                    // Si updateId está definido y es distinto de 0, agregamos input de cantidad
+                                    if (typeof updateId !== 'undefined' && updateId != 0) {
+                                        var $qtyLabel = $('<label>', {
+                                            text: 'Cantidad'
+                                        });
+                                        var $quantityInput = $('<input>', {
+                                            type: 'number',
+                                            id: 'quantityBox',
+                                            name: 'quantityBox',
+                                            class: 'form-control',
+                                            placeholder: 'Cantidad',
+                                            min: 1,
+                                            value: 1
+                                        });
 
-                                    // Agregar botón después de cada fila completa
+                                        var $colQty = $('<div>', {
+                                                class: 'col-md-2'
+                                            })
+                                            .append($qtyLabel)
+                                            .append($quantityInput);
+
+                                        $currentRow.append($colQty);
+                                    }
+
+                                    // Botón al final de cada fila par o último elemento
                                     if (index % 2 === 1 || index === results.length - 1) {
                                         var $buttonCol = $('<div>', {
-                                            class: 'col-md-12'
+                                            class: 'col-md-12 mt-2'
                                         });
                                         var $button = $('<button>', {
                                             class: 'btn btn-add_to_cart shadow-0 btnAdd'
@@ -674,6 +741,7 @@
                                         $currentRow.append($buttonCol);
                                     }
                                 });
+
                             } else {
                                 // Si no hay atributos, mostrar solo el botón
                                 var $buttonRow = $('<div>', {

@@ -115,7 +115,6 @@ class BuyController extends Controller
 
         return response()->json($buys);
     }
-
     public function buyDetails($id)
     {
         $tenantinfo = TenantInfo::first();
@@ -248,7 +247,7 @@ class BuyController extends Controller
         $iva = $tenantinfo->iva;
         $tenant = $tenantinfo->tenant;
 
-        return view('admin.buys.indexDetail', compact('buysDetails', 'iva', 'tenant', 'previousBuy', 'nextBuy', 'id', 'currentBuy'));
+        return view('admin.buys.indexDetail', compact('buysDetails', 'iva','id', 'tenant', 'previousBuy', 'nextBuy', 'id', 'currentBuy'));
     }
     public function approve($id, $approved)
     {
@@ -423,8 +422,12 @@ class BuyController extends Controller
         $totalEnvio = $buys->sum('total_delivery');
         return view('admin.buys.index-total', compact('buys', 'iva', 'totalIva', 'totalPrecio', 'totalEnvio', 'totalVentas', 'totalDetails'));
     }
-    public function indexBuy()
+    public function indexBuy($id)
     {
+        $buy = null;
+        if($id != 0){
+            $buy = Buy::where('id',$id)->first();
+        }
         $tenantinfo = TenantInfo::first();
         $clothings = ClothingCategory::where('status', 1)
             ->leftJoin('product_images', function ($join) {
@@ -440,10 +443,16 @@ class BuyController extends Controller
                 DB::raw('IFNULL(product_images.image, "") as image'), // Obtener la primera imagen del producto
             )
             ->get();
-        $cart_items = Cache::remember('cart_items', $this->expirationTime, function () {
-            $cart_items = Cart::where('carts.user_id', null)
-                ->where('carts.session_id', null)
-                ->where('carts.sold', 0)
+        $cart_items = Cache::remember('cart_items_' . $id, $this->expirationTime, function () use ($id) {
+            $cart_items = Cart::whereNull('carts.user_id')
+                ->whereNull('carts.session_id')
+                ->when($id == 0, function ($query) {
+                    return $query->where('carts.sold', 0);
+                })
+                ->when($id != 0, function ($query) use ($id) {
+                    return $query->where('carts.sold', 1)
+                        ->where('carts.buy_id', $id);
+                })
                 ->leftJoin('attribute_value_cars', 'carts.id', 'attribute_value_cars.cart_id')
                 ->leftJoin('attributes', 'attribute_value_cars.attr_id', 'attributes.id')
                 ->leftJoin('attribute_values', 'attribute_value_cars.value_attr', 'attribute_values.id')
@@ -454,12 +463,13 @@ class BuyController extends Controller
                 })
                 ->join('clothing', 'carts.clothing_id', 'clothing.id')
                 ->leftJoin('product_images', function ($join) {
-                    $join->on('clothing.id', '=', 'product_images.clothing_id')->whereRaw('product_images.id = (
-                                    SELECT MIN(id) FROM product_images
-                                    WHERE product_images.clothing_id = clothing.id
-                                )');
+                    $join->on('clothing.id', '=', 'product_images.clothing_id')
+                        ->whereRaw('product_images.id = (
+                                SELECT MIN(id) FROM product_images
+                                WHERE product_images.clothing_id = clothing.id
+                            )');
                 })
-                ->whereRaw('(stocks.price != 0 OR clothing.price != 0)') // Condición adicional
+                ->whereRaw('(stocks.price != 0 OR clothing.price != 0)')
                 ->select(
                     'clothing.id as id',
                     'clothing.name as name',
@@ -477,13 +487,13 @@ class BuyController extends Controller
                     DB::raw('COALESCE(stocks.price, clothing.price) as price'),
                     DB::raw('COALESCE(stocks.stock, clothing.stock) as stock'),
                     DB::raw('(
-                                SELECT GROUP_CONCAT(CONCAT(attributes.name, ": ", attribute_values.value) SEPARATOR ", ")
-                                FROM attribute_value_cars
-                                JOIN attributes ON attribute_value_cars.attr_id = attributes.id
-                                JOIN attribute_values ON attribute_value_cars.value_attr = attribute_values.id
-                                WHERE attribute_value_cars.cart_id = carts.id
-                            ) as attributes_values'),
-                    DB::raw('IFNULL(product_images.image, "") as image') // Obtener la primera imagen del producto
+                            SELECT GROUP_CONCAT(CONCAT(attributes.name, ": ", attribute_values.value) SEPARATOR ", ")
+                            FROM attribute_value_cars
+                            JOIN attributes ON attribute_value_cars.attr_id = attributes.id
+                            JOIN attribute_values ON attribute_value_cars.value_attr = attribute_values.id
+                            WHERE attribute_value_cars.cart_id = carts.id
+                        ) as attributes_values'),
+                    DB::raw('IFNULL(product_images.image, "") as image')
                 )
                 ->groupBy(
                     'clothing.id',
@@ -505,6 +515,7 @@ class BuyController extends Controller
                     'product_images.image'
                 )
                 ->get();
+
             return $cart_items;
         });
 
@@ -541,7 +552,7 @@ class BuyController extends Controller
         $iva_tenant = $tenantinfo->iva;
         $total_price = $cloth_price + $iva;
 
-        return view('admin.buys.buys', compact('cart_items', 'clothings', 'iva_tenant', 'name', 'cloth_price', 'iva', 'total_price', 'you_save'));
+        return view('admin.buys.buys', compact('cart_items','buy', 'clothings','id', 'iva_tenant', 'name', 'cloth_price', 'iva', 'total_price', 'you_save'));
     }
     public function sizeByCloth(Request $request)
     {

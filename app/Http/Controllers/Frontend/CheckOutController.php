@@ -257,8 +257,7 @@ class CheckOutController extends Controller
                 }
                 return view('frontend.checkout', compact('cartItems', 'advert', 'tenant', 'delivery', 'iva', 'total_price', 'cloth_price', 'user_info', 'paypal_amount'));
                 break;
-        }       
-        
+        }
     }
 
     public function payment(
@@ -510,7 +509,7 @@ class CheckOutController extends Controller
                         }
                     }
 
-                    Cart::where('user_id', Auth::user()->id)->where('sold', 0)->update(['sold' => 1]);
+                    Cart::where('user_id', Auth::user()->id)->where('sold', 0)->update(['sold' => 1, 'buy_id' => $buy_id]);
                     DB::commit();
                 } else {
                     $session_id = session()->get('session_id');
@@ -743,13 +742,20 @@ class CheckOutController extends Controller
                         }
                     }
 
-                    Cart::where('session_id', $session_id)->where('sold', 0)->update(['sold' => 1]);
+                    Cart::where('session_id', $session_id)->where('sold', 0)->update(['sold' => 1, 'buy_id' => $buy_id]);
                     DB::commit();
                 }
             } else {
-                $cartItems = Cart::where('user_id', null)
-                    ->where('session_id', null)
-                    ->where('sold', 0)
+                $updateId = $request->updateId;
+                $cartItems = Cart::whereNull('carts.user_id')
+                    ->whereNull('carts.session_id')
+                    ->when($updateId == 0, function ($query) {
+                        return $query->where('carts.sold', 0);
+                    })
+                    ->when($updateId != 0, function ($query) use ($updateId) {
+                        return $query->where('carts.sold', 1)
+                            ->where('carts.buy_id', $updateId);
+                    })
                     ->leftJoin('attribute_value_cars', 'carts.id', 'attribute_value_cars.cart_id')
                     ->leftJoin('attributes', 'attribute_value_cars.attr_id', 'attributes.id')
                     ->leftJoin('attribute_values', 'attribute_value_cars.value_attr', 'attribute_values.id')
@@ -840,7 +846,11 @@ class CheckOutController extends Controller
                 }
                 $iva = $cloth_price * $tenantinfo->iva;
                 $total_price = $cloth_price + $iva;
-                $buy = new Buy();
+                if ($updateId != 0) {
+                    $buy = Buy::find($updateId);
+                } else {
+                    $buy = new Buy();
+                }
                 $buy->user_id = null;
                 $buy->total_iva =  $iva;
                 $buy->total_buy =  $total_price;
@@ -880,67 +890,99 @@ class CheckOutController extends Controller
                 if ($request->has('postal_code')) {
                     $buy->postal_code = $request->postal_code;
                 }
-                $buy->save();
+                if ($updateId != 0) {
+                    $buy->update();
+                } else {
+                    $buy->save();
+                }
+
                 $buy_id = $buy->id;
 
                 foreach ($cartItems as $cart) {
                     $precio = $cart->price != 0 ? $cart->price : $cart->price_cloth;
+
                     if ($precio > 0) {
                         if (isset($tenantinfo->custom_size) && $tenantinfo->custom_size == 1 && $cart->stock_price > 0) {
                             $precio = $cart->stock_price;
                         }
+
                         if (Auth::check() && Auth::user()->mayor == '1' && $cart->mayor_price > 0) {
                             $precio = $cart->mayor_price;
                         }
+
                         $descuentoPorcentaje = $cart->discount;
-                        // Calcular el descuento
                         $descuento = ($precio * $descuentoPorcentaje) / 100;
-                        // Calcular el precio con el descuento aplicado
                         $precioConDescuento = $precio - $descuento;
-                        $buy_detail = new BuyDetail();
-                        $buy_detail->buy_id = $buy_id;
-                        $buy_detail->clothing_id = $cart->clothing_id;
-                        $buy_detail->total = ($precioConDescuento * $cart->quantity) + ($precioConDescuento * $tenantinfo->iva);
-                        $buy_detail->iva = $precioConDescuento * $tenantinfo->iva;
-                        $buy_detail->quantity = $cart->quantity;
-                        $buy_detail->cancel_item = 0;
-                        $buy_detail->save();
-                        $buy_detail_id = $buy_detail->id;
-                        $attributeValuePairs = !empty($cart->attributes_values) ? explode(',', $cart->attributes_values) : null;
-                        if ($attributeValuePairs) {
-                            foreach ($attributeValuePairs as $pair) {
-                                list($attr_id, $value_attr) = explode('-', $pair);
-                                $attr_val_buy = new AttributeValueBuy();
-                                $attr_val_buy->buy_detail_id = $buy_detail_id;
-                                $attr_val_buy->attr_id = $attr_id;
-                                $attr_val_buy->value_attr = $value_attr;
-                                $attr_val_buy->save();
-                                if ($cart->manage_stock == 1) {
-                                    $stock = Stock::where('clothing_id', $cart->clothing_id)
-                                        ->where('attr_id', $attr_id)
-                                        ->where('value_attr', $value_attr)
-                                        ->first();
-                                    Stock::where('clothing_id', $cart->clothing_id)
-                                        ->where('attr_id', $attr_id)
-                                        ->where('value_attr', $value_attr)
-                                        ->update(['stock' => ($stock->stock - $cart->quantity)]);
-                                }
-                            }
+
+                        // Verificar si el detalle ya existe (por ID de compra y prenda)
+                        $buy_detail = BuyDetail::where('buy_id', $buy_id)
+                            ->where('clothing_id', $cart->clothing_id)
+                            ->first();
+
+                        if ($buy_detail) {
+                            // Ya existe, actualizamos los valores
+                            $buy_detail->total = ($precioConDescuento * $cart->quantity) + ($precioConDescuento * $tenantinfo->iva);
+                            $buy_detail->iva = $precioConDescuento * $tenantinfo->iva;
+                            $buy_detail->quantity = $cart->quantity;
+                            $buy_detail->cancel_item = 0;
+                            $buy_detail->update();
+                            $buy_detail_id = $buy_detail->id;
                         } else {
-                            if ($cart->manage_stock == 1) {
-                                $cart_quantity = $cart->quantity;
-                                if ($cart->stock > 0 && $cart->price > 0) {
+                            // No existe, lo creamos y restamos del stock
+                            $buy_detail = new BuyDetail();
+                            $buy_detail->buy_id = $buy_id;
+                            $buy_detail->clothing_id = $cart->clothing_id;
+                            $buy_detail->total = ($precioConDescuento * $cart->quantity) + ($precioConDescuento * $tenantinfo->iva);
+                            $buy_detail->iva = $precioConDescuento * $tenantinfo->iva;
+                            $buy_detail->quantity = $cart->quantity;
+                            $buy_detail->cancel_item = 0;
+                            $buy_detail->save();
+                            $buy_detail_id = $buy_detail->id;
+
+                            // Solo restamos del stock si es nuevo
+                            $attributeValuePairs = !empty($cart->attributes_values) ? explode(',', $cart->attributes_values) : null;
+
+                            if ($attributeValuePairs) {
+                                foreach ($attributeValuePairs as $pair) {
+                                    list($attr_id, $value_attr) = explode('-', $pair);
+
+                                    // Guardamos los atributos
+                                    $attr_val_buy = new AttributeValueBuy();
+                                    $attr_val_buy->buy_detail_id = $buy_detail_id;
+                                    $attr_val_buy->attr_id = $attr_id;
+                                    $attr_val_buy->value_attr = $value_attr;
+                                    $attr_val_buy->save();
+
+                                    if ($cart->manage_stock == 1) {
+                                        $stock = Stock::where('clothing_id', $cart->clothing_id)
+                                            ->where('attr_id', $attr_id)
+                                            ->where('value_attr', $value_attr)
+                                            ->first();
+
+                                        if ($stock) {
+                                            Stock::where('clothing_id', $cart->clothing_id)
+                                                ->where('attr_id', $attr_id)
+                                                ->where('value_attr', $value_attr)
+                                                ->update(['stock' => ($stock->stock - $cart->quantity)]);
+                                        }
+                                    }
+                                }
+                            } else {
+                                if ($cart->manage_stock == 1 && $cart->stock > 0 && $cart->price > 0) {
                                     ClothingCategory::where('id', $cart->clothing_id)
-                                        ->update(['stock' => DB::raw("stock - $cart_quantity")]);
+                                        ->update(['stock' => DB::raw("stock - {$cart->quantity}")]);
                                 }
                             }
                         }
                     }
                 }
 
-                Cart::where('user_id', null)
-                    ->where('session_id', null)
-                    ->where('sold', 0)->update(['sold' => 1]);
+                if ($updateId == 0) {
+                    Cart::where('user_id', null)
+                        ->where('session_id', null)
+                        ->where('sold', 0)->update(['sold' => 1, 'buy_id' => $buy_id]);
+                }
+
                 DB::commit();
                 return redirect()->back()->with(['status' => 'Venta exitosa!', 'icon' => 'success']);
             }

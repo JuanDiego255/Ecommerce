@@ -210,7 +210,7 @@ Route::middleware([
             Route::post('/size-by-cloth', [BuyController::class, 'sizeByCloth']);
             Route::post('/save/guide-number/{id}', [BuyController::class, 'updateGuideNumber']);
             Route::get('/total-buys', [BuyController::class, 'indexTotalBuys']);
-            Route::get('/new-buy', [BuyController::class, 'indexBuy']);
+            Route::get('/new-buy/{id}', [BuyController::class, 'indexBuy']);
             Route::get('/buy/details/admin/{id}', [BuyController::class, 'buyDetailsAdmin']);
             Route::put('/approve/{id}/{ready}', [BuyController::class, 'approve']);
             Route::put('/ready/{id}/{approved}', [BuyController::class, 'readyToGive']);

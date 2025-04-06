@@ -79,6 +79,7 @@ class CartController extends Controller
             $attributes = json_decode($request->input('attributes'), true);
             if ($request->code) {
                 $code = $request->code;
+                $updateId = $request->updateId;
                 $cloth_check = ClothingCategory::where('code', $code)->first();
 
                 if ($cloth_check) {
@@ -89,8 +90,9 @@ class CartController extends Controller
                         $cart_item = new Cart();
                         $cart_item->user_id = null;
                         $cart_item->clothing_id = $cloth_check->id;
-                        $cart_item->quantity = 1;
-                        $cart_item->sold = 0;
+                        $cart_item->quantity = $request->quantity != null ? $request->quantity : 1;
+                        $cart_item->sold = $request->updateId != 0 ? 1 : 0;
+                        $cart_item->buy_id = $request->updateId != 0 ? $updateId : null;
                         $cart_item->save();
                         $cart_id = $cart_item->id;
                         foreach ($attributes as $attr) {
@@ -102,6 +104,7 @@ class CartController extends Controller
                             $attr_db->value_attr = $value_attr;
                             $attr_db->save();
                         }
+
                         $newCartNumber = count(Cart::where('user_id', Auth::id())->where('sold', 0)->get());
 
                         view()->share([
@@ -252,7 +255,7 @@ class CartController extends Controller
                 }
                 return view('frontend.view-cart', compact('cart_items', 'name', 'cloth_price', 'iva', 'total_price', 'you_save'));
                 break;
-        }        
+        }
     }
     public function delete($id, Request $request)
     {
