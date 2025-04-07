@@ -224,7 +224,7 @@
                     <div class="row">
                         <div class="col-xl-12">
                             <div class="section_title text-center mb-40">
-                                <h3>Clientes</h3>
+                                <h3 class="text-uppercase uppercase text-prov">Clientes</h3>
                             </div>
                         </div>
                     </div>
@@ -247,7 +247,7 @@
                     <div class="row">
                         <div class="col-xl-12">
                             <div class="section_title text-center mb-40">
-                                <h3>Equipos de calidad, marcas de confianza</h3>
+                                <h3 class="text-uppercase uppercase text-prov">Servicios de excelencia - respaldados por marcas líderes</h3>
                             </div>
                         </div>
                     </div>

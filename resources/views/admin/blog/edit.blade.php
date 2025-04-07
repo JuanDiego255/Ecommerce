@@ -100,6 +100,12 @@
                                     placeholder="Descripción del blog">{{ $blog->body }}</textarea>
                             </div>
                         </div>
+                        <div class="col-md-12 mb-3">
+                            <div class="input-group input-group-static mb-4">
+                                <textarea id="editor_note" type="text" class="form-control form-control-lg" name="note"
+                                    placeholder="Nota del blog">{{ $blog->note }}</textarea>
+                            </div>
+                        </div>
                         @if (
                             (isset($tenantinfo->tenant) && $tenantinfo->tenant == 'avelectromecanica') ||
                                 (isset($tenantinfo->tenant) && $tenantinfo->tenant == 'aclimate'))
@@ -136,6 +142,49 @@
         $(document).ready(function() {
             ClassicEditor
                 .create(document.querySelector('#editor'), {
+                    fontSize: {
+                        options: [
+                            'tiny',
+                            'default',
+                            'big'
+                        ]
+                    },
+                    heading: {
+                        options: [{
+                                model: 'paragraph',
+                                title: 'Párrafo',
+                                class: 'ck-heading_paragraph'
+                            },
+                            {
+                                model: 'heading1',
+                                view: 'h1',
+                                title: 'Título',
+                                class: 'ck-heading_heading1'
+                            },
+                            {
+                                model: 'headingFancy',
+                                view: {
+                                    name: 'p',
+                                },
+                                title: 'Párrafo 28px',
+                                class: 'ck-heading_paragraph-p28',
+
+                                // It needs to be converted before the standard 'heading2'.
+                                converterPriority: 'high'
+                            }
+                        ]
+                    },
+                    ckfinder: {
+                        uploadUrl: "{{ route('upload', ['_token' => csrf_token()]) }}"
+                    },
+
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+
+            ClassicEditor
+                .create(document.querySelector('#editor_note'), {
                     fontSize: {
                         options: [
                             'tiny',

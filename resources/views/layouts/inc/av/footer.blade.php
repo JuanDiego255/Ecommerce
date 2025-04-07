@@ -7,7 +7,7 @@
                     <div class="footer_widget">
                         <div class="footer_logo">
                             <a href="#">
-                                <img src="{{ route('file', $tenantinfo->logo) }}" alt="" />
+                                <img src="{{ asset('avstyles/img/logos/logo-av2.svg') }}" alt="" />
                             </a>
                         </div>
 

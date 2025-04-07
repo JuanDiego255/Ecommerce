@@ -46,12 +46,7 @@ background-size: cover; background-position: center;">
                             {!! $blog->body !!}
                             <div class="quote-wrapper">
                                 <div class="quotes">
-                                    MCSE boot camps have its supporters and its detractors. Some people do not understand
-                                    why you
-                                    should have to spend money on boot camp when you can get the MCSE study materials
-                                    yourself at
-                                    a fraction of the camp price. However, who has the willpower to actually sit through a
-                                    self-imposed MCSE training.
+                                    {!! $blog->note !!}
                                 </div>
                             </div>
                             @foreach ($tags as $tag)

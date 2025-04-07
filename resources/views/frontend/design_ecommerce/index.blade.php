@@ -3,6 +3,9 @@
     {!! SEOMeta::generate() !!}
     {!! OpenGraph::generate() !!}
 @endsection
+@php
+    $ruta = $tenantinfo->tenant != 'aclimate' ? 'file' : 'aclifile';
+@endphp
 @section('content')
     {{-- Carousel Start --}}
     @if (count($tenantcarousel) != 0)
@@ -10,7 +13,7 @@
             <div class="slick1">
                 @foreach ($tenantcarousel as $key => $carousel)
                     <div class="item-slick1"
-                        style="background-image:url('{{ tenant_asset('/') . '/' . $carousel->image }}');">
+                        style="background-image:url('{{ route($ruta, $carousel->image) }}');">
                         <div class="container h-full">
                             <div class="flex-col-l-m h-full p-t-100 p-b-30 respon5">
                                 <div class="layer-slick1 animated visible-false" data-appear="fadeInDown" data-delay="0">
@@ -50,7 +53,7 @@
                                 <div class="col-md-6 col-xl-4 p-b-30 m-lr-auto">
                                     <!-- Block1 -->
                                     <div class="block1 wrap-pic-w">
-                                        <img src="{{ isset($item->image) ? route('file', $item->image) : url('design_ecommerce/images/producto-sin-imagen.PNG') }}"
+                                        <img src="{{ isset($item->image) ? route($ruta, $item->image) : url('/design_ecommerce/images/producto-sin-imagen.PNG') }}"
                                             alt="IMG-BANNER">
 
                                         <a href="{{ url('clothes-category/' . $item->category_id . '/' . $item->department_id) }}"
@@ -89,7 +92,7 @@
                                 <div class="col-md-6 col-xl-4 p-b-30 m-lr-auto">
                                     <!-- Block1 -->
                                     <div class="block1 wrap-pic-w">
-                                        <img src="{{ isset($item->image) ? route('file', $item->image) : url('design_ecommerce/images/producto-sin-imagen.PNG') }}"
+                                        <img src="{{ isset($item->image) ? route($ruta, $item->image) : url('design_ecommerce/images/producto-sin-imagen.PNG') }}"
                                             alt="IMG-BANNER">
 
                                         <a href="{{ url('category/' . $item->id) }}"
@@ -196,7 +199,7 @@
                             <input type="hidden" class="code" name="code" value="{{ $item->code }}">
                             <input type="hidden" class="clothing-name" name="clothing-name" value="{{ $item->name }}">
                             <div class="block2-pic hov-img0">
-                                <img src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"
+                                <img src="{{ isset($item->image) ? route($ruta, $item->image) : url('images/producto-sin-imagen.PNG') }}"
                                     alt="IMG-PRODUCT">
 
                                 <a href="#"
@@ -206,8 +209,8 @@
                                     data-price="{{ number_format($precioConDescuento, 2) }}"
                                     data-original-price="{{ number_format($item->price, 2) }}"
                                     data-attributes='@json($item->atributos)' data-category="{{ $item->category }}"
-                                    data-images='@json(array_map(fn($img) => route('file', $img), $item->all_images))'
-                                    data-image="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
+                                    data-images='@json(array_map(fn($img) => route($ruta, $img), $item->all_images))'
+                                    data-image="{{ isset($item->image) ? route($ruta, $item->image) : url('images/producto-sin-imagen.PNG') }}">
                                     Detallar
                                 </a>
                             </div>
