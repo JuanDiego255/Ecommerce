@@ -157,12 +157,20 @@
             </div>
         </div>
         <div class="flex-c-m flex-w w-full p-t-45">
-            <button id="btnPrev" class="lex-c-m stext-101 cl5 m-r-5 size-103 bg2 bor1 hov-btn1 p-lr-15 trans-04"
-                data-prev="{{ $clothings->previousPageUrl() }}" data-id="{{ $category_id }}">Anterior</button>
-            <button id="circleNumber"
-                class="lex-c-m stext-101 m-r-5 cl5 size-103-clothes bg2 bor1 hov-btn1 p-lr-15 w-5 trans-04">1</button>
-            <button id="btnNext" class="lex-c-m stext-101 cl5 size-103 bg2 bor1 hov-btn1 p-lr-15 trans-04"
-                data-next="{{ $clothings->nextPageUrl() }}" data-id="{{ $category_id }}">Siguiente</button>
+            <button id="btnPrev"
+                class="lex-c-m stext-101 cl5 m-r-5 size-103-clothes bg-de text-white hov-btn1 p-lr-15 trans-04"
+                data-prev="{{ $clothings->previousPageUrl() }}" data-id="{{ $category_id }}"><i
+                    class="fa fa-chevron-left"></i>
+            </button>
+            @for ($i = 1; $i < $totalPages + 1; $i++)
+                <button id="circleNumber" data-page="{{ $i }}" data-id="{{ $category_id }}"
+                    class="page-number-{{ $i }} page-lex-c-m stext-101 m-r-5 cl5 size-103-clothes-number bg-none  hov-btn1 p-lr-15 w-5 trans-04 {{ $i == 1 ? 'font-weight-bold' : 'text-muted' }}">{{ $i }}</button>
+            @endfor
+            <button id="btnNext"
+                class="lex-c-m stext-101 cl5 size-103-clothes bg-de text-white hov-btn1 p-lr-15 trans-04"
+                data-next="{{ $clothings->nextPageUrl() }}" data-id="{{ $category_id }}"><i
+                    class="fa fa-chevron-right"></i>
+            </button>
         </div>
     </section>
     @include('layouts.inc.design_ecommerce.footer')
@@ -197,59 +205,69 @@
                         let precioConDescuento = precio - descuento;
 
                         html += `
-    <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item ${item.category.toLowerCase().replace(/\s/g, '')}">
-        <div class="block2 product_data">
-            <input type="hidden" class="code" name="code" value="${item.code}">
-            <input type="hidden" class="clothing-name" name="clothing-name" value="${item.name}">
-            <div class="block2-pic hov-img0">
-                <img src="${item.image ? `/file/${item.image}` : '/images/producto-sin-imagen.PNG'}" 
-                    alt="IMG-PRODUCT">
-                <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1"
-                    data-id="${item.id}" 
-                    data-name="${item.name}" 
-                    data-discount="${item.discount}" 
-                    data-description="${item.description}"
-                    data-price="${precioConDescuento}"
-                    data-original-price="${item.price}"
-                    data-attributes='${JSON.stringify(item.atributos)}'
-                    data-category="${item.category}"
-                    data-images='${JSON.stringify(item.all_images.map(img => `/file/${img}`))}'
-                    data-image="${item.image ? `/file/${item.image}` : '/images/producto-sin-imagen.PNG'}">
-                    Detallar
-                </a>
-            </div>
-            <div class="block2-txt flex-w flex-t p-t-14">
-                <div class="block2-txt-child1 flex-col-l ">
-                    <a href="/detail-clothing/${item.id}/${category_id}" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-                        ${item.name}
-                    </a>
-                    <div class="price">
-                        ₡${precioConDescuento}
-                        ${item.discount ? `<s class="text-danger">₡${item.price}</s>` : ''}
-                    </div>
-                </div>
-                <div class="block2-txt-child2 flex-r p-t-3">
-                    ${item.is_fav ? 
-                        `<a href="#" class="dis-block pos-relative add_favorite" data-clothing-id="${item.id}">
-                                <i class="fa fa-heart text-danger"></i>
-                            </a>` : ''
-                    }
-                </div>
-            </div>
-        </div>
-    </div>`;
+                            <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item ${item.category.toLowerCase().replace(/\s/g, '')}">
+                                <div class="block2 product_data">
+                                    <input type="hidden" class="code" name="code" value="${item.code}">
+                                    <input type="hidden" class="clothing-name" name="clothing-name" value="${item.name}">
+                                    <div class="block2-pic hov-img0">
+                                        <img src="${item.image ? `/file/${item.image}` : '/images/producto-sin-imagen.PNG'}" 
+                                            alt="IMG-PRODUCT">
+                                        <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1"
+                                            data-id="${item.id}" 
+                                            data-name="${item.name}" 
+                                            data-discount="${item.discount}" 
+                                            data-description="${item.description}"
+                                            data-price="${precioConDescuento}"
+                                            data-original-price="${item.price}"
+                                            data-attributes='${JSON.stringify(item.atributos)}'
+                                            data-category="${item.category}"
+                                            data-images='${JSON.stringify(item.all_images.map(img => `/file/${img}`))}'
+                                            data-image="${item.image ? `/file/${item.image}` : '/images/producto-sin-imagen.PNG'}">
+                                            Detallar
+                                        </a>
+                                    </div>
+                                    <div class="block2-txt flex-w flex-t p-t-14">
+                                        <div class="block2-txt-child1 flex-col-l ">
+                                            <a href="/detail-clothing/${item.id}/${category_id}" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
+                                                ${item.name}
+                                            </a>
+                                            <div class="price">
+                                                ₡${precioConDescuento}
+                                                ${item.discount ? `<s class="text-danger">₡${item.price}</s>` : ''}
+                                            </div>
+                                        </div>
+                                        <div class="block2-txt-child2 flex-r p-t-3">
+                                            ${item.is_fav ? 
+                                                `<a href="#" class="dis-block pos-relative add_favorite" data-clothing-id="${item.id}">
+                                                                                                        <i class="fa fa-heart text-danger"></i>
+                                                                                                    </a>` : ''
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>`;
 
                     });
 
                     // Actualizar el contenido del contenedor
                     $('#product-container').empty().append(html);
-                    $('#circleNumber').text(response.page);
+                    //$('#circleNumber').text(response.page);
 
                     // Actualizar paginación
                     response.next_page_url ? $('#btnNext').data('next', response.next_page_url) : $(
                         '#btnNext').removeData('next');
                     response.prev_page_url ? $('#btnPrev').data('prev', response.prev_page_url) : $(
                         '#btnPrev').removeData('prev');
+                    // Actualizar botones numéricos (resaltar página actual)
+                    $('.page-lex-c-m').removeClass(
+                        'font-weight-bold'); // Quita el bold de todos
+                    $('.page-lex-c-m').addClass(
+                        'text-muted'); // Quita el bold de todos
+                    $(`.page-number-${response.currentPage}`).addClass(
+                        'font-weight-bold'); // Agrega bold al actual
+                    $(`.page-number-${response.currentPage}`).removeClass(
+                        'text-muted');
+
 
                     // Reinicializar Isotope
                     var $grid = $('.isotope-grid').data('isotope');
@@ -283,8 +301,128 @@
             });
 
         });
+        $(document).on('click', '.page-lex-c-m', function() {
+            let page = $(this).data('page');
+            let id = $(this).data('id');
+
+            if (!page || !id) return;
+
+            $.ajax({
+                method: "GET",
+                url: "/paginate/" + Number(page) + "/" + id,
+                success: function(response) {
+                    var items = response.clothings.data;
+                    var category_id = response.category_id;
+                    var html = '';
+                    // Construcción del HTML dinámicamente
+                    items.forEach(function(item) {
+                        let precio = item.price;
+                        if (item.custom_size == 1) {
+                            precio = item.first_price;
+                        }
+                        if (item.mayor_price > 0 && item.is_mayor) {
+                            precio = item.mayor_price;
+                        }
+                        let descuento = (precio * item.discount) / 100;
+                        let precioConDescuento = precio - descuento;
+
+                        html += `
+                            <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item ${item.category.toLowerCase().replace(/\s/g, '')}">
+                                <div class="block2 product_data">
+                                    <input type="hidden" class="code" name="code" value="${item.code}">
+                                    <input type="hidden" class="clothing-name" name="clothing-name" value="${item.name}">
+                                    <div class="block2-pic hov-img0">
+                                        <img src="${item.image ? `/file/${item.image}` : '/images/producto-sin-imagen.PNG'}" 
+                                            alt="IMG-PRODUCT">
+                                        <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1"
+                                            data-id="${item.id}" 
+                                            data-name="${item.name}" 
+                                            data-discount="${item.discount}" 
+                                            data-description="${item.description}"
+                                            data-price="${precioConDescuento}"
+                                            data-original-price="${item.price}"
+                                            data-attributes='${JSON.stringify(item.atributos)}'
+                                            data-category="${item.category}"
+                                            data-images='${JSON.stringify(item.all_images.map(img => `/file/${img}`))}'
+                                            data-image="${item.image ? `/file/${item.image}` : '/images/producto-sin-imagen.PNG'}">
+                                            Detallar
+                                        </a>
+                                    </div>
+                                    <div class="block2-txt flex-w flex-t p-t-14">
+                                        <div class="block2-txt-child1 flex-col-l ">
+                                            <a href="/detail-clothing/${item.id}/${category_id}" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
+                                                ${item.name}
+                                            </a>
+                                            <div class="price">
+                                                ₡${precioConDescuento}
+                                                ${item.discount ? `<s class="text-danger">₡${item.price}</s>` : ''}
+                                            </div>
+                                        </div>
+                                        <div class="block2-txt-child2 flex-r p-t-3">
+                                            ${item.is_fav ? 
+                                                `<a href="#" class="dis-block pos-relative add_favorite" data-clothing-id="${item.id}">
+                                                                                                        <i class="fa fa-heart text-danger"></i>
+                                                                                                    </a>` : ''
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>`;
+
+                    });
+
+                    // Actualizar el contenido del contenedor
+                    $('#product-container').empty().append(html);
+                    //$('#circleNumber').text(response.page);
+
+                    // Actualizar paginación
+                    response.next_page_url ? $('#btnNext').data('next', response.next_page_url) : $(
+                        '#btnNext').removeData('next');
+                    response.prev_page_url ? $('#btnPrev').data('prev', response.prev_page_url) : $(
+                        '#btnPrev').removeData('prev');
+                    // Actualizar botones numéricos (resaltar página actual)
+                    $('.page-lex-c-m').removeClass(
+                        'font-weight-bold'); // Quita el bold de todos
+                    $('.page-lex-c-m').addClass(
+                        'text-muted'); // Quita el bold de todos
+                    $(`.page-number-${response.currentPage}`).addClass(
+                        'font-weight-bold'); // Agrega bold al actual
+                    $(`.page-number-${response.currentPage}`).removeClass(
+                        'text-muted');
 
 
+                    // Reinicializar Isotope
+                    var $grid = $('.isotope-grid').data('isotope');
+                    if ($grid) {
+                        $grid.destroy();
+                    }
+
+                    var $newGrid = $('#product-container').isotope({
+                        itemSelector: '.isotope-item',
+                        layoutMode: 'fitRows',
+                        percentPosition: true,
+                        animationEngine: 'best-available',
+                        masonry: {
+                            columnWidth: '.isotope-item'
+                        }
+                    });
+
+                    // Espera a que isotope termine de organizar antes de hacer scroll
+                    $newGrid.on('arrangeComplete', function() {
+                        $('html, body').animate({
+                            scrollTop: 0
+                        }, 600);
+                    });
+
+                    // Trigger layout después de pequeño delay para mayor seguridad
+                    setTimeout(function() {
+                        $newGrid.isotope('layout');
+                    }, 100);
+
+                }
+            });
+
+        });
         $(document).on('click', '.js-show-modal1', function(e) {
             e.preventDefault();
             $('.js-modal1').addClass('show-modal1');

@@ -2481,6 +2481,10 @@ input.num-product::-webkit-inner-spin-button {
     min-width: 80px;
     height: 46px;
 }
+.size-103-clothes-number {
+    min-width: 40px;
+    height: 46px;
+}
 
 .size-104 {
     min-width: 94px;
@@ -2688,6 +2692,9 @@ input.num-product::-webkit-inner-spin-button {
 }
 .bg0 {
     background-color: #fff;
+}
+.bg-de {
+    background-color: var(--btn_cart);
 }
 .bg1 {
     background-color: var(--btn_cart);

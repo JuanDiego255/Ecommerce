@@ -457,8 +457,9 @@ class FrontendController extends Controller
             ->orderByRaw('CASE WHEN clothing.casa IS NOT NULL AND clothing.casa != "" THEN 0 ELSE 1 END')
             ->orderBy('clothing.casa', 'asc')
             ->orderBy('clothing.name', 'asc')
-            ->simplePaginate(20);
+            ->paginate(20);
 
+            $totalPages = $clothings->lastPage();
 
         $tags = Cache::remember('meta_tags_specific_category', $this->expirationTime, function () {
             return MetaTags::where('section', 'Categoría Específica')->get();
@@ -521,7 +522,7 @@ class FrontendController extends Controller
                 break;
             default:
                 if ($tenantinfo->kind_of_features == 1) {
-                    return view('frontend.design_ecommerce.clothes-category', compact('clothings', 'category_name', 'category_id', 'department_id', 'department_name'));
+                    return view('frontend.design_ecommerce.clothes-category', compact('clothings','totalPages', 'category_name', 'category_id', 'department_id', 'department_name'));
                 }
                 return view('frontend.clothes-category', compact('clothings', 'category_name', 'category_id', 'department_id', 'department_name'));
         }
@@ -911,6 +912,7 @@ class FrontendController extends Controller
                     'next_page_url' => $clothings->nextPageUrl(),
                     'prev_page_url' => $clothings->previousPageUrl(),
                     'page' => $next_page,
+                    'currentPage' => $clothings->currentPage(),
                     'items' => $items
                 ]);
             } catch (\Exception $th) {
