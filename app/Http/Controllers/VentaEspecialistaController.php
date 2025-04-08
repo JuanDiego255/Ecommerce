@@ -110,7 +110,7 @@ class VentaEspecialistaController extends Controller
             ->orderBy('matricula_estudiantes.curso', 'asc')
             ->get();
         $ventasEntrada = DB::table(DB::raw("(
-                SELECT tipo_pagos.tipo AS tipo_pago, SUM(venta_especialistas.monto_venta) AS total_venta
+                SELECT tipo_pagos.tipo AS tipo_pago, SUM(venta_especialistas.monto_venta + venta_especialistas.monto_producto_venta) AS total_venta
                 FROM venta_especialistas
                 JOIN arqueo_cajas ON venta_especialistas.arqueo_id = arqueo_cajas.id
                 JOIN tipo_pagos ON venta_especialistas.tipo_pago_id = tipo_pagos.id
