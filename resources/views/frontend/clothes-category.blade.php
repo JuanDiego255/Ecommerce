@@ -44,6 +44,7 @@
                     @foreach ($clothings as $item)
                         <div class="col-md-3 col-sm-6 mb-2 card-container">
                             <input type="hidden" class="code" name="code" value="{{ $item->code }}">
+                            <input type="hidden" class="clothing-name" name="clothing-name" value="{{ $item->name }}">
                             <div class="product-grid product_data">
                                 <div class="product-image">
                                     <img 
@@ -171,6 +172,7 @@
                     @foreach ($clothings as $item)
                         <div class="col-md-3 col-sm-6 mb-2 card-container">
                             <input type="hidden" class="code" name="code" value="{{ $item->code }}">
+                            <input type="hidden" class="clothing-name" name="clothing-name" value="{{ $item->name }}">
                             <div class="product-grid product_data">
                                 <div class="product-image">
                                     <img
@@ -272,7 +274,7 @@
             $('#searchfor').on('keyup', function() {
                 var searchTerm = $(this).val().toLowerCase();
                 $('.card-container').each(function() {
-                    var name = $(this).find('.clothing-name').text().toLowerCase();
+                    var name = $(this).find('.clothing-name').val().toLowerCase();
                     var code = $(this).find('.code').val().toLowerCase();
                     if (name.includes(searchTerm) || code.includes(searchTerm)) {
                         $(this).show();

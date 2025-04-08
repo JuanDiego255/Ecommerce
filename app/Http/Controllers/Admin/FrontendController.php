@@ -395,8 +395,12 @@ class FrontendController extends Controller
     }
     public function clothesByCategory($id, $department_id)
     {
+        $totalPages = null;
         $category = Cache::remember('category_' . $id, $this->expirationTime, function () use ($id) {
             return Categories::find($id);
+        });
+        $tenantinfo = Cache::remember('tenant_info', $this->expirationTime, function () {
+            return TenantInfo::first();
         });
         $categories = Cache::remember('categories', $this->expirationTime, function () {
             return Categories::where('departments.department', 'Default')
@@ -456,18 +460,22 @@ class FrontendController extends Controller
             ->havingRaw('total_stock > 0')
             ->orderByRaw('CASE WHEN clothing.casa IS NOT NULL AND clothing.casa != "" THEN 0 ELSE 1 END')
             ->orderBy('clothing.casa', 'asc')
-            ->orderBy('clothing.name', 'asc')
-            ->paginate(20);
+            ->orderBy('clothing.name', 'asc');
 
+        if ($tenantinfo->kind_of_features == 1) {
+            $clothings = $clothings->paginate(20);
             $totalPages = $clothings->lastPage();
+        } else {
+            $clothings = $clothings->simplePaginate(20);
+        }
+
+
 
         $tags = Cache::remember('meta_tags_specific_category', $this->expirationTime, function () {
             return MetaTags::where('section', 'Categoría Específica')->get();
         });
 
-        $tenantinfo = Cache::remember('tenant_info', $this->expirationTime, function () {
-            return TenantInfo::first();
-        });
+
         foreach ($clothings as $clothing) {
             // Obtener la primera imagen
             $firstImage = ProductImage::where('clothing_id', $clothing->id)
@@ -522,7 +530,7 @@ class FrontendController extends Controller
                 break;
             default:
                 if ($tenantinfo->kind_of_features == 1) {
-                    return view('frontend.design_ecommerce.clothes-category', compact('clothings','totalPages', 'category_name', 'category_id', 'department_id', 'department_name'));
+                    return view('frontend.design_ecommerce.clothes-category', compact('clothings', 'totalPages', 'category_name', 'category_id', 'department_id', 'department_name'));
                 }
                 return view('frontend.clothes-category', compact('clothings', 'category_name', 'category_id', 'department_id', 'department_name'));
         }
