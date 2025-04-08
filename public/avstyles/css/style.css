@@ -1292,7 +1292,7 @@ h3 {
 /* line 312, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_header.scss */
 .header-area .header-top_area {
     padding: 12px 0;
-    background: #fff;
+    background: #000;
 }
 
 @media (max-width: 767px) {
@@ -1305,7 +1305,7 @@ h3 {
 /* line 319, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_header.scss */
 .header-area .header-top_area .social_media_links a {
     font-size: 15px;
-    color: #c7c7c7;
+    color: #000;
     margin-right: 12px;
 }
 
@@ -1316,10 +1316,11 @@ h3 {
 
 /* line 329, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_header.scss */
 .header-area .header-top_area .header_left p {
-    color: #727272;
+    color: #fff;
     font-weight: 400;
     font-size: 13px;
     margin-bottom: 0;
+    text-align: center;
 }
 
 /* line 336, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_header.scss */
@@ -3512,7 +3513,7 @@ h3 {
 .bradcam_area {
     background-size: cover;
     background-position: center center;
-    padding: 280px 0 150px 0;
+    padding: 220px 0 0px 0;
     background-repeat: no-repeat;
     position: relative;
     z-index: 0;
@@ -3525,7 +3526,7 @@ h3 {
     top: 0;
     width: 100%;
     height: 100%;
-    background: #001d38;
+    background: #fff;
     opacity: 0.4;
     z-index: -1;
     content: "";
@@ -3539,13 +3540,31 @@ h3 {
 }
 
 /* line 26, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_bradcam.scss */
-.bradcam_area h3 {
-    font-size: 60px;
-    color: #fff;
-    font-weight: 300;
-    margin-bottom: 0;
-    text-transform: capitalize;
+.bradcam_area {
+    text-align: center; /* Centra el contenido dentro del contenedor */
 }
+
+.bradcam_area h3 {
+    font-size: 30px;
+    color: #000;
+    font-weight: bold;
+    letter-spacing: .3em;
+    margin-bottom: 0;
+    text-transform: uppercase;
+    position: relative;
+    display: inline-block; /* Necesario para centrar correctamente el pseudo-elemento */
+}
+
+.bradcam_area h3::after {
+    content: "";
+    display: block;
+    width: 450px;
+    height: 4px;
+    background-color: #92bb57;
+    margin: 40px auto 0; /* margen arriba (espacio con el texto), centrado automático */
+}
+
+
 
 @media (max-width: 767px) {
     /* line 26, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_bradcam.scss */

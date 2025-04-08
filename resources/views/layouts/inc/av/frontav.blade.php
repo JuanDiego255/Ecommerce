@@ -7,6 +7,11 @@
         $descuento_mas_alto = max($descuentos);
     }
     $ruta = $tenantinfo->tenant != 'aclimate' ? 'file' : 'aclifile';
+    $logo =
+        $view_name != 'frontend_av_blog_show-articles'
+            ? route($ruta, $tenantinfo->logo)
+            : asset('avstyles/img/logos/logo-av2.svg');
+    $color_navs = $view_name != 'frontend_av_blog_show-articles' ? '' : 'text-dark';
 @endphp
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 {{-- <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light shadow-sm" id="ftco-navbar">
@@ -73,45 +78,19 @@
 </nav> --}}
 <header>
     <div class="header-area {{ $tenantinfo->tenant == 'aclimate' ? 'position-acli' : '' }}">
-        {{--  <div class="header-top_area d-none d-lg-block">
-            <div class="container">
-                <div class="row">
-                    <div class="col-xl-5 col-md-5">
-                        <div class="header_left">
-                            <p>Welcome to Conbusi consulting service</p>
-                        </div>
-                    </div>
-                    <div class="col-xl-7 col-md-7">
-                        <div class="header_right d-flex">
-                            <div class="short_contact_list">
-                                <ul>
-                                    <li>
-                                        <a href="#">
-                                            <i class="fa fa-envelope"></i> info@docmed.com</a>
-                                    </li>
-                                    <li>
-                                        <a href="#">
-                                            <i class="fa fa-phone"></i> 1601-609 6780</a>
-                                    </li>
-                                </ul>
+        @if ($view_name == 'frontend_av_blog_show-articles')
+            <div class="header-top_area d-none d-lg-block">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-xl-12 col-md-5">
+                            <div class="header_left">
+                                <p>Encuentra increibles articulos en nuestro blog</p>
                             </div>
-                            <div class="social_media_links">
-                                <a href="#">
-                                    <i class="fab fa-linkedin"></i>
-                                </a>
-                                <a href="#">
-                                    <i class="fab fa-facebook"></i>
-                                </a>
-                                <a href="#">
-                                    <i class="fab fa-google-plus"></i>
-                                </a>
-                            </div>
-                        </div>
+                        </div>                       
                     </div>
                 </div>
             </div>
-        </div> --}}
-
+        @endif
         <div id="sticky-header"
             class="main-header-area {{ $view_name == 'frontend_av_clothes-category' ? 'details_nav shadow-sm' : '' }} {{ $tenantinfo->tenant == 'aclimate' ? 'bg-acli' : '' }}">
             <div class="container">
@@ -120,9 +99,9 @@
                         <div class="col-xl-3 col-lg-2">
                             <div class="logo">
                                 <a href="index.html">
-                                    <img id="logo-img" src="{{ route($ruta, $tenantinfo->logo) }}"
+                                    <img id="logo-img" src="{{ $logo }}"
                                         data-logo-scroll="{{ asset('avstyles/img/logos/logo-av2.svg') }}"
-                                        data-logo-original="{{ route($ruta, $tenantinfo->logo) }}" alt="Logo" />
+                                        data-logo-original="{{ $logo }}" alt="Logo" />
                                 </a>
                             </div>
                         </div>
@@ -130,10 +109,10 @@
                             <div class="main-menu d-none d-lg-block">
                                 <nav>
                                     <ul id="navigation">
-                                        <li><a class="{{ $view_name == 'frontend_av_index' ? 'active' : '' }} {{ $tenantinfo->tenant == 'aclimate' ? 'text-color-acli' : '' }}"
+                                        <li><a class="{{ $view_name == 'frontend_av_index' ? 'active' : '' }} {{ $tenantinfo->tenant == 'aclimate' ? 'text-color-acli' : $color_navs }}"
                                                 href="{{ url('/') }}">Inicio</a></li>
                                         <li>
-                                            <a class="{{ $view_name == 'frontend_av_about_us' ? 'active' : '' }} {{ $tenantinfo->tenant == 'aclimate' ? 'text-color-acli' : '' }}"
+                                            <a class="{{ $view_name == 'frontend_av_about_us' ? 'active' : '' }} {{ $tenantinfo->tenant == 'aclimate' ? 'text-color-acli' : $color_navs }}"
                                                 href="#">Nosotros <i class="ti-angle-down"></i></a>
                                             <ul class="submenu">
                                                 <li>
@@ -143,17 +122,17 @@
                                                 <li><a href="elements.html">elements</a></li> --}}
                                             </ul>
                                         </li>
-                                        <li><a class="{{ $view_name == 'frontend_av_clothes-category' ? 'active' : '' }} {{ $tenantinfo->tenant == 'aclimate' ? 'text-color-acli' : '' }}"
+                                        <li><a class="{{ $view_name == 'frontend_av_clothes-category' ? 'active' : '' }} {{ $tenantinfo->tenant == 'aclimate' ? 'text-color-acli' : $color_navs }}"
                                                 href="services.html">Servicios</a></li>
                                         <li>
-                                            <a class="{{ $tenantinfo->tenant == 'aclimate' ? 'text-color-acli' : '' }}"
+                                            <a class="{{ $tenantinfo->tenant == 'aclimate' ? 'text-color-acli' : $color_navs }}"
                                                 href="#">blog <i class="ti-angle-down"></i></a>
                                             <ul class="submenu">
                                                 <li><a href="blog.html">blog</a></li>
                                                 <li><a href="single-blog.html">single-blog</a></li>
                                             </ul>
                                         </li>
-                                        <li><a class="{{ $tenantinfo->tenant == 'aclimate' ? 'text-color-acli' : '' }}"
+                                        <li><a class="{{ $tenantinfo->tenant == 'aclimate' ? 'text-color-acli' : $color_navs }}"
                                                 href="{{ url('/contact') }}">Contacto</a></li>
                                     </ul>
                                 </nav>

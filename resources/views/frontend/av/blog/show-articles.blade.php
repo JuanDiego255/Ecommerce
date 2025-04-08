@@ -8,20 +8,11 @@
 @endphp
 
 @section('content')
-    <div class="bradcam_area"
-        style="background-image:{{ $tenantinfo->tenant != 'aclimate'
-            ? ' linear-gradient(to right, 
-                                                                                                                                                                                                                                                rgb(0, 0, 0) 0%, 
-                                                                                                                                                                                                                                                rgb(0, 0, 0) 30%, 
-                                                                                                                                                                                                                                                rgba(0, 0, 0, 0.7) 40%, 
-                                                                                                                                                                                                                                                rgba(0, 0, 0, 0) 70%), '
-            : '' }} 
-url('{{ route($ruta, $blog->horizontal_images) }}');
-background-size: cover; background-position: center;">
+    <div class="bradcam_area">
         <div class="container">
             <div class="row">
                 <div class="col-xl-12">
-                    <div class="bradcam_text">
+                    <div class="bradcam_text text-center">
                         <h3>{{ $blog->title }}</h3>
                     </div>
                 </div>
