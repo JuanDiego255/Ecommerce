@@ -84,9 +84,9 @@
                     <div class="row">
                         <div class="col-xl-12 col-md-5">
                             <div class="header_left">
-                                <p>Encuentra increibles articulos en nuestro blog</p>
+                                <p> {{ isset($tenantinfo->text_cintillo) ? $tenantinfo->text_cintillo : '' }}</p>
                             </div>
-                        </div>                       
+                        </div>
                     </div>
                 </div>
             </div>
