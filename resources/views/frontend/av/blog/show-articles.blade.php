@@ -8,7 +8,7 @@
 @endphp
 
 @section('content')
-    <div class="bradcam_area">
+    <div class="bradcam_area_blog">
         <div class="container">
             <div class="row">
                 <div class="col-xl-12">
