@@ -80,6 +80,12 @@
                             <input required class="form-control" type="file" name="image">
                         </div>
                     </div>
+                    <div class="col-md-12 mb-3">
+                        <label class="form-label">Imagen (Visible en smartphones)</label>
+                        <div class="input-group input-group-static mb-4">
+                            <input required class="form-control" type="file" name="mobile_image">
+                        </div>
+                    </div>
                     <center>
                         <input class="btn btn-velvet" type="submit" value="Guardar">
                     </center>

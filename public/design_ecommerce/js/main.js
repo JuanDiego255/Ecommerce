@@ -65,14 +65,22 @@
     }
 
     $(window).on('scroll', function () {
-        if ($(this).scrollTop() > posWrapHeader) {
+        var scroll = $(window).scrollTop();
+        var logo = $("#logo-img");
+        var logoOriginal = logo.data("logo-original");
+        var logoScroll = logo.data("logo-scroll");
+
+        if (scroll > posWrapHeader) {
             $(headerDesktop).addClass('fix-menu-desktop');
             $(wrapMenu).css('top', 0);
+            logo.attr("src", logoScroll); // Cambia al logo de scroll
         } else {
             $(headerDesktop).removeClass('fix-menu-desktop');
-            $(wrapMenu).css('top', posWrapHeader - $(this).scrollTop());
+            $(wrapMenu).css('top', posWrapHeader - scroll);
+            logo.attr("src", logoOriginal); // Aquí debes volver al original
         }
     });
+
 
 
     /*==================================================================
@@ -284,7 +292,4 @@
     $('.js-hide-modal1').on('click', function () {
         $('.js-modal1').removeClass('show-modal1');
     });
-
-
-
 })(jQuery);

@@ -70,10 +70,26 @@
                             </div>
                         </div>
                     </div>
+                    @if ($carousel->image)
+                        <img class="img-fluid img-thumbnail w-50"
+                            src="{{ isset($carousel->image) ? route('file', $carousel->image) : url('images/producto-sin-imagen.PNG') }}"
+                            alt="image">
+                    @endif
                     <div class="col-md-12 mb-3">
                         <label class="form-label">Imagen</label>
                         <div class="input-group input-group-static mb-4">
                             <input class="form-control" type="file" name="image">
+                        </div>
+                    </div>
+                    @if ($carousel->mobile_image)
+                        <img class="img-fluid img-thumbnail w-50"
+                            src="{{ isset($carousel->mobile_image) ? route('file', $carousel->mobile_image) : url('images/producto-sin-imagen.PNG') }}"
+                            alt="image">
+                    @endif
+                    <div class="col-md-12 mb-3">
+                        <label class="form-label">Imagen (Visible en smartphones)</label>
+                        <div class="input-group input-group-static mb-4">
+                            <input class="form-control" type="file" name="mobile_image">
                         </div>
                     </div>
                     <center>

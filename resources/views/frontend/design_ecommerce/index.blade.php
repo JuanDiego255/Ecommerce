@@ -7,13 +7,37 @@
     $ruta = $tenantinfo->tenant != 'aclimate' ? 'file' : 'aclifile';
 @endphp
 @section('content')
+    <style>
+        @media screen and (max-width: 768px) {
+            @foreach ($tenantcarousel as $index => $carousel)
+                .bg-carousel-{{ $index }} {
+                    background-image: url('{{ route($ruta, $carousel->mobile_image ?? $carousel->image) }}');
+                }
+            @endforeach
+        }
+
+        @media screen and (min-width: 769px) {
+            @foreach ($tenantcarousel as $index => $carousel)
+                .bg-carousel-{{ $index }} {
+                    background-image: url('{{ route($ruta, $carousel->image) }}');
+                }
+            @endforeach
+        }
+
+        .item-slick1 {
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+        }
+    </style>
+
     {{-- Carousel Start --}}
     @if (count($tenantcarousel) != 0)
         <div class="wrap-slick1">
             <div class="slick1">
                 @foreach ($tenantcarousel as $key => $carousel)
-                    <div class="item-slick1"
-                        style="background-image:url('{{ route($ruta, $carousel->image) }}');">
+                    <div class="item-slick1 bg-carousel-{{ $loop->index }}">
+
                         <div class="container h-full">
                             <div class="flex-col-l-m h-full p-t-100 p-b-30 respon5">
                                 <div class="layer-slick1 animated visible-false" data-appear="fadeInDown" data-delay="0">

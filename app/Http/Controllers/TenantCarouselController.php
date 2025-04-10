@@ -24,6 +24,9 @@ class TenantCarouselController extends Controller
             if ($request->hasFile('image')) {
                 $tenant_carousel->image = $request->file('image')->store('uploads', 'public');
             }
+            if ($request->hasFile('mobile_image')) {
+                $tenant_carousel->mobile_image = $request->file('mobile_image')->store('uploads', 'public');
+            }
 
             $tenant_carousel->text1 = $request->text1;
             $tenant_carousel->text2 = $request->text2; 
@@ -57,6 +60,11 @@ class TenantCarouselController extends Controller
                 Storage::delete('public/' . $tenantcarousel->image);
                 $image = $request->file('image')->store('uploads', 'public');
                 $tenantcarousel->image = $image;
+            }
+            if ($request->hasFile('mobile_image')) {
+                Storage::delete('public/' . $tenantcarousel->image);
+                $image = $request->file('mobile_image')->store('uploads', 'public');
+                $tenantcarousel->mobile_image = $image;
             }
             $tenantcarousel->text1 = $request->text1;
             $tenantcarousel->text2 = $request->text2;  

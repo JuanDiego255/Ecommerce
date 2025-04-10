@@ -6,7 +6,7 @@
         }, $clothings_offer_array);
         $descuento_mas_alto = max($descuentos);
     }
-    $ruta = $tenantinfo->tenant != 'aclimate' ? $ruta : 'aclifile';
+    $ruta = $tenantinfo->tenant != 'aclimate' ? 'file' : 'aclifile';
 @endphp
 {{-- <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light shadow-sm" id="ftco-navbar">
     <div class="container">
@@ -72,7 +72,7 @@
 </nav> --}}
 <input type="hidden" name="view_name" value="{{ $view_name }}" id="view_name">
 <input type="hidden" name="iva_tenant" id="iva_tenant" value="{{ $iva }}">
-<header class="{{$view_name == 'frontend_design_ecommerce_blog_index' ? 'header-v4' : ''}}">
+<header class="{{ $view_name == 'frontend_design_ecommerce_blog_index' ? 'header-v4' : '' }}">
     <!-- Header desktop -->
     <div class="container-menu-desktop">
         <!-- Topbar -->
@@ -104,7 +104,9 @@
 
                 <!-- Logo desktop -->
                 <a href="#" class="logo">
-                    <img src="{{ route($ruta, $tenantinfo->logo) }}" alt="img-logo" />
+                    <img id="{{$tenantinfo->tenant == 'aclimate' ? 'logo-img' : 'logo'}}" data-logo-scroll="{{ asset('avstyles/img/logos/logo-acli.svg') }}"
+                        data-logo-original="{{ route($ruta, $tenantinfo->logo) }}"
+                        src="{{ route($ruta, $tenantinfo->logo) }}" alt="IMG-LOGO">
                 </a>
 
                 <!-- Menu desktop -->
@@ -161,7 +163,7 @@
                             <a href="shoping-cart.html">Features</a>
                         </li> --}}
                         <li>
-                            <a href="{{url('/blog/index')}}">Blog</a>
+                            <a href="{{ url('/blog/index') }}">Blog</a>
                         </li>
                         <li>
                             <a href="about.html">Favoritos</a>
@@ -174,7 +176,8 @@
                     <div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 js-show-modal-search">
                         <i class="zmdi zmdi-search icon-text-color-desk"></i>
                     </div>
-                    <button class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti js-show-cart icon-text-color-desk"
+                    <button
+                        class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti js-show-cart icon-text-color-desk"
                         data-notify="{{ $cartNumber }}">
                         <i class="zmdi zmdi-shopping-cart icon-text-color-desk"></i>
                     </button>
@@ -193,7 +196,11 @@
     <div class="wrap-header-mobile">
         <!-- Logo moblie -->
         <div class="logo-mobile">
-            <a href="index.html"><img src="{{ route($ruta, $tenantinfo->logo) }}" alt="IMG-LOGO"></a>
+            <a href="index.html">
+                <img id="logo-img" data-logo-scroll="{{ asset('avstyles/img/logos/logo-av2.svg') }}"
+                    data-logo-original="{{ route($ruta, $tenantinfo->logo) }}"
+                    src="{{ route($ruta, $tenantinfo->logo) }}" alt="IMG-LOGO">
+            </a>
         </div>
 
         <!-- Icon header -->
@@ -207,7 +214,8 @@
                 <i class="zmdi zmdi-shopping-cart"></i>
             </div>
 
-            <a href="#" class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti icon-text-color-desk"
+            <a href="#"
+                class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti icon-text-color-desk"
                 data-notify="0">
                 <i class="zmdi zmdi-favorite-outline"></i>
             </a>
