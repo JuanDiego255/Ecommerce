@@ -102,7 +102,7 @@
                                             <td class="column-1">
                                                 <div class="how-itemcart1 btnDeleteCart"
                                                     data-item-id="{{ $item->cart_id }}">
-                                                    <img src="{{ isset($item->image) ? route('file', $item->image) : url('/design_ecommerce/images/producto-sin-imagen.PNG') }}"
+                                                    <img src="{{ isset($item->image) ? route($ruta, $item->image) : url('/design_ecommerce/images/producto-sin-imagen.PNG') }}"
                                                         alt="IMG">
                                                 </div>
                                             </td>

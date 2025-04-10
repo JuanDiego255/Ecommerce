@@ -109,14 +109,14 @@
                         $precioConDescuento = $precio - $descuento;
                     @endphp
                     <link rel="preload" as="image"
-                        href="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
+                        href="{{ isset($item->image) ? route($ruta, $item->image) : url('images/producto-sin-imagen.PNG') }}">
                     <div
                         class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item {{ strtolower(str_replace(' ', '', $item->category)) }}">
                         <div class="block2 product_data">
                             <input type="hidden" class="code" name="code" value="{{ $item->code }}">
                             <input type="hidden" class="clothing-name" name="clothing-name" value="{{ $item->name }}">
                             <div class="block2-pic hov-img0">
-                                <img src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"
+                                <img src="{{ isset($item->image) ? route($ruta, $item->image) : url('images/producto-sin-imagen.PNG') }}"
                                     alt="IMG-PRODUCT">
 
                                 <a href="#"
@@ -126,8 +126,8 @@
                                     data-price="{{ number_format($precioConDescuento, 2) }}"
                                     data-original-price="{{ number_format($item->price, 2) }}"
                                     data-attributes='@json($item->atributos)' data-category="{{ $item->category }}"
-                                    data-images='@json(array_map(fn($img) => route('file', $img), $item->all_images))'
-                                    data-image="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
+                                    data-images='@json(array_map(fn($img) => route($ruta, $img), $item->all_images))'
+                                    data-image="{{ isset($item->image) ? route($ruta, $item->image) : url('images/producto-sin-imagen.PNG') }}">
                                     Detallar
                                 </a>
                             </div>

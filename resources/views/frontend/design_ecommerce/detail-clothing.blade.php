@@ -93,13 +93,13 @@
                                         @endphp
                                         @foreach ($uniqueImages as $image)
                                             <div class="item-slick3"
-                                                data-thumb="{{ isset($image) && $image != '' ? route('file', $image) : url('images/producto-sin-imagen.PNG') }}">
+                                                data-thumb="{{ isset($image) && $image != '' ? route($ruta, $image) : url('images/producto-sin-imagen.PNG') }}">
                                                 <div class="wrap-pic-w pos-relative">
-                                                    <img src="{{ isset($image) && $image != '' ? route('file', $image) : url('images/producto-sin-imagen.PNG') }}"
+                                                    <img src="{{ isset($image) && $image != '' ? route($ruta, $image) : url('images/producto-sin-imagen.PNG') }}"
                                                         alt="IMG-PRODUCT">
 
                                                     <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04"
-                                                        href="{{ isset($image) && $image != '' ? route('file', $image) : url('images/producto-sin-imagen.PNG') }}">
+                                                        href="{{ isset($image) && $image != '' ? route($ruta, $image) : url('images/producto-sin-imagen.PNG') }}">
                                                         <i class="fa fa-expand"></i>
                                                     </a>
                                                 </div>
@@ -463,7 +463,7 @@
                         <!-- Block2 -->
                         <div class="block2">
                             <div class="block2-pic hov-img0">
-                                <img src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"
+                                <img src="{{ isset($item->image) ? route($ruta, $item->image) : url('images/producto-sin-imagen.PNG') }}"
                                     alt="IMG-PRODUCT">
 
                                 <a href="#"
@@ -473,15 +473,15 @@
                                     data-price="{{ number_format($precioConDescuento, 2) }}"
                                     data-original-price="{{ number_format($item->price, 2) }}"
                                     data-attributes='@json($item->atributos)'
-                                    data-category="{{ $item->category }}" data-images='@json(array_map(fn($img) => route('file', $img), $item->all_images))'
-                                    data-image="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
+                                    data-category="{{ $item->category }}" data-images='@json(array_map(fn($img) => route($ruta, $img), $item->all_images))'
+                                    data-image="{{ isset($item->image) ? route($ruta, $item->image) : url('images/producto-sin-imagen.PNG') }}">
                                     Detallar
                                 </a>
                             </div>
 
                             <div class="block2-txt flex-w flex-t p-t-14">
                                 <div class="block2-txt-child1 flex-col-l ">
-                                    <a href="product-detail.html"
+                                    <a href="{{ url(($prefix == 'aclimate' ? $prefix . '/' : '') .'detail-clothing/' . $item->id . '/' . $item->category_id) }}"
                                         class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
                                         {{ $item->name }}
                                     </a>
