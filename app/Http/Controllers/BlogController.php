@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\ArticleBlog;
 use App\Models\Blog;
 use App\Models\CardBlog;
+use App\Models\ClothingCategory;
 use App\Models\MedicineResult;
 use App\Models\MetaTags;
 use App\Models\PersonalUser;
+use App\Models\ProductImage;
 use App\Models\TenantInfo;
 use App\Models\Testimonial;
 use Artesaos\SEOTools\Facades\OpenGraph;
@@ -15,6 +17,7 @@ use Artesaos\SEOTools\Facades\SEOMeta;
 use DateTime;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
@@ -22,6 +25,13 @@ use Illuminate\Support\Facades\URL;
 
 class BlogController extends Controller
 {
+    protected $expirationTime;
+
+    public function __construct()
+    {
+        // Define el tiempo de expiración en minutos
+        $this->expirationTime = 60; // Por ejemplo, 60 minutos
+    }
     /**
 
      * Get all the blogs, and the events.
@@ -37,6 +47,65 @@ class BlogController extends Controller
         $tenantinfo = TenantInfo::first();
         $blogs = Blog::orderBy('title', 'asc')->simplePaginate(8);
         $tags = MetaTags::where('section', 'Blog')->get();
+        $clothings = Cache::remember('clothings_trending', $this->expirationTime, function () use ($tenantinfo) {
+            return ClothingCategory::inRandomOrder()->where('clothing.trending', 1)
+                ->leftJoin('pivot_clothing_categories', 'clothing.id', '=', 'pivot_clothing_categories.clothing_id')
+                ->leftJoin('categories', 'pivot_clothing_categories.category_id', '=', 'categories.id')
+                ->leftJoin('clothing_details', 'clothing.id', 'clothing_details.clothing_id')
+                ->leftJoin('stocks', 'clothing.id', 'stocks.clothing_id')
+                ->select(
+                    'categories.name as category',
+                    'categories.id as category_id',
+                    'clothing.id as id',
+                    'clothing.trending as trending',
+                    'clothing.main_image as main_image',
+                    'clothing.created_at as created_at',
+                    'clothing_details.modelo as model',
+                    'clothing.discount as discount',
+                    'clothing.name as name',
+                    'clothing.casa as casa',
+                    'clothing.description as description',
+                    'clothing.price as price',
+                    'clothing.mayor_price as mayor_price',
+                    DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE clothing.stock END) as total_stock'),
+                    DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'),
+                    DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
+                )
+                ->when($tenantinfo->tenant === 'sakura318', function ($query) {
+                    return $query->where('categories.slug', 'LIKE', '%especial%'); // Ajusta la condición según necesidad
+                })
+                ->groupBy(
+                    'clothing.id',
+                    'categories.name',
+                    'clothing.main_image',
+                    'clothing.created_at',
+                    'clothing_details.modelo',
+                    'clothing.casa',
+                    'categories.id',
+                    'clothing.name',
+                    'clothing.discount',
+                    'clothing.trending',
+                    'clothing.description',
+                    'clothing.price',
+                    'clothing.mayor_price',
+                )->orderByRaw('CASE WHEN clothing.casa IS NOT NULL AND clothing.casa != "" THEN 0 ELSE 1 END')
+                ->orderBy('clothing.casa', 'asc')
+                ->orderBy('clothing.name', 'asc')
+                ->take(15)
+                ->get();
+        });
+        //Set de imagenes a productos
+        foreach ($clothings as $clothing) {
+            // Obtener la primera imagen
+            $firstImage = ProductImage::where('clothing_id', $clothing->id)
+                ->orderBy('id')
+                ->first();
+            $clothing->image = $firstImage ? $firstImage->image : null;
+            $clothing->all_images = ProductImage::where('clothing_id', $clothing->id)
+                ->orderBy('id')
+                ->pluck('image')
+                ->toArray();
+        }
         foreach ($tags as $tag) {
             SEOMeta::setTitle($tag->title);
             SEOMeta::setKeywords($tag->meta_keywords);
@@ -51,6 +120,9 @@ class BlogController extends Controller
                 return view('frontend.blog.carsale.index', compact('blogs'));
                 break;
             default:
+                if ($tenantinfo->kind_of_features == 1) {
+                    return view('frontend.design_ecommerce.blog.index', compact('blogs', 'clothings'));
+                }
                 return view('frontend.blog.index', compact('blogs'));
                 break;
         }
@@ -144,7 +216,65 @@ class BlogController extends Controller
             $name_month_event = $meses[$mes_event - 1];
         }
         $fecha_letter = $dia_event . ' de ' . $name_month_event . ' del ' . $anio_event;
-
+        $clothings = Cache::remember('clothings_trending', $this->expirationTime, function () use ($tenantinfo) {
+            return ClothingCategory::inRandomOrder()->where('clothing.trending', 1)
+                ->leftJoin('pivot_clothing_categories', 'clothing.id', '=', 'pivot_clothing_categories.clothing_id')
+                ->leftJoin('categories', 'pivot_clothing_categories.category_id', '=', 'categories.id')
+                ->leftJoin('clothing_details', 'clothing.id', 'clothing_details.clothing_id')
+                ->leftJoin('stocks', 'clothing.id', 'stocks.clothing_id')
+                ->select(
+                    'categories.name as category',
+                    'categories.id as category_id',
+                    'clothing.id as id',
+                    'clothing.trending as trending',
+                    'clothing.main_image as main_image',
+                    'clothing.created_at as created_at',
+                    'clothing_details.modelo as model',
+                    'clothing.discount as discount',
+                    'clothing.name as name',
+                    'clothing.casa as casa',
+                    'clothing.description as description',
+                    'clothing.price as price',
+                    'clothing.mayor_price as mayor_price',
+                    DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE clothing.stock END) as total_stock'),
+                    DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'),
+                    DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
+                )
+                ->when($tenantinfo->tenant === 'sakura318', function ($query) {
+                    return $query->where('categories.slug', 'LIKE', '%especial%'); // Ajusta la condición según necesidad
+                })
+                ->groupBy(
+                    'clothing.id',
+                    'categories.name',
+                    'clothing.main_image',
+                    'clothing.created_at',
+                    'clothing_details.modelo',
+                    'clothing.casa',
+                    'categories.id',
+                    'clothing.name',
+                    'clothing.discount',
+                    'clothing.trending',
+                    'clothing.description',
+                    'clothing.price',
+                    'clothing.mayor_price',
+                )->orderByRaw('CASE WHEN clothing.casa IS NOT NULL AND clothing.casa != "" THEN 0 ELSE 1 END')
+                ->orderBy('clothing.casa', 'asc')
+                ->orderBy('clothing.name', 'asc')
+                ->take(15)
+                ->get();
+        });
+        //Set de imagenes a productos
+        foreach ($clothings as $clothing) {
+            // Obtener la primera imagen
+            $firstImage = ProductImage::where('clothing_id', $clothing->id)
+                ->orderBy('id')
+                ->first();
+            $clothing->image = $firstImage ? $firstImage->image : null;
+            $clothing->all_images = ProductImage::where('clothing_id', $clothing->id)
+                ->orderBy('id')
+                ->pluck('image')
+                ->toArray();
+        }
         switch ($tenantinfo->kind_business) {
             case (1):
                 return view('frontend.blog.carsale.show-articles', compact('tags', 'comments', 'cards', 'results', 'another_blogs', 'id', 'fecha_letter', 'blog'));
@@ -155,6 +285,9 @@ class BlogController extends Controller
                 return view('frontend.av.blog.show-articles',  compact('tags', 'comments', 'cards', 'results', 'another_blogs', 'id', 'fecha_letter', 'blog'));
                 break;
             default:
+                if ($tenantinfo->kind_of_features == 1) {
+                    return view('frontend.design_ecommerce.blog.show-articles', compact('tags','clothings', 'comments', 'cards', 'results', 'another_blogs', 'id', 'fecha_letter', 'blog'));
+                }
                 return view('frontend.blog.show-articles', compact('tags', 'comments', 'cards', 'results', 'another_blogs', 'id', 'fecha_letter', 'blog'));
                 break;
         }

@@ -6,12 +6,13 @@
         }, $clothings_offer_array);
         $descuento_mas_alto = max($descuentos);
     }
+    $ruta = $tenantinfo->tenant != 'aclimate' ? $ruta : 'aclifile';
 @endphp
 {{-- <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light shadow-sm" id="ftco-navbar">
     <div class="container">
         <a class="navbar-brand" href="{{ url('/') }}">
             @if (isset($tenantinfo->show_logo) && $tenantinfo->show_logo != 0)
-                <img class="logo-car" src="{{ route('file', $tenantinfo->logo) }}" alt="">
+                <img class="logo-car" src="{{ route($ruta, $tenantinfo->logo) }}" alt="">
             @else
                 {{ isset($tenantinfo->title) ? $tenantinfo->title : 'Car<span>Book</span>' }}
             @endif
@@ -71,7 +72,7 @@
 </nav> --}}
 <input type="hidden" name="view_name" value="{{ $view_name }}" id="view_name">
 <input type="hidden" name="iva_tenant" id="iva_tenant" value="{{ $iva }}">
-<header>
+<header class="{{$view_name == 'frontend_design_ecommerce_blog_index' ? 'header-v4' : ''}}">
     <!-- Header desktop -->
     <div class="container-menu-desktop">
         <!-- Topbar -->
@@ -103,7 +104,7 @@
 
                 <!-- Logo desktop -->
                 <a href="#" class="logo">
-                    <img src="{{ route('file', $tenantinfo->logo) }}" alt="img-logo" />
+                    <img src="{{ route($ruta, $tenantinfo->logo) }}" alt="img-logo" />
                 </a>
 
                 <!-- Menu desktop -->
@@ -160,7 +161,7 @@
                             <a href="shoping-cart.html">Features</a>
                         </li> --}}
                         <li>
-                            <a href="blog.html">Blog</a>
+                            <a href="{{url('/blog/index')}}">Blog</a>
                         </li>
                         <li>
                             <a href="about.html">Favoritos</a>
@@ -192,7 +193,7 @@
     <div class="wrap-header-mobile">
         <!-- Logo moblie -->
         <div class="logo-mobile">
-            <a href="index.html"><img src="{{ route('file', $tenantinfo->logo) }}" alt="IMG-LOGO"></a>
+            <a href="index.html"><img src="{{ route($ruta, $tenantinfo->logo) }}" alt="IMG-LOGO"></a>
         </div>
 
         <!-- Icon header -->
@@ -333,7 +334,7 @@
     </div>
 </header>
 @if ($view_name != 'frontend_design_ecommerce_view-cart')
-    <div class="wrap-header-cart js-panel-cart" data-image-base-url="{{ route('file', '') }}" id="modalMiniCart">
+    <div class="wrap-header-cart js-panel-cart" data-image-base-url="{{ route($ruta, '') }}" id="modalMiniCart">
         <div class="s-full js-hide-cart"></div>
 
         <div class="header-cart flex-col-l p-l-65 p-r-25">
@@ -383,7 +384,7 @@
                         ">
                             <input type="hidden" value="{{ $descuento }}" class="discount" name="discount">
                             <div class="header-cart-item-img">
-                                <img src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"
+                                <img src="{{ isset($item->image) ? route($ruta, $item->image) : url('images/producto-sin-imagen.PNG') }}"
                                     alt="IMG">
                             </div>
 

@@ -48,6 +48,7 @@ class AppServiceProvider extends ServiceProvider
         Buy::observe(GeneralObserver::class);
         Blog::observe(GeneralObserver::class);
         User::observe(GeneralObserver::class); */
+        Carbon::setLocale('es');
         Schema::defaultStringLength(191);
         view()->composer('*', function ($view) {
             $view_name = str_replace('.', '_', $view->getName());

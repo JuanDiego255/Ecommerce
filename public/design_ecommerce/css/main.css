@@ -2289,9 +2289,22 @@ input.num-product::-webkit-inner-spin-button {
 }
 
 .stext-117 {
-    font-family: Poppins-Light;
-    font-size: 15px;
+    font-family: Poppins-Light !important;
+    font-size: 24px;
     line-height: 1.666667;
+    color: var(--title_text);
+}
+.blog-body p {
+    font-family: Poppins-Light !important;
+    font-size: 15px;
+    line-height: 1.8;
+    text-align: justify;
+}
+.article-body p {
+    font-family: Poppins-Light !important;
+    font-size: 15px;
+    line-height: 1.8;
+    text-align: justify;
 }
 
 /*---------------------------------------------*/
@@ -3779,4 +3792,8 @@ input.num-product::-webkit-inner-spin-button {
 .select2-container .select2-results__option--selected {
     background-color: var(--hover) !important;
     color: white !important;
+}
+.img-min{
+    width: 90px;
+    height: 110px;
 }

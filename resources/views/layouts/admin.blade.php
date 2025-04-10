@@ -58,7 +58,7 @@
     <div class="{{ $tenantinfo->tenant === 'autosgreciacr' ? 'main-container-ag' : 'main-container' }}">
         @include('layouts.inc.sidebar')
         <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
-            @if ($tenantinfo->kind_business == 6 || $tenantinfo->kind_business == 7)
+            @if ($tenantinfo->tenant == 'aclimate' || $tenantinfo->tenant == 'avelectromecanica')
                 <a href="{{ route('tenant.switch', ['identifier' => $tenantinfo->tenant == 'avelectromecanica' ? 'aclimate' : 'avelectromecanica']) }}"
                     class="tenant-button {{ $tenantinfo->tenant == 'avelectromecanica' ? 'tenant-ac-color' : 'tenant-av-color' }}">
                     <span class="tenant-label">
