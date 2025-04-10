@@ -46,6 +46,9 @@ class BlogController extends Controller
     {
         $tenantinfo = TenantInfo::first();
         $blogs = Blog::orderBy('title', 'asc')->simplePaginate(8);
+        if(count($blogs) == 0){
+            return redirect()->back()->with(['status' => 'No hay blogs creados!', 'icon' => 'warning']);
+        }
         $tags = MetaTags::where('section', 'Blog')->get();
         $clothings = Cache::remember('clothings_trending', $this->expirationTime, function () use ($tenantinfo) {
             return ClothingCategory::inRandomOrder()->where('clothing.trending', 1)

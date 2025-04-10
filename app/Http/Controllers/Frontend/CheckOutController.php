@@ -275,6 +275,7 @@ class CheckOutController extends Controller
             // Obtener la IP del usuario
             $userIp = request()->ip();
             $request = request();
+            $prefix = $request->prefix;
 
             // Utilizar una API de geolocalización para obtener la ubicación basada en la IP
             /* $details = GeoLocation::lookup($userIp);
@@ -1018,7 +1019,7 @@ class CheckOutController extends Controller
             }
             if ($request->has('telephone')) {
                 $this->sendEmail($cartItems, $total_price, $request->delivery);
-                return redirect('/')->with(['status' => 'Compra exitosa!', 'icon' => 'success']);
+                return redirect($prefix == "aclimate" ? $prefix : "" . '/')->with(['status' => 'Compra exitosa!', 'icon' => 'success']);
             }
 
             return true;

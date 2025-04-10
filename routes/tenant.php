@@ -146,6 +146,7 @@ Route::middleware([
             Route::post('send-email/blog', [BlogController::class, 'sendEmail']);
             Route::get('departments/index', [FrontendController::class, 'departments']);
             Route::get('category/{id}', [FrontendController::class, 'category']);
+            Route::get('checkout', [CheckOutController::class, 'index']);
             Route::get('clothes-category/{id}/{department_id}', [FrontendController::class, 'clothesByCategory']);
             Route::get('detail-clothing/{id}/{cat_id}', [FrontendController::class, 'DetailClothingById']);
             Route::post('/add-to-cart', [CartController::class, 'store']);

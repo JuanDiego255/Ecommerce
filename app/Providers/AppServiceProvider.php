@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 use App\Observers\GeneralObserver;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Request;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -350,8 +351,13 @@ class AppServiceProvider extends ServiceProvider
             if (Auth::check()) {
                 $clothing_favs = Favorite::where('user_id', Auth::user()->id)->get();
             }
+            $ruta = $tenantinfo->tenant != 'aclimate' ? 'file' : 'aclifile';
+            $prefix = Request::segment(1);
+
             view()->share([
                 'view_name' => $view_name,
+                'ruta' => $ruta,
+                'prefix' => $prefix,
                 'fechaCostaRica' => $fechaCostaRica,
                 'clothing_favs' => $clothing_favs,
                 'profesionals' => $profesionals,

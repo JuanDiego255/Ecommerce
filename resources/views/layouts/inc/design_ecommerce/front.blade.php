@@ -7,69 +7,22 @@
         $descuento_mas_alto = max($descuentos);
     }
     $ruta = $tenantinfo->tenant != 'aclimate' ? 'file' : 'aclifile';
+    $logo_principal = null;
+    switch ($view_name) {
+        case 'frontend_design_ecommerce_clothes-category':
+        case 'frontend_design_ecommerce_detail-clothing':
+        case 'frontend_design_ecommerce_view-cart':
+        case 'frontend_design_ecommerce_checkout':
+        case 'frontend_design_ecommerce_category':
+        case 'frontend_design_ecommerce_departments':
+        case 'frontend_design_ecommerce_buys':
+            $logo_principal = asset('avstyles/img/logos/logo-acli.svg');
+            break;
+        default:
+            $logo_principal = route($ruta, $tenantinfo->logo);
+            break;
+    }
 @endphp
-{{-- <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light shadow-sm" id="ftco-navbar">
-    <div class="container">
-        <a class="navbar-brand" href="{{ url('/') }}">
-            @if (isset($tenantinfo->show_logo) && $tenantinfo->show_logo != 0)
-                <img class="logo-car" src="{{ route($ruta, $tenantinfo->logo) }}" alt="">
-            @else
-                {{ isset($tenantinfo->title) ? $tenantinfo->title : 'Car<span>Book</span>' }}
-            @endif
-        </a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav"
-            aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="oi oi-menu"></span> Menu
-        </button>
-
-
-
-
-        <div class="collapse navbar-collapse" id="ftco-nav">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item {{ $view_name == 'frontend_carsale_index' ? 'active' : '' }}"><a
-                        href="{{ url('/') }}" class="nav-link">Inicio</a></li>
-                <li class="nav-item"><a href="{{ url('#about_us') }}" class="nav-link">Acerca de</a></li>
-                <li class="nav-item {{ $view_name == 'frontend_carsale_category' || $view_name == 'frontend_carsale_detail-car' ? 'active' : '' }}"><a href="{{ url('category/') }}" class="nav-link">Categorías</a></li>
-                <li
-                    class="nav-item {{ $view_name == 'frontend_blog_carsale_index' || $view_name == 'frontend_blog_carsale_show-articles' ? 'active' : '' }}">
-                    <a href="{{ url('blog/index') }}" class="nav-link">Blog</a>
-                </li>
-
-                <li class="nav-item {{ $view_name == 'frontend_carsale_compare' ? 'active' : '' }}"><a
-                        href="{{ url('compare/vehicles') }}" class="nav-link">Comparar Vehículos</a>
-                </li>
-                @guest
-
-
-                    <li class="nav-item">
-                        <a href="{{ route('login') }}" class="nav-link">
-                            <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
-                        </a>
-                    </li>
-                @else
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            {{ Auth::user()->name }} {{ Auth::user()->last_name }}
-                        </a>
-                        <div class="dropdown-menu" aria-labelledby="userDropdown">
-                            <a class="dropdown-item" href="{{ url('/category') }}">Todas las categorías</a>
-                            <a class="dropdown-item" href="{{ route('logout') }}"
-                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                Salir
-                            </a>
-                            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                                @csrf
-                            </form>
-                        </div>
-                    </li>
-                @endguest
-
-            </ul>
-        </div>
-    </div>
-</nav> --}}
 <input type="hidden" name="view_name" value="{{ $view_name }}" id="view_name">
 <input type="hidden" name="iva_tenant" id="iva_tenant" value="{{ $iva }}">
 <header class="{{ $view_name == 'frontend_design_ecommerce_blog_index' ? 'header-v4' : '' }}">
@@ -83,7 +36,8 @@
                 </div>
 
                 <div class="right-top-bar flex-w h-full">
-                    <a href="{{ url('/about_us') }}" class="flex-c-m trans-04 p-lr-25 text-cintillo">
+                    <a href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/about_us') }}"
+                        class="flex-c-m trans-04 p-lr-25 text-cintillo">
                         Acerca De
                     </a>
                     @guest
@@ -91,7 +45,8 @@
                             Ingresar <i class="m-l-2 fa fa-sign-in"></i>
                         </a>
                     @else
-                        <a href="{{ url('buys') }}" class="flex-c-m trans-04 p-lr-25 text-cintillo">
+                        <a href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/buys') }}"
+                            class="flex-c-m trans-04 p-lr-25 text-cintillo">
                             Mis Compras
                         </a>
                     @endguest
@@ -104,16 +59,17 @@
 
                 <!-- Logo desktop -->
                 <a href="#" class="logo">
-                    <img id="{{$tenantinfo->tenant == 'aclimate' ? 'logo-img' : 'logo'}}" data-logo-scroll="{{ asset('avstyles/img/logos/logo-acli.svg') }}"
-                        data-logo-original="{{ route($ruta, $tenantinfo->logo) }}"
-                        src="{{ route($ruta, $tenantinfo->logo) }}" alt="IMG-LOGO">
+                    <img id="{{ $tenantinfo->tenant == 'aclimate' ? 'logo-img' : 'logo' }}"
+                        data-logo-scroll="{{ asset('avstyles/img/logos/logo-acli.svg') }}"
+                        data-logo-original="{{ $logo_principal }}"
+                        src="{{ $logo_principal }}" alt="IMG-LOGO">
                 </a>
 
                 <!-- Menu desktop -->
                 <div class="menu-desktop">
                     <ul class="main-menu">
                         <li class="{{ $view_name == 'frontend_design_ecommerce_index' ? 'active-menu' : '' }}">
-                            <a href="{{ url('/') }}">Inicio</a>
+                            <a href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/') }}">Inicio</a>
                         </li>
                         <li>
                             <a href="javascript:void(0);" id="toggleMenu">Explorar</a>
@@ -134,7 +90,7 @@
                                                     @foreach ($department->categories as $categoria)
                                                         <li>
                                                             <a
-                                                                href="{{ url('clothes-category/' . $categoria->id . '/' . $department->id) }}">
+                                                                href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/clothes-category/' . $categoria->id . '/' . $department->id) }}">
                                                                 {{ $categoria->name }}
                                                             </a>
                                                         </li>
@@ -144,12 +100,13 @@
                                         @endforeach
                                     @else
                                         <ul>
-                                            <li><a href="{{ url('category/') }}" class="nav-submenu-item">Todas las
+                                            <li><a href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/category/') }}"
+                                                    class="nav-submenu-item">Todas las
                                                     Categorías</a></li>
                                             @foreach ($categories as $item)
                                                 <li>
                                                     <a
-                                                        href="{{ url('clothes-category/' . $item->category_id . '/' . $item->department_id) }}">
+                                                        href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/clothes-category/' . $item->category_id . '/' . $item->department_id) }}">
                                                         {{ $item->name }}
                                                     </a>
                                                 </li>
@@ -163,7 +120,7 @@
                             <a href="shoping-cart.html">Features</a>
                         </li> --}}
                         <li>
-                            <a href="{{ url('/blog/index') }}">Blog</a>
+                            <a href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/blog/index') }}">Blog</a>
                         </li>
                         <li>
                             <a href="about.html">Favoritos</a>
@@ -241,7 +198,8 @@
 
             <li>
                 <div class="right-top-bar flex-w h-full">
-                    <a href="{{ url('/about_us') }}" class="flex-c-m trans-04 p-lr-10">
+                    <a href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/about_us') }}"
+                        class="flex-c-m trans-04 p-lr-10">
                         Acerca De
                     </a>
                     @guest
@@ -249,7 +207,8 @@
                             Ingresar <i style="color: var(--navbar_text);" class="fas fa-sign-in"></i>
                         </a>
                     @else
-                        <a href="{{ url('buys') }}" class="flex-c-m trans-04 p-lr-10">
+                        <a href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/buys') }}"
+                            class="flex-c-m trans-04 p-lr-10">
                             Mis Compras
                         </a>
                     @endguest
@@ -259,7 +218,7 @@
 
         <ul class="main-menu-m">
             <li>
-                <a href="{{ url('/') }}">Inicio</a>
+                <a href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/') }}">Inicio</a>
             </li>
 
             <li>
@@ -280,7 +239,7 @@
                                         @foreach ($department->categories as $categoria)
                                             <li>
                                                 <a
-                                                    href="{{ url('clothes-category/' . $categoria->id . '/' . $department->id) }}">
+                                                    href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/clothes-category/' . $categoria->id . '/' . $department->id) }}">
                                                     {{ $categoria->name }}
                                                 </a>
                                             </li>
@@ -290,12 +249,13 @@
                             @endforeach
                         @else
                             <ul>
-                                <li><a href="{{ url('category/') }}" class="nav-submenu-item">Todas las
+                                <li><a href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/category/') }}"
+                                        class="nav-submenu-item">Todas las
                                         Categorías</a></li>
                                 @foreach ($categories as $item)
                                     <li>
                                         <a
-                                            href="{{ url('clothes-category/' . $item->category_id . '/' . $item->department_id) }}">
+                                            href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/clothes-category/' . $item->category_id . '/' . $item->department_id) }}">
                                             {{ $item->name }}
                                         </a>
                                     </li>
@@ -470,12 +430,12 @@
 
 
                     <div class="header-cart-buttons flex-w w-full">
-                        <a href="{{ url('view-cart') }}"
+                        <a href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/view-cart') }}"
                             class="flex-c-m stext-101 cl0 size-107 bg3 bor2 hov-btn3 p-lr-15 trans-04 m-r-8 m-b-10">
                             Ver Carrito
                         </a>
 
-                        <a href="{{ url('checkout') }}"
+                        <a href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/checkout') }}"
                             class="flex-c-m stext-101 cl0 size-107 bg3 bor2 hov-btn3 p-lr-15 trans-04 m-b-10">
                             Finalizar Pedido
                         </a>

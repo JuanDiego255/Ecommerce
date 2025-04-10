@@ -21,15 +21,15 @@
     <div class="container m-t-80">
         <div class="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg">
             @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
-                <a href="{{ url('/') }}" class="stext-109 cl8 hov-cl1 trans-04">
+                <a href="{{ url(($prefix == 'aclimate' ? $prefix . '' : '') .'/') }}" class="stext-109 cl8 hov-cl1 trans-04">
                     Inicio
                     <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
                 </a>
-                <a href="{{ url('/category') }}" class="stext-109 cl8 hov-cl1 trans-04">
+                <a href="{{ url(($prefix == 'aclimate' ? $prefix . '' : '') .'/category') }}" class="stext-109 cl8 hov-cl1 trans-04">
                     Categorías
                     <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
                 </a>
-                <a href="{{ url('/view-cart') }}" class="stext-109 cl8 hov-cl1 trans-04">
+                <a href="{{ url(($prefix == 'aclimate' ? $prefix . '' : '') .'/view-cart') }}" class="stext-109 cl8 hov-cl1 trans-04">
                     Carrito
                     <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
                 </a>
@@ -37,15 +37,15 @@
                     Checkout
                 </span>
             @else
-                <a href="{{ url('/') }}" class="stext-109 cl8 hov-cl1 trans-04">
+                <a href="{{ url(($prefix == 'aclimate' ? $prefix . '' : '') .'/') }}" class="stext-109 cl8 hov-cl1 trans-04">
                     Inicio
                     <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
                 </a>
-                <a href="{{ url('departments/index') }}" class="stext-109 cl8 hov-cl1 trans-04">
+                <a href="{{ url(($prefix == 'aclimate' ? $prefix . '/' : '') .'departments/index') }}" class="stext-109 cl8 hov-cl1 trans-04">
                     Departamentos
                     <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
                 </a>
-                <a href="{{ url('/view-cart') }}" class="stext-109 cl8 hov-cl1 trans-04">
+                <a href="{{ url(($prefix == 'aclimate' ? $prefix . '' : '') .'/view-cart') }}" class="stext-109 cl8 hov-cl1 trans-04">
                     Carrito
                     <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
                 </a>
@@ -58,9 +58,10 @@
             <div id="sinpeContent" class="col-lg-10 col-xl-7 m-lr-auto m-b-50">
                 <div class="bor10 p-lr-40 p-t-30 p-b-40 m-l-20 m-r-10 m-lr-0-xl p-lr-15-sm">
                     <h4 class="mtext-109 cl2 p-b-30">Formulario de compra</h4>
-                    <form action="{{ url('payment') }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ url(($prefix == 'aclimate' ? $prefix . '/' : '') .'payment') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <input type="hidden" value="0" name="delivery" id="delivery">
+                        <input type="hidden" value="{{ $prefix }}" name="prefix" id="prefix">
                         <input type="hidden" value="{{ $delivery }}" name="total_delivery" id="total_delivery">
                         <input type="hidden" value="V" name="kind_of" id="kind_of">
                         <input type="hidden" value="" name="apply_code" id="apply_code">
@@ -154,7 +155,7 @@
                         @else
                             <h6 class="sakura-font m-t-25">
                                 Para cambiar la dirección de entrega ve a
-                                <a class="text-info" href="{{ url('address') }}">direcciones</a> y selecciona
+                                <a class="text-info" href="{{ url(($prefix == 'aclimate' ? $prefix . '/' : '') .'address') }}">direcciones</a> y selecciona
                                 la que desees.
 
                             </h6>
@@ -428,6 +429,9 @@
 
         $('.btnCode').click(function(e) {
             var code = document.getElementById("code").value;
+            var prefix = document.getElementById('prefix').value == "aclimate" ? document.getElementById('prefix')
+            .value : '';
+            var url = (prefix === 'aclimate' ? '/' + prefix : '') + '/gift-code/' + code;
 
             var btnCodeCancel = $(
                 '#divCodeCancel'
@@ -439,7 +443,7 @@
             } else {
                 $.ajax({
                     method: "GET",
-                    url: "/gift-code/" + code,
+                    url: url,
                     success: function(giftCard) {
                         if (typeof giftCard.status === 'undefined') {
                             swal("Proceso...",

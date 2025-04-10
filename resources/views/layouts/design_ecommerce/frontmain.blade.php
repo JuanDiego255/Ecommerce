@@ -52,10 +52,10 @@
         --cintillo_text: {{ $settings->cintillo_text }};
     }
 </style>
-
 <input type="hidden" value="{{ $tenantinfo->whatsapp }}" id="random_whats" name="random_whats">
 <input hidden type="user_id" value="{{ isset(Auth::user()->id) ? Auth::user()->id : '' }}" name="user_id"
     id="user_id">
+<input type="hidden" class="prefix" id="prefix" value="{{ $prefix }}">
 
 <body class="animsition">
     {{-- @include('frontend.av.add-comment') --}}
@@ -155,7 +155,7 @@
 
     @if (session('status'))
         <script>
-            swal("", "{{ session('status') }}", "{{ session('icon') }}");
+            swal("Mensaje Del Sistema", "{{ session('status') }}", "{{ session('icon') }}");
         </script>
     @endif
 
@@ -216,9 +216,12 @@
         }
 
         function getCart() {
+            var prefix = document.getElementById('prefix').value == "aclimate" ? document.getElementById('prefix')
+                .value : '';
+            var url = (prefix === 'aclimate' ? '/' + prefix : '') + "/get-cart-items";
             $.ajax({
                 method: "GET",
-                url: "/get-cart-items",
+                url: url,
                 success: function(cartItems) {
                     $('.productsList').empty();
                     var imageBaseUrl = $('#modalMiniCart').data('image-base-url');
@@ -286,12 +289,16 @@
             });
         }
         $(document).ready(function() {
+            var url = null;
+            var prefix = document.getElementById('prefix').value == "aclimate" ? document.getElementById('prefix')
+                .value : '';
+            url = (prefix === 'aclimate' ? '/' + prefix : '') + "/get/products/select/";
             $('#search-select').select2({
                 placeholder: "BUSCAR PRODUCTOS...",
                 allowClear: true,
                 width: '100%',
                 ajax: {
-                    url: '/get/products/select/',
+                    url: url,
                     dataType: 'json',
                     delay: 250,
                     data: function(params) {
@@ -312,14 +319,15 @@
                 }
             });
             $('#search-select').on('change', function(e) {
+                url = (prefix === 'aclimate' ? '/' + prefix : '') + '/detail-clothing' + selectedId;
                 var selectedId = $(this).val();
                 if (selectedId) {
-                    window.location.href = '/detail-clothing' + selectedId;
+                    window.location.href = url;
                 }
             });
             $(document).on('click', '.btnQuantity', function(e) {
                 e.preventDefault();
-
+                url = (prefix === 'aclimate' ? '/' + prefix : '') + '/edit-quantity';
                 var quantity = $(this).val();
                 var itemId = $(this).data('cart-id');
 
@@ -331,7 +339,7 @@
 
                 $.ajax({
                     method: "POST",
-                    url: "/edit-quantity",
+                    url: url,
                     data: {
                         'quantity': quantity,
                         'cart_id': itemId,
@@ -346,8 +354,9 @@
                 let $button = $(this);
                 let cartId = $button.data('item-id');
                 let $form = $button.closest('form.delete-form');
+                url = (prefix === 'aclimate' ? '/' + prefix : '') + '/delete-item-cart/' + cartId;
                 $.ajax({
-                    url: "/delete-item-cart/" + cartId,
+                    url: url,
                     type: 'POST', // Si usas el método DELETE, puedes sobreescribirlo en los datos o la cabecera según tu configuración
                     data: $form.serialize() + '&cart_id=' +
                         cartId, // Se envían los datos del form + el ID del item
@@ -393,8 +402,9 @@
                 var user_id = document.getElementById('user_id').value;
                 let token = $('meta[name="csrf-token"]').attr('content');
                 let icon = $(this).find('i');
+                url = (prefix === 'aclimate' ? '/' + prefix : '') + '/add-favorite';
                 $.ajax({
-                    url: '/add-favorite',
+                    url: url,
                     method: 'POST',
                     data: {
                         user_id: user_id,
@@ -459,6 +469,9 @@
             }, 500); // Espera a que termine la animación antes de ocultarlo
         });
         document.addEventListener("click", function(event) {
+            var prefix = document.getElementById('prefix').value == "aclimate" ? document.getElementById('prefix')
+            .value : '';
+            var url = null;
             if (event.target.closest(".js-show-modal1")) {
                 let button = event.target.closest(".js-show-modal1");
 
@@ -671,8 +684,13 @@
                     e.preventDefault();
                     var attributes_array = [];
                     var concat_attr = value_attr + "-" + attr_id + "-" + productId;
-                    attributes_array.push(concat_attr);
+                    if(value_attr != null && attr_id != null){
+                        attributes_array.push(concat_attr);
+                    }                   
                     var attributes = JSON.stringify(attributes_array);
+                    var url = (prefix === 'aclimate' ? '/' + prefix : '') + "/add-to-cart";
+                    
+                    console.log(attributes);
                     $.ajaxSetup({
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr(
@@ -681,7 +699,7 @@
                     });
                     $.ajax({
                         method: "POST",
-                        url: "/add-to-cart",
+                        url: url,
                         data: {
                             'clothing_id': productId,
                             'quantity': quantity,
@@ -717,9 +735,13 @@
         });
 
         function getStock(cloth_id, attr_id, value_attr, porcDescuento) {
+            var prefix = document.getElementById('prefix').value == "aclimate" ? document.getElementById('prefix')
+                .value : '';
+            var url = (prefix === 'aclimate' ? '/' + prefix : '') + "/get-stock/" + cloth_id + '/' + attr_id + '/' +
+                value_attr;
             $.ajax({
                 method: "GET",
-                url: "/get-stock/" + cloth_id + '/' + attr_id + '/' + value_attr,
+                url: url,
                 success: function(stock) {
                     var maxStock = stock.stock > 0 ? stock.stock : '';
                     var perPrice = stock.price;
@@ -793,9 +815,12 @@
         }
 
         function getCart() {
+            var prefix = document.getElementById('prefix').value == "aclimate" ? document.getElementById('prefix')
+                .value : '';
+            var url = (prefix === 'aclimate' ? '/' + prefix : '') + "/get-cart-items";
             $.ajax({
                 method: "GET",
-                url: "/get-cart-items",
+                url: url,
                 success: function(cartItems) {
                     $('.productsList').empty();
                     var imageBaseUrl = $('#modalMiniCart').data('image-base-url');

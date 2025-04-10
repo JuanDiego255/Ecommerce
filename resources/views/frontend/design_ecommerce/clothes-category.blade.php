@@ -8,11 +8,13 @@
         <div class="container">
             <div class="bread-crumb flex-w p-r-15 p-t-30 p-lr-0-lg">
                 @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
-                    <a href="{{ url('/') }}" class="stext-109 cl8 hov-cl1 trans-04">
+                    <a href="{{ url(($prefix == 'aclimate' ? $prefix . '' : '') . '/') }}"
+                        class="stext-109 cl8 hov-cl1 trans-04">
                         Inicio
                         <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
                     </a>
-                    <a href="{{ url('category/') }}" class="stext-109 cl8 hov-cl1 trans-04">
+                    <a href="{{ url(($prefix == 'aclimate' ? $prefix . '' : '') . '/category/') }}"
+                        class="stext-109 cl8 hov-cl1 trans-04">
                         Categorías
                         <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
                     </a>
@@ -20,15 +22,18 @@
                         {{ $category_name }}
                     </span>
                 @else
-                    <a href="{{ url('/') }}" class="stext-109 cl8 hov-cl1 trans-04">
+                    <a href="{{ url(($prefix == 'aclimate' ? $prefix . '' : '') . '/') }}"
+                        class="stext-109 cl8 hov-cl1 trans-04">
                         Inicio
                         <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
                     </a>
-                    <a href="{{ url('departments/index') }}" class="stext-109 cl8 hov-cl1 trans-04">
+                    <a href="{{ url(($prefix == 'aclimate' ? $prefix . '' : '') . '/departments/index') }}"
+                        class="stext-109 cl8 hov-cl1 trans-04">
                         Departamentos
                         <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
                     </a>
-                    <a href="{{ url('category/' . $department_id) }}" class="stext-109 cl8 hov-cl1 trans-04">
+                    <a href="{{ url(($prefix == 'aclimate' ? $prefix . '' : '') . '/category/' . $department_id) }}"
+                        class="stext-109 cl8 hov-cl1 trans-04">
                         {{ $department_name }}
                         <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
                     </a>
@@ -128,7 +133,7 @@
                             </div>
                             <div class="block2-txt flex-w flex-t p-t-14">
                                 <div class="block2-txt-child1 flex-col-l ">
-                                    <a href="{{ url('detail-clothing/' . $item->id . '/' . $category_id) }}"
+                                    <a href="{{ url(($prefix == 'aclimate' ? $prefix . '' : '') . '/detail-clothing/' . $item->id . '/' . $category_id) }}"
                                         class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
                                         {{ $item->name }}
                                     </a>
@@ -239,8 +244,8 @@
                                         <div class="block2-txt-child2 flex-r p-t-3">
                                             ${item.is_fav ? 
                                                 `<a href="#" class="dis-block pos-relative add_favorite" data-clothing-id="${item.id}">
-                                                                                                        <i class="fa fa-heart text-danger"></i>
-                                                                                                    </a>` : ''
+                                                                                                            <i class="fa fa-heart text-danger"></i>
+                                                                                                        </a>` : ''
                                             }
                                         </div>
                                     </div>
@@ -361,8 +366,8 @@
                                         <div class="block2-txt-child2 flex-r p-t-3">
                                             ${item.is_fav ? 
                                                 `<a href="#" class="dis-block pos-relative add_favorite" data-clothing-id="${item.id}">
-                                                                                                        <i class="fa fa-heart text-danger"></i>
-                                                                                                    </a>` : ''
+                                                                                                            <i class="fa fa-heart text-danger"></i>
+                                                                                                        </a>` : ''
                                             }
                                         </div>
                                     </div>

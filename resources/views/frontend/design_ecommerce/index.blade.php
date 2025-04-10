@@ -3,9 +3,6 @@
     {!! SEOMeta::generate() !!}
     {!! OpenGraph::generate() !!}
 @endsection
-@php
-    $ruta = $tenantinfo->tenant != 'aclimate' ? 'file' : 'aclifile';
-@endphp
 @section('content')
     <style>
         @media screen and (max-width: 768px) {
@@ -53,7 +50,7 @@
                                 </div>
 
                                 <div class="layer-slick1 animated visible-false" data-appear="zoomIn" data-delay="1600">
-                                    <a href="{{ url($carousel->url) }}"
+                                    <a href="{{ url(($prefix == 'aclimate' ? $prefix . '/' : '') . $carousel->url) }}"
                                         class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
                                         {{ $carousel->link_text }}
                                     </a>
@@ -80,7 +77,7 @@
                                         <img src="{{ isset($item->image) ? route($ruta, $item->image) : url('/design_ecommerce/images/producto-sin-imagen.PNG') }}"
                                             alt="IMG-BANNER">
 
-                                        <a href="{{ url('clothes-category/' . $item->category_id . '/' . $item->department_id) }}"
+                                        <a href="{{ url(($prefix == 'aclimate' ? $prefix . '/' : '') . 'clothes-category/' . $item->category_id . '/' . $item->department_id) }}"
                                             class="block1-txt ab-t-l s-full flex-col-l-sb p-lr-38 p-tb-34 trans-03 respon3">
                                             <div class="block1-txt-child1 flex-col-l">
                                                 <span class="block1-name ltext-102 trans-04 p-b-8">
@@ -119,7 +116,7 @@
                                         <img src="{{ isset($item->image) ? route($ruta, $item->image) : url('design_ecommerce/images/producto-sin-imagen.PNG') }}"
                                             alt="IMG-BANNER">
 
-                                        <a href="{{ url('category/' . $item->id) }}"
+                                        <a href="{{ url(($prefix == 'aclimate' ? $prefix . '/' : '') . 'category/' . $item->id) }}"
                                             class="block1-txt ab-t-l s-full flex-col-l-sb p-lr-38 p-tb-34 trans-03 respon3">
                                             <div class="block1-txt-child1 flex-col-l">
                                                 <span class="block1-name ltext-102 trans-04 p-b-8">
@@ -240,7 +237,7 @@
                             </div>
                             <div class="block2-txt flex-w flex-t p-t-14">
                                 <div class="block2-txt-child1 flex-col-l ">
-                                    <a href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}"
+                                    <a href="{{ url(($prefix == 'aclimate' ? $prefix . '/' : '') . 'detail-clothing/' . $item->id . '/' . $item->category_id) }}"
                                         class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
                                         ({{ $item->category }})
                                         {{ $item->name }}

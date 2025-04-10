@@ -27,15 +27,17 @@
         <div class="container m-t-80">
             <div class="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg">
                 @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
-                    <a href="{{ url('/') }}" class="stext-109 cl8 hov-cl1 trans-04">
+                    <a href="{{ url(($prefix == 'aclimate' ? $prefix . '' : '') . '/') }}"
+                        class="stext-109 cl8 hov-cl1 trans-04">
                         Inicio
                         <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
                     </a>
-                    <a href="{{ url('category/') }}" class="stext-109 cl8 hov-cl1 trans-04">
+                    <a href="{{ url(($prefix == 'aclimate' ? $prefix . '/' : '') . 'category/') }}"
+                        class="stext-109 cl8 hov-cl1 trans-04">
                         Categorías
                         <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
                     </a>
-                    <a href="{{ url('clothes-category/' . $category_id . '/' . $item->department_id) }}"
+                    <a href="{{ url(($prefix == 'aclimate' ? $prefix . '/' : '') . 'clothes-category/' . $category_id . '/' . $item->department_id) }}"
                         class="stext-109 cl8 hov-cl1 trans-04">
                         {{ $item->category }}
                         <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
@@ -45,20 +47,23 @@
                         Detalles
                     </span>
                 @else
-                    <a href="{{ url('/') }}" class="stext-109 cl8 hov-cl1 trans-04">
+                    <a href="{{ url(($prefix == 'aclimate' ? $prefix . '' : '') . '/') }}"
+                        class="stext-109 cl8 hov-cl1 trans-04">
                         Inicio
                         <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
                     </a>
 
-                    <a href="{{ url('departments/index') }}" class="stext-109 cl8 hov-cl1 trans-04">
+                    <a href="{{ url(($prefix == 'aclimate' ? $prefix . '/' : '') . 'departments/index') }}"
+                        class="stext-109 cl8 hov-cl1 trans-04">
                         Departamentos
                         <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
                     </a>
-                    <a href="{{ url('category/' . $item->department_id) }}" class="stext-109 cl8 hov-cl1 trans-04">
+                    <a href="{{ url(($prefix == 'aclimate' ? $prefix . '/' : '') . 'category/' . $item->department_id) }}"
+                        class="stext-109 cl8 hov-cl1 trans-04">
                         {{ $item->department_name }}
                         <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
                     </a>
-                    <a href="{{ url('clothes-category/' . $category_id . '/' . $item->department_id) }}"
+                    <a href="{{ url(($prefix == 'aclimate' ? $prefix . '/' : '') . 'clothes-category/' . $category_id . '/' . $item->department_id) }}"
                         class="stext-109 cl8 hov-cl1 trans-04">
                         {{ $item->category }}
                         <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
@@ -73,6 +78,7 @@
         <section class="sec-product-detail bg0 p-t-65 p-b-60">
             <div class="container product_data">
                 <input type="hidden" class="cloth_item" value="{{ $item->id }}">
+                <input type="hidden" class="prefix" id="prefix" value="{{ $prefix }}">
                 <div class="row">
                     <div class="col-md-6 col-lg-7 p-b-30">
                         <div class="p-l-25 p-r-30 p-lr-0-lg">
@@ -516,6 +522,7 @@
 @section('scripts')
 <script>
     $(document).ready(function() {
+
         var attributeButtons = document.querySelectorAll('.attribute-btn');
         attributeButtons.forEach(function(button) {
             button.addEventListener('click', function() {
@@ -569,9 +576,12 @@
     });
     $('.btnAddToCart').click(function(e) {
         e.preventDefault();
+        var prefix = document.getElementById('prefix').value == "aclimate" ? document.getElementById('prefix')
+            .value : '';
         var cloth_id = $(this).closest('.product_data').find('.cloth_item').val();
         var quantity = $(this).closest('.product_data').find('.quantity').val();
         var selected_attributes = [];
+        var url = (prefix === 'aclimate' ? '/' + prefix : '') + "/add-to-cart";
 
         // Recorrer todos los inputs ocultos con los valores seleccionados
         $(".js-select2").each(function() {
@@ -591,13 +601,14 @@
         });
         $.ajax({
             method: "POST",
-            url: "/add-to-cart",
+            url: url,
             data: {
                 'clothing_id': cloth_id,
                 'quantity': quantity,
                 'attributes': attributes,
             },
             success: function(response) {
+                console.log(response);
                 swal(response.status,
                     "Producto agregado al carrito", response
                     .icon);
@@ -631,9 +642,12 @@
     });
 
     function getStock(cloth_id, attr_id, value_attr) {
+        var prefix = document.getElementById('prefix').value == "aclimate" ? document.getElementById('prefix')
+            .value : '';
+        var url = (prefix === 'aclimate' ? '/' + prefix : '') + "/get-stock/" + cloth_id + '/' + attr_id + '/' + value_attr;
         $.ajax({
             method: "GET",
-            url: "/get-stock/" + cloth_id + '/' + attr_id + '/' + value_attr,
+            url: url,
             success: function(stock) {
                 var maxStock = stock.stock > 0 ? stock.stock : '';
                 var porcDescuento = document.getElementById("porcDescuento").value;

@@ -15,7 +15,7 @@
                     <div class="product-grid product_data">
                         <div class="product-image">
                             <img
-                                src="{{ isset($item->image) ? route('file', $item->image) : url('/design_ecommerce/images/producto-sin-imagen.PNG') }}">
+                                src="{{ isset($item->image) ? route($ruta, $item->image) : url('/design_ecommerce/images/producto-sin-imagen.PNG') }}">
                             <ul class="product-links">
                                 <li><a target="blank" href="{{ tenant_asset('/') . '/' . $item->image }}"><i
                                             class="fas fa-eye"></i></a></li>
@@ -68,7 +68,7 @@
                         @foreach ($blogs as $item)
                             <div class="p-b-63">
                                 <a href="blog-detail.html" class="hov-img0 how-pos5-parent">
-                                    <img src="{{ isset($item->image) ? route('file', $item->image) : url('/design_ecommerce/images/producto-sin-imagen.PNG') }}"
+                                    <img src="{{ isset($item->image) ? route($ruta, $item->image) : url('/design_ecommerce/images/producto-sin-imagen.PNG') }}"
                                         alt="IMG-BLOG">
 
                                     @php
@@ -204,7 +204,7 @@
 
                                     <li class="flex-w flex-t p-b-30">
                                         <a href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}" class="wrao-pic-w size-214 hov-ovelay1 m-r-20">
-                                            <img class="img-min" src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"
+                                            <img class="img-min" src="{{ isset($item->image) ? route($ruta, $item->image) : url('images/producto-sin-imagen.PNG') }}"
                                                 alt="PRODUCT">
                                         </a>
 

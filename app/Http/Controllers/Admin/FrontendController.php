@@ -402,6 +402,7 @@ class FrontendController extends Controller
         $tenantinfo = Cache::remember('tenant_info', $this->expirationTime, function () {
             return TenantInfo::first();
         });
+
         $categories = Cache::remember('categories', $this->expirationTime, function () {
             return Categories::where('departments.department', 'Default')
                 ->where('categories.status', 0)
@@ -428,7 +429,6 @@ class FrontendController extends Controller
             $department_id = $department->id;
         }
         $department_name = $department->department;
-
         $clothings = ClothingCategory::where('pivot_clothing_categories.category_id', $id)
             ->where('clothing.status', 1)
             ->leftJoin('pivot_clothing_categories', 'clothing.id', '=', 'pivot_clothing_categories.clothing_id')
@@ -457,7 +457,7 @@ class FrontendController extends Controller
                 DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
             )
             ->groupBy('clothing.id', 'clothing.can_buy', 'clothing.casa', 'clothing.mayor_price', 'categories.name', 'clothing.discount', 'clothing.name', 'clothing.description', 'clothing.price', 'product_images.image')
-            ->havingRaw('total_stock > 0')
+            ->havingRaw('total_stock > 0 OR total_stock IS NULL')
             ->orderByRaw('CASE WHEN clothing.casa IS NOT NULL AND clothing.casa != "" THEN 0 ELSE 1 END')
             ->orderBy('clothing.casa', 'asc')
             ->orderBy('clothing.name', 'asc');
@@ -468,8 +468,6 @@ class FrontendController extends Controller
         } else {
             $clothings = $clothings->simplePaginate(20);
         }
-
-
 
         $tags = Cache::remember('meta_tags_specific_category', $this->expirationTime, function () {
             return MetaTags::where('section', 'Categoría Específica')->get();
@@ -514,7 +512,7 @@ class FrontendController extends Controller
             OpenGraph::setDescription($tag->meta_og_description);
         }
 
-        if (count($clothings) == 0 && ($tenantinfo->kind_business != 2 && $tenantinfo->kind_business != 3 && $tenantinfo->kind_business != 6)) {
+        if (count($clothings) == 0 && ($tenantinfo->kind_business != 2 && $tenantinfo->kind_business != 3 && $tenantinfo->tenant != 'aclimate')) {
             return redirect()->back()->with(['status' => 'No hay artículos en esta categoría', 'icon' => 'warning']);
         }
         switch ($tenantinfo->kind_business) {
