@@ -3,19 +3,24 @@
     // TOP Menu Sticky
     $(window).on('scroll', function () {
         var scroll = $(window).scrollTop();
-        var logo = $("#logo-img"); // Selecciona el logo
-        var logoOriginal = logo.data("logo-original"); // Obtiene el logo original
+        var logo = $("#logo-img");
+        var logoOriginal = logo.data("logo-original");
         var logoScroll = logo.data("logo-scroll");
+        var menuButton = $(".slicknav_btn");
+    
         if (scroll < 400) {
             $("#sticky-header").removeClass("sticky");
-            $("#sticky-header .main-menu ul li a").removeClass("scrolled"); // Remueve la clase del color al volver arriba
+            $("#sticky-header .main-menu ul li a").removeClass("scrolled");
             logo.attr("src", logoOriginal);
+            menuButton.removeClass("black-bars"); // Quita las barras negras
         } else {
             $("#sticky-header").addClass("sticky");
-            $("#sticky-header .main-menu ul li a").addClass("scrolled"); // Agrega la clase al hacer scroll
+            $("#sticky-header .main-menu ul li a").addClass("scrolled");
             logo.attr("src", logoScroll);
+            menuButton.addClass("black-bars"); // Aplica las barras negras
         }
     });
+    
 
 
 

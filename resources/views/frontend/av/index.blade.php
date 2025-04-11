@@ -8,14 +8,35 @@
 @endphp
 @section('content')
     {{-- @include('layouts.inc.carsale.footer') --}}
+    <style>
+        @media screen and (max-width: 768px) {
+            @foreach ($tenantcarousel as $index => $carousel)
+                .owl-bg-carousel-{{ $index }} {
+                    background-image: url('{{ route($ruta, $carousel->mobile_image ?? $carousel->image) }}');
+                }
+            @endforeach
+        }
+
+        @media screen and (min-width: 769px) {
+            @foreach ($tenantcarousel as $index => $carousel)
+                .owl-bg-carousel-{{ $index }} {
+                    background-image: url('{{ route($ruta, $carousel->image) }}');
+                }
+            @endforeach
+        }
+
+        .owl-bg-carousel {
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+    </style>
+
     <div class="slider_area mb-5">
         <div class="slider_active owl-carousel">
             @if (isset($tenantcarousel) && count($tenantcarousel) > 0)
                 @foreach ($tenantcarousel as $key => $carousel)
-                    <div class="single_slider d-flex align-items-center "
-                        style="background-image:
-    url('{{ route($ruta, $carousel->image) }}');
- background-size: cover; background-position: center;">
+                <div class="single_slider d-flex align-items-center owl-bg-carousel owl-bg-carousel-{{ $loop->index }}">
                         <div class="container">
                             <div class="row">
                                 <div class="col-xl-12">
@@ -247,7 +268,8 @@
                     <div class="row">
                         <div class="col-xl-12">
                             <div class="section_title text-center mb-40">
-                                <h3 class="text-uppercase uppercase text-prov">Servicios de excelencia - respaldados por marcas líderes</h3>
+                                <h3 class="text-uppercase uppercase text-prov">Servicios de excelencia - respaldados por
+                                    marcas líderes</h3>
                             </div>
                         </div>
                     </div>
