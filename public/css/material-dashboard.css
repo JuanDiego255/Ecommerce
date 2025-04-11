@@ -29465,7 +29465,7 @@ select.noStyle {
 
 .product-grid .product-image img {
     width: 100%;
-    height: auto;
+    height: 400px;
 }
 
 .product-grid .product-discount-label {
@@ -30827,6 +30827,7 @@ a.more-link {
     .border-top-sk {
         border-top-left-radius: 50% 100px;
         border-top-right-radius: 50% 100px;
+        height: auto !important;
     }
 }
 .sakura-font{

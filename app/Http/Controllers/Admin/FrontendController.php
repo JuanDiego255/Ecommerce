@@ -68,9 +68,6 @@ class FrontendController extends Controller
                     DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'),
                     DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
                 )
-                ->when($tenantinfo->tenant === 'sakura318', function ($query) {
-                    return $query->where('categories.slug', 'LIKE', '%especial%'); // Ajusta la condición según necesidad
-                })
                 ->groupBy(
                     'clothing.id',
                     'categories.name',
@@ -85,13 +82,19 @@ class FrontendController extends Controller
                     'clothing.description',
                     'clothing.price',
                     'clothing.mayor_price',
-                )->orderByRaw('CASE WHEN clothing.casa IS NOT NULL AND clothing.casa != "" THEN 0 ELSE 1 END')
+                );
+        });
+        if ($tenantinfo->tenant === 'sakura318') {
+            $clothings = $clothings->inRandomOrder()
+                ->take(25)
+                ->get();
+        } else {
+            $clothings = $clothings->orderByRaw('CASE WHEN clothing.casa IS NOT NULL AND clothing.casa != "" THEN 0 ELSE 1 END')
                 ->orderBy('clothing.casa', 'asc')
                 ->orderBy('clothing.name', 'asc')
-                ->take(15)
+                ->take(20)
                 ->get();
-        });
-
+        }
         $category = Cache::remember('categories', $this->expirationTime, function () use ($tenantinfo) {
             $query = Categories::join('departments', 'categories.department_id', 'departments.id')
                 ->where('categories.status', 0)
