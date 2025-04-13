@@ -59,6 +59,8 @@
                         <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                             Tipo</th>
                         <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
+                            Cambio Arqueo</th>
+                        <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                             Fecha</th>
                     </tr>
                 </thead>
@@ -88,6 +90,10 @@
                                     data-bs-placement="bottom" title="Editar">
                                     <i class="material-icons text-lg">edit</i>
                                 </a>
+                                <button type="button" data-bs-toggle="modal"
+                                    data-bs-target="#change-arqueo-modal{{ $item->id }}"
+                                    class="btn btn-link text-velvet me-auto border-0" style="text-decoration: none;"> <i
+                                        class="material-icons text-lg">autorenew</i></button>
                             </td>
                             <td class="align-middle text-xxs text-center">
                                 <p class=" font-weight-bold mb-0">{{ $item->nombre }}</p>
@@ -118,11 +124,15 @@
                                 <p class=" font-weight-bold mb-0">{{ $item->tipo }}</p>
                             </td>
                             <td class="align-middle text-xxs text-center">
+                                <p class=" font-weight-bold mb-0">{{ $item->justificacion_arqueo }}</p>
+                            </td>
+                            <td class="align-middle text-xxs text-center">
                                 <p class=" font-weight-bold mb-0">{{ $item->created_at->format('d/m/Y') }} </p>
                             </td>
 
                         </tr>
                         @include('admin.ventas.anular')
+                        @include('admin.ventas.change-arqueo')
                     @endforeach
                 </tbody>
             </table>

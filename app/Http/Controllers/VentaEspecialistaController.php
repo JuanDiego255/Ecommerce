@@ -50,6 +50,7 @@ class VentaEspecialistaController extends Controller
     public function listVentas()
     {
         //
+        $arqueos = ArqueoCaja::take(10);
         $ventas = VentaEspecialista::join('especialistas', 'venta_especialistas.especialista_id', 'especialistas.id')
             ->join('tipo_pagos', 'venta_especialistas.tipo_pago_id', 'tipo_pagos.id')
             ->select(
@@ -64,7 +65,7 @@ class VentaEspecialistaController extends Controller
             )
             ->orderBy('venta_especialistas.created_at', 'desc')
             ->get();
-        return view('admin.ventas.list', compact('ventas'));
+        return view('admin.ventas.list', compact('ventas','arqueos'));
     }
     //
     /**
@@ -281,6 +282,28 @@ class VentaEspecialistaController extends Controller
         } catch (\Exception $th) {
             DB::rollBack();
             return redirect()->back()->with(['status' => 'No se pudo anular la venta', 'icon' => 'error'])->withInput();
+        }
+    }
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function updateArqueo($id, Request $request)
+    {
+        //
+        DB::beginTransaction();
+        try {
+            $venta = VentaEspecialista::find($id);
+            $venta->justificacion_arqueo = $request->justificacion_arqueo;
+            $venta->arqueo_id = $request->arqueo_id;
+            $venta->update();
+            DB::commit();
+            return redirect()->back()->with(['status' => 'Se ha cambiado el arqueo de la venta con éxito', 'icon' => 'success']);
+        } catch (\Exception $th) {
+            DB::rollBack();
+            return redirect()->back()->with(['status' => 'No se pudo cambiar el arqueo de la venta', 'icon' => 'error'])->withInput();
         }
     }
 }

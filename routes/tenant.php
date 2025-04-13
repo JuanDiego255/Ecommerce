@@ -390,6 +390,7 @@ Route::middleware([
             Route::get('/ventas/list/', [VentaEspecialistaController::class, 'listVentas']);
             Route::put('tipo_pago/update/{id}', [TipoPagoController::class, 'update']);
             Route::put('anular/venta/{id}', [VentaEspecialistaController::class, 'updateStatus']);
+            Route::put('cambiar/venta/{id}', [VentaEspecialistaController::class, 'updateArqueo']);
             Route::delete('delete/tipo_pago/{id}', [TipoPagoController::class, 'destroy']);
             Route::post('venta/especialista/store', [VentaEspecialistaController::class, 'store']);
             Route::get('get-list/especialistas/service/', [VentaEspecialistaController::class, 'getServices']);
