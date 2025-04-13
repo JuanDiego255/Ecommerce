@@ -16,7 +16,11 @@
         case 'frontend_design_ecommerce_category':
         case 'frontend_design_ecommerce_departments':
         case 'frontend_design_ecommerce_buys':
-            $logo_principal = asset('avstyles/img/logos/logo-acli.svg');
+            if ($tenantinfo->tenant == 'aclimate') {
+                $logo_principal = asset('avstyles/img/logos/logo-acli.svg');
+            }else{
+                $logo_principal = route($ruta, $tenantinfo->logo);
+            }
             break;
         default:
             $logo_principal = route($ruta, $tenantinfo->logo);
@@ -61,8 +65,7 @@
                 <a href="#" class="logo">
                     <img id="{{ $tenantinfo->tenant == 'aclimate' ? 'logo-img' : 'logo' }}"
                         data-logo-scroll="{{ asset('avstyles/img/logos/logo-acli.svg') }}"
-                        data-logo-original="{{ $logo_principal }}"
-                        src="{{ $logo_principal }}" alt="IMG-LOGO">
+                        data-logo-original="{{ $logo_principal }}" src="{{ $logo_principal }}" alt="IMG-LOGO">
                 </a>
 
                 <!-- Menu desktop -->
