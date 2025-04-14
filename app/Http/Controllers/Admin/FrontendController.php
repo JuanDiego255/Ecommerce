@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Advert;
+use App\Models\Attribute;
 use App\Models\Blog;
 use App\Models\Categories;
 use App\Models\ClothingCategory;
@@ -531,7 +532,9 @@ class FrontendController extends Controller
                 break;
             default:
                 if ($tenantinfo->kind_of_features == 1) {
-                    return view('frontend.design_ecommerce.clothes-category', compact('clothings', 'totalPages', 'category_name', 'category_id', 'department_id', 'department_name'));
+                    $attributes = Attribute::with('values')->where('attributes.name', '!=', 'Stock')
+                        ->get();
+                    return view('frontend.design_ecommerce.clothes-category', compact('clothings', 'attributes', 'totalPages', 'category_name', 'category_id', 'department_id', 'department_name'));
                 }
                 return view('frontend.clothes-category', compact('clothings', 'category_name', 'category_id', 'department_id', 'department_name'));
         }

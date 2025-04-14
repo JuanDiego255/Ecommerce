@@ -164,6 +164,271 @@
                 }
             });
         });
+        $(document).on('click', '#btnPrev, #btnNext', function () {
+            let pageUrl = $(this).data('next') || $(this).data('prev'); // Detecta si es "next" o "prev"
+            if (!pageUrl) return;
+
+            let urlParams = new URLSearchParams(new URL(pageUrl).search);
+            let page = urlParams.get('page'); // Extrae el número de página
+            let id = $(this).data('id');
+            console.log($grid);
+
+            $.ajax({
+                method: "GET",
+                url: "/paginate/" + Number(page) + "/" + id,
+                success: function (response) {
+                    var items = response.clothings.data;
+                    var category_id = response.category_id;
+                    var html = '';
+                    // Construcción del HTML dinámicamente
+                    items.forEach(function (item) {
+                        let precio = item.price;
+                        if (item.custom_size == 1) {
+                            precio = item.first_price;
+                        }
+                        if (item.mayor_price > 0 && item.is_mayor) {
+                            precio = item.mayor_price;
+                        }
+                        let descuento = (precio * item.discount) / 100;
+                        let precioConDescuento = precio - descuento;
+
+                        html += `
+                            <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item ${item.category.toLowerCase().replace(/\s/g, '')}">
+                                <div class="block2 product_data data-attributes_filter='${JSON.stringify(Object.fromEntries(item.atributos.map(attr => [attr.attr_id, attr.ids.split("/")])))}'>
+                                    <input type="hidden" class="code" name="code" value="${item.code}">
+                                    <input type="hidden" class="clothing-name" name="clothing-name" value="${item.name}">
+                                    <div class="block2-pic hov-img0">
+                                        <img src="${item.image ? `/file/${item.image}` : '/images/producto-sin-imagen.PNG'}" 
+                                            alt="IMG-PRODUCT">
+                                        <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1"
+                                            data-id="${item.id}" 
+                                            data-name="${item.name}" 
+                                            data-discount="${item.discount}" 
+                                            data-description="${item.description}"
+                                            data-price="${precioConDescuento}"
+                                            data-original-price="${item.price}"
+                                            data-attributes='${JSON.stringify(item.atributos)}'
+                                            data-category="${item.category}"
+                                            data-images='${JSON.stringify(item.all_images.map(img => `/file/${img}`))}'
+                                            data-image="${item.image ? `/file/${item.image}` : '/images/producto-sin-imagen.PNG'}">
+                                            Detallar
+                                        </a>
+                                    </div>
+                                    <div class="block2-txt flex-w flex-t p-t-14">
+                                        <div class="block2-txt-child1 flex-col-l ">
+                                            <a href="/detail-clothing/${item.id}/${category_id}" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
+                                                ${item.name}
+                                            </a>
+                                            <div class="price">
+                                                ₡${precioConDescuento}
+                                                ${item.discount ? `<s class="text-danger">₡${item.price}</s>` : ''}
+                                            </div>
+                                        </div>
+                                        <div class="block2-txt-child2 flex-r p-t-3">
+                                            ${item.is_fav ? 
+                                                `<a href="#" class="dis-block pos-relative add_favorite" data-clothing-id="${item.id}">
+                                                                                                                                                                                                                    <i class="fa fa-heart text-danger"></i>
+                                                                                                                                                                                                                </a>` : ''
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>`;
+
+                    });
+
+                    // Actualizar el contenido del contenedor
+                    $('#product-container').empty().append(html);
+                    //$('#circleNumber').text(response.page);
+
+                    // Actualizar paginación
+                    response.next_page_url ? $('#btnNext').data('next', response
+                        .next_page_url) : $(
+                        '#btnNext').removeData('next');
+                    response.prev_page_url ? $('#btnPrev').data('prev', response
+                        .prev_page_url) : $(
+                        '#btnPrev').removeData('prev');
+                    // Actualizar botones numéricos (resaltar página actual)
+                    $('.page-lex-c-m').removeClass(
+                        'font-weight-bold'); // Quita el bold de todos
+                    $('.page-lex-c-m').addClass(
+                        'text-muted'); // Quita el bold de todos
+                    $(`.page-number-${response.currentPage}`).addClass(
+                        'font-weight-bold'); // Agrega bold al actual
+                    $(`.page-number-${response.currentPage}`).removeClass(
+                        'text-muted');
+                    // Reinicializar Isotope      
+                    reinitGrid();
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        $(document).on('click', '.page-lex-c-m', function () {
+            let page = $(this).data('page');
+            let id = $(this).data('id');
+
+            if (!page || !id) return;
+
+            $.ajax({
+                method: "GET",
+                url: "/paginate/" + Number(page) + "/" + id,
+                success: function (response) {
+                    var items = response.clothings.data;
+                    var category_id = response.category_id;
+                    var html = '';
+                    // Construcción del HTML dinámicamente
+                    items.forEach(function (item) {
+                        let precio = item.price;
+                        if (item.custom_size == 1) {
+                            precio = item.first_price;
+                        }
+                        if (item.mayor_price > 0 && item.is_mayor) {
+                            precio = item.mayor_price;
+                        }
+                        let descuento = (precio * item.discount) / 100;
+                        let precioConDescuento = precio - descuento;
+
+                        html += `
+                            <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item ${item.category.toLowerCase().replace(/\s/g, '')}">
+                                <div class="block2 product_data data-attributes_filter='${JSON.stringify(Object.fromEntries(item.atributos.map(attr => [attr.attr_id, attr.ids.split("/")])))}'>
+                                    <input type="hidden" class="code" name="code" value="${item.code}">
+                                    <input type="hidden" class="clothing-name" name="clothing-name" value="${item.name}">
+                                    <div class="block2-pic hov-img0">
+                                        <img src="${item.image ? `/file/${item.image}` : '/images/producto-sin-imagen.PNG'}" 
+                                            alt="IMG-PRODUCT">
+                                        <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1"
+                                            data-id="${item.id}" 
+                                            data-name="${item.name}" 
+                                            data-discount="${item.discount}" 
+                                            data-description="${item.description}"
+                                            data-price="${precioConDescuento}"
+                                            data-original-price="${item.price}"
+                                            data-attributes='${JSON.stringify(item.atributos)}'
+                                            data-category="${item.category}"
+                                            data-images='${JSON.stringify(item.all_images.map(img => `/file/${img}`))}'
+                                            data-image="${item.image ? `/file/${item.image}` : '/images/producto-sin-imagen.PNG'}">
+                                            Detallar
+                                        </a>
+                                    </div>
+                                    <div class="block2-txt flex-w flex-t p-t-14">
+                                        <div class="block2-txt-child1 flex-col-l ">
+                                            <a href="/detail-clothing/${item.id}/${category_id}" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
+                                                ${item.name}
+                                            </a>
+                                            <div class="price">
+                                                ₡${precioConDescuento}
+                                                ${item.discount ? `<s class="text-danger">₡${item.price}</s>` : ''}
+                                            </div>
+                                        </div>
+                                        <div class="block2-txt-child2 flex-r p-t-3">
+                                            ${item.is_fav ? 
+                                                `<a href="#" class="dis-block pos-relative add_favorite" data-clothing-id="${item.id}">
+                                                                                                                                                                                                                    <i class="fa fa-heart text-danger"></i>
+                                                                                                                                                                                                                </a>` : ''
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>`;
+
+                    });
+
+                    // Actualizar el contenido del contenedor
+                    $('#product-container').empty().append(html);
+                    //$('#circleNumber').text(response.page);
+
+                    // Actualizar paginación
+                    response.next_page_url ? $('#btnNext').data('next', response
+                        .next_page_url) : $(
+                        '#btnNext').removeData('next');
+                    response.prev_page_url ? $('#btnPrev').data('prev', response
+                        .prev_page_url) : $(
+                        '#btnPrev').removeData('prev');
+                    // Actualizar botones numéricos (resaltar página actual)
+                    $('.page-lex-c-m').removeClass(
+                        'font-weight-bold'); // Quita el bold de todos
+                    $('.page-lex-c-m').addClass(
+                        'text-muted'); // Quita el bold de todos
+                    $(`.page-number-${response.currentPage}`).addClass(
+                        'font-weight-bold'); // Agrega bold al actual
+                    $(`.page-number-${response.currentPage}`).removeClass(
+                        'text-muted');
+                    // Reinicializar Isotope
+                    reinitGrid();
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+
+                }
+            });
+
+        });
+        $(document).on('click', '.js-show-modal1', function (e) {
+            e.preventDefault();
+            $('.js-modal1').addClass('show-modal1');
+        });     
+        const activeFilters = {};
+        document.querySelectorAll('.filter-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                const attrId = this.dataset.attrId;
+                const valueId = this.dataset.valueId;
+
+                this.classList.toggle('filter-link-active');
+
+                // Manejo del estado activo
+                if (!activeFilters[attrId]) {
+                    activeFilters[attrId] = [];
+                }
+
+                if (this.classList.contains('filter-link-active')) {
+                    if (!activeFilters[attrId].includes(valueId)) {
+                        activeFilters[attrId].push(valueId);
+                    }
+                } else {
+                    activeFilters[attrId] = activeFilters[attrId].filter(id => id !== valueId);
+                    if (activeFilters[attrId].length === 0) {
+                        delete activeFilters[attrId];
+                    }
+                }
+                filterProducts();
+            });
+        });   
+        function filterProducts() {
+            const items = document.querySelectorAll('.product_data');
+            console.log(items);
+            items.forEach(item => {
+                const attributes = JSON.parse(item.dataset.attributes_filter);
+                console.log(attributes);
+
+                let show = true;
+
+                for (const [attrId, values] of Object.entries(activeFilters)) {
+                    if (!attributes[attrId]) {
+                        show = false;
+                        break;
+                    }
+
+                    // ¿Al menos un valor coincide?
+                    const match = values.some(v => attributes[attrId].includes(v));
+                    if (!match) {
+                        show = false;
+                        break;
+                    }
+                }
+
+                item.closest('.isotope-item').style.display = show ? '' : 'none';
+            });
+            reinitGrid();
+        }
+        function reinitGrid() {
+            $grid.isotope('layout');
+        }
     });
 
     var isotopeButton = $('.filter-tope-group button');

@@ -79,6 +79,42 @@
                         Buscar
                     </div>
                 </div>
+                <div class="dis-none panel-filter w-full p-t-10">
+                    <div class="wrap-filter flex-w bg6 w-full p-lr-40 p-t-27 p-lr-15-sm">
+                        @foreach ($attributes as $attribute)
+                            @php
+                                // Dividir los valores en chunks de 5
+                                $chunks = $attribute->values->chunk(5);
+                            @endphp
+
+                            @foreach ($chunks as $chunk)
+                                <div class="filter-col p-l-15 p-b-27">
+                                    @if ($loop->first)
+                                        <div class="mtext-102 cl2 p-b-15">
+                                            {{ $attribute->name }}
+                                        </div>
+                                    @else
+                                        <div class="mtext-102 cl2 p-b-15">
+                                            &nbsp; {{-- espacio para mantener alineación visual --}}
+                                        </div>
+                                    @endif
+
+                                    <ul>
+                                        @foreach ($chunk as $value)
+                                            <li class="p-b-6 p-r-50">
+                                                <a href="#" class="filter-link stext-106 trans-04"
+                                                    data-attr-id="{{ $attribute->id }}"
+                                                    data-value-id="{{ $value->id }}">
+                                                    {{ $value->value }}
+                                                </a>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endforeach
+                        @endforeach
+                    </div>
+                </div>
             </div>
 
             <!-- Paneles de búsqueda y filtro (si los requieres) -->
@@ -94,7 +130,7 @@
             <!-- Aquí podrías agregar un panel-filter similar si lo requieres -->
 
             <!-- Grid de productos -->
-            <div class="row isotope-grid" id="product-container">
+            <div class="row isotope-grid-clothes" id="product-container">
                 @foreach ($clothings as $item)
                     @php
                         $precio = $item->price;
@@ -112,7 +148,7 @@
                         href="{{ isset($item->image) ? route($ruta, $item->image) : url('images/producto-sin-imagen.PNG') }}">
                     <div
                         class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item {{ strtolower(str_replace(' ', '', $item->category)) }}">
-                        <div class="block2 product_data">
+                        <div class="block2 product_data" data-attributes_filter='@json(collect($item->atributos)->mapWithKeys(fn($a) => [$a->attr_id => explode('/', $a->ids)]))'>
                             <input type="hidden" class="code" name="code" value="{{ $item->code }}">
                             <input type="hidden" class="clothing-name" name="clothing-name" value="{{ $item->name }}">
                             <div class="block2-pic hov-img0">
@@ -181,256 +217,4 @@
     @include('layouts.inc.design_ecommerce.footer')
 @endsection
 @section('scripts')
-    <script>
-        $(document).on('click', '#btnPrev, #btnNext', function() {
-            let pageUrl = $(this).data('next') || $(this).data('prev'); // Detecta si es "next" o "prev"
-            if (!pageUrl) return;
-
-            let urlParams = new URLSearchParams(new URL(pageUrl).search);
-            let page = urlParams.get('page'); // Extrae el número de página
-            let id = $(this).data('id');
-
-            $.ajax({
-                method: "GET",
-                url: "/paginate/" + Number(page) + "/" + id,
-                success: function(response) {
-                    var items = response.clothings.data;
-                    var category_id = response.category_id;
-                    var html = '';
-                    // Construcción del HTML dinámicamente
-                    items.forEach(function(item) {
-                        let precio = item.price;
-                        if (item.custom_size == 1) {
-                            precio = item.first_price;
-                        }
-                        if (item.mayor_price > 0 && item.is_mayor) {
-                            precio = item.mayor_price;
-                        }
-                        let descuento = (precio * item.discount) / 100;
-                        let precioConDescuento = precio - descuento;
-
-                        html += `
-                            <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item ${item.category.toLowerCase().replace(/\s/g, '')}">
-                                <div class="block2 product_data">
-                                    <input type="hidden" class="code" name="code" value="${item.code}">
-                                    <input type="hidden" class="clothing-name" name="clothing-name" value="${item.name}">
-                                    <div class="block2-pic hov-img0">
-                                        <img src="${item.image ? `/file/${item.image}` : '/images/producto-sin-imagen.PNG'}" 
-                                            alt="IMG-PRODUCT">
-                                        <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1"
-                                            data-id="${item.id}" 
-                                            data-name="${item.name}" 
-                                            data-discount="${item.discount}" 
-                                            data-description="${item.description}"
-                                            data-price="${precioConDescuento}"
-                                            data-original-price="${item.price}"
-                                            data-attributes='${JSON.stringify(item.atributos)}'
-                                            data-category="${item.category}"
-                                            data-images='${JSON.stringify(item.all_images.map(img => `/file/${img}`))}'
-                                            data-image="${item.image ? `/file/${item.image}` : '/images/producto-sin-imagen.PNG'}">
-                                            Detallar
-                                        </a>
-                                    </div>
-                                    <div class="block2-txt flex-w flex-t p-t-14">
-                                        <div class="block2-txt-child1 flex-col-l ">
-                                            <a href="/detail-clothing/${item.id}/${category_id}" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-                                                ${item.name}
-                                            </a>
-                                            <div class="price">
-                                                ₡${precioConDescuento}
-                                                ${item.discount ? `<s class="text-danger">₡${item.price}</s>` : ''}
-                                            </div>
-                                        </div>
-                                        <div class="block2-txt-child2 flex-r p-t-3">
-                                            ${item.is_fav ? 
-                                                `<a href="#" class="dis-block pos-relative add_favorite" data-clothing-id="${item.id}">
-                                                                                                            <i class="fa fa-heart text-danger"></i>
-                                                                                                        </a>` : ''
-                                            }
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>`;
-
-                    });
-
-                    // Actualizar el contenido del contenedor
-                    $('#product-container').empty().append(html);
-                    //$('#circleNumber').text(response.page);
-
-                    // Actualizar paginación
-                    response.next_page_url ? $('#btnNext').data('next', response.next_page_url) : $(
-                        '#btnNext').removeData('next');
-                    response.prev_page_url ? $('#btnPrev').data('prev', response.prev_page_url) : $(
-                        '#btnPrev').removeData('prev');
-                    // Actualizar botones numéricos (resaltar página actual)
-                    $('.page-lex-c-m').removeClass(
-                        'font-weight-bold'); // Quita el bold de todos
-                    $('.page-lex-c-m').addClass(
-                        'text-muted'); // Quita el bold de todos
-                    $(`.page-number-${response.currentPage}`).addClass(
-                        'font-weight-bold'); // Agrega bold al actual
-                    $(`.page-number-${response.currentPage}`).removeClass(
-                        'text-muted');
-
-
-                    // Reinicializar Isotope
-                    var $grid = $('.isotope-grid').data('isotope');
-                    if ($grid) {
-                        $grid.destroy();
-                    }
-
-                    var $newGrid = $('#product-container').isotope({
-                        itemSelector: '.isotope-item',
-                        layoutMode: 'fitRows',
-                        percentPosition: true,
-                        animationEngine: 'best-available',
-                        masonry: {
-                            columnWidth: '.isotope-item'
-                        }
-                    });
-
-                    // Espera a que isotope termine de organizar antes de hacer scroll
-                    $newGrid.on('arrangeComplete', function() {
-                        $('html, body').animate({
-                            scrollTop: 0
-                        }, 600);
-                    });
-
-                    // Trigger layout después de pequeño delay para mayor seguridad
-                    setTimeout(function() {
-                        $newGrid.isotope('layout');
-                    }, 100);
-
-                }
-            });
-
-        });
-        $(document).on('click', '.page-lex-c-m', function() {
-            let page = $(this).data('page');
-            let id = $(this).data('id');
-
-            if (!page || !id) return;
-
-            $.ajax({
-                method: "GET",
-                url: "/paginate/" + Number(page) + "/" + id,
-                success: function(response) {
-                    var items = response.clothings.data;
-                    var category_id = response.category_id;
-                    var html = '';
-                    // Construcción del HTML dinámicamente
-                    items.forEach(function(item) {
-                        let precio = item.price;
-                        if (item.custom_size == 1) {
-                            precio = item.first_price;
-                        }
-                        if (item.mayor_price > 0 && item.is_mayor) {
-                            precio = item.mayor_price;
-                        }
-                        let descuento = (precio * item.discount) / 100;
-                        let precioConDescuento = precio - descuento;
-
-                        html += `
-                            <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item ${item.category.toLowerCase().replace(/\s/g, '')}">
-                                <div class="block2 product_data">
-                                    <input type="hidden" class="code" name="code" value="${item.code}">
-                                    <input type="hidden" class="clothing-name" name="clothing-name" value="${item.name}">
-                                    <div class="block2-pic hov-img0">
-                                        <img src="${item.image ? `/file/${item.image}` : '/images/producto-sin-imagen.PNG'}" 
-                                            alt="IMG-PRODUCT">
-                                        <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1"
-                                            data-id="${item.id}" 
-                                            data-name="${item.name}" 
-                                            data-discount="${item.discount}" 
-                                            data-description="${item.description}"
-                                            data-price="${precioConDescuento}"
-                                            data-original-price="${item.price}"
-                                            data-attributes='${JSON.stringify(item.atributos)}'
-                                            data-category="${item.category}"
-                                            data-images='${JSON.stringify(item.all_images.map(img => `/file/${img}`))}'
-                                            data-image="${item.image ? `/file/${item.image}` : '/images/producto-sin-imagen.PNG'}">
-                                            Detallar
-                                        </a>
-                                    </div>
-                                    <div class="block2-txt flex-w flex-t p-t-14">
-                                        <div class="block2-txt-child1 flex-col-l ">
-                                            <a href="/detail-clothing/${item.id}/${category_id}" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-                                                ${item.name}
-                                            </a>
-                                            <div class="price">
-                                                ₡${precioConDescuento}
-                                                ${item.discount ? `<s class="text-danger">₡${item.price}</s>` : ''}
-                                            </div>
-                                        </div>
-                                        <div class="block2-txt-child2 flex-r p-t-3">
-                                            ${item.is_fav ? 
-                                                `<a href="#" class="dis-block pos-relative add_favorite" data-clothing-id="${item.id}">
-                                                                                                            <i class="fa fa-heart text-danger"></i>
-                                                                                                        </a>` : ''
-                                            }
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>`;
-
-                    });
-
-                    // Actualizar el contenido del contenedor
-                    $('#product-container').empty().append(html);
-                    //$('#circleNumber').text(response.page);
-
-                    // Actualizar paginación
-                    response.next_page_url ? $('#btnNext').data('next', response.next_page_url) : $(
-                        '#btnNext').removeData('next');
-                    response.prev_page_url ? $('#btnPrev').data('prev', response.prev_page_url) : $(
-                        '#btnPrev').removeData('prev');
-                    // Actualizar botones numéricos (resaltar página actual)
-                    $('.page-lex-c-m').removeClass(
-                        'font-weight-bold'); // Quita el bold de todos
-                    $('.page-lex-c-m').addClass(
-                        'text-muted'); // Quita el bold de todos
-                    $(`.page-number-${response.currentPage}`).addClass(
-                        'font-weight-bold'); // Agrega bold al actual
-                    $(`.page-number-${response.currentPage}`).removeClass(
-                        'text-muted');
-
-
-                    // Reinicializar Isotope
-                    var $grid = $('.isotope-grid').data('isotope');
-                    if ($grid) {
-                        $grid.destroy();
-                    }
-
-                    var $newGrid = $('#product-container').isotope({
-                        itemSelector: '.isotope-item',
-                        layoutMode: 'fitRows',
-                        percentPosition: true,
-                        animationEngine: 'best-available',
-                        masonry: {
-                            columnWidth: '.isotope-item'
-                        }
-                    });
-
-                    // Espera a que isotope termine de organizar antes de hacer scroll
-                    $newGrid.on('arrangeComplete', function() {
-                        $('html, body').animate({
-                            scrollTop: 0
-                        }, 600);
-                    });
-
-                    // Trigger layout después de pequeño delay para mayor seguridad
-                    setTimeout(function() {
-                        $newGrid.isotope('layout');
-                    }, 100);
-
-                }
-            });
-
-        });
-        $(document).on('click', '.js-show-modal1', function(e) {
-            e.preventDefault();
-            $('.js-modal1').addClass('show-modal1');
-        });
-    </script>
 @endsection
