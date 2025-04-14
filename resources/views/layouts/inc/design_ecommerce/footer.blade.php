@@ -192,7 +192,7 @@
                     Sobre Nosotros...
                 </h4>
 
-                <p class="stext-107 cl7 size-201">                    
+                <p class="stext-107-footer cl7 size-201">                    
                     {{ isset($tenantinfo->mision) ? $tenantinfo->mision : '' }}
                 </p>
             </div>

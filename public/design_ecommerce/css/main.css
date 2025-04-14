@@ -2233,6 +2233,12 @@ input.num-product::-webkit-inner-spin-button {
     font-size: 13px;
     line-height: 1.923;
 }
+.stext-107-footer {
+    font-family: Poppins-Regular;
+    font-size: 13px;
+    line-height: 1.923;
+    text-align: justify;
+}
 
 .stext-108 {
     font-family: Poppins-Light;
