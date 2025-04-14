@@ -184,6 +184,42 @@
                         Buscar
                     </div>
                 </div>
+                <div class="dis-none panel-filter w-full p-t-10">
+                    <div class="wrap-filter flex-w bg6 w-full p-lr-40 p-t-27 p-lr-15-sm">
+                        @foreach ($attributes as $attribute)
+                            @php
+                                // Dividir los valores en chunks de 5
+                                $chunks = $attribute->values->chunk(5);
+                            @endphp
+
+                            @foreach ($chunks as $chunk)
+                                <div class="filter-col p-l-15 p-b-27">
+                                    @if ($loop->first)
+                                        <div class="mtext-102 cl2 p-b-15">
+                                            {{ $attribute->name }}
+                                        </div>
+                                    @else
+                                        <div class="mtext-102 cl2 p-b-15">
+                                            &nbsp; {{-- espacio para mantener alineación visual --}}
+                                        </div>
+                                    @endif
+
+                                    <ul>
+                                        @foreach ($chunk as $value)
+                                            <li class="p-b-6 p-r-50">
+                                                <a href="#" class="filter-link stext-106 trans-04"
+                                                    data-attr-id="{{ $attribute->id }}"
+                                                    data-value-id="{{ $value->id }}">
+                                                    {{ $value->value }}
+                                                </a>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endforeach
+                        @endforeach
+                    </div>
+                </div>
             </div>
 
             <!-- Paneles de búsqueda y filtro (si los requieres) -->
@@ -194,7 +230,7 @@
                     </button>
                     <input class="mtext-107 cl2 size-114 plh2 p-r-15" type="text" name="searchfor" id="searchfor"
                         placeholder="Buscar">
-                </div>
+                </div>              
             </div>
             <!-- Aquí podrías agregar un panel-filter similar si lo requieres -->
 
@@ -216,7 +252,7 @@
 
                     <div
                         class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item {{ strtolower(str_replace(' ', '', $item->category)) }}">
-                        <div class="block2 product_data">
+                        <div class="block2 product_data" data-attributes-filter='@json(collect($item->atributos)->mapWithKeys(fn($a) => [$a->attr_id => explode('/', $a->ids)]))'>
                             <input type="hidden" class="code" name="code" value="{{ $item->code }}">
                             <input type="hidden" class="clothing-name" name="clothing-name" value="{{ $item->name }}">
                             <div class="block2-pic hov-img0">

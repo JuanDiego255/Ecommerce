@@ -194,7 +194,7 @@
 
                         html += `
                             <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item ${item.category.toLowerCase().replace(/\s/g, '')}">
-                                <div class="block2 product_data data-attributes_filter='${JSON.stringify(Object.fromEntries(item.atributos.map(attr => [attr.attr_id, attr.ids.split("/")])))}'>
+                                <div class="block2 product_data" data-attributes-filter='${JSON.stringify(Object.fromEntries(item.atributos.map(attr => [attr.attr_id, attr.ids.split("/")])))}'>
                                     <input type="hidden" class="code" name="code" value="${item.code}">
                                     <input type="hidden" class="clothing-name" name="clothing-name" value="${item.name}">
                                     <div class="block2-pic hov-img0">
@@ -259,6 +259,7 @@
                         'text-muted');
                     // Reinicializar Isotope      
                     reinitGrid();
+                    filterProducts();
                     window.scrollTo({
                         top: 0,
                         behavior: 'smooth'
@@ -293,7 +294,7 @@
 
                         html += `
                             <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item ${item.category.toLowerCase().replace(/\s/g, '')}">
-                                <div class="block2 product_data data-attributes_filter='${JSON.stringify(Object.fromEntries(item.atributos.map(attr => [attr.attr_id, attr.ids.split("/")])))}'>
+                                <div class="block2 product_data" data-attributes-filter='${JSON.stringify(Object.fromEntries(item.atributos.map(attr => [attr.attr_id, attr.ids.split("/")])))}'>
                                     <input type="hidden" class="code" name="code" value="${item.code}">
                                     <input type="hidden" class="clothing-name" name="clothing-name" value="${item.name}">
                                     <div class="block2-pic hov-img0">
@@ -358,6 +359,7 @@
                         'text-muted');
                     // Reinicializar Isotope
                     reinitGrid();
+                    filterProducts();
                     window.scrollTo({
                         top: 0,
                         behavior: 'smooth'
@@ -370,10 +372,10 @@
         $(document).on('click', '.js-show-modal1', function (e) {
             e.preventDefault();
             $('.js-modal1').addClass('show-modal1');
-        });     
+        });
         const activeFilters = {};
         document.querySelectorAll('.filter-link').forEach(link => {
-            link.addEventListener('click', function(e) {
+            link.addEventListener('click', function (e) {
                 e.preventDefault();
 
                 const attrId = this.dataset.attrId;
@@ -398,12 +400,20 @@
                 }
                 filterProducts();
             });
-        });   
+        });
+
         function filterProducts() {
             const items = document.querySelectorAll('.product_data');
             console.log(items);
             items.forEach(item => {
-                const attributes = JSON.parse(item.dataset.attributes_filter);
+                console.log("Raw dataset value:", item.dataset.attributesFilter);
+
+                if (!item.dataset.attributesFilter) {
+                    console.warn("Elemento sin data-attributes-filter:", item);
+                    return; // saltar este producto para evitar error
+                }
+
+                const attributes = JSON.parse(item.dataset.attributesFilter);
                 console.log(attributes);
 
                 let show = true;
@@ -426,6 +436,7 @@
             });
             reinitGrid();
         }
+
         function reinitGrid() {
             $grid.isotope('layout');
         }

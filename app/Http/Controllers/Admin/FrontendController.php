@@ -293,7 +293,9 @@ class FrontendController extends Controller
                 break;
             default:
                 if ($tenantinfo->kind_of_features == 1) {
-                    return view('frontend.design_ecommerce.index', compact('clothings', 'advert', 'showModal', 'blogs', 'social', 'clothings_offer', 'category', 'comments'));
+                    $attributes = Attribute::with('values')->where('attributes.name', '!=', 'Stock')
+                    ->get();
+                    return view('frontend.design_ecommerce.index', compact('clothings','attributes', 'advert', 'showModal', 'blogs', 'social', 'clothings_offer', 'category', 'comments'));
                 }
                 return view('frontend.index', compact('clothings', 'advert', 'showModal', 'blogs', 'social', 'clothings_offer', 'category', 'comments'));
                 break;

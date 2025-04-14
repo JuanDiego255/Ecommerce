@@ -148,7 +148,7 @@
                         href="{{ isset($item->image) ? route($ruta, $item->image) : url('images/producto-sin-imagen.PNG') }}">
                     <div
                         class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item {{ strtolower(str_replace(' ', '', $item->category)) }}">
-                        <div class="block2 product_data" data-attributes_filter='@json(collect($item->atributos)->mapWithKeys(fn($a) => [$a->attr_id => explode('/', $a->ids)]))'>
+                        <div class="block2 product_data" data-attributes-filter='@json(collect($item->atributos)->mapWithKeys(fn($a) => [$a->attr_id => explode('/', $a->ids)]))'>
                             <input type="hidden" class="code" name="code" value="{{ $item->code }}">
                             <input type="hidden" class="clothing-name" name="clothing-name" value="{{ $item->name }}">
                             <div class="block2-pic hov-img0">
