@@ -38,6 +38,7 @@ class FrontendController extends Controller
     public function index($showModal = null)
     {
         $tenantinfo = TenantInfo::first();
+        $clothing_skincare = null;
 
         $social = Cache::remember('social_networks', $this->expirationTime, function () {
             return SocialNetwork::get();
@@ -89,6 +90,76 @@ class FrontendController extends Controller
             $clothings = $clothings->inRandomOrder()
                 ->take(25)
                 ->get();
+            $clothings_skincare = Cache::remember('clothings_skincare', $this->expirationTime, function () use ($tenantinfo) {
+                return ClothingCategory::where('categories.slug', 'skincare')
+                    ->leftJoin('pivot_clothing_categories', 'clothing.id', '=', 'pivot_clothing_categories.clothing_id')
+                    ->leftJoin('categories', 'pivot_clothing_categories.category_id', '=', 'categories.id')
+                    ->leftJoin('clothing_details', 'clothing.id', 'clothing_details.clothing_id')
+                    ->leftJoin('stocks', 'clothing.id', 'stocks.clothing_id')
+                    ->select(
+                        'categories.name as category',
+                        'categories.id as category_id',
+                        'clothing.id as id',
+                        'clothing.trending as trending',
+                        'clothing.main_image as main_image',
+                        'clothing.created_at as created_at',
+                        'clothing_details.modelo as model',
+                        'clothing.discount as discount',
+                        'clothing.name as name',
+                        'clothing.casa as casa',
+                        'clothing.description as description',
+                        'clothing.price as price',
+                        'clothing.mayor_price as mayor_price',
+                        DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE clothing.stock END) as total_stock'),
+                        DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'),
+                        DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
+                    )
+                    ->groupBy(
+                        'clothing.id',
+                        'categories.name',
+                        'clothing.main_image',
+                        'clothing.created_at',
+                        'clothing_details.modelo',
+                        'clothing.casa',
+                        'categories.id',
+                        'clothing.name',
+                        'clothing.discount',
+                        'clothing.trending',
+                        'clothing.description',
+                        'clothing.price',
+                        'clothing.mayor_price',
+                    )->inRandomOrder()
+                    ->take(25)
+                    ->get();
+            });
+            // Obtener las primeras imágenes de las prendas obtenidas
+        foreach ($clothings_skincare as $clothing) {
+            // Obtener la primera imagen
+            $firstImage = ProductImage::where('clothing_id', $clothing->id)
+                ->orderBy('id')
+                ->first();
+            $clothing->image = $firstImage ? $firstImage->image : null;
+            $clothing->all_images = ProductImage::where('clothing_id', $clothing->id)
+                ->orderBy('id')
+                ->pluck('image')
+                ->toArray();
+
+            // Obtener atributos
+            $result = DB::table('stocks as s')->where('s.clothing_id', $clothing->id)
+                ->join('attributes as a', 's.attr_id', '=', 'a.id')
+                ->join('attribute_values as v', 's.value_attr', '=', 'v.id')
+                ->select(
+                    'a.name as columna_atributo',
+                    'a.id as attr_id',
+                    DB::raw('GROUP_CONCAT(v.value ORDER BY s.order ASC SEPARATOR "/") as valores'),
+                    DB::raw('GROUP_CONCAT(v.id ORDER BY s.order ASC SEPARATOR "/") as ids'),
+                    DB::raw('GROUP_CONCAT(s.stock ORDER BY s.order ASC SEPARATOR "/") as stock'),
+                )
+                ->groupBy('a.name', 'a.id')
+                ->orderBy('a.name', 'asc')
+                ->get();
+            $clothing->atributos = $result->toArray();
+        }
         } else {
             $clothings = $clothings->orderByRaw('CASE WHEN clothing.casa IS NOT NULL AND clothing.casa != "" THEN 0 ELSE 1 END')
                 ->orderBy('clothing.casa', 'asc')
@@ -294,10 +365,10 @@ class FrontendController extends Controller
             default:
                 if ($tenantinfo->kind_of_features == 1) {
                     $attributes = Attribute::with('values')->where('attributes.name', '!=', 'Stock')
-                    ->get();
-                    return view('frontend.design_ecommerce.index', compact('clothings','attributes', 'advert', 'showModal', 'blogs', 'social', 'clothings_offer', 'category', 'comments'));
+                        ->get();
+                    return view('frontend.design_ecommerce.index', compact('clothings', 'attributes', 'advert', 'showModal', 'blogs', 'social', 'clothings_offer', 'category', 'comments'));
                 }
-                return view('frontend.index', compact('clothings', 'advert', 'showModal', 'blogs', 'social', 'clothings_offer', 'category', 'comments'));
+                return view('frontend.index', compact('clothings','clothings_skincare', 'advert', 'showModal', 'blogs', 'social', 'clothings_offer', 'category', 'comments'));
                 break;
         }
     }

@@ -29467,6 +29467,10 @@ select.noStyle {
     width: 100%;
     height: 400px;
 }
+.product-grid .product-image .rounded-circle {
+    width: 100%;
+    height: auto;
+}
 
 .product-grid .product-discount-label {
     color: #fff;
@@ -29547,6 +29551,17 @@ select.noStyle {
     background: transparent;
     padding-top: 15px;
     text-align: left !important;
+}
+.product-grid .product-content-sk-1 {
+    background: var(--navbar);
+    padding-top: 15px;
+    text-align: center !important;
+    padding-bottom: 10px;
+}
+.product-grid .product-content-sk-center {
+    background: transparent;
+    padding-top: 15px;
+    text-align: center !important;
 }
 
 .product-grid .title {
@@ -29916,6 +29931,10 @@ input.card {
     left: 50%;
     opacity: 0;
     transition: all 1s ease 0s;
+}
+.add-to-cart-wh{
+    background: #fff !important;
+    color: #fff !important;
 }
 
 .product-grid-offer:hover .add-to-cart {
@@ -30823,10 +30842,24 @@ a.more-link {
     border-top-left-radius: 50% 200px;
     border-top-right-radius: 50% 200px;
 }
+.border-bottom-sk{
+    border-bottom-left-radius: 50% 200px;
+    border-bottom-right-radius: 50% 200px;
+}
 @media screen and (max-width: 768px) {
     .border-top-sk {
         border-top-left-radius: 50% 100px;
         border-top-right-radius: 50% 100px;
+        height: auto !important;
+    }
+}
+@media screen and (max-width: 768px) {
+    .rounded-circle {       
+        height: auto !important;
+    }
+}
+@media screen and (max-width: 1024px) {
+    .rounded-circle {       
         height: auto !important;
     }
 }
@@ -30835,6 +30868,9 @@ a.more-link {
 }
 .sakura-color{
     color: var(--navbar) !important;
+}
+.sakura-color-wh{
+    color: #fff !important;
 }
 .sakura-h3{
     font-size: 18px;
@@ -31796,7 +31832,13 @@ a.more-link {
     }
 }
 .sakura-title{
-    color: var(--navbar);
+    color: var(--navbar_text);
+    font-weight: 400;
+    text-align: left;
+    font-family: 'Playfair Display', serif !important;
+}
+.sakura-black{
+    color:#000;
     font-weight: 400;
     text-align: left;
     font-family: 'Playfair Display', serif !important;
@@ -32230,7 +32272,6 @@ a.more-link {
 .product-circle::after {
     content: "";
     position: absolute;
-    background-color: rgba(255, 255, 255, 0.3); /* Color de los círculos decorativos */
     border-radius: 50%;
 }
 

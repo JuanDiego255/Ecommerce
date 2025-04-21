@@ -30,10 +30,7 @@
                                     <div class="item">
                                         <div class="product-grid product_data">
                                             <div class="product-circle">
-                                                <p class="category-name-circle">{{ $item->department }}</p>
-                                                <span></span>
-                                                <span></span>
-                                                <span></span>
+                                                <p class="category-name-circle">{{ $item->department }}</p>                                               
                                             </div>
                                         </div>
                                     </div>

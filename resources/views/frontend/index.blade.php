@@ -13,12 +13,12 @@
                         <div class="grid-item {{ $key == 0 ? 'item1' : 'item2' }}"
                             style="background-image: url('{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}');">
                             <a href="{{ url('category/' . $item->id) }}" class="overlay">
-                                <button class="explore-btn">{{$item->department}}</button>
+                                <button class="explore-btn">{{ $item->department }}</button>
                             </a>
                         </div>
                     @endforeach
                 </div>
-                
+
                 {{-- Gift Cards --}}
                 <div class="gift-card mb-5">
                     <h1 class="sakura-font">Disfruta de la flexibilidad de nuestras tarjetas de regalo para canjear en cualquier
@@ -42,7 +42,7 @@
                                                     <a href="{{ $carousel->text1 ?? '#' }}" class="btn btn-outline-primary mt-3">
                                                         Ver producto
                                                     </a>
-                                                </div>                                               
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -95,13 +95,115 @@
                         </a>
                     @endif
                 @endif
+                <div class="mt-3 mb-5">
+
+                    @if (count($clothings_skincare) != 0)
+                        <div>
+                            <h1 class="mt-5 mb-5 sakura-black">
+                                Productos Skin Care Destacados</h1>
+                        </div>
+                    @endif
+                    <div class="row">
+                        <div class="owl-carousel featured-carousel owl-theme">
+                            @foreach ($clothings_skincare as $item)
+                                <div class="item">
+                                    <div class="product-grid product_data">
+                                        <div class="product-image">
+                                            <img class="rounded-circle"
+                                                src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
+                                            @if ($item->discount)
+                                                <span class="product-discount-label">-{{ $item->discount }}%</span>
+                                            @endif
+                                            <ul class="product-links">
+                                                <li><a target="blank"
+                                                        href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}"><i
+                                                            class="fas fa-eye"></i></a></li>
+                                                @if (Auth::check())
+                                                    <li>
+                                                        <a class="add_favorite" data-clothing-id="{{ $item->id }}"
+                                                            href="#">
+                                                            <i
+                                                                class="fas fa-heart {{ $clothing_favs->contains('clothing_id', $item->id) ? 'text-danger' : '' }}"></i>
+                                                        </a>
+                                                    </li>
+                                                @endif
+                                            </ul>
+                                            {{-- <a href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}"
+                                                class="add-to-cart sakura-font">Detallar</a> --}}
+                                        </div>
+                                        <div class="product-content-sk-center">
+                                            <h3
+                                                class="text-muted text-uppercase {{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'd-none' : '' }}">
+                                                {{ $item->casa }}
+                                            </h3>
+                                            {{--  <h3 class="clothing-name sakura-font sakura-h3 sakura-color"><a class="sakura-color" href="#">({{ $item->category }})</a>
+                                            </h3> --}}
+                                            <h3
+                                                class="sakura-font {{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'text-muted' : 'title-frags' }}">
+                                                <a class="sakura-color"
+                                                    href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}">{{ $item->name }}
+                                                    @if ($item->total_stock == 0)
+                                                        <s class="text-danger"> Agotado</s>
+                                                    @endif
+                                                </a>
+                                            </h3>
+
+                                            @if (isset($tenantinfo->show_stock) && $tenantinfo->show_stock != 0)
+                                                <h4 class="title sakura-font sakura-color">
+                                                    Stock:
+                                                    @if ($item->total_stock > 0)
+                                                        {{ $item->total_stock }}
+                                                    @elseif ($item->total_stock == 0)
+                                                        <s class="text-danger">0</s>
+                                                    @else
+                                                        <span class="text-info sakura-font sakura-color">Sin manejo de
+                                                            stock</span>
+                                                    @endif
+                                                </h4>
+                                            @endif
+
+
+                                            @php
+
+                                                $precio = $item->price;
+                                                if (isset($tenantinfo->custom_size) && $tenantinfo->custom_size == 1) {
+                                                    $precio = $item->first_price;
+                                                }
+                                                if (
+                                                    Auth::check() &&
+                                                    Auth::user()->mayor == '1' &&
+                                                    $item->mayor_price > 0
+                                                ) {
+                                                    $precio = $item->mayor_price;
+                                                }
+                                                $descuentoPorcentaje = $item->discount;
+                                                // Calcular el descuento
+                                                $descuento = ($precio * $descuentoPorcentaje) / 100;
+                                                // Calcular el precio con el descuento aplicado
+                                                $precioConDescuento = $precio - $descuento;
+                                            @endphp
+                                            <div class="sakura-font sakura-color">₡{{ number_format($precioConDescuento) }}
+                                                @if ($item->discount)
+                                                    <s class="text-danger"><span
+                                                            class="text-danger">₡{{ number_format(Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0 ? $item->mayor_price : $item->price) }}
+                                                        </span></s>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+
+                </div>
                 {{-- Trending --}}
                 @if (isset($tenantinfo->show_trending) && $tenantinfo->show_trending == 1)
                     <div class="mt-3 mb-5">
 
                         @if (count($clothings) != 0)
                             <div>
-                                <h1 class="mt-5 mb-5 sakura-title">
+                                <h1 class="mt-5 mb-5 sakura-black">
                                     {{ isset($tenantinfo->title_trend) ? $tenantinfo->title_trend : '' }}</h1>
                             </div>
                         @endif
@@ -133,7 +235,7 @@
                                                 <a href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}"
                                                     class="add-to-cart sakura-font">Detallar</a>
                                             </div>
-                                            <div class="product-content">
+                                            <div class="product-content-sk-1">
                                                 <h3
                                                     class="text-muted text-uppercase {{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'd-none' : '' }}">
                                                     {{ $item->casa }}
@@ -142,7 +244,7 @@
                                                 </h3> --}}
                                                 <h3
                                                     class="sakura-font {{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'text-muted' : 'title-frags' }}">
-                                                    <a class="sakura-color"
+                                                    <a class="sakura-color-wh"
                                                         href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}">{{ $item->name }}
                                                         @if ($item->total_stock == 0)
                                                             <s class="text-danger"> Agotado</s>
@@ -151,14 +253,14 @@
                                                 </h3>
 
                                                 @if (isset($tenantinfo->show_stock) && $tenantinfo->show_stock != 0)
-                                                    <h4 class="title sakura-font sakura-color">
+                                                    <h4 class="title sakura-font sakura-color-wh">
                                                         Stock:
                                                         @if ($item->total_stock > 0)
                                                             {{ $item->total_stock }}
                                                         @elseif ($item->total_stock == 0)
                                                             <s class="text-danger">0</s>
                                                         @else
-                                                            <span class="text-info sakura-font sakura-color">Sin manejo de
+                                                            <span class="text-info sakura-font sakura-color-wh">Sin manejo de
                                                                 stock</span>
                                                         @endif
                                                     </h4>
@@ -187,7 +289,7 @@
                                                     // Calcular el precio con el descuento aplicado
                                                     $precioConDescuento = $precio - $descuento;
                                                 @endphp
-                                                <div class="sakura-font sakura-color">₡{{ number_format($precioConDescuento) }}
+                                                <div class="sakura-font sakura-color-wh">₡{{ number_format($precioConDescuento) }}
                                                     @if ($item->discount)
                                                         <s class="text-danger"><span
                                                                 class="text-danger">₡{{ number_format(Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0 ? $item->mayor_price : $item->price) }}
@@ -343,7 +445,7 @@
                     <hr class="dark horizontal text-danger mb-3">
                 @endif
                 {{-- Insta --}}
-             {{--    @if (isset($tenantinfo->show_insta) && $tenantinfo->show_insta == 1)
+                {{--    @if (isset($tenantinfo->show_insta) && $tenantinfo->show_insta == 1)
                     <hr class="text-dark">
                     <div class="text-center animado">
                         <span class="text-muted text-center">
@@ -1047,7 +1149,6 @@
     @endif
 
     <script>
-       
         $('.featured-carousel-comments').owlCarousel({
             loop: true,
             margin: 10,
@@ -1063,7 +1164,7 @@
                     items: 4
                 }
             }
-        })       
+        })
 
         document.addEventListener('DOMContentLoaded', function() {
             var showMoreButtons = document.querySelectorAll('.show-more');

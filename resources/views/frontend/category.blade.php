@@ -55,10 +55,7 @@
                                     <div class="item">
                                         <div class="product-grid product_data">
                                             <div class="product-circle">
-                                                <p class="category-name-circle">{{ $item->name }}</p>
-                                                <span></span>
-                                                <span></span>
-                                                <span></span>
+                                                <p class="category-name-circle">{{ $item->name }}</p>                                               
                                             </div>
                                         </div>
                                     </div>
