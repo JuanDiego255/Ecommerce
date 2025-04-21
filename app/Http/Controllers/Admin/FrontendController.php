@@ -133,33 +133,33 @@ class FrontendController extends Controller
                     ->get();
             });
             // Obtener las primeras imágenes de las prendas obtenidas
-        foreach ($clothings_skincare as $clothing) {
-            // Obtener la primera imagen
-            $firstImage = ProductImage::where('clothing_id', $clothing->id)
-                ->orderBy('id')
-                ->first();
-            $clothing->image = $firstImage ? $firstImage->image : null;
-            $clothing->all_images = ProductImage::where('clothing_id', $clothing->id)
-                ->orderBy('id')
-                ->pluck('image')
-                ->toArray();
+            foreach ($clothings_skincare as $clothing) {
+                // Obtener la primera imagen
+                $firstImage = ProductImage::where('clothing_id', $clothing->id)
+                    ->orderBy('id')
+                    ->first();
+                $clothing->image = $firstImage ? $firstImage->image : null;
+                $clothing->all_images = ProductImage::where('clothing_id', $clothing->id)
+                    ->orderBy('id')
+                    ->pluck('image')
+                    ->toArray();
 
-            // Obtener atributos
-            $result = DB::table('stocks as s')->where('s.clothing_id', $clothing->id)
-                ->join('attributes as a', 's.attr_id', '=', 'a.id')
-                ->join('attribute_values as v', 's.value_attr', '=', 'v.id')
-                ->select(
-                    'a.name as columna_atributo',
-                    'a.id as attr_id',
-                    DB::raw('GROUP_CONCAT(v.value ORDER BY s.order ASC SEPARATOR "/") as valores'),
-                    DB::raw('GROUP_CONCAT(v.id ORDER BY s.order ASC SEPARATOR "/") as ids'),
-                    DB::raw('GROUP_CONCAT(s.stock ORDER BY s.order ASC SEPARATOR "/") as stock'),
-                )
-                ->groupBy('a.name', 'a.id')
-                ->orderBy('a.name', 'asc')
-                ->get();
-            $clothing->atributos = $result->toArray();
-        }
+                // Obtener atributos
+                $result = DB::table('stocks as s')->where('s.clothing_id', $clothing->id)
+                    ->join('attributes as a', 's.attr_id', '=', 'a.id')
+                    ->join('attribute_values as v', 's.value_attr', '=', 'v.id')
+                    ->select(
+                        'a.name as columna_atributo',
+                        'a.id as attr_id',
+                        DB::raw('GROUP_CONCAT(v.value ORDER BY s.order ASC SEPARATOR "/") as valores'),
+                        DB::raw('GROUP_CONCAT(v.id ORDER BY s.order ASC SEPARATOR "/") as ids'),
+                        DB::raw('GROUP_CONCAT(s.stock ORDER BY s.order ASC SEPARATOR "/") as stock'),
+                    )
+                    ->groupBy('a.name', 'a.id')
+                    ->orderBy('a.name', 'asc')
+                    ->get();
+                $clothing->atributos = $result->toArray();
+            }
         } else {
             $clothings = $clothings->orderByRaw('CASE WHEN clothing.casa IS NOT NULL AND clothing.casa != "" THEN 0 ELSE 1 END')
                 ->orderBy('clothing.casa', 'asc')
@@ -182,10 +182,14 @@ class FrontendController extends Controller
             if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1) {
                 $query->where('departments.department', 'Default');
             }
-
-            return $query->orderBy('categories.name', 'asc')
-                ->take(7)
-                ->get();
+            if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== "sakura318") {
+                return $query->orderBy('categories.name', 'asc')
+                    ->take(7)
+                    ->get();
+            } else {
+                return $query->orderByRaw('ISNULL(categories.order_item), categories.order_item ASC')
+                    ->get();
+            }
         });
 
         $sellers = Cache::remember('sellers', $this->expirationTime, function () {
@@ -368,7 +372,7 @@ class FrontendController extends Controller
                         ->get();
                     return view('frontend.design_ecommerce.index', compact('clothings', 'attributes', 'advert', 'showModal', 'blogs', 'social', 'clothings_offer', 'category', 'comments'));
                 }
-                return view('frontend.index', compact('clothings','clothings_skincare', 'advert', 'showModal', 'blogs', 'social', 'clothings_offer', 'category', 'comments'));
+                return view('frontend.index', compact('clothings', 'clothings_skincare', 'advert', 'showModal', 'blogs', 'social', 'clothings_offer', 'category', 'comments'));
                 break;
         }
     }

@@ -9,11 +9,11 @@
         @case('sakura318')
             <div class="container">
                 <div class="d-grid">
-                    @foreach ($departments->take(3) as $key => $item)
+                    @foreach ($category->take(3) as $key => $item)
                         <div class="grid-item {{ $key == 0 ? 'item1' : 'item2' }}"
                             style="background-image: url('{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}');">
-                            <a href="{{ url('category/' . $item->id) }}" class="overlay">
-                                <button class="explore-btn">{{ $item->department }}</button>
+                            <a href="{{ url('clothes-category/' . $item->category_id . '/' . $item->department_id) }}" class="overlay">
+                                <button class="explore-btn">{{ $item->name }}</button>
                             </a>
                         </div>
                     @endforeach
