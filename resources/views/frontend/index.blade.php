@@ -99,7 +99,7 @@
 
                     @if (count($clothings_skincare) != 0)
                         <div>
-                            <h1 class="mt-5 mb-5 sakura-black">
+                            <h1 class="mt-5 mb-5 sakura-coffee">
                                 Productos Skin Care Destacados</h1>
                         </div>
                     @endif
@@ -203,7 +203,7 @@
 
                         @if (count($clothings) != 0)
                             <div>
-                                <h1 class="mt-5 mb-5 sakura-black">
+                                <h1 class="mt-5 mb-5 sakura-coffee">
                                     {{ isset($tenantinfo->title_trend) ? $tenantinfo->title_trend : '' }}</h1>
                             </div>
                         @endif

@@ -31843,6 +31843,18 @@ a.more-link {
     text-align: left;
     font-family: 'Playfair Display', serif !important;
 }
+.sakura-coffee{
+    color:#d0c0a0;
+    font-weight: 400;
+    text-align: left;
+    font-family: 'Playfair Display', serif !important;
+}
+.sakura-gray{
+    color:#c2c1bf;
+    font-weight: 400;
+    text-align: left;
+    font-family: 'Playfair Display', serif !important;
+}
 @media (max-width: 575px) {
     .header-right1 .header-social a {
         color: #fff;
