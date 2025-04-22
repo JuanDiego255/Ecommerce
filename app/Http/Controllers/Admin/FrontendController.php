@@ -158,7 +158,39 @@ class FrontendController extends Controller
                     ->groupBy('a.name', 'a.id')
                     ->orderBy('a.name', 'asc')
                     ->get();
-                $clothing->atributos = $result->toArray();
+                // Limpiar atributos con stock 0
+                $cleaned = $result->map(function ($item) {
+                    $valores = explode('/', $item->valores);
+                    $ids = explode('/', $item->ids);
+                    $stock = explode('/', $item->stock);
+
+                    // Filtrar solo los que tienen stock > 0
+                    $filtered = collect($stock)
+                        ->map(function ($s, $i) use ($valores, $ids) {
+                            return [
+                                'value' => $valores[$i],
+                                'id' => $ids[$i],
+                                'stock' => $s,
+                            ];
+                        })
+                        ->filter(fn($x) => (int)$x['stock'] > 0)
+                        ->values();
+
+                    // Si después de filtrar no queda nada, lo descartamos
+                    if ($filtered->isEmpty()) {
+                        return null;
+                    }
+
+                    return (object)[
+                        'columna_atributo' => $item->columna_atributo,
+                        'attr_id' => $item->attr_id,
+                        'valores' => $filtered->pluck('value')->implode('/'),
+                        'ids' => $filtered->pluck('id')->implode('/'),
+                        'stock' => $filtered->pluck('stock')->implode('/'),
+                    ];
+                })->filter()->values();
+
+                $clothing->atributos = $cleaned->toArray();
             }
         } else {
             $clothings = $clothings->orderByRaw('CASE WHEN clothing.casa IS NOT NULL AND clothing.casa != "" THEN 0 ELSE 1 END')
@@ -222,7 +254,39 @@ class FrontendController extends Controller
                 ->groupBy('a.name', 'a.id')
                 ->orderBy('a.name', 'asc')
                 ->get();
-            $clothing->atributos = $result->toArray();
+            // Limpiar atributos con stock 0
+            $cleaned = $result->map(function ($item) {
+                $valores = explode('/', $item->valores);
+                $ids = explode('/', $item->ids);
+                $stock = explode('/', $item->stock);
+
+                // Filtrar solo los que tienen stock > 0
+                $filtered = collect($stock)
+                    ->map(function ($s, $i) use ($valores, $ids) {
+                        return [
+                            'value' => $valores[$i],
+                            'id' => $ids[$i],
+                            'stock' => $s,
+                        ];
+                    })
+                    ->filter(fn($x) => (int)$x['stock'] > 0)
+                    ->values();
+
+                // Si después de filtrar no queda nada, lo descartamos
+                if ($filtered->isEmpty()) {
+                    return null;
+                }
+
+                return (object)[
+                    'columna_atributo' => $item->columna_atributo,
+                    'attr_id' => $item->attr_id,
+                    'valores' => $filtered->pluck('value')->implode('/'),
+                    'ids' => $filtered->pluck('id')->implode('/'),
+                    'stock' => $filtered->pluck('stock')->implode('/'),
+                ];
+            })->filter()->values();
+
+            $clothing->atributos = $cleaned->toArray();
         }
 
         foreach ($tags as $tag) {
@@ -580,7 +644,39 @@ class FrontendController extends Controller
                 ->groupBy('a.name', 'a.id')
                 ->orderBy('a.name', 'asc')
                 ->get();
-            $clothing->atributos = $result->toArray();
+            // Limpiar atributos con stock 0
+            $cleaned = $result->map(function ($item) {
+                $valores = explode('/', $item->valores);
+                $ids = explode('/', $item->ids);
+                $stock = explode('/', $item->stock);
+
+                // Filtrar solo los que tienen stock > 0
+                $filtered = collect($stock)
+                    ->map(function ($s, $i) use ($valores, $ids) {
+                        return [
+                            'value' => $valores[$i],
+                            'id' => $ids[$i],
+                            'stock' => $s,
+                        ];
+                    })
+                    ->filter(fn($x) => (int)$x['stock'] > 0)
+                    ->values();
+
+                // Si después de filtrar no queda nada, lo descartamos
+                if ($filtered->isEmpty()) {
+                    return null;
+                }
+
+                return (object)[
+                    'columna_atributo' => $item->columna_atributo,
+                    'attr_id' => $item->attr_id,
+                    'valores' => $filtered->pluck('value')->implode('/'),
+                    'ids' => $filtered->pluck('id')->implode('/'),
+                    'stock' => $filtered->pluck('stock')->implode('/'),
+                ];
+            })->filter()->values();
+
+            $clothing->atributos = $cleaned->toArray();
         }
 
         foreach ($tags as $tag) {
@@ -732,6 +828,39 @@ class FrontendController extends Controller
             ->groupBy('a.name', 'a.id')
             ->orderBy('a.name', 'asc')
             ->get();
+        // Limpiar atributos con stock 0
+        $cleaned = $result->map(function ($item) {
+            $valores = explode('/', $item->valores);
+            $ids = explode('/', $item->ids);
+            $stock = explode('/', $item->stock);
+
+            // Filtrar solo los que tienen stock > 0
+            $filtered = collect($stock)
+                ->map(function ($s, $i) use ($valores, $ids) {
+                    return [
+                        'value' => $valores[$i],
+                        'id' => $ids[$i],
+                        'stock' => $s,
+                    ];
+                })
+                ->filter(fn($x) => (int)$x['stock'] > 0)
+                ->values();
+
+            // Si después de filtrar no queda nada, lo descartamos
+            if ($filtered->isEmpty()) {
+                return null;
+            }
+
+            return (object)[
+                'columna_atributo' => $item->columna_atributo,
+                'attr_id' => $item->attr_id,
+                'valores' => $filtered->pluck('value')->implode('/'),
+                'ids' => $filtered->pluck('id')->implode('/'),
+                'stock' => $filtered->pluck('stock')->implode('/'),
+            ];
+        })->filter()->values();
+
+        $result = $cleaned->toArray();
         $tags = MetaTags::where('section', 'Categoría Específica')->get();
         $tenantinfo = TenantInfo::first();
 
@@ -815,7 +944,39 @@ class FrontendController extends Controller
                 ->groupBy('a.name', 'a.id')
                 ->orderBy('a.name', 'asc')
                 ->get();
-            $cloth->atributos = $result_trend->toArray();
+            // Limpiar atributos con stock 0
+            $cleaned = $result_trend->map(function ($item) {
+                $valores = explode('/', $item->valores);
+                $ids = explode('/', $item->ids);
+                $stock = explode('/', $item->stock);
+
+                // Filtrar solo los que tienen stock > 0
+                $filtered = collect($stock)
+                    ->map(function ($s, $i) use ($valores, $ids) {
+                        return [
+                            'value' => $valores[$i],
+                            'id' => $ids[$i],
+                            'stock' => $s,
+                        ];
+                    })
+                    ->filter(fn($x) => (int)$x['stock'] > 0)
+                    ->values();
+
+                // Si después de filtrar no queda nada, lo descartamos
+                if ($filtered->isEmpty()) {
+                    return null;
+                }
+
+                return (object)[
+                    'columna_atributo' => $item->columna_atributo,
+                    'attr_id' => $item->attr_id,
+                    'valores' => $filtered->pluck('value')->implode('/'),
+                    'ids' => $filtered->pluck('id')->implode('/'),
+                    'stock' => $filtered->pluck('stock')->implode('/'),
+                ];
+            })->filter()->values();
+
+            $cloth->atributos = $cleaned->toArray();
         }
 
         switch ($tenantinfo->kind_business) {
@@ -992,7 +1153,39 @@ class FrontendController extends Controller
                         ->groupBy('a.name', 'a.id')
                         ->orderBy('a.name', 'asc')
                         ->get();
-                    $clothing->atributos = $result->toArray();
+                    // Limpiar atributos con stock 0
+                    $cleaned = $result->map(function ($item) {
+                        $valores = explode('/', $item->valores);
+                        $ids = explode('/', $item->ids);
+                        $stock = explode('/', $item->stock);
+
+                        // Filtrar solo los que tienen stock > 0
+                        $filtered = collect($stock)
+                            ->map(function ($s, $i) use ($valores, $ids) {
+                                return [
+                                    'value' => $valores[$i],
+                                    'id' => $ids[$i],
+                                    'stock' => $s,
+                                ];
+                            })
+                            ->filter(fn($x) => (int)$x['stock'] > 0)
+                            ->values();
+
+                        // Si después de filtrar no queda nada, lo descartamos
+                        if ($filtered->isEmpty()) {
+                            return null;
+                        }
+
+                        return (object)[
+                            'columna_atributo' => $item->columna_atributo,
+                            'attr_id' => $item->attr_id,
+                            'valores' => $filtered->pluck('value')->implode('/'),
+                            'ids' => $filtered->pluck('id')->implode('/'),
+                            'stock' => $filtered->pluck('stock')->implode('/'),
+                        ];
+                    })->filter()->values();
+
+                    $clothing->atributos = $cleaned->toArray();
                 }
                 $items = count($clothings);
 
