@@ -55,6 +55,10 @@
                                 {{ __('Acciones') }}</th>
                             <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                 {{ __('Origen') }}</th>
+                            @if ($tenantinfo->tenant == 'sakura318')
+                                <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
+                                    {{ __('Recolección') }}</th>
+                            @endif
                             <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                 {{ __('Comprobante') }}</th>
                             <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
@@ -228,7 +232,7 @@
                                             @case('F')
                                                 @if ($buy->apartado == 1)
                                                     Venta Interna <span
-                                                        class="badge badge-pill text-xxs ml-2 {{ $isOlderThanMonth ?  'badge-date animacion' : 'badge-date-cool' }} badge-date text-white"
+                                                        class="badge badge-pill text-xxs ml-2 {{ $isOlderThanMonth ? 'badge-date animacion' : 'badge-date-cool' }} badge-date text-white"
                                                         id="comparison-count">Apartado</span>
                                                 @else
                                                     Venta Interna
@@ -237,6 +241,11 @@
 
                                             @default
                                         @endswitch
+                                    </p>
+                                </td>
+                                <td class="align-middle text-xxs text-center">
+                                    <p class="font-weight-bold mb-0">
+                                        {{ $buy->sucursal == 'T' ? 'Tibás' : 'Guadalupe' }}
                                     </p>
                                 </td>
                                 <td>
@@ -255,7 +264,7 @@
                                 <td class="align-middle text-xxs text-center">
                                     <p class="font-weight-bold mb-0">
                                         {{ isset($buy->name) ? $buy->name : (isset($buy->name_b) ? $buy->name_b : (isset($buy->last_name) ? $buy->last_name : (isset($buy->last_name_b) ? $buy->last_name_b : $buy->detail))) }}
-                                    </p>                                    
+                                    </p>
                                 </td>
                                 <td class="align-middle text-xxs text-center">
                                     <p class=" font-weight-bold mb-0">

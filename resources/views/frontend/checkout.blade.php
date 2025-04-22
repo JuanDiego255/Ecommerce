@@ -54,6 +54,7 @@
                                     <form action="{{ url('payment') }}" method="POST" enctype="multipart/form-data">
                                         @csrf
                                         <input type="hidden" value="0" name="delivery" id="delivery">
+                                        <input type="hidden" value="" name="sucursal_rec" id="sucursal_rec">
                                         <input type="hidden" value="{{ $delivery }}" name="total_delivery"
                                             id="total_delivery">
                                         <input type="hidden" value="V" name="kind_of" id="kind_of">
@@ -269,9 +270,27 @@
                                             <label for="checkboxSubmit">
                                                 <div class="form-check">
                                                     <input id="envio" class="form-check-input envio" type="checkbox"
-                                                        value="" name="envio" onchange="checkEnvio();">
+                                                        value="" name="envio" onchange="checkEnvio(this);">
                                                     <label class="form-check-label mb-2" for="envio">
                                                         Realizar Envío
+                                                    </label>
+                                                </div>
+                                            </label><br>
+                                            <label for="checkboxSubmit">
+                                                <div class="form-check">
+                                                    <input id="envio2" class="form-check-input envio" type="checkbox"
+                                                        value="" name="envio2" onchange="checkEnvio(this);">
+                                                    <label class="form-check-label mb-2" for="envio2">
+                                                        Recolección (Sucursal Guadalupe)
+                                                    </label>
+                                                </div>
+                                            </label><br>
+                                            <label for="checkboxSubmit">
+                                                <div class="form-check">
+                                                    <input id="envio3" class="form-check-input envio" type="checkbox"
+                                                        value="" name="envio3" onchange="checkEnvio(this);">
+                                                    <label class="form-check-label mb-2" for="envio3">
+                                                        Recolección (Sucursal Tibás)
                                                     </label>
                                                 </div>
                                             </label>
@@ -681,61 +700,61 @@
     </script>
     <script>
         /*  paypal.Buttons({
-                                                                                                                                                                                                    locale: 'es',
-                                                                                                                                                                                                    fundingSource: paypal.FUNDING.CARD,
-                                                                                                                                                                                                    createOrder: function(data, actions) {
-                                                                                                                                                                                                        return actions.order.create({
+                                                                                                                                                                                                                                                    locale: 'es',
+                                                                                                                                                                                                                                                    fundingSource: paypal.FUNDING.CARD,
+                                                                                                                                                                                                                                                    createOrder: function(data, actions) {
+                                                                                                                                                                                                                                                        return actions.order.create({
 
-                                                                                                                                                                                                            payer: {
-                                                                                                                                                                                                                email_address: '{{ isset(Auth::user()->email) ? Auth::user()->email : '' }}',
-                                                                                                                                                                                                                name: {
-                                                                                                                                                                                                                    given_name: '{{ isset(Auth::user()->name) ? Auth::user()->name : '' }}',
-                                                                                                                                                                                                                    surname: ''
-                                                                                                                                                                                                                },
-                                                                                                                                                                                                                address: {
-                                                                                                                                                                                                                    country_code: "CR",
-                                                                                                                                                                                                                }
-                                                                                                                                                                                                            },
-                                                                                                                                                                                                            purchase_units: [{
-                                                                                                                                                                                                                amount: {
-                                                                                                                                                                                                                    value: {{ $paypal_amount }}
-                                                                                                                                                                                                                }
-                                                                                                                                                                                                            }]
-                                                                                                                                                                                                        });
-                                                                                                                                                                                                    },
+                                                                                                                                                                                                                                                            payer: {
+                                                                                                                                                                                                                                                                email_address: '{{ isset(Auth::user()->email) ? Auth::user()->email : '' }}',
+                                                                                                                                                                                                                                                                name: {
+                                                                                                                                                                                                                                                                    given_name: '{{ isset(Auth::user()->name) ? Auth::user()->name : '' }}',
+                                                                                                                                                                                                                                                                    surname: ''
+                                                                                                                                                                                                                                                                },
+                                                                                                                                                                                                                                                                address: {
+                                                                                                                                                                                                                                                                    country_code: "CR",
+                                                                                                                                                                                                                                                                }
+                                                                                                                                                                                                                                                            },
+                                                                                                                                                                                                                                                            purchase_units: [{
+                                                                                                                                                                                                                                                                amount: {
+                                                                                                                                                                                                                                                                    value: {{ $paypal_amount }}
+                                                                                                                                                                                                                                                                }
+                                                                                                                                                                                                                                                            }]
+                                                                                                                                                                                                                                                        });
+                                                                                                                                                                                                                                                    },
 
-                                                                                                                                                                                                    onApprove(data) {
-                                                                                                                                                                                                        return fetch("/paypal/process/" + data.orderID)
-                                                                                                                                                                                                            .then((response) => response.json())
-                                                                                                                                                                                                            .then((orderData) => {
-                                                                                                                                                                                                                if (!orderData.success) {
-                                                                                                                                                                                                                    swal({
-                                                                                                                                                                                                                        title: orderData.status,
-                                                                                                                                                                                                                        icon: orderData.icon,
-                                                                                                                                                                                                                    }).then((value) => {
-                                                                                                                                                                                                                        // Esta función se ejecuta cuando el usuario hace clic en el botón "Ok"
-                                                                                                                                                                                                                        if (value) {
-                                                                                                                                                                                                                            // Recargar la página
-                                                                                                                                                                                                                            window.location.href = '{{ url('/') }}';
-                                                                                                                                                                                                                        }
-                                                                                                                                                                                                                    });
-                                                                                                                                                                                                                }
-                                                                                                                                                                                                                swal({
-                                                                                                                                                                                                                    title: orderData.status,
-                                                                                                                                                                                                                    icon: orderData.icon,
-                                                                                                                                                                                                                }).then((value) => {
-                                                                                                                                                                                                                    // Esta función se ejecuta cuando el usuario hace clic en el botón "Ok"
-                                                                                                                                                                                                                    if (value) {
-                                                                                                                                                                                                                        // Recargar la página
-                                                                                                                                                                                                                        window.location.href = '{{ url('/') }}';
-                                                                                                                                                                                                                    }
-                                                                                                                                                                                                                });
-                                                                                                                                                                                                            });
-                                                                                                                                                                                                    },
-                                                                                                                                                                                                    onError: function(err) {
-                                                                                                                                                                                                        alert(err);
-                                                                                                                                                                                                    }
-                                                                                                                                                                                                }).render('#paypal-button-container'); */
+                                                                                                                                                                                                                                                    onApprove(data) {
+                                                                                                                                                                                                                                                        return fetch("/paypal/process/" + data.orderID)
+                                                                                                                                                                                                                                                            .then((response) => response.json())
+                                                                                                                                                                                                                                                            .then((orderData) => {
+                                                                                                                                                                                                                                                                if (!orderData.success) {
+                                                                                                                                                                                                                                                                    swal({
+                                                                                                                                                                                                                                                                        title: orderData.status,
+                                                                                                                                                                                                                                                                        icon: orderData.icon,
+                                                                                                                                                                                                                                                                    }).then((value) => {
+                                                                                                                                                                                                                                                                        // Esta función se ejecuta cuando el usuario hace clic en el botón "Ok"
+                                                                                                                                                                                                                                                                        if (value) {
+                                                                                                                                                                                                                                                                            // Recargar la página
+                                                                                                                                                                                                                                                                            window.location.href = '{{ url('/') }}';
+                                                                                                                                                                                                                                                                        }
+                                                                                                                                                                                                                                                                    });
+                                                                                                                                                                                                                                                                }
+                                                                                                                                                                                                                                                                swal({
+                                                                                                                                                                                                                                                                    title: orderData.status,
+                                                                                                                                                                                                                                                                    icon: orderData.icon,
+                                                                                                                                                                                                                                                                }).then((value) => {
+                                                                                                                                                                                                                                                                    // Esta función se ejecuta cuando el usuario hace clic en el botón "Ok"
+                                                                                                                                                                                                                                                                    if (value) {
+                                                                                                                                                                                                                                                                        // Recargar la página
+                                                                                                                                                                                                                                                                        window.location.href = '{{ url('/') }}';
+                                                                                                                                                                                                                                                                    }
+                                                                                                                                                                                                                                                                });
+                                                                                                                                                                                                                                                            });
+                                                                                                                                                                                                                                                    },
+                                                                                                                                                                                                                                                    onError: function(err) {
+                                                                                                                                                                                                                                                        alert(err);
+                                                                                                                                                                                                                                                    }
+                                                                                                                                                                                                                                                }).render('#paypal-button-container'); */
 
         function togglePaypalButton() {
             var checkBox = document.getElementById("sinpe");
@@ -759,6 +778,7 @@
         var labelTotal = document.getElementById("totalIva");
         var labelBtnPay = document.getElementById("btnPay");
         var inputTotal = document.getElementById("delivery");
+        var inputSucursalRec = document.getElementById("sucursal_rec");
         var cardContent = document.getElementById("cardContent");
 
         $('.btnCode').click(function(e) {
@@ -836,7 +856,28 @@
             location.reload();
         });
 
-        function checkEnvio() {
+        function checkEnvio(checkPressed) {
+            const checkboxes = document.querySelectorAll('.envio');
+            var check_id = checkPressed.id;
+            var checkEnvioPressed = checkBox.checked;
+            switch (check_id) {
+                case "envio2":
+                    inputSucursalRec.value = checkPressed.checked ? "G" : null;
+                    break;
+                case "envio3":
+                    inputSucursalRec.value = checkPressed.checked ? "T" : null;
+                    break;
+                default:
+                    break;
+            }
+
+            // Recorrer todos los checkboxes
+            checkboxes.forEach((checkboxOpc) => {
+                // Si no es el checkbox que se acaba de cambiar, lo desmarcamos
+                if (checkboxOpc !== event.target) {
+                    checkboxOpc.checked = false;
+                }
+            });
             var code = document.getElementById("code").value;
             if (code != "") {
                 Swal.fire({
@@ -851,14 +892,16 @@
             } else {
                 if (checkBox.checked) {
                     var numericTotalIva = convertToNumber(labelTotal.textContent);
-                    labelTotal.textContent = `${(numericTotalIva + envio).toLocaleString()}`;
-                    labelBtnPay.textContent = `${(numericTotalIva + envio).toLocaleString()}`;
+                    labelTotal.textContent = `${(numericTotalIva + envio).toLocaleString('en-US')}`;
+                    labelBtnPay.textContent = `${(numericTotalIva + envio).toLocaleString('en-US')}`;
                     inputTotal.value = envio;
                 } else {
-                    var numericTotalIva = convertToNumber(labelTotal.textContent);
-                    labelTotal.textContent = `${(numericTotalIva - envio).toLocaleString()}`;
-                    labelBtnPay.textContent = `${(numericTotalIva - envio).toLocaleString()}`;
-                    inputTotal.value = 0;
+                    if (check_id == "envio" || (check_id !== "envio" && checkEnvioPressed)) {
+                        var numericTotalIva = convertToNumber(labelTotal.textContent);
+                        labelTotal.textContent = `${(numericTotalIva - envio).toLocaleString('en-US')}`;
+                        labelBtnPay.textContent = `${(numericTotalIva - envio).toLocaleString('en-US')}`;
+                        inputTotal.value = 0;
+                    }
                 }
             }
         }

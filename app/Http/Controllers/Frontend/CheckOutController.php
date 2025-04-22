@@ -271,12 +271,11 @@ class CheckOutController extends Controller
         $province = null,
         $postal_code = null
     ) {
-        try {
+        try {            
             // Obtener la IP del usuario
             $userIp = request()->ip();
             $request = request();
             $prefix = $request->prefix;
-
             // Utilizar una API de geolocalización para obtener la ubicación basada en la IP
             /* $details = GeoLocation::lookup($userIp);
             $countryCode = $details->getCountryCode();
@@ -422,6 +421,9 @@ class CheckOutController extends Controller
                     $buy->postal_code =  $postal_code;
                     $buy->total_iva =  $iva;
                     $buy->total_delivery =  $request->delivery;
+                    if ($tenantinfo->tenant === "sakura318") {
+                        $buy->sucursal_recoleccion =  $request->sucursal_rec;
+                    }
                     $buy->delivered = 0;
                     $buy->ready_to_give = 0;
                     $buy->approved = 0;

@@ -63,6 +63,7 @@ class BuyController extends Controller
                 'buys.total_buy as total_buy',
                 'buys.credit_used',
                 'buys.kind_of_buy',
+                'buys.sucursal_recoleccion as sucursal',
                 'buys.total_delivery as total_delivery',
                 'buys.delivered as delivered',
                 'buys.ready_to_give as ready_to_give',
