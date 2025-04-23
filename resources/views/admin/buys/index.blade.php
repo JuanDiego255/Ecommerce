@@ -243,11 +243,13 @@
                                         @endswitch
                                     </p>
                                 </td>
-                                <td class="align-middle text-xxs text-center">
-                                    <p class="font-weight-bold mb-0">
-                                        {{ $buy->sucursal == 'T' ? 'Tibás' : 'Guadalupe' }}
-                                    </p>
-                                </td>
+                                @if ($tenantinfo->tenant == 'sakura318')
+                                    <td class="align-middle text-xxs text-center">
+                                        <p class="font-weight-bold mb-0">
+                                            {{ $buy->sucursal == 'T' ? 'Tibás' : 'Guadalupe' }}
+                                        </p>
+                                    </td>
+                                @endif
                                 <td>
                                     <div class="d-flex px-2 py-1">
                                         <div>
