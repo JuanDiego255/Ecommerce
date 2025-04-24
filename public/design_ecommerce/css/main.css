@@ -2013,6 +2013,9 @@ input.num-product::-webkit-inner-spin-button {
 .block1-name {
     color: #333;
 }
+.block1-name-ac {
+    color: transparent;
+}
 .block1-info {
     color: #555;
 }
@@ -2059,6 +2062,10 @@ input.num-product::-webkit-inner-spin-button {
 }
 
 .block1-txt:hover .block1-name,
+.block1-txt:hover .block1-info {
+    color: #fff;
+}
+.block1-txt:hover .block1-name-ac,
 .block1-txt:hover .block1-info {
     color: #fff;
 }
