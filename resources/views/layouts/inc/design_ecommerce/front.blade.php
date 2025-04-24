@@ -20,7 +20,7 @@
         case 'frontend_design_ecommerce_blog_show-articles':
             if ($tenantinfo->tenant == 'aclimate') {
                 $logo_principal = asset('avstyles/img/logos/logo-acli.svg');
-            }else{
+            } else {
                 $logo_principal = route($ruta, $tenantinfo->logo);
             }
             break;
@@ -126,9 +126,12 @@
                         </li> --}}
                         <li>
                             <a href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/blog/index') }}">Blog</a>
-                        </li>
+                        </li>{{-- 
                         <li>
-                            <a href="about.html">Favoritos</a>
+                            <a href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/about_us') }}">ACERCA DE</a>
+                        </li> --}}
+                        <li>
+                            <a href="#">Favoritos</a>
                         </li>
                     </ul>
                 </div>
@@ -223,11 +226,11 @@
 
         <ul class="main-menu-m">
             <li>
-                <a href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/') }}">Inicio</a>
+                <a href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/') }}">INICIO</a>
             </li>
 
             <li>
-                <a href="javascript:void(0);" id="toggleMenuMobile">Explorar</a>
+                <a href="javascript:void(0);" id="toggleMenuMobile">EXPLORAR</a>
             </li>
 
             <div id="fullScreenMenuMobile" class="fullscreen-menu-mobile">
@@ -270,22 +273,12 @@
                     </div>
                 </div>
             </div>
-
-
             <li>
-                <a href="shoping-cart.html" class="label1 rs1" data-label1="hot">Features</a>
+                <a href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/blog/index') }}">BLOG</a>
             </li>
 
             <li>
-                <a href="blog.html">Blog</a>
-            </li>
-
-            <li>
-                <a href="about.html">About</a>
-            </li>
-
-            <li>
-                <a href="contact.html">Contact</a>
+                <a href="#">FAVORITOS</a>
             </li>
         </ul>
     </div>
