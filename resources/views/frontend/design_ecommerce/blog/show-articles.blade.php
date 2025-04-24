@@ -29,7 +29,7 @@
                         <!--  -->
 
                         <div class="wrap-pic-w how-pos5-parent">
-                            <img src="{{ route('file', $blog->image) }}" alt="IMG-BLOG">
+                            <img src="{{ route($ruta, $blog->image) }}" alt="IMG-BLOG">
 
                             @php
                                 $fecha = \Carbon\Carbon::parse($blog->fecha_post);
@@ -192,7 +192,7 @@
                                         <a href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}"
                                             class="wrao-pic-w size-214 hov-ovelay1 m-r-20">
                                             <img class="img-min"
-                                                src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"
+                                                src="{{ isset($item->image) ? route($ruta, $item->image) : url('images/producto-sin-imagen.PNG') }}"
                                                 alt="PRODUCT">
                                         </a>
 

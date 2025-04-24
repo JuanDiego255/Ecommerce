@@ -4,60 +4,12 @@
     {!! OpenGraph::generate() !!}
 @endsection
 @section('content')
-    {{-- <div class="container mt-4">
-        <div class="breadcrumb-nav bc3x">
-            <li class="home"><a href="{{ url('/') }}"><i class="fas fa-{{ $icon->home }} me-1"></i></a></li>
-            <li class="bread-standard"><a href="#"><i class="fas fa-book me-1"></i>Blog</a></li>
-        </div>
-        <div class="row row-cols-1 row-cols-md-3 g-4 align-content-center card-group mt-5 mb-5">
-            @foreach ($blogs as $item)
-                <div class="col-md-3 col-sm-6 mb-2">
-                    <div class="product-grid product_data">
-                        <div class="product-image">
-                            <img
-                                src="{{ isset($item->image) ? route($ruta, $item->image) : url('/design_ecommerce/images/producto-sin-imagen.PNG') }}">
-                            <ul class="product-links">
-                                <li><a target="blank" href="{{ tenant_asset('/') . '/' . $item->image }}"><i
-                                            class="fas fa-eye"></i></a></li>
-                            </ul>
-                            <a href="{{ url('/blog/' . $item->id . '/' . $item->name_url) }}"
-                                class="add-to-cart">{{ __('Ver Información') }}</a>
-                        </div>
-                        <div class="product-content">
-                            <h3 class="title"><a
-                                    href="{{ url('/blog/' . $item->id . '/' . $item->name_url) }}">{{ $item->title }}</a>
-                            </h3>
-                        </div>
-                    </div>
-                </div>
-            @endforeach
-
-        </div>
-        <center>
-            <div class="container mb-3">
-                {{ $blogs ?? ('')->links('pagination::simple-bootstrap-4') }}
-            </div>
-        </center>
-    </div> --}}
-    {{-- <div class="container m-t-70">
-        <div class="bread-crumb flex-w p-r-15 p-t-30 p-lr-0-lg mt-5">
-            <a href="{{ url('/') }}" class="stext-109 cl8 hov-cl1 trans-04">
-                Inicio
-                <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
-            </a>
-
-            <span class="stext-109 cl4">
-                Blog
-            </span>
-        </div>
-    </div> --}}
-    <section class="bg-img1 txt-center p-lr-15 p-tb-92" style="background-image: {{$tenantinfo->tenant !== "aclimate" ? "url('/design_ecommerce/images/bg-02.jpg');" : "url('/design_ecommerce/images/blog-ac.png');"}}">
+    <section class="bg-img1 txt-center p-lr-15 p-tb-92"
+        style="background-image: {{ $tenantinfo->tenant !== 'aclimate' ? "url('/design_ecommerce/images/bg-02.jpg');" : "url('/design_ecommerce/images/blog-ac.png');" }}">
         <h2 class="ltext-105 cl0 txt-center">
             Blog
         </h2>
     </section>
-
-
     <!-- Content page -->
     <section class="bg0 p-t-62 p-b-60">
         <div class="container">
@@ -88,7 +40,7 @@
 
                                 <div class="p-t-32">
                                     <h4 class="p-b-15">
-                                        <a href="{{ url('/blog/' . $item->id . '/' . $item->name_url) }}"
+                                        <a href="{{ url(($prefix == 'aclimate' ? $prefix . '' : '') . '/blog/' . $item->id . '/' . $item->name_url) }}"
                                             class="ltext-108 cl2 hov-cl1 trans-04">
                                             {{ $item->title }}
                                         </a>
@@ -111,7 +63,8 @@
                                             </span>
                                         </span>
 
-                                        <a href="{{ url('/blog/' . $item->id . '/' . $item->name_url) }}" class="stext-101 cl2 hov-cl1 trans-04 m-tb-10">
+                                        <a href="{{ url(($prefix == 'aclimate' ? $prefix . '' : '') . '/blog/' . $item->id . '/' . $item->name_url) }}"
+                                            class="stext-101 cl2 hov-cl1 trans-04 m-tb-10">
                                             Leer más
 
                                             <i class="fa fa-long-arrow-right m-l-9"></i>
@@ -121,7 +74,7 @@
                             </div>
                         @endforeach
                         <!-- Pagination -->
-                     {{--    <div class="flex-l-m flex-w w-full p-t-10 m-lr--7">
+                        {{--    <div class="flex-l-m flex-w w-full p-t-10 m-lr--7">
                             <a href="#" class="flex-c-m how-pagination1 trans-04 m-all-7 active-pagination1">
                                 1
                             </a>
@@ -203,13 +156,16 @@
                                     @endphp
 
                                     <li class="flex-w flex-t p-b-30">
-                                        <a href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}" class="wrao-pic-w size-214 hov-ovelay1 m-r-20">
-                                            <img class="img-min" src="{{ isset($item->image) ? route($ruta, $item->image) : url('images/producto-sin-imagen.PNG') }}"
+                                        <a href="{{ url(($prefix == 'aclimate' ? $prefix . '/' : '') .'detail-clothing/' . $item->id . '/' . $item->category_id) }}"
+                                            class="wrao-pic-w size-214 hov-ovelay1 m-r-20">
+                                            <img class="img-min"
+                                                src="{{ isset($item->image) ? route($ruta, $item->image) : url('images/producto-sin-imagen.PNG') }}"
                                                 alt="PRODUCT">
                                         </a>
 
                                         <div class="size-215 flex-col-t p-t-8">
-                                            <a href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}" class="stext-116 cl8 hov-cl1 trans-04">
+                                            <a href="{{ url(($prefix == 'aclimate' ? $prefix . '/' : '') .'detail-clothing/' . $item->id . '/' . $item->category_id) }}"
+                                                class="stext-116 cl8 hov-cl1 trans-04">
                                                 {{ $item->name }}
                                             </a>
 

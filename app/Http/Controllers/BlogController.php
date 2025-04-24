@@ -46,7 +46,7 @@ class BlogController extends Controller
     {
         $tenantinfo = TenantInfo::first();
         $blogs = Blog::orderBy('title', 'asc')->simplePaginate(8);
-        if(count($blogs) == 0){
+        if (count($blogs) == 0) {
             return redirect()->back()->with(['status' => 'No hay blogs creados!', 'icon' => 'warning']);
         }
         $tags = MetaTags::where('section', 'Blog')->get();
@@ -159,7 +159,8 @@ class BlogController extends Controller
     public function showArticles(Request $request, $id, $name_url)
     {
         $tenantinfo = TenantInfo::first();
-        $blog = Blog::leftJoin('personal_users', 'blogs.personal_id', 'personal_users.id')
+        $ruta = $tenantinfo->tenant != 'aclimate' ? 'file' : 'aclifile';
+        $queryBlog = Blog::leftJoin('personal_users', 'blogs.personal_id', 'personal_users.id')
             ->select(
                 'blogs.id as id',
                 'blogs.body as body',
@@ -181,13 +182,14 @@ class BlogController extends Controller
             )
             ->findOrfail($id);
         $another_blogs = Blog::where('id', '!=', $id)->inRandomOrder()->take(4)->get();
-        $fecha_post = $blog->fecha_post;
+        $fecha_post = $queryBlog->fecha_post;
         $cards = CardBlog::where('blog_id', $id)->take(4)->get();
         $comments = Testimonial::where('approve', 1)->inRandomOrder()->orderBy('name', 'asc')
             ->get();
         $results = MedicineResult::where('blog_id', $id)->take(9)->get();
-        $tags = DB::table('article_blogs')
-            ->where('blog_id', $id)->join('blogs', 'article_blogs.blog_id', 'blogs.id')
+        $queryTags = DB::table('article_blogs')
+            ->where('blog_id', $id)
+            ->join('blogs', 'article_blogs.blog_id', 'blogs.id')
             ->select(
                 'blogs.title as blog_title',
                 'blogs.autor as autor',
@@ -197,9 +199,54 @@ class BlogController extends Controller
                 'article_blogs.id as id',
                 'article_blogs.context as context',
                 'article_blogs.meta_keywords as meta_keywords',
-                'article_blogs.meta_description as meta_description'
+                'article_blogs.meta_description as meta_description',
+                'blogs.image as blog_image' // agrega si necesitas info del blog para el route
             )
             ->get();
+        if ($tenantinfo->tenant === "aclimate") {
+            $queryTags->map(function ($tag) {
+                $tag->context = preg_replace_callback(
+                    '/<img[^>]*src=["\']([^"\']+)["\'][^>]*>/i',
+                    function ($matches) {
+                        $originalSrc = $matches[1];
+
+                        // Extrae el path relativo de la URL original
+                        $relativePath = ltrim(parse_url($originalSrc, PHP_URL_PATH), '/');
+
+                        // Prepara el tenant dinámico (ejemplo: 'aclimate')
+                        $tenantPrefix = request()->segment(1); // o como determines el tenant actual
+
+                        // Arma la nueva URL
+                        $newSrc = url($tenantPrefix . '/' . $relativePath);
+
+                        return str_replace($originalSrc, $newSrc, $matches[0]);
+                    },
+                    $tag->context
+                );
+                return $tag;
+            });
+            $queryBlog->body = preg_replace_callback(
+                '/<img[^>]*src=["\']([^"\']+)["\'][^>]*>/i',
+                function ($matchesBlog) {
+                    $originalSrcBlog = $matchesBlog[1];
+
+                    // Extrae el path relativo
+                    $relativePath = ltrim(parse_url($originalSrcBlog, PHP_URL_PATH), '/');
+
+                    // Detecta el tenant desde la URL (por ejemplo: /aclimate/...)
+                    $tenantPrefix = request()->segment(1); // puede ser 'aclimate' u otro tenant
+
+                    // Construye la nueva URL
+                    $newSrc = url($tenantPrefix . '/' . $relativePath);
+
+                    return str_replace($originalSrcBlog, $newSrc, $matchesBlog[0]);
+                },
+                $queryBlog->body
+            );
+        }
+        $tags = $queryTags;
+        $blog = $queryBlog;
+
         foreach ($tags as $tag) {
             SEOMeta::setTitle($tag->title);
             SEOMeta::setKeywords($tag->meta_keywords);
@@ -289,7 +336,7 @@ class BlogController extends Controller
                 break;
             default:
                 if ($tenantinfo->kind_of_features == 1) {
-                    return view('frontend.design_ecommerce.blog.show-articles', compact('tags','clothings', 'comments', 'cards', 'results', 'another_blogs', 'id', 'fecha_letter', 'blog'));
+                    return view('frontend.design_ecommerce.blog.show-articles', compact('tags', 'clothings', 'comments', 'cards', 'results', 'another_blogs', 'id', 'fecha_letter', 'blog'));
                 }
                 return view('frontend.blog.show-articles', compact('tags', 'comments', 'cards', 'results', 'another_blogs', 'id', 'fecha_letter', 'blog'));
                 break;

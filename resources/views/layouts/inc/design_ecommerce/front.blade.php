@@ -16,6 +16,8 @@
         case 'frontend_design_ecommerce_category':
         case 'frontend_design_ecommerce_departments':
         case 'frontend_design_ecommerce_buys':
+        case 'frontend_design_ecommerce_blog_index':
+        case 'frontend_design_ecommerce_blog_show-articles':
             if ($tenantinfo->tenant == 'aclimate') {
                 $logo_principal = asset('avstyles/img/logos/logo-acli.svg');
             }else{
