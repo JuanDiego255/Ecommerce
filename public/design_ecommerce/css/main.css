@@ -2314,6 +2314,34 @@ input.num-product::-webkit-inner-spin-button {
     line-height: 1.8;
     text-align: justify;
 }
+.blog-body .image img {
+    font-family: Poppins-Light !important;
+    font-size: 15px;
+    line-height: 1.8;
+    max-width: 100%;
+    height: auto;
+    text-align: justify;
+}
+@media (max-width: 768px) {
+    .blog-body .image img {
+        width: 100%;
+        max-width: none;
+    }
+}
+.article-body .image img {
+    font-family: Poppins-Light !important;
+    font-size: 15px;
+    line-height: 1.8;
+    max-width: 100%;
+    height: auto;
+    text-align: justify;
+}
+@media (max-width: 768px) {
+    .article-body .image img {
+        width: 100%;
+        max-width: none;
+    }
+}
 .article-body p {
     font-family: Poppins-Light !important;
     font-size: 15px;

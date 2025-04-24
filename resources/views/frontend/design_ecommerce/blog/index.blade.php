@@ -51,7 +51,7 @@
             </span>
         </div>
     </div> --}}
-    <section class="bg-img1 txt-center p-lr-15 p-tb-92" style="background-image: url('/design_ecommerce/images/bg-02.jpg');">
+    <section class="bg-img1 txt-center p-lr-15 p-tb-92" style="background-image: {{$tenantinfo->tenant !== "aclimate" ? "url('/design_ecommerce/images/bg-02.jpg');" : "url('/design_ecommerce/images/blog-ac.png');"}}">
         <h2 class="ltext-105 cl0 txt-center">
             Blog
         </h2>
