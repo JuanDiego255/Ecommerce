@@ -38,7 +38,7 @@ class FrontendController extends Controller
     public function index($showModal = null)
     {
         $tenantinfo = TenantInfo::first();
-        $clothing_skincare = null;
+        $clothings_skincare = null;
 
         $social = Cache::remember('social_networks', $this->expirationTime, function () {
             return SocialNetwork::get();
