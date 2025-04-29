@@ -96,7 +96,7 @@
                                         class="material-icons text-lg">autorenew</i></button>
                             </td>
                             <td class="align-middle text-xxs text-center">
-                                <p class=" font-weight-bold mb-0">{{ $item->nombre }}</p>
+                                <p class=" font-weight-bold mb-0">{{ isset($item->nombre) ? $item->nombre : 'Paquete' }}</p>
                             </td>
                             <td class="align-middle text-xxs text-center">
                                 <p class=" font-weight-bold mb-0">{!! str_replace(',', '<br>', $item->servicios) !!}

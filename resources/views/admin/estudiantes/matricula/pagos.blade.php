@@ -12,6 +12,9 @@
     <button type="button" data-bs-toggle="modal" data-bs-target="#add-pago-modal" class="btn btn-velvet">
         {{ __('Nuevo pago') }}</button>
     @include('admin.estudiantes.matricula.pagos.add')
+    <input type="hidden" value="{{ $info_estudiante->monto_pago }}" name="monto_pago_set" id="monto_pago_set">
+    <input type="hidden" value="{{ $info_estudiante->monto_curso }}" name="monto_curso_set" id="monto_curso_set">
+    <input type="hidden" value="{{ $info_estudiante->tipo }}" name="tipo_estudiante" id="tipo_estudiante">
     <div class="card mt-3">
         <div class="card-body">
             <div class="row w-100">
@@ -88,7 +91,10 @@
                                         </p>
                                     </td>
                                     <td class="align-middle text-sm">
-                                        <p class="mb-0">{{ $item->tipo_venta == 1 ? 'Mensualidad' : 'Otro' }}
+                                        @php
+                                            $tipo = $info_estudiante->tipo == 'C' ? 'Otro' : 'Sesión';
+                                        @endphp
+                                        <p class="mb-0">{{ $item->tipo_venta == 1 ? 'Mensualidad' : $tipo }}
                                         </p>
                                     </td>
                                     <td class="align-middle text-sm">
@@ -124,11 +130,20 @@
             const detalleDiv = document.querySelector(".div_detalle");
 
             tipoVenta.addEventListener("change", function() {
+                var monto_pago = $('#monto_pago_set').val();
+                var monto_curso = $('#monto_curso_set').val();
+                var tipo = $('#tipo_estudiante').val();
                 if (this.value == "2") {
-                    detalleDiv.classList.remove("d-none");
-                    $('#detalle').val('');
-                    $('#monto_pago').val('');
+                    detalleDiv.classList.remove("d-none");                   
+                    if (tipo == 'C') {
+                        $('#detalle').val('');
+                        $('#monto_pago').val('');
+                    } else {
+                        $('#detalle').val('');
+                        $('#monto_pago').val(monto_curso);
+                    }
                 } else {
+                    $('#monto_pago').val(monto_pago);
                     detalleDiv.classList.add("d-none");
                 }
             });

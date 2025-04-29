@@ -29,7 +29,7 @@
                                     <option
                                         {{ isset($item->tipo_venta) && $item->tipo_venta == '2' ? 'selected' : '' }}
                                         value="2">
-                                        Otro
+                                        {{ $info_estudiante->tipo == 'C' ? 'Otro' : 'Sesión' }}
                                     </option>
                                 </select>
                                 @error('tipo_venta')

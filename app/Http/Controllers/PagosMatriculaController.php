@@ -20,7 +20,9 @@ class PagosMatriculaController extends Controller
             ->select(
                 'matricula_estudiantes.curso as curso',
                 'matricula_estudiantes.monto_curso as monto_curso',
+                'matricula_estudiantes.monto_pago as monto_pago',
                 'estudiantes.nombre as nombre_estudiante',
+                'estudiantes.tipo_estudiante as tipo',
                 'estudiantes.id as estudiante_id'
             )->first();
         $pagos_matricula = PagosMatricula::where('matricula_id', $id)

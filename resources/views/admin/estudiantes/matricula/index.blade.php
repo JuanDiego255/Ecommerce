@@ -4,14 +4,17 @@
     {!! OpenGraph::generate() !!}
 @endsection
 @section('content')
+    @php
+        $label = $item->tipo_estudiante == 'Y' ? 'mensualidad' : 'matricula';
+    @endphp
     <center>
         <h2 class="text-center font-title">
-            <strong>{{ __('Gestión de matriculas del estudiante ') . $item->nombre }}</strong>
+            <strong>{{ $item->tipo_estudiante == 'C' ? 'Gestión de matriculas del estudiante ' : 'Gestión de mensualidades del estudiante ' . $item->nombre }}</strong>
         </h2>
     </center>
     <button type="button" data-bs-toggle="modal" data-bs-target="#matricula-estudiante-modal{{ $item->id }}"
         class="btn btn-velvet">
-        {{ __('Nueva matricula') }}</button>
+        {{ __('Nueva ') . $label }}</button>
     @include('admin.estudiantes.matricula')
     <div class="card mt-3">
         <div class="card-body">
@@ -54,7 +57,8 @@
                                 <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Monto Pagado') }}</th>
                                 <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Monto del curso') }}
                                 </th>
-                                <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Fecha Matricula') }}
+                                <th class="text-secondary font-weight-bolder opacity-7 ps-2">
+                                    {{ __('Fecha ') . ($item->tipo_estudiante == 'C' ? 'Matrícula' : 'Inicio') }}
                                 </th>
                                 <th class="text-secondary font-weight-bolder opacity-7 ps-2">
                                     {{ __('Próxima fecha de pago') }}</th>
@@ -76,8 +80,8 @@
                                                 onclick="return confirm('Deseas borrar esta matrícula?')"
                                                 class="btn btn-admin-delete" style="text-decoration: none;">Borrar</button>
                                         </form>
-                                        <a href="{{ url('/pagos/matricula/' . $matricula->id) }}" class="btn btn-admin-open"
-                                            style="text-decoration: none;">Gestión de pagos</a>
+                                        <a href="{{ url('/pagos/matricula/' . $matricula->id) }}"
+                                            class="btn btn-admin-open" style="text-decoration: none;">Gestión de pagos</a>
                                     </td>
                                     <td class="align-middle text-sm">
                                         <p class="mb-0">{{ $matricula->curso }}
@@ -121,7 +125,8 @@
     </div>
     <center>
         <div class="col-md-12 mt-3">
-            <a href="{{ url('estudiantes/') }}" class="btn btn-velvet w-25">{{ __('Volver') }}</a>
+            <a href="{{ url('estudiantes/manage/' . ($item->tipo_estudiante == 'C' ? 'clases' : 'yoga')) }}"
+                class="btn btn-velvet w-25">{{ __('Volver') }}</a>
         </div>
     </center>
 @endsection

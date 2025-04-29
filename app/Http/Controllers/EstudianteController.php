@@ -10,13 +10,15 @@ use Illuminate\Support\Facades\Storage;
 
 class EstudianteController extends Controller
 {
-    public function index(){
-        $estudiantes = Estudiante::all();
+    public function index($tipo)
+    {
+        $tipo = $tipo == 'clases' ? 'C' : 'Y';
+        $estudiantes = Estudiante::where('tipo_estudiante', $tipo)->get();
         $tipo_pagos = TipoPago::get();
-        return view('admin.estudiantes.index', compact('estudiantes','tipo_pagos'));
+        return view('admin.estudiantes.index', compact('estudiantes', 'tipo_pagos', 'tipo'));
     }
-    
-        /**
+
+    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -33,12 +35,13 @@ class EstudianteController extends Controller
             $estudiante->edad = $request->edad;
             $estudiante->email = $request->email;
             $estudiante->fecha_pago = $request->fecha_pago;
+            $estudiante->tipo_estudiante = $request->tipo_est;
             $estudiante->save();
             DB::commit();
             return redirect()->back()->with(['status' => 'Se ha guardado el estudiante con éxito', 'icon' => 'success']);
         } catch (\Exception $th) {
             DB::rollBack();
-            return redirect()->back()->with(['status' => 'No se pudo guardar el estudiante '.$th->getMessage(), 'icon' => 'error']);
+            return redirect()->back()->with(['status' => 'No se pudo guardar el estudiante ' . $th->getMessage(), 'icon' => 'error']);
         }
     }
 
@@ -60,6 +63,7 @@ class EstudianteController extends Controller
             $estudiante->edad = $request->edad;
             $estudiante->email = $request->email;
             $estudiante->fecha_pago = $request->fecha_pago;
+            $estudiante->tipo_estudiante = $request->tipo_est;
             $estudiante->update();
             DB::commit();
             return redirect()->back()->with(['status' => 'Se ha editado el estudiante con éxito', 'icon' => 'success']);

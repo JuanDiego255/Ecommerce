@@ -12,7 +12,7 @@
                 <form class="form-horizontal" action="{{ url('estudiantes/store') }}" method="post"
                     enctype="multipart/form-data">
                     {{ csrf_field() }}
-
+                    <input type="hidden" value="{{ $tipo }}" name="tipo_est">
                     @include('admin.estudiantes.form', ['Modo' => 'crear'])
 
                 </form>

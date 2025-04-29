@@ -23015,9 +23015,7 @@ body.dark-version {
 
 .form-check:not(.form-switch) .form-check-input {
     float: initial !important;
-    margin-left: auto !important;
 }
-
 .form-check:not(.form-switch) .form-check-input[type="checkbox"],
 .form-check:not(.form-switch) .form-check-input[type="radio"] {
     border: 1px solid #d1d7e1;

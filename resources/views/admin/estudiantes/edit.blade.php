@@ -13,7 +13,7 @@
                     enctype="multipart/form-data">
                     {{ csrf_field() }}
                     {{ method_field('PUT') }}
-
+                    <input type="hidden" value="{{ $tipo }}" name="tipo_est">
                     <div class="row">
                         <div class="col-md-12 mb-3">
                             <div

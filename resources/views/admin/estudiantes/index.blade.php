@@ -3,10 +3,13 @@
     {!! SEOMeta::generate() !!}
     {!! OpenGraph::generate() !!}
 @endsection
+@php
+    $label = $tipo == 'Y' ? 'mensualidad' : 'matricula'
+@endphp
 @section('content')
     <center>
         <h2 class="text-center font-title">
-            <strong>{{ __('Gestión de estudiantes') }}</strong>
+            <strong>{{ $tipo == 'C' ? __('Gestión de estudiantes') : __('Gestión de clases de yoga') }}</strong>
         </h2>
     </center>
     <button type="button" data-bs-toggle="modal" data-bs-target="#add-estudiante-modal" class="btn btn-velvet">

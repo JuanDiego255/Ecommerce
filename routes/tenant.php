@@ -367,7 +367,7 @@ Route::middleware([
             Route::get('/get/products/select/{id}', [EspecialistaController::class, 'getProductsToSelect']);
             Route::get('/especialistas/service/list/{id}', [EspecialistaController::class, 'listServices']);
             //Rutas para gestionar estudiantes y sus matriculas
-            Route::get('/estudiantes', [EstudianteController::class, 'index']);
+            Route::get('/estudiantes/manage/{tipo}', [EstudianteController::class, 'index']);
             Route::put('estudiantes/update/{id}', [EstudianteController::class, 'update']);
             Route::delete('delete/estudiantes/{id}', [EstudianteController::class, 'destroy']);
             Route::post('/estudiantes/store', [EstudianteController::class, 'store']);
@@ -395,7 +395,7 @@ Route::middleware([
             Route::post('venta/especialista/store', [VentaEspecialistaController::class, 'store']);
             Route::get('get-list/especialistas/service/', [VentaEspecialistaController::class, 'getServices']);
             //Rutas para ver los movimientos de las cuentas
-            Route::get('list-esp/ventas/{fecha}', [VentaEspecialistaController::class, 'indexVentas']);
+            Route::get('list-esp/ventas/{fecha}/{fecha_fin}/{id}', [VentaEspecialistaController::class, 'indexVentas']);
             //Rutas para metricas
             Route::get('metrica/admin', [MetricaController::class, 'index']);
             Route::put('metrica/update/{id}', [MetricaController::class, 'update']);

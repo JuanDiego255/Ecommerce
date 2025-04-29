@@ -47,6 +47,25 @@
             <div class="card p-2">
                 <div class="card-body">
                     <div class="row">
+                        <div class="col-md-12 mb-1">
+
+                            <div class="form-check">
+                                <input class="form-check-input margin-left-checkbox" type="checkbox" value="1"
+                                    @if ($especialista !== null && $especialista->especialista_id === null) checked @endif id="is_package" name="is_package">
+                                <label class="custom-control-label"
+                                    for="customCheck1">{{ __('Vender solo un servicio o paquete') }}</label>
+                            </div>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <div class="form-check">
+                                <input @if ($especialista !== null && $especialista->is_gift_card === 1) checked @endif
+                                    @if ($especialista === null || ($especialista !== null && $especialista->especialista_id !== null)) disabled @endif
+                                    class="form-check-input margin-left-checkbox" type="checkbox" value="1"
+                                    id="gift_card" name="gift_card">
+                                <label class="custom-control-label"
+                                    for="customCheck1">{{ __('Incluir tarjeta de regalo') }}</label>
+                            </div>
+                        </div>
                         <div class="col-md-12 mb-3">
                             <div class="input-group input-group-static">
                                 <label>Especialistas</label>
@@ -125,6 +144,8 @@
                                 <input type="hidden" name="set_campo_esp" id="set_campo_esp">
                                 <input type="hidden" name="aplica_113" id="aplica_113">
                                 <input type="hidden" name="aplica_calc_tarjeta" id="aplica_calc_tarjeta">
+                                <input type="hidden" name="is_gift_card" id="is_gift_card"
+                                    value="{{ old('input_porcentaje', isset($especialista->is_gift_card) ? $especialista->is_gift_card : '') }}">
                                 <input type="hidden" name="venta_id" id="venta_id"
                                     value="{{ isset($especialista->id) ? $especialista->id : '' }}">
                                 <input type="hidden" name="type" id="type"
@@ -222,7 +243,7 @@
                                     <label class="form-label">Monto por servicio o salario (Opcional)</label>
                                     <input
                                         value="{{ old('monto_por_servicio_o_salario', isset($especialista->monto_por_servicio_o_salario) ? $especialista->monto_por_servicio_o_salario : '0') }}"
-                                        type="number" readonly
+                                        type="number"
                                         class="form-control form-control-lg @error('monto_por_servicio_o_salario') is-invalid @enderror"
                                         name="monto_por_servicio_o_salario" id="monto_por_servicio_o_salario">
                                     @error('monto_por_servicio_o_salario')
@@ -302,34 +323,38 @@
         $(document).ready(function() {
             var especialistaUpdate = "{{ $especialista->clothing_id ?? 'N' }}";
             let choicesServicios = null;
+            var chkValuePack = $('#is_package').prop('checked');
+            var chkValueGiftCard = $('#gift_card').prop('checked');
 
             function cargarServicios(especialistaId, especialistaUpdate) {
-                var monto_salario = especialistaId.find(':selected').data('salary');
-                var set_campo_esp = especialistaId.find(':selected').data('set_campo_esp');
-                var monto_serv = especialistaId.find(':selected').data('service');
-                var aplica_calc = especialistaId.find(':selected').data('aplica');
-                var aplica_tarj = especialistaId.find(':selected').data('apli_tarj');
-                var aplica_prod = especialistaId.find(':selected').data('apli_prod');
-                var aplica_113 = especialistaId.find(':selected').data('apli_113');
-                var mont_salary_serv = monto_salario > 0 ? monto_salario : monto_serv > 0 ? monto_serv : 0;
+                if (especialistaId !== null && especialistaUpdate !== null) {
+                    var monto_salario = especialistaId.find(':selected').data('salary');
+                    var set_campo_esp = especialistaId.find(':selected').data('set_campo_esp');
+                    var monto_serv = especialistaId.find(':selected').data('service');
+                    var aplica_calc = especialistaId.find(':selected').data('aplica');
+                    var aplica_tarj = especialistaId.find(':selected').data('apli_tarj');
+                    var aplica_prod = especialistaId.find(':selected').data('apli_prod');
+                    var aplica_113 = especialistaId.find(':selected').data('apli_113');
+                    var mont_salary_serv = monto_salario > 0 ? monto_salario : monto_serv > 0 ? monto_serv : 0;
 
-                $('#aplica').val(aplica_calc);
-                $('#aplica_calc_tarjeta').val(aplica_tarj);
-                $('#set_campo_esp').val(set_campo_esp);
-                $('#aplica_prod').val(aplica_prod);
-                $('#aplica_113').val(aplica_113);
-                $('#select_servicios').empty(); // Limpiar 
-                if (especialistaUpdate == 'N') {
-                    $('#input_porcentaje').val(''); // Resetear el input
-                    $('#monto_por_servicio_o_salario').val(mont_salary_serv);
+                    $('#aplica').val(aplica_calc);
+                    $('#aplica_calc_tarjeta').val(aplica_tarj);
+                    $('#set_campo_esp').val(set_campo_esp);
+                    $('#aplica_prod').val(aplica_prod);
+                    $('#aplica_113').val(aplica_113);
+                    $('#select_servicios').empty(); // Limpiar 
+                    if (especialistaUpdate == 'N') {
+                        $('#input_porcentaje').val(''); // Resetear el input
+                        $('#monto_por_servicio_o_salario').val(mont_salary_serv);
+                    }
+                    $('#div_sal_serv').addClass('is-filled');
                 }
-                $('#div_sal_serv').addClass('is-filled');
 
                 $.ajax({
                     url: "/get-list/especialistas/service/",
                     type: 'GET',
                     data: {
-                        especialista_id: especialistaId.val()
+                        especialista_id: especialistaId !== null ? especialistaId.val() : null
                     },
                     success: function(response) {
                         const selectElement = document.getElementById('select_servicios');
@@ -355,6 +380,7 @@
                                 option.value = servicio.servicio_id;
                                 option.textContent = servicio.servicio;
                                 option.dataset.porcentaje = servicio.porcentaje;
+                                option.dataset.price = servicio.price;
                                 // ✅ Marcar como seleccionado si corresponde
                                 if (selectedIds.includes(servicio.servicio_id.toString())) {
                                     option.selected = true;
@@ -385,9 +411,20 @@
             }
             let especialistaSeleccionado = $('#select_especialista');
             if (especialistaSeleccionado) {
+                if (chkValuePack) {
+                    $('#especialista_id').val(null);
+                    $('#select_especialista').prop('disabled', true);
+                    especialistaSeleccionado = null;
+                    if (chkValueGiftCard) {
+                        $('#is_gift_card').val(1);
+                    } else {
+                        $('#is_gift_card').val(0);
+                    }
+                }
                 cargarServicios(especialistaSeleccionado, especialistaUpdate);
             }
-            $('#especialista_id').val($('#select_especialista').val());
+            var selectedEsp = !chkValuePack ? $('#select_especialista').val() : null;
+            $('#especialista_id').val(selectedEsp);
             // Cargar servicios al cambiar de especialista
             $('#select_especialista').change(function() {
                 if (especialistaUpdate != 'N') {
@@ -401,18 +438,70 @@
                 $('#monto_producto_venta').val(0);
                 $('#monto_especialista').val(0);
             });
+            $('#is_package').change(function() {
+                var chkValue = $('#is_package').prop('checked');
+                $('#monto_clinica').val(0);
+                $('#monto_venta').val(0);
+                $('#monto_producto_venta').val(0);
+                $('#monto_especialista').val(0);
+                $('#monto_por_servicio_o_salario').val(0);
+                if (chkValue) {
+                    cargarServicios(null, 'N');
+                    $('#especialista_id').val(null);
+                    $('#select_especialista').prop('disabled', true);
+                    $('#gift_card').prop('disabled', false);
+                } else {
+                    let especialistaSeleccionado = $('#select_especialista');
+                    if (especialistaSeleccionado) {
+                        cargarServicios(especialistaSeleccionado, especialistaUpdate);
+                    }
+                    $('#especialista_id').val($('#select_especialista').val());
+                    $('#select_especialista').prop('disabled', false);
+                    $('#gift_card').prop('disabled', true);
+                }
+            });
+            $('#gift_card').change(function() {
+                var chkValue = $('#gift_card').prop('checked');
+                const montoActual = parseFloat($('#monto_venta').val()) || 0;
+                if (chkValue) {
+                    $('#is_gift_card').val(1);
+                    $('#monto_venta').val((montoActual + 2500).toFixed(2));
+                } else {
+                    $('#is_gift_card').val(0);
+                    $('#monto_venta').val((montoActual - 2500).toFixed(2));
+                }
+            });
             // Capturar el cambio en el select de servicios
             $('#select_servicios').change(function() {
-                let porcentaje = $(this).find(':selected').data(
-                    'porcentaje');
+                let totalPrecio = 0;
+                const chkValuePck = $('#is_package').prop('checked');
+                const chkGiftCard = $('#gift_card').prop(
+                'checked'); // <-- chequeamos si gift card está activo
+                const selectedOptions = $(this).find(':selected');
+
+                if (chkValuePck) {
+                    selectedOptions.each(function() {
+                        let price = $(this).data('price') || 0;
+                        totalPrecio += parseFloat(price);
+                    });
+
+                    if (chkGiftCard) {
+                        totalPrecio += 2500; // <-- le sumamos los 2500 si está marcada
+                    }
+
+                    $('#monto_venta').val(totalPrecio.toFixed(2));
+                }
+
                 const selectedValues = $(this).val();
                 const selectedCount = selectedValues ? selectedValues.length : 0;
+
+                let porcentaje = selectedOptions.last().data('porcentaje') || 0;
                 $('#input_porcentaje').val(porcentaje);
-                $('#clothing_id').val($(this).val());
+                $('#clothing_id').val(selectedValues);
+
                 if (selectedCount <= 1) {
                     if (especialistaUpdate == 'N') {
                         $('#monto_clinica').val(0);
-                        $('#monto_venta').val('');
                         $('#monto_especialista').val(0);
                         $('#monto_producto_venta').val(0);
                     } else {
@@ -420,6 +509,8 @@
                     }
                 }
             });
+
+
             $('#btnCalculate').click(function() {
                 // Aquí va lo que quieres hacer cuando se haga clic               
                 calcularMontos();
@@ -436,6 +527,7 @@
                 var monto_producto = parseFloat($('#monto_producto_venta').val());
                 var monto_serv_sal = parseFloat($('#monto_por_servicio_o_salario').val());
                 var tipo_pago = $('#tipo_pago option:selected').text();
+                var chkPackage = $('#is_package').prop('checked');
                 var monto_venta_con_porc = 0;
                 var monto_calc_prod_sin_iva = 0;
                 var monto_calc_prod = 0;
@@ -454,61 +546,61 @@
                     });
                     return;
                 }
+                // Ajuste de monto_venta si es pago con tarjeta
                 if (tipo_pago.trim().toUpperCase() === "TARJETA") {
-                    monto_venta = aplica_113 == 1 ? monto_venta / 1.13 : monto_venta;
-                    monto_venta = aplica_calc_tarjeta == 1 ? (monto_venta * 0.13) + monto_venta : monto_venta;
-                    //$('#monto_venta').val(monto_venta);
-                }
-                if (monto_producto > 0) {
-                    monto_producto = aplica_prod == 1 ? monto_producto / 1.13 : monto_producto;
-                    porc_prod = aplica_prod == 1 ? 10 / 100 : 0;
-                }
-                if (aplica_prod == 1) {
-                    monto_calc_prod = (monto_producto * porc_prod);
+                    if (aplica_113 == 1) monto_venta /= 1.13;
+                    if (aplica_calc_tarjeta == 1) monto_venta *= 1.13;
                 }
 
-                if (porcentaje >= 0) {
-                    monto_venta_con_porc = (monto_venta * (porcentaje / 100));
-                    //$('#monto_clinica').val(monto_max);
-                    if (set_campo_esp == 1) {
-                        //$('#monto_especialista').val((monto_venta - monto_venta_con_porc - monto_serv_sal) + monto_calc_prod);
-                    } else {
-                        //$('#monto_clinica').val(monto_venta + monto_producto);
-                        //$('#monto_especialista').val(0);
-                    }
+                // Ajuste de monto_producto si aplica producto
+                if (monto_producto > 0 && !chkPackage && aplica_prod == 1) {
+                    monto_producto /= 1.13;
+                    porc_prod = 0.10;
+                } else {
+                    porc_prod = 0;
                 }
-                if (monto_serv_sal > 0) {
-                    //monto_max = monto_max + (monto_venta - monto_serv_sal);
-                    //$('#monto_clinica').val(monto_max);
-                    if (aplica == 1) {
-                        //$('#monto_especialista').val((monto_venta - (monto_venta - monto_serv_sal)) + monto_calc_prod);
-                    } else {
-                        //$('#monto_clinica').val((monto_venta - (monto_venta - monto_serv_sal)) + monto_calc_prod);
-                        //$('#monto_especialista').val(0);
-                    }
-                }
+
+                // Cálculo de monto relacionado a producto
+                monto_calc_prod = aplica_prod == 1 ? (monto_producto * porc_prod) : 0;
+
+                // Cálculo de monto_venta_con_porc si hay porcentaje
+                monto_venta_con_porc = porcentaje >= 0 ? (monto_venta * (porcentaje / 100)) : 0;
+
+                // Inicialización de montos
+                monto_total_cli = 0;
+                monto_total_esp = 0;
+
+                // Si aplica producto
                 if (aplica_prod == 1 && monto_producto > 0) {
                     monto_total_cli = monto_producto - monto_calc_prod;
                     monto_total_esp = monto_calc_prod;
                 }
-                if (aplica == 1) {
-                    monto_total_cli = monto_total_cli + monto_venta_con_porc;
-                    monto_total_esp = monto_total_esp + (monto_venta - monto_venta_con_porc);
+
+                // Si aplica comisión general
+                if (aplica == 1 || chkPackage) {
+                    monto_total_cli += monto_venta_con_porc;
+                    monto_total_esp += (monto_venta - monto_venta_con_porc);
                 }
+
+                // Si existe un servicio con saldo
                 if (monto_serv_sal > 0) {
-                    monto_total_cli = monto_total_cli + (monto_venta - monto_serv_sal);
-                    monto_total_esp = monto_total_esp + monto_serv_sal;
+                    monto_total_cli += (monto_venta - monto_serv_sal);
+                    monto_total_esp += monto_serv_sal;
                 }
                 $('#monto_clinica').val(monto_total_cli);
-                if (set_campo_esp == 1) {
+                if (set_campo_esp == 1 && !chkPackage) {
                     $('#monto_especialista').val(monto_total_esp);
                 } else {
-                    if (monto_venta == 0 && monto_producto > 0 && aplica_prod) {
-                        $('#monto_clinica').val(monto_producto - monto_calc_prod);
-                    } else {
-                        $('#monto_clinica').val(monto_total_esp - monto_calc_prod + monto_producto);
+                    const montoClinica = (monto_venta == 0 && monto_producto > 0 && aplica_prod) ?
+                        (monto_producto - monto_calc_prod) :
+                        (!chkPackage ? (monto_total_esp - monto_calc_prod + monto_producto) : (monto_total_esp +
+                            monto_producto));
+
+                    $('#monto_clinica').val(montoClinica);
+
+                    if (!chkPackage) {
+                        $('#monto_especialista').val(monto_calc_prod);
                     }
-                    $('#monto_especialista').val(monto_calc_prod);
                 }
             }
         });

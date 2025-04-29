@@ -9,7 +9,7 @@
                     Mensualidad
                 </option>
                 <option value="2">
-                    Otro
+                    {{ $info_estudiante->tipo == 'C' ? 'Otro' : 'Sesión' }}
                 </option>
             </select>
             @error('tipo_venta')
@@ -23,7 +23,7 @@
     <div class="col-md-6 mb-3">
         <div class="input-group input-group-lg input-group-outline is-filled }} my-3">
             <label class="form-label">Monto pago</label>
-            <input value="{{ $info_estudiante->monto_curso }}" required type="number"
+            <input value="{{ $info_estudiante->tipo == 'C' ? $info_estudiante->monto_curso : $info_estudiante->monto_pago }}" required type="number"
                 class="form-control form-control-lg @error('monto_pago') is-invalid @enderror" name="monto_pago"
                 id="monto_pago">
             @error('monto_pago')

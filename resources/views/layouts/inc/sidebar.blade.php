@@ -94,23 +94,31 @@
                                         </div>
                                         <span class="nav-link-text ms-1">Ventas</span>
                                     </a>
-                                </li>                                
+                                </li>
                             </ul>
-                        </li>                        
+                        </li>
                     @endif
                     <li class="nav-item">
                         <a @if ($view_name == 'admin_estudiantes_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
-                            href="{{ url('/estudiantes') }}">
-                            <div
-                                class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                            href="{{ url('/estudiantes/manage/clases') }}">
+                            <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
                                 <i class="material-icons opacity-10">school</i>
                             </div>
                             <span class="nav-link-text ms-1">Estudiantes y matrículas</span>
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link text-sidebar"
+                            href="{{ url('/estudiantes/manage/yoga') }}">
+                            <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                                <i class="material-icons opacity-10">self_improvement</i>
+                            </div>
+                            <span class="nav-link-text ms-1">Clases De Yoga</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a @if ($view_name == 'admin_buys_index' || $view_name == 'admin_buys_indexDetail') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
-                            href="{{ url('list-esp/ventas/' . $fechaCostaRica) }}">
+                            href="{{ url('list-esp/ventas/' . $fechaCostaRica . '/' . $fechaCostaRica . '/' . '0') }}">
                             <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
                                 <i class="material-icons opacity-10">local_mall</i>
                             </div>
@@ -120,8 +128,7 @@
                     <li class="nav-item">
                         <a @if ($view_name == 'admin_tipo_pagos_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
                             href="{{ url('/tipo_pagos') }}">
-                            <div
-                                class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                            <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
                                 <i class="material-icons opacity-10">credit_card</i>
                             </div>
                             <span class="nav-link-text ms-1">Tipos de pago</span>
@@ -145,7 +152,7 @@
                             </div>
                             <span class="nav-link-text ms-1">Mantenimiento de Roles</span>
                         </a>
-                    </li>                    
+                    </li>
                 </ul>
             </div>
         @break
@@ -406,7 +413,8 @@
                             <span class="nav-link-text ms-1">Blog</span>
                         </a>
                     </li>
-                    <li class="nav-item {{ $tenantinfo->tenant == 'avelectromecanica' || $tenantinfo->tenant == 'aclimate' ? 'd-block' : 'd-none' }}">
+                    <li
+                        class="nav-item {{ $tenantinfo->tenant == 'avelectromecanica' || $tenantinfo->tenant == 'aclimate' ? 'd-block' : 'd-none' }}">
                         <a @if ($view_name == 'admin_metrica_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
                             href="{{ url('metrica/admin') }}">
                             <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
@@ -555,6 +563,7 @@
                 </ul>
             </div>
         @break
+
     @endswitch
     <div class="sidenav-footer position-absolute w-100 bottom-0 ">
         <div class="mx-3">
