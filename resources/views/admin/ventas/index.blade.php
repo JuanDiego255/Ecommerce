@@ -53,7 +53,7 @@
                                 <input class="form-check-input margin-left-checkbox" type="checkbox" value="1"
                                     @if ($especialista !== null && $especialista->especialista_id === null) checked @endif id="is_package" name="is_package">
                                 <label class="custom-control-label"
-                                    for="customCheck1">{{ __('Vender solo un servicio o paquete') }}</label>
+                                    for="customCheck1">{{ __('Vender solo servicios o paquetes') }}</label>
                             </div>
                         </div>
                         <div class="col-md-12 mb-3">
