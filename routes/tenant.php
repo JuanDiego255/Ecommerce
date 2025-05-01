@@ -394,6 +394,9 @@ Route::middleware([
             Route::delete('delete/tipo_pago/{id}', [TipoPagoController::class, 'destroy']);
             Route::post('venta/especialista/store', [VentaEspecialistaController::class, 'store']);
             Route::get('get-list/especialistas/service/', [VentaEspecialistaController::class, 'getServices']);
+            Route::get('/ajax/ventas', [VentaEspecialistaController::class, 'ajaxVentas'])->name('ajax.ventas');
+            Route::get('/api/arqueos-validos', [VentaEspecialistaController::class, 'arqueosValidos']);
+
             //Rutas para ver los movimientos de las cuentas
             Route::get('list-esp/ventas/{fecha}/{fecha_fin}/{id}', [VentaEspecialistaController::class, 'indexVentas']);
             //Rutas para metricas

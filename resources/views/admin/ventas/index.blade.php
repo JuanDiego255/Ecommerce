@@ -48,7 +48,6 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-12 mb-1">
-
                             <div class="form-check">
                                 <input class="form-check-input margin-left-checkbox" type="checkbox" value="1"
                                     @if ($especialista !== null && $especialista->especialista_id === null) checked @endif id="is_package" name="is_package">
@@ -56,7 +55,7 @@
                                     for="customCheck1">{{ __('Vender solo servicios o paquetes') }}</label>
                             </div>
                         </div>
-                        <div class="col-md-12 mb-3">
+                        <div class="col-md-12 mb-1">
                             <div class="form-check">
                                 <input @if ($especialista !== null && $especialista->is_gift_card === 1) checked @endif
                                     @if ($especialista === null || ($especialista !== null && $especialista->especialista_id !== null)) disabled @endif
@@ -64,6 +63,14 @@
                                     id="gift_card" name="gift_card">
                                 <label class="custom-control-label"
                                     for="customCheck1">{{ __('Incluir tarjeta de regalo') }}</label>
+                            </div>
+                        </div>
+                        <div class="col-md-12 mb-1">
+                            <div class="form-check">
+                                <input class="form-check-input margin-left-checkbox" type="checkbox" value="1"
+                                    id="set_clinica" name="set_clinica">
+                                <label class="custom-control-label"
+                                    for="customCheck1">{{ __('Asignar todo el monto a la clínica') }}</label>
                             </div>
                         </div>
                         <div class="col-md-12 mb-3">
@@ -476,7 +483,7 @@
                 let totalPrecio = 0;
                 const chkValuePck = $('#is_package').prop('checked');
                 const chkGiftCard = $('#gift_card').prop(
-                'checked'); // <-- chequeamos si gift card está activo
+                    'checked'); // <-- chequeamos si gift card está activo
                 const selectedOptions = $(this).find(':selected');
 
                 if (chkValuePck) {
@@ -528,6 +535,7 @@
                 var monto_serv_sal = parseFloat($('#monto_por_servicio_o_salario').val());
                 var tipo_pago = $('#tipo_pago option:selected').text();
                 var chkPackage = $('#is_package').prop('checked');
+                var chkSetClinica = $('#set_clinica').prop('checked');
                 var monto_venta_con_porc = 0;
                 var monto_calc_prod_sin_iva = 0;
                 var monto_calc_prod = 0;
@@ -539,6 +547,8 @@
                 var descuento = 0;
                 var porc_prod = 0;
                 var calc_extra = 0;
+                var monto_prod_fijo = 0;
+                monto_prod_fijo = monto_producto;
                 if (monto_venta <= 0 && monto_producto <= 0) {
                     Swal.fire({
                         title: "Para realizar una venta debes ingresar el monto de la venta, o el monto del producto",
@@ -587,21 +597,28 @@
                     monto_total_cli += (monto_venta - monto_serv_sal);
                     monto_total_esp += monto_serv_sal;
                 }
-                $('#monto_clinica').val(monto_total_cli);
-                if (set_campo_esp == 1 && !chkPackage) {
-                    $('#monto_especialista').val(monto_total_esp);
-                } else {
-                    const montoClinica = (monto_venta == 0 && monto_producto > 0 && aplica_prod) ?
-                        (monto_producto - monto_calc_prod) :
-                        (!chkPackage ? (monto_total_esp - monto_calc_prod + monto_producto) : (monto_total_esp +
-                            monto_producto));
+               
+                if (!chkSetClinica) {
+                    $('#monto_clinica').val(monto_total_cli);
+                    if (set_campo_esp == 1 && !chkPackage) {
+                        $('#monto_especialista').val(monto_total_esp);
+                    } else {
+                        const montoClinica = (monto_venta == 0 && monto_producto > 0 && aplica_prod) ?
+                            (monto_producto - monto_calc_prod) :
+                            (!chkPackage ? (monto_total_esp - monto_calc_prod + monto_producto) : (monto_total_esp +
+                                monto_producto));
 
-                    $('#monto_clinica').val(montoClinica);
+                        $('#monto_clinica').val(montoClinica);
 
-                    if (!chkPackage) {
-                        $('#monto_especialista').val(monto_calc_prod);
+                        if (!chkPackage) {
+                            $('#monto_especialista').val(monto_calc_prod);
+                        }
                     }
+                } else {
+                    $('#monto_clinica').val(monto_venta + monto_prod_fijo);
+                    $('#monto_especialista').val(0);
                 }
+
             }
         });
     </script>

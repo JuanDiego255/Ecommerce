@@ -1,5 +1,7 @@
 @extends('layouts.admin')
 @section('content')
+    @include('admin.ventas.anular')
+    @include('admin.ventas.change-arqueo')
     <h2 class="text-center font-title">
         <strong>Ventas realizadas</strong>
     </h2>
@@ -37,7 +39,7 @@
     </div>
     <div class="card p-2">
         <div class="table-responsive">
-            <table id="table" class="table align-items-center mb-0">
+            <table id="table_ventas" class="table align-items-center mb-0">
                 <thead>
                     <tr>
                         <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
@@ -61,84 +63,141 @@
                         <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                             Cambio Arqueo</th>
                         <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
+                            Nota anulación</th>
+                        <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                             Fecha</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($ventas as $item)
-                        <tr>
-                            <td class="align-middle">
-                                {{-- <form name="delete-venta{{ $item->id }}" id="delete-venta{{ $item->id }}"
-                                    method="post" action="{{ url('/delete-venta/' . $item->id) }}">
-                                    {{ csrf_field() }}
-                                    {{ method_field('DELETE') }}
-                                </form>
-                                <button form="delete-user{{ $user->id }}" type="submit"
-                                    onclick="return confirm('Deseas borrar este usuario?')"
-                                    class="btn btn-link text-velvet ms-auto border-0" data-bs-toggle="tooltip"
-                                    data-bs-placement="bottom" title="Eliminar">
-                                    <i class="material-icons text-lg">delete</i>
-                                </button> --}}
-                                @if ($item->estado != 'A')
-                                    <button type="button" data-bs-toggle="modal"
-                                        data-bs-target="#anular-modal{{ $item->id }}"
-                                        class="btn btn-link text-velvet me-auto border-0" style="text-decoration: none;"> <i
-                                            class="material-icons text-lg">delete</i></button>
-                                @endif
-                                <a class="btn btn-link text-velvet me-auto border-0"
-                                    href="{{ url('/ventas/especialistas/' . $item->id) }}" data-bs-toggle="tooltip"
-                                    data-bs-placement="bottom" title="Editar">
-                                    <i class="material-icons text-lg">edit</i>
-                                </a>
-                                <button type="button" data-bs-toggle="modal"
-                                    data-bs-target="#change-arqueo-modal{{ $item->id }}"
-                                    class="btn btn-link text-velvet me-auto border-0" style="text-decoration: none;"> <i
-                                        class="material-icons text-lg">autorenew</i></button>
-                            </td>
-                            <td class="align-middle text-xxs text-center">
-                                <p class=" font-weight-bold mb-0">{{ isset($item->nombre) ? $item->nombre : 'Paquete' }}</p>
-                            </td>
-                            <td class="align-middle text-xxs text-center">
-                                <p class=" font-weight-bold mb-0">{!! str_replace(',', '<br>', $item->servicios) !!}
-                                    @if ($item->estado == 'A')
-                                        <span class="badge badge-pill ml-2 text-xxs badge-date text-white">Anulado</span>
-                                    @endif
-                                </p>
-                            </td>
-                            <td class="align-middle text-xxs text-center">
-                                <p class=" font-weight-bold mb-0">₡{{ number_format($item->monto_venta) }}</p>
-                            </td>
-                            <td class="align-middle text-xxs text-center">
-                                <p class=" font-weight-bold mb-0">₡{{ number_format($item->monto_clinica) }}</p>
-                            </td>
-                            <td class="align-middle text-xxs text-center">
-                                <p class=" font-weight-bold mb-0">₡{{ number_format($item->monto_especialista) }}</p>
-                            </td>
-                            <td class="align-middle text-xxs text-center">
-                                <p class=" font-weight-bold mb-0">₡{{ number_format($item->monto_producto_venta) }}</p>
-                            </td>
-                            <td class="align-middle text-xxs text-center">
-                                <p class=" font-weight-bold mb-0">%{{ $item->porcentaje }}</p>
-                            </td>
-                            <td class="align-middle text-xxs text-center">
-                                <p class=" font-weight-bold mb-0">{{ $item->tipo }}</p>
-                            </td>
-                            <td class="align-middle text-xxs text-center">
-                                <p class=" font-weight-bold mb-0">{{ $item->justificacion_arqueo }}</p>
-                            </td>
-                            <td class="align-middle text-xxs text-center">
-                                <p class=" font-weight-bold mb-0">{{ $item->created_at->format('d/m/Y') }} </p>
-                            </td>
 
-                        </tr>
-                        @include('admin.ventas.anular')
-                        @include('admin.ventas.change-arqueo')
-                    @endforeach
                 </tbody>
             </table>
         </div>
     </div>
 @endsection
 @section('script')
-    <script src="{{ asset('js/datatables.js') }}"></script>
+    <script>
+        $(document).ready(function() {
+            var tableVentas = $('#table_ventas').DataTable({
+                searching: true,
+                lengthChange: false,
+                pageLength: 15,
+                serverSide: true, // Carga los datos desde el servidor
+                ajax: {
+                    url: "/ajax/ventas", // Ruta en Laravel
+                    type: "GET"
+                },
+                columns: [{
+                        data: 'acciones',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'nombre'
+                    },
+                    {
+                        data: 'servicios'
+                    },
+                    {
+                        data: 'monto_venta'
+                    },
+                    {
+                        data: 'monto_clinica'
+                    },
+                    {
+                        data: 'monto_especialista'
+                    },
+                    {
+                        data: 'monto_producto_venta'
+                    },
+                    {
+                        data: 'porcentaje'
+                    },
+                    {
+                        data: 'tipo'
+                    },
+                    {
+                        data: 'justificacion_arqueo'
+                    },
+                    {
+                        data: 'nota_anulacion'
+                    },
+                    {
+                        data: 'created_at'
+                    },
+                ],
+                dom: 'Bfrtip',
+                buttons: [{
+                        extend: 'excelHtml5',
+                        text: '<i class="fas fa-file-excel"></i> Excel',
+                        titleAttr: 'Exportar a Excel',
+                        className: 'btn btn-table',
+                        messageTop: 'Mi reporte personalizado de Excel',
+                        title: 'Reporte Excel'
+                    },
+                    {
+                        extend: 'pdfHtml5',
+                        text: '<i class="fas fa-file-pdf"></i> PDF',
+                        titleAttr: 'Exportar a PDF',
+                        className: 'btn btn-table',
+                        messageTop: 'Mi reporte personalizado de PDF',
+                        title: 'Reporte PDF'
+                    }
+                ],
+                language: {
+                    sProcessing: "Procesando...",
+                    sZeroRecords: "No se encontraron resultados",
+                    sEmptyTable: "Ningún dato disponible en esta tabla",
+                    sInfo: "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                    sInfoEmpty: "Mostrando 0 a 0 de 0 registros",
+                    sInfoFiltered: "(filtrado de un total de _MAX_ registros)",
+                    sSearch: "Buscar:",
+                    oPaginate: {
+                        sFirst: "<<",
+                        sLast: "Último",
+                        sNext: ">>",
+                        sPrevious: "<<"
+                    }
+                }
+            });
+        });
+
+        function abrirAnularModal(id) {
+            const modal = new bootstrap.Modal(document.getElementById('anularModal'));
+            const form = document.getElementById('anularForm');
+            form.action = '/anular/venta/' + id;
+            document.getElementById('nota_anulacion_input').value = ''; // opcional: limpiar el input
+            modal.show();
+        }
+
+        function abrirCambioArqueoModal(ventaId, createdAt) {
+            const modal = new bootstrap.Modal(document.getElementById('changeArqueoModal'));
+            const form = document.getElementById('changeArqueoForm');
+            form.action = '/cambiar/venta/' + ventaId;
+
+            // Limpiar valores anteriores
+            document.getElementById('justificacionArqueoInput').value = '';
+            const select = document.getElementById('arqueoSelect');
+            select.innerHTML = '<option>Cargando...</option>';
+            // Obtener arqueos válidos vía AJAX
+            fetch(`/api/arqueos-validos?fecha=${createdAt}`)
+                .then(response => response.json())
+                .then(data => {
+                    select.innerHTML = '';
+                    if (data.length === 0) {
+                        select.innerHTML = '<option disabled selected>No hay arqueos disponibles</option>';
+                    } else {
+                        data.forEach((arqueo, index) => {
+                            const option = document.createElement('option');
+                            option.value = arqueo.id;
+                            option.text = `Inicio: ${arqueo.fecha_ini} - Cierre: ${arqueo.fecha_fin}`;
+                            if (index === 0) option.selected = true;
+                            select.appendChild(option);
+                        });
+                    }
+                });
+
+            modal.show();
+        }
+    </script>
 @endsection

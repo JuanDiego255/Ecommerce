@@ -10,6 +10,7 @@ use App\Models\PagosMatricula;
 use App\Models\PivotServiciosEspecialista;
 use App\Models\TipoPago;
 use App\Models\VentaEspecialista;
+use Yajra\DataTables\Facades\DataTables;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -38,7 +39,7 @@ class VentaEspecialistaController extends Controller
                     'especialistas.set_campo_esp as set_campo_esp',
                     'especialistas.aplica_calc as aplica_calc'
                 )
-                ->first();               
+                ->first();
         }
         $especialistas = Especialista::get();
         return view('admin.ventas.index', compact('tipos', 'especialistas', 'id', 'especialista'));
@@ -52,7 +53,7 @@ class VentaEspecialistaController extends Controller
     {
         //
         $arqueos = ArqueoCaja::take(10);
-        $ventas = VentaEspecialista::leftJoin('especialistas', 'venta_especialistas.especialista_id', 'especialistas.id')
+        /*  $ventas = VentaEspecialista::leftJoin('especialistas', 'venta_especialistas.especialista_id', 'especialistas.id')
             ->join('tipo_pagos', 'venta_especialistas.tipo_pago_id', 'tipo_pagos.id')
             ->select(
                 'especialistas.nombre as nombre',
@@ -65,8 +66,8 @@ class VentaEspecialistaController extends Controller
                 'venta_especialistas.*'
             )
             ->orderBy('venta_especialistas.created_at', 'desc')
-            ->get();
-        return view('admin.ventas.list', compact('ventas', 'arqueos'));
+            ->get(); */
+        return view('admin.ventas.list', compact('arqueos'));
     }
     //
     /**
@@ -409,5 +410,63 @@ class VentaEspecialistaController extends Controller
             DB::rollBack();
             return redirect()->back()->with(['status' => 'No se pudo cambiar el arqueo de la venta', 'icon' => 'error'])->withInput();
         }
+    }
+    public function ajaxVentas(Request $request)
+    {
+        $ventas = VentaEspecialista::leftJoin('especialistas', 'venta_especialistas.especialista_id', 'especialistas.id')
+            ->join('tipo_pagos', 'venta_especialistas.tipo_pago_id', 'tipo_pagos.id')
+            ->join('arqueo_cajas', 'venta_especialistas.arqueo_id', 'arqueo_cajas.id')
+            ->select(
+                'especialistas.nombre as nombre',
+                'tipo_pagos.tipo as tipo',
+                DB::raw("(
+                SELECT GROUP_CONCAT(clothing.name ORDER BY clothing.name SEPARATOR ', ')
+                FROM clothing
+                WHERE FIND_IN_SET(clothing.id, venta_especialistas.clothing_id)
+            ) as servicios"),
+                'venta_especialistas.*'
+            )
+            ->orderBy('venta_especialistas.created_at', 'desc');
+
+        return DataTables::of($ventas)
+            ->addColumn('acciones', function ($item) {
+                $buttons = '';
+                if ($item->estado != 'A') {
+                    $buttons .= '<button type="button" class="btn btn-link text-velvet border-0" onclick="abrirAnularModal(' . $item->id . ')"><i class="material-icons text-lg">delete</i></button>';
+                }
+                $buttons .= '<a href="' . url('/ventas/especialistas/' . $item->id) . '" class="btn btn-link text-velvet border-0" data-bs-toggle="tooltip" title="Editar"><i class="material-icons text-lg">edit</i></a>';
+                $buttons .= '<button type="button" class="btn btn-link text-velvet border-0" onclick="abrirCambioArqueoModal(' . $item->id . ', \'' . $item->created_at . '\')"><i class="material-icons text-lg">autorenew</i></button>';
+                return $buttons;
+            })
+            ->editColumn('servicios', function ($item) {
+                $servicios = str_replace(',', '<br>', $item->servicios);
+                if ($item->estado === 'A') {
+                    $servicios .= '<br><span class="badge badge-pill ml-2 text-xxs badge-date text-white">Anulado</span>';
+                }
+                return $servicios;
+            })
+
+            ->editColumn('nombre', function ($item) {
+                return $item->nombre ?? 'Paquetes';
+            })
+            ->editColumn('monto_venta', fn($item) => '₡' . number_format($item->monto_venta))
+            ->editColumn('monto_clinica', fn($item) => '₡' . number_format($item->monto_clinica))
+            ->editColumn('monto_especialista', fn($item) => '₡' . number_format($item->monto_especialista))
+            ->editColumn('monto_producto_venta', fn($item) => '₡' . number_format($item->monto_producto_venta))
+            ->editColumn('porcentaje', fn($item) => '%' . $item->porcentaje)
+            ->editColumn('created_at', fn($item) => $item->created_at->format('d/m/Y'))
+            ->rawColumns(['acciones', 'servicios'])
+            ->make(true);
+    }
+    public function arqueosValidos(Request $request)
+    {
+        $fecha = $request->input('fecha');
+        $arqueos = ArqueoCaja::where('estado', 0)
+            ->whereDate('fecha_ini', '<', $fecha)
+            ->orderByDesc('created_at')
+            ->take(10)
+            ->get(['id', 'fecha_ini', 'fecha_fin']);
+
+        return response()->json($arqueos);
     }
 }
