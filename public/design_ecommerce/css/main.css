@@ -2161,6 +2161,9 @@ input.num-product::-webkit-inner-spin-button {
 .cl2 {
     color: var(--title_text)
 }
+.clnew {
+    color: #000;
+}
 .cl3 {
     color: #666;
 }

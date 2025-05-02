@@ -3,6 +3,17 @@
     {!! SEOMeta::generate() !!}
     {!! OpenGraph::generate() !!}
 @endsection
+@php
+    switch ($tenantinfo->tenant) {
+        case 'solociclismocrc':
+            $take = 6;
+            break;
+
+        default:
+            $take = 4;
+            break;
+    }
+@endphp
 @section('content')
     <style>
         @media screen and (max-width: 768px) {
@@ -69,7 +80,7 @@
             <div class="sec-banner bg0 p-t-80 p-b-50">
                 <div class="container">
                     <div class="row">
-                        @foreach ($category->take(4) as $key => $item)
+                        @foreach ($category->take($take) as $key => $item)
                             @if ($item->black_friday != 1)
                                 <div class="col-md-6 col-xl-4 p-b-30 m-lr-auto">
                                     <!-- Block1 -->
@@ -80,7 +91,8 @@
                                         <a href="{{ url(($prefix == 'aclimate' ? $prefix . '/' : '') . 'clothes-category/' . $item->category_id . '/' . $item->department_id) }}"
                                             class="block1-txt ab-t-l s-full flex-col-l-sb p-lr-38 p-tb-34 trans-03 respon3">
                                             <div class="block1-txt-child1 flex-col-l">
-                                                <span class="ltext-102 trans-04 p-b-8 {{isset($tenantinfo->tenant) && $tenantinfo->tenant != 'aclimate' ? 'block1-name' : 'block1-name-ac'}}">
+                                                <span
+                                                    class="ltext-102 trans-04 p-b-8 {{ isset($tenantinfo->tenant) && ($tenantinfo->tenant != 'aclimate' && $tenantinfo->tenant != 'solociclismocrc') ? 'block1-name' : 'block1-name-ac' }}">
                                                     {{ $item->name }}
                                                 </span>
 

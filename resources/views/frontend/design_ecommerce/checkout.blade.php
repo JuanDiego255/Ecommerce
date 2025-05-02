@@ -57,7 +57,7 @@
         <div class="row m-t-40">
             <div id="sinpeContent" class="col-lg-10 col-xl-7 m-lr-auto m-b-50">
                 <div class="bor10 p-lr-40 p-t-30 p-b-40 m-l-20 m-r-10 m-lr-0-xl p-lr-15-sm">
-                    <h4 class="mtext-109 cl2 p-b-30">Formulario de compra</h4>
+                    <h4 class="mtext-109 clnew p-b-30">Formulario de compra</h4>
                     <form action="{{ url(($prefix == 'aclimate' ? $prefix . '/' : '') .'payment') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <input type="hidden" value="0" name="delivery" id="delivery">
@@ -70,67 +70,67 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="bor8 dis-flex p-l-15 m-b-20">
-                                    <input class="mtext-107 cl2 size-114 plh2 p-r-15" type="text" name="name"
+                                    <input class="mtext-107 clnew size-114 plh2 p-r-15" type="text" name="name"
                                         value="{{ isset(Auth::user()->name) ? Auth::user()->name : '' }}" id="name"
                                         placeholder="Nombre Completo" required>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="bor8 dis-flex p-l-15 m-b-20">
-                                    <input class="mtext-107 cl2 size-114 plh2 p-r-15" type="email" name="email"
+                                    <input class="mtext-107 clnew size-114 plh2 p-r-15" type="email" name="email"
                                         value="{{ isset(Auth::user()->email) ? Auth::user()->email : '' }}" id="email"
                                         placeholder="Correo Electrónico" required>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="bor8 dis-flex p-l-15 m-b-20">
-                                    <input class="mtext-107 cl2 size-114 plh2 p-r-15" type="text" name="telephone"
+                                    <input class="mtext-107 clnew size-114 plh2 p-r-15" type="text" name="telephone"
                                         value="{{ isset(Auth::user()->telephone) ? Auth::user()->telephone : '' }}"
                                         id="telephone" placeholder="Teléfono (WhatsApp)" required>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="bor8 dis-flex p-l-15 m-b-20">
-                                    <input class="mtext-107 cl2 size-114 plh2 p-r-15" type="text" name="country"
+                                    <input class="mtext-107 clnew size-114 plh2 p-r-15" type="text" name="country"
                                         id="country" value="Costa Rica" readonly required>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="bor8 dis-flex p-l-15 m-b-20">
-                                    <input class="mtext-107 cl2 size-114 plh2 p-r-15" type="text" name="province"
+                                    <input class="mtext-107 clnew size-114 plh2 p-r-15" type="text" name="province"
                                         id="province" placeholder="Provincia" required>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="bor8 dis-flex p-l-15 m-b-20">
-                                    <input class="mtext-107 cl2 size-114 plh2 p-r-15" type="text" name="city"
+                                    <input class="mtext-107 clnew size-114 plh2 p-r-15" type="text" name="city"
                                         id="city" placeholder="Cantón" required>
                                 </div>
                             </div>
                             @if ($tenant != 'mandicr')
                                 <div class="col-md-6">
                                     <div class="bor8 dis-flex p-l-15 m-b-20">
-                                        <input class="mtext-107 cl2 size-114 plh2 p-r-15" type="text"
+                                        <input class="mtext-107 clnew size-114 plh2 p-r-15" type="text"
                                             name="address_two" id="address_two" placeholder="Distrito" required>
                                     </div>
                                 </div>
                             @endif
                             <div class="col-md-6">
                                 <div class="bor8 dis-flex p-l-15 m-b-20">
-                                    <input class="mtext-107 cl2 size-114 plh2 p-r-15" type="text" name="address"
+                                    <input class="mtext-107 clnew size-114 plh2 p-r-15" type="text" name="address"
                                         id="address" placeholder="Dirección Exacta" required>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="bor8 dis-flex p-l-15 m-b-20">
-                                    <input class="mtext-107 cl2 size-114 plh2 p-r-15" type="text" name="postal_code"
+                                    <input class="mtext-107 clnew size-114 plh2 p-r-15" type="text" name="postal_code"
                                         id="postal_code" placeholder="Código Postal" required>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <label for="">Comprobante</label>
                                 <div class="bor8 dis-flex p-l-15 m-b-20">
-                                    <input class="mtext-107 cl2 size-114 plh2 p-r-15" type="file" name="image"
+                                    <input class="mtext-107 clnew size-114 plh2 p-r-15" type="file" name="image"
                                         id="image" required>
                                 </div>
                             </div>
@@ -181,7 +181,7 @@
 
             <div class="col-sm-10 col-lg-5 col-xl-5 m-lr-auto m-b-50">
                 <div class="bor10 p-lr-40 p-t-30 p-b-40 m-l-63 m-r-40 m-lr-0-xl p-lr-15-sm">
-                    <h4 class="mtext-109 cl2 p-b-30">
+                    <h4 class="mtext-109 clnew p-b-30">
                         Detalles
                     </h4>
                     <div class="row m-0 border mb-3">
@@ -235,14 +235,14 @@
                     </div>
                     <div class="flex-w flex-t bor12 p-b-13">
                         <div class="size-208">
-                            <span class="stext-110 cl2">
+                            <span class="stext-110 clnew">
                                 Total + IVA:
                             </span>
                         </div>
 
                         <div class="size-209">
                             <span>₡</span>
-                            <span id="totalIva" class="mtext-110 cl2">
+                            <span id="totalIva" class="mtext-110 clnew">
                                 {{ number_format($total_price) }}
                             </span>
                         </div>
@@ -275,7 +275,7 @@
                                     <div class="bor8 dis-flex p-l-15 m-b-20">
                                         <input value="" placeholder="Ingrese el código" type="text"
                                             name="code" id="code"
-                                            class="mtext-107 cl2 size-114 plh2 p-r-15 code">
+                                            class="mtext-107 clnew size-114 plh2 p-r-15 code">
                                     </div>
                                 </div>
                                 <div class="col-md-12">
