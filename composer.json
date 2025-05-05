@@ -14,7 +14,7 @@
         "google/cloud-vision": "^1.7",
         "guzzlehttp/guzzle": "^7.5",
         "laravel/framework": "^8.75",
-        "laravel/sanctum": "^2.11",
+        "laravel/sanctum": "^2.15",
         "laravel/socialite": "^5.11",
         "laravel/tinker": "^2.5",
         "laravel/ui": "^3.4",

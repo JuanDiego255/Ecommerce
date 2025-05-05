@@ -8,7 +8,9 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\FrontendController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AdvertController;
+use App\Http\Controllers\Api\HomeDataController;
 use App\Http\Controllers\AttributeController;
+use App\Http\Controllers\Auth\ApiLoginController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\BuyController;
 use App\Http\Controllers\CajasController;
@@ -38,10 +40,12 @@ use App\Http\Controllers\TestimonialController;
 use App\Http\Controllers\TipoPagoController;
 use App\Http\Controllers\VentaEspecialistaController;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
+use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
 
 /*
@@ -414,4 +418,16 @@ Route::middleware([
         return response()->file($path);
     })->where('path', '.*')->name('file');
     //images tenant
+});
+
+Route::prefix('api')->middleware([
+    InitializeTenancyByDomain::class,
+    PreventAccessFromCentralDomains::class,
+    'api',
+])->group(function () {
+    Route::post('/login', [ApiLoginController::class, 'login']);
+    Route::get('/home/admin', [HomeDataController::class, 'index']);
+    Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+        return $request->user();
+    });
 });
