@@ -6,15 +6,19 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Department;
 use App\Models\Categories;
+use App\Models\Tenant;
+use App\Models\TenantInfo;
 
 class HomeDataController extends Controller
 {
-    public function index()
+    public function index($tenant)
     {
-        $tenant = tenancy()->tenant;
+        $tenants = Tenant::where('id', $tenant)->first();
+        tenancy()->initialize($tenants);
+        $tenantinfo = TenantInfo::first();
 
         // Si el tenant maneja departamentos, devolvemos departamentos
-        if ($tenant->manage_department) {
+        if ($tenantinfo->manage_department == 1) {
             $departments = Department::where('department', '!=', 'Default')
                 ->orderBy('department', 'asc')
                 ->get(['id', 'department as name', 'image']);

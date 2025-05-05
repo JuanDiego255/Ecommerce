@@ -426,7 +426,7 @@ Route::prefix('api')->middleware([
     'api',
 ])->group(function () {
     Route::post('/login', [ApiLoginController::class, 'login']);
-    Route::get('/home/admin', [HomeDataController::class, 'index']);
+    Route::get('/home/admin/{tenant}', [HomeDataController::class, 'index']);
     Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
         return $request->user();
     });
