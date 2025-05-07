@@ -290,6 +290,9 @@
                                         ({{ $item->category }})
                                         {{ $item->name }}
                                     </a>
+                                    @if ($tenantinfo->tenant == 'solociclismocrc' && $item->is_contra_pedido == 1)
+                                        <p class="text-info font-weight-bold">Producto contrapedido</p>
+                                    @endif
                                     <div class="price">₡{{ number_format($precioConDescuento) }}
                                         @if ($item->discount)
                                             <s class="text-danger">

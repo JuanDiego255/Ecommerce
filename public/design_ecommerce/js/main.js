@@ -178,6 +178,7 @@
                 url: "/paginate/" + Number(page) + "/" + id,
                 success: function (response) {
                     var items = response.clothings.data;
+                    var tenant_info = response.tenant_info;
                     var category_id = response.category_id;
                     var html = '';
                     // Construcción del HTML dinámicamente
@@ -219,6 +220,7 @@
                                             <a href="/detail-clothing/${item.id}/${category_id}" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
                                                 ${item.name}
                                             </a>
+                                             ${tenant_info.tenant == 'solociclismocrc' && item.is_contra_pedido ? '<p class="font-weight-bold text-info">Producto contrapedido</p>' : ''}
                                             <div class="price">
                                                 ₡${precioConDescuento}
                                                 ${item.discount ? `<s class="text-danger">₡${item.price}</s>` : ''}
@@ -278,6 +280,7 @@
                 url: "/paginate/" + Number(page) + "/" + id,
                 success: function (response) {
                     var items = response.clothings.data;
+                    var tenant_info = response.tenant_info;
                     var category_id = response.category_id;
                     var html = '';
                     // Construcción del HTML dinámicamente
@@ -319,6 +322,7 @@
                                             <a href="/detail-clothing/${item.id}/${category_id}" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
                                                 ${item.name}
                                             </a>
+                                            ${tenant_info.tenant == 'solociclismocrc' && item.is_contra_pedido ? '<p class="font-weight-bold text-info">Producto contrapedido</p>' : ''}
                                             <div class="price">
                                                 ₡${precioConDescuento}
                                                 ${item.discount ? `<s class="text-danger">₡${item.price}</s>` : ''}

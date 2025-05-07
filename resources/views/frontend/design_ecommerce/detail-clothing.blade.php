@@ -116,6 +116,9 @@
                             <h4 class="mtext-105 cl2 js-name-detail p-b-14">
                                 {{ $item->name }}
                             </h4>
+                            @if ($tenantinfo->tenant == 'solociclismocrc' && $item->is_contra_pedido == 1)
+                                <p class="text-info font-weight-bold">Producto contrapedido</p>
+                            @endif
                             <span class="mtext-106 cl2">
                                 <div class="price {{ $item->can_buy != 1 && $precioConDescuento <= 0 ? 'd-none' : '' }}">
                                     <strong id="text_price">₡{{ number_format($precioConDescuento) }}</strong>
@@ -481,11 +484,13 @@
 
                             <div class="block2-txt flex-w flex-t p-t-14">
                                 <div class="block2-txt-child1 flex-col-l ">
-                                    <a href="{{ url(($prefix == 'aclimate' ? $prefix . '/' : '') .'detail-clothing/' . $item->id . '/' . $item->category_id) }}"
+                                    <a href="{{ url(($prefix == 'aclimate' ? $prefix . '/' : '') . 'detail-clothing/' . $item->id . '/' . $item->category_id) }}"
                                         class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
                                         {{ $item->name }}
                                     </a>
-
+                                    @if ($tenantinfo->tenant == 'solociclismocrc' && $item->is_contra_pedido == 1)
+                                        <p class="text-info font-weight-bold">Producto contrapedido</p>
+                                    @endif
                                     <span class="stext-105 cl3">
                                         <div
                                             class="sakura-font sakura-color {{ $item->can_buy != 1 && $precioConDescuento <= 0 ? 'd-none' : '' }}">
@@ -644,7 +649,8 @@
     function getStock(cloth_id, attr_id, value_attr) {
         var prefix = document.getElementById('prefix').value == "aclimate" ? document.getElementById('prefix')
             .value : '';
-        var url = (prefix === 'aclimate' ? '/' + prefix : '') + "/get-stock/" + cloth_id + '/' + attr_id + '/' + value_attr;
+        var url = (prefix === 'aclimate' ? '/' + prefix : '') + "/get-stock/" + cloth_id + '/' + attr_id + '/' +
+            value_attr;
         $.ajax({
             method: "GET",
             url: url,

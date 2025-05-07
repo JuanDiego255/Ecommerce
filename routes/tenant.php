@@ -427,6 +427,7 @@ Route::prefix('api')->middleware([
 ])->group(function () {
     Route::post('/login', [ApiLoginController::class, 'login']);
     Route::get('/home/admin/{tenant}', [HomeDataController::class, 'index']);
+    Route::get('/tenant/info/{tenant}', [HomeDataController::class, 'getTenantInfo']);
     Route::get('/products/category/{id}/{tenant}', [HomeDataController::class, 'apiIndexByCategory']);
     Route::get('/categories/by-department/{id}/{tenant}', [HomeDataController::class, 'apiCategoriesByDepartment']);
     Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

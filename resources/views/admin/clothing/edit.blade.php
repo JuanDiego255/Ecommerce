@@ -114,19 +114,34 @@
                                             {{ __('Stock (Inventario)') }}
                                         @endif
                                     </label>
-                                    <input id="stock" min="1" required                                       
+                                    <input id="stock" min="1" required
                                         value="{{ $clothing->total_stock == 0 ? '1' : $clothing->total_stock }}"
                                         type="number" class="form-control form-control-lg" name="stock">
                                 </div>
                             </div>
 
-                            @if (isset($tenantinfo->kind_business) && ($tenantinfo->kind_business == 2 || $tenantinfo->kind_business == 3 || $tenantinfo->tenant === 'muebleriasarchi'))
+                            @if (isset($tenantinfo->kind_business) &&
+                                    ($tenantinfo->kind_business == 2 ||
+                                        $tenantinfo->kind_business == 3 ||
+                                        $tenantinfo->tenant === 'muebleriasarchi'))
                                 <div class="col-md-12 mb-3">
                                     <label>{{ __('Se puede comprar?') }}</label>
                                     <div class="form-check">
                                         <input {{ $clothing->can_buy == 1 ? 'checked' : '' }} class="form-check-input"
                                             type="checkbox" value="1" id="can_buy" name="can_buy">
                                         <label class="custom-control-label" for="customCheck1">Producto de compra</label>
+                                    </div>
+                                </div>
+                            @endif
+                            @if (isset($tenantinfo->tenant) && $tenantinfo->tenant === 'solociclismocrc')
+                                <div class="col-md-12 mb-3">
+                                    <label>{{ __('Producto contrapedido') }}</label>
+                                    <div class="form-check">
+                                        <input {{ $clothing->is_contra_pedido == 1 ? 'checked' : '' }} class="form-check-input" type="checkbox" value="1"
+                                            id="is_contra_pedido" name="is_contra_pedido"
+                                            {{ old('is_contra_pedido') ? 'checked' : '' }}>
+                                        <label class="custom-control-label"
+                                            for="customCheck1">{{ __('¿Es producto contrapedido?') }}</label>
                                     </div>
                                 </div>
                             @endif

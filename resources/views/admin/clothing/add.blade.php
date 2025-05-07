@@ -138,13 +138,27 @@
                                     </div>
                                 </div>
                             @endif
-                            @if (isset($tenantinfo->kind_business) && ($tenantinfo->kind_business == 2 || $tenantinfo->kind_business == 3 || $tenantinfo->tenant === 'muebleriasarchi'))
+                            @if (isset($tenantinfo->kind_business) &&
+                                    ($tenantinfo->kind_business == 2 ||
+                                        $tenantinfo->kind_business == 3 ||
+                                        $tenantinfo->tenant === 'muebleriasarchi'))
                                 <div class="col-md-12 mb-3">
                                     <label>{{ __('Se puede comprar?') }}</label>
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="1" id="can_buy"
                                             name="can_buy" {{ old('can_buy') ? 'checked' : '' }}>
                                         <label class="custom-control-label" for="customCheck1">Producto de compra</label>
+                                    </div>
+                                </div>
+                            @endif
+                            @if (isset($tenantinfo->tenant) && $tenantinfo->tenant === 'solociclismocrc')
+                                <div class="col-md-12 mb-3">
+                                    <label>{{ __('Producto contrapedido') }}</label>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="1" id="is_contra_pedido"
+                                            name="is_contra_pedido" {{ old('is_contra_pedido') ? 'checked' : '' }}>
+                                        <label class="custom-control-label"
+                                            for="customCheck1">{{ __('¿Es producto contrapedido?') }}</label>
                                     </div>
                                 </div>
                             @endif

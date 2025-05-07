@@ -255,6 +255,7 @@ class ClothingCategoryController extends Controller
                     'clothing.horizontal_image as horizontal_image',
                     'clothing.main_image as main_image',
                     'clothing.code as code',
+                    'clothing.is_contra_pedido as is_contra_pedido',
                     'clothing.discount as discount',
                     'clothing.trending as trending',
                     'clothing.description as description',
@@ -264,7 +265,7 @@ class ClothingCategoryController extends Controller
                     DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE clothing.stock END) as total_stock'),
                     'product_images.image as image', // Obtener la primera imagen del producto
                 )
-                ->groupBy('clothing.id', 'clothing.main_image', 'clothing.horizontal_image', 'clothing.casa', 'clothing.name', 'clothing.manage_stock', 'clothing.code', 'clothing.can_buy', 'pivot_clothing_categories.category_id', 'categories.name', 'clothing.description', 'clothing.trending', 'clothing.price', 'clothing.mayor_price', 'clothing.meta_keywords', 'product_images.image', 'clothing.discount')
+                ->groupBy('clothing.id','clothing.is_contra_pedido', 'clothing.main_image', 'clothing.horizontal_image', 'clothing.casa', 'clothing.name', 'clothing.manage_stock', 'clothing.code', 'clothing.can_buy', 'pivot_clothing_categories.category_id', 'categories.name', 'clothing.description', 'clothing.trending', 'clothing.price', 'clothing.mayor_price', 'clothing.meta_keywords', 'product_images.image', 'clothing.discount')
                 ->first();
         });
 
@@ -354,6 +355,7 @@ class ClothingCategoryController extends Controller
             }
             $clothing->meta_keywords = $request->meta_keywords;
             $clothing->manage_stock = $request->manage_stock ? 1 : 0;
+            $clothing->is_contra_pedido = $request->is_contra_pedido ? 1 : 0;
             if ($request->hasFile('horizontal_image')) {
                 $image = $request->file('horizontal_image');
                 $clothing->horizontal_image = $image->store('uploads', 'public');
@@ -560,6 +562,7 @@ class ClothingCategoryController extends Controller
                 $clothing->trending = $request->filled('trending') ? 1 : 0;
                 $clothing->meta_keywords = $request->meta_keywords;
                 $clothing->manage_stock = $request->manage_stock ? 1 : 0;
+                $clothing->is_contra_pedido = $request->is_contra_pedido ? 1 : 0;
                 $clothing->save();
                 $clothingId = $clothing->id;
 

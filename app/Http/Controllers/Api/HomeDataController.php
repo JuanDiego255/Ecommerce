@@ -43,6 +43,17 @@ class HomeDataController extends Controller
             'data' => $categories
         ]);
     }
+    //Método que devuelve los departmanentos o categorías API
+    public function getTenantInfo($tenant)
+    {
+        $tenants = Tenant::where('id', $tenant)->first();
+        tenancy()->initialize($tenants);
+        $tenantinfo = TenantInfo::first();
+        
+        return response()->json([
+            'data' => $tenantinfo
+        ]);
+    }
     //Método que devuelve los productos por categoría
     public function apiIndexByCategory($id, $tenant)
     {
