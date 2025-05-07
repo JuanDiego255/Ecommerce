@@ -153,7 +153,7 @@
 
                 <p class="stext-107 cl7 size-201">                    
                     {{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'muebleriasarchi' ? 'Envíos por correos de C.R' : 'Se realizan entregas en todo Costa Rica.' }}<br>
-                    <i class="fa fa-whatsapp"></i> 89420339<br>
+                    <i class="fa fa-whatsapp"></i> {{ isset($tenantinfo->whatsapp) ? $tenantinfo->whatsapp : '' }}<br>
                     <i class="fa fa-envelope"></i> {{ isset($tenantinfo->email) ? $tenantinfo->email : '' }}
                 </p>
 
