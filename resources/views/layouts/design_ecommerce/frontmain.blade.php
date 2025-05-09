@@ -363,7 +363,10 @@
                     success: function(response) {
                         var newCartNumber = response.cartNumber
                         const button = document.querySelector('.js-show-cart');
+                        const buttonMobile = document.querySelector(
+                            '.icon-cart-mobile');
                         button.dataset.notify = newCartNumber;
+                        buttonMobile.dataset.notify = newCartNumber;
                         $button.closest('.header-cart-item').remove();
                         calcularTotal();
                     }
@@ -415,13 +418,14 @@
                     },
                     success: function(response) {
                         const button = document.querySelector('.icon-fav');
+                        const buttonMobile = document.querySelector('.icon-fav-mobile');
                         if (response.status === 'added') {
                             icon.addClass('text-danger');
-                            button.dataset.notify = response.favNumber;
                         } else {
                             icon.removeClass('text-danger');
-                            button.dataset.notify = response.favNumber;
                         }
+                        button.dataset.notify = response.favNumber;
+                        buttonMobile.dataset.notify = response.favNumber;
                     },
                     error: function(xhr) {
                         console.error('Error al añadir a favoritos', xhr.responseText);
@@ -470,7 +474,7 @@
         });
         document.addEventListener("click", function(event) {
             var prefix = document.getElementById('prefix').value == "aclimate" ? document.getElementById('prefix')
-            .value : '';
+                .value : '';
             var url = null;
             if (event.target.closest(".js-show-modal1")) {
                 let button = event.target.closest(".js-show-modal1");
@@ -684,12 +688,12 @@
                     e.preventDefault();
                     var attributes_array = [];
                     var concat_attr = value_attr + "-" + attr_id + "-" + productId;
-                    if(value_attr != null && attr_id != null){
+                    if (value_attr != null && attr_id != null) {
                         attributes_array.push(concat_attr);
-                    }                   
+                    }
                     var attributes = JSON.stringify(attributes_array);
                     var url = (prefix === 'aclimate' ? '/' + prefix : '') + "/add-to-cart";
-                    
+
                     console.log(attributes);
                     $.ajaxSetup({
                         headers: {
@@ -713,7 +717,10 @@
                                 var newCartNumber = response.cartNumber;
                                 const button = document.querySelector(
                                     '.js-show-cart');
+                                const buttonMobile = document.querySelector(
+                                    '.icon-cart-mobile');
                                 button.dataset.notify = newCartNumber;
+                                buttonMobile.dataset.notify = newCartNumber;
                                 getCart();
                             }
                         }

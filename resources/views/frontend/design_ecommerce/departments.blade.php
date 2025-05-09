@@ -38,8 +38,8 @@
             </div>
         </center>
     </div> --}}
-    <div class="container m-t-70">
-        <div class="bread-crumb flex-w p-r-15 p-t-30 p-lr-0-lg mt-5">
+    <div class="container p-t-30 p-b-30">
+        <div class="bread-crumb flex-w p-r-15 p-lr-0-lg">
             <a href="{{ url('/') }}" class="stext-109 cl8 hov-cl1 trans-04">
                 Inicio
                 <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
@@ -49,9 +49,9 @@
                 Departamentos
             </span>
         </div>
-        <div class="sec-banner bg0 m-t-50 p-b-140">
-            <div class="p-b-10">
-                <h3 class="ltext-103 cl5 text-center mb-5">
+        <div class="sec-banner bg0 m-t-20 p-b-20">
+            <div>
+                <h3 class="mtext-105 cl5 text-center mb-5">
                     Explora y sumérgete en nuestros departamentos
                 </h3>
             </div>

@@ -18,8 +18,8 @@
     }
 @endphp
 @section('content')
-    <div class="container m-t-80">
-        <div class="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg">
+    <div class="container p-t-30 p-b-30">
+        <div class="bread-crumb flex-w p-l-25 p-r-15 p-lr-0-lg">
             @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
                 <a href="{{ url(($prefix == 'aclimate' ? $prefix . '' : '') .'/') }}" class="stext-109 cl8 hov-cl1 trans-04">
                     Inicio
@@ -257,9 +257,9 @@
                     <div class="h8">
                         <label for="checkboxSubmit">
                             <div class="form-check">
-                                <input id="envio" class="form-check-input envio" type="checkbox" value=""
+                                <input id="envio" class="form-check-input envio m-l-10" type="checkbox" value=""
                                     name="envio" onchange="checkEnvio();">
-                                <label class="form-check-label mb-2" for="envio">
+                                <label class="form-check-label mb-2 m-l-10" for="envio">
                                     Realizar Envío
                                 </label>
                             </div>
@@ -298,9 +298,9 @@
 
                                 <label for="checkboxSubmit">
                                     <div class="form-check">
-                                        <input id="sinpe" class="form-check-input" type="checkbox" value=""
+                                        <input id="sinpe" class="form-check-input m-l-10" type="checkbox" value=""
                                             name="sinpe" checked onchange="togglePaypalButton();">
-                                        <label class="form-check-label mb-2" for="sinpe">
+                                        <label class="form-check-label mb-2 m-l-10" for="sinpe">
                                             Pagar Por SINPE o Transferencia bancaria
                                         </label>
                                     </div>

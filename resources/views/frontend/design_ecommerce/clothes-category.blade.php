@@ -4,9 +4,9 @@
     {!! OpenGraph::generate() !!}
 @endsection
 @section('content')
-    <section class="bg0 p-t-100 p-b-140">
+    <section class="bg0 p-t-30 p-b-30">
         <div class="container">
-            <div class="bread-crumb flex-w p-r-15 p-t-30 p-lr-0-lg">
+            <div class="bread-crumb flex-w p-r-15 p-lr-0-lg">
                 @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
                     <a href="{{ url(($prefix == 'aclimate' ? $prefix . '' : '') . '/') }}"
                         class="stext-109 cl8 hov-cl1 trans-04">

@@ -83,14 +83,17 @@
                         <div id="fullScreenMenu" class="fullscreen-menu">
                             <div class="menu-content">
                                 <button id="closeMenu" class="close-menu">&times;</button>
-                                <h2 class="text-center">
-                                    {{ isset($tenantinfo->manage_department) && $tenantinfo->manage_department == 1 ? 'Departamentos' : 'Categorías' }}
-                                </h2>
+                                @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
+                                    <h2 class="text-center mb-3 category-menu">
+                                        Categorías
+                                    </h2>
+                                @endif
+
                                 <div class="departments-container">
                                     @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department == 1)
                                         @foreach ($departments as $department)
                                             <div class="department-section">
-                                                <h3>{{ $department->department }}</h3>
+                                                <h3 class="text-uppercase">{{ $department->department }}</h3>
                                                 <ul>
                                                     @foreach ($department->categories as $categoria)
                                                         <li>
@@ -104,19 +107,23 @@
                                             </div>
                                         @endforeach
                                     @else
-                                        <ul>
-                                            <li><a href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/category/') }}"
-                                                    class="nav-submenu-item">Todas las
-                                                    Categorías</a></li>
-                                            @foreach ($categories as $item)
-                                                <li>
-                                                    <a
-                                                        href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/clothes-category/' . $item->category_id . '/' . $item->department_id) }}">
-                                                        {{ $item->name }}
-                                                    </a>
-                                                </li>
-                                            @endforeach
-                                        </ul>
+                                        @php
+                                            $chunks = $categories->chunk(5); // Divide la colección en partes de 5
+                                        @endphp
+                                        @foreach ($chunks as $chunk)
+                                            <div class="department-section">
+                                                <ul>
+                                                    @foreach ($chunk as $item)
+                                                        <li>
+                                                            <a
+                                                                href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/clothes-category/' . $item->category_id . '/' . $item->department_id) }}">
+                                                                {{ $item->name }}
+                                                            </a>
+                                                        </li>
+                                                    @endforeach
+                                                </ul>
+                                            </div>
+                                        @endforeach
                                     @endif
                                 </div>
                             </div>
@@ -124,9 +131,12 @@
                         {{-- <li class="label1" data-label1="hot">
                             <a href="shoping-cart.html">Features</a>
                         </li> --}}
-                        <li>
-                            <a href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/blog/index') }}">Blog</a>
-                        </li>{{-- 
+                        @if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'mitaibabyboutique')
+                            <li>
+                                <a href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/blog/index') }}">Blog</a>
+                            </li>
+                        @endif
+                        {{-- 
                         <li>
                             <a href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/about_us') }}">ACERCA DE</a>
                         </li> --}}
@@ -174,15 +184,16 @@
                 <i class="zmdi zmdi-search"></i>
             </div>
 
-            <div class="icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti js-show-cart icon-text-color-desk"
-                data-notify="2">
-                <i class="zmdi zmdi-shopping-cart"></i>
-            </div>
+            <button
+                class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti js-show-cart icon-cart-mobile icon-text-color-desk"
+                data-notify="{{ $cartNumber }}">
+                <i class="zmdi zmdi-shopping-cart icon-text-color-desk"></i>
+            </button>
 
             <a href="#"
-                class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 icon-header-noti icon-text-color-desk"
-                data-notify="0">
-                <i class="zmdi zmdi-favorite-outline"></i>
+                class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti icon-fav-mobile icon-text-color-desk"
+                data-notify="{{ $favNumber }}">
+                <i class="zmdi zmdi-favorite-outline icon-text-color-desk"></i>
             </a>
         </div>
 
@@ -273,10 +284,11 @@
                     </div>
                 </div>
             </div>
-            <li>
-                <a href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/blog/index') }}">BLOG</a>
-            </li>
-
+            @if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'mitaibabyboutique')
+                <li>
+                    <a href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/blog/index') }}">BLOG</a>
+                </li>
+            @endif
             <li>
                 <a href="#">FAVORITOS</a>
             </li>

@@ -608,7 +608,7 @@ class FrontendController extends Controller
                 DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'),
                 DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
             )
-            ->groupBy('clothing.id', 'clothing.can_buy','clothing.is_contra_pedido', 'clothing.casa', 'clothing.mayor_price', 'categories.name', 'clothing.discount', 'clothing.name', 'clothing.description', 'clothing.price', 'product_images.image')
+            ->groupBy('clothing.id', 'clothing.can_buy', 'clothing.is_contra_pedido', 'clothing.casa', 'clothing.mayor_price', 'categories.name', 'clothing.discount', 'clothing.name', 'clothing.description', 'clothing.price', 'product_images.image')
             ->havingRaw('total_stock > 0 OR total_stock IS NULL')
             ->orderByRaw('CASE WHEN clothing.casa IS NOT NULL AND clothing.casa != "" THEN 0 ELSE 1 END')
             ->orderBy('clothing.casa', 'asc')
@@ -820,7 +820,7 @@ class FrontendController extends Controller
                 DB::raw('GROUP_CONCAT(stocks.price) AS price_per_size'),
                 DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
             )
-            ->groupBy('clothing.id', 'categories.id','clothing.is_contra_pedido', 'clothing.code', 'clothing.meta_keywords', 'clothing.main_image', 'clothing.manage_stock', 'clothing.horizontal_image', 'clothing.can_buy', 'clothing.casa', 'departments.id', 'departments.department', 'clothing.mayor_price', 'clothing.discount', 'categories.name', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
+            ->groupBy('clothing.id', 'categories.id', 'clothing.is_contra_pedido', 'clothing.code', 'clothing.meta_keywords', 'clothing.main_image', 'clothing.manage_stock', 'clothing.horizontal_image', 'clothing.can_buy', 'clothing.casa', 'departments.id', 'departments.department', 'clothing.mayor_price', 'clothing.discount', 'categories.name', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
             ->orderByRaw('CASE WHEN clothing.casa IS NOT NULL AND clothing.casa != "" THEN 0 ELSE 1 END')
             ->orderBy('clothing.casa', 'asc')
             ->orderBy('clothing.name', 'asc')
@@ -923,7 +923,7 @@ class FrontendController extends Controller
                 DB::raw('GROUP_CONCAT(stocks.price) AS price_per_size'),
                 DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
             )
-            ->groupBy('clothing.id', 'clothing.casa','clothing.is_contra_pedido', 'clothing.main_image', 'clothing.mayor_price', 'clothing.discount', 'categories.name', 'categories.id', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
+            ->groupBy('clothing.id', 'clothing.casa', 'clothing.is_contra_pedido', 'clothing.main_image', 'clothing.mayor_price', 'clothing.discount', 'categories.name', 'categories.id', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
             ->orderByRaw('CASE WHEN clothing.casa IS NOT NULL AND clothing.casa != "" THEN 0 ELSE 1 END')
             ->orderBy('clothing.casa', 'asc')
             ->orderBy('clothing.name', 'asc')
@@ -1073,6 +1073,9 @@ class FrontendController extends Controller
                 return view('frontend.av.about_us');
                 break;
             default:
+                if ($tenantinfo->kind_of_features == 1) {
+                    return view('frontend.design_ecommerce.about_us');
+                }
                 return view('frontend.about_us');
         }
     }

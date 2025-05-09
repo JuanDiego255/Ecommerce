@@ -5,8 +5,8 @@
 @endsection
 @section('content')
     <!-- breadcrumb -->
-    <div class="container m-t-80">
-        <div class="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg">
+    <div class="container p-t-30 p-b-30">
+        <div class="bread-crumb flex-w p-l-25 p-r-15 p-lr-0-lg">
             @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
                 <a href="{{ url(($prefix == 'aclimate' ? $prefix . '' : '') . '/') }}" class="stext-109 cl8 hov-cl1 trans-04">
                     Inicio
@@ -37,10 +37,8 @@
             @endif
         </div>
     </div>
-
-
     <!-- Shoping Cart -->
-    <form class="bg0 p-t-75 p-b-85">
+    <form class="bg0">
         <div class="container">
             <div class="row">
                 <div class="col-lg-10 col-xl-7 m-lr-auto m-b-50">

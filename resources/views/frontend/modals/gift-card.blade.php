@@ -4,7 +4,11 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title font-weight-normal" id="exampleModalLabel">Tarjeta de regalo</h5>
-                <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close">
+                <button type="button" class="btn-close text-dark"
+                    @if ($tenantinfo->kind_of_features == 1) data-dismiss="modal"
+                @else
+                data-bs-dismiss="modal" @endif
+                    aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>

@@ -155,6 +155,24 @@
             </div>
         @endif
     @endif
+    <div class="container p-b-60">
+        <div class="p-b-10">
+            <h6 class="mtext-101 cl5 text-justify text-center p-b-10">
+                Disfruta de la flexibilidad de nuestras tarjetas de regalo para canjear en cualquier
+                producto.
+            </h6>
+        </div>
+        <center>
+            <button class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 text-center" type="button"
+                data-toggle="modal" data-target="#gift-card-modal">Obtener
+                Tarjeta
+                de Regalo</button>
+        </center>
+
+        <hr>
+    </div>
+
+    @include('frontend.modals.gift-card')
     <!-- Banner End-->
     <!-- Product -->
     <section class="bg0 p-t-23 p-b-140">

@@ -23,9 +23,9 @@
 @endphp
 @section('content')
     <!-- Banner -->
-    <div class="sec-banner bg0 p-t-60 p-b-70">
+    <div class="sec-banner bg0 p-t-30 p-b-30">
         <div class="container">
-            <div class="bread-crumb flex-w p-r-15 p-t-30 p-lr-0-lg">
+            <div class="bread-crumb flex-w p-r-15 p-lr-0-lg">
                 @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
                     <a href="{{ url(($prefix == 'aclimate' ? $prefix . '' : '') . '/') }}"
                         class="stext-109 cl8 hov-cl1 trans-04">
@@ -51,7 +51,14 @@
                     </span>
                 @endif
             </div>
-            <div class="row">
+            @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department == 1)
+                <div class="p-t-30 text-center">
+                    <h3 class="ltext-103 cl5">
+                        {{ $department_name }}
+                    </h3>
+                </div>
+            @endif
+            <div class="row p-t-30">
                 @foreach ($category as $item)
                     <div class="col-md-6 p-b-60 m-lr-auto">
                         <!-- Block1 -->
@@ -63,7 +70,7 @@
                                 class="block1-txt ab-t-l s-full flex-col-l-sb p-lr-38 p-tb-34 trans-03 respon3">
                                 <div class="block1-txt-child1 flex-col-l">
                                     <span
-                                        class="ltext-102 trans-04 p-b-8 {{ isset($tenantinfo->tenant) && ($tenantinfo->tenant != 'aclimate' && $tenantinfo->tenant != 'solociclismocrc') ? 'block1-name' : 'block1-name-ac' }}">
+                                        class="ltext-102 trans-04 p-b-8 {{ isset($tenantinfo->tenant) && ($tenantinfo->tenant != 'aclimate' && $tenantinfo->tenant != 'solociclismocrc' && $tenantinfo->tenant != 'mitaibabyboutique') ? 'block1-name' : 'block1-name-ac' }}">
                                         {{ $item->name }}
                                     </span>
                                 </div>
@@ -80,7 +87,7 @@
             </div>
         </div>
         <center>
-            <div class="container mb-5">
+            <div class="container p-b-30">
                 {{ $category ?? ('')->links('pagination::simple-bootstrap-4') }}
             </div>
         </center>

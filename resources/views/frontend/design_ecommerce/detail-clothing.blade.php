@@ -24,8 +24,8 @@
             $precioConDescuento = $precio - $descuento;
         @endphp
         <input type="hidden" name="porcDescuento" value="{{ $item->discount }}" id="porcDescuento">
-        <div class="container m-t-80">
-            <div class="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg">
+        <div class="container p-t-30">
+            <div class="bread-crumb flex-w p-l-25 p-r-15 p-lr-0-lg">
                 @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
                     <a href="{{ url(($prefix == 'aclimate' ? $prefix . '' : '') . '/') }}"
                         class="stext-109 cl8 hov-cl1 trans-04">
@@ -75,7 +75,7 @@
                 @endif
             </div>
         </div>
-        <section class="sec-product-detail bg0 p-t-65 p-b-60">
+        <section class="sec-product-detail bg0 p-t-30 ">
             <div class="container product_data">
                 <input type="hidden" class="cloth_item" value="{{ $item->id }}">
                 <input type="hidden" class="prefix" id="prefix" value="{{ $prefix }}">
@@ -432,7 +432,7 @@
         <!-- Related Products -->
     @break
 @endforeach
-<section class="sec-relate-product bg0 p-t-45 p-b-105">
+<section class="sec-relate-product bg0 p-t-20 p-b-20">
     <div class="container">
         <div class="p-b-45">
             <h3 class="ltext-106 cl5 txt-center">
@@ -621,7 +621,10 @@
                     var newCartNumber = response.cartNumber;
                     const button = document.querySelector(
                         '.js-show-cart');
+                    const buttonMobile = document.querySelector(
+                        '.icon-cart-mobile');
                     button.dataset.notify = newCartNumber;
+                    buttonMobile.dataset.notify = newCartNumber;
                     getCart();
                 }
             }
