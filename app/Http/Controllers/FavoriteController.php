@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Attribute;
 use App\Models\ClothingCategory;
 use App\Models\Favorite;
+use App\Models\ProductImage;
+use App\Models\TenantInfo;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -57,7 +60,7 @@ class FavoriteController extends Controller
                 // Si existe, eliminarlo
                 $favorite->delete();
                 $favNumber = count(Favorite::where('user_id', $user_id)->get());
-                return response()->json(['status' => 'removed','favNumber' => $favNumber]);
+                return response()->json(['status' => 'removed', 'favNumber' => $favNumber]);
             } else {
                 // Si no existe, agregarlo
                 Favorite::create([
@@ -68,7 +71,7 @@ class FavoriteController extends Controller
                     'value_attr' => $value_attr ?? null
                 ]);
                 $favNumber = count(Favorite::where('user_id', $user_id)->get());
-                return response()->json(['status' => 'added','favNumber' => $favNumber]);
+                return response()->json(['status' => 'added', 'favNumber' => $favNumber]);
             }
         } catch (\Exception $th) {
             return response()->json(['status' => 'falló: ' . $th->getMessage()]);
@@ -77,6 +80,7 @@ class FavoriteController extends Controller
     public function checkCode($id)
     {
         try {
+            $tenantinfo = TenantInfo::first();
             $check_user = User::where('code_love', $id)->exists();
             if (!$check_user) {
                 return redirect()
@@ -87,7 +91,7 @@ class FavoriteController extends Controller
             $clothings = ClothingCategory::where('clothing.status', 1)
                 ->where('favorites.user_id', $user->id)
                 ->leftJoin('pivot_clothing_categories', 'clothing.id', '=', 'pivot_clothing_categories.clothing_id')
-                
+
                 ->join('favorites', 'clothing.id', '=', 'favorites.clothing_id')
                 ->leftJoin('categories', 'favorites.category_id', '=', 'categories.id')
                 ->leftJoin('stocks', 'clothing.id', 'stocks.clothing_id')
@@ -118,15 +122,80 @@ class FavoriteController extends Controller
                     DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'),
                     DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
                 )
-                ->groupBy('clothing.id','categories.id','categories.name', 'attribute_values.value', 'clothing.can_buy', 'clothing.casa', 'clothing.mayor_price', 'clothing.discount', 'clothing.name', 'clothing.description', 'clothing.price', 'product_images.image')
+                ->groupBy('clothing.id', 'categories.id', 'categories.name', 'attribute_values.value', 'clothing.can_buy', 'clothing.casa', 'clothing.mayor_price', 'clothing.discount', 'clothing.name', 'clothing.description', 'clothing.price', 'product_images.image')
                 ->orderByRaw('CASE WHEN clothing.casa IS NOT NULL AND clothing.casa != "" THEN 0 ELSE 1 END')
                 ->orderBy('clothing.casa', 'asc')
                 ->orderBy('clothing.name', 'asc')
-                ->simplePaginate(16);
+                ->simplePaginate(50);
             if (count($clothings) == 0) {
                 return redirect()
                     ->back()
                     ->with(['status' => 'No hay productos favoritos en la lista del usuario', 'icon' => 'warning']);
+            }
+
+            foreach ($clothings as $clothing) {
+                // Obtener la primera imagen
+                $firstImage = ProductImage::where('clothing_id', $clothing->id)
+                    ->orderBy('id')
+                    ->first();
+                $clothing->image = $firstImage ? $firstImage->image : null;
+                $clothing->all_images = ProductImage::where('clothing_id', $clothing->id)
+                    ->orderBy('id')
+                    ->pluck('image')
+                    ->toArray();
+
+                // Obtener atributos
+                $result = DB::table('stocks as s')->where('s.clothing_id', $clothing->id)
+                    ->join('attributes as a', 's.attr_id', '=', 'a.id')
+                    ->join('attribute_values as v', 's.value_attr', '=', 'v.id')
+                    ->select(
+                        'a.name as columna_atributo',
+                        'a.id as attr_id',
+                        DB::raw('GROUP_CONCAT(v.value ORDER BY s.order ASC SEPARATOR "/") as valores'),
+                        DB::raw('GROUP_CONCAT(v.id ORDER BY s.order ASC SEPARATOR "/") as ids'),
+                        DB::raw('GROUP_CONCAT(s.stock ORDER BY s.order ASC SEPARATOR "/") as stock'),
+                    )
+                    ->groupBy('a.name', 'a.id')
+                    ->orderBy('a.name', 'asc')
+                    ->get();
+                // Limpiar atributos con stock 0
+                $cleaned = $result->map(function ($item) {
+                    $valores = explode('/', $item->valores);
+                    $ids = explode('/', $item->ids);
+                    $stock = explode('/', $item->stock);
+
+                    // Filtrar solo los que tienen stock > 0
+                    $filtered = collect($stock)
+                        ->map(function ($s, $i) use ($valores, $ids) {
+                            return [
+                                'value' => $valores[$i],
+                                'id' => $ids[$i],
+                                'stock' => $s,
+                            ];
+                        })
+                        ->filter(fn($x) => (int)$x['stock'] > 0)
+                        ->values();
+
+                    // Si después de filtrar no queda nada, lo descartamos
+                    if ($filtered->isEmpty()) {
+                        return null;
+                    }
+
+                    return (object)[
+                        'columna_atributo' => $item->columna_atributo,
+                        'attr_id' => $item->attr_id,
+                        'valores' => $filtered->pluck('value')->implode('/'),
+                        'ids' => $filtered->pluck('id')->implode('/'),
+                        'stock' => $filtered->pluck('stock')->implode('/'),
+                    ];
+                })->filter()->values();
+
+                $clothing->atributos = $cleaned->toArray();
+            }
+            $attributes = Attribute::with('values')->where('attributes.name', '!=', 'Stock')
+            ->get();
+            if ($tenantinfo->kind_of_features == 1) {
+                return view('frontend.design_ecommerce.list-fav', compact('clothings', 'user','attributes'));
             }
             return view('frontend.list-fav', compact('clothings', 'user'));
         } catch (\Exception $th) {

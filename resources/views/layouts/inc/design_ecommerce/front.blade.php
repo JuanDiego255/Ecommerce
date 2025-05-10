@@ -156,12 +156,13 @@
                         data-notify="{{ $cartNumber }}">
                         <i class="zmdi zmdi-shopping-cart icon-text-color-desk"></i>
                     </button>
-
-                    <a href="#"
-                        class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti icon-fav icon-text-color-desk"
-                        data-notify="{{ $favNumber }}">
-                        <i class="zmdi zmdi-favorite-outline icon-text-color-desk"></i>
-                    </a>
+                    @auth
+                        <a href="{{ url('/check/list-fav/' . Auth::user()->code_love) }}"
+                            class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti icon-fav icon-text-color-desk"
+                            data-notify="{{ $favNumber }}">
+                            <i class="zmdi zmdi-favorite-outline icon-text-color-desk"></i>
+                        </a>
+                    @endauth
                 </div>
             </nav>
         </div>
@@ -189,12 +190,13 @@
                 data-notify="{{ $cartNumber }}">
                 <i class="zmdi zmdi-shopping-cart icon-text-color-desk"></i>
             </button>
-
-            <a href="#"
-                class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti icon-fav-mobile icon-text-color-desk"
-                data-notify="{{ $favNumber }}">
-                <i class="zmdi zmdi-favorite-outline icon-text-color-desk"></i>
-            </a>
+            @auth
+                <a href="{{ url('/check/list-fav/' . Auth::user()->code_love) }}"
+                    class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti icon-fav-mobile icon-text-color-desk"
+                    data-notify="{{ $favNumber }}">
+                    <i class="zmdi zmdi-favorite-outline icon-text-color-desk"></i>
+                </a>
+            @endauth
         </div>
 
         <!-- Button show menu -->

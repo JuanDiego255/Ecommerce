@@ -77,7 +77,7 @@
     <!-- Banner Start-->
     @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
         @if (count($category) != 0)
-            <div class="sec-banner bg0 p-t-80 p-b-50">
+            <div class="sec-banner bg0 p-t-80 p-b-30">
                 <div class="container">
                     <div class="row">
                         @foreach ($category->take($take) as $key => $item)
@@ -117,7 +117,7 @@
         @endif
     @else
         @if (count($departments) != 0)
-            <div class="sec-banner bg0 p-t-80 p-b-50">
+            <div class="sec-banner bg0 p-t-80 p-b-30">
                 <div class="container">
                     <div class="row">
                         @foreach ($departments as $item)
@@ -155,7 +155,7 @@
             </div>
         @endif
     @endif
-    <div class="container p-b-60">
+    <div class="container p-b-30">
         <div class="p-b-10">
             <h6 class="mtext-101 cl5 text-justify text-center p-b-10">
                 Disfruta de la flexibilidad de nuestras tarjetas de regalo para canjear en cualquier
@@ -168,14 +168,15 @@
                 Tarjeta
                 de Regalo</button>
         </center>
-
+    </div>
+    <div class="container">
         <hr>
     </div>
 
     @include('frontend.modals.gift-card')
     <!-- Banner End-->
     <!-- Product -->
-    <section class="bg0 p-t-23 p-b-140">
+    <section class="bg0 p-t-15 p-b-140">
         <div class="container">
             <div class="p-b-10">
                 <h3 class="ltext-103 cl5">
