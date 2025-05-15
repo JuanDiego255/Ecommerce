@@ -265,7 +265,7 @@ class ClothingCategoryController extends Controller
                     DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE clothing.stock END) as total_stock'),
                     'product_images.image as image', // Obtener la primera imagen del producto
                 )
-                ->groupBy('clothing.id','clothing.is_contra_pedido', 'clothing.main_image', 'clothing.horizontal_image', 'clothing.casa', 'clothing.name', 'clothing.manage_stock', 'clothing.code', 'clothing.can_buy', 'pivot_clothing_categories.category_id', 'categories.name', 'clothing.description', 'clothing.trending', 'clothing.price', 'clothing.mayor_price', 'clothing.meta_keywords', 'product_images.image', 'clothing.discount')
+                ->groupBy('clothing.id', 'clothing.is_contra_pedido', 'clothing.main_image', 'clothing.horizontal_image', 'clothing.casa', 'clothing.name', 'clothing.manage_stock', 'clothing.code', 'clothing.can_buy', 'pivot_clothing_categories.category_id', 'categories.name', 'clothing.description', 'clothing.trending', 'clothing.price', 'clothing.mayor_price', 'clothing.meta_keywords', 'product_images.image', 'clothing.discount')
                 ->first();
         });
 
@@ -323,10 +323,12 @@ class ClothingCategoryController extends Controller
             if ($validator->fails()) {
                 return redirect('/edit-clothing/' . $id . '/' . $request->category_id)->with(['status' => '(El formato de la imagen debe ser: jpg,png,jpeg,gif,svg. Max(2048), permitidas solo 4 imagenes)', 'icon' => 'warning']);
             }
+            $contenido = $request->input('description');
+            $contenidoEscapado = str_replace('"', '&quot;', $contenido);
             $clothing = ClothingCategory::findOrfail($id);
             $clothing->name = $request->name;
             $clothing->code = $request->code;
-            $clothing->description = $request->description;
+            $clothing->description = $contenidoEscapado;
             $clothing->stock = $request->stock;
             $clothing->price = $request->price;
             $prices_attr = $request->input('precios_attr');
@@ -527,6 +529,8 @@ class ClothingCategoryController extends Controller
         $prices_attr = $request->input('precios_attr');
         $cantidades_attr = $request->input('cantidades_attr');
         $attr_id = $request->input('attr_id');
+        $contenido = $request->input('description');
+        $contenidoEscapado = str_replace('"', '&quot;', $contenido);
         if ($request->hasFile('images')) {
             $images = $request->file('images');
 
@@ -536,7 +540,7 @@ class ClothingCategoryController extends Controller
                 $clothing->name = $request->name;
                 $clothing->code = $code;
                 $clothing->stock = $request->stock;
-                $clothing->description = $request->description;
+                $clothing->description = $contenidoEscapado;
                 $clothing->price = $request->price;
                 if ($request->hasFile('horizontal_image')) {
                     $image = $request->file('horizontal_image');
@@ -652,7 +656,7 @@ class ClothingCategoryController extends Controller
             $clothing = new ClothingCategory();
             $clothing->name = $request->name;
             $clothing->code = $request->code;
-            $clothing->description = $request->description;
+            $clothing->description = $contenidoEscapado;
             $clothing->price = $request->price;
             $clothing->stock = $request->stock;
             $clothing->status = 1;
