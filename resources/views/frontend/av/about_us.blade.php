@@ -4,7 +4,7 @@
     {!! OpenGraph::generate() !!}
 @endsection
 @section('content')
-    <div class="bradcam_area bradcam_bg_1">
+    <div class="bradcam_area bradcam_bg_about">
         <div class="container">
             <div class="row">
                 <div class="col-xl-12">

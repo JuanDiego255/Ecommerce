@@ -32,7 +32,7 @@
         }
     </style>
 
-    <div class="slider_area mb-5">
+    <div class="slider_area mb-1">
         <div class="slider_active owl-carousel">
             @if (isset($tenantcarousel) && count($tenantcarousel) > 0)
                 @foreach ($tenantcarousel as $key => $carousel)
@@ -64,7 +64,7 @@
                 <div class="border_bottom">
                     <div class="row">
                         <div class="col-xl-12">
-                            <div class="section_title text-center mb-40">
+                            <div class="section_title text-center mb-30">
                                 <h3>Nuestros servicios</h3>
                             </div>
                         </div>
@@ -108,7 +108,7 @@
                 <div class="border_bottom">
                     <div class="row">
                         <div class="col-xl-12">
-                            <div class="section_title text-center mb-40">
+                            <div class="section_title text-center mb-30">
                                 <h3>Proyectos Ejecutados</h3>
                             </div>
                         </div>
@@ -244,7 +244,7 @@
                 <div class="border_bottom">
                     <div class="row">
                         <div class="col-xl-12">
-                            <div class="section_title text-center mb-40">
+                            <div class="section_title text-center mb-10">
                                 <h3 class="text-uppercase uppercase text-prov">Clientes</h3>
                             </div>
                         </div>
@@ -267,7 +267,7 @@
                     </div>
                     <div class="row">
                         <div class="col-xl-12">
-                            <div class="section_title text-center mb-40">
+                            <div class="section_title text-center mb-10">
                                 <h3 class="text-uppercase uppercase text-prov">Servicios de excelencia - respaldados por
                                     marcas líderes</h3>
                             </div>

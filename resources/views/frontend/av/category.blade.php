@@ -22,7 +22,7 @@
     }
 @endphp
 @section('content')
-    <div class="bradcam_area bradcam_bg_1">
+    <div class="bradcam_area bradcam_bg_services">
         <div class="container">
             <div class="row">
                 <div class="col-xl-12">
@@ -35,7 +35,7 @@
     </div>
     <!--/ bradcam_area  -->
     @if (count($category) != 0)
-        <div class="case_study_area case_page">
+        <div class="case_study_area case_page mt-40">
             <div class="container">
                 {{-- <div class="row">
                     <div class="col-xl-12">
@@ -55,16 +55,19 @@
                                 <div class="case_heading">
                                     <span>{{ $item->meta_title }}</span>
                                     <h3><a
-                                            href="{{ url('clothes-category/' . $item->category_id . '/' . $item->department_id) }}">{{ $item->name }}</a>
+                                            href="{{ url('clothes-category/' . $item->id . '/' . $item->department_id) }}">{{ $item->name }}</a>
                                     </h3>
                                 </div>
                             </div>
                         </div>
                     @endforeach
-                </div>               
+                </div>
             </div>
-        </div>       
+        </div>
     @endif
+    <!-- counter_area  -->
+   
+    <!-- /counter_area  -->
 
     @include('layouts.inc.av.footer')
 @endsection

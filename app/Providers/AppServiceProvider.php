@@ -10,6 +10,7 @@ use App\Models\Categories;
 use App\Models\ClothingCategory;
 use App\Models\Department;
 use App\Models\Favorite;
+use App\Models\Metrica;
 use App\Models\PersonalUser;
 use App\Models\Settings;
 use App\Models\TenantCarousel;
@@ -353,9 +354,11 @@ class AppServiceProvider extends ServiceProvider
             }
             $ruta = $tenantinfo->tenant != 'aclimate' ? 'file' : 'aclifile';
             $prefix = Request::segment(1);
+            $metricas = Metrica::all();
 
             view()->share([
                 'view_name' => $view_name,
+                'metricas' => $metricas,
                 'ruta' => $ruta,
                 'prefix' => $prefix,
                 'fechaCostaRica' => $fechaCostaRica,
