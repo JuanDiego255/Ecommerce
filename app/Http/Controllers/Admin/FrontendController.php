@@ -536,6 +536,9 @@ class FrontendController extends Controller
 
                 return view('frontend.carsale.category', compact('clothings', 'department_name', 'department_id'));
                 break;
+            case (6):
+                return view('frontend.av.category', compact('category', 'department_name', 'department_id'));
+                break;
             default:
                 if ($tenantinfo->kind_of_features == 1) {
                     return view('frontend.design_ecommerce.category', compact('category', 'department_name', 'department_id'));
@@ -696,7 +699,7 @@ class FrontendController extends Controller
             OpenGraph::setDescription($tag->meta_og_description);
         }
 
-        if (count($clothings) == 0 && ($tenantinfo->kind_business != 2 && $tenantinfo->kind_business != 3 && $tenantinfo->tenant != 'aclimate')) {
+        if (count($clothings) == 0 && ($tenantinfo->kind_business != 2 && $tenantinfo->kind_business != 3 && $tenantinfo->tenant != 'aclimate' && $tenantinfo->tenant != 'avelectromecanica')) {
             return redirect()->back()->with(['status' => 'No hay artículos en esta categoría', 'icon' => 'warning']);
         }
         switch ($tenantinfo->kind_business) {
@@ -1112,6 +1115,7 @@ class FrontendController extends Controller
                     })
                     ->select(
                         'categories.name as category',
+                        'categories.id as category_id',
                         'clothing.id as id',
                         'clothing.name as name',
                         'clothing.casa as casa',
@@ -1133,6 +1137,7 @@ class FrontendController extends Controller
                         'clothing.is_contra_pedido',
                         'clothing.mayor_price',
                         'categories.name',
+                        'categories.id',
                         'clothing.discount',
                         'clothing.name',
                         'clothing.description',

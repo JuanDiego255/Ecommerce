@@ -92,7 +92,7 @@
                     <div class="row">
                         <div class="col-xl-12">
                             <div class="more_close_btn text-center">
-                                <a href="#" class="boxed-btn3-line">Explorar más</a>
+                                <a href="{{url('/category/1')}}" class="boxed-btn3-line">Explorar más</a>
                             </div>
                         </div>
                     </div>

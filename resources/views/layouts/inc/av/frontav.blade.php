@@ -8,7 +8,7 @@
     }
     $ruta = $tenantinfo->tenant != 'aclimate' ? 'file' : 'aclifile';
     $logo =
-        $view_name != 'frontend_av_blog_show-articles'
+        $view_name != 'frontend_av_blog_show-articles' && $view_name != 'frontend_av_clothes-category'
             ? route($ruta, $tenantinfo->logo)
             : asset('avstyles/img/logos/logo-av2.svg');
     $color_navs = $view_name != 'frontend_av_blog_show-articles' ? '' : 'text-dark';
@@ -98,7 +98,7 @@
                     <div class="row align-items-center">
                         <div class="col-xl-3 col-lg-2">
                             <div class="logo">
-                                <a href="index.html">
+                                <a href="{{url('/')}}">
                                     <img id="logo-img" src="{{ $logo }}"
                                         data-logo-scroll="{{ asset('avstyles/img/logos/logo-av2.svg') }}"
                                         data-logo-original="{{ $logo }}" alt="Logo" />
@@ -123,15 +123,9 @@
                                             </ul>
                                         </li>
                                         <li><a class="{{ $view_name == 'frontend_av_clothes-category' ? 'active' : '' }} {{ $tenantinfo->tenant == 'aclimate' ? 'text-color-acli' : $color_navs }}"
-                                                href="services.html">Servicios</a></li>
-                                        <li>
-                                            <a class="{{ $tenantinfo->tenant == 'aclimate' ? 'text-color-acli' : $color_navs }}"
-                                                href="#">blog <i class="ti-angle-down"></i></a>
-                                            <ul class="submenu">
-                                                <li><a href="blog.html">blog</a></li>
-                                                <li><a href="single-blog.html">single-blog</a></li>
-                                            </ul>
-                                        </li>
+                                                href="{{url('category/1')}}">Servicios</a></li>
+                                        <li><a class="{{ $view_name == 'frontend_av_blog_index' ? 'active' : '' }} {{ $tenantinfo->tenant == 'aclimate' ? 'text-color-acli' : $color_navs }}"
+                                                href="#">Blog</a></li>                                        
                                         <li><a class="{{ $tenantinfo->tenant == 'aclimate' ? 'text-color-acli' : $color_navs }}"
                                                 href="{{ url('/contact') }}">Contacto</a></li>
                                     </ul>
