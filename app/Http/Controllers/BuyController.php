@@ -248,7 +248,7 @@ class BuyController extends Controller
         $iva = $tenantinfo->iva;
         $tenant = $tenantinfo->tenant;
 
-        return view('admin.buys.indexDetail', compact('buysDetails', 'iva','id', 'tenant', 'previousBuy', 'nextBuy', 'id', 'currentBuy'));
+        return view('admin.buys.indexDetail', compact('buysDetails', 'iva', 'id', 'tenant', 'previousBuy', 'nextBuy', 'id', 'currentBuy'));
     }
     public function approve($id, $approved)
     {
@@ -426,8 +426,8 @@ class BuyController extends Controller
     public function indexBuy($id)
     {
         $buy = null;
-        if($id != 0){
-            $buy = Buy::where('id',$id)->first();
+        if ($id != 0) {
+            $buy = Buy::where('id', $id)->first();
         }
         $tenantinfo = TenantInfo::first();
         $clothings = ClothingCategory::where('status', 1)
@@ -553,7 +553,7 @@ class BuyController extends Controller
         $iva_tenant = $tenantinfo->iva;
         $total_price = $cloth_price + $iva;
 
-        return view('admin.buys.buys', compact('cart_items','buy', 'clothings','id', 'iva_tenant', 'name', 'cloth_price', 'iva', 'total_price', 'you_save'));
+        return view('admin.buys.buys', compact('cart_items', 'buy', 'clothings', 'id', 'iva_tenant', 'name', 'cloth_price', 'iva', 'total_price', 'you_save'));
     }
     public function sizeByCloth(Request $request)
     {
@@ -615,5 +615,44 @@ class BuyController extends Controller
             DB::rollBack();
             return redirect()->back()->with(['status' => $th->getMessage(), 'icon' => 'success']);
         }
+    }
+    public function getBuysTotals(Request $request)
+    {
+        $start = $request->input('start');
+        $end = $request->input('end');
+
+        $tenantinfo = TenantInfo::first();
+        $query = Buy::leftJoin('users', 'buys.user_id', 'users.id')
+            ->leftJoin('buy_details', 'buys.id', 'buy_details.buy_id')
+            ->select(
+                'buys.id as id',
+                'buys.total_iva as total_iva',
+                'buys.total_buy as total_buy',
+                'buys.kind_of_buy as kind_of',
+                'buys.total_delivery as total_delivery',
+                'buys.credit_used as credit_used',
+                'buys.created_at as created_at',
+                DB::raw('sum(buy_details.quantity) as details_count')
+            )
+            ->groupBy('buys.id', 'buys.kind_of_buy', 'buys.credit_used', 'buys.total_iva', 'buys.total_buy', 'buys.total_Delivery', 'buys.created_at');
+
+        if ($start && $end) {
+            $query->whereBetween('buys.created_at', [$start, $end]);
+        }
+
+        $buys = $query->get();
+
+        if ($buys->isEmpty()) {
+            return response()->json(['status' => 'empty']);
+        }
+
+        return response()->json([
+            'totalPrecio' => $buys->sum('total_buy'),
+            'totalEnvio' => $buys->sum('total_delivery'),
+            'totalVentas' => $buys->count(),
+            'totalProductos' => $buys->sum('details_count'),
+            'totalIva' => $buys->sum('total_iva'),
+            'iva' => $tenantinfo->iva
+        ]);
     }
 }

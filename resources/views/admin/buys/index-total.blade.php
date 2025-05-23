@@ -163,11 +163,11 @@
                                     <th class="align-middle text-center">
                                         <p class=" font-weight-bold mb-0" id="totalShipping"></p>
                                     </th>
-                                    <th class="align-middle text-center">                                        
+                                    <th class="align-middle text-center">
                                     </th>
-                                    <th class="align-middle text-center">                                        
+                                    <th class="align-middle text-center">
                                     </th>
-                                    <th class="align-middle text-center">                                        
+                                    <th class="align-middle text-center">
                                     </th>
                                 </tr>
                             </tfoot>
@@ -182,40 +182,6 @@
 @endsection
 @section('script')
     <script>
-        function setFirstAndLastDayOfMonth() {
-            var currentDate = getCurrentDate();
-            var firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-            var lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
-
-            $('#searchfordateini').val(formatDate(firstDayOfMonth));
-            $('#searchfordatefin').val(formatDate(lastDayOfMonth));
-        }
-
-        function getCurrentDate() {
-            return new Date();
-        }
-
-        function formatDate(date) {
-            var day = date.getDate();
-            var month = date.getMonth() + 1; // Los meses en JavaScript se indexan desde 0
-            var year = date.getFullYear();
-
-            // Asegurar que los días y los meses tengan dos dígitos
-            if (day < 10) {
-                day = '0' + day;
-            }
-            if (month < 10) {
-                month = '0' + month;
-            }
-
-            return year + '-' + month + '-' + day;
-        }
-
-        // Llama a la función para establecer la fecha actual al cargar la página
-        $(document).ready(function() {
-            setFirstAndLastDayOfMonth();
-        });
-
         var dataTable = $('#buys').DataTable({
             searching: true,
             lengthChange: false,
@@ -249,7 +215,7 @@
                                             if (typeof cell.text === 'string') {
                                                 cell.text = cell.text.replace(/₡/g,
                                                     ''
-                                                    ); // Reemplazar ₡ con Unicode
+                                                ); // Reemplazar ₡ con Unicode
                                             }
                                         });
                                     });
@@ -282,87 +248,59 @@
                 // Función para limpiar el símbolo de colones y separadores
                 var cleanNumber = function(value) {
                     if (!value) {
-                        return 0; // Si el valor es nulo, indefinido o vacío, retornar 0
+                        return 0;
                     }
                     if (typeof value !== 'string') {
-                        value = value.toString(); // Asegurarse de que sea una cadena
+                        value = value.toString();
                     }
-                    // Eliminar símbolo de colones y separadores de miles
                     return parseFloat(value.replace(/[₡,]/g, '')) || 0;
                 };
 
-                // Calcula el total de la columna de ventas (extrae texto y limpia)
-                var totalSales = api
-                    .column(1, {
-                        page: 'current'
-                    })
-                    .data()
-                    .map(function(data) {
-                        // Extraer solo el texto, sin etiquetas HTML
-                        return $(data).text();
-                    })
-                    .reduce(function(a, b) {
-                        return cleanNumber(a) + cleanNumber(b);
-                    }, 0);
+                var totalSales = 0;
+                var totalShipping = 0;
 
-                // Calcula el total de la columna de envíos (extrae texto y limpia)
-                var totalShipping = api
-                    .column(2, {
-                        page: 'current'
-                    })
-                    .data()
-                    .map(function(data) {
-                        // Extraer solo el texto, sin etiquetas HTML
-                        return $(data).text();
-                    })
-                    .reduce(function(a, b) {
-                        return cleanNumber(a) + cleanNumber(b);
-                    }, 0);
+                // Accede a todas las filas filtradas
+                api.rows({
+                    filter: 'applied'
+                }).every(function() {
+                    var data = this.data(); // Devuelve el array de celdas por fila
+                    var salesText = $(data[1]).text(); // columna 1 = ventas
+                    var shippingText = $(data[2]).text(); // columna 2 = envíos
+                    totalSales += cleanNumber(salesText);
+                    totalShipping += cleanNumber(shippingText);
+                });
 
-                // Actualiza los valores en el footer con formato
+                // Mostrar en el footer
                 $(api.column(1).footer()).html(`₡${totalSales.toLocaleString()}`);
                 $(api.column(2).footer()).html(`₡${totalShipping.toLocaleString()}`);
             }
+
+
         });
 
 
         $('#recordsPerPage').on('change', function() {
-            var recordsPerPage = parseInt($(this).val());
+            var recordsPerPage = parseInt($(this).val());            
             dataTable.page.len(recordsPerPage).draw();
         });
 
         // Captura el evento input en el campo de búsqueda
         $('#searchfor').on('input', function() {
             var searchTerm = $(this).val();
+            if (searchTerm === "") {
+                calcularTotalAll();
+                return;
+            }
             dataTable.search(searchTerm).draw();
-            calcularTotal();
+            calcularTotal(true);
         });
 
         // Captura el evento input en el campo de búsqueda
         $('#searchfordateini, #searchfordatefin').on('change', function() {
-            var startDate = $('#searchfordateini').val();
-            var endDate = $('#searchfordatefin').val();
-
-            // Filtra los datos basándose en el rango de fechas seleccionado
-            $.fn.dataTable.ext.search.push(
-                function(settings, data, dataIndex) {
-                    var rowData = dataTable.row(dataIndex).data();
-                    var rowDataDate = $(rowData[0]).text();
-
-                    // Comprueba si la fecha está dentro del rango seleccionado
-                    return (rowDataDate >= startDate && rowDataDate <= endDate);
-                }
-            );
-
-            // Redibujar la tabla con los datos filtrados
-            dataTable.draw();
-
-            // Eliminar la función de filtro después de realizar la búsqueda
-            $.fn.dataTable.ext.search.pop();
-            calcularTotal();
+            calcularTotalAll();
         });
 
-        function calcularTotal() {
+        function calcularTotal(setear) {
             var totalPrecio = 0;
             var totalEnvio = 0;
             var totalVentas = 0;
@@ -401,15 +339,68 @@
 
 
             });
-
-            $('#totalPrecio').text(totalPrecio.toFixed(2));
-            $('#totalEnvio').text(totalEnvio.toFixed(2));
-            $('#totalVentas').text(totalVentas.toFixed(0));
-            $('#totalProductos').text(totalProductos.toFixed(0));
-            $('#total').text((totalPrecio + totalEnvio).toFixed(2));
-            if (iva > 0) {
-                $('#totalIva').text(totalIva.toFixed(2));
+            if (setear) {
+                $('#totalPrecio').text(totalPrecio.toFixed(2));
+                $('#totalEnvio').text(totalEnvio.toFixed(2));
+                $('#totalVentas').text(totalVentas.toFixed(0));
+                $('#totalProductos').text(totalProductos.toFixed(0));
+                $('#total').text((totalPrecio + totalEnvio).toFixed(2));
+                if (iva > 0) {
+                    $('#totalIva').text(totalIva.toFixed(2));
+                }
             }
+        }
+
+        function calcularTotalAll() {
+            var startDate = $('#searchfordateini').val();
+            var endDate = $('#searchfordatefin').val();
+
+            // Filtra los datos basándose en el rango de fechas seleccionado
+            $.fn.dataTable.ext.search.push(
+                function(settings, data, dataIndex) {
+                    var rowData = dataTable.row(dataIndex).data();
+                    var rowDataDate = $(rowData[0]).text();
+
+                    // Comprueba si la fecha está dentro del rango seleccionado
+                    return (rowDataDate >= startDate && rowDataDate <= endDate);
+                }
+            );
+
+            // Redibujar la tabla con los datos filtrados
+            dataTable.draw();
+
+            // Eliminar la función de filtro después de realizar la búsqueda
+            $.fn.dataTable.ext.search.pop();
+            if (startDate && endDate) {
+                $.ajax({
+                    url: "{{ route('buys.total') }}",
+                    method: "GET",
+                    data: {
+                        start: startDate,
+                        end: endDate
+                    },
+                    success: function(response) {
+                        if (response.status === 'empty') {
+                            alert('No hay ventas en ese rango de fechas!');
+                            return;
+                        }
+
+                        $('#totalPrecio').text(response.totalPrecio.toFixed(2));
+                        $('#totalEnvio').text(response.totalEnvio.toFixed(2));
+                        $('#totalVentas').text(response.totalVentas.toFixed(0));
+                        $('#totalProductos').text(response.totalProductos.toFixed(0));
+                        $('#total').text((response.totalPrecio + response.totalEnvio).toFixed(2));
+
+                        if (response.iva > 0) {
+                            $('#totalIva').text(response.totalIva.toFixed(2));
+                        }
+                    },
+                    error: function() {
+                        alert('Error al obtener los datos.');
+                    }
+                });
+            }
+            calcularTotal(false);
         }
     </script>
 @endsection

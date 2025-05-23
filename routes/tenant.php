@@ -222,6 +222,7 @@ Route::middleware([
             Route::put('/delivery/{id}/{delivery}', [BuyController::class, 'delivery']);
             Route::delete('delete-buy/{id}', [BuyController::class, 'destroy']);
             Route::get('/get/buys/select/{id}', [BuyController::class, 'getBuys']);
+            Route::get('/buys/total', [BuyController::class, 'getBuysTotals'])->name('buys.total');
             //Rutas para anuncios
             Route::post('advert/store', [AdvertController::class, 'store']);
             Route::get('/adverts', [AdvertController::class, 'index']);
