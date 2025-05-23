@@ -557,7 +557,7 @@
                     return;
                 }
                 // Ajuste de monto_venta si es pago con tarjeta
-                if (tipo_pago.trim().toUpperCase() === "TARJETA") {
+                if (tipo_pago.trim().toUpperCase() === "TARJETA" && !chkSetClinica) {
                     if (aplica_113 == 1) monto_venta /= 1.13;
                     if (aplica_calc_tarjeta == 1) monto_venta *= 1.13;
                 }
