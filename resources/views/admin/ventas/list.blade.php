@@ -93,10 +93,12 @@
                         searchable: false
                     },
                     {
-                        data: 'nombre'
+                        data: 'nombre',
+                        name: 'especialistas.nombre'
                     },
                     {
-                        data: 'servicios'
+                        data: 'servicios',
+                        searchable: false
                     },
                     {
                         data: 'monto_venta'
@@ -114,7 +116,8 @@
                         data: 'porcentaje'
                     },
                     {
-                        data: 'tipo'
+                        data: 'tipo',
+                        name: 'tipo_pagos.tipo'
                     },
                     {
                         data: 'justificacion_arqueo'
@@ -159,6 +162,14 @@
                         sPrevious: "<<"
                     }
                 }
+            });
+            $('#recordsPerPage').on('change', function() {
+                var recordsPerPage = parseInt($(this).val());
+                tableVentas.page.len(recordsPerPage).draw();
+            });
+            $('#searchfor').on('input', function() {
+                var searchTerm = $(this).val();
+                tableVentas.search(searchTerm).draw();
             });
         });
 

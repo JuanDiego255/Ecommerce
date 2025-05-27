@@ -2659,7 +2659,7 @@ input.num-product::-webkit-inner-spin-button {
 /*//////////////////////////////////////////////////////////////////
 [ Width ]*/
 .size-201 {
-    max-width: 270px;
+    max-width: auto;
 }
 
 .size-202 {

@@ -224,20 +224,20 @@
                             @endphp
 
                             @foreach ($chunks as $chunk)
-                                <div class="filter-col p-l-15 p-b-27">
+                                <div class="filter-col p-l-15 p-b-10">
                                     @if ($loop->first)
-                                        <div class="mtext-102 cl2 p-b-15">
+                                        <div class="mtext-102 cl2 p-b-10">
                                             {{ $attribute->name }}
                                         </div>
                                     @else
-                                        <div class="mtext-102 cl2 p-b-15">
+                                        <div class="mtext-102 cl2 p-b-10">
                                             &nbsp; {{-- espacio para mantener alineación visual --}}
                                         </div>
                                     @endif
 
                                     <ul>
                                         @foreach ($chunk as $value)
-                                            <li class="p-b-6 p-r-50">
+                                            <li class="p-b-1 p-r-50">
                                                 <a href="#" class="filter-link stext-106 trans-04"
                                                     data-attr-id="{{ $attribute->id }}"
                                                     data-value-id="{{ $value->id }}">

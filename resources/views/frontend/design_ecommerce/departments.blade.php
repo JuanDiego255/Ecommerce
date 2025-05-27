@@ -24,7 +24,7 @@
             <div class="flex-w flex-c-m">
                 @foreach ($departments as $item)
                     @if ($item->black_friday != 1)
-                        <div class="size-202 m-lr-auto respon4">
+                        <div class="size-202 m-lr-auto respon4 m-b-30">
                             <!-- Block1 -->
                             <div class="block1 wrap-pic-w">
                                 <img src="{{ isset($item->image) ? route('file', $item->image) : url('design_ecommerce/images/producto-sin-imagen.PNG') }}"
