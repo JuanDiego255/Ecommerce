@@ -44,7 +44,7 @@
                         <div class="col-md-6">
                             <div class="input-group input-group-lg input-group-outline is-filled }} my-3">
                                 <label class="form-label">URL (Opcional)</label>
-                                <input required value="{{ isset($carousel->url) ? $carousel->url : '' }}" type="text"
+                                <input value="{{ isset($carousel->url) ? $carousel->url : '' }}" type="text"
                                     placeholder="URL de redirección"
                                     class="form-control form-control-lg @error('url') is-invalid @enderror"
                                     name="url" id="url">
@@ -58,7 +58,7 @@
                         <div class="col-md-6">
                             <div class="input-group input-group-lg input-group-outline is-filled my-3">
                                 <label class="form-label">Texto del botón de enlace (Opcional)</label>
-                                <input required value="{{ isset($carousel->link_text) ? $carousel->link_text : '' }}"
+                                <input value="{{ isset($carousel->link_text) ? $carousel->link_text : '' }}"
                                     type="text" placeholder="URL de redirección"
                                     class="form-control form-control-lg @error('link_text') is-invalid @enderror"
                                     name="link_text" id="link_text">

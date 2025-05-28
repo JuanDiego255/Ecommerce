@@ -45,7 +45,7 @@
                             <div
                                 class="input-group input-group-lg input-group-outline is-filled }} my-3">
                                 <label class="form-label">URL (Opcional)</label>
-                                <input required value="{{ isset($item->url) ? $item->url : '' }}" type="text"
+                                <input value="{{ isset($item->url) ? $item->url : '' }}" type="text"
                                     placeholder="URL de redirección"
                                     class="form-control form-control-lg @error('url') is-invalid @enderror"
                                     name="url" id="url">
@@ -60,7 +60,7 @@
                             <div
                                 class="input-group input-group-lg input-group-outline is-filled my-3">
                                 <label class="form-label">Texto del botón de enlace (Opcional)</label>
-                                <input required value="{{ isset($item->link_text) ? $item->link_text : '' }}"
+                                <input value="{{ isset($item->link_text) ? $item->link_text : '' }}"
                                     type="text" placeholder="URL de redirección"
                                     class="form-control form-control-lg @error('link_text') is-invalid @enderror"
                                     name="link_text" id="link_text">
@@ -83,7 +83,7 @@
                     <div class="col-md-12 mb-3">
                         <label class="form-label">Imagen (Visible en smartphones)</label>
                         <div class="input-group input-group-static mb-4">
-                            <input required class="form-control" type="file" name="mobile_image">
+                            <input class="form-control" type="file" name="mobile_image">
                         </div>
                     </div>
                     <center>
