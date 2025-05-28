@@ -1466,7 +1466,7 @@ h3 {
 
 /* line 2, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_about.scss */
 .about_info_area {
-    padding-bottom: 70px;
+    padding-bottom: 0;
 }
 
 /* line 4, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_about.scss */
@@ -1574,7 +1574,7 @@ h3 {
 @media (max-width: 767px) {
     /* line 31, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_counter.scss */
     .case_study_area {
-        padding-top: 50px;
+        padding-top: 0;
     }
 }
 
