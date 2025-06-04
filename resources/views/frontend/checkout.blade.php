@@ -27,14 +27,14 @@
                         <li class="home-sk"><a href="{{ url('/') }}"><i class="fas fa-{{ $icon->home }} me-1"></i></a></li>
                         <li class="bread-sk"><a href="{{ url('category/') }}"><i
                                     class="fas fa-{{ $icon->categories }} me-1"></i>Categorías</a></li>
-                        <li class="bread-sk"><a href="{{ url('/view-cart') }}"><i
+                        <li class="bread-sk"><a href="{{ url('/view-cart/cnormal-in') }}"><i
                                     class="fas fa-{{ $icon->cart }} me-1"></i>Carrito</a></li>
                         <li class="bread-sk"><a href="#"><i class="fab fa-cc-mastercard me-1"></i>Finalizar Compra</a></li>
                     @else
                         <li class="home-sk"><a href="{{ url('/') }}"><i class="fas fa-home me-1"></i></a></li>
                         <li class="bread-sk"><a href="{{ url('departments/index') }}"><i
                                     class="fas fa-shapes me-1"></i>Departamentos</a></li>
-                        <li class="bread-sk"><a href="{{ url('/view-cart') }}"><i
+                        <li class="bread-sk"><a href="{{ url('/view-cart/cnormal-in') }}"><i
                                     class="fas fa-{{ $icon->cart }} me-1"></i>Carrito</a></li>
                         <li class="bread-sk"><a href="#"><i class="fab fa-cc-mastercard me-1"></i>Finalizar Compra</a></li>
                     @endif
@@ -359,7 +359,7 @@
                         </li>
                         <li class="bread-standard"><a href="{{ url('category/') }}"><i
                                     class="fas fa-{{ $icon->categories }} me-1"></i>Categorías</a></li>
-                        <li class="bread-standard"><a href="{{ url('/view-cart') }}"><i
+                        <li class="bread-standard"><a href="{{ url('/view-cart/cnormal-in') }}"><i
                                     class="fas fa-{{ $icon->cart }} me-1"></i>Carrito</a>
                         </li>
                         <li class="bread-standard"><a href="#"><i class="fab fa-cc-mastercard me-1"></i>Finalizar
@@ -369,7 +369,7 @@
                         <li class="home"><a href="{{ url('/') }}"><i class="fas fa-home me-1"></i></a></li>
                         <li class="bread-standard"><a href="{{ url('departments/index') }}"><i
                                     class="fas fa-shapes me-1"></i>Departamentos</a></li>
-                        <li class="bread-standard"><a href="{{ url('/view-cart') }}"><i
+                        <li class="bread-standard"><a href="{{ url('/view-cart/cnormal-in') }}"><i
                                     class="fas fa-{{ $icon->cart }} me-1"></i>Carrito</a>
                         </li>
                         <li class="bread-standard"><a href="#"><i class="fab fa-cc-mastercard me-1"></i>Finalizar

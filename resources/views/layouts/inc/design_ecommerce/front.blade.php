@@ -442,7 +442,7 @@
 
 
                     <div class="header-cart-buttons flex-w w-full">
-                        <a href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/view-cart') }}"
+                        <a href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/view-cart/cnormal-in') }}"
                             class="flex-c-m stext-101 cl0 size-107 bg3 bor2 hov-btn3 p-lr-15 trans-04 m-r-8 m-b-10">
                             Ver Carrito
                         </a>

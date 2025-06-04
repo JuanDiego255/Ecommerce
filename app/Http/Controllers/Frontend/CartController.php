@@ -77,6 +77,7 @@ class CartController extends Controller
         DB::beginTransaction();
         try {
             $attributes = json_decode($request->input('attributes'), true);
+            $prefix_cart = "CARTID";
             if ($request->code) {
                 $code = $request->code;
                 $updateId = $request->updateId;
@@ -130,6 +131,7 @@ class CartController extends Controller
                             $cart_item->clothing_id = $clothing_id;
                             $cart_item->quantity = $quantity;
                             $cart_item->sold = 0;
+                            $cart_item->unique_cart_id = $prefix_cart . Auth::id();
                             $cart_item->save();
                             $cart_id = $cart_item->id;
                             foreach ($attributes as $attr) {
@@ -168,6 +170,7 @@ class CartController extends Controller
                         $cart_item->clothing_id = $clothing_id;
                         $cart_item->quantity = $quantity;
                         $cart_item->sold = 0;
+                        $cart_item->unique_cart_id = $prefix_cart . $session_id;
                         $cart_item->save();
                         $cart_id = $cart_item->id;
                         foreach ($attributes as $attr) {
@@ -193,10 +196,10 @@ class CartController extends Controller
             return response()->json(['status' => 'Ocurrió un error al agregar la artículo al carrito ' . $th->getMessage(), 'icon' => 'error']);
         }
     }
-    public function viewCart()
+    public function viewCart($unique_cart_id = null)
     {
         $tenantinfo = TenantInfo::first();
-        $cart_items = $this->getCartItems();
+        $cart_items = $this->getCartItems($unique_cart_id);
 
         $tags = MetaTags::where('section', 'Carrito')->get();
         $tenantinfo = TenantInfo::first();
@@ -306,9 +309,72 @@ class CartController extends Controller
             return response()->json(['error' => $th->getMessage()]);
         }
     }
-    public function getCartItems()
+    public function getCartItems($unique_cart_id)
     {
-        $cart_items = Cache::remember('cart_items', $this->expirationTime, function () {
+        $cart_items = Cache::remember('cart_items', $this->expirationTime, function () use ($unique_cart_id) {
+            if ($unique_cart_id != "cnormal-in") {
+                $cart_items = Cart::where('carts.unique_cart_id', $unique_cart_id)
+                    ->where('carts.sold', 0)
+                    ->leftJoin('attribute_value_cars', 'carts.id', 'attribute_value_cars.cart_id')
+                    ->leftJoin('attributes', 'attribute_value_cars.attr_id', 'attributes.id')
+                    ->leftJoin('attribute_values', 'attribute_value_cars.value_attr', 'attribute_values.id')
+                    ->leftJoin('stocks', function ($join) {
+                        $join->on('carts.clothing_id', '=', 'stocks.clothing_id')->on('attribute_value_cars.attr_id', '=', 'stocks.attr_id')->on('attribute_value_cars.value_attr', '=', 'stocks.value_attr')->where('stocks.price', '!=', 0);
+                    })
+                    ->join('clothing', 'carts.clothing_id', 'clothing.id')
+                    ->leftJoin('product_images', function ($join) {
+                        $join->on('clothing.id', '=', 'product_images.clothing_id')->whereRaw('product_images.id = (
+                                SELECT MIN(id) FROM product_images
+                                WHERE product_images.clothing_id = clothing.id
+                            )');
+                    })
+                    ->select(
+                        'clothing.id as id',
+                        'clothing.name as name',
+                        'clothing.casa as casa',
+                        'clothing.description as description',
+                        'clothing.mayor_price as mayor_price',
+                        'clothing.discount as discount',
+                        'clothing.status as status',
+                        'carts.quantity as quantity',
+                        'carts.id as cart_id',
+                        'carts.unique_cart_id as unique_cart_id',
+                        'attributes.name as name_attr',
+                        'attribute_values.value as value',
+                        DB::raw('COALESCE(stocks.price, clothing.price) as price'),
+                        DB::raw('COALESCE(stocks.stock, clothing.stock) as stock'),
+                        DB::raw('(
+                            SELECT GROUP_CONCAT(CONCAT(attributes.name, ": ", attribute_values.value) SEPARATOR ", ")
+                            FROM attribute_value_cars
+                            JOIN attributes ON attribute_value_cars.attr_id = attributes.id
+                            JOIN attribute_values ON attribute_value_cars.value_attr = attribute_values.id
+                            WHERE attribute_value_cars.cart_id = carts.id
+                        ) as attributes_values'),
+                        DB::raw('IFNULL(product_images.image, "") as image'), // Obtener la primera imagen del producto
+                    )
+                    ->groupBy(
+                        'clothing.id',
+                        'clothing.price',
+                        'clothing.stock',
+                        'clothing.name',
+                        'clothing.casa',
+                        'clothing.description',
+                        'stocks.price',
+                        'stocks.stock',
+                        'clothing.mayor_price',
+                        'attributes.name',
+                        'attribute_values.value',
+                        'clothing.status',
+                        'clothing.discount',
+                        'carts.quantity',
+                        'carts.id',
+                        'carts.unique_cart_id',
+                        'product_images.image'
+                    )
+                    ->get();
+
+                return $cart_items;
+            }
             if (Auth::check()) {
                 $userId = Auth::id();
                 $cart_items = Cart::where('carts.user_id', $userId)
@@ -337,6 +403,7 @@ class CartController extends Controller
                         'clothing.description as description',
                         'clothing.mayor_price as mayor_price',
                         'clothing.discount as discount',
+                        'carts.unique_cart_id as unique_cart_id',
                         'clothing.status as status',
                         'carts.quantity as quantity',
                         'carts.id as cart_id',
@@ -369,6 +436,7 @@ class CartController extends Controller
                         'clothing.discount',
                         'carts.quantity',
                         'carts.id',
+                        'carts.unique_cart_id',
                         'product_images.image'
                     )
                     ->get();
@@ -397,6 +465,7 @@ class CartController extends Controller
                         'clothing.name as name',
                         'clothing.casa as casa',
                         'clothing.description as description',
+                        'carts.unique_cart_id as unique_cart_id',
                         'clothing.mayor_price as mayor_price',
                         'clothing.discount as discount',
                         'clothing.status as status',
@@ -431,6 +500,7 @@ class CartController extends Controller
                         'clothing.discount',
                         'carts.quantity',
                         'carts.id',
+                        'carts.unique_cart_id',
                         'product_images.image'
                     )
                     ->get();
@@ -442,7 +512,7 @@ class CartController extends Controller
     }
     public function getCart()
     {
-        $cart_items = $this->getCartItems();
+        $cart_items = $this->getCartItems("cnormal-in");
         return response()->json($cart_items);
     }
 }

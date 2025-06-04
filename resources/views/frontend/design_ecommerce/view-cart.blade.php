@@ -4,6 +4,9 @@
     {!! OpenGraph::generate() !!}
 @endsection
 @section('content')
+    @php
+        $cart_unique = null;
+    @endphp
     <!-- breadcrumb -->
     <div class="container p-t-30 p-b-30">
         <div class="bread-crumb flex-w p-l-25 p-r-15 p-lr-0-lg">
@@ -82,6 +85,7 @@
                                             $attributesValues = !empty($item->attributes_values)
                                                 ? explode(', ', $item->attributes_values)
                                                 : [];
+                                            $cart_unique = $item->unique_cart_id;
                                         @endphp
                                         <tr class="table_row">
                                             <input type="hidden" name="prod_id" value="{{ $item->id }}"
@@ -274,6 +278,12 @@
                             class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer text-white">
                             Finalizar Pedido
                         </a>
+                        @if (!empty($cart_unique))
+                            <a href="#" id="copyCartLinkBtn" data-link="{{ url('/view-cart/' . $cart_unique) }}"
+                                class="flex-c-m stext-101 m-t-10 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer text-white">
+                                Obtener link de mi carrito
+                            </a>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -341,7 +351,39 @@
                 });
             });
         });
+        document.getElementById('copyCartLinkBtn').addEventListener('click', function(e) {
+            e.preventDefault();
 
+            const link = this.getAttribute('data-link');
+
+            if (navigator.clipboard && window.isSecureContext) {
+                // Método moderno
+                navigator.clipboard.writeText(link).then(() => {
+                    swal('¡Link copiado al portapapeles!',
+                        "Comparte tu carrito para que tus amigos conozcan lo que deseas", "success");
+                }).catch(err => {
+                    console.error('Error al copiar: ', err);
+                });
+            } else {
+                // Método de respaldo para navegadores antiguos
+                const textArea = document.createElement("textarea");
+                textArea.value = link;
+                textArea.style.position = "fixed"; // Evita el scroll al enfocar
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+
+                try {
+                    document.execCommand('copy');
+                    swal('¡Link copiado al portapapeles!',
+                        "Comparte tu carrito para que tus amigos conozcan lo que deseas", "success");
+                } catch (err) {
+                    console.error('Error al copiar: ', err);
+                }
+
+                document.body.removeChild(textArea);
+            }
+        });
         $('.btnDeleteCart').click(function(e) {
             e.preventDefault();
 
