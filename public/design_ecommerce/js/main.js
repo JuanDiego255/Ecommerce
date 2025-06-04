@@ -125,7 +125,7 @@
         $(this).css('opacity', '0');
     });
 
-    $('.js-hide-modal-search').on('click', function () {
+    $('.btn-hide-modal-search').on('click', function () {
         $('.modal-search-header').removeClass('show-modal-search');
         $('.js-show-modal-search').css('opacity', '1');
     });

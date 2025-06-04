@@ -303,13 +303,16 @@
             <button class="flex-c-m btn-hide-modal-search trans-04 js-hide-modal-search">
                 <img src="/design_ecommerce/images/icons/icon-close2.png" alt="CLOSE">
             </button>
-
-            <form class="wrap-search-header flex-w p-l-15">
-                <button class="flex-c-m trans-04">
-                    <i class="zmdi zmdi-search"></i>
-                </button>
-                <input class="plh3" type="text" name="search" placeholder="Search...">
-            </form>
+            <div class="wrap-search-header flex-w p-l-15">
+                <div class="search">
+                    <select id="search-select" class="form-control select2" placeholder="Search..." name="search">
+                        <option value="">Select an option</option>
+                        <option value="1">Option 1</option>
+                        <option value="2">Option 2</option>
+                        <option value="3">Option 3</option>
+                    </select>
+                </div>
+            </div>
         </div>
     </div>
 </header>

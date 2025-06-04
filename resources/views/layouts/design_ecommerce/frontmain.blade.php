@@ -319,8 +319,9 @@
                 }
             });
             $('#search-select').on('change', function(e) {
-                url = (prefix === 'aclimate' ? '/' + prefix : '') + '/detail-clothing' + selectedId;
+
                 var selectedId = $(this).val();
+                url = (prefix === 'aclimate' ? '/' + prefix : '') + '/detail-clothing' + selectedId;
                 if (selectedId) {
                     window.location.href = url;
                 }
