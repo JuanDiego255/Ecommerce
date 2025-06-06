@@ -36,7 +36,7 @@
         <div class="slider_active owl-carousel">
             @if (isset($tenantcarousel) && count($tenantcarousel) > 0)
                 @foreach ($tenantcarousel as $key => $carousel)
-                <div class="single_slider d-flex align-items-center owl-bg-carousel owl-bg-carousel-{{ $loop->index }}">
+                    <div class="single_slider d-flex align-items-center owl-bg-carousel owl-bg-carousel-{{ $loop->index }}">
                         <div class="container">
                             <div class="row">
                                 <div class="col-xl-12">
@@ -92,7 +92,7 @@
                     <div class="row">
                         <div class="col-xl-12">
                             <div class="more_close_btn text-center">
-                                <a href="{{url('/category/1')}}" class="boxed-btn3-line">Explorar más</a>
+                                <a href="{{ url('/category/1') }}" class="boxed-btn3-line">Explorar más</a>
                             </div>
                         </div>
                     </div>
@@ -120,8 +120,10 @@
                                     @if ($item->is_project == 1)
                                         <div class="single_case">
                                             <div class="case_thumb">
-                                                <img src="{{ isset($item->image) ? route($ruta, $item->image) : url('images/producto-sin-imagen.PNG') }}"
-                                                    alt="" />
+                                                <a href="{{ url('/blog/' . $item->id . '/' . $item->name_url) }}">
+                                                    <img src="{{ isset($item->image) ? route($ruta, $item->image) : url('images/producto-sin-imagen.PNG') }}"
+                                                        alt="" />
+                                                </a>
                                             </div>
                                             <div class="case_heading">
                                                 <span>Finalizado</span>
@@ -165,6 +167,7 @@
                                     <h5 class="mb-0">
                                         <button class="btn btn-link collapsed" data-toggle="collapse"
                                             data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                            <i class="fa fa-chevron-down mr-2"></i>
                                             Servicio al cliente
                                         </button>
                                     </h5>
@@ -183,6 +186,7 @@
                                     <h5 class="mb-0">
                                         <button class="btn btn-link collapsed" data-toggle="collapse"
                                             data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                            <i class="fa fa-chevron-down mr-2"></i>
                                             Excelencia
                                         </button>
                                     </h5>
@@ -201,6 +205,7 @@
                                         <button class="btn btn-link collapsed" data-toggle="collapse"
                                             data-target="#collapseThree" aria-expanded="false"
                                             aria-controls="collapseThree">
+                                            <i class="fa fa-chevron-down mr-2"></i>
                                             Compromiso
                                         </button>
                                     </h5>
@@ -219,6 +224,7 @@
                                         <button class="btn btn-link collapsed" data-toggle="collapse"
                                             data-target="#collapseThree" aria-expanded="false"
                                             aria-controls="collapseThree">
+                                            <i class="fa fa-chevron-down mr-2"></i>
                                             Calidad
                                         </button>
                                     </h5>

@@ -2111,17 +2111,7 @@ h3 {
 }
 
 /* line 65, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_accordion.scss */
-#accordion h5 button.btn.btn-link:after {
-    position: absolute;
-    content: "\e648";
-    top: 9px;
-    right: 12px;
-    height: auto;
-    font-family: Poppins-Bold;
-    color: #0f2137;
-    font-size: 14px;
-    left: -24px;
-}
+
 
 @media (max-width: 767px) {
     /* line 65, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_accordion.scss */
@@ -2131,11 +2121,7 @@ h3 {
 }
 
 /* line 81, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_accordion.scss */
-#accordion h5 button.btn.btn-link.collapsed:after {
-    content: "\e64b";
-    color: #0f2137;
-    font-size: 14px;
-}
+
 
 /* line 88, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_accordion.scss */
 #accordion h5 button i {
@@ -2147,19 +2133,15 @@ h3 {
     line-height: 36px;
     border-radius: 50%;
     margin-right: 20px;
-    color: #fff;
+    background: #f4f7f9;
+    color: #0f2137;
     -webkit-transition: 0.3s;
     -moz-transition: 0.3s;
     -o-transition: 0.3s;
     transition: 0.3s;
 }
 
-@media (max-width: 767px) {
-    /* line 88, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_accordion.scss */
-    #accordion h5 button i {
-        display: none;
-    }
-}
+
 
 /* line 104, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_accordion.scss */
 #accordion h5 button.btn.btn-link.collapsed i {
@@ -2167,12 +2149,7 @@ h3 {
     color: #0f2137;
 }
 
-@media (max-width: 767px) {
-    /* line 104, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_accordion.scss */
-    #accordion h5 button.btn.btn-link.collapsed i {
-        display: none;
-    }
-}
+
 
 /* line 116, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_accordion.scss */
 #accordion .btn-link:hover {
@@ -2252,7 +2229,6 @@ h3 {
 /* line 46, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_accordion_area.scss */
 .accordion_area .faq_ask #accordion .card .card-header {
     background-color: transparent;
-    padding: 4px 14px;
     border: none;
 }
 
@@ -2261,6 +2237,7 @@ h3 {
     font-size: 15px;
     color: #001d38 !important;
     font-weight: 300 !important;
+    padding-left: 0;
 }
 
 @media (max-width: 767px) {
@@ -2273,13 +2250,13 @@ h3 {
 /* line 61, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_accordion_area.scss */
 .accordion_area .faq_ask #accordion .card .card-header {
     background-color: transparent;
-    padding: 4px 30px;
 }
 
 /* line 75, ../../Arafath/CL/CL October/216. Consulting/HTML/scss/_accordion_area.scss */
 .accordion_area .faq_ask #accordion .card .card-body {
     font-size: 15px;
     line-height: 28px;
+    text-align: justify;
     color: #727272;
     padding: 10px 30px 32px;
     font-weight: 400;

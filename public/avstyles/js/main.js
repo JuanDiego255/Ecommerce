@@ -7,7 +7,7 @@
         var logoOriginal = logo.data("logo-original");
         var logoScroll = logo.data("logo-scroll");
         var menuButton = $(".slicknav_btn");
-    
+
         if (scroll < 400) {
             $("#sticky-header").removeClass("sticky");
             $("#sticky-header .main-menu ul li a").removeClass("scrolled");
@@ -20,7 +20,26 @@
             menuButton.addClass("black-bars"); // Aplica las barras negras
         }
     });
-    
+
+
+
+    const buttons = document.querySelectorAll('#accordion .btn');
+
+    buttons.forEach(button => {
+        button.addEventListener('click', function () {
+            const icon = this.querySelector('i');
+            // Espera un poco para que el colapso se complete
+            setTimeout(() => {
+                if (this.classList.contains('collapsed')) {
+                    icon.classList.remove('fa-chevron-up');
+                    icon.classList.add('fa-chevron-down');
+                } else {
+                    icon.classList.remove('fa-chevron-down');
+                    icon.classList.add('fa-chevron-up');
+                }
+            }, 300);
+        });
+    });
 
 
 
