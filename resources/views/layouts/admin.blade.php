@@ -35,7 +35,7 @@
         rel="stylesheet">
     <link href="{{ asset('css/material-dashboard.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/fontawesome.css') }}">
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />    
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
 </head>
 <style>
@@ -53,9 +53,24 @@
         --cintillo_text: {{ $settings->cintillo_text }};
     }
 </style>
+@php
+    $class = 'main-container';
+    switch ($tenantinfo->tenant) {
+        case 'autosgreciacr':
+            $class = 'main-container-ag';
+            break;
+        case 'avelectromecanica':
+        case 'aclimate':
+            $class = 'main-container-ac';
+            break;
+        default:
+            # code...
+            break;
+    }
+@endphp
 
 <body class="g-sidenav-show  bg-gray-200">
-    <div class="{{ $tenantinfo->tenant === 'autosgreciacr' ? 'main-container-ag' : 'main-container' }}">
+    <div class="{{ $class }}">
         @include('layouts.inc.sidebar')
         <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
             @if ($tenantinfo->tenant == 'aclimate' || $tenantinfo->tenant == 'avelectromecanica')

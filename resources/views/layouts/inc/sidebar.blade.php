@@ -1,6 +1,16 @@
 @php
     $name_category = $tenantinfo->tenant == 'rutalimon' ? 'Mant. Categorías' : 'Categorías';
     $name_atributos = $tenantinfo->tenant == 'rutalimon' ? 'Mant. Atributos' : 'Atributos';
+    $class = 'bg-gradient-btnVelvet';
+    switch ($tenantinfo->tenant) {
+        case 'avelectromecanica':
+        case 'aclimate':
+            $class = 'bg-gradient-btnAc';
+            break;
+        default:
+            # code...
+            break;
+    }
 @endphp
 <aside
     class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3 bg-gradient-velvet"
@@ -108,8 +118,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-sidebar"
-                            href="{{ url('/estudiantes/manage/yoga') }}">
+                        <a class="nav-link text-sidebar" href="{{ url('/estudiantes/manage/yoga') }}">
                             <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
                                 <i class="material-icons opacity-10">self_improvement</i>
                             </div>
@@ -567,7 +576,7 @@
     @endswitch
     <div class="sidenav-footer position-absolute w-100 bottom-0 ">
         <div class="mx-3">
-            <a class="btn bg-gradient-btnVelvet mt-4 w-100" href="{{ route('logout') }}"
+            <a class="btn {{ $class }} mt-4 w-100" href="{{ route('logout') }}"
                 onclick="event.preventDefault();
                 document.getElementById('logout-form').submit();">
                 {{ __('Cerrar Sesion') }}</a>
