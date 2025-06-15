@@ -166,6 +166,7 @@ class BlogController extends Controller
                 'blogs.body as body',
                 'blogs.note as note',
                 'blogs.image as image',
+                'blogs.video_file as video_file',
                 'blogs.video_url as video_url',
                 'blogs.title as title',
                 'blogs.image as image',
@@ -405,7 +406,8 @@ class BlogController extends Controller
             'body' => 'required|string|max:10000',
             'name_url' => 'required|string|max:200',
             'image' => 'required|max:10000|mimes:jpeg,png,jpg,ico',
-            'horizontal_images' => 'required|max:10000|mimes:jpeg,png,jpg,ico'
+            'horizontal_images' => 'required|max:10000|mimes:jpeg,png,jpg,ico',
+            'video_file' => 'nullable|mimes:mp4,webm,ogg,mkv|max:50000'
         ];
         $mensaje = ["required" => 'El :attribute es requerido'];
         $this->validate($request, $campos, $mensaje);
@@ -414,6 +416,10 @@ class BlogController extends Controller
         $name_url = str_replace(" ", "-", $request->name_url);
         $datetoday = date("Y-m-d", time());
         $blog =  request()->except('_token');
+        if ($request->hasFile('video_file')) {
+            $blog['video_file'] = $request->file('video_file')->store('videos', 'public');
+        }
+
         if ($request->hasFile('image')) {
             $blog['image'] = $request->file('image')->store('uploads', 'public');
         }
@@ -497,6 +503,7 @@ class BlogController extends Controller
                 'blogs.id as id',
                 'blogs.body as body',
                 'blogs.image as image',
+                'blogs.video_file as video_file',
                 'blogs.title as title',
                 'blogs.horizontal_images as horizontal_images',
                 'blogs.autor as autor',
@@ -543,12 +550,25 @@ class BlogController extends Controller
     {
         $campos = [
             'title' => 'required|string|max:100',
-            'body' => 'required|string|max:10000'
+            'body' => 'required|string|max:10000',
+            'video_file' => 'nullable|mimes:mp4,webm,ogg,mkv|max:50000'
         ];
         $mensaje = ["required" => 'El :attribute es requerido'];
         $this->validate($request, $campos, $mensaje);
         $blog =  request()->except(['_token', '_method']);
         $blog = Blog::findOrfail($id);
+        if ($request->hasFile('video_file')) {
+            // Elimina el video anterior si existe
+            if ($blog->video_file) {
+                Storage::delete('public/' . $blog->video_file);
+            }
+
+            // Guarda el nuevo video
+            $video = $request->file('video_file')->store('video', 'public');
+            //dd($video);
+            $blog->video_file = $video;
+        }
+
         if ($request->hasFile('image')) {
             Storage::delete('public/' . $blog->image);
             $image = $request->file('image')->store('uploads', 'public');

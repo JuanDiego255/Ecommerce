@@ -95,6 +95,20 @@
                             </div>
                         </div>
                         <div class="col-md-12 mb-3">
+                            @if ($blog->video_file)
+                                <label>{{ __('Video actual') }}</label><br>
+                                <video width="320" height="240" controls>
+                                    <source src="{{ route('file', $blog->video_file) }}" type="video/mp4">
+                                    Tu navegador no soporta el video HTML5.
+                                </video>
+                            @endif
+                            <label class="mt-2">{{ __('Video nuevo (opcional)') }}</label>
+                            <div class="input-group input-group-static mb-4">
+                                <input class="form-control" type="file" name="video_file"   accept="video/mp4,video/webm,video/x-matroska">
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 mb-3">
                             <div class="input-group input-group-static mb-4">
                                 <textarea id="editor" type="text" class="form-control form-control-lg" name="body"
                                     placeholder="Descripción del blog">{{ $blog->body }}</textarea>

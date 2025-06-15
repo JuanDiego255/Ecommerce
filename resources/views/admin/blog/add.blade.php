@@ -72,13 +72,18 @@
                                 </div>
                             </div>
                             <div class="col-md-12 mb-3">
+                                <label>{{ __('Video del blog (opcional)') }}</label>
+                                <div class="input-group input-group-lg input-group-outline my-3">
+                                    <input class="form-control" type="file" name="video_file"
+                                        accept="video/mp4,video/webm,video/x-matroska">
+                                </div>
+                            </div>
+                            <div class="col-md-12 mb-3">
                                 <label>{{ __('Imagen Horizontal') }}</label>
                                 <div class="input-group input-group-lg input-group-outline my-3">
                                     <input required class="form-control" type="file" name="horizontal_images">
                                 </div>
                             </div>
-
-
                             <div class="col-md-12 mb-3">
                                 <div class="input-group input-group-static mb-4">
                                     <textarea id="editor" type="text" class="form-control form-control-lg" name="body"

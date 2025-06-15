@@ -44,6 +44,19 @@
                                 <h3 class="text-title">{{ $tag->title }}</h3>
                                 {!! $tag->context !!}
                             @endforeach
+
+                            @if ($blog->video_file)
+                                <hr>
+                                <h2>Video relacionado con este blog
+                                </h2>
+                                <div class="my-4">
+                                    <video width="100%" height="auto" controls>
+                                        <source src="{{ route('file', $blog->video_file) }}" type="video/mp4">
+                                        Tu navegador no soporta el video HTML5.
+                                    </video>
+                                </div>
+                            @endif
+
                         </div>
                     </div>
                     <div class="navigation-top">
