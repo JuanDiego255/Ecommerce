@@ -122,6 +122,10 @@ class BlogController extends Controller
             case (1):
                 return view('frontend.blog.carsale.index', compact('blogs'));
                 break;
+            case (6):
+            case (7):
+                return view('frontend.av.blog.index',  compact('blogs'));
+                break;
             default:
                 if ($tenantinfo->kind_of_features == 1) {
                     return view('frontend.design_ecommerce.blog.index', compact('blogs', 'clothings'));

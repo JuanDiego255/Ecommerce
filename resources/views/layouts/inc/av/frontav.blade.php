@@ -125,7 +125,7 @@
                                         <li><a class="{{ $view_name == 'frontend_av_clothes-category' ? 'active' : '' }} {{ $tenantinfo->tenant == 'aclimate' ? 'text-color-acli' : $color_navs }}"
                                                 href="{{url('category/1')}}">Servicios</a></li>
                                         <li><a class="{{ $view_name == 'frontend_av_blog_index' ? 'active' : '' }} {{ $tenantinfo->tenant == 'aclimate' ? 'text-color-acli' : $color_navs }}"
-                                                href="#">Blog</a></li>                                        
+                                                href="{{url('/blog/index')}}">Blog</a></li>                                        
                                         <li><a class="{{ $tenantinfo->tenant == 'aclimate' ? 'text-color-acli' : $color_navs }}"
                                                 href="{{ url('/contact') }}">Contacto</a></li>
                                     </ul>

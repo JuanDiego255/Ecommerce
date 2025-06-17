@@ -30,10 +30,10 @@
                         <div class="blog_details">
                             <h2>{{ $blog->title_optional }}
                             </h2>
-                            <ul class="blog-info-link mt-3 mb-4">
+                            {{-- <ul class="blog-info-link mt-3 mb-4">
                                 <li><a href="#"><i class="fa fa-user"></i> {{ $blog->autor }}</a></li>
                                 <li><a href="#"><i class="fa fa-calendar"></i> {{ $fecha_letter }}</a></li>
-                            </ul>
+                            </ul> --}}
                             {!! $blog->body !!}
                             <div class="quote-wrapper">
                                 <div class="quotes">

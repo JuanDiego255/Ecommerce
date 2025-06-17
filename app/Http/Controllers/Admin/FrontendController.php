@@ -361,7 +361,7 @@ class FrontendController extends Controller
         }
 
         $blogs = Blog::inRandomOrder()->orderBy('title', 'asc')
-            ->take(4)->get();
+            ->take(10)->get();
 
         $comments = Testimonial::where('approve', 1)->inRandomOrder()->orderBy('name', 'asc')
             ->get();
