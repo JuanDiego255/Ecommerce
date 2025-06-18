@@ -76,7 +76,7 @@
                                                 @php
                                                     date_default_timezone_set('America/Chihuahua');
                                                     $datetoday = date('Y-m-d', time());
-                                                    $time_to_pay = $tenant->time_to_pay > 1 ? $tenant->time_to_pay : 0;
+                                                    $time_to_pay = $tenant->time_to_pay > 1 ? $tenant->time_to_pay : 1;
                                                 @endphp
 
                                                 @if ($datetoday >= \Carbon\Carbon::parse($tenant->payment_date)->addMonths($time_to_pay))
