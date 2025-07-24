@@ -67,6 +67,7 @@ class FrontendController extends Controller
                     'clothing.description as description',
                     'clothing.price as price',
                     'clothing.mayor_price as mayor_price',
+                    'clothing.manage_stock as manage_stock',
                     DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE clothing.stock END) as total_stock'),
                     DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'),
                     DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
@@ -86,7 +87,8 @@ class FrontendController extends Controller
                     'clothing.description',
                     'clothing.price',
                     'clothing.mayor_price',
-                );
+                    'clothing.manage_stock'
+                )->havingRaw('total_stock > 0 OR total_stock IS NULL or clothing.manage_stock = 0');
         });
         if ($tenantinfo->tenant === 'sakura318') {
             $clothings = $clothings->inRandomOrder()
@@ -163,45 +165,47 @@ class FrontendController extends Controller
                     ->orderBy('a.name', 'asc')
                     ->get();
                 // Limpiar atributos con stock 0
-                $cleaned = $result->map(function ($item) {
+                $cleaned = $result->map(function ($item) use ($clothing) {
                     $valores = explode('/', $item->valores);
-                    $ids = explode('/', $item->ids);
-                    $stock = explode('/', $item->stock);
+                    $ids     = explode('/', $item->ids);
+                    $stock   = explode('/', $item->stock);
 
-                    // Filtrar solo los que tienen stock > 0
-                    $filtered = collect($stock)
-                        ->map(function ($s, $i) use ($valores, $ids) {
-                            return [
-                                'value' => $valores[$i],
-                                'id' => $ids[$i],
-                                'stock' => $s,
-                            ];
-                        })
-                        ->filter(fn($x) => (int)$x['stock'] > 0)
-                        ->values();
+                    $rows = collect($stock)->map(fn($s, $i) => [
+                        'value' => $valores[$i],
+                        'id'    => $ids[$i],
+                        'stock' => $s,
+                    ]);
 
-                    // Si después de filtrar no queda nada, lo descartamos
-                    if ($filtered->isEmpty()) {
-                        return null;
+                    // si no maneja stock, no filtres
+                    if ((int)$clothing->manage_stock === 0) {
+                        $filtered = $rows;
+                    } else {
+                        $filtered = $rows->filter(fn($x) => (int)$x['stock'] > 0);
                     }
+
+                    if ($filtered->isEmpty()) return null;
 
                     return (object)[
                         'columna_atributo' => $item->columna_atributo,
-                        'attr_id' => $item->attr_id,
-                        'valores' => $filtered->pluck('value')->implode('/'),
-                        'ids' => $filtered->pluck('id')->implode('/'),
-                        'stock' => $filtered->pluck('stock')->implode('/'),
+                        'attr_id'          => $item->attr_id,
+                        'valores'          => $filtered->pluck('value')->implode('/'),
+                        'ids'              => $filtered->pluck('id')->implode('/'),
+                        'stock'            => $filtered->pluck('stock')->implode('/'),
                     ];
                 })->filter()->values();
-
                 $clothing->atributos = $cleaned->toArray();
             }
         } else {
-            $clothings = $clothings->orderByRaw('CASE WHEN clothing.casa IS NOT NULL AND clothing.casa != "" THEN 0 ELSE 1 END')
-                ->orderBy('clothing.casa', 'asc')
-                ->orderBy('clothing.name', 'asc')
+            $clothings = $clothings->inRandomOrder()
                 ->take(20)
-                ->get();
+                ->get()
+                ->sortBy(fn($c) => [
+                    blank($c->casa) ? 1 : 0,   // emula tu CASE: los que tienen casa primero
+                    $c->casa,
+                    $c->name,
+                ])
+                ->values(); // reindexa
+
         }
         $category = Cache::remember('categories', $this->expirationTime, function () use ($tenantinfo) {
             $query = Categories::join('departments', 'categories.department_id', 'departments.id')
@@ -259,34 +263,32 @@ class FrontendController extends Controller
                 ->orderBy('a.name', 'asc')
                 ->get();
             // Limpiar atributos con stock 0
-            $cleaned = $result->map(function ($item) {
+            $cleaned = $result->map(function ($item) use ($clothing) {
                 $valores = explode('/', $item->valores);
-                $ids = explode('/', $item->ids);
-                $stock = explode('/', $item->stock);
+                $ids     = explode('/', $item->ids);
+                $stock   = explode('/', $item->stock);
 
-                // Filtrar solo los que tienen stock > 0
-                $filtered = collect($stock)
-                    ->map(function ($s, $i) use ($valores, $ids) {
-                        return [
-                            'value' => $valores[$i],
-                            'id' => $ids[$i],
-                            'stock' => $s,
-                        ];
-                    })
-                    ->filter(fn($x) => (int)$x['stock'] > 0)
-                    ->values();
+                $rows = collect($stock)->map(fn($s, $i) => [
+                    'value' => $valores[$i],
+                    'id'    => $ids[$i],
+                    'stock' => $s,
+                ]);
 
-                // Si después de filtrar no queda nada, lo descartamos
-                if ($filtered->isEmpty()) {
-                    return null;
+                // si no maneja stock, no filtres
+                if ((int)$clothing->manage_stock === 0) {
+                    $filtered = $rows;
+                } else {
+                    $filtered = $rows->filter(fn($x) => (int)$x['stock'] > 0);
                 }
+
+                if ($filtered->isEmpty()) return null;
 
                 return (object)[
                     'columna_atributo' => $item->columna_atributo,
-                    'attr_id' => $item->attr_id,
-                    'valores' => $filtered->pluck('value')->implode('/'),
-                    'ids' => $filtered->pluck('id')->implode('/'),
-                    'stock' => $filtered->pluck('stock')->implode('/'),
+                    'attr_id'          => $item->attr_id,
+                    'valores'          => $filtered->pluck('value')->implode('/'),
+                    'ids'              => $filtered->pluck('id')->implode('/'),
+                    'stock'            => $filtered->pluck('stock')->implode('/'),
                 ];
             })->filter()->values();
 
@@ -607,12 +609,13 @@ class FrontendController extends Controller
                 'clothing.price as price',
                 'clothing.mayor_price as mayor_price',
                 'product_images.image as image',
+                'clothing.manage_stock as manage_stock',
                 DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE clothing.stock END) as total_stock'),
                 DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'),
                 DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
             )
-            ->groupBy('clothing.id', 'clothing.can_buy', 'clothing.is_contra_pedido', 'clothing.casa', 'clothing.mayor_price', 'categories.name', 'clothing.discount', 'clothing.name', 'clothing.description', 'clothing.price', 'product_images.image')
-            ->havingRaw('total_stock > 0 OR total_stock IS NULL')
+            ->groupBy('clothing.id', 'clothing.manage_stock', 'clothing.can_buy', 'clothing.is_contra_pedido', 'clothing.casa', 'clothing.mayor_price', 'categories.name', 'clothing.discount', 'clothing.name', 'clothing.description', 'clothing.price', 'product_images.image')
+            ->havingRaw('total_stock > 0 OR total_stock IS NULL or clothing.manage_stock = 0')
             ->orderByRaw('CASE WHEN clothing.casa IS NOT NULL AND clothing.casa != "" THEN 0 ELSE 1 END')
             ->orderBy('clothing.casa', 'asc')
             ->orderBy('clothing.name', 'asc');
@@ -655,34 +658,47 @@ class FrontendController extends Controller
                 ->orderBy('a.name', 'asc')
                 ->get();
             // Limpiar atributos con stock 0
-            $cleaned = $result->map(function ($item) {
+            if ((int)$clothing->manage_stock === 0) {
+                $clothing->atributos = $result->map(function ($item) {
+                    return (object)[
+                        'columna_atributo' => $item->columna_atributo,
+                        'attr_id'          => $item->attr_id,
+                        'valores'          => $item->valores,
+                        'ids'              => $item->ids,
+                        'stock'            => $item->stock,
+                    ];
+                })->toArray();
+
+                continue;
+            }
+
+            // Si maneja stock, limpia los que están en 0
+            $cleaned = $result->map(function ($item) use ($clothing) {
                 $valores = explode('/', $item->valores);
-                $ids = explode('/', $item->ids);
-                $stock = explode('/', $item->stock);
+                $ids     = explode('/', $item->ids);
+                $stock   = explode('/', $item->stock);
 
-                // Filtrar solo los que tienen stock > 0
-                $filtered = collect($stock)
-                    ->map(function ($s, $i) use ($valores, $ids) {
-                        return [
-                            'value' => $valores[$i],
-                            'id' => $ids[$i],
-                            'stock' => $s,
-                        ];
-                    })
-                    ->filter(fn($x) => (int)$x['stock'] > 0)
-                    ->values();
+                $rows = collect($stock)->map(fn($s, $i) => [
+                    'value' => $valores[$i],
+                    'id'    => $ids[$i],
+                    'stock' => $s,
+                ]);
 
-                // Si después de filtrar no queda nada, lo descartamos
-                if ($filtered->isEmpty()) {
-                    return null;
+                // si no maneja stock, no filtres
+                if ((int)$clothing->manage_stock === 0) {
+                    $filtered = $rows;
+                } else {
+                    $filtered = $rows->filter(fn($x) => (int)$x['stock'] > 0);
                 }
+
+                if ($filtered->isEmpty()) return null;
 
                 return (object)[
                     'columna_atributo' => $item->columna_atributo,
-                    'attr_id' => $item->attr_id,
-                    'valores' => $filtered->pluck('value')->implode('/'),
-                    'ids' => $filtered->pluck('id')->implode('/'),
-                    'stock' => $filtered->pluck('stock')->implode('/'),
+                    'attr_id'          => $item->attr_id,
+                    'valores'          => $filtered->pluck('value')->implode('/'),
+                    'ids'              => $filtered->pluck('id')->implode('/'),
+                    'stock'            => $filtered->pluck('stock')->implode('/'),
                 ];
             })->filter()->values();
 
@@ -816,10 +832,10 @@ class FrontendController extends Controller
                 'clothing.description as description',
                 'clothing.price as price',
                 'clothing.mayor_price as mayor_price',
-                'product_images.image as image', // columna de imagen
+                'product_images.image as image',
                 DB::raw('GROUP_CONCAT(product_images.image ORDER BY product_images.id ASC) AS images'),
                 DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE clothing.stock END) as total_stock'),
-                DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'), // Obtener stock por talla
+                DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'),
                 DB::raw('GROUP_CONCAT(stocks.price) AS price_per_size'),
                 DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
             )
@@ -828,6 +844,7 @@ class FrontendController extends Controller
             ->orderBy('clothing.casa', 'asc')
             ->orderBy('clothing.name', 'asc')
             ->get();
+
         $result = DB::table('stocks as s')->where('s.clothing_id', $id)
             ->join('attributes as a', 's.attr_id', '=', 'a.id')
             ->join('attribute_values as v', 's.value_attr', '=', 'v.id')
@@ -836,40 +853,35 @@ class FrontendController extends Controller
                 'a.id as attr_id',
                 DB::raw('GROUP_CONCAT(v.value ORDER BY s.order ASC SEPARATOR "/") as valores'),
                 DB::raw('GROUP_CONCAT(v.id ORDER BY s.order ASC SEPARATOR "/") as ids'),
-                DB::raw('GROUP_CONCAT(s.stock ORDER BY s.order ASC SEPARATOR "/") as stock'),
+                DB::raw('GROUP_CONCAT(s.stock ORDER BY s.order ASC SEPARATOR "/") as stock')
             )
             ->groupBy('a.name', 'a.id')
             ->orderBy('a.name', 'asc')
             ->get();
+
+        $manageStock = $clothes->first()?->manage_stock ?? 1;
         // Limpiar atributos con stock 0
-        $cleaned = $result->map(function ($item) {
+        $cleaned = $result->map(function ($item) use ($manageStock) {
             $valores = explode('/', $item->valores);
             $ids = explode('/', $item->ids);
             $stock = explode('/', $item->stock);
 
-            // Filtrar solo los que tienen stock > 0
-            $filtered = collect($stock)
-                ->map(function ($s, $i) use ($valores, $ids) {
-                    return [
-                        'value' => $valores[$i],
-                        'id' => $ids[$i],
-                        'stock' => $s,
-                    ];
-                })
-                ->filter(fn($x) => (int)$x['stock'] > 0)
-                ->values();
+            $rows = collect($stock)->map(fn($s, $i) => [
+                'value' => $valores[$i],
+                'id'    => $ids[$i],
+                'stock' => $s,
+            ]);
 
-            // Si después de filtrar no queda nada, lo descartamos
-            if ($filtered->isEmpty()) {
-                return null;
-            }
+            $filtered = $manageStock == 0 ? $rows : $rows->filter(fn($x) => (int)$x['stock'] > 0);
+
+            if ($filtered->isEmpty()) return null;
 
             return (object)[
                 'columna_atributo' => $item->columna_atributo,
-                'attr_id' => $item->attr_id,
-                'valores' => $filtered->pluck('value')->implode('/'),
-                'ids' => $filtered->pluck('id')->implode('/'),
-                'stock' => $filtered->pluck('stock')->implode('/'),
+                'attr_id'          => $item->attr_id,
+                'valores'          => $filtered->pluck('value')->implode('/'),
+                'ids'              => $filtered->pluck('id')->implode('/'),
+                'stock'            => $filtered->pluck('stock')->implode('/')
             ];
         })->filter()->values();
 
@@ -920,13 +932,14 @@ class FrontendController extends Controller
                 'clothing.description as description',
                 'clothing.price as price',
                 'clothing.mayor_price as mayor_price',
+                'clothing.manage_stock as manage_stock',
                 DB::raw('IFNULL(product_images.image, "") as image'), // Obtener la primera imagen del producto
                 DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE clothing.stock END) as total_stock'),
                 DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'), // Obtener stock por talla
                 DB::raw('GROUP_CONCAT(stocks.price) AS price_per_size'),
                 DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
             )
-            ->groupBy('clothing.id', 'clothing.casa', 'clothing.is_contra_pedido', 'clothing.main_image', 'clothing.mayor_price', 'clothing.discount', 'categories.name', 'categories.id', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
+            ->groupBy('clothing.id', 'clothing.manage_stock', 'clothing.casa', 'clothing.is_contra_pedido', 'clothing.main_image', 'clothing.mayor_price', 'clothing.discount', 'categories.name', 'categories.id', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
             ->orderByRaw('CASE WHEN clothing.casa IS NOT NULL AND clothing.casa != "" THEN 0 ELSE 1 END')
             ->orderBy('clothing.casa', 'asc')
             ->orderBy('clothing.name', 'asc')
@@ -934,7 +947,6 @@ class FrontendController extends Controller
             ->take(8)
             ->get();
         foreach ($clothings_trending as $cloth) {
-            // Obtener la primera imagen
             $firstImage = ProductImage::where('clothing_id', $cloth->id)
                 ->orderBy('id')
                 ->first();
@@ -944,7 +956,6 @@ class FrontendController extends Controller
                 ->pluck('image')
                 ->toArray();
 
-            // Obtener atributos
             $result_trend = DB::table('stocks as s')->where('s.clothing_id', $cloth->id)
                 ->join('attributes as a', 's.attr_id', '=', 'a.id')
                 ->join('attribute_values as v', 's.value_attr', '=', 'v.id')
@@ -953,44 +964,39 @@ class FrontendController extends Controller
                     'a.id as attr_id',
                     DB::raw('GROUP_CONCAT(v.value ORDER BY s.order ASC SEPARATOR "/") as valores'),
                     DB::raw('GROUP_CONCAT(v.id ORDER BY s.order ASC SEPARATOR "/") as ids'),
-                    DB::raw('GROUP_CONCAT(s.stock ORDER BY s.order ASC SEPARATOR "/") as stock'),
+                    DB::raw('GROUP_CONCAT(s.stock ORDER BY s.order ASC SEPARATOR "/") as stock')
                 )
                 ->groupBy('a.name', 'a.id')
                 ->orderBy('a.name', 'asc')
                 ->get();
-            // Limpiar atributos con stock 0
-            $cleaned = $result_trend->map(function ($item) {
+
+            $manageStockTrend = $cloth->manage_stock ?? 1;
+
+            $cleanedTrend = $result_trend->map(function ($item) use ($manageStockTrend) {
                 $valores = explode('/', $item->valores);
                 $ids = explode('/', $item->ids);
                 $stock = explode('/', $item->stock);
 
-                // Filtrar solo los que tienen stock > 0
-                $filtered = collect($stock)
-                    ->map(function ($s, $i) use ($valores, $ids) {
-                        return [
-                            'value' => $valores[$i],
-                            'id' => $ids[$i],
-                            'stock' => $s,
-                        ];
-                    })
-                    ->filter(fn($x) => (int)$x['stock'] > 0)
-                    ->values();
+                $rows = collect($stock)->map(fn($s, $i) => [
+                    'value' => $valores[$i],
+                    'id'    => $ids[$i],
+                    'stock' => $s,
+                ]);
 
-                // Si después de filtrar no queda nada, lo descartamos
-                if ($filtered->isEmpty()) {
-                    return null;
-                }
+                $filtered = $manageStockTrend == 0 ? $rows : $rows->filter(fn($x) => (int)$x['stock'] > 0);
+
+                if ($filtered->isEmpty()) return null;
 
                 return (object)[
                     'columna_atributo' => $item->columna_atributo,
-                    'attr_id' => $item->attr_id,
-                    'valores' => $filtered->pluck('value')->implode('/'),
-                    'ids' => $filtered->pluck('id')->implode('/'),
-                    'stock' => $filtered->pluck('stock')->implode('/'),
+                    'attr_id'          => $item->attr_id,
+                    'valores'          => $filtered->pluck('value')->implode('/'),
+                    'ids'              => $filtered->pluck('id')->implode('/'),
+                    'stock'            => $filtered->pluck('stock')->implode('/')
                 ];
             })->filter()->values();
 
-            $cloth->atributos = $cleaned->toArray();
+            $cloth->atributos = $cleanedTrend->toArray();
         }
 
         switch ($tenantinfo->kind_business) {
@@ -1109,9 +1115,9 @@ class FrontendController extends Controller
                     ->leftJoin('product_images', function ($join) {
                         $join->on('clothing.id', '=', 'product_images.clothing_id')
                             ->whereRaw('product_images.id = (
-                SELECT MIN(id) FROM product_images 
-                WHERE product_images.clothing_id = clothing.id
-            )');
+                            SELECT MIN(id) FROM product_images 
+                            WHERE product_images.clothing_id = clothing.id
+                        )');
                     })
                     ->select(
                         'categories.name as category',
@@ -1126,6 +1132,7 @@ class FrontendController extends Controller
                         'clothing.price as price',
                         'clothing.mayor_price as mayor_price',
                         'product_images.image as image',
+                        'clothing.manage_stock as manage_stock',
                         DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE clothing.stock END) as total_stock'),
                         DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'),
                         DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
@@ -1142,13 +1149,14 @@ class FrontendController extends Controller
                         'clothing.name',
                         'clothing.description',
                         'clothing.price',
-                        'product_images.image'
+                        'product_images.image',
+                        'clothing.manage_stock'
                     )
-                    ->havingRaw('total_stock > 0')
+                    ->havingRaw('(clothing.manage_stock = 0 OR total_stock > 0)')
                     ->orderByRaw('CASE WHEN clothing.casa IS NOT NULL AND clothing.casa != "" THEN 0 ELSE 1 END')
                     ->orderBy('clothing.casa', 'asc')
                     ->orderBy('clothing.name', 'asc')
-                    ->simplePaginate(20, ['*'], 'page', $next_page); // <-- Aquí se especifica la página 2
+                    ->simplePaginate(20, ['*'], 'page', $next_page);
 
                 foreach ($clothings as $clothing) {
                     // Obtener la primera imagen
@@ -1170,45 +1178,42 @@ class FrontendController extends Controller
                             'a.id as attr_id',
                             DB::raw('GROUP_CONCAT(v.value ORDER BY s.order ASC SEPARATOR "/") as valores'),
                             DB::raw('GROUP_CONCAT(v.id ORDER BY s.order ASC SEPARATOR "/") as ids'),
-                            DB::raw('GROUP_CONCAT(s.stock ORDER BY s.order ASC SEPARATOR "/") as stock'),
+                            DB::raw('GROUP_CONCAT(s.stock ORDER BY s.order ASC SEPARATOR "/") as stock')
                         )
                         ->groupBy('a.name', 'a.id')
                         ->orderBy('a.name', 'asc')
                         ->get();
-                    // Limpiar atributos con stock 0
-                    $cleaned = $result->map(function ($item) {
+
+                    $manageStock = $clothing->manage_stock ?? 1;
+
+                    // Alternativa compacta con control de manage_stock
+                    $cleaned = $result->map(function ($item) use ($manageStock) {
                         $valores = explode('/', $item->valores);
                         $ids = explode('/', $item->ids);
                         $stock = explode('/', $item->stock);
 
-                        // Filtrar solo los que tienen stock > 0
-                        $filtered = collect($stock)
-                            ->map(function ($s, $i) use ($valores, $ids) {
-                                return [
-                                    'value' => $valores[$i],
-                                    'id' => $ids[$i],
-                                    'stock' => $s,
-                                ];
-                            })
-                            ->filter(fn($x) => (int)$x['stock'] > 0)
-                            ->values();
+                        $rows = collect($stock)->map(fn($s, $i) => [
+                            'value' => $valores[$i],
+                            'id'    => $ids[$i],
+                            'stock' => $s,
+                        ]);
 
-                        // Si después de filtrar no queda nada, lo descartamos
-                        if ($filtered->isEmpty()) {
-                            return null;
-                        }
+                        $filtered = $manageStock == 0 ? $rows : $rows->filter(fn($x) => (int)$x['stock'] > 0);
+
+                        if ($filtered->isEmpty()) return null;
 
                         return (object)[
                             'columna_atributo' => $item->columna_atributo,
-                            'attr_id' => $item->attr_id,
-                            'valores' => $filtered->pluck('value')->implode('/'),
-                            'ids' => $filtered->pluck('id')->implode('/'),
-                            'stock' => $filtered->pluck('stock')->implode('/'),
+                            'attr_id'          => $item->attr_id,
+                            'valores'          => $filtered->pluck('value')->implode('/'),
+                            'ids'              => $filtered->pluck('id')->implode('/'),
+                            'stock'            => $filtered->pluck('stock')->implode('/')
                         ];
                     })->filter()->values();
 
                     $clothing->atributos = $cleaned->toArray();
                 }
+
                 $items = count($clothings);
 
                 return response()->json([

@@ -171,13 +171,13 @@
             let urlParams = new URLSearchParams(new URL(pageUrl).search);
             let page = urlParams.get('page'); // Extrae el número de página
             let id = $(this).data('id');
-            console.log($grid);
 
             $.ajax({
                 method: "GET",
                 url: "/paginate/" + Number(page) + "/" + id,
                 success: function (response) {
                     var items = response.clothings.data;
+                    console.log(items);
                     var tenant_info = response.tenant_info;
                     var category_id = response.category_id;
                     var html = '';

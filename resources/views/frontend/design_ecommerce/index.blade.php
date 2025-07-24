@@ -6,6 +6,7 @@
 @php
     switch ($tenantinfo->tenant) {
         case 'solociclismocrc':
+        case 'muebleriasarchi':
             $take = 6;
             break;
 

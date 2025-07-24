@@ -34,7 +34,7 @@ use Illuminate\Support\Facades\Storage;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
+Route::get('index/try', [FrontendController::class, 'index']);
 Route::get('/', [TenantController::class, 'frontend']);
 Route::get('category', [FrontendController::class, 'category']);
 Route::get('/blog/index',  [BlogController::class, 'index']);
