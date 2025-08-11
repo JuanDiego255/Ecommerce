@@ -459,6 +459,16 @@
                             <span
                                 class="nav-link-text ms-1">{{ $tenantinfo->tenant == 'rutalimon' ? __('Mantenimiento de usuarios') : __('Usuarios') }}</span>
                         </a>
+                    </li>                    
+                    <li class="nav-item">
+                        <a @if ($view_name == 'admin_suscriptors_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
+                            href="{{ url('suscriptors/admin') }}">
+                            <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                                <i class="material-icons opacity-10">group</i>
+                            </div>
+                            <span
+                                class="nav-link-text ms-1">{{__('Suscriptores') }}</span>
+                        </a>
                     </li>
                     <li class="nav-item">
                         <a @if ($view_name == 'admin_roles_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
