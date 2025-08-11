@@ -38,6 +38,20 @@
             background-position: center center;
             background-repeat: no-repeat;
         }
+
+        .video-container {
+            width: 1930px;
+            height: 920px;
+            position: relative;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+
+        .video-bg {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
     </style>
 
     {{-- Carousel Start --}}
@@ -71,6 +85,41 @@
                         </div>
                     </div>
                 @endforeach
+                @if ($tenantinfo->tenant == 'main')
+                    {{-- 🔥 Slide manual con video quemado --}}
+                    <div class="item-slick1">
+                        <div class="video-container">
+                            <video autoplay muted loop playsinline class="video-bg">
+                                <source src="{{ url('/design_ecommerce/videos/main.mp4') }}" type="video/mp4">
+                                Tu navegador no soporta video HTML5.
+                            </video>
+                        </div>
+
+                        <div class="container h-full">
+                            <div class="flex-col-l-m h-full p-t-100 p-b-30 respon5">
+                                <div class="layer-slick1 animated visible-false" data-appear="fadeInDown" data-delay="0">
+                                    <span class="ltext-101 cl2 respon2">
+                                        ¡Bienvenido a nuestro mundo!
+                                    </span>
+                                </div>
+
+                                <div class="layer-slick1 animated visible-false" data-appear="fadeInUp" data-delay="800">
+                                    <h2 class="ltext-201 cl2 p-t-19 p-b-43 respon1">
+                                        Mira nuestro video promocional
+                                    </h2>
+                                </div>
+
+                                <div class="layer-slick1 animated visible-false" data-appear="zoomIn" data-delay="1600">
+                                    <a href="/promo"
+                                        class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
+                                        Ver más
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {{-- Fin slide manual --}}
+                @endif
             </div>
         </div>
     @endif
@@ -286,7 +335,8 @@
                         class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item {{ strtolower(str_replace(' ', '', $item->category)) }}">
                         <div class="block2 product_data" data-attributes-filter='@json(collect($item->atributos)->mapWithKeys(fn($a) => [$a->attr_id => explode('/', $a->ids)]))'>
                             <input type="hidden" class="code" name="code" value="{{ $item->code }}">
-                            <input type="hidden" class="clothing-name" name="clothing-name" value="{{ $item->name }}">
+                            <input type="hidden" class="clothing-name" name="clothing-name"
+                                value="{{ $item->name }}">
                             <div class="block2-pic hov-img0">
                                 <img src="{{ isset($item->image) ? route($ruta, $item->image) : url('images/producto-sin-imagen.PNG') }}"
                                     alt="IMG-PRODUCT">
