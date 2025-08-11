@@ -32,6 +32,7 @@ use App\Http\Controllers\PersonalUserController;
 use App\Http\Controllers\RolesController;
 use App\Http\Controllers\SellerController;
 use App\Http\Controllers\SocialNetworkController;
+use App\Http\Controllers\SuscriptorController;
 use App\Http\Controllers\TenantCarouselController;
 use App\Http\Controllers\TenantController;
 use App\Http\Controllers\TenantInfoController;
@@ -68,6 +69,10 @@ Route::middleware([
     Route::group(['middleware' => 'isAre'], function () {
         Route::get('/', [FrontendController::class, 'index']);
     });
+    //Rutas para suscriptores    
+    Route::get('/suscriptor/', [SuscriptorController::class, 'index']);
+    Route::post('/suscriptor/store', [SuscriptorController::class, 'store']);
+    //Rutas para suscriptores    
     Route::get('/about_us', [FrontendController::class, 'aboutUs']);
     Route::get('/contact', [FrontendController::class, 'contact']);
     Route::get('compare/vehicles', [FrontendController::class, 'compareIndex']);
@@ -90,7 +95,7 @@ Route::middleware([
         Route::get('/file/{path}', function ($path) {
             $path = Storage::path($path);
             $path = str_replace('app\\', 'app\\public\\', $path);
-    
+
             return response()->file($path);
         })->where('path', '.*')->name('aclifile');
     });
@@ -409,6 +414,10 @@ Route::middleware([
             Route::put('metrica/update/{id}', [MetricaController::class, 'update']);
             Route::delete('delete/metrica/{id}', [MetricaController::class, 'destroy']);
             Route::post('/metrica/store', [MetricaController::class, 'store']);
+            //Rutas para suscriptores
+            Route::get('/suscriptors/admin', [SuscriptorController::class, 'indexAdmin']);
+            Route::put('/suscriptor/update/{id}', [SuscriptorController::class, 'update']);
+            Route::delete('/suscriptor/delete/{id}', [SuscriptorController::class, 'destroy']);
         });
     });
     //images Tenant

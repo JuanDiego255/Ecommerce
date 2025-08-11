@@ -363,7 +363,7 @@
                                     @if ($tenantinfo->tenant == 'solociclismocrc' && $item->is_contra_pedido == 1)
                                         <p class="text-info font-weight-bold">Producto contrapedido</p>
                                     @endif
-                                    <div class="price">₡{{ number_format($precioConDescuento) }}
+                                    <div class="price">{{ __('₡') }}{{ number_format($precioConDescuento) }}
                                         @if ($item->discount)
                                             <s class="text-danger">
                                                 ₡{{ number_format(Auth::check() && Auth::user()->mayor == '1' && $item->mayor_price > 0 ? $item->mayor_price : $item->price) }}
