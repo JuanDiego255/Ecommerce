@@ -46,11 +46,18 @@ class TestimonialController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([            
+            'name'       => 'required|string|max:255',           
+            'g-recaptcha-response' => 'required|captcha', // 👈 valida reCAPTCHA
+        ], [
+            'g-recaptcha-response.required' => 'Por favor confirma que no eres un robot.',
+            'g-recaptcha-response.captcha'  => 'La verificación reCAPTCHA falló. Intenta de nuevo.',
+        ]);
         DB::beginTransaction();
         try {
             $campos = [
                 'name' => 'required|string|max:100',
-                'description' => 'required|string|max:10000'           
+                'description' => 'required|string|max:10000'
             ];
             $mensaje = ["required" => 'El :attribute es requerido'];
             $this->validate($request, $campos, $mensaje);
@@ -59,25 +66,24 @@ class TestimonialController extends Controller
                 $image = $request->file('image')->store('uploads', 'public');
                 $comment->image = $image;
             }
-            
+
             $comment->name = $request->name;
             $comment->stars = $request->rating;
             $comment->description = $request->description;
             $comment->approve = $request->approve;
             $comment->save();
-            
+
             DB::commit();
-            if($request->approve != 0){
+            if ($request->approve != 0) {
                 return redirect('comments')->with(['status' => 'Testimonio creado con éxito!', 'icon' => 'success']);
-            }else{
+            } else {
                 return redirect()->back()->with(['status' => 'Testimonio creado con éxito, una vez que se apruebe se mostrará!', 'icon' => 'success']);
             }
-           
         } catch (\Exception $th) {
             DB::rollBack();
-            if($request->approve != 0){
+            if ($request->approve != 0) {
                 return redirect('comments')->with(['status' => 'Error al crear el testimonio!', 'icon' => 'success']);
-            }else{
+            } else {
                 return redirect()->back()->with(['status' => 'Error al crear el testimonio', 'icon' => 'success']);
             }
         }
@@ -130,7 +136,7 @@ class TestimonialController extends Controller
             $comment->description = $request->description;
             $comment->stars = $request->rating;
             $comment->approve = $request->approve;
-            $comment->update();            
+            $comment->update();
             db::commit();
             return redirect('comments')->with(['status' => 'Testimonio actualizado con éxito!', 'icon' => 'success']);
         } catch (\Exception $th) {
@@ -155,10 +161,10 @@ class TestimonialController extends Controller
     {
         DB::beginTransaction();
         try {
-            
-            $comment = Testimonial::findOrfail($id);     
+
+            $comment = Testimonial::findOrfail($id);
             $comment->approve = $request->approve ? 1 : 0;
-            $comment->update();            
+            $comment->update();
             db::commit();
             return redirect('comments')->with(['status' => 'Estado actualizado con éxito!', 'icon' => 'success']);
         } catch (\Exception $th) {

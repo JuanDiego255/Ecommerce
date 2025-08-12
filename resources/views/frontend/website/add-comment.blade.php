@@ -9,13 +9,14 @@
                 </button>
             </div>
             <div class="modal-body">
+                {!! NoCaptcha::renderJs('es') !!}
                 <form class="form-horizontal" action="{{ url('comments/store') }}" method="post"
                     enctype="multipart/form-data">
                     @csrf
                     <input type="hidden" name="approve" value="0">
                     <div class="row">
                         <div class="col-md-12">
-                            <div class="card">                               
+                            <div class="card">
                                 <div class="card-body">
 
                                     <div class="row">
@@ -62,6 +63,12 @@
                                         <div class="input-group input-group-lg input-group-outline my-3">
                                             <input class="form-control" type="file" name="image">
                                         </div>
+                                    </div>
+                                    <div class="col-md-12 mb-3">
+                                        {!! NoCaptcha::display() !!}
+                                        @error('g-recaptcha-response')
+                                            <div class="text-danger small mt-2">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                     <div class="col-md-12">
                                         <button type="submit" class="btn btn-velvet">

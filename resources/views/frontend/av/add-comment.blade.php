@@ -9,6 +9,7 @@
                 </button>
             </div>
             <div class="modal-body">
+                {!! NoCaptcha::renderJs('es') !!}
                 <form class="form-horizontal" action="{{ url('comments/store') }}" method="post"
                     enctype="multipart/form-data">
                     @csrf
@@ -60,9 +61,12 @@
                                             </div>
                                         </div>
                                     </div>
-
-
-
+                                    <div class="col-md-12 mb-3">
+                                        {!! NoCaptcha::display() !!}
+                                        @error('g-recaptcha-response')
+                                            <div class="text-danger small mt-2">{{ $message }}</div>
+                                        @enderror
+                                    </div>
                                     <div class="text-center">
                                         <button type="submit" class="boxed-btn-comment">
                                             {{ __('Agregar Testimonio') }}</button>
