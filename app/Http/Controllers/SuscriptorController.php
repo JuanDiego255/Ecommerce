@@ -35,21 +35,35 @@ class SuscriptorController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // 1) Validación (incluye reCAPTCHA)
+        $request->validate([
+            'tutor_name' => 'required|string|max:255',
+            'name'       => 'required|string|max:255',
+            'email'      => 'required|email:rfc',
+            'telephone'  => 'required|string|max:30',
+            'birthday'   => 'required|date',
+            'g-recaptcha-response' => 'required|captcha', // 👈 valida reCAPTCHA
+        ], [
+            'g-recaptcha-response.required' => 'Por favor confirma que no eres un robot.',
+            'g-recaptcha-response.captcha'  => 'La verificación reCAPTCHA falló. Intenta de nuevo.',
+        ]);
+
         DB::beginTransaction();
         try {
-            $suscriptor =  new  Suscriptor();
+            $suscriptor = new Suscriptor();
             $suscriptor->tutor_name = $request->tutor_name;
-            $suscriptor->name = $request->name;
-            $suscriptor->email = $request->email;
-            $suscriptor->telephone = $request->telephone;
-            $suscriptor->birthday = $request->birthday;
+            $suscriptor->name       = $request->name;
+            $suscriptor->email      = $request->email;
+            $suscriptor->telephone  = $request->telephone;
+            $suscriptor->birthday   = $request->birthday;
             $suscriptor->save();
+
             DB::commit();
             return redirect()->back()->with(['status' => 'Gracias por suscribirte', 'icon' => 'success']);
-        } catch (\Exception $th) {
+        } catch (\Throwable $e) {
             DB::rollBack();
-            return redirect()->back()->with(['status' => 'No se pudo guardar la suscripción', 'icon' => 'error']);
+            // opcional: Log::error($e);
+            return redirect()->back()->withInput()->with(['status' => 'No se pudo guardar la suscripción', 'icon' => 'error']);
         }
     }
 
@@ -65,7 +79,7 @@ class SuscriptorController extends Controller
         //
         DB::beginTransaction();
         try {
-            
+
             DB::commit();
             return redirect()->back()->with(['status' => 'Se ha editado el suscriptor con éxito', 'icon' => 'success']);
         } catch (\Exception $th) {
@@ -84,8 +98,8 @@ class SuscriptorController extends Controller
     {
         //
         DB::beginTransaction();
-        try {           
-           
+        try {
+
             Suscriptor::destroy($id);
             DB::commit();
             return redirect()->back()->with(['status' => 'Se ha eliminado el suscriptor con éxito', 'icon' => 'success']);

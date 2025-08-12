@@ -52,47 +52,58 @@
         <div class="col-md-12 col-lg-12">
             <div class="p-t-7 m-t-20 p-r-15-lg p-r-0-md">
                 <h3 class="mtext-111 cl2 p-b-16 text-center">
-                    Queremos acompañarte en cada etapa de tu bebé. Comparte su fecha de cumpleaños y prepárate para recibir detalles llenos de amor.
+                    Queremos acompañarte en cada etapa de tu bebé. Comparte su fecha de cumpleaños y prepárate para recibir
+                    detalles llenos de amor.
                 </h3>
             </div>
         </div>
         <div class="row m-t-20">
             <div class="col-sm-10 w-75 col-lg-10 col-xl-10 m-lr-auto m-b-50">
                 <div class="bor10 p-lr-40 p-t-30 p-b-40 m-l-20 m-r-10 m-lr-0-xl p-lr-15-sm">
+                    {{-- Carga el JS del captcha en español --}}
+                    {!! NoCaptcha::renderJs('es') !!}
+                    {{-- Tu formulario --}}
                     <form action="{{ url('/suscriptor/store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
-
                         <div class="row">
+                            <!-- campos ... -->
                             <div class="col-md-12">
                                 <div class="bor8 dis-flex p-l-15 m-b-20">
                                     <input class="mtext-107 clnew size-114 plh2 p-r-15" type="text" name="tutor_name"
-                                        value="" id="name" placeholder="Nombre Completo (Encargado)" required>
+                                        id="tutor_name" placeholder="Nombre Completo (Encargado)" required>
                                 </div>
                             </div>
-
                             <div class="col-md-12">
                                 <div class="bor8 dis-flex p-l-15 m-b-20">
                                     <input class="mtext-107 clnew size-114 plh2 p-r-15" type="text" name="name"
-                                        value="" id="name" placeholder="Nombre Completo (Bebé)" required>
+                                        id="name" placeholder="Nombre Completo (Bebé)" required>
                                 </div>
                             </div>
                             <div class="col-md-12">
                                 <div class="bor8 dis-flex p-l-15 m-b-20">
                                     <input class="mtext-107 clnew size-114 plh2 p-r-15" type="email" name="email"
-                                        value="" id="email" placeholder="E-mail" required>
+                                        id="email" placeholder="E-mail" required>
                                 </div>
                             </div>
                             <div class="col-md-12">
                                 <div class="bor8 dis-flex p-l-15 m-b-20">
-                                    <input class="mtext-107 clnew size-114 plh2 p-r-15" type="telephone" name="telephone"
-                                        value="" id="telephone" placeholder="Teléfono" required>
+                                    {{-- tip: "tel" en vez de "telephone" --}}
+                                    <input class="mtext-107 clnew size-114 plh2 p-r-15" type="tel" name="telephone"
+                                        id="telephone" placeholder="Teléfono" required>
                                 </div>
                             </div>
                             <div class="col-md-12">
                                 <div class="bor8 dis-flex p-l-15 m-b-20">
                                     <input class="mtext-107 clnew size-114 plh2 p-r-15" type="date" name="birthday"
-                                        value="" id="birthday" placeholder="Cumpleaños" required>
+                                        id="birthday" placeholder="Cumpleaños" required>
                                 </div>
+                            </div>
+                            {{-- reCAPTCHA checkbox --}}
+                            <div class="col-md-12 m-b-20">
+                                {!! NoCaptcha::display() !!}
+                                @error('g-recaptcha-response')
+                                    <div class="text-danger small mt-2">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
                         <center>
@@ -101,14 +112,11 @@
                                 Suscribirse
                             </button>
                         </center>
-
                     </form>
                 </div>
             </div>
         </div>
     </div>
-
-
     @include('layouts.inc.design_ecommerce.footer')
 @endsection
 @section('scripts')
