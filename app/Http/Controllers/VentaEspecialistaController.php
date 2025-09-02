@@ -305,6 +305,49 @@ class VentaEspecialistaController extends Controller
      */
     public function store(Request $request)
     {
+        // ========= NUEVO: Prevalidaciones para fecha manual y motivo =========
+        $today = Carbon::now('America/Costa_Rica')->toDateString();
+        $customDate = (bool) $request->input('custom_date', false);
+        $actualizarArqueo = false;
+        $fechaVenta = $request->input('fecha_venta');
+        if ($customDate) {
+            // 1) Debe venir fecha_venta
+            if (empty($fechaVenta)) {
+                return redirect()->back()
+                    ->with(['status' => 'Debes seleccionar la fecha de la venta.', 'icon' => 'warning'])
+                    ->withInput();
+            }
+            // 1.1) No permitir fechas futuras (defensa del lado servidor)
+            if ($fechaVenta > $today) {
+                return redirect()->back()
+                    ->with(['status' => 'No puedes seleccionar una fecha futura para la venta.', 'icon' => 'warning'])
+                    ->withInput();
+            }
+
+            // 2) Si la fecha seleccionada es distinta a hoy, el motivo es obligatorio
+            if ($fechaVenta !== $today && !filled($request->input('motivo_fecha'))) {
+                return redirect()->back()
+                    ->with(['status' => 'Debes ingresar un motivo para registrar una venta con fecha distinta a hoy.', 'icon' => 'warning'])
+                    ->withInput();
+            }
+
+            // 1) Verificar que exista un arqueo abierto en la fecha seleccionada
+            $cajaEnFecha = ArqueoCaja::cajaAbiertaHoy($fechaVenta)->first();
+            if (!$cajaEnFecha) {
+                return redirect()->back()
+                    ->with(['status' => 'No hay ninguna caja abierta para la fecha seleccionada (' . $fechaVenta . ').', 'icon' => 'warning'])
+                    ->withInput();
+            }
+
+            // Mantener tu código original intacto: alimentamos fecha_matricula para que lo use tu línea existente
+            $request->merge(['fecha_matricula' => $fechaVenta]);
+            $actualizarArqueo = true;
+        } else {
+            // Si no viene fecha manual, forzamos fecha_matricula a hoy para tu línea original
+            $request->merge(['fecha_matricula' => $today]);
+        }
+        // ========= FIN NUEVO: Prevalidaciones =========
+
         //
         DB::beginTransaction();
         try {
@@ -329,6 +372,10 @@ class VentaEspecialistaController extends Controller
                 if ($venta) {
                     // Actualizar los valores (sin modificar arqueo_id)
                     $venta->especialista_id = $request->especialista_id;
+                    if ($actualizarArqueo) {
+                        $venta->arqueo_id = $cajaAbierta->id;
+                        $venta->justificacion_arqueo = $request->input('motivo_fecha');
+                    }
                     $venta->clothing_id = $request->clothing_id;
                     $venta->monto_venta = $request->monto_venta;
                     $venta->tipo_pago_id = $request->tipo_pago;
@@ -352,6 +399,7 @@ class VentaEspecialistaController extends Controller
                 $venta->tipo_pago_id = $request->tipo_pago;
                 $venta->monto_producto_venta = $request->monto_producto_venta;
                 $venta->is_gift_card = $request->is_gift_card;
+                $venta->justificacion_arqueo ??= $request->input('motivo_fecha');
                 $venta->porcentaje = $request->input_porcentaje;
                 $venta->descuento = $request->descuento;
                 $venta->monto_por_servicio_o_salario = $request->monto_por_servicio_o_salario;
@@ -367,6 +415,7 @@ class VentaEspecialistaController extends Controller
             return redirect()->back()->with(['status' => 'No se pudo guardar la venta', 'icon' => 'error'])->withInput();
         }
     }
+
     /**
      * Store a newly created resource in storage.
      *

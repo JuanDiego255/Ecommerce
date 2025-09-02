@@ -73,6 +73,45 @@
                                     for="customCheck1">{{ __('Asignar todo el monto a la clínica') }}</label>
                             </div>
                         </div>
+                        <div class="col-md-12 mb-1">
+                            <div class="form-check">
+                                <input class="form-check-input margin-left-checkbox" type="checkbox" value="1"
+                                    id="custom_date" name="custom_date">
+                                <label class="custom-control-label"
+                                    for="custom_date">{{ __('Ingresar fecha manualmente') }}</label>
+                            </div>
+                        </div>
+
+                        <div id="custom_date_fields" class="col-md-12 mb-2 d-none">
+                            <div class="input-group input-group-static mb-2">
+                                <label>{{ __('Fecha de la venta') }}</label>
+                                <input type="date"
+                                    class="form-control form-control-lg @error('fecha_venta') is-invalid @enderror"
+                                    id="fecha_venta" name="fecha_venta" max="{{ now()->format('Y-m-d') }}"
+                                    value="{{ old('fecha_venta') }}">
+                                @error('fecha_venta')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+
+                            <span class="text-sm text-muted d-block mb-2" id="arqueo_hint">
+                                {{ __('La venta se registrará en el arqueo que estaba abierto en esa fecha.') }}
+                            </span>
+
+                            <div class="input-group input-group-static">
+                                <label>{{ __('¿Por qué no es hoy?') }}</label>
+                                <textarea rows="2" class="form-control form-control-lg @error('motivo_fecha') is-invalid @enderror"
+                                    id="motivo_fecha" name="motivo_fecha" placeholder="{{ __('Describe el motivo') }}">{{ old('motivo_fecha') }}</textarea>
+                                @error('motivo_fecha')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+
                         <div class="col-md-12 mb-3">
                             <div class="input-group input-group-static">
                                 <label>Especialistas</label>
@@ -145,6 +184,12 @@
                         {{ csrf_field() }}
                         <div class="row">
                             <div class="col-md-3 mb-3">
+                                <input type="hidden" name="custom_date" id="custom_date_hidden"
+                                    value="{{ old('custom_date', 0) }}">
+                                <input type="hidden" name="fecha_venta" id="fecha_venta_hidden"
+                                    value="{{ old('fecha_venta') }}">
+                                <input type="hidden" name="motivo_fecha" id="motivo_fecha_hidden"
+                                    value="{{ old('motivo_fecha') }}">
                                 <input type="hidden" name="clothing_id" id="clothing_id">
                                 <input type="hidden" name="aplica" id="aplica">
                                 <input type="hidden" name="aplica_prod" id="aplica_prod">
@@ -597,7 +642,7 @@
                     monto_total_cli += (monto_venta - monto_serv_sal);
                     monto_total_esp += monto_serv_sal;
                 }
-               
+
                 if (!chkSetClinica) {
                     $('#monto_clinica').val(monto_total_cli);
                     if (set_campo_esp == 1 && !chkPackage) {
@@ -620,6 +665,84 @@
                 }
 
             }
+            const today = new Date().toISOString().split('T')[0];
+            const $chkCustomDate = $('#custom_date');
+            const $customFields = $('#custom_date_fields');
+            const $fechaVenta = $('#fecha_venta');
+            const $motivoFecha = $('#motivo_fecha');
+            const $arqueoHint = $('#arqueo_hint');
+
+            const $customDateHidden = $('#custom_date_hidden');
+            const $fechaVentaHidden = $('#fecha_venta_hidden');
+            const $motivoFechaHidden = $('#motivo_fecha_hidden');
+
+            function syncHiddenFromUI() {
+                const checked = $chkCustomDate.is(':checked') ? 1 : 0;
+                $customDateHidden.val(checked);
+
+                const fv = $fechaVenta.val() || '';
+                $fechaVentaHidden.val(fv);
+
+                const motivo = $motivoFecha.val() || '';
+                $motivoFechaHidden.val(motivo);
+            }
+
+            $fechaVenta.attr('max', today);
+
+            function toggleCustomDateFields() {
+                const on = $chkCustomDate.is(':checked');
+                $customFields.toggleClass('d-none', !on);
+                $fechaVenta.prop('disabled', !on).prop('required', on);
+                // El motivo se requiere si la fecha no es hoy (se ajusta abajo en el change)
+                $motivoFecha.prop('disabled', !on);
+                if (!on) {
+                    $fechaVenta.val('');
+                    $motivoFecha.val('').prop('required', false);
+                    $arqueoHint.text('La venta se registrará en el arqueo que estaba abierto en esa fecha.');
+                }
+            }
+
+            $chkCustomDate.on('change', function() {
+                toggleCustomDateFields();
+                syncHiddenFromUI();
+            });
+
+            $fechaVenta.on('change keyup', function() {
+                const selected = $(this).val();
+                // No permitir fechas futuras (defensa adicional)
+                if (selected && selected > today) {
+                    $(this).val(today);
+                    Swal && Swal.fire ? Swal.fire({
+                        title: "Fecha inválida",
+                        text: "No puedes seleccionar una fecha futura.",
+                        icon: "warning",
+                    }) : alert("No puedes seleccionar una fecha futura.");
+                }
+
+                // Requerir motivo solo si la fecha no es hoy
+                const finalVal = $(this).val();
+                const requiereMotivo = finalVal && finalVal !== today;
+                $motivoFecha.prop('required', requiereMotivo);
+
+                // Mensaje de arqueo dinámico
+                if (finalVal) {
+                    $arqueoHint.text(
+                        `La venta se registrará en el arqueo que estaba abierto el ${finalVal}.`);
+                } else {
+                    $arqueoHint.text(
+                        'La venta se registrará en el arqueo que estaba abierto en esa fecha.');
+                }
+                syncHiddenFromUI();
+            });
+
+            $motivoFecha.on('change keyup', function() {
+                syncHiddenFromUI();
+            });
+
+            // Por si algo no disparó change, sincroniza justo antes de enviar el form
+            $('form[action="{{ url('venta/especialista/store') }}"]').on('submit', function() {
+                syncHiddenFromUI();
+            });
         });
     </script>
 @endsection
