@@ -310,6 +310,12 @@ class VentaEspecialistaController extends Controller
         $customDate = (bool) $request->input('custom_date', false);
         $actualizarArqueo = false;
         $fechaVenta = $request->input('fecha_venta');
+        $fechaUltCaja = ArqueoCaja::where('estado', 1)->first()->fecha_ini;
+        if ($fechaUltCaja != $today) {
+            return redirect()->back()
+                ->with(['status' => 'Existe una caja abierta con fecha distinta a la de hoy, para evitar inconsistencias cierre la caja antes de registrar una venta.', 'icon' => 'warning'])
+                ->withInput();
+        }
         if ($customDate) {
             // 1) Debe venir fecha_venta
             if (empty($fechaVenta)) {
