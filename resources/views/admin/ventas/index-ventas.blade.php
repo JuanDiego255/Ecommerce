@@ -419,6 +419,7 @@
         $acumuladoTotalVentas = 0;
         $acumuladoTotalEspecialistas = 0;
         $acumuladoTotalClinica = 0;
+        $acumuladoTotalProd = 0;
         $acumuladoTotalDescuentos = 0;
     @endphp
 
@@ -486,6 +487,7 @@
             $acumuladoTotalVentas += $totalGeneralVenta;
             $acumuladoTotalEspecialistas += $totalGeneralEspecialista;
             $acumuladoTotalClinica += $totalGeneralClinica;
+            $acumuladoTotalProd += $totalGeneralProducto;
         @endphp
 
         <div class="col-md-4">
@@ -586,10 +588,14 @@
                             <strong>Total Clínica</strong>
                             <span class="text-danger fw-bold">₡{{ number_format($acumuladoTotalClinica) }}</span>
                         </li>
+                         <li class="list-group-item d-flex justify-content-between align-items-center bg-light">
+                            <strong>Total Productos</strong>
+                            <span class="text-warning fw-bold">₡{{ number_format($acumuladoTotalProd) }}</span>
+                        </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center bg-light">
                             <strong>Total Descuentos</strong>
                             <span class="text-warning fw-bold">₡{{ number_format($acumuladoTotalDescuentos) }}</span>
-                        </li>
+                        </li>                       
                     </ul>
                 </div>
             </div>
