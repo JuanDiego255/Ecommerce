@@ -9,7 +9,7 @@
             <strong>{{ __('Administrar Cajas') }}</strong>
         </h2>
     </center>
-    <button type="button" data-bs-toggle="modal" data-bs-target="#add-caja-modal" class="btn btn-velvet">
+    <button type="button" data-bs-toggle="modal" data-bs-target="#add-caja-modal" class="btn btn-accion">
         {{ __('Nueva caja') }}</button>
     @include('admin.cajas.add')
     <div class="card mt-3">
@@ -59,7 +59,7 @@
                                 <tr>
                                     <td class="align-middle">
                                         <button type="button" data-bs-toggle="modal"
-                                            data-bs-target="#edit-caja-modal{{ $item->id }}" class="btn btn-velvet"
+                                            data-bs-target="#edit-caja-modal{{ $item->id }}" class="btn btn-accion"
                                             style="text-decoration: none;">Editar</button>
 
                                         <form method="post" action="{{ url('/delete/cajas/' . $item->id) }}"
@@ -88,7 +88,7 @@
                                                     style="text-decoration: none;">Cerrar</button>
                                             </form>
                                         @endif
-                                        <a href="{{ url('cajas/arqueos/' . $item->id) }}" class="btn btn-velvet"
+                                        <a href="{{ url('cajas/arqueos/' . $item->id) }}" class="btn btn-accion"
                                             style="text-decoration: none;">Arqueos</a>
                                     </td>
                                     <td class="align-middle text-sm">

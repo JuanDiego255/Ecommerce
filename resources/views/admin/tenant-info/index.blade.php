@@ -358,7 +358,7 @@ is-invalid
 
                     </div>
                 </div>
-                <input class="btn btn-velvet mt-4" type="submit" value="Guardar Cambios">
+                <input class="btn btn-accion mt-4" type="submit" value="Guardar Cambios">
                 <hr class="dark horizontal text-danger">
                 <div class="card col-md-6">
                     <div class="card-body text-center">

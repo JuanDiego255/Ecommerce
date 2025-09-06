@@ -12,7 +12,7 @@
         <hr class="hr-servicios">
 
         <button type="button" data-bs-toggle="modal" data-bs-target="#add-department-modal"
-            class="btn btn-velvet">{{ __('Nuevo departamento') }}</button>
+            class="btn btn-accion">{{ __('Nuevo departamento') }}</button>
         @include('admin.departments.add')
         <div class="card mt-3 mb-4">
             <div class="card-body">
@@ -64,7 +64,7 @@
                                     <center>
                                         <button type="button" data-bs-toggle="modal"
                                             data-bs-target="#edit-department-modal{{ $item->id }}"
-                                            class="btn btn-velvet"
+                                            class="btn btn-accion"
                                             style="text-decoration: none;">{{ __('Editar') }}</button>
 
                                         <form method="post" action="{{ url('/delete/department/' . $item->id) }}"
@@ -73,11 +73,11 @@
                                             {{ method_field('DELETE') }}
                                             <button type="submit" data-bs-toggle="modal"
                                                 onclick="return confirm('Deseas borrar este departamento?')"
-                                                class="btn btn-velvet"
+                                                class="btn btn-accion"
                                                 style="text-decoration: none;">{{ __('Borrar') }}</button>
                                         </form>
                                         <a href="{{ url('categories/' . $item->id) }}"
-                                            class="btn btn-velvet">{{ __('Ver categorías') }}</a>
+                                            class="btn btn-accion">{{ __('Ver categorías') }}</a>
                                     </center>
                                 </td>
                                 @include('admin.departments.edit')

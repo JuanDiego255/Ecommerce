@@ -85,7 +85,7 @@
                         </div> --}}
                         <div class="row">
                             <div class="col-md-6">
-                                <input class="btn btn-velvet mt-4" type="submit" value="Guardar Cambios">
+                                <input class="btn btn-accion mt-4" type="submit" value="Guardar Cambios">
                             </div>
                         </div>
                     </div>
@@ -250,7 +250,7 @@
                         </div>
 
                         <div class="col-md-12">
-                            <input class="btn btn-velvet mt-4" type="submit" value="Guardar Cambios">
+                            <input class="btn btn-accion mt-4" type="submit" value="Guardar Cambios">
                         </div>
                     </div>
                 </div>
@@ -375,7 +375,7 @@
 
                     </div>
                     <div class="col-md-12">
-                        <input class="btn btn-velvet mt-4" type="submit" value="Guardar Iconos">
+                        <input class="btn btn-accion mt-4" type="submit" value="Guardar Iconos">
                     </div>
                 </div>
             </form>

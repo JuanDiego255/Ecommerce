@@ -54,7 +54,7 @@
                         <div class="col-md-12 mb-3">
                             <label
                                 class="form-label">{{ __('Meta Keywords (Opcional - Presione enter para agregar la palabra
-                                                                                                                                                                                                                    clave)') }}</label><br>
+                                                                                                                                                                                                                                                    clave)') }}</label><br>
                             <div class="tags-input">
                                 <ul id="tags"></ul>
                                 <input type="text" id="input-tag" placeholder="Escriba la palabra clave.." />
@@ -96,7 +96,7 @@
                 <input type="hidden" value="0" id="status" name="popular">
 
                 <div class="col-md-6">
-                    <button type="submit" class="btn btn-velvet">{{ __('Agregar categoría') }}</button>
+                    <button type="submit" class="btn btn-accion">{{ __('Agregar categoría') }}</button>
                 </div>
 
             </form>
@@ -104,7 +104,7 @@
     </div>
     <center>
         <div class="col-md-12 mt-3">
-            <a href="{{ url('categories') }}" class="btn btn-velvet">{{ __('Volver') }}</a>
+            <a href="{{ url('categories') }}" class="btn btn-accion">{{ __('Volver') }}</a>
         </div>
     </center>
 @endsection

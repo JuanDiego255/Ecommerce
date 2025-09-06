@@ -12,7 +12,7 @@
     <div class="row w-50">
         <div class="col-md-6">
             <a href="{{ url('blog-result/' . $blog_id . '/add') }}"
-                class="btn btn-velvet w-100">{{ __('Agregar nuevo resultado') }}</a>
+                class="btn btn-accion w-100">{{ __('Agregar nuevo resultado') }}</a>
         </div>
     </div>
     <div class="card mt-3">

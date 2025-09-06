@@ -114,7 +114,7 @@
 
                     </div>
                     <center>
-                        <input class="btn btn-velvet text-center" type="submit" value="Matricular">
+                        <input class="btn btn-accion text-center" type="submit" value="Matricular">
                     </center>
                 </form>
             </div>

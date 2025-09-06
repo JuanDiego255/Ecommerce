@@ -102,7 +102,7 @@
                         </div>
                     </div>
 
-                    <input class="btn btn-velvet" type="submit" value="Guardar Cambios">
+                    <input class="btn btn-accion" type="submit" value="Guardar Cambios">
 
 
                 </form>

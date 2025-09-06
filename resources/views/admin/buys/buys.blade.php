@@ -33,7 +33,7 @@
                         </div>
                         <div class="col-md-4">
                             <button type="button" data-bs-toggle="modal" data-bs-target="#add-products-modal"
-                                data-name="products" class="btn btn-velvet icon-button">
+                                data-name="products" class="btn btn-accion icon-button">
                                 Productos
                             </button>
                         </div>

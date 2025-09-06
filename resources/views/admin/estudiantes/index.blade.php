@@ -12,7 +12,7 @@
             <strong>{{ $tipo == 'C' ? __('Gestión de estudiantes') : __('Gestión de clases de yoga') }}</strong>
         </h2>
     </center>
-    <button type="button" data-bs-toggle="modal" data-bs-target="#add-estudiante-modal" class="btn btn-velvet">
+    <button type="button" data-bs-toggle="modal" data-bs-target="#add-estudiante-modal" class="btn btn-accion">
         {{ __('Nuevo estudiante') }}</button>
     @include('admin.estudiantes.add')
     <div class="card mt-3">
@@ -65,7 +65,7 @@
                                     <td class="align-middle">
                                         <button type="button" data-bs-toggle="modal"
                                             data-bs-target="#edit-estudiante-modal{{ $item->id }}"
-                                            class="btn btn-velvet" style="text-decoration: none;">Editar</button>
+                                            class="btn btn-accion" style="text-decoration: none;">Editar</button>
 
                                         <form method="post" action="{{ url('/delete/estudiantes/' . $item->id) }}"
                                             style="display:inline">
@@ -78,7 +78,7 @@
                                         <button type="button" data-bs-toggle="modal"
                                             data-bs-target="#matricula-estudiante-modal{{ $item->id }}"
                                             class="btn btn-admin-open" style="text-decoration: none;">Matricular</button>
-                                        <a href="{{ url('list/matricula/' . $item->id) }}" class="btn btn-velvet"
+                                        <a href="{{ url('list/matricula/' . $item->id) }}" class="btn btn-accion"
                                             style="text-decoration: none;">Gestionar</a>
                                     </td>
                                     <td class="align-middle text-sm">

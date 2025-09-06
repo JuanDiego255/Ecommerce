@@ -9,7 +9,7 @@
             <strong>{{ __('Administrar especialistas') }}</strong>
         </h2>
     </center>
-    <button type="button" data-bs-toggle="modal" data-bs-target="#add-especialista-modal" class="btn btn-velvet">
+    <button type="button" data-bs-toggle="modal" data-bs-target="#add-especialista-modal" class="btn btn-accion">
         {{ __('Nuevo especialista') }}</button>
     @include('admin.especialistas.add')
     <div class="card mt-3">
@@ -64,7 +64,7 @@
                                     <td class="align-middle">
                                         <button type="button" data-bs-toggle="modal"
                                             data-bs-target="#edit-especialista-modal{{ $item->id }}"
-                                            class="btn btn-velvet" style="text-decoration: none;">Editar</button>
+                                            class="btn btn-accion" style="text-decoration: none;">Editar</button>
 
                                         <form method="post" action="{{ url('/especialistas/destroy/' . $item->id) }}"
                                             style="display:inline">

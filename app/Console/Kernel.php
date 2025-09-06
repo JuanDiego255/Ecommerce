@@ -16,6 +16,9 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('tenants:sitemap:generate')->daily();
+        $schedule->command('tenants:artisan send:reminders')
+            ->hourly()
+            ->timezone(config('app.timezone', 'America/Costa_Rica'));
     }
 
     /**
@@ -25,7 +28,7 @@ class Kernel extends ConsoleKernel
      */
     protected function commands()
     {
-        $this->load(__DIR__.'/Commands');
+        $this->load(__DIR__ . '/Commands');
 
         require base_path('routes/console.php');
     }

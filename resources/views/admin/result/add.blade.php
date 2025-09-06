@@ -34,7 +34,7 @@
 
 
                         <div class="col-md-12">
-                            <button type="submit" class="btn btn-velvet"> {{ __('Agregar resultado') }}</button>
+                            <button type="submit" class="btn btn-accion"> {{ __('Agregar resultado') }}</button>
                         </div>
                     </div>
                 </div>
@@ -44,7 +44,7 @@
 
     <center>
         <div class="col-md-12 mt-3">
-            <a href="{{ url('results/'.$blog_id) }}" class="btn btn-velvet w-25"> {{ __('Volver') }}</a>
+            <a href="{{ url('results/'.$blog_id) }}" class="btn btn-accion w-25"> {{ __('Volver') }}</a>
         </div>
     </center>
 @endsection

@@ -21,7 +21,7 @@
                         </div>                                         
                     </div>
                     <div class="col-md-12">
-                        <button type="submit" class="btn btn-velvet"> {{ __('Agregar valor') }}</button>
+                        <button type="submit" class="btn btn-accion"> {{ __('Agregar valor') }}</button>
                     </div>
                 </form>
             </div>

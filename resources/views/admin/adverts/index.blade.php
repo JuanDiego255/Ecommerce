@@ -12,7 +12,7 @@
         <hr class="hr-servicios">
 
         <button type="button" data-bs-toggle="modal" data-bs-target="#add-advert-modal"
-            class="btn btn-velvet">{{ __('Nuevo anuncio') }}</button>
+            class="btn btn-accion">{{ __('Nuevo anuncio') }}</button>
 
         @include('admin.adverts.add')
         <div class="card mt-3 mb-4">

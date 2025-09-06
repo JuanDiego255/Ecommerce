@@ -71,7 +71,7 @@
                                         @enderror
                                     </div>
                                     <div class="col-md-12">
-                                        <button type="submit" class="btn btn-velvet">
+                                        <button type="submit" class="btn btn-accion">
                                             {{ __('Agregar Testimonio') }}</button>
                                     </div>
                                 </div>

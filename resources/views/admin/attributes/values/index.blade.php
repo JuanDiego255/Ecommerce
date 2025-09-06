@@ -13,7 +13,7 @@
     <div class="row w-50">
         <div class="col-md-6">
             <button type="button" data-bs-toggle="modal" data-bs-target="#add-value-attr-modal"
-                class="btn btn-velvet">{{ __('Nuevo valor') }}</button>
+                class="btn btn-accion">{{ __('Nuevo valor') }}</button>
         </div>
     </div>
     <div class="card mt-3">
@@ -94,7 +94,7 @@
     </div>
     <center>
         <div class="col-md-12 mt-3">
-            <a href="{{ url('attributes/') }}" class="btn btn-velvet w-25">{{ __('Ir a atributos') }}</a>
+            <a href="{{ url('attributes/') }}" class="btn btn-accion w-25">{{ __('Ir a atributos') }}</a>
         </div>
     </center>
 @endsection

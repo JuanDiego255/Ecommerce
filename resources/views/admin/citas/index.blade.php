@@ -1,0 +1,198 @@
+@extends('layouts.admin')
+
+@section('metatag')
+    {!! SEOMeta::generate() !!}{!! OpenGraph::generate() !!}
+@endsection
+
+@section('content')
+    <center>
+        <h2 class="text-center font-title">
+            <strong>{{ __('Administrar citas') }}</strong>
+        </h2>
+    </center>
+
+    {{-- Filtros --}}
+    <div class="card mt-3">
+        <div class="card-body">
+            <div class="row w-100">
+                <div class="col-md-6">
+                    <div class="input-group input-group-lg input-group-static my-3 w-100">
+                        <label>Filtrar</label>
+                        <input value="" placeholder="Escribe para filtrar...." type="text"
+                            class="form-control form-control-lg" name="searchfor" id="searchfor">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="input-group input-group-lg input-group-static my-3 w-100">
+                        <label>Mostrar</label>
+                        <select id="recordsPerPage" name="recordsPerPage" class="form-control form-control-lg"
+                            autocomplete="recordsPerPage">
+                            <option value="5">5 Registros</option>
+                            <option value="10">10 Registros</option>
+                            <option selected value="15">15 Registros</option>
+                            <option value="50">50 Registros</option>
+                        </select>
+
+                    </div>
+                </div>
+
+            </div>
+
+            @if (session('ok'))
+                <div class="alert alert-success text-white mt-3 mb-0">{{ session('ok') }}</div>
+            @endif
+            @if (session('error'))
+                <div class="alert alert-danger text-white mt-3 mb-0">{{ session('error') }}</div>
+            @endif
+            @if ($errors->any())
+                <div class="alert alert-danger text-white mt-3 mb-0">{{ $errors->first() }}</div>
+            @endif
+        </div>
+    </div>
+
+    {{-- Tabla --}}
+    <div class="row row-cols-1 row-cols-md-1 g-4 align-content-center card-group mt-3">
+        <div class="col-md-12">
+            <div class="card p-2">
+                <div class="table-responsive">
+                    <table class="table align-items-center mb-0" id="table">
+                        <thead>
+                            <tr>
+                                <th class="text-secondary font-weight-bolder opacity-7">{{ __('Acciones') }}</th>
+                                <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Cliente') }}</th>
+                                <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Barbero') }}</th>
+                                <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Fecha') }}</th>
+                                <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Hora') }}</th>
+                                <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Total') }}</th>
+                                <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Estado') }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($items as $item)
+                                @php
+                                    $fecha = optional($item->starts_at)->format('d/m/Y');
+                                    $hora = optional($item->starts_at)->format('H:i');
+                                    $total = number_format((int) $item->total_cents / 100, 0, ',', '.');
+                                @endphp
+                                <tr>
+                                    {{-- Acciones con íconos y tooltips --}}
+                                    <td class="align-middle text-center">
+                                        @can('citas.manage-any')
+                                            {{-- Confirmar --}}
+                                            @if ($item->status !== 'confirmed')
+                                                <form method="post" action="{{ url('/citas/' . $item->id . '/status') }}"
+                                                    class="d-inline">
+                                                    {{ csrf_field() }} {{ method_field('PUT') }}
+                                                    <input type="hidden" name="status" value="confirmed">
+                                                    <button type="submit" class="btn btn-link text-success border-0"
+                                                        data-bs-toggle="tooltip" data-bs-placement="bottom" title="Confirmar">
+                                                        <i class="material-icons text-lg">task_alt</i>
+                                                    </button>
+                                                </form>
+                                            @endif
+
+                                            {{-- Completar --}}
+                                            @if ($item->status !== 'completed')
+                                                <form method="post" action="{{ url('/citas/' . $item->id . '/status') }}"
+                                                    class="d-inline">
+                                                    {{ csrf_field() }} {{ method_field('PUT') }}
+                                                    <input type="hidden" name="status" value="completed">
+                                                    <button type="submit" class="btn btn-link text-primary border-0"
+                                                        data-bs-toggle="tooltip" data-bs-placement="bottom"
+                                                        title="Marcar como completada">
+                                                        <i class="material-icons text-lg">done_all</i>
+                                                    </button>
+                                                </form>
+                                            @endif
+
+                                            {{-- Cancelar --}}
+                                            @if ($item->status !== 'cancelled')
+                                                <form method="post" action="{{ url('/citas/' . $item->id . '/status') }}"
+                                                    class="d-inline" onsubmit="return confirm('¿Cancelar esta cita?');">
+                                                    {{ csrf_field() }} {{ method_field('PUT') }}
+                                                    <input type="hidden" name="status" value="cancelled">
+                                                    <button type="submit" class="btn btn-link text-warning border-0"
+                                                        data-bs-toggle="tooltip" data-bs-placement="bottom" title="Cancelar">
+                                                        <i class="material-icons text-lg">cancel</i>
+                                                    </button>
+                                                </form>
+                                            @endif
+
+                                            {{-- Eliminar --}}
+                                            <form method="post" action="{{ url('/citas/' . $item->id) }}" class="d-inline"
+                                                onsubmit="return confirm('¿Eliminar definitivamente?');">
+                                                {{ csrf_field() }} {{ method_field('DELETE') }}
+                                                <button type="submit" class="btn btn-link text-danger border-0"
+                                                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="Eliminar">
+                                                    <i class="material-icons text-lg">delete</i>
+                                                </button>
+                                            </form>
+                                        @endcan
+                                        @php $current = request()->fullUrl(); @endphp
+                                        <a href="{{ route('citas.show', ['id' => $item->id, 'back' => $current]) }}"
+                                            class="btn btn-link text-velvet border-0" data-bs-toggle="tooltip"
+                                            data-bs-placement="bottom" title="Ver detalle">
+                                            <i class="material-icons text-lg">visibility</i>
+                                        </a>
+                                    </td>
+
+                                    <td class="align-middle text-sm">
+                                        <p class="text-success mb-0">{{ $item->cliente_nombre }}</p>
+                                        <small class="text-muted">
+                                            {{ $item->cliente_email ?? '' }}
+                                            {{ $item->cliente_telefono ? ' · ' . $item->cliente_telefono : '' }}
+                                        </small>
+                                    </td>
+
+                                    <td class="align-middle text-sm">
+                                        <p class="mb-0">{{ $item->barbero->nombre ?? '—' }}</p>
+                                    </td>
+
+                                    <td class="align-middle text-sm">
+                                        <p class="mb-0">{{ $fecha }}</p>
+                                    </td>
+
+                                    <td class="align-middle text-sm">
+                                        <p class="mb-0">{{ $hora }}</p>
+                                    </td>
+
+                                    <td class="align-middle text-sm">
+                                        <p class="font-weight-bold mb-0">₡{{ $total }}</p>
+                                    </td>
+
+                                    <td class="align-middle text-sm">
+                                        @switch($item->status)
+                                            @case('pending')
+                                                <span class="badge bg-secondary">Pendiente</span>
+                                            @break
+
+                                            @case('confirmed')
+                                                <span class="badge bg-info">Confirmada</span>
+                                            @break
+
+                                            @case('completed')
+                                                <span class="badge bg-success">Completada</span>
+                                            @break
+
+                                            @case('cancelled')
+                                                <span class="badge bg-danger">Cancelada</span>
+                                            @break
+                                        @endswitch
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="px-2">
+                    {{ $items->withQueryString()->links() }}
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection
+
+@section('script')
+    <script src="{{ asset('js/datatables.js') }}"></script>
+@endsection

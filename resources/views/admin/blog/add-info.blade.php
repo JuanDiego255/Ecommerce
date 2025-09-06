@@ -51,7 +51,7 @@
 
 
                         <div class="col-md-12">
-                            <button type="submit" class="btn btn-velvet">{{ __('Crear') }}</button>
+                            <button type="submit" class="btn btn-accion">{{ __('Crear') }}</button>
                         </div>
                     </div>
                 </div>
@@ -61,7 +61,7 @@
 
     <center>
         <div class="col-md-12 mt-3">
-            <a href="{{ url('blog-show/' . $blog_id . '/show') }}" class="btn btn-velvet w-25">{{ __('Volver') }}</a>
+            <a href="{{ url('blog-show/' . $blog_id . '/show') }}" class="btn btn-accion w-25">{{ __('Volver') }}</a>
         </div>
     </center>
 @endsection

@@ -11,7 +11,7 @@
     </center>
     @if (isset($especialista))
         <div class="col-md-12 mb-2">
-            <a href="{{ url('ventas/especialistas/0') }}" class="btn btn-velvet w-25">{{ __('Nueva venta') }}</a>
+            <a href="{{ url('ventas/especialistas/0') }}" class="btn btn-accion w-25">{{ __('Nueva venta') }}</a>
         </div>
     @endif
     <div class="card mt-3">
@@ -355,7 +355,7 @@
                             </div>
                         </div>
                         <center>
-                            <input class="btn btn-velvet" type="submit"
+                            <input class="btn btn-accion" type="submit"
                                 value="{{ isset($especialista) ? 'Guardar cambios' : 'Realizar venta' }}">
                         </center>
                     </form>
@@ -365,7 +365,7 @@
     </div>
     <center>
         <div class="col-md-12 mt-3">
-            <a href="{{ url('ventas/list') }}" class="btn btn-velvet w-25">{{ __('Ventas realizadas') }}</a>
+            <a href="{{ url('ventas/list') }}" class="btn btn-accion w-25">{{ __('Ventas realizadas') }}</a>
         </div>
     </center>
 @endsection

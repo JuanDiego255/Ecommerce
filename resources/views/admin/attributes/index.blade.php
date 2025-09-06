@@ -13,7 +13,7 @@
     <div class="row w-50">
         <div class="col-md-6">
             <button type="button" data-bs-toggle="modal" data-bs-target="#add-attribute-modal"
-                class="btn btn-velvet">{{ __('Nuevo atributo') }}</button>
+                class="btn btn-accion">{{ __('Nuevo atributo') }}</button>
         </div>
     </div>
     <div class="card mt-3">

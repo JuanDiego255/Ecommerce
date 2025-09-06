@@ -108,7 +108,7 @@
                                             <td class="align-middle">
                                                 <center>
                                                     <a href="{{ url('tenant/manage-pay/' . $tenant->id) }}"
-                                                        class="btn btn-velvet" style="text-decoration: none;">Ver Pagos</a>
+                                                        class="btn btn-accion" style="text-decoration: none;">Ver Pagos</a>
                                                 </center>
 
                                             </td>
@@ -145,7 +145,7 @@
                 </div>
             </div>
         </center>
-        <button type="button" data-bs-toggle="modal" data-bs-target="#add-bill-modal" class="btn btn-velvet">Nuevo
+        <button type="button" data-bs-toggle="modal" data-bs-target="#add-bill-modal" class="btn btn-accion">Nuevo
             gasto</button>
         <hr class="hr-servicios">
         @include('admin.tenant.add-bill')
@@ -227,7 +227,7 @@
                     </table>
                 </div>
             </div>
-            <a href="{{ url('tenants/payments') }}" class="btn btn-velvet" style="text-decoration: none;">Volver</a>
+            <a href="{{ url('tenants/payments') }}" class="btn btn-accion" style="text-decoration: none;">Volver</a>
         </center>
     </div>
 @endsection

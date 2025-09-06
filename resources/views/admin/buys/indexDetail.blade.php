@@ -115,7 +115,7 @@
 
                                                         <input type="hidden" name="action" value="1">
                                                         <input type="hidden" name="buy" value="{{ $buy->buy }}">
-                                                        <button class="btn btn-velvet text-white btn-tooltip"
+                                                        <button class="btn btn-accion text-white btn-tooltip"
                                                             data-bs-toggle="tooltip" data-bs-placement="top"
                                                             title="Aprobar Cancelación" data-container="body"
                                                             data-animation="true" type="submit"> <i
@@ -131,7 +131,7 @@
 
                                                         <input type="hidden" name="action" value="0">
                                                         <input type="hidden" name="buy" value="{{ $buy->buy }}">
-                                                        <button class="btn btn-velvet text-white btn-tooltip"
+                                                        <button class="btn btn-accion text-white btn-tooltip"
                                                             data-bs-toggle="tooltip" data-bs-placement="top"
                                                             title="Desaprobar Cancelación" data-container="body"
                                                             data-animation="true" type="submit"> <i
@@ -307,14 +307,14 @@
 <div class="d-flex justify-content-between mb-3 mt-3">
     <div>
         @if ($previousBuy)
-            <a href="{{ url('buy/details/admin/' . $previousBuy->id) }}" class="btn btn-velvet">
+            <a href="{{ url('buy/details/admin/' . $previousBuy->id) }}" class="btn btn-accion">
                 <i class="material-icons">arrow_back</i> Anterior
             </a>
         @endif
     </div>
     <div>
         @if ($nextBuy)
-            <a href="{{ url('buy/details/admin/' . $nextBuy->id) }}" class="btn btn-velvet">
+            <a href="{{ url('buy/details/admin/' . $nextBuy->id) }}" class="btn btn-accion">
                 Siguiente <i class="material-icons">arrow_forward</i>
             </a>
         @endif
@@ -325,7 +325,7 @@
 
 
     <div class="col-md-12 mt-3">
-        <a href="{{ url('buys-admin') }}" class="btn btn-velvet">Volver</a>
+        <a href="{{ url('buys-admin') }}" class="btn btn-accion">Volver</a>
     </div>
 </center>
 @endsection

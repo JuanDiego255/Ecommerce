@@ -10,7 +10,7 @@
         </h2>
 
         <hr class="hr-servicios">
-        <a href="{{ url('metatag/agregar') }}" class="btn btn-velvet">{{ __('Nueva sección') }}</a>
+        <a href="{{ url('metatag/agregar') }}" class="btn btn-accion">{{ __('Nueva sección') }}</a>
         <div class="card mt-3 mb-3">
             <div class="card-body">
                 <div class="row w-100">
@@ -70,7 +70,7 @@
                                 <td class="align-middle">
                                     <center>
                                         <a data-bs-toggle="tooltip" data-bs-placement="top" title="Editar"
-                                            data-container="body" data-animation="true" class="btn btn-velvet"
+                                            data-container="body" data-animation="true" class="btn btn-accion"
                                             style="text-decoration: none;" href="{{ url('metatag/edit/' . $tag->id) }}"><i
                                                 class="material-icons opacity-10">edit</i></a>
                                         <form method="post" action="{{ url('/delete-metatag/' . $tag->id) }}"

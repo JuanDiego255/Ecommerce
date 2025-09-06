@@ -14,7 +14,7 @@
 
         <div class="row w-75">
             <div class="col-md-3">
-                <button type="button" data-bs-toggle="modal" data-bs-target="#add-tenant-modal" class="btn btn-velvet">Nuevo
+                <button type="button" data-bs-toggle="modal" data-bs-target="#add-tenant-modal" class="btn btn-accion">Nuevo
                     Inquilino</button>
             </div>
             <div class="col-md-3">
@@ -105,7 +105,7 @@
 
                                     <td class="align-middle">
                                         <center>
-                                            <a href="{{ url('manage/tenant/' . $tenant->id) }}" class="btn btn-velvet"
+                                            <a href="{{ url('manage/tenant/' . $tenant->id) }}" class="btn btn-accion"
                                                 style="text-decoration: none;">Gestionar</a>
                                         </center>
 

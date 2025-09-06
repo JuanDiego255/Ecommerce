@@ -8,7 +8,7 @@
 
         <h2 class="text-center font-title"><strong>Pagos del inquilino {{$name}}</strong>
         </h2>
-        <button type="button" data-bs-toggle="modal" data-bs-target="#add-pay-modal" class="btn btn-velvet">Nuevo pago</button>
+        <button type="button" data-bs-toggle="modal" data-bs-target="#add-pay-modal" class="btn btn-accion">Nuevo pago</button>
         <hr class="hr-servicios">
         @include('admin.tenant.add')
         <center>
@@ -84,7 +84,7 @@
                     </table>
                 </div>
             </div>
-            <a href="{{ url('tenants/payments') }}" class="btn btn-velvet"
+            <a href="{{ url('tenants/payments') }}" class="btn btn-accion"
             style="text-decoration: none;">Volver</a>
         </center>
     </div>

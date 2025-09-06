@@ -77,7 +77,7 @@
 
 
                         <div class="col-md-12 mt-3 text-center">
-                            <button type="submit" class="btn btn-velvet">{{ __('Editar usuario') }}</button>
+                            <button type="submit" class="btn btn-accion">{{ __('Editar usuario') }}</button>
                         </div>
 
 
@@ -90,7 +90,7 @@
     </form>
     <center>
         <div class="col-md-12 mt-3">
-            <a href="{{ url('users/') }}" class="btn btn-velvet w-25">{{ __('Volver') }}</a>
+            <a href="{{ url('users/') }}" class="btn btn-accion w-25">{{ __('Volver') }}</a>
         </div>
     </center>
 @endsection

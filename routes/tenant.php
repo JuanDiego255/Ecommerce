@@ -46,6 +46,18 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
+//Controladores barberia
+use App\Http\Controllers\Admin\BarberoController;
+use App\Http\Controllers\Admin\BarberoTrabajoController;
+use App\Http\Controllers\Admin\CalendarController;
+use App\Http\Controllers\Admin\CitaAdminController;
+use App\Http\Controllers\Admin\SecurityController;
+use App\Http\Controllers\Admin\ServicioController;
+use App\Http\Controllers\Admin\SuperAdminController;
+use App\Http\Controllers\Admin\TenantSettingController;
+use App\Http\Controllers\OwnerDashboardController;
+use App\Http\Controllers\Public\BookingController;
+use App\Http\Controllers\PublicBookingController;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
 
@@ -134,6 +146,12 @@ Route::middleware([
             Route::get('/gift-code/{id}', [GiftCardController::class, 'applyCode']);
             Route::post('gift/store', [GiftCardController::class, 'store']);
             Route::get('/get/products/select/', [ClothingCategoryController::class, 'getProductsToSelect']);
+
+            //rutas barberia
+            Route::get('/barberos/{barbero}/agendar', [BookingController::class, 'showForm']);
+            Route::get('/barberos/{barbero}/servicios', [BookingController::class, 'servicios']);
+            Route::get('/barberos/{barbero}/disponibilidad', [BookingController::class, 'disponibilidad']);
+            Route::post('/reservas', [BookingController::class, 'reservar']);
         });
         Auth::routes();
 
@@ -418,6 +436,84 @@ Route::middleware([
             Route::get('/suscriptors/admin', [SuscriptorController::class, 'indexAdmin']);
             Route::put('/suscriptor/update/{id}', [SuscriptorController::class, 'update']);
             Route::delete('/suscriptor/delete/{id}', [SuscriptorController::class, 'destroy']);
+
+            // Solo dueño (owner)
+            Route::middleware('role:owner')->group(function () {
+                // Catálogo servicios global
+                Route::get('/servicios', [ServicioController::class, 'index']);
+                Route::post('/servicios/store', [ServicioController::class, 'store']);
+                Route::put('/servicios/update/{id}', [ServicioController::class, 'update']);
+                Route::delete('/servicios/destroy/{id}', [ServicioController::class, 'destroy']);
+                // Barberos CRUD y asignación de servicios
+                Route::get('/barberos', [BarberoController::class, 'index']);
+                Route::post('/barberos/store', [BarberoController::class, 'store']);
+                Route::put('/barberos/update/{id}', [BarberoController::class, 'update']);
+                Route::delete('/barberos/destroy/{id}', [BarberoController::class, 'destroy']);
+                Route::get('/barberos/{id}/services', [BarberoController::class, 'services']);
+                Route::post('/barberos/service/store', [BarberoController::class, 'storeService']);
+                Route::put('/barberos/{barbero_id}/services/{servicio_id}', [BarberoController::class, 'updateService']);
+                Route::delete('/barberos/{barbero}/services/{servicio}', [BarberoController::class, 'destroyService']);
+                Route::post('/barberos/{barbero}/photo', [BarberoController::class, 'uploadPhoto'])->name('barberos.photo.upload');
+                Route::delete('/barberos/{barbero}/photo', [BarberoController::class, 'deletePhoto'])->name('barberos.photo.delete');
+                // Configuración tenant, usuarios, roles, etc. (todos los tuyos)
+                Route::get('/seguridad', [SecurityController::class, 'index'])->name('security.index');
+                Route::put('/seguridad/user/{id}/role', [SecurityController::class, 'updateRole'])->name('security.updateRole');
+                Route::put('/seguridad/user/{id}/barbero', [SecurityController::class, 'attachBarbero'])->name('security.attachBarbero');
+                //
+                Route::get('/owner/dashboard', [OwnerDashboardController::class, 'index'])
+                    ->name('owner.dashboard');
+                // Datos para charts (opcional)
+                Route::get('/owner/dashboard/data', [OwnerDashboardController::class, 'data'])
+                    ->name('owner.dashboard.data');
+                // ...
+            });
+
+            // Dueño o manager: ver/gestionar citas de TODOS
+            Route::middleware('role:owner,manager')->group(function () {
+                Route::get('/citas', [CitaAdminController::class, 'index'])->name('citas.index');
+                Route::put('/citas/{id}/status', [CitaAdminController::class, 'updateStatus']);
+                Route::delete('/citas/{id}', [CitaAdminController::class, 'destroy']);
+                Route::get('/citas/{id}', [CitaAdminController::class, 'show'])->name('citas.show');
+            });
+
+            // Mis citas: todos los roles autenticados que sean barbero vinculado
+            Route::middleware('role:owner,manager,barber')->group(function () {
+                Route::get('/mis-citas', [CitaAdminController::class, 'myIndex'])->name('citas.mine');
+                Route::get('/barberos/{barbero}/trabajos', [BarberoTrabajoController::class, 'index'])->name('barberos.trabajos.index');
+                Route::post('/barberos/{barbero}/trabajos', [BarberoTrabajoController::class, 'store'])->name('barberos.trabajos.store');
+                Route::delete('/barberos/{barbero}/trabajos/{photo}', [BarberoTrabajoController::class, 'destroy'])->name('barberos.trabajos.destroy');
+                Route::post('/barberos/{barbero}/trabajos/{photo}/feature', [BarberoTrabajoController::class, 'feature'])->name('barberos.trabajos.feature');
+                //Excepciones barbero
+                Route::post('/barberos/{barbero}/excepciones', [BarberoController::class, 'storeExcepcion'])->name('barberos.excepciones.store');
+                Route::delete('/barberos/{barbero}/excepciones/{id}', [BarberoController::class, 'destroyExcepcion']);
+                Route::post('/barberos/{barbero}/bloques', [BarberoController::class, 'storeBloque'])->name('barberos.bloques.store');
+                Route::delete('/barberos/{barbero}/bloques/{id}', [BarberoController::class, 'destroyBloque'])->name('barberos.bloques.destroy');
+                Route::get('/barberos/{barbero}/agenda', [BarberoController::class, 'agenda'])->name('barberos.agenda');
+                //AJAX Barberos excepciones y bloques
+                Route::get('/barberos/{barbero}/excepciones/list', [BarberoController::class, 'listExcepciones'])
+                    ->name('barberos.excepciones.list');
+                Route::get('/barberos/{barbero}/bloques/list', [BarberoController::class, 'listBloques'])
+                    ->name('barberos.bloques.list');
+                //Calendar
+                Route::get('/barberos/{barbero}/calendar', [CalendarController::class, 'barberoCalendar'])
+                    ->name('barberos.calendar');
+                // Feed de eventos (JSON) que consume FullCalendar
+                Route::get('/barberos/{barbero}/events', [CalendarController::class, 'barberoEvents'])
+                    ->name('barberos.events');
+                Route::put('/citas/{cita}/reschedule', [CalendarController::class, 'reschedule'])
+                    ->name('citas.reschedule');
+                // NUEVO: crear bloque desde selección
+                Route::post('/barberos/{barbero}/bloques/quick', [CalendarController::class, 'quickBlock'])
+                    ->name('barberos.bloques.quick');
+                Route::get('/settings/policies', [TenantSettingController::class, 'index'])->name('settings.policies');
+                Route::put('/settings/policies', [TenantSettingController::class, 'update'])->name('settings.policies.update');
+                Route::get('/barberos/{barbero}', [BarberoController::class, 'show'])->name('barberos.show');
+            });
+
+            Route::middleware(['signed'])->group(function () {
+                Route::get('/booking/{cita}/cancel', [PublicBookingController::class, 'cancel'])->name('booking.cancel');     // GET por simplicidad
+                Route::get('/booking/{cita}/reschedule', [PublicBookingController::class, 'reschedule'])->name('booking.reschedule');
+            });
         });
     });
     //images Tenant

@@ -91,7 +91,7 @@
                 </div>
             </div>
             <div class="col-md-12 mt-3">
-                <a href="{{ url('tenants') }}" class="btn btn-velvet w-25">Volver</a>
+                <a href="{{ url('tenants') }}" class="btn btn-accion w-25">Volver</a>
             </div>
 
         </center>

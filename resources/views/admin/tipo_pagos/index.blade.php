@@ -9,7 +9,7 @@
             <strong>{{ __('Gestionar tipos de pago') }}</strong>
         </h2>
     </center>
-    <button type="button" data-bs-toggle="modal" data-bs-target="#add-tipo-modal" class="btn btn-velvet">
+    <button type="button" data-bs-toggle="modal" data-bs-target="#add-tipo-modal" class="btn btn-accion">
         {{ __('Nuevo tipo') }}</button>
     @include('admin.tipo_pagos.add')
     <div class="card mt-3">
@@ -60,7 +60,7 @@
                                 <tr>
                                     <td class="align-middle">
                                         <button type="button" data-bs-toggle="modal"
-                                            data-bs-target="#edit-tipo-modal{{ $item->id }}" class="btn btn-velvet"
+                                            data-bs-target="#edit-tipo-modal{{ $item->id }}" class="btn btn-accion"
                                             style="text-decoration: none;">Editar</button>
 
                                         <form method="post" action="{{ url('/delete/tipo_pago/' . $item->id) }}"

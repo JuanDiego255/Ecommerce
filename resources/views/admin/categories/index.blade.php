@@ -14,19 +14,19 @@
 
     </center>
     @include('admin.categories.import')
-    <div class="row w-50">
-        <div class="col-md-3">
-            <a href="{{ url('add-category/' . $department_id) }}" class="btn btn-velvet">{{ __('Nueva categoría') }}</a>
-        </div>
+    <div class="d-flex gap-2">
+        <a href="{{ url('add-category/' . $department_id) }}" class="btn btn-accion">
+            {{ __('Nueva categoría') }}
+        </a>
+
         @if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'rutalimon')
-            <div class="col-md-3">
-                <button type="button" data-bs-toggle="modal" data-bs-target="#import-product-modal"
-                    class="btn btn-icon btn-3 btn-success">Importar Productos
-                    <i class="fas fa-file-excel"></i>
-                </button>
-            </div>
+            <button type="button" data-bs-toggle="modal" data-bs-target="#import-product-modal"
+                class="btn btn-icon btn-3 btn-accion">
+                Importar Productos <i class="fas fa-file-excel"></i>
+            </button>
         @endif
     </div>
+
 
     <div class="card mt-3">
         <div class="card-body">
@@ -132,7 +132,7 @@
     @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 0)
         <center>
             <div class="col-md-12 mt-3">
-                <a href="{{ url('departments') }}" class="btn btn-velvet w-25">Volver</a>
+                <a href="{{ url('departments') }}" class="btn btn-accion w-25">Volver</a>
             </div>
         </center>
     @endif

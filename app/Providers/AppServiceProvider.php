@@ -2,11 +2,13 @@
 
 namespace App\Providers;
 
+use App\Models\Barbero;
 use App\Models\Blog;
 use App\Models\ButtonIcon;
 use App\Models\Buy;
 use App\Models\Cart;
 use App\Models\Categories;
+use App\Models\Cita;
 use App\Models\ClothingCategory;
 use App\Models\Department;
 use App\Models\Favorite;
@@ -17,6 +19,7 @@ use App\Models\TenantCarousel;
 use App\Models\TenantInfo;
 use App\Models\TenantSocialNetwork;
 use App\Models\User;
+use App\Observers\CitaObserver;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -50,14 +53,17 @@ class AppServiceProvider extends ServiceProvider
         Buy::observe(GeneralObserver::class);
         Blog::observe(GeneralObserver::class);
         User::observe(GeneralObserver::class); */
+        Cita::observe(CitaObserver::class);
         Carbon::setLocale('es');
         Schema::defaultStringLength(191);
         view()->composer('*', function ($view) {
             $view_name = str_replace('.', '_', $view->getName());
             $session_id = session()->get('session_id');
             $favNumber = 0;
+            $myBarberProfileId = null;
             if (Auth::check()) {
                 $favNumber = count(Favorite::where('user_id', Auth::id())->get());
+                $myBarberProfileId = Barbero::where('user_id', Auth::id())->first();
             }
             if (Auth::check()) {
                 $cartNumber = count(Cart::where('user_id', Auth::id())
@@ -355,15 +361,18 @@ class AppServiceProvider extends ServiceProvider
             $ruta = $tenantinfo->tenant != 'aclimate' ? 'file' : 'aclifile';
             $prefix = Request::segment(1);
             $metricas = Metrica::all();
+            $barbers = Barbero::get();
 
             view()->share([
                 'view_name' => $view_name,
                 'metricas' => $metricas,
                 'ruta' => $ruta,
+                'myBarberProfileId' => $myBarberProfileId,
                 'prefix' => $prefix,
                 'fechaCostaRica' => $fechaCostaRica,
                 'clothing_favs' => $clothing_favs,
                 'profesionals' => $profesionals,
+                'barbers' => $barbers,
                 'profesional_info' => $profesional_info,
                 'cartNumber' => $cartNumber,
                 'favNumber' => $favNumber,

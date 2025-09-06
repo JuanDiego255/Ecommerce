@@ -125,7 +125,7 @@
                                     <td class="align-middle">
                                         <center>
                                             @if ($buy->cancel_buy == 0)
-                                                <a class="btn btn-velvet" style="text-decoration: none;"
+                                                <a class="btn btn-accion" style="text-decoration: none;"
                                                     href="{{ url('buy/details/' . $buy->id) }}">Ver
                                                     Detalle</a>
                                             @endif
@@ -137,7 +137,7 @@
                                                 <button @if ($buy->cancel_buy != 0 || $buy->approved != 0) disabled @endif type="submit"
                                                     data-bs-toggle="modal"
                                                     onclick="return confirm('Deseas cancelar este pedido?')"
-                                                    class="btn btn-velvet" style="text-decoration: none;">
+                                                    class="btn btn-accion" style="text-decoration: none;">
                                                     @if ($buy->cancel_buy != 0)
                                                         Cancelado
                                                     @else

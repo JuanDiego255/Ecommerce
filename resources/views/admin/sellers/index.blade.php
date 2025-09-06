@@ -9,7 +9,7 @@
             <strong>{{ __('Vendedores') }}</strong>
         </h2>
     </center>
-    <button type="button" data-bs-toggle="modal" data-bs-target="#add-seller-modal" class="btn btn-velvet">
+    <button type="button" data-bs-toggle="modal" data-bs-target="#add-seller-modal" class="btn btn-accion">
         {{ __('Nuevo vendedor') }}</button>
     @include('admin.sellers.add')
     <div class="card mt-3">
@@ -83,7 +83,7 @@
                                         <center>
                                             <button type="button" data-bs-toggle="modal"
                                                 data-bs-target="#edit-seller-modal{{ $item->id }}"
-                                                class="btn btn-velvet" style="text-decoration: none;">Editar</button>
+                                                class="btn btn-accion" style="text-decoration: none;">Editar</button>
 
                                             <form method="post" action="{{ url('/delete/seller/' . $item->id) }}"
                                                 style="display:inline">
@@ -110,7 +110,7 @@
     <center>
 
         <div class="col-md-12 mt-3">
-            <a href="{{ url('categories') }}" class="btn btn-velvet w-25">{{ __('Volver') }}</a>
+            <a href="{{ url('categories') }}" class="btn btn-accion w-25">{{ __('Volver') }}</a>
         </div>
     </center>
 @endsection

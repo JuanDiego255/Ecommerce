@@ -123,7 +123,7 @@
                                     </div>
                                     <center>
                                         <div class="col-md-12">
-                                            <button type="submit" class="btn btn-velvet">Solicitar Información</button>
+                                            <button type="submit" class="btn btn-accion">Solicitar Información</button>
                                         </div>
                                     </center>
                                 </div>

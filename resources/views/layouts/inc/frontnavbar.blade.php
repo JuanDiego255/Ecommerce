@@ -165,7 +165,7 @@
 
 
                     <div class="pt-4">
-                        <a class="btn btn-block btn-velvet w-100" href="{{ url('view-cart') }}">
+                        <a class="btn btn-block btn-accion w-100" href="{{ url('view-cart') }}">
                             Ver carrito de compras
                         </a>
                         <a class="btn btn-block btn-add_to_cart w-100" href="{{ url('checkout') }}">

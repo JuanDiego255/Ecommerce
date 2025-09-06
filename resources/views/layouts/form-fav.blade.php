@@ -27,7 +27,7 @@
                                     </div>
 
                                     <div class="col-md-12 text-center">
-                                        <button type="submit" class="btn btn-velvet">
+                                        <button type="submit" class="btn btn-accion">
                                             {{ __('Enviar') }}</button>
                                     </div>
                                     </div>

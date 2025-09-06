@@ -8,7 +8,7 @@
 
     <hr class="hr-servicios">
     <div class="col-md-12 mb-2">
-        <a href="{{ url('ventas/especialistas/0') }}" class="btn btn-velvet w-25">{{ __('Nueva venta') }}</a>
+        <a href="{{ url('ventas/especialistas/0') }}" class="btn btn-accion w-25">{{ __('Nueva venta') }}</a>
     </div>
     <div class="card mt-3 mb-3">
         <div class="card-body">

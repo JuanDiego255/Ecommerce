@@ -61,7 +61,7 @@
                                             method="POST" enctype="multipart/form-data">
                                             @csrf
                                             @method('DELETE')
-                                            <button class="btn btn-velvet text-white btn-tooltip" data-bs-toggle="tooltip"
+                                            <button class="btn btn-accion text-white btn-tooltip" data-bs-toggle="tooltip"
                                                 data-bs-placement="top" title="Eliminar suscriptor" data-container="body"
                                                 data-animation="true" type="submit"><i class="material-icons opacity-10">
                                                     delete

@@ -11,7 +11,7 @@
     </center>
     <div class="row w-50">
         <div class="col-md-6">
-            <a href="{{ url('new-user-info') }}" class="btn btn-velvet w-100">{{ __('Agregar nuevo profesional') }}</a>
+            <a href="{{ url('new-user-info') }}" class="btn btn-accion w-100">{{ __('Agregar nuevo profesional') }}</a>
         </div>
     </div>
     <div class="card mt-3">

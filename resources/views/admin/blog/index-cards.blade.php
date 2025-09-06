@@ -11,7 +11,7 @@
     </center>
     <div class="row w-50">
         <div class="col-md-6">
-            <a href="{{ url('blog-add/' . $id . '/add-card') }}" class="btn btn-velvet w-100">{{ __('Nueva tarjeta') }}</a>
+            <a href="{{ url('blog-add/' . $id . '/add-card') }}" class="btn btn-accion w-100">{{ __('Nueva tarjeta') }}</a>
         </div>
     </div>
     <div class="card mt-3">
@@ -109,7 +109,7 @@
     </div>
     <center>
         <div class="col-md-12 mt-3">
-            <a href="{{ url('blog/indexadmin') }}" class="btn btn-velvet w-25">{{ __('Ir a blogs') }}</a>
+            <a href="{{ url('blog/indexadmin') }}" class="btn btn-accion w-25">{{ __('Ir a blogs') }}</a>
         </div>
     </center>
 @endsection

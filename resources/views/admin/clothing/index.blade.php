@@ -15,7 +15,7 @@
     <div class="row w-50">
         <div class="col-md-6">
             <a href="{{ url('new-item/' . $category_id) }}"
-                class="btn btn-velvet w-100">{{ __('Agregar nuevo producto') }}</a>
+                class="btn btn-accion w-100">{{ __('Agregar nuevo producto') }}</a>
         </div>
     </div>
     <div class="card mt-3">
@@ -89,7 +89,7 @@
     <center>
 
         <div class="col-md-12 mt-3">
-            <a href="{{ url('categories/' . $department_id) }}" class="btn btn-velvet w-25">Volver</a>
+            <a href="{{ url('categories/' . $department_id) }}" class="btn btn-accion w-25">Volver</a>
         </div>
     </center>
 @endsection

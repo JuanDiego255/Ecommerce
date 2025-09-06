@@ -11,7 +11,7 @@
 
         <hr class="hr-servicios">
 
-        <button type="button" data-bs-toggle="modal" data-bs-target="#add-size-modal" class="btn btn-velvet">
+        <button type="button" data-bs-toggle="modal" data-bs-target="#add-size-modal" class="btn btn-accion">
             {{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'Nueva Talla' : 'Nuevo Tamaño'}}</button>
 
         <center>
@@ -69,7 +69,7 @@
                                         <center>
                                             <button type="button" data-bs-toggle="modal"
                                                 data-bs-target="#edit-size-modal{{ $size->id }}"
-                                                class="btn btn-velvet" style="text-decoration: none;">Editar</button>
+                                                class="btn btn-accion" style="text-decoration: none;">Editar</button>
 
                                             <form method="post" action="{{ url('/delete/sizes/' . $size->id) }}"
                                                 style="display:inline">

@@ -9,7 +9,7 @@
             <strong>{{ __('Roles') }}</strong>
         </h2>
     </center>
-    <button type="button" data-bs-toggle="modal" data-bs-target="#add-role-modal" class="btn btn-velvet">
+    <button type="button" data-bs-toggle="modal" data-bs-target="#add-role-modal" class="btn btn-accion">
         {{ __('Nuevo rol') }}</button>
     @include('admin.roles.add')
     <div class="card mt-3">
@@ -61,7 +61,7 @@
                                 <tr>
                                     <td class="align-middle">
                                         <button type="button" data-bs-toggle="modal"
-                                            data-bs-target="#edit-rol-modal{{ $item->id }}" class="btn btn-velvet"
+                                            data-bs-target="#edit-rol-modal{{ $item->id }}" class="btn btn-accion"
                                             style="text-decoration: none;">Editar</button>
 
                                         <form method="post" action="{{ url('/delete/role/' . $item->id) }}"

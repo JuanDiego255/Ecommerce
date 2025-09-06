@@ -29,7 +29,7 @@
                             </div>
                         </div>
                     </div>
-                    <input class="btn btn-velvet text-center" type="submit" value="Cambiar">
+                    <input class="btn btn-accion text-center" type="submit" value="Cambiar">
                 </form>
             </div>
         </div>

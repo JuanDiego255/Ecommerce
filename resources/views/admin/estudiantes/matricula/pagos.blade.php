@@ -9,7 +9,7 @@
             <strong>{{ __('Gestión de pagos del curso ') . $info_estudiante->curso . __(' del estudiante ') . $info_estudiante->nombre_estudiante }}</strong>
         </h2>
     </center>
-    <button type="button" data-bs-toggle="modal" data-bs-target="#add-pago-modal" class="btn btn-velvet">
+    <button type="button" data-bs-toggle="modal" data-bs-target="#add-pago-modal" class="btn btn-accion">
         {{ __('Nuevo pago') }}</button>
     @include('admin.estudiantes.matricula.pagos.add')
     <input type="hidden" value="{{ $info_estudiante->monto_pago }}" name="monto_pago_set" id="monto_pago_set">
@@ -65,7 +65,7 @@
                                 <tr>
                                     <td class="align-middle">
                                         <button type="button" data-bs-toggle="modal"
-                                            data-bs-target="#edit-pago-modal{{ $item->id }}" class="btn btn-velvet"
+                                            data-bs-target="#edit-pago-modal{{ $item->id }}" class="btn btn-accion"
                                             style="text-decoration: none;">Editar</button>
 
                                         <form method="post" action="{{ url('/delete/matricula/pago/' . $item->id) }}"
@@ -118,7 +118,7 @@
     <center>
         <div class="col-md-12 mt-3">
             <a href="{{ url('/list/matricula') . '/' . $info_estudiante->estudiante_id }}"
-                class="btn btn-velvet w-25">{{ __('Volver') }}</a>
+                class="btn btn-accion w-25">{{ __('Volver') }}</a>
         </div>
     </center>
 @endsection

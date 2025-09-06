@@ -98,7 +98,9 @@
     <script src="{{ asset('js/bootstrap.min.js') }}" defer></script>
     <script src="{{ asset('js/perfect-scrollbar.min.js') }}" defer></script>
     <script src="{{ asset('js/smooth-scrollbar.min.js') }}" defer></script>
-    <script src="{{ asset('js/chartjs.min.js') }}" defer></script>
+    {{-- Chart.js v4 --}}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+
     <script async defer src="https://buttons.github.io/buttons.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

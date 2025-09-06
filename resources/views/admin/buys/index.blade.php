@@ -107,7 +107,7 @@
                                             @csrf
                                             @method('DELETE')
 
-                                            <button class="btn btn-velvet text-white btn-tooltip" data-bs-toggle="tooltip"
+                                            <button class="btn btn-accion text-white btn-tooltip" data-bs-toggle="tooltip"
                                                 data-bs-placement="top" title="Eliminar pedido" data-container="body"
                                                 data-animation="true" type="submit"><i class="material-icons opacity-10">
                                                     delete
@@ -118,7 +118,7 @@
                                         @if ($buy->cancel_buy == 0)
                                             <a data-bs-toggle="tooltip" data-bs-placement="top" title="Ver Detalle"
                                                 data-container="body" data-animation="true"
-                                                class="btn btn-velvet text-white" style="text-decoration: none;"
+                                                class="btn btn-accion text-white" style="text-decoration: none;"
                                                 href="{{ url('buy/details/admin/' . $buy->id) }}"><i
                                                     class="material-icons opacity-10">visibility</i></a>
                                         @endif
@@ -131,7 +131,7 @@
                                                 @method('PUT')
 
                                                 <button
-                                                    class="btn btn-tooltip {{ $buy->approved == 1 ? 'btn-velvet text-white' : 'btn-velvet-outline' }}"
+                                                    class="btn btn-tooltip {{ $buy->approved == 1 ? 'btn-accion text-white' : 'btn-accion-outline' }}"
                                                     data-bs-toggle="tooltip" data-bs-placement="top"
                                                     title="{{ $buy->approved == 1 ? 'Desaprobar Compra' : 'Aprobar Compra' }}"
                                                     data-container="body" data-animation="true" type="submit"> <i
@@ -151,7 +151,7 @@
                                                 @method('PUT')
 
                                                 <button
-                                                    class="btn btn-tooltip {{ $buy->ready_to_give == 1 ? 'btn-velvet text-white' : 'btn-velvet-outline' }}"
+                                                    class="btn btn-tooltip {{ $buy->ready_to_give == 1 ? 'btn-accion text-white' : 'btn-accion-outline' }}"
                                                     data-bs-toggle="tooltip" data-bs-placement="top"
                                                     title="{{ $buy->ready_to_give == 1 ? 'Procesando paquete...' : 'Listo para enviar' }}"
                                                     data-container="body" data-animation="true" type="submit"> <i
@@ -172,7 +172,7 @@
                                                 @method('PUT')
 
                                                 <button
-                                                    class="btn btn-tooltip {{ $buy->delivered == 1 ? 'btn-velvet text-white' : 'btn-velvet-outline' }}"
+                                                    class="btn btn-tooltip {{ $buy->delivered == 1 ? 'btn-accion text-white' : 'btn-accion-outline' }}"
                                                     data-bs-toggle="tooltip" data-bs-placement="top"
                                                     title="{{ $buy->delivered == 1 ? 'No Entregado' : 'Entregado' }}"
                                                     data-container="body" data-animation="true" type="submit"> <i
@@ -194,7 +194,7 @@
                                                 @csrf
 
                                                 <input type="hidden" name="action" value="1">
-                                                <button class="btn btn-velvet text-white btn-tooltip"
+                                                <button class="btn btn-accion text-white btn-tooltip"
                                                     data-bs-toggle="tooltip" data-bs-placement="top"
                                                     title="Aprobar Cancelación" data-container="body"
                                                     data-animation="true" type="submit"> <i
@@ -209,7 +209,7 @@
                                                 @csrf
 
                                                 <input type="hidden" name="action" value="0">
-                                                <button class="btn btn-velvet text-white btn-tooltip"
+                                                <button class="btn btn-accion text-white btn-tooltip"
                                                     data-bs-toggle="tooltip" data-bs-placement="top"
                                                     title="Desaprobar Cancelación" data-container="body"
                                                     data-animation="true" type="submit"> <i

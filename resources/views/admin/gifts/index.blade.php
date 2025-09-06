@@ -71,7 +71,7 @@
                                             @csrf
                                             @method('DELETE')
 
-                                            <button class="btn btn-velvet text-white btn-tooltip" data-bs-toggle="tooltip"
+                                            <button class="btn btn-accion text-white btn-tooltip" data-bs-toggle="tooltip"
                                                 data-bs-placement="top" title="Eliminar tarjeta" data-container="body"
                                                 data-animation="true" type="submit"><i class="material-icons opacity-10">
                                                     delete
@@ -84,7 +84,7 @@
                                             @csrf
                                             @method('PUT')
 
-                                            <button class="btn btn-velvet text-white btn-tooltip" data-bs-toggle="tooltip"
+                                            <button class="btn btn-accion text-white btn-tooltip" data-bs-toggle="tooltip"
                                                 data-bs-placement="top"
                                                 title="{{ $item->approve == 1 ? 'Desaprobar tarjeta' : 'Aprobar tarjeta' }}"
                                                 data-container="body" data-animation="true" type="submit"> <i

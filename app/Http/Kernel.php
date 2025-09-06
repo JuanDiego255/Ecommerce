@@ -70,5 +70,6 @@ class Kernel extends HttpKernel
         'isKindBusiness' => \App\Http\Middleware\CarSaleMiddleware::class,
         'setTenantDatabase' => \App\Http\Middleware\SetTenantDatabase::class,
         'isAre' => \App\Http\Middleware\GestionAre::class,
+        'role' => \App\Http\Middleware\RoleMiddleware::class,
     ];
 }

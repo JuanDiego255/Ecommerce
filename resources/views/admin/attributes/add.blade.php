@@ -43,7 +43,7 @@
                         @endif
                     </div>
                     <div class="col-md-12">
-                        <button type="submit" class="btn btn-velvet"> {{ __('Agregar atributo') }}</button>
+                        <button type="submit" class="btn btn-accion"> {{ __('Agregar atributo') }}</button>
                     </div>
                 </form>
             </div>

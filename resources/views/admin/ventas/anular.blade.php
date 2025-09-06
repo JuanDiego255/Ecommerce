@@ -21,7 +21,7 @@
                             </div>       
                         </div>                      
                     </div>
-                    <input class="btn btn-velvet text-center" type="submit" value="Anular">
+                    <input class="btn btn-accion text-center" type="submit" value="Anular">
                 </form>
             </div>
         </div>

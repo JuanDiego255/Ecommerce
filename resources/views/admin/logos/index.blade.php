@@ -9,7 +9,7 @@
             <strong>{{ __('Logos de los clientes procesados') }}</strong>
         </h2>
     </center>
-    <button type="button" data-bs-toggle="modal" data-bs-target="#add-logo-modal" class="btn btn-velvet">
+    <button type="button" data-bs-toggle="modal" data-bs-target="#add-logo-modal" class="btn btn-accion">
         {{ __('Nuevo logo') }}</button>
     @include('admin.logos.add')
     <div class="card mt-3">
@@ -63,7 +63,7 @@
                                 <tr>
                                     <td class="align-middle">
                                         <button type="button" data-bs-toggle="modal"
-                                            data-bs-target="#edit-logo-modal{{ $item->id }}" class="btn btn-velvet"
+                                            data-bs-target="#edit-logo-modal{{ $item->id }}" class="btn btn-accion"
                                             style="text-decoration: none;">Editar</button>
 
                                         <form method="post" action="{{ url('/delete/logos/' . $item->id) }}"

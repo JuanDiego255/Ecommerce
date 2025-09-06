@@ -9,7 +9,7 @@
             <strong>{{ __('Métricas establecidas') }}</strong>
         </h2>
     </center>
-    <button type="button" data-bs-toggle="modal" data-bs-target="#add-metrica-modal" class="btn btn-velvet">
+    <button type="button" data-bs-toggle="modal" data-bs-target="#add-metrica-modal" class="btn btn-accion">
         {{ __('Nueva métrica') }}</button>
     @include('admin.metrica.add')
     <div class="card mt-3">
@@ -63,7 +63,7 @@
                                 <tr>
                                     <td class="align-middle">
                                         <button type="button" data-bs-toggle="modal"
-                                            data-bs-target="#edit-metrica-modal{{ $item->id }}" class="btn btn-velvet"
+                                            data-bs-target="#edit-metrica-modal{{ $item->id }}" class="btn btn-accion"
                                             style="text-decoration: none;">Editar</button>
 
                                         <form method="post" action="{{ url('/delete/metrica/' . $item->id) }}"

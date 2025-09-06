@@ -13,7 +13,7 @@
         </h2>
     </center>
     <button type="button" data-bs-toggle="modal" data-bs-target="#matricula-estudiante-modal{{ $item->id }}"
-        class="btn btn-velvet">
+        class="btn btn-accion">
         {{ __('Nueva ') . $label }}</button>
     @include('admin.estudiantes.matricula')
     <div class="card mt-3">
@@ -70,7 +70,7 @@
                                     <td class="align-middle">
                                         <button type="button" data-bs-toggle="modal"
                                             data-bs-target="#edit-matricula-modal{{ $matricula->id }}"
-                                            class="btn btn-velvet" style="text-decoration: none;">Editar</button>
+                                            class="btn btn-accion" style="text-decoration: none;">Editar</button>
 
                                         <form method="post" action="{{ url('/delete/matricula/' . $matricula->id) }}"
                                             style="display:inline">
@@ -126,7 +126,7 @@
     <center>
         <div class="col-md-12 mt-3">
             <a href="{{ url('estudiantes/manage/' . ($item->tipo_estudiante == 'C' ? 'clases' : 'yoga')) }}"
-                class="btn btn-velvet w-25">{{ __('Volver') }}</a>
+                class="btn btn-accion w-25">{{ __('Volver') }}</a>
         </div>
     </center>
 @endsection

@@ -22,7 +22,8 @@ class User extends Authenticatable
         'telephone',
         'email',
         'password',
-        'auth_id'
+        'auth_id',
+        'role'
     ];
 
     /**
@@ -43,4 +44,23 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function barbero()
+    {
+        return $this->hasOne(\App\Models\Barbero::class);
+    }
+
+    // Helpers de rol (útiles en blades)
+    public function isOwner(): bool
+    {
+        return $this->role === 'owner';
+    }
+    public function isManager(): bool
+    {
+        return $this->role === 'manager';
+    }
+    public function isBarber(): bool
+    {
+        return $this->role === 'barber';
+    }
 }

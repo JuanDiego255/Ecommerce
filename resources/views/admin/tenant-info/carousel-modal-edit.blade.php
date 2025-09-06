@@ -93,7 +93,7 @@
                         </div>
                     </div>
                     <center>
-                        <input class="btn btn-velvet" type="submit" value="Guardar">
+                        <input class="btn btn-accion" type="submit" value="Guardar">
                     </center>
 
                 </form>

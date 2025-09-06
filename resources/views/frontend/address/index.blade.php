@@ -106,7 +106,7 @@
                                         <center>
                                             <button type="button" data-bs-toggle="modal"
                                                 data-bs-target="#edit-address-modal{{ $item->id }}"
-                                                class="btn btn-velvet" style="text-decoration: none;">Editar</button>
+                                                class="btn btn-accion" style="text-decoration: none;">Editar</button>
 
                                             <form method="post" action="{{ url('/delete/address/' . $item->id) }}"
                                                 style="display:inline">
@@ -114,7 +114,7 @@
                                                 {{ method_field('DELETE') }}
                                                 <button type="submit"
                                                     onclick="return confirm('Deseas borrar esta dirección?')"
-                                                    class="btn btn-velvet" style="text-decoration: none;">Borrar</button>
+                                                    class="btn btn-accion" style="text-decoration: none;">Borrar</button>
                                             </form>
                                         </center>
 

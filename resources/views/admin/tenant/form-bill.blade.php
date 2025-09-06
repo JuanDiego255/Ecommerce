@@ -44,7 +44,7 @@
     </div>
 
     <center>
-        <input class="btn btn-velvet" type="submit"
+        <input class="btn btn-accion" type="submit"
             value="{{ $Modo == 'crear' ? 'Agregar' : 'Guardar Cambios' }}">
     </center>
 

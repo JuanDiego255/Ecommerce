@@ -117,7 +117,7 @@
                     </div>
                 </div>
                 <div class="col-md-12">
-                    <button type="submit" class="btn btn-velvet">Editar Sección</button>
+                    <button type="submit" class="btn btn-accion">Editar Sección</button>
                 </div>
 
             </form>

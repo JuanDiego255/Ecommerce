@@ -62,7 +62,8 @@
                     <div class="col-lg-6 col-md-11">
                         <!-- about-img -->
                         <div class="about-img ">
-                            <img src="{{ route('file', isset($tenantinfo->login_image) ? $tenantinfo->login_image : '') }}" alt="">
+                            <img src="{{ route('file', isset($tenantinfo->login_image) ? $tenantinfo->login_image : '') }}"
+                                alt="">
                         </div>
                     </div>
                     <div class="col-lg-6 col-md-12">
@@ -157,16 +158,19 @@
                 <div class="row team-active dot-style">
                     <!-- single Tem -->
                     {{-- profesional info --}}
-                    @if (isset($profesionals))
-                        @foreach ($profesionals as $item)
+                    @if (isset($barbers))
+                        @foreach ($barbers as $item)
                             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-">
                                 <div class="single-team mb-80 text-center">
                                     <div class="team-img">
-                                        <img src="{{ route('file', $item->image) }}" alt="">
+                                        <img src="{{ isset($item->photo_path) ? route('file', $item->photo_path) : url('images/producto-sin-imagen.PNG') }}"
+                                            alt="">
                                     </div>
                                     <div class="team-caption">
                                         <span></span>
-                                        <h3><a href="{{ url('https://wa.me/506' . $tenantinfo->whatsapp) }}">{{ $item->name }}</a></h3>
+                                        <h3><a
+                                                href="{{ url('/barberos/' . $item->id . '/agendar/') }}">{{ $item->nombre }}</a>
+                                        </h3>
                                     </div>
                                 </div>
                             </div>
@@ -513,8 +517,9 @@
                     <ul class="nav nav-pills mb-1" id="pills-tab" role="tablist">
                         @foreach ($clothings->groupBy('category_id') as $categoryId => $vehicles)
                             <li class="nav-item">
-                                <a class="nav-link {{ $loop->first ? 'active' : '' }}" id="pills-{{ $categoryId }}-tab"
-                                    data-toggle="pill" href="#pills-{{ $categoryId }}" role="tab"
+                                <a class="nav-link {{ $loop->first ? 'active' : '' }}"
+                                    id="pills-{{ $categoryId }}-tab" data-toggle="pill"
+                                    href="#pills-{{ $categoryId }}" role="tab"
                                     aria-controls="pills-{{ $categoryId }}">
                                     {{ $vehicles->first()->category }}
                                 </a>

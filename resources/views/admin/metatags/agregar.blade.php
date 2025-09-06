@@ -102,7 +102,7 @@
 
 
                 <div class="col-md-6">
-                    <button type="submit" class="btn btn-velvet">Agregar Metatag</button>
+                    <button type="submit" class="btn btn-accion">Agregar Metatag</button>
                 </div>
 
             </form>
