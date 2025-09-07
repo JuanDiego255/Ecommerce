@@ -363,6 +363,44 @@
                                     @endcan
                                 </ul>
                             </li>
+                            @if (isset($tenantinfo->kind_business) && $tenantinfo->kind_business == 5)
+                                @can('barberos.manage')
+                                    <li class="nav-item">
+                                        <a @if ($view_name == 'admin_payroll_index' || $view_name == 'admin_payroll_show' || $view_name == 'admin_payroll_config') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
+                                            href="javascript:void(0);">
+                                            <div
+                                                class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                                                <i class="material-icons opacity-10">money</i>
+                                            </div>
+                                            <span class="nav-link-text ms-1">Módulo Salarial</span>
+                                        </a>
+
+                                        <!-- Lista desplegable de "Mi Negocio" -->
+                                        <ul class="submenu">
+                                            <li class="nav-item">
+                                                <a @if ($view_name == 'admin_payroll_index' || $view_name == 'admin_payroll_show') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
+                                                    href="{{ url('/payroll') }}">
+                                                    <div
+                                                        class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                                                        <i class="material-icons opacity-10">arrow_right_alt</i>
+                                                    </div>
+                                                    <span class="nav-link-text ms-1">Salarios</span>
+                                                </a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a @if ($view_name == 'admin_payroll_config') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
+                                                    href="{{ route('payroll.config') }}">
+                                                    <div
+                                                        class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                                                        <i class="material-icons opacity-10">arrow_right_alt</i>
+                                                    </div>
+                                                    <span class="nav-link-text ms-1">Comisiones</span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                @endcan
+                            @endif
                             @can('tenant.settings')
                                 <li class="nav-item">
                                     <a @if ($view_name == 'admin_security_index' || $view_name == 'admin_settings_policies') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif

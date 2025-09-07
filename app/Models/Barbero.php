@@ -30,6 +30,7 @@ class Barbero extends Model
         'user_id',
         'buffer_minutes',
         'photo_path',
+        'commission_rate'
     ];
 
 

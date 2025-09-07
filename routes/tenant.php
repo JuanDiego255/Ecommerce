@@ -56,6 +56,7 @@ use App\Http\Controllers\Admin\ServicioController;
 use App\Http\Controllers\Admin\SuperAdminController;
 use App\Http\Controllers\Admin\TenantSettingController;
 use App\Http\Controllers\OwnerDashboardController;
+use App\Http\Controllers\PayrollController;
 use App\Http\Controllers\Public\BookingController;
 use App\Http\Controllers\PublicBookingController;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
@@ -466,6 +467,28 @@ Route::middleware([
                 Route::get('/owner/dashboard/data', [OwnerDashboardController::class, 'data'])
                     ->name('owner.dashboard.data');
                 // ...
+                Route::get('/payroll',        [PayrollController::class, 'index'])->name('payroll.index');
+                Route::post('/payroll/generate', [PayrollController::class, 'generate'])->name('payroll.generate');
+                Route::get('/payroll/{payroll}', [PayrollController::class, 'show'])->name('payroll.show');
+                Route::put('/payroll/{payroll}/close', [PayrollController::class, 'close'])->name('payroll.close');
+                Route::put('/payroll/{payroll}/reopen', [PayrollController::class, 'reopen'])->name('payroll.reopen');
+
+                // actualizar ítems (ajustes / marcar pagado)
+                Route::put('/payroll/items/{item}', [PayrollController::class, 'updateItem'])->name('payroll.items.update');
+                Route::put('/payroll/items/{item}/paid', [PayrollController::class, 'markItemPaid'])->name('payroll.items.paid');
+
+                // config rápida de comisión por barbero
+                Route::get('/pay/config', [PayrollController::class, 'config'])->name('payroll.config');
+                Route::put('/payroll/config/barbero/{barbero}', [PayrollController::class, 'updateBarberCommission'])->name('payroll.barbero.commission');
+                Route::put('/payroll/{payroll}/pay-all', [PayrollController::class, 'markAllPaid'])
+                    ->name('payroll.pay_all');
+
+                Route::get('/payroll/{payroll}/export/csv', [PayrollController::class, 'exportCsv'])
+                    ->name('payroll.export.csv');
+                Route::middleware(['auth', 'can:owner-only'])->group(function () {
+                    Route::get('/payroll/{payroll}/export/pdf', [PayrollController::class, 'exportPdf'])
+                        ->name('payroll.export.pdf');
+                });
             });
 
             // Dueño o manager: ver/gestionar citas de TODOS

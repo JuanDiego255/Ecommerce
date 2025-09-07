@@ -63,7 +63,7 @@
                 @endif
 
                 @yield('content')
-                @include('layouts.inc.social-footer')
+                @include('layouts.inc.barber.footer')
             </div>
         </main>
     </div>
