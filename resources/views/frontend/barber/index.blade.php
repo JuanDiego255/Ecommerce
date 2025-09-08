@@ -6,7 +6,7 @@
 @section('content')
     <main>
         <!--? slider Area Start-->
-        <div class="slider-area position-relative fix">
+        <div class="slider-area position-relative fix pb-120">
             <div class="slider-active">
                 <!-- Single Slider -->
                 <div class="single-slider slider-height d-flex align-items-center">

@@ -78,11 +78,15 @@
                 <div class="row align-items-center">
                     <!-- Logo -->
                     <div class="col-xl-2 col-lg-2 col-md-1">
-                        <div class="logo">
-                            <a href="index.html"><img
-                                    src="{{ route('file', isset($tenantinfo->logo) ? $tenantinfo->logo : '') }}"
-                                    alt=""></a>
-                        </div>
+                        @if (isset($tenantinfo->show_logo) && $tenantinfo->show_logo != 0)
+                            <div class="logo">
+                                <a href="index.html"><img
+                                        src="{{ route('file', isset($tenantinfo->logo) ? $tenantinfo->logo : '') }}"
+                                        alt=""></a>
+                            </div>
+                        @else
+                            <p class="text-white"> {{ isset($tenantinfo->title) ? $tenantinfo->title : 'Car<span>Book</span>' }}</p>
+                        @endif
                     </div>
                     <div class="col-xl-10 col-lg-10 col-md-10">
                         <div class="menu-main d-flex align-items-center justify-content-end">
