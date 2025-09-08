@@ -50,7 +50,7 @@ class ServicioController extends Controller
             'nombre' => $data['nombre'],
             'descripcion' => $data['descripcion'] ?? null,
             'duration_minutes' => $data['duration_minutes'],
-            'base_price_cents' => isset($data['base_price_view']) ? (int)$data['base_price_view'] : $srv->base_price_cents,
+            'base_price_cents' => isset($data['base_price_view']) ? (int)$data['base_price_view'] * 100 : $srv->base_price_cents * 100,
             'activo' => (bool)($data['activo'] ?? $srv->activo),
         ]);
         return back()->with('ok', 'Servicio actualizado');
