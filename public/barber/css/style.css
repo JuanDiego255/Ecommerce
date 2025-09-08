@@ -2279,12 +2279,21 @@ hr {
 }
 .slider-area {
     margin-top: -1px;
-    background-image: url(../img/hero/h1_hero.png);
+    background-image: url("../img/hero/h1_hero.png"); /* Imagen por defecto (laptops/desktop) */
     background-repeat: no-repeat;
     background-position: top center;
     background-size: cover;
     background-attachment: fixed;
 }
+
+/* ✅ Si la pantalla es de celular (máx. 768px) */
+@media screen and (max-width: 768px) {
+    .slider-area {
+        background-image: url("../img/gallery/banner-mobile.png"); /* Imagen móvil */
+        background-attachment: scroll; /* opcional: evita problemas en móviles con fixed */
+    }
+}
+
 .slider-area .hero__caption {
     overflow: hidden;
 }
