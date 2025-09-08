@@ -79,7 +79,9 @@
                     <!-- Logo -->
                     <div class="col-xl-2 col-lg-2 col-md-1">
                         <div class="logo">
-                            <a href="index.html"><img src="{{ route('file', isset($tenantinfo->logo) ? $tenantinfo->logo : '') }}" alt=""></a>
+                            <a href="index.html"><img
+                                    src="{{ route('file', isset($tenantinfo->logo) ? $tenantinfo->logo : '') }}"
+                                    alt=""></a>
                         </div>
                     </div>
                     <div class="col-xl-10 col-lg-10 col-md-10">
@@ -88,26 +90,18 @@
                             <div class="main-menu f-right d-none d-lg-block">
                                 <nav>
                                     <ul id="navigation">
-                                        <li class="active"><a href="index.html">Home</a></li>
-                                        <li><a href="about.html">About</a></li>
-                                        <li><a href="services.html">Services</a></li>
-                                        <li><a href="portfolio.html">Portfolio</a></li>
-                                        <li><a href="blog.html">Blog</a>
-                                            <ul class="submenu">
-                                                <li><a href="blog.html">Blog</a></li>
-                                                <li><a href="blog_details.html">Blog Details</a></li>
-                                                <li><a href="elements.html">Element</a></li>
-                                            </ul>
-                                        </li>
-                                        <li><a href="contact.html">Contact</a></li>
+                                        <li class="active"><a href="{{ url('/') }}">Inicio</a></li>
+                                        <li><a href="{{ url('/#about') }}">Acerca de</a></li>
+                                        <li><a href="{{ url('/#services') }}">Servicios</a></li>
+                                        <li><a href="{{ url('/#contact') }}">Contacto</a></li>
                                     </ul>
                                 </nav>
                             </div>
                             <div class="header-right-btn f-right d-none d-lg-block ml-30">
-                                <a href="from.html" class="btn header-btn">became a member</a>
+                                <a href="{{ url('/#reservation') }}" class="btn header-btn">Reservar una cita</a>
                             </div>
                         </div>
-                    </div>   
+                    </div>
                     <!-- Mobile Menu -->
                     <div class="col-12">
                         <div class="mobile_menu d-block d-lg-none"></div>

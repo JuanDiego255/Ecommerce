@@ -1,4 +1,4 @@
-<footer>
+<footer id="contact">
     <!--? Footer Start-->
     <div class="footer-area section-bg" data-background="{{ asset('/barber/img/gallery/footer_bg.png') }}">
         <div class="container">
@@ -12,12 +12,13 @@
                             </div>
                             <div class="footer-tittle">
                                 <div class="footer-pera">
-                                    <p class="info1">Receive updates and latest news direct from Simply enter.</p>
+                                    <p class="info1">Si buscas información aquí tienen nuestro distintos contactos.</p>
                                 </div>
                             </div>
                             <div class="footer-number">
-                                <h4><span>+564 </span>7885 3222</h4>
-                                <p>youremail@gmail.com</p>
+                                <h4><span>+506 </span>{{ isset($tenantinfo->whatsapp) ? $tenantinfo->whatsapp : '' }}
+                                </h4>
+                                <p>{{ isset($tenantinfo->email) ? $tenantinfo->email : '' }}</p>
                             </div>
                         </div>
                     </div>
@@ -87,9 +88,9 @@
                                 Copyright &copy;
                                 <script>
                                     document.write(new Date().getFullYear());
-                                </script> All rights reserved | This template is made with <i
-                                    class="fa fa-heart" aria-hidden="true"></i> by <a href="https://colorlib.com"
-                                    target="_blank">Colorlib</a>
+                                </script> Todos los derechos reservados | Desarrollado para
+                                {{ isset($tenantinfo->title) ? $tenantinfo->title : '' }} por <a
+                                    href="https://colorlib.com" target="_blank">Safewor Solutions</a>
                                 <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
                             </p>
                         </div>
@@ -97,9 +98,9 @@
                     <div class="col-xl-3 col-lg-4">
                         <!-- Footer Social -->
                         <div class="footer-social f-right">
-                            <a href="#"><i class="fab fa-twitter"></i></a>
+                            
                             <a href="https://www.facebook.com/sai4ull"><i class="fab fa-facebook-f"></i></a>
-                            <a href="#"><i class="fas fa-globe"></i></a>
+                            
                             <a href="#"><i class="fab fa-instagram"></i></a>
                         </div>
                     </div>

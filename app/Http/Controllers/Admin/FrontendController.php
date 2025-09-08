@@ -15,6 +15,7 @@ use App\Models\MetaTags;
 use App\Models\Metrica;
 use App\Models\ProductImage;
 use App\Models\Seller;
+use App\Models\Servicio;
 use App\Models\SocialNetwork;
 use App\Models\Stock;
 use App\Models\TenantInfo;
@@ -430,7 +431,8 @@ class FrontendController extends Controller
                 return view('frontend.website.index', compact('clothings', 'showModal', 'advert', 'blogs', 'social', 'clothings_offer', 'category', 'sellers', 'comments'));
                 break;
             case (5):
-                return view('frontend.barber.index', compact('clothings', 'showModal', 'advert', 'blogs', 'social', 'clothings_offer', 'category', 'sellers', 'comments'));
+                $barber_services = Servicio::where('activo', 1)->get();
+                return view('frontend.barber.index', compact('clothings', 'showModal', 'barber_services', 'advert', 'blogs', 'social', 'clothings_offer', 'category', 'sellers', 'comments'));
                 break;
             case (6):
             case (7):
