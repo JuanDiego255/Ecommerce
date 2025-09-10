@@ -22,7 +22,8 @@ class Cita extends Model
         'total_cents',
         'status',
         'notas',
-        'source'
+        'source',
+        'client_id'
     ];
 
 

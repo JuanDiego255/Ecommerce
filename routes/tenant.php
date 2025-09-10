@@ -160,6 +160,11 @@ Route::middleware([
                 return view('auto_book.optin_ok', ['client' => $client]);
             })->name('clients.auto.optin')->middleware('signed');
         });
+        Route::middleware(['signed'])->group(function () {
+            //Route::get('/auto-book/accept/{cita}',  [AutoBookingController::class, 'accept'])->name('auto.accept');
+            //Route::get('/auto-book/resched/{cita}', [AutoBookingController::class, 'resched'])->name('auto.resched');
+            //Route::get('/auto-book/decline/{cita}', [AutoBookingController::class, 'decline'])->name('auto.decline');
+        });
         Auth::routes();
 
         Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

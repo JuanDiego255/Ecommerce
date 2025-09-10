@@ -18,6 +18,7 @@ class Client extends Model
         'preferred_end',
         'last_seen_at',
         'notes',
+        'next_due_at',
     ];
     protected $casts = [
         'auto_book_opt_in' => 'bool',
