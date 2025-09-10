@@ -40,7 +40,7 @@
             </div> --}}
         </div>
         <!--? Team Start -->
-        <div class="team-area pb-120" id="reservation">
+        <div class="team-area pb-120 pt-60" id="reservation">
             <div class="container">
                 <!-- Section Tittle -->
                 <div class="row justify-content-center">
@@ -193,7 +193,7 @@
         </div> --}}
         <!-- Best Pricing Area End -->
         <!--? Gallery Area Start -->
-        <div class="gallery-area section-padding10">
+        {{-- <div class="gallery-area section-padding10">
             <div class="container">
                 <!-- Section Tittle -->
                 <div class="row justify-content-center">
@@ -239,7 +239,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
         <!-- Gallery Area End -->
         <!-- Cut Details Start -->
         {{--  <div class="cut-details section-bg section-padding2" data-background="assets/barber/img/gallery/section_bg02.png">

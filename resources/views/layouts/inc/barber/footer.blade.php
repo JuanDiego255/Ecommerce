@@ -16,22 +16,28 @@
                                 </div>
                             </div>
                             <div class="footer-number">
-                                <h4><span>+506 </span>{{ isset($tenantinfo->whatsapp) ? $tenantinfo->whatsapp : '' }}
-                                </h4>
-                                <p>{{ isset($tenantinfo->email) ? $tenantinfo->email : '' }}</p>
+                                <a href="{{ url('https://wa.me/506' . $tenantinfo->whatsapp) }}">
+                                    <h4><span>+506
+                                        </span>{{ isset($tenantinfo->whatsapp) ? $tenantinfo->whatsapp : '' }}
+                                    </h4>
+                                </a>
+                                <a href="{{ isset($tenantinfo->email) ? 'mailto:' . $tenantinfo->email : '#' }}">
+                                    <p>{{ isset($tenantinfo->email) ? $tenantinfo->email : '' }}</p>
+                                </a>
                             </div>
                         </div>
                     </div>
                     <div class="col-xl-2 col-lg-2 col-md-3 col-sm-5">
                         <div class="single-footer-caption mb-50">
                             <div class="footer-tittle">
-                                <h4>Location </h4>
+                                <h4>Servicios </h4>
                                 <ul>
-                                    <li><a href="#">Advanced</a></li>
-                                    <li><a href="#"> Management</a></li>
-                                    <li><a href="#">Corporate</a></li>
-                                    <li><a href="#">Customer</a></li>
-                                    <li><a href="#">Information</a></li>
+                                    @foreach ($barber_services as $key => $item)
+                                        <li><a href="#">{{ $item->nombre }}</a></li>
+                                        @if ($key >= 5)
+                                            @break
+                                        @endif
+                                    @endforeach
                                 </ul>
                             </div>
                         </div>
@@ -39,13 +45,14 @@
                     <div class="col-xl-2 col-lg-2 col-md-3 col-sm-5">
                         <div class="single-footer-caption mb-50">
                             <div class="footer-tittle">
-                                <h4>Explore</h4>
+                                <h4>Barberos</h4>
                                 <ul>
-                                    <li><a href="#">Cookies</a></li>
-                                    <li><a href="#">About</a></li>
-                                    <li><a href="#">Privacy Policy</a></li>
-                                    <li><a href="#">Proparties</a></li>
-                                    <li><a href="#">Licenses</a></li>
+                                    @foreach ($barbers as $key => $item)
+                                        <li><a href="{{ url('/barberos/' . $item->id . '/agendar/') }}">{{ $item->nombre }}</a></li>
+                                        @if ($key >= 5)
+                                            @break
+                                        @endif
+                                    @endforeach                                    
                                 </ul>
                             </div>
                         </div>
@@ -53,9 +60,9 @@
                     <div class="col-xl-4 col-lg-4 col-md-6 col-sm-8">
                         <div class="single-footer-caption mb-50">
                             <div class="footer-tittle">
-                                <h4>Location</h4>
+                                <h4>¡HAZ PARTE DE NUESTRO EQUIPO!</h4>
                                 <div class="footer-pera">
-                                    <p class="info1">Subscribe now to get daily updates</p>
+                                    <p class="info1">Suscríbete y obtén boletín informativo</p>
                                 </div>
                             </div>
                             <!-- Form -->
@@ -70,7 +77,7 @@
                                             onblur="this.placeholder = 'Your email address'">
                                         <div class="form-icon">
                                             <button type="submit" name="submit" id="newsletter-submit"
-                                                class="email_icon newsletter-submit button-contactForm">Send</button>
+                                                class="email_icon newsletter-submit button-contactForm">Enviar</button>
                                         </div>
                                         <div class="mt-10 info"></div>
                                     </form>
@@ -98,9 +105,9 @@
                     <div class="col-xl-3 col-lg-4">
                         <!-- Footer Social -->
                         <div class="footer-social f-right">
-                            
+
                             <a href="https://www.facebook.com/sai4ull"><i class="fab fa-facebook-f"></i></a>
-                            
+
                             <a href="#"><i class="fab fa-instagram"></i></a>
                         </div>
                     </div>

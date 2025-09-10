@@ -14,6 +14,7 @@ use App\Models\Department;
 use App\Models\Favorite;
 use App\Models\Metrica;
 use App\Models\PersonalUser;
+use App\Models\Servicio;
 use App\Models\Settings;
 use App\Models\TenantCarousel;
 use App\Models\TenantInfo;
@@ -362,9 +363,11 @@ class AppServiceProvider extends ServiceProvider
             $prefix = Request::segment(1);
             $metricas = Metrica::all();
             $barbers = Barbero::get();
+            $barber_services = Servicio::where('activo', 1)->get();
 
             view()->share([
                 'view_name' => $view_name,
+                'barber_services' => $barber_services,
                 'metricas' => $metricas,
                 'ruta' => $ruta,
                 'myBarberProfileId' => $myBarberProfileId,
