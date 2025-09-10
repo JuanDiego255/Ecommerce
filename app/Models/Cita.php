@@ -12,6 +12,7 @@ class Cita extends Model
 
 
     protected $fillable = [
+        'client_id',
         'barbero_id',
         'user_id',
         'cliente_nombre',
@@ -19,11 +20,12 @@ class Cita extends Model
         'cliente_telefono',
         'starts_at',
         'ends_at',
+        'hold_expires_at',
         'total_cents',
         'status',
+        'is_auto',
         'notas',
-        'source',
-        'client_id'
+        'source',        
     ];
 
 

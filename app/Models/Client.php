@@ -18,6 +18,8 @@ class Client extends Model
         'preferred_end',
         'last_seen_at',
         'notes',
+        'cadence_days',
+        'last_auto_booked_at',
         'next_due_at',
     ];
     protected $casts = [
