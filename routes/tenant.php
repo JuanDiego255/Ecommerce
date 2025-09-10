@@ -55,6 +55,7 @@ use App\Http\Controllers\Admin\SecurityController;
 use App\Http\Controllers\Admin\ServicioController;
 use App\Http\Controllers\Admin\SuperAdminController;
 use App\Http\Controllers\Admin\TenantSettingController;
+use App\Http\Controllers\AutoBookingController;
 use App\Http\Controllers\OwnerDashboardController;
 use App\Http\Controllers\PayrollController;
 use App\Http\Controllers\Public\BookingController;
@@ -159,12 +160,18 @@ Route::middleware([
                 $client->update(['auto_book_opt_in' => true]);
                 return view('auto_book.optin_ok', ['client' => $client]);
             })->name('clients.auto.optin')->middleware('signed');
+            Route::get('/auto-book/accept/{cita}',  [AutoBookingController::class, 'accept'])
+                ->middleware('signed')->name('auto.accept');
+            Route::get('/auto-book/decline/{cita}', [AutoBookingController::class, 'decline'])
+                ->middleware('signed')->name('auto.decline');
+            // Mostrar formulario de reprogramar (GET) + enviar cambios (POST)
+            Route::get('/auto-book/resched/{cita}', [AutoBookingController::class, 'reschedForm'])
+                ->middleware('signed')->name('auto.resched');
+
+            Route::post('/auto-book/resched/{cita}', [AutoBookingController::class, 'reschedApply'])
+                ->middleware('signed')->name('auto.resched.apply');
         });
-        Route::middleware(['signed'])->group(function () {
-            //Route::get('/auto-book/accept/{cita}',  [AutoBookingController::class, 'accept'])->name('auto.accept');
-            //Route::get('/auto-book/resched/{cita}', [AutoBookingController::class, 'resched'])->name('auto.resched');
-            //Route::get('/auto-book/decline/{cita}', [AutoBookingController::class, 'decline'])->name('auto.decline');
-        });
+
         Auth::routes();
 
         Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
