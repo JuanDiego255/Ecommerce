@@ -147,12 +147,18 @@ Route::middleware([
             Route::get('/gift-code/{id}', [GiftCardController::class, 'applyCode']);
             Route::post('gift/store', [GiftCardController::class, 'store']);
             Route::get('/get/products/select/', [ClothingCategoryController::class, 'getProductsToSelect']);
+            Route::get('/catalogo/{barber}', [FrontendController::class, 'index']);
 
             //rutas barberia
             Route::get('/barberos/{barbero}/agendar', [BookingController::class, 'showForm']);
             Route::get('/barberos/{barbero}/servicios', [BookingController::class, 'servicios']);
             Route::get('/barberos/{barbero}/disponibilidad', [BookingController::class, 'disponibilidad']);
             Route::post('/reservas', [BookingController::class, 'reservar']);
+            // routes/web.php
+            Route::get('/clients/{client}/auto-optin', function (\App\Models\Client $client) {
+                $client->update(['auto_book_opt_in' => true]);
+                return view('auto_book.optin_ok', ['client' => $client]);
+            })->name('clients.auto.optin')->middleware('signed');
         });
         Auth::routes();
 
@@ -489,6 +495,11 @@ Route::middleware([
                     Route::get('/payroll/{payroll}/export/pdf', [PayrollController::class, 'exportPdf'])
                         ->name('payroll.export.pdf');
                 });
+                Route::get('/clientes', [\App\Http\Controllers\Admin\ClientController::class, 'index'])->name('clientes.index');
+                Route::get('/clientes/{client}/edit', [\App\Http\Controllers\Admin\ClientController::class, 'edit'])->name('clientes.edit');
+                Route::put('/clientes/{client}', [\App\Http\Controllers\Admin\ClientController::class, 'update'])->name('clientes.update');
+                // si quieres crear manualmente:
+                Route::post('/clientes', [\App\Http\Controllers\Admin\ClientController::class, 'store'])->name('clientes.store');
             });
 
             // Dueño o manager: ver/gestionar citas de TODOS

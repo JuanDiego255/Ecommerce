@@ -85,7 +85,8 @@
                                         alt=""></a>
                             </div>
                         @else
-                            <p class="text-white"> {{ isset($tenantinfo->title) ? $tenantinfo->title : 'Car<span>Book</span>' }}</p>
+                            <p class="text-white">
+                                {{ isset($tenantinfo->title) ? $tenantinfo->title : 'Car<span>Book</span>' }}</p>
                         @endif
                     </div>
                     <div class="col-xl-10 col-lg-10 col-md-10">
@@ -98,6 +99,7 @@
                                         <li><a href="{{ url('/#about') }}">Acerca de</a></li>
                                         <li><a href="{{ url('/#services') }}">Servicios</a></li>
                                         <li><a href="{{ url('/#contact') }}">Contacto</a></li>
+                                        <li><a href="{{ url('catalogo/barber') }}">Tienda Online</a></li>
                                     </ul>
                                 </nav>
                             </div>

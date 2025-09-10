@@ -431,6 +431,13 @@ class FrontendController extends Controller
                 return view('frontend.website.index', compact('clothings', 'showModal', 'advert', 'blogs', 'social', 'clothings_offer', 'category', 'sellers', 'comments'));
                 break;
             case (5):
+                if ($showModal != null && $showModal === "barber") {
+                    if ($tenantinfo->kind_of_features == 1) {
+                        $attributes = Attribute::with('values')->where('attributes.name', '!=', 'Stock')
+                            ->get();
+                        return view('frontend.design_ecommerce.index', compact('clothings', 'attributes', 'advert', 'showModal', 'blogs', 'social', 'clothings_offer', 'category', 'comments'));
+                    }
+                }
                 return view('frontend.barber.index', compact('clothings', 'showModal', 'advert', 'blogs', 'social', 'clothings_offer', 'category', 'sellers', 'comments'));
                 break;
             case (6):

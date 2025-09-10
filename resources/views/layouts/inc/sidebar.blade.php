@@ -441,6 +441,18 @@
                                     </ul>
                                 </li>
                             @endcan
+                            @can('barberos.manage')
+                                <li class="nav-item">
+                                    <a @if ($view_name == 'admin_clientes_index' || $view_name == 'admin_clientes_edit') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
+                                        href="{{ url('clientes') }}">
+                                        <div
+                                            class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                                            <i class="material-icons opacity-10">group</i>
+                                        </div>
+                                        <span class="nav-link-text ms-1">Clientes</span>
+                                    </a>
+                                </li>
+                            @endcan
                         @endif
                         @if (isset($tenantinfo->kind_business) && $tenantinfo->kind_business != 5)
                             <li class="nav-item">

@@ -41,4 +41,8 @@ class Cita extends Model
             ->withPivot(['price_cents', 'duration_minutes'])
             ->withTimestamps();
     }
+    public function client()
+    {
+        return $this->belongsTo(\App\Models\Client::class, 'client_id');
+    }
 }

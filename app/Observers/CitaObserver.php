@@ -6,6 +6,7 @@ namespace App\Observers;
 use App\Mail\AppointmentApproved;
 use App\Mail\AppointmentCancelled;
 use App\Models\Cita;
+use App\Support\TenantSettings;
 use Illuminate\Support\Facades\Mail;
 
 class CitaObserver
@@ -15,6 +16,8 @@ class CitaObserver
         if (!$cita->wasChanged('status')) return;
         $old = $cita->getOriginal('status');
         $new = $cita->status;
+        $tenantId = tenant('id') ?? config('app.name'); // ajusta según tu tenancy
+        $tenant = TenantSettings::get($tenantId);
         // Aprobada (confirmada)
         if ($old !== 'confirmed' && $new === 'confirmed' && $cita->cliente_email) {
             Mail::to($cita->cliente_email)->queue(new AppointmentApproved($cita));
@@ -23,6 +26,17 @@ class CitaObserver
         // Cancelada
         if ($old !== 'cancelled' && $new === 'cancelled' && $cita->cliente_email) {
             Mail::to($cita->cliente_email)->queue(new AppointmentCancelled($cita));
+        }
+
+        if ($cita->wasChanged('status') && $cita->status === 'completed' && $cita->client_id) {
+            $client = $cita->client;
+            if ($client && $client->auto_book_opt_in) {
+                $cadence = $client->cadence_days ?: ($tenant->auto_book_default_cadence_days ?? 30);
+                $client->update([
+                    'last_seen_at' => now(),
+                    'next_due_at'  => $cita->starts_at->copy()->addDays($cadence),
+                ]);
+            }
         }
     }
 }

@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCitaRequest;
 use App\Models\Barbero;
 use App\Models\Cita;
+use App\Models\Client;
 use App\Models\Especialista;
 use App\Models\Servicio;
 use App\Services\PricingService;
@@ -135,10 +136,30 @@ class BookingController extends Controller
         }
 
         // Crear cita y snapshot de servicios
-        DB::transaction(function () use ($barbero, $data, $totalCents, $detalle, $startsAt, $endsAt) {
+        DB::transaction(function () use ($barbero, $data, $totalCents, $detalle, $startsAt, $endsAt, $request) {
+
+            $email  = trim((string)$request->input('cliente_email'));
+            $nombre = trim((string)$request->input('cliente_nombre'));
+            $tel    = trim((string)$request->input('cliente_telefono'));
+
+            $client = null;
+            if ($email !== '') {
+                $client = Client::firstOrCreate(['email' => $email], [
+                    'nombre' => $nombre ?: null,
+                    'telefono' => $tel ?: null,
+                    'last_seen_at' => now(),
+                ]);
+                $client->fill([
+                    'nombre' => $nombre ?: $client->nombre,
+                    'telefono' => $tel ?: $client->telefono,
+                    'last_seen_at' => now(),
+                ])->save();
+            }
+
             $cita = Cita::create([
                 'barbero_id' => $barbero->id,
                 'user_id' => auth()->id(),
+                'client_id'      => $client?->id,
                 'cliente_nombre' => $data['cliente_nombre'],
                 'cliente_email' => $data['cliente_email'] ?? null,
                 'cliente_telefono' => $data['cliente_telefono'] ?? null,

@@ -136,6 +136,11 @@
                                 <a href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/blog/index') }}">Blog</a>
                             </li>
                         @endif
+                        @if (isset($tenantinfo->tenant) && $tenantinfo->tenant === 'andresbarberiacr')
+                            <li>
+                                <a href="{{ url('/') }}">Barbería</a>
+                            </li>
+                        @endif
                         {{-- 
                         <li>
                             <a href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/about_us') }}">ACERCA DE</a>

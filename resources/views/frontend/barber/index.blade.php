@@ -32,12 +32,12 @@
                 <h2>Confianza en cada detalle</h2>
             </div>
             <!-- Arrow -->
-            {{-- <div class="thumb-content-box">
+            <div class="thumb-content-box">
                 <div class="thumb-content">
-                    <h3>make an appointment now</h3>
-                    <a href="#"> <i class="fas fa-long-arrow-alt-right"></i></a>
+                    <h3>Ir a nuestra tienda online</h3>
+                    <a href="{{ url('catalogo/barber') }}"> <i class="fas fa-long-arrow-alt-right"></i></a>
                 </div>
-            </div> --}}
+            </div>
         </div>
         <!--? Team Start -->
         <div class="team-area pb-120 pt-60" id="reservation">

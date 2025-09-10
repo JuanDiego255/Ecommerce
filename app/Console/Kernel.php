@@ -19,6 +19,8 @@ class Kernel extends ConsoleKernel
         $schedule->command('tenants:artisan send:reminders')
             ->hourly()
             ->timezone(config('app.timezone', 'America/Costa_Rica'));
+        $schedule->command('tenants:auto-book-run')->hourly()->withoutOverlapping();
+        $schedule->command('auto-book:expire-holds')->hourly();
     }
 
     /**
