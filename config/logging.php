@@ -53,7 +53,11 @@ return [
             'channels' => ['single'],
             'ignore_exceptions' => false,
         ],
-
+        'auto' => [
+            'driver' => 'single',
+            'path'   => storage_path('logs/auto_scheduler.log'),
+            'level'  => 'debug',
+        ],
         'single' => [
             'driver' => 'single',
             'path' => storage_path('logs/laravel.log'),
