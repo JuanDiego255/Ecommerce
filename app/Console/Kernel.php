@@ -21,7 +21,8 @@ class Kernel extends ConsoleKernel
             ->timezone(config('app.timezone', 'America/Costa_Rica'));
         $schedule->command('tenants:auto-book-run')->hourly()->withoutOverlapping(10)
             ->appendOutputTo(storage_path('logs/auto_book_run.log'));
-        $schedule->command('tenants:auto-book:expire-holds')->everyFiveMinutes();
+        $schedule->command('tenants:auto-book:expire-holds')->everyFiveMinutes()
+            ->appendOutputTo(storage_path('logs/auto_book_expire_run.log'));
     }
 
     /**

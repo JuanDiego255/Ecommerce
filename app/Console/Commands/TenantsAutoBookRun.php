@@ -45,7 +45,7 @@ class TenantsAutoBookRun extends Command
             foreach ($clientes as $c) {
                 ProposeAutoAppointmentJob::dispatch($c->id)->onQueue('emails'); // o la que uses
             }
-            $this->info("Propuestas encoladas: " . $clientes->count());
+            $this->info("Propuestas encoladas para el tenant " . $tenant->id . ":" . $clientes->count());
         }
 
         return 0;
