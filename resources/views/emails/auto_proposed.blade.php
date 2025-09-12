@@ -78,11 +78,11 @@
                                             ✅ Aceptar cita
                                         </a>
                                         <span style="display:inline-block;width:8px"></span>
-                                        <a href="{{ $reschedUrl }}" target="_blank"
+                                        {{--  <a href="{{ $reschedUrl }}" target="_blank"
                                             style="display:inline-block;background:#0ea5e9;color:#fff;text-decoration:none;
                               padding:12px 18px;border-radius:10px;font-weight:600">
                                             🔁 Cambiar hora
-                                        </a>
+                                        </a> --}}
                                         <span style="display:inline-block;width:8px"></span>
                                         <a href="{{ $declineUrl }}" target="_blank"
                                             style="display:inline-block;background:#ef4444;color:#fff;text-decoration:none;
@@ -120,8 +120,8 @@
                                 Si los botones no funcionan, copia y pega en tu navegador:
                                 <br> Aceptar: <a href="{{ $acceptUrl }}"
                                     style="color:#6e00ff">{{ $acceptUrl }}</a>
-                                <br> Cambiar: <a href="{{ $reschedUrl }}"
-                                    style="color:#6e00ff">{{ $reschedUrl }}</a>
+                                {{--   <br> Cambiar: <a href="{{ $reschedUrl }}"
+                                    style="color:#6e00ff">{{ $reschedUrl }}</a> --}}
                                 <br> Rechazar: <a href="{{ $declineUrl }}"
                                     style="color:#6e00ff">{{ $declineUrl }}</a>
                             </p>

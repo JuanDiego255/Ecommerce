@@ -135,41 +135,48 @@
                 <h2>Confianza en cada detalle</h2>
             </div>
         </div>
-        <div class="container mt-3">
+        <div class="container py-5">
             <center>
                 <h3>Reprogramar tu cita con {{ $barbero->nombre }}</h3>
             </center>
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="blog_right_sidebar">
+                        <aside class="single_sidebar_widget newsletter_widget">
+                            <h2 class="mb-4 text-center">Completar formulario</h2>
 
-            @if (session('alert'))
-                <div class="alert alert-{{ session('alert.type') }}">{{ session('alert.msg') }}</div>
-            @endif
+                            @if (session('ok'))
+                                <div class="alert alert-success">{{ session('ok') }}</div>
+                            @endif
+                            @if ($errors->any())
+                                <div class="alert alert-danger">{{ $errors->first() }}</div>
+                            @endif
+                            <form id="reschedForm" method="POST" action="{{ route('auto.resched.apply', $cita->id) }}">
+                                @csrf
+                                <div class="form-group mb-3">
+                                    <input type="date" class="form-control" name="fecha" id="fecha"
+                                        min="{{ now()->toDateString() }}" onfocus="this.placeholder=''"
+                                        onblur="this.placeholder='Selecciona fecha'" placeholder="Selecciona fecha"
+                                        required>
+                                </div>
 
-            <div class="card mt-3">
-                <div class="card-body">
-                    <form id="reschedForm" method="POST" action="{{ route('auto.resched.apply', $cita->id) }}">
-                        @csrf
+                                {{-- Hora --}}
+                                <div class="form-group mb-3">
+                                    <select class="form-control" name="hora" id="hora" required>
+                                        <option value="">Selecciona hora</option>
+                                    </select>
+                                </div>
 
-                        {{-- Fecha --}}
-                        <div class="form-group mb-3">
-                            <label class="form-label fw-bold">Fecha</label>
-                            <input type="date" id="fecha" class="form-control" min="{{ now()->toDateString() }}"
-                                required>
-                        </div>
+                                {{-- Campos ocultos que enviamos al controlador --}}
+                                <input type="hidden" name="start" id="startIso">
+                                <input type="hidden" name="end" id="endIso">
 
-                        {{-- Selector de hora (llenas por AJAX con tus slots disponibles) --}}
-                        <div class="form-group mb-3">
-                            <label class="form-label fw-bold">Hora</label>
-                            <select id="hora" class="form-control" required>
-                                <option value="">Selecciona una hora…</option>
-                            </select>
-                        </div>
-
-                        {{-- Campos ocultos que enviamos al controlador --}}
-                        <input type="hidden" name="start" id="startIso">
-                        <input type="hidden" name="end" id="endIso">
-
-                        <button type="submit" class="btn btn-velvet">Confirmar cambio</button>
-                    </form>
+                                <button type="submit" class="button rounded-0 primary-bg text-white w-100 btn_1 boxed-btn">
+                                    Confirmar cambio
+                                </button>
+                            </form>
+                        </aside>
+                    </div>
                 </div>
             </div>
         </div>
@@ -177,54 +184,58 @@
 @endsection
 @section('scripts')
     <script>
-        // Cargar horas por AJAX (reutiliza tu endpoint existente para getAvailableSlots)
-        const fecha = document.getElementById('fecha');
-        const horaSel = document.getElementById('hora');
-        const tz = 'America/Costa_Rica';
-        const slotMin = {{ (int) ($barbero->slot_minutes ?? 30) }};
-        const durMin =
-            {{ max(15, (int) ($cita->ends_at->diffInMinutes($cita->starts_at) ?: $barbero->slot_minutes ?? 30)) }};
+        (function() {
+            const dateEl = document.getElementById('fecha');
+            const timeEl = document.getElementById('hora');
 
-        fecha.addEventListener('change', async () => {
-            horaSel.innerHTML = '<option value="">Cargando…</option>';
-            if (!fecha.value) return;
-
-            try {
-                // Ajusta a tu ruta real; por ejemplo: GET /barberos/{id}/slots?date=YYYY-MM-DD&duration=XX
-                const url =
-                    `{{ url('/barberos/' . $barbero->id . '/slots') }}?date=${fecha.value}&duration=${durMin}`;
-                const res = await fetch(url, {
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                });
-                const json = await res.json();
-                // json = [{start: 'YYYY-MM-DDTHH:mm:ss', end:'...'}]
-                const opts = ['<option value="">Selecciona una hora…</option>'];
-                json.forEach(s => {
-                    const d = new Date(s.start.replace(' ', 'T'));
-                    const hh = String(d.getHours()).padStart(2, '0');
-                    const mm = String(d.getMinutes()).padStart(2, '0');
-                    opts.push(
-                        `<option data-start="${s.start}" data-end="${s.end}" value="${hh}:${mm}">${hh}:${mm}</option>`
-                        );
-                });
-                horaSel.innerHTML = opts.join('');
-            } catch (e) {
-                console.error(e);
-                horaSel.innerHTML = '<option value="">No hay horarios disponibles</option>';
+            function clearSelect() {
+                timeEl.innerHTML = '<option value="">Selecciona hora</option>';
+                if (window.jQuery && jQuery.fn.niceSelect && jQuery(timeEl).data('nice-select')) {
+                    jQuery(timeEl).niceSelect('update');
+                }
             }
-        });
 
-        document.getElementById('reschedForm').addEventListener('submit', (e) => {
-            const opt = horaSel.options[horaSel.selectedIndex];
-            if (!opt || !opt.dataset.start) {
-                e.preventDefault();
-                alert('Selecciona fecha y hora');
-                return;
+            async function fetchSlots() {
+                const date = dateEl.value;
+                const sel = $('#time');
+                // Limpia opciones
+                sel.empty().append('<option value="">Selecciona hora</option>');
+                clearSelect();
+                if (!date) {
+                    sel.niceSelect('update'); // refresca la UI
+                    return;
+                }
+
+                const url = '{{ url('/barberos/' . $barbero->id . '/disponibilidad') }}' +
+                    '?date=' + encodeURIComponent(date);
+
+                try {
+                    const res = await fetch(url);
+                    const data = await res.json();
+
+                    console.log(data);
+                    (data.slots || []).forEach(h => {
+                        sel.append(new Option(h, h));
+                    });
+
+                    sel.niceSelect('update'); // 🔑 refrescar aquí
+                } catch (e) {
+                    console.error(e);
+                }
             }
-            document.getElementById('startIso').value = opt.dataset.start;
-            document.getElementById('endIso').value = opt.dataset.end;
-        });
+
+            dateEl.addEventListener('change', fetchSlots);
+            //checks.forEach(c => c.addEventListener('change', fetchSlots));
+            document.getElementById('reschedForm').addEventListener('submit', (e) => {
+                const opt = horaSel.options[horaSel.selectedIndex];
+                if (!opt || !opt.dataset.start) {
+                    e.preventDefault();
+                    alert('Selecciona fecha y hora');
+                    return;
+                }
+                document.getElementById('startIso').value = opt.dataset.start;
+                document.getElementById('endIso').value = opt.dataset.end;
+            });
+        })();
     </script>
 @endsection

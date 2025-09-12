@@ -61,12 +61,15 @@ class ProposeAutoAppointmentJob implements ShouldQueue
             'resumen_servicios' => 'Propuesta automática', // ajusta si infieres servicios
             'total_cents'   => 0, // opcional si estimas costo
         ]);
-
+        $domain = $tenantId == "muebleriasarchi" || $tenantId == "avelectromecanica" ? "https://{$tenantId}.com" : "https://{$tenantId}.safeworsolutions.com";
+        URL::forceRootUrl($domain);
+        URL::forceScheme('https');
         // Links firmados
-        $acceptUrl  = URL::signedRoute('auto.accept',  ['cita' => $cita->id]);
-        $reschedUrl = URL::signedRoute('auto.resched', ['cita' => $cita->id]);
-        $declineUrl = URL::signedRoute('auto.decline', ['cita' => $cita->id]);
-
+        $acceptUrl  = URL::temporarySignedRoute('auto.accept',  now()->addHours(36), ['cita' => $cita->id]);
+        $reschedUrl = URL::temporarySignedRoute('auto.resched', now()->addHours(36), ['cita' => $cita->id]);
+        $declineUrl = URL::temporarySignedRoute('auto.decline', now()->addHours(36), ['cita' => $cita->id]);
+        URL::forceRootUrl(config('app.url'));
+        URL::forceScheme(null);
         // Datos para el blade del correo (ya lo tienes: auto_proposed)
         $tz = config('app.timezone', 'America/Costa_Rica');
         $viewData = [

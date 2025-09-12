@@ -13,7 +13,7 @@ Te reservamos una cita tentativa con {{ $barberoNombre }}:
 
 Acciones:
 - Aceptar: {{ $acceptUrl }}
-- Cambiar hora: {{ $reschedUrl }}
+{{-- - Cambiar hora: {{ $reschedUrl }} --}}
 - Rechazar: {{ $declineUrl }}
 
 @isset($cancelHours)
