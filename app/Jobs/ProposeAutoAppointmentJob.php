@@ -88,10 +88,18 @@ class ProposeAutoAppointmentJob implements ShouldQueue
         ];
 
         // Enviar con tu estilo Mail::send
-        Mail::send(['html' => 'emails.auto_proposed', 'text' => 'emails.auto_proposed_text'], $viewData, function ($m) use ($client, $barbero, $startLocal) {
-            $m->to($client->email)->subject('Propuesta de cita con ' . $barbero->nombre . ' — ' . $startLocal->format('d/m/Y'));
-        });
-
+        Mail::send(
+            ['html' => 'emails.auto_proposed', 'text' => 'emails.auto_proposed_text'],
+            $viewData,
+            function ($m) use ($client, $barbero, $startLocal) {
+                $m->to($client->email)
+                    ->from(
+                        env('MAIL_FROM_ADDRESS'),   // usa MAIL_FROM_ADDRESS del .env
+                        'Info Barbería'       // usa MAIL_FROM_NAME del .env
+                    )
+                    ->subject('Propuesta de cita con ' . $barbero->nombre . ' — ' . $startLocal->format('d/m/Y'));
+            }
+        );
         // marcar para no repetir
         $client->update([
             'last_auto_booked_at' => now(),

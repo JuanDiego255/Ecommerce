@@ -27,8 +27,16 @@ class AppointmentReminder extends Mailable
             $end,
             $tz
         );
-        return $this->subject('🔔 Recordatorio: tu cita es mañana')
+        return $this->from(
+            env('MAIL_FROM_ADDRESS'),
+            'Info Barbería'
+        )
+            ->subject('🔔 Recordatorio: tu cita es mañana')
             ->view('emails.citas.reminder')
-            ->attachData($ics, "cita-{$this->cita->id}.ics", ['mime' => 'text/calendar']);
+            ->attachData(
+                $ics,
+                "cita-{$this->cita->id}.ics",
+                ['mime' => 'text/calendar']
+            );
     }
 }

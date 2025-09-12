@@ -239,9 +239,15 @@ class BookingController extends Controller
                 ];
 
                 // Si prefieres encolar, puedes usar un Mailable. Como pediste Mail::send, lo dejo así:
-                Mail::send(['html' => 'emails.citas.new_for_barber'], $viewData, function ($m) use ($barberoEmail, $cita) {
-                    $m->to($barberoEmail)->subject('📅 Nueva cita agendada — #' . $cita->id);
-                });
+                Mail::send(
+                    ['html' => 'emails.citas.new_for_barber'],
+                    $viewData,
+                    function ($m) use ($barberoEmail, $cita) {
+                        $m->to($barberoEmail)
+                            ->from(env('MAIL_FROM_ADDRESS'), 'Info Barbería') // 👈 aquí cambias el nombre visible
+                            ->subject('📅 Nueva cita agendada — #' . $cita->id);
+                    }
+                );
             }
         });
 

@@ -55,9 +55,17 @@ class AppointmentApproved extends Mailable
             'reschText'  => "Puedes reprogramar hasta {$set->reschedule_window_hours} h antes.",
         ];
 
-        return $this->subject('✅ Tu cita fue confirmada')
+        return $this->from(
+            env('MAIL_FROM_ADDRESS'),   // 👈 MAIL_FROM_ADDRESS
+            'Info Babería'       // 👈 MAIL_FROM_NAME
+        )
+            ->subject('✅ Tu cita fue confirmada')
             ->view('emails.citas.approved')
             ->with($viewData)
-            ->attachData($ics, "cita-{$this->cita->id}.ics", ['mime' => 'text/calendar']);
+            ->attachData(
+                $ics,
+                "cita-{$this->cita->id}.ics",
+                ['mime' => 'text/calendar']
+            );
     }
 }

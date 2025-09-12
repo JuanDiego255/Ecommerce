@@ -15,7 +15,11 @@ class AppointmentCancelled extends Mailable
 
     public function build()
     {
-        return $this->subject('❌ Tu cita fue cancelada')
+        return $this->from(
+            env('MAIL_FROM_ADDRESS'),   // 👈 MAIL_FROM_ADDRESS
+            'Info Barbería'       // 👈 MAIL_FROM_NAME
+        )
+            ->subject('❌ Tu cita fue cancelada')
             ->view('emails.citas.cancelled');
     }
 }
