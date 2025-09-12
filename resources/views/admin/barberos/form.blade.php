@@ -133,7 +133,7 @@
     </div>
     <div class="col-md-6 mb-3">
         <div class="input-group input-group-lg input-group-outline my-3">
-            <input required accept="image/*" class="form-control" type="file" name="image">
+            <input accept="image/*" class="form-control" type="file" name="image">
         </div>
     </div>
 

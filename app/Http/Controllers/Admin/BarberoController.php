@@ -120,8 +120,7 @@ class BarberoController extends Controller
                 'work_days' => ['required', 'array', 'min:1'],
                 'work_days.*' => ['integer', 'between:0,6'],
                 'activo' => ['sometimes', 'boolean'],
-                'buffer_minutes' => 'nullable|integer|min:0|max:120',
-                'image' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
+                'buffer_minutes' => 'nullable|integer|min:0|max:120'
             ]);
             $data['work_days'] = json_encode($data['work_days']);
             $data['activo'] = (bool)($data['activo'] ?? $barbero->activo);

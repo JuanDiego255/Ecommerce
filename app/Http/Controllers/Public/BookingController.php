@@ -20,6 +20,7 @@ use Illuminate\Http\Request;
 use Artesaos\SEOTools\Facades\OpenGraph;
 use Artesaos\SEOTools\Facades\SEOMeta;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
 
 
@@ -187,11 +188,60 @@ class BookingController extends Controller
                 'source' => 'landing',
             ]);
 
+            $syncData = [];
+
             foreach ($detalle as $d) {
-                $cita->servicios()->attach($d['servicio_id'], [
-                    'price_cents' => $d['price_cents'],
-                    'duration_minutes' => $d['duration_minutes'],
-                ]);
+                $syncData[$d['servicio_id']] = [
+                    'price_cents'       => $d['price_cents'],
+                    'duration_minutes'  => $d['duration_minutes'],
+                ];
+            }
+            // attach (siempre agrega) o syncWithoutDetaching (no quita existentes)
+            $cita->servicios()->attach($syncData);
+
+            $serviciosResumen = [];
+
+            foreach ($syncData as $servicioId => $pivot) {
+                $srv = \App\Models\Servicio::find($servicioId);
+                if (!$srv) continue;
+
+                $serviciosResumen[] = [
+                    'nombre'    => $srv->nombre,
+                    'precio'    => (int)($pivot['price_cents'] / 100),
+                    'duracion'  => $pivot['duration_minutes'],
+                ];
+            }
+
+            $tz = config('app.timezone', 'America/Costa_Rica');
+            $fechaHuman  = $cita->starts_at->timezone($tz)->isoFormat('dddd D [de] MMMM YYYY');
+            $horaHuman   = $cita->starts_at->timezone($tz)->format('H:i');
+            $duracionMin = $cita->ends_at->diffInMinutes($cita->starts_at);
+            $servicios   = $serviciosResumen;  // o arma el texto según lo que guardes
+            $totalCols   = (int) ($cita->total_cents / 100);
+
+            // link a detalle admin (ajusta nombre de ruta según lo tengas)
+            $adminShowUrl = route('citas.show', $cita->id);
+            // destinatario del barbero
+            $barberoEmail = $cita->barbero->email ?? optional($cita->barbero->user)->email;
+
+            if ($barberoEmail) {
+                $viewData = [
+                    'barberoNombre'  => $cita->barbero->nombre,
+                    'clienteNombre'  => $cita->cliente_nombre,
+                    'clienteEmail'   => $cita->cliente_email,
+                    'clientePhone'   => $cita->cliente_telefono,
+                    'fechaHuman'     => $fechaHuman,
+                    'horaHuman'      => $horaHuman,
+                    'duracionMin'    => $duracionMin,
+                    'serviciosResumen' => $servicios,
+                    'totalColones'   => $totalCols,
+                    'adminShowUrl'   => $adminShowUrl,
+                ];
+
+                // Si prefieres encolar, puedes usar un Mailable. Como pediste Mail::send, lo dejo así:
+                Mail::send(['html' => 'emails.citas.new_for_barber'], $viewData, function ($m) use ($barberoEmail, $cita) {
+                    $m->to($barberoEmail)->subject('📅 Nueva cita agendada — #' . $cita->id);
+                });
             }
         });
 
