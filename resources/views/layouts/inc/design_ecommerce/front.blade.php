@@ -74,7 +74,8 @@
                 <div class="menu-desktop">
                     <ul class="main-menu">
                         <li class="{{ $view_name == 'frontend_design_ecommerce_index' ? 'active-menu' : '' }}">
-                            <a href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/') }}">Inicio</a>
+                            <a
+                                href="{{ $tenantinfo->tenant != 'andresbarberiacr' ? url(($prefix == 'aclimate' ? $prefix : '') . '/') : url(($prefix == 'aclimate' ? $prefix : '') . '/catalogo/barber') }}">Inicio</a>
                         </li>
                         <li>
                             <a href="javascript:void(0);" id="toggleMenu">Explorar</a>
@@ -244,7 +245,8 @@
 
         <ul class="main-menu-m">
             <li>
-                <a href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/') }}">INICIO</a>
+                <a
+                    href="{{ $tenantinfo->tenant != 'andresbarberiacr' ? url(($prefix == 'aclimate' ? $prefix : '') . '/') : url(($prefix == 'aclimate' ? $prefix : '') . '/catalogo/barber') }}">INICIO</a>
             </li>
 
             <li>
