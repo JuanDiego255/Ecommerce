@@ -10,12 +10,17 @@ use App\Models\Barbero;
 use App\Models\Cita;
 use App\Models\Client;
 use App\Models\Especialista;
+use App\Models\MetaTags;
 use App\Models\Servicio;
+use App\Models\TenantInfo;
 use App\Services\PricingService;
 use App\Services\AvailabilityService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Artesaos\SEOTools\Facades\OpenGraph;
+use Artesaos\SEOTools\Facades\SEOMeta;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\URL;
 
 
 class BookingController extends Controller
@@ -23,6 +28,17 @@ class BookingController extends Controller
 
     public function showForm(Barbero $barbero, Request $request)
     {
+        $tenantinfo = TenantInfo::first();
+        $tags = MetaTags::where('section', 'Blog')->get();
+        foreach ($tags as $tag) {
+            SEOMeta::setTitle($tag->title . " - " . $barbero->nombre);
+            SEOMeta::setKeywords($tag->meta_keywords);
+            SEOMeta::setDescription($tag->meta_description);
+            //Opengraph
+            OpenGraph::addImage(URL::to($tag->url_image_og));
+            OpenGraph::setTitle($tag->title);
+            OpenGraph::setDescription($tag->meta_og_description);
+        }
         // Servicios activos con precio/duración efectivo (pivot o base)
         $servicios = $barbero->servicios()
             ->wherePivot('activo', true)

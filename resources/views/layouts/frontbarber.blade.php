@@ -8,7 +8,7 @@
         type="image/x-icon">
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
-
+    @yield('metatag')
     <link href="{{ asset('/barber/css/bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ asset('/barber/css/owl.carousel.min.css') }}" rel="stylesheet">
     <link href="{{ asset('/barber/css/slicknav.css') }}" rel="stylesheet">
