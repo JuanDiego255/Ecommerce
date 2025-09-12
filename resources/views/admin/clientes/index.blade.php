@@ -53,6 +53,7 @@
                             <th>Teléfono</th>
                             <th class="text-center">Auto-agendar</th>
                             <th>Última visita</th>
+                            <th>Próxima Propuesta</th>
                             <th class="text-center">Acciones</th>
                         </tr>
                     </thead>
@@ -68,7 +69,14 @@
                                         : '<span class="badge bg-secondary">No</span>' !!}
                                 </td>
                                 <td class="align-middle">
-                                    {{ isset($c->last_seen_at) ? $c->last_seen_at : '—' }}
+                                    {{ isset($c->last_seen_at) ? $c->last_seen_at : '' }}
+                                </td>
+                                <td class="align-middle">
+                                    @if (isset($c->next_due_at))
+                                        <span class="badge bg-success">{{$c->next_due_at}}</span>
+                                    @else
+                                        <span class="badge bg-secondary">—</span>
+                                    @endif
                                 </td>
                                 <td class="align-middle text-center">
                                     <a href="{{ route('clientes.edit', $c) }}" class="btn btn-link text-velvet border-0"
