@@ -467,6 +467,52 @@
                                 </a>
                             </li>
                         @endif
+                        @if (isset($tenantinfo->tenant) && $tenantinfo->tenant === 'solociclismocrc')
+                            <li class="nav-item">
+                                <a @if ($view_name == 'admin_events_index' || $view_name == 'admin_event_categories_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
+                                    href="javascript:void(0);">
+                                    <div
+                                        class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                                        <i class="material-icons opacity-10">money</i>
+                                    </div>
+                                    <span class="nav-link-text ms-1">Eventos</span>
+                                </a>
+
+                                <!-- Lista desplegable de "Mi Negocio" -->
+                                <ul class="submenu">
+                                    <li class="nav-item">
+                                        <a @if ($view_name == 'admin_events_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
+                                            href="{{ url('events') }}">
+                                            <div
+                                                class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                                                <i class="material-icons opacity-10">arrow_right_alt</i>
+                                            </div>
+                                            <span class="nav-link-text ms-1">Eventos</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a @if ($view_name == 'admin_event_categories_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
+                                            href="{{ route('event-categories.index') }}">
+                                            <div
+                                                class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                                                <i class="material-icons opacity-10">arrow_right_alt</i>
+                                            </div>
+                                            <span class="nav-link-text ms-1">Categorías eventos</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a @if ($view_name == 'admin_registrations_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
+                                            href="{{ route('registrations.index') }}">
+                                            <div
+                                                class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                                                <i class="material-icons opacity-10">arrow_right_alt</i>
+                                            </div>
+                                            <span class="nav-link-text ms-1">Inscripciones</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        @endif
                     @endif
                     @if (isset($tenantinfo->kind_business) && $tenantinfo->kind_business != 1)
                         @if (isset($tenantinfo->kind_business) && $tenantinfo->kind_business == 5)

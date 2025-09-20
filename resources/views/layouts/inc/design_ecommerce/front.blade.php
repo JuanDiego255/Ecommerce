@@ -142,6 +142,11 @@
                                 <a href="{{ url('/') }}">Barbería</a>
                             </li>
                         @endif
+                        @if (isset($tenantinfo->tenant) && $tenantinfo->tenant === 'solociclismocrc')
+                            <li>
+                                <a href="{{ url('registrations/show') }}">Eventos</a>
+                            </li>
+                        @endif
                         {{-- 
                         <li>
                             <a href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/about_us') }}">ACERCA DE</a>
@@ -296,6 +301,11 @@
             @if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'mitaibabyboutique')
                 <li>
                     <a href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/blog/index') }}">BLOG</a>
+                </li>
+            @endif
+            @if (isset($tenantinfo->tenant) && $tenantinfo->tenant === 'solociclismocrc')
+                <li>
+                    <a href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/registrations/show') }}">EVENTOS</a>
                 </li>
             @endif
             <li>

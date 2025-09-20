@@ -51,6 +51,9 @@ use App\Http\Controllers\Admin\BarberoController;
 use App\Http\Controllers\Admin\BarberoTrabajoController;
 use App\Http\Controllers\Admin\CalendarController;
 use App\Http\Controllers\Admin\CitaAdminController;
+use App\Http\Controllers\Admin\EventCategoryController;
+use App\Http\Controllers\Admin\EventController;
+use App\Http\Controllers\Admin\RegistrationController;
 use App\Http\Controllers\Admin\SecurityController;
 use App\Http\Controllers\Admin\ServicioController;
 use App\Http\Controllers\Admin\SuperAdminController;
@@ -60,6 +63,8 @@ use App\Http\Controllers\OwnerDashboardController;
 use App\Http\Controllers\PayrollController;
 use App\Http\Controllers\Public\BookingController;
 use App\Http\Controllers\PublicBookingController;
+use App\Http\Controllers\PublicEventController;
+use App\Http\Controllers\PublicRegistrationController;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
 
@@ -170,6 +175,10 @@ Route::middleware([
 
             Route::post('/auto-book/resched/{cita}', [AutoBookingController::class, 'reschedApply'])
                 ->middleware('signed')->name('auto.resched.apply');
+            //Rutas para los usuarios del form de ciclismo
+            Route::get('/eventos/{event}', [PublicEventController::class, 'show']);
+            Route::post('/eventos/{event}/inscribirse', [PublicRegistrationController::class, 'store']);
+            Route::get('/registrations/show', [PublicRegistrationController::class, 'show'])->name('registrations.show');
         });
 
         Auth::routes();
@@ -560,6 +569,25 @@ Route::middleware([
                 Route::get('/booking/{cita}/cancel', [PublicBookingController::class, 'cancel'])->name('booking.cancel');     // GET por simplicidad
                 Route::get('/booking/{cita}/reschedule', [PublicBookingController::class, 'reschedule'])->name('booking.reschedule');
             });
+            //Rutas para form de ciclismo
+            Route::get('/events', [EventController::class, 'index'])->name('events.index');
+            Route::post('/events/store', [EventController::class, 'store'])->name('events.store');
+            Route::get('/events/edit/{id}', [EventController::class, 'edit'])->name('events.edit');
+            Route::put('/events/update/{id}', [EventController::class, 'update'])->name('events.update');
+            Route::delete('/events/destroy/{id}', [EventController::class, 'destroy'])->name('events.destroy');
+
+            // Categorías de evento
+            Route::get('/event-categories', [EventCategoryController::class, 'index'])->name('event-categories.index');
+            Route::post('/event-categories/store', [EventCategoryController::class, 'store'])->name('event-categories.store');
+            Route::get('/event-categories/edit/{id}', [EventCategoryController::class, 'edit'])->name('event-categories.edit');
+            Route::put('/event-categories/update/{id}', [EventCategoryController::class, 'update'])->name('event-categories.update');
+            Route::delete('/event-categories/destroy/{id}', [EventCategoryController::class, 'destroy'])->name('event-categories.destroy');
+
+            // Inscripciones (admin)
+            Route::get('/registrations', [RegistrationController::class, 'index'])->name('registrations.index');
+            Route::post('/registration/store/{id}', [PublicRegistrationController::class, 'store'])->name('registration.store');            
+            Route::patch('/registrations/{id}/estado', [RegistrationController::class, 'updateEstado'])->name('registrations.updateEstado');
+            Route::get('/registrations/{id}/comprobante', [RegistrationController::class, 'descargarComprobante'])->name('registrations.download');
         });
     });
     //images Tenant
