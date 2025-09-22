@@ -11,11 +11,9 @@
         <div>
             <h4 class="mb-1 fw-bold">Servicios de {{ $barbero->nombre }}</h4>
             <div class="d-flex flex-wrap gap-2">
-                <span class="chip">💰 Salario base:
-                    <strong>₡{{ number_format((int) $barbero->salario_base, 0, ',', '.') }}</strong>
-                </span>
-                <span class="chip">✂️ Por servicio:
-                    <strong>₡{{ number_format((int) $barbero->monto_por_servicio, 0, ',', '.') }}</strong>
+                <span class="chip">
+                    💰 Servicios Profesionales
+                    <strong>Sin monto definido</strong>
                 </span>
             </div>
         </div>

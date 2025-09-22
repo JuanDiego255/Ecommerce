@@ -126,7 +126,7 @@ class BookingController extends Controller
         $data = $request->validate([
             'barbero_id' => ['required', 'integer', 'exists:barberos,id'],
             'cliente_nombre' => ['required', 'string', 'max:120'],
-            'cliente_email' => ['nullable', 'email', 'max:120'],
+            'cliente_email' => ['required', 'email', 'max:120'],
             'cliente_telefono' => ['nullable', 'string', 'max:50'],
             'servicios' => ['required', 'array', 'min:1'],
             'servicios.*' => ['integer', 'exists:servicios,id'],
@@ -158,7 +158,9 @@ class BookingController extends Controller
             $email  = trim((string)$request->input('cliente_email'));
             $nombre = trim((string)$request->input('cliente_nombre'));
             $tel    = trim((string)$request->input('cliente_telefono'));
-
+            $client = Client::where('email', $email)->first();
+            if (isset($client) && $client->discount > 0 && $client->discount != null)
+                $totalCents = $client->discount * 100;
             $client = null;
             if ($email !== '') {
                 $client = Client::firstOrCreate(['email' => $email], [

@@ -202,8 +202,8 @@
 
                                 <div class="form-group mb-3">
                                     <input type="email" class="form-control" name="cliente_email"
-                                        onfocus="this.placeholder=''" onblur="this.placeholder='Tu correo'"
-                                        placeholder="Tu correo (opcional)">
+                                        onfocus="this.placeholder=''" required onblur="this.placeholder='Tu correo'"
+                                        placeholder="Tu correo">
                                 </div>
 
                                 <div class="form-group mb-4">

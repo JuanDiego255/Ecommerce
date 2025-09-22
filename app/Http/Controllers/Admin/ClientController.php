@@ -42,6 +42,7 @@ class ClientController extends Controller
             'preferred_start'       => 'nullable|date_format:H:i',
             'preferred_end'         => 'nullable|date_format:H:i|after:preferred_start',
             'notes'    => 'nullable|string|max:2000',
+            'discount'    => 'nullable|string|max:2000',
         ]);
 
         $client->fill($data);

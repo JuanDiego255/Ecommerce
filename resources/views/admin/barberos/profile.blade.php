@@ -27,12 +27,13 @@
                         href="{{ route('barberos.show', ['barbero' => $barbero->id, 'tab' => 'info', 'back' => $back]) }}"
                         role="tab">Información</a>
                 </li>
-
-                <li class="nav-item" role="presentation">
-                    <a class="nav-link {{ $active === 'servicios' ? 'active' : '' }}"
-                        href="{{ route('barberos.show', ['barbero' => $barbero->id, 'tab' => 'servicios', 'back' => $back]) }}"
-                        role="tab">Servicios</a>
-                </li>
+                @can('barberos.manage')
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link {{ $active === 'servicios' ? 'active' : '' }}"
+                            href="{{ route('barberos.show', ['barbero' => $barbero->id, 'tab' => 'servicios', 'back' => $back]) }}"
+                            role="tab">Servicios</a>
+                    </li>
+                @endcan
                 @can('barberos.manage')
                     <li class="nav-item" role="presentation">
                         <a class="nav-link {{ $active === 'agenda' ? 'active' : '' }}"

@@ -21,6 +21,7 @@ class Client extends Model
         'cadence_days',
         'last_auto_booked_at',
         'next_due_at',
+        'discount'
     ];
     protected $casts = [
         'auto_book_opt_in' => 'bool',

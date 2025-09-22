@@ -84,6 +84,11 @@ class AvailabilityService
                 ];
             });
 
+        $bloques[] = [
+            'starts_at' => Carbon::createFromFormat('Y-m-d H:i', $dateYmd . ' 12:00'),
+            'ends_at'   => Carbon::createFromFormat('Y-m-d H:i', $dateYmd . ' 13:00'),
+        ];
+
         // Generar slots base
         $slots = [];
         for ($t = $start->copy(); $t->lt($end); $t->addMinutes($slot)) {

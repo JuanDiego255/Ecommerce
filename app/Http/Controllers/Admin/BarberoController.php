@@ -141,7 +141,7 @@ class BarberoController extends Controller
     public function destroy($id)
     {
         Barbero::findOrFail($id)->delete();
-        return back()->with('ok', 'Barbero eliminado');
+        return redirect('/barberos')->with('ok', 'Barbero eliminado');
     }
 
 

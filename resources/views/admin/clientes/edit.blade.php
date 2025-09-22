@@ -89,18 +89,25 @@
                         </div>
                     </div>
                 
-                    <div class="col-md-3">
+                    <div class="col-md-6">
                         <div class="input-group input-group-lg input-group-outline is-filled my-3">
                             <label class="form-label">Hora inicio</label>
                             <input type="time" name="preferred_start"
                                 value="{{ old('preferred_start', $client->preferred_start) }}" class="form-control">
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-6">
                         <div class="input-group input-group-lg input-group-outline is-filled my-3">
                             <label class="form-label">Hora fin</label>
                             <input type="time" name="preferred_end"
                                 value="{{ old('preferred_end', $client->preferred_end) }}" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="input-group input-group-lg input-group-outline is-filled my-3">
+                            <label class="form-label">Precio con descuento</label>
+                            <input type="number" name="discount"
+                                value="{{ old('discount', $client->discount) }}" class="form-control">
                         </div>
                     </div>
 
