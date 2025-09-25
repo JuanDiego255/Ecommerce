@@ -101,9 +101,13 @@ class ProposeAutoAppointmentJob implements ShouldQueue
             }
         );
         // marcar para no repetir
+        $cadence = $client->effective_cadence_days ?? ($tenant->auto_book_default_cadence_days ?? 7);
+        // opcional: anclar al mismo weekday/hora de la cita propuesta
+        $next = $startLocal->copy()->addDays($cadence);
+        $next = $next->setTimeFromTimeString($client->preferred_start?->format('H:i') ?? $startLocal->format('H:i'));
         $client->update([
             'last_auto_booked_at' => now(),
-            'next_due_at' => now()->addDays($client->cadence_days ?: ($tenant->auto_book_default_cadence_days ?? 30)),
+            'next_due_at' => $next->timezone('UTC'),
         ]);
     }
 }

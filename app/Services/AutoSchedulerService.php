@@ -17,7 +17,10 @@ class AutoSchedulerService
         $tenant = TenantSettings::get($tenantId);
         if (!$tenant || $tenant->auto_book_enabled != 1) return null;
 
-        $cadence     = (int)($client->cadence_days ?: $tenant->auto_book_default_cadence_days ?: 30);
+        $effectiveCadence = $client->cadence_days
+            ?: ($client->auto_book_frequency === 'weekly' ? 7
+                : ($client->auto_book_frequency === 'biweekly' ? 14
+                    : ($tenant->auto_book_default_cadence_days ?? 30)));
         $lookback    = (int)($tenant->auto_book_lookback_days ?: 90);
         $minVisits   = (int)($tenant->auto_book_min_visits ?: 3);
 
@@ -27,7 +30,13 @@ class AutoSchedulerService
             ->where('status', 'completed')
             ->where('starts_at', '>=', $from) // si guardas UTC; si no, ajusta
             ->count();
-        if ($visits < $minVisits) return null;
+        if (
+            !$client->prefersWeekly() &&
+            !$client->prefersBiweekly() &&
+            $visits < $minVisits
+        ) {
+            return null;
+        }
 
         // 3) Próxima fecha objetivo por cadencia
         $lastDone = Cita::where('client_id', $client->id)
@@ -36,8 +45,11 @@ class AutoSchedulerService
             ->first();
 
         $target = $lastDone
-            ? $lastDone->starts_at->copy()->timezone($tz)->addDays($cadence)
-            : now($tz)->addDays(7);
+            ? $lastDone->starts_at->copy()->timezone($tz)->addDays($effectiveCadence)
+            : now($tz)->addDays(min($effectiveCadence, 7));
+
+        $lookbehindDays = $client->auto_book_frequency === 'weekly' ? 3 : 7;
+        $lookaheadDays  = $client->auto_book_frequency === 'weekly' ? 10 : 21;
 
         if ($client->next_due_at instanceof \Carbon\Carbon && now($tz)->lt($client->next_due_at->timezone($tz))) {
             return null; // aún no toca proponer
@@ -47,19 +59,19 @@ class AutoSchedulerService
         $barbero = $client->preferredBarbero ?: Barbero::where('activo', 1)->orderBy('id')->first();
         if (!$barbero) return null;
         // 5) Ventana de búsqueda alrededor del target
-        $startWindow = $target->copy()->subDays(7)->startOfDay();
-        $endWindow   = $target->copy()->addDays(14)->endOfDay();
+        $startWindow = $target->copy()->subDays($lookbehindDays)->startOfDay();
+        $endWindow   = $target->copy()->addDays($lookaheadDays)->endOfDay();
 
         // 6) Preferencias del cliente (fallbacks sensatos)
-        $prefDays  = $client->preferred_days ?: [1, 2, 3, 4, 5]; // L-V
-        $prefStart = substr($client->preferred_start ?: '09:00', 0, 5);
-        $prefEnd   = substr($client->preferred_end   ?: '18:00', 0, 5);
+        $prefDays  = $client->preferred_days ?: [1, 2, 3, 4, 5, 6]; // L-S
+        $prefStart = substr($client->preferred_start ?: '09:00', 0, 6);
+        $prefEnd   = substr($client->preferred_end   ?: '18:00', 0, 6);
 
         // 7) Duración a usar (según patrón o slot del barbero)
         $slotMin  = (int)($barbero->slot_minutes ?: 30);
         $duration = $this->inferDurationForClient($client, $barbero) ?: $slotMin;
         // 8) Buscar primer hueco válido usando availableSlots (convertido a Carbon)
-        return $this->scanAvailabilityUsingAvailableSlots(
+        $result = $this->scanAvailabilityUsingAvailableSlots(
             $barbero,
             $startWindow,
             $endWindow,
@@ -69,6 +81,22 @@ class AutoSchedulerService
             $duration,
             $tz
         );
+
+        if (!$result) {
+            $extra = $client->auto_book_frequency === 'weekly' ? 7 : 14;
+            $result = $this->scanAvailabilityUsingAvailableSlots(
+                $barbero,
+                $endWindow->copy()->addDay(),
+                $endWindow->copy()->addDays($extra),
+                $prefDays,
+                $prefStart,
+                $prefEnd,
+                $duration,
+                $tz
+            );
+        }
+
+        return $result;
     }
     protected function inferDurationForClient(Client $client, Barbero $barbero): ?int
     {

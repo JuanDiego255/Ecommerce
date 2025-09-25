@@ -36,6 +36,10 @@ class TenantsAutoBookRun extends Command
 
             $now = now();
             $clientes = Client::where('auto_book_opt_in', 1)
+                ->where(function ($q) {
+                    $q->whereIn('auto_book_frequency', ['weekly', 'biweekly'])
+                        ->orWhereIn('cadence_days', [7, 14]);
+                })
                 ->where(function ($q) use ($now) {
                     $q->whereNull('next_due_at')->orWhere('next_due_at', '<=', $now);
                 })
