@@ -63,4 +63,23 @@ class Client extends Model
     {
         return $this->auto_book_frequency === 'biweekly' || $this->effective_cadence_days === 14;
     }
+    /**
+     * Calcula el próximo next_due_at a partir de una fecha base (Carbon, en TZ local)
+     * - Si tiene frecuencia semanal/quincenal (o cadence_days), respétala.
+     * - Si no, usa default del tenant (o 30 días).
+     * Devuelve un Carbon en UTC (si guardas UTC).
+     */
+    public function computeNextDueAtFromBase(\Carbon\Carbon $baseLocal, ?int $tenantDefault = 30, string $tz = 'America/Costa_Rica'): \Carbon\Carbon
+    {
+        $cadence = $this->effective_cadence_days ?? $tenantDefault ?? 30 - 3;
+        $nextLocal = $baseLocal->copy()->addDays($cadence - 3);
+
+        // (Opcional) anclar hora preferida si existe
+        if ($this->preferred_start) {
+            $hhmm = \Illuminate\Support\Str::substr((string)$this->preferred_start, 0, 5);
+            $nextLocal->setTimeFromTimeString($hhmm);
+        }
+
+        return $nextLocal->clone();
+    }
 }

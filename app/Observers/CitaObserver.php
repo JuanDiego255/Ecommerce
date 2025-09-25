@@ -14,6 +14,7 @@ class CitaObserver
     public function updated(Cita $cita): void
     {
         if (!$cita->wasChanged('status')) return;
+        $tz = config('app.timezone', 'America/Costa_Rica');
         $old = $cita->getOriginal('status');
         $new = $cita->status;
         $tenantId = tenant('id') ?? config('app.name'); // ajusta según tu tenancy
@@ -31,10 +32,12 @@ class CitaObserver
         if ($cita->wasChanged('status') && $cita->status === 'completed' && $cita->client_id) {
             $client = $cita->client;
             if ($client && $client->auto_book_opt_in) {
+
                 $cadence = $client->cadence_days ?: ($tenant->auto_book_default_cadence_days ?? 30);
+                $baseLocal = $cita->starts_at->copy()->timezone($tz);
                 $client->update([
                     'last_seen_at' => now(),
-                    'next_due_at'  => $cita->starts_at->copy()->addDays($cadence),
+                    'next_due_at'  => $client->computeNextDueAtFromBase($baseLocal, $cadence, $tz),
                 ]);
             }
         }
