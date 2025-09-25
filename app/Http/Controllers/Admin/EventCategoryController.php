@@ -38,11 +38,11 @@ class EventCategoryController extends Controller
         return view('admin.event_categories.edit', ['category' => $eventCategory]);
     }
 
-    public function update(StoreEventCategoryRequest $request, EventCategory $eventCategory)
+    public function update(StoreEventCategoryRequest $request, $id)
     {
         //dd($request);
         //Gate::authorize('update', $eventCategory->event);
-        $eventUpd = EventCategory::find($request->event_id);
+        $eventUpd = EventCategory::find($id);
         $data = $request->validated();
         $eventUpd->update($data);
         return back()->with('success', 'Categoría actualizada.');

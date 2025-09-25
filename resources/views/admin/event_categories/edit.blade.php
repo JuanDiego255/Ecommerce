@@ -11,7 +11,7 @@
             </div>
 
             <div class="modal-body">
-                <form class="form-horizontal" action="{{ route('event-categories.update', $category) }}" method="post"
+                <form class="form-horizontal" action="{{ route('event-categories.update', $category->id) }}" method="post"
                     autocomplete="off">
                     @csrf @method('PUT')
                     @include('admin.event_categories._form', [

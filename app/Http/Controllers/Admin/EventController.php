@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreEventRequest;
 use App\Http\Requests\UpdateEventRequest;
 use App\Models\Event;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 
@@ -68,12 +69,23 @@ class EventController extends Controller
         return redirect()->route('events.index')->with('success', 'Evento actualizado.');
     }
 
-    public function destroy(Event $event)
+    public function destroy($id)
     {
         //Gate::authorize('delete', $event);
-        if ($event->imagen_premios) Storage::disk('public')->delete($event->imagen_premios);
-        $event->delete();
-
-        return back()->with('success', 'Evento eliminado.');
+        DB::beginTransaction();
+        try {
+            $event = Event::findOrfail($id);
+            if (
+                Storage::delete('public/' . $event->image)
+            ) {
+                Event::destroy($id);
+            }
+            Event::destroy($id);
+            DB::commit();
+            return back()->with('success', 'Evento eliminado.');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return redirect('/categories')->with(['status' => 'Ocurrió un error al eliminar la categoría!', 'icon' => 'error']);
+        }
     }
 }
