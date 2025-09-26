@@ -9,93 +9,14 @@ use Illuminate\Support\Facades\Log;
 
 class AutoSchedulerService
 {
-    public function findBestSlotFor(Client $client): ?array
+    public function findBestSlotFor(Client $client, $activeInUpdate = false): ?array
     {
-        // 1) Config y preferencias
-        $tz = config('app.timezone', 'America/Costa_Rica');
-        $tenantId = tenant('id') ?? config('app.name');
-        $tenant = TenantSettings::get($tenantId);
-        if (!$tenant || $tenant->auto_book_enabled != 1) return null;
-
-        $effectiveCadence = $client->cadence_days
-            ?: ($client->auto_book_frequency === 'weekly' ? 7
-                : ($client->auto_book_frequency === 'biweekly' ? 14
-                    : ($tenant->auto_book_default_cadence_days ?? 30)));
-        $lookback    = (int)($tenant->auto_book_lookback_days ?: 90);
-        $minVisits   = (int)($tenant->auto_book_min_visits ?: 3);
-
-        // 2) Chequear visitas completadas en ventana
-        $from = now($tz)->subDays($lookback)->startOfDay();
-        $visits = Cita::where('client_id', $client->id)
-            ->where('status', 'completed')
-            ->where('starts_at', '>=', $from) // si guardas UTC; si no, ajusta
-            ->count();
-        if (
-            !$client->prefersWeekly() &&
-            !$client->prefersBiweekly() &&
-            $visits < $minVisits
-        ) {
-            return null;
+        $result = null;
+        if (!$activeInUpdate) {
+            $result = $this->findAuto($client);
+        } else {
+            $result = $this->findInUpdate($client);
         }
-
-        // 3) Próxima fecha objetivo por cadencia
-        $lastDone = Cita::where('client_id', $client->id)
-            ->where('status', 'completed')
-            ->orderByDesc('starts_at')
-            ->first();
-
-        $target = $lastDone
-            ? $lastDone->starts_at->copy()->timezone($tz)->addDays($effectiveCadence)
-            : now($tz)->addDays(min($effectiveCadence, 7));
-
-        $lookbehindDays = $client->auto_book_frequency === 'weekly' ? 3 : 7;
-        $lookaheadDays  = $client->auto_book_frequency === 'weekly' ? 10 : 21;
-
-        if ($client->next_due_at instanceof \Carbon\Carbon && now($tz)->lt($client->next_due_at->timezone($tz))) {
-            return null; // aún no toca proponer
-        }
-
-        // 4) Barbero base (preferido o cualquiera activo)
-        $barbero = $client->preferredBarbero ?: Barbero::where('activo', 1)->orderBy('id')->first();
-        if (!$barbero) return null;
-        // 5) Ventana de búsqueda alrededor del target
-        $startWindow = $target->copy()->subDays($lookbehindDays)->startOfDay();
-        $endWindow   = $target->copy()->addDays($lookaheadDays)->endOfDay();
-
-        // 6) Preferencias del cliente (fallbacks sensatos)
-        $prefDays  = $client->preferred_days ?: [1, 2, 3, 4, 5, 6]; // L-S
-        $prefStart = substr($client->preferred_start ?: '09:00', 0, 6);
-        $prefEnd   = substr($client->preferred_end   ?: '18:00', 0, 6);
-
-        // 7) Duración a usar (según patrón o slot del barbero)
-        $slotMin  = (int)($barbero->slot_minutes ?: 30);
-        $duration = $this->inferDurationForClient($client, $barbero) ?: $slotMin;
-        // 8) Buscar primer hueco válido usando availableSlots (convertido a Carbon)
-        $result = $this->scanAvailabilityUsingAvailableSlots(
-            $barbero,
-            $startWindow,
-            $endWindow,
-            $prefDays,
-            $prefStart,
-            $prefEnd,
-            $duration,
-            $tz
-        );
-
-        if (!$result) {
-            $extra = $client->auto_book_frequency === 'weekly' ? 7 : 14;
-            $result = $this->scanAvailabilityUsingAvailableSlots(
-                $barbero,
-                $endWindow->copy()->addDay(),
-                $endWindow->copy()->addDays($extra),
-                $prefDays,
-                $prefStart,
-                $prefEnd,
-                $duration,
-                $tz
-            );
-        }
-
         return $result;
     }
     protected function inferDurationForClient(Client $client, Barbero $barbero): ?int
@@ -241,5 +162,203 @@ class AutoSchedulerService
         }
 
         return $available;
+    }
+    public function findAuto(Client $client): ?array
+    {
+
+        // 1) Config y preferencias
+        $tz = config('app.timezone', 'America/Costa_Rica');
+        $tenantId = tenant('id') ?? config('app.name');
+        $tenant = TenantSettings::get($tenantId);
+        if (!$tenant || $tenant->auto_book_enabled != 1) return null;
+
+        $effectiveCadence = $client->cadence_days
+            ?: ($client->auto_book_frequency === 'weekly' ? 7
+                : ($client->auto_book_frequency === 'biweekly' ? 14
+                    : ($tenant->auto_book_default_cadence_days ?? 30)));
+        $lookback    = (int)($tenant->auto_book_lookback_days ?: 90);
+        $minVisits   = (int)($tenant->auto_book_min_visits ?: 3);
+
+        // 2) Chequear visitas completadas en ventana
+        $from = now($tz)->subDays($lookback)->startOfDay();
+        $visits = Cita::where('client_id', $client->id)
+            ->where('status', 'completed')
+            ->where('starts_at', '>=', $from) // si guardas UTC; si no, ajusta
+            ->count();
+        if (
+            !$client->prefersWeekly() &&
+            !$client->prefersBiweekly() &&
+            $visits < $minVisits
+        ) {
+            return null;
+        }
+
+        // 3) Próxima fecha objetivo por cadencia
+        $lastDone = Cita::where('client_id', $client->id)
+            ->where('status', 'completed')
+            ->orderByDesc('starts_at')
+            ->first();
+
+        $target = $lastDone
+            ? $lastDone->starts_at->copy()->timezone($tz)->addDays($effectiveCadence)
+            : now($tz)->addDays(min($effectiveCadence, 7));
+
+        $lookbehindDays = $client->auto_book_frequency === 'weekly' ? 3 : 7;
+        $lookaheadDays  = $client->auto_book_frequency === 'weekly' ? 10 : 21;
+
+        if ($client->next_due_at instanceof \Carbon\Carbon && now($tz)->lt($client->next_due_at->timezone($tz))) {
+            return null; // aún no toca proponer
+        }
+
+        // 4) Barbero base (preferido o cualquiera activo)
+        $barbero = $client->preferredBarbero ?: Barbero::where('activo', 1)->orderBy('id')->first();
+        if (!$barbero) return null;
+        // 5) Ventana de búsqueda alrededor del target
+        $startWindow = $target->copy()->subDays($lookbehindDays)->startOfDay();
+        $endWindow   = $target->copy()->addDays($lookaheadDays)->endOfDay();
+
+        // 6) Preferencias del cliente (fallbacks sensatos)
+        $prefDays  = $client->preferred_days ?: [1, 2, 3, 4, 5, 6]; // L-S
+        $prefStart = substr($client->preferred_start ?: '09:00', 0, 6);
+        $prefEnd   = substr($client->preferred_end   ?: '18:00', 0, 6);
+
+        // 7) Duración a usar (según patrón o slot del barbero)
+        $slotMin  = (int)($barbero->slot_minutes ?: 30);
+        $duration = $this->inferDurationForClient($client, $barbero) ?: $slotMin;
+        // 8) Buscar primer hueco válido usando availableSlots (convertido a Carbon)
+        $result = $this->scanAvailabilityUsingAvailableSlots(
+            $barbero,
+            $startWindow,
+            $endWindow,
+            $prefDays,
+            $prefStart,
+            $prefEnd,
+            $duration,
+            $tz
+        );
+
+        if (!$result) {
+            $extra = $client->auto_book_frequency === 'weekly' ? 7 : 14;
+            $result = $this->scanAvailabilityUsingAvailableSlots(
+                $barbero,
+                $endWindow->copy()->addDay(),
+                $endWindow->copy()->addDays($extra),
+                $prefDays,
+                $prefStart,
+                $prefEnd,
+                $duration,
+                $tz
+            );
+        }
+        return $result;
+    }
+    public function findInUpdate(Client $client): ?array
+    {
+        // Requiere weekly o biweekly
+        if (!$client->prefersWeekly() && !$client->prefersBiweekly()) {
+            return null;
+        }
+
+        // 1) Config y habilitación
+        $tz = config('app.timezone', 'America/Costa_Rica');
+        $tenantId = tenant('id') ?? config('app.name');
+        $tenant = TenantSettings::get($tenantId);
+        if (!$tenant || $tenant->auto_book_enabled != 1) return null;
+
+        // 2) Última cita como ancla (si no hay, usar ahora)
+        $lastDone = Cita::where('client_id', $client->id)
+            ->where('status', 'completed')
+            ->orderByDesc('starts_at')
+            ->first();
+
+        $anchor = $lastDone
+            ? $lastDone->starts_at->copy()->timezone($tz)
+            : now($tz);
+
+        // 3) Barbero base
+        $barbero = $client->preferredBarbero ?: Barbero::where('activo', 1)->orderBy('id')->first();
+        if (!$barbero) return null;
+
+        // 4) Preferencias de día/hora
+        // ISO: 1=Lun ... 6=Sáb, 7=Dom (manteniendo tu convención L-S en [1..6])
+        $prefDays = $client->preferred_days;
+        if (!$prefDays || !is_array($prefDays) || count($prefDays) === 0) {
+            // Si no hay día preferido definido, no forzamos este flujo
+            return null;
+        }
+        // Normaliza enteros 1..7 y ordena único
+        $prefDays = array_values(array_unique(array_map('intval', $prefDays)));
+
+        // Horas normalizadas
+        $prefStart = $client->preferred_start
+            ? \Carbon\Carbon::parse($client->preferred_start, $tz)->format('H:i')
+            : '09:00';
+        $prefEnd = $client->preferred_end
+            ? \Carbon\Carbon::parse($client->preferred_end, $tz)->format('H:i')
+            : '18:00';
+
+        // Duración: si definieron start/end, usamos la diferencia; si no, inferimos
+        $slotMin  = (int)($barbero->slot_minutes ?: 30);
+        if ($client->preferred_start && $client->preferred_end) {
+            $duration = \Carbon\Carbon::parse($client->preferred_start, $tz)
+                ->diffInMinutes(\Carbon\Carbon::parse($client->preferred_end, $tz));
+            if ($duration <= 0) $duration = $slotMin;
+        } else {
+            $duration = $this->inferDurationForClient($client, $barbero) ?: $slotMin;
+        }
+
+        // 5) Helper: siguiente fecha cuyo dayOfWeekIso ∈ $prefDays (estrictamente después de $anchor)
+        $nextIsoDayAfter = function (\Carbon\Carbon $from, array $isoDays) use ($tz): \Carbon\Carbon {
+            $cursor = $from->copy()->addDay()->startOfDay(); // estrictamente después
+            // Buscamos el más cercano dentro de los próximos 14 días (suficiente para cubrir multi-días)
+            $best = null;
+            for ($i = 0; $i < 14; $i++) {
+                if (in_array($cursor->dayOfWeekIso, $isoDays, true)) {
+                    $best = $cursor->copy();
+                    break;
+                }
+                $cursor->addDay();
+            }
+            return $best ?: $from->copy()->addWeek()->startOfDay(); // fallback defensivo
+        };
+
+        // 6) Primer intento: el siguiente día preferido después de la última cita
+        $firstTryDate = $nextIsoDayAfter($anchor, $prefDays);
+
+        // 7) Segundo intento: +1 semana (weekly) o +2 semanas (biweekly) desde ese mismo día
+        $weeks = $client->prefersWeekly() ? 1 : 2;
+        $secondTryDate = $firstTryDate->copy()->addWeeks($weeks);
+
+        // 8) Intentos dirigidos (dos chances máximo). Ventana = exclusivamente ese día.
+        $attempts = [$firstTryDate, $secondTryDate];
+
+        foreach ($attempts as $tryDate) {
+            // Limitamos la búsqueda al día completo del intento
+            $startWindow = $tryDate->copy()->startOfDay();
+            $endWindow   = $tryDate->copy()->endOfDay();
+
+            // Forzamos SOLO el día ISO del intento para que no se deslice a otro día
+            $onlyThisDay = [$tryDate->dayOfWeekIso];
+
+            $result = $this->scanAvailabilityUsingAvailableSlots(
+                $barbero,
+                $startWindow,
+                $endWindow,
+                $onlyThisDay,
+                $prefStart,
+                $prefEnd,
+                $duration,
+                $tz
+            );
+
+            if ($result) {
+                // (Opcional) Si quieres exigir que inicie exactamente en $prefStart,
+                // valida aquí: if ($result['start']->format('H:i') !== $prefStart) { continue; }
+                return $result;
+            }
+        }
+
+        // 9) Si no hubo hueco en esos dos intentos, nos detenemos.
+        return null;
     }
 }
