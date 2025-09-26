@@ -23,10 +23,13 @@
             @enderror
         </div>
     </div>
-
+    <div class="col-md-12 mb-3">
+        <div class="input-group input-group-lg input-group-outline my-3">
+            <input required class="form-control" type="file" name="image">
+        </div>
+    </div>
     <div class="col-md-4">
-        <div
-            class="input-group input-group-lg input-group-outline is-filled my-3">
+        <div class="input-group input-group-lg input-group-outline is-filled my-3">
             <label class="form-label">Duración (min)</label>
             <input value="{{ old('duration_minutes', $servicio->duration_minutes ?? 30) }}" type="number"
                 class="form-control form-control-lg @error('duration_minutes') is-invalid @enderror"
@@ -39,8 +42,7 @@
     </div>
 
     <div class="col-md-4">
-        <div
-            class="input-group input-group-lg input-group-outline is-filled my-3">
+        <div class="input-group input-group-lg input-group-outline is-filled my-3">
             <label class="form-label">Precio base (₡)</label>
             <input
                 value="{{ old('base_price_view', isset($servicio->base_price_cents) ? (int) $servicio->base_price_cents / 100 : 0) }}"

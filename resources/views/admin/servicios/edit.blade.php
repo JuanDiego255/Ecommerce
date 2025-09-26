@@ -42,6 +42,15 @@
                                 @enderror
                             </div>
                         </div>
+                        @if ($servicio->image)
+                            <img class="img-fluid img-thumbnail" src="{{ route('file', $servicio->image) }}"
+                                style="width: 150px; height:150px;" alt="image">
+                        @endif
+                        <div class="col-md-12 mb-3">
+                            <div class="input-group input-group-static mb-4">
+                                <input class="form-control" type="file" name="image">
+                            </div>
+                        </div>
 
                         <div class="col-md-4">
                             <div
@@ -80,8 +89,10 @@
                                 <label class="form-label">Estado</label>
                                 <select name="activo" id="activo_{{ $servicio->id }}"
                                     class="form-control form-control-lg">
-                                    <option value="1" {{ (int) $activoOld == 1 ? 'selected' : '' }}>Activo</option>
-                                    <option value="0" {{ (int) $activoOld == 0 ? 'selected' : '' }}>Inactivo</option>
+                                    <option value="1" {{ (int) $activoOld == 1 ? 'selected' : '' }}>Activo
+                                    </option>
+                                    <option value="0" {{ (int) $activoOld == 0 ? 'selected' : '' }}>Inactivo
+                                    </option>
                                 </select>
                             </div>
                         </div>

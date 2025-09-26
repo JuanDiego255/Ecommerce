@@ -2721,10 +2721,10 @@ hr {
     position: relative;
     color: #fff;
     font-size: 40px;
-    height: 105px;
-    width: 105px;
+    height: 300px;
+    width: 300px;
     display: block;
-    line-height: 105px;
+    line-height: 300px;
     text-align: center;
     background: #1d2434;
     margin-bottom: 42px;
@@ -3032,7 +3032,12 @@ hr {
     overflow: hidden;
 }
 .team-area .single-team .team-img img {
-    width: 100%;
+    width: 300px !important;
+    transform: scale(1);
+    transition: all 0.6s ease-out 0s;
+}
+.service-img img {
+    width: 300px;
     transform: scale(1);
     transition: all 0.6s ease-out 0s;
 }

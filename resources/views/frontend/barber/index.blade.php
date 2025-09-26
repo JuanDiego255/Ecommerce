@@ -127,7 +127,14 @@
                             <div class="col-xl-4 col-lg-4 col-md-6">
                                 <div class="services-caption text-center mb-30">
                                     <div class="service-icon">
-                                        <i class="fas fa-scissors"></i>
+                                        @if (isset($item->image))
+                                            <div class="service-img mb-5">
+                                                <img src="{{ route('file', $item->image) }}" alt="">
+                                            </div>
+                                        @else
+                                            <i class="fas fa-scissors"></i>
+                                        @endif
+
                                     </div>
                                     <div class="service-cap">
                                         <h4><a href="#">{{ $item->nombre }}</a></h4>

@@ -18,7 +18,8 @@ class Servicio extends Model
         'descripcion',
         'duration_minutes',
         'base_price_cents',
-        'activo'
+        'activo',
+        'image'
     ];
 
 
