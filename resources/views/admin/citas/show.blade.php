@@ -58,7 +58,14 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @php
+                            $totalTable = 0;
+                            $totalCita = $cita->total_cents / 100;
+                        @endphp
                         @foreach ($cita->servicios as $s)
+                            @php
+                                $totalTable += $s->pivot->price_cents / 100;
+                            @endphp
                             <tr>
                                 <td>{{ $s->nombre }}</td>
                                 <td class="text-end">₡{{ number_format((int) $s->pivot->price_cents / 100, 0, ',', '.') }}
@@ -70,9 +77,15 @@
                     <tfoot>
                         <tr>
                             <th>Total</th>
-                            <th class="text-end">₡{{ number_format((int) $cita->total_cents / 100, 0, ',', '.') }}</th>
+                            <th class="text-end">₡{{ number_format((int) $totalCita, 0, ',', '.') }}</th>
                             <th></th>
                         </tr>
+                        @if ($totalCita != $totalTable)
+                            <tr>
+                                <th>El monto de la cita fue modificado (Por algún descuento, u otros)</th>
+                                <th></th>
+                            </tr>
+                        @endif
                     </tfoot>
                 </table>
             </div>

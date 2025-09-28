@@ -569,6 +569,7 @@ Route::middleware([
                 Route::get('/booking/{cita}/cancel', [PublicBookingController::class, 'cancel'])->name('booking.cancel');     // GET por simplicidad
                 Route::get('/booking/{cita}/reschedule', [PublicBookingController::class, 'reschedule'])->name('booking.reschedule');
             });
+            Route::put('update/cita/total/{id}', [CitaAdminController::class, 'updateTotal'])->name('cita.updateTotal');
             //Rutas para form de ciclismo
             Route::get('/events', [EventController::class, 'index'])->name('events.index');
             Route::post('/events/store', [EventController::class, 'store'])->name('events.store');

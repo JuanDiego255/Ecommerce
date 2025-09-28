@@ -36,6 +36,15 @@
                 </div>
 
             </div>
+            @if (session('ok'))
+                <div class="alert alert-success text-white mt-3 mb-0">{{ session('ok') }}</div>
+            @endif
+            @if (session('error'))
+                <div class="alert alert-danger text-white mt-3 mb-0">{{ session('error') }}</div>
+            @endif
+            @if ($errors->any())
+                <div class="alert alert-danger text-white mt-3 mb-0">{{ $errors->first() }}</div>
+            @endif
         </div>
     </div>
 
@@ -89,7 +98,20 @@
                             <td class="align-middle text-sm">{{ optional($item->starts_at)->format('d/m/Y') }}</td>
                             <td class="align-middle text-sm">{{ optional($item->starts_at)->format('H:i') }}</td>
                             <td class="align-middle text-sm">
-                                ₡{{ number_format((int) $item->total_cents / 100, 0, ',', '.') }}
+                                <form method="post" action="{{ url('/update/cita/total/' . $item->id) }}"
+                                    class="d-flex align-items-center gap-2">
+                                    {{ csrf_field() }} {{ method_field('PUT') }}
+                                    <div class="input-group input-group-sm input-group-outline is-filled">
+                                        <label class="form-label">Total</label>
+                                        <input value="{{ $item->total_cents / 100 }}" name="total" id="total"
+                                            type="number" class="form-control">
+                                    </div>
+
+                                    <button type="submit" class="btn btn-link text-success border-0"
+                                        data-bs-toggle="tooltip" title="Guardar total">
+                                        <i class="material-icons text-lg">save</i>
+                                    </button>
+                                </form>
                             </td>
                             <td class="align-middle text-sm">
                                 @switch($item->status)

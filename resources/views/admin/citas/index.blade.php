@@ -156,8 +156,24 @@
                                         <p class="mb-0">{{ $hora }}</p>
                                     </td>
 
-                                    <td class="align-middle text-sm">
+                                    {{--  <td class="align-middle text-sm">
                                         <p class="font-weight-bold mb-0">₡{{ $total }}</p>
+                                    </td> --}}
+                                    <td class="align-middle text-sm">
+                                        <form method="post" action="{{ url('/update/cita/total/' . $item->id) }}"
+                                            class="d-flex align-items-center gap-2">
+                                            {{ csrf_field() }} {{ method_field('PUT') }}
+                                            <div class="input-group input-group-sm input-group-outline is-filled"                                                >
+                                                <label class="form-label">Total</label>
+                                                <input value="{{ $item->total_cents / 100 }}" name="total" id="total"
+                                                    type="number" class="form-control">
+                                            </div>
+
+                                            <button type="submit" class="btn btn-link text-success border-0"
+                                                data-bs-toggle="tooltip" title="Guardar total">
+                                                <i class="material-icons text-lg">save</i>
+                                            </button>
+                                        </form>
                                     </td>
 
                                     <td class="align-middle text-sm">

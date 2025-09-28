@@ -85,4 +85,17 @@ class CitaAdminController extends Controller
 
         return view('admin.citas.mine', compact('items', 'barbero'));
     }
+
+    public function updateTotal(Request $request, $id)
+    {
+        //abort_unless(Gate::allows('tenant.settings'), 403);
+        $data = $request->validate([
+            'total' => ['required'],
+        ]);
+
+        $cita = Cita::findOrFail($id);
+        $cita->update(['total_cents' => $data['total'] * 100]);
+
+        return back()->with('ok', 'Monto de la cita actualizado.');
+    }
 }
