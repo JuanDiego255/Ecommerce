@@ -71,7 +71,17 @@
                                     class="btn btn-link text-velvet border-0" data-bs-toggle="tooltip" title="Ver detalle">
                                     <i class="material-icons text-lg">visibility</i>
                                 </a>
-
+                                @if ($item->status !== 'confirmed')
+                                    <form method="post" action="{{ url('/citas/' . $item->id . '/status') }}"
+                                        class="d-inline">
+                                        {{ csrf_field() }} {{ method_field('PUT') }}
+                                        <input type="hidden" name="status" value="confirmed">
+                                        <button type="submit" class="btn btn-link text-success border-0"
+                                            data-bs-toggle="tooltip" data-bs-placement="bottom" title="Confirmar">
+                                            <i class="material-icons text-lg">task_alt</i>
+                                        </button>
+                                    </form>
+                                @endif
 
                                 {{-- Marcar completada (rápido) --}}
                                 @if ($item->status !== 'completed')

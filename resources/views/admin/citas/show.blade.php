@@ -92,17 +92,15 @@
 
             <div class="d-flex align-items-center gap-2 mt-3">
                 {{-- Acciones rápidas --}}
-                @can('barberos.manage')
-                    @if ($cita->status !== 'confirmed')
-                        <form method="post" action="{{ url('/citas/' . $cita->id . '/status') }}">
-                            {{ csrf_field() }} {{ method_field('PUT') }}
-                            <input type="hidden" name="status" value="confirmed">
-                            <button class="btn btn-link text-success border-0" data-bs-toggle="tooltip" title="Confirmar">
-                                <i class="material-icons">task_alt</i>
-                            </button>
-                        </form>
-                    @endif
-                @endcan
+                @if ($cita->status !== 'confirmed')
+                    <form method="post" action="{{ url('/citas/' . $cita->id . '/status') }}">
+                        {{ csrf_field() }} {{ method_field('PUT') }}
+                        <input type="hidden" name="status" value="confirmed">
+                        <button class="btn btn-link text-success border-0" data-bs-toggle="tooltip" title="Confirmar">
+                            <i class="material-icons">task_alt</i>
+                        </button>
+                    </form>
+                @endif
 
                 @if ($cita->status !== 'completed')
                     <form method="post" action="{{ url('/citas/' . $cita->id . '/status') }}">
