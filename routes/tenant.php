@@ -526,13 +526,12 @@ Route::middleware([
             // Dueño o manager: ver/gestionar citas de TODOS
             Route::middleware('role:owner,manager')->group(function () {
                 Route::get('/citas', [CitaAdminController::class, 'index'])->name('citas.index');
-                Route::put('/citas/{id}/status', [CitaAdminController::class, 'updateStatus']);
                 Route::delete('/citas/{id}', [CitaAdminController::class, 'destroy']);
-                
             });
 
             // Mis citas: todos los roles autenticados que sean barbero vinculado
             Route::middleware('role:owner,manager,barber')->group(function () {
+                Route::put('/citas/{id}/status', [CitaAdminController::class, 'updateStatus']);
                 Route::get('/citas/{id}', [CitaAdminController::class, 'show'])->name('citas.show');
                 Route::get('/mis-citas', [CitaAdminController::class, 'myIndex'])->name('citas.mine');
                 Route::get('/barberos/{barbero}/trabajos', [BarberoTrabajoController::class, 'index'])->name('barberos.trabajos.index');
@@ -587,7 +586,7 @@ Route::middleware([
 
             // Inscripciones (admin)
             Route::get('/registrations', [RegistrationController::class, 'index'])->name('registrations.index');
-            Route::post('/registration/store/{id}', [PublicRegistrationController::class, 'store'])->name('registration.store');            
+            Route::post('/registration/store/{id}', [PublicRegistrationController::class, 'store'])->name('registration.store');
             Route::patch('/registrations/{id}/estado', [RegistrationController::class, 'updateEstado'])->name('registrations.updateEstado');
             Route::get('/registrations/{id}/comprobante', [RegistrationController::class, 'descargarComprobante'])->name('registrations.download');
         });
