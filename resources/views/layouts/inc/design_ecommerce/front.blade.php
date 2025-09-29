@@ -75,7 +75,7 @@
                     <ul class="main-menu">
                         <li class="{{ $view_name == 'frontend_design_ecommerce_index' ? 'active-menu' : '' }}">
                             <a
-                                href="{{ $tenantinfo->tenant != 'andresbarberiacr' ? url(($prefix == 'aclimate' ? $prefix : '') . '/') : url(($prefix == 'aclimate' ? $prefix : '') . '/catalogo/barber') }}">Inicio</a>
+                                href="{{ $tenantinfo->kind_business != 5 ? url(($prefix == 'aclimate' ? $prefix : '') . '/') : url(($prefix == 'aclimate' ? $prefix : '') . '/catalogo/barber') }}">Inicio</a>
                         </li>
                         <li>
                             <a href="javascript:void(0);" id="toggleMenu">Explorar</a>
@@ -137,7 +137,7 @@
                                 <a href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/blog/index') }}">Blog</a>
                             </li>
                         @endif
-                        @if (isset($tenantinfo->tenant) && $tenantinfo->tenant === 'andresbarberiacr')
+                        @if (isset($tenantinfo->tenant) && ($tenantinfo->kind_business == 5 ))
                             <li>
                                 <a href="{{ url('/') }}">Barbería</a>
                             </li>
@@ -251,7 +251,7 @@
         <ul class="main-menu-m">
             <li>
                 <a
-                    href="{{ $tenantinfo->tenant != 'andresbarberiacr' ? url(($prefix == 'aclimate' ? $prefix : '') . '/') : url(($prefix == 'aclimate' ? $prefix : '') . '/catalogo/barber') }}">INICIO</a>
+                    href="{{ $tenantinfo->kind_business != 5 ? url(($prefix == 'aclimate' ? $prefix : '') . '/') : url(($prefix == 'aclimate' ? $prefix : '') . '/catalogo/barber') }}">INICIO</a>
             </li>
 
             <li>

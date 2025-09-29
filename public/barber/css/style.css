@@ -2279,11 +2279,16 @@ hr {
 }
 .slider-area {
     margin-top: -1px;
-    background-image: url("../img/hero/h1_hero.png"); /* Imagen por defecto (laptops/desktop) */
     background-repeat: no-repeat;
     background-position: top center;
     background-size: cover;
     background-attachment: fixed;
+}
+.hero-img {   
+    background-image: url("../img/hero/h1_hero.png"); /* Imagen por defecto (laptops/desktop) */
+}
+.hero-img-jp {   
+    background-image: url("../img/hero/h1_jp.png"); /* Imagen por defecto (laptops/desktop) */
 }
 
 /* ✅ Si la pantalla es de celular (máx. 768px) */

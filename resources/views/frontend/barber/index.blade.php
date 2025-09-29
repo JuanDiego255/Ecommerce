@@ -4,9 +4,17 @@
     {!! OpenGraph::generate() !!}
 @endsection
 @section('content')
+    @php
+        $heroImg = 'hero-img';
+        switch ($tenantinfo->tenant) {
+            case 'barberiajp':
+                $heroImg = 'hero-img-jp';
+                break;
+        }
+    @endphp
     <main>
         <!--? slider Area Start-->
-        <div class="slider-area position-relative fix pb-120">
+        <div class="slider-area position-relative fix pb-120 {{ $heroImg }}">
             <div class="slider-active">
                 <!-- Single Slider -->
                 <div class="single-slider slider-height d-flex align-items-center">
