@@ -92,15 +92,17 @@
 
             <div class="d-flex align-items-center gap-2 mt-3">
                 {{-- Acciones rápidas --}}
-                @if ($cita->status !== 'confirmed')
-                    <form method="post" action="{{ url('/citas/' . $cita->id . '/status') }}">
-                        {{ csrf_field() }} {{ method_field('PUT') }}
-                        <input type="hidden" name="status" value="confirmed">
-                        <button class="btn btn-link text-success border-0" data-bs-toggle="tooltip" title="Confirmar">
-                            <i class="material-icons">task_alt</i>
-                        </button>
-                    </form>
-                @endif
+                @can('barberos.manage')
+                    @if ($cita->status !== 'confirmed')
+                        <form method="post" action="{{ url('/citas/' . $cita->id . '/status') }}">
+                            {{ csrf_field() }} {{ method_field('PUT') }}
+                            <input type="hidden" name="status" value="confirmed">
+                            <button class="btn btn-link text-success border-0" data-bs-toggle="tooltip" title="Confirmar">
+                                <i class="material-icons">task_alt</i>
+                            </button>
+                        </form>
+                    @endif
+                @endcan
 
                 @if ($cita->status !== 'completed')
                     <form method="post" action="{{ url('/citas/' . $cita->id . '/status') }}">
@@ -112,25 +114,26 @@
                         </button>
                     </form>
                 @endif
+                @can('barberos.manage')
+                    @if ($cita->status !== 'cancelled')
+                        <form method="post" action="{{ url('/citas/' . $cita->id . '/status') }}"
+                            onsubmit="return confirm('¿Cancelar la cita?');">
+                            {{ csrf_field() }} {{ method_field('PUT') }}
+                            <input type="hidden" name="status" value="cancelled">
+                            <button class="btn btn-link text-warning border-0" data-bs-toggle="tooltip" title="Cancelar">
+                                <i class="material-icons">cancel</i>
+                            </button>
+                        </form>
+                    @endif
 
-                @if ($cita->status !== 'cancelled')
-                    <form method="post" action="{{ url('/citas/' . $cita->id . '/status') }}"
-                        onsubmit="return confirm('¿Cancelar la cita?');">
-                        {{ csrf_field() }} {{ method_field('PUT') }}
-                        <input type="hidden" name="status" value="cancelled">
-                        <button class="btn btn-link text-warning border-0" data-bs-toggle="tooltip" title="Cancelar">
-                            <i class="material-icons">cancel</i>
+                    <form method="post" action="{{ url('/citas/' . $cita->id) }}"
+                        onsubmit="return confirm('¿Eliminar definitivamente?');">
+                        {{ csrf_field() }} {{ method_field('DELETE') }}
+                        <button class="btn btn-link text-danger border-0" data-bs-toggle="tooltip" title="Eliminar">
+                            <i class="material-icons">delete</i>
                         </button>
                     </form>
-                @endif
-
-                <form method="post" action="{{ url('/citas/' . $cita->id) }}"
-                    onsubmit="return confirm('¿Eliminar definitivamente?');">
-                    {{ csrf_field() }} {{ method_field('DELETE') }}
-                    <button class="btn btn-link text-danger border-0" data-bs-toggle="tooltip" title="Eliminar">
-                        <i class="material-icons">delete</i>
-                    </button>
-                </form>
+                @endcan
             </div>
         </div>
     </div>

@@ -528,11 +528,12 @@ Route::middleware([
                 Route::get('/citas', [CitaAdminController::class, 'index'])->name('citas.index');
                 Route::put('/citas/{id}/status', [CitaAdminController::class, 'updateStatus']);
                 Route::delete('/citas/{id}', [CitaAdminController::class, 'destroy']);
-                Route::get('/citas/{id}', [CitaAdminController::class, 'show'])->name('citas.show');
+                
             });
 
             // Mis citas: todos los roles autenticados que sean barbero vinculado
             Route::middleware('role:owner,manager,barber')->group(function () {
+                Route::get('/citas/{id}', [CitaAdminController::class, 'show'])->name('citas.show');
                 Route::get('/mis-citas', [CitaAdminController::class, 'myIndex'])->name('citas.mine');
                 Route::get('/barberos/{barbero}/trabajos', [BarberoTrabajoController::class, 'index'])->name('barberos.trabajos.index');
                 Route::post('/barberos/{barbero}/trabajos', [BarberoTrabajoController::class, 'store'])->name('barberos.trabajos.store');
