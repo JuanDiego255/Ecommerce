@@ -2290,6 +2290,9 @@ hr {
 .hero-img-jp {   
     background-image: url("../img/hero/h1_jp.png"); /* Imagen por defecto (laptops/desktop) */
 }
+.hero-img-andres {   
+    background-image: url("../img/hero/h1_andres.png"); /* Imagen por defecto (laptops/desktop) */
+}
 
 /* ✅ Si la pantalla es de celular (máx. 768px) */
 @media screen and (max-width: 768px) {

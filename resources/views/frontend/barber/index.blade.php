@@ -10,6 +10,9 @@
             case 'barberiajp':
                 $heroImg = 'hero-img-jp';
                 break;
+            case 'andresbarberiacr':
+                $heroImg = 'hero-img-andres';
+                break;
         }
     @endphp
     <main>

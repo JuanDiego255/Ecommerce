@@ -29,9 +29,9 @@
                             <h1 style="margin:0 0 8px 0;font-size:22px;line-height:1.3;">Hola
                                 {{ $clienteNombre ?? '¡Hola!' }} 👋</h1>
                             <p style="margin:0;color:#4b5563;font-size:15px;line-height:1.6">
-                                Te reservamos <strong>una cita tentativa</strong> con
+                                Te reservamos <strong>una cita </strong> con
                                 <strong>{{ $barberoNombre }}</strong>.
-                                Confírmala o cámbiala cuando gustes:
+                                Puedes rechazar la cita, sin embargo ten en cuenta las políticas de la barbería
                             </p>
                         </td>
                     </tr>
@@ -49,8 +49,15 @@
                                                 {{ $horaHuman }} ({{ $duracionMin }} min)
                                             </div>
                                             @if (!empty($serviciosResumen))
-                                                <div style="margin-bottom:8px">
-                                                    <strong>Servicios:</strong> {{ $serviciosResumen }}
+                                                <div style="margin-bottom:6px"><strong>Servicios:</strong>
+                                                    <ul>
+                                                        @foreach ($serviciosResumen as $s)
+                                                            <li>{{ $s['nombre'] }} —
+                                                                ₡{{ number_format($s['precio'], 0, ',', '.') }}
+                                                                ({{ $s['duracion'] }} min)
+                                                            </li>
+                                                        @endforeach
+                                                    </ul>
                                                 </div>
                                             @endif
                                             @if (isset($totalColones))
@@ -71,12 +78,12 @@
                         <td style="padding:16px 28px 0 28px">
                             <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
                                 <tr>
-                                    <td align="center" style="padding:8px 0 16px 0">
+                                    <td align="center" style="padding:8px 0 16px 0">{{-- 
                                         <a href="{{ $acceptUrl }}" target="_blank"
                                             style="display:inline-block;background:#6e00ff;color:#fff;text-decoration:none;
                               padding:12px 18px;border-radius:10px;font-weight:600">
                                             ✅ Aceptar cita
-                                        </a>
+                                        </a> --}}
                                         <span style="display:inline-block;width:8px"></span>
                                         {{--  <a href="{{ $reschedUrl }}" target="_blank"
                                             style="display:inline-block;background:#0ea5e9;color:#fff;text-decoration:none;
@@ -118,8 +125,8 @@
                         <td style="padding:10px 28px 24px 28px">
                             <p style="margin:0;color:#9ca3af;font-size:12px;line-height:1.6">
                                 Si los botones no funcionan, copia y pega en tu navegador:
-                                <br> Aceptar: <a href="{{ $acceptUrl }}"
-                                    style="color:#6e00ff">{{ $acceptUrl }}</a>
+                                {{-- <br> Aceptar: <a href="{{ $acceptUrl }}"
+                                    style="color:#6e00ff">{{ $acceptUrl }}</a> --}}
                                 {{--   <br> Cambiar: <a href="{{ $reschedUrl }}"
                                     style="color:#6e00ff">{{ $reschedUrl }}</a> --}}
                                 <br> Rechazar: <a href="{{ $declineUrl }}"

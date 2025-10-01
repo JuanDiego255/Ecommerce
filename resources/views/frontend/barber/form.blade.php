@@ -92,10 +92,20 @@
         margin: 0 .25rem;
     }
 </style>
-
+@php
+    $heroImg = 'hero-img';
+    switch ($tenantinfo->tenant) {
+        case 'barberiajp':
+            $heroImg = 'hero-img-jp';
+            break;
+        case 'andresbarberiacr':
+            $heroImg = 'hero-img-andres';
+            break;
+    }
+@endphp
 @section('content')
     <main>
-        <div class="slider-area position-relative fix">
+       <div class="slider-area position-relative fix pb-120 {{ $heroImg }}">
             <div class="slider-active">
                 <!-- Single Slider -->
                 <div class="single-slider slider-height d-flex align-items-center">

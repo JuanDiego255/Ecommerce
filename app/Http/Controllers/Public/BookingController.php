@@ -15,6 +15,7 @@ use App\Models\Servicio;
 use App\Models\TenantInfo;
 use App\Services\PricingService;
 use App\Services\AvailabilityService;
+use App\Support\TenantSettings;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Artesaos\SEOTools\Facades\OpenGraph;
@@ -185,7 +186,7 @@ class BookingController extends Controller
                 'starts_at' => $startsAt,
                 'ends_at' => $endsAt,
                 'total_cents' => $totalCents,
-                'status' => 'pending',
+                'status' => 'confirmed',
                 'notas' => null,
                 'source' => 'landing',
             ]);
@@ -248,6 +249,49 @@ class BookingController extends Controller
                         $m->to($barberoEmail)
                             ->from(env('MAIL_FROM_ADDRESS'), 'Info Barbería') // 👈 aquí cambias el nombre visible
                             ->subject('📅 Nueva cita agendada — #' . $cita->id);
+                    }
+                );
+                //Enviar correo al cliente para que pueda eliminar, cancelar la cita
+                $tenantId = TenantInfo::first()->tenant;
+                $tenant = TenantSettings::get($tenantId);
+                $domain = $tenantId == "muebleriasarchi" || $tenantId == "avelectromecanica" ? "https://{$tenantId}.com" : "https://{$tenantId}.safeworsolutions.com";
+                
+                URL::forceRootUrl($domain);
+                URL::forceScheme('https');
+                // Links firmados
+                $acceptUrl  = URL::temporarySignedRoute('auto.accept',  now()->addHours(36), ['cita' => $cita->id]);
+                $reschedUrl = URL::temporarySignedRoute('auto.resched', now()->addHours(36), ['cita' => $cita->id]);
+                $declineUrl = URL::temporarySignedRoute('auto.decline', now()->addHours(36), ['cita' => $cita->id]);
+                URL::forceRootUrl(config('app.url'));
+                URL::forceScheme(null);
+                // Datos para el blade del correo (ya lo tienes: auto_proposed)
+                $tz = config('app.timezone', 'America/Costa_Rica');
+                $viewData = [
+                    'clienteNombre' => $cita->cliente_nombre,
+                    'barberoNombre' => $cita->barbero->nombre,
+                     'fechaHuman'     => $fechaHuman,
+                    'horaHuman'      => $horaHuman,
+                    'duracionMin'    => $duracionMin,
+                    'serviciosResumen' => $servicios,
+                    'totalColones'  => $totalCols,
+                    'acceptUrl'     => $acceptUrl,
+                    'reschedUrl'    => $reschedUrl,
+                    'declineUrl'    => $declineUrl,
+                    'cancelHours'   => optional($tenant)->cancel_window_hours,
+                    'reschedHours'  => optional($tenant)->reschedule_window_hours,
+                ];
+
+                // Enviar con tu estilo Mail::send
+                Mail::send(
+                    ['html' => 'emails.auto_proposed', 'text' => 'emails.auto_proposed_text'],
+                    $viewData,
+                    function ($m) use ($cita, $barbero, $startsAt) {
+                        $m->to($cita->cliente_email)
+                            ->from(
+                                env('MAIL_FROM_ADDRESS'),   // usa MAIL_FROM_ADDRESS del .env
+                                'Info Barbería'       // usa MAIL_FROM_NAME del .env
+                            )
+                            ->subject('Cita confirmada con ' . $barbero->nombre . ' — ' . $startsAt->format('d/m/Y'));
                     }
                 );
             }

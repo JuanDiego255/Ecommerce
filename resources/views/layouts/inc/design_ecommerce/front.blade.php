@@ -80,6 +80,9 @@
                         <li>
                             <a href="javascript:void(0);" id="toggleMenu">Explorar</a>
                         </li>
+                        <li>
+                            <a href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/category') }}">Categorías</a>
+                        </li>
                         <!-- Menú expandido -->
                         <div id="fullScreenMenu" class="fullscreen-menu">
                             <div class="menu-content">
@@ -132,12 +135,12 @@
                         {{-- <li class="label1" data-label1="hot">
                             <a href="shoping-cart.html">Features</a>
                         </li> --}}
-                        @if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'mitaibabyboutique')
+                        @if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'mitaibabyboutique' && $tenantinfo->kind_business !== 5)
                             <li>
                                 <a href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/blog/index') }}">Blog</a>
                             </li>
                         @endif
-                        @if (isset($tenantinfo->tenant) && ($tenantinfo->kind_business == 5 ))
+                        @if (isset($tenantinfo->tenant) && $tenantinfo->kind_business == 5)
                             <li>
                                 <a href="{{ url('/') }}">Barbería</a>
                             </li>
@@ -257,6 +260,9 @@
             <li>
                 <a href="javascript:void(0);" id="toggleMenuMobile">EXPLORAR</a>
             </li>
+            <li>
+                <a href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/category') }}">CATEGORIAS</a>
+            </li>
 
             <div id="fullScreenMenuMobile" class="fullscreen-menu-mobile">
                 <button id="closeMenuMobile" class="close-menu-mobile">&times;</button>
@@ -298,9 +304,14 @@
                     </div>
                 </div>
             </div>
-            @if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'mitaibabyboutique')
+            @if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'mitaibabyboutique' && $tenantinfo->kind_business !== 5)
                 <li>
                     <a href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/blog/index') }}">BLOG</a>
+                </li>
+            @endif
+            @if (isset($tenantinfo->tenant) && $tenantinfo->kind_business == 5)
+                <li>
+                    <a href="{{ url('/') }}">BARBERIA</a>
                 </li>
             @endif
             @if (isset($tenantinfo->tenant) && $tenantinfo->tenant === 'solociclismocrc')

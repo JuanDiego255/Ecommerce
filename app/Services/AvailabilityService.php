@@ -84,6 +84,7 @@ class AvailabilityService
                 ];
             });
 
+        // Ejemplo: almuerzo fijo 12:00-13:00 (si aplica en tu lógica)
         $bloques[] = [
             'starts_at' => Carbon::createFromFormat('Y-m-d H:i', $dateYmd . ' 12:00'),
             'ends_at'   => Carbon::createFromFormat('Y-m-d H:i', $dateYmd . ' 13:00'),
@@ -95,6 +96,10 @@ class AvailabilityService
             $slots[] = $t->copy();
         }
 
+        // Hora "ahora" (solo filtrar si la fecha consultada es hoy)
+        $now = Carbon::now(); // Ajusta TZ si corresponde: Carbon::now(config('app.timezone'))
+        $isToday = $dateYmd === $now->toDateString();
+
         // Función de traslape con arrays de intervalos
         $overlaps = function ($startA, $endA, $startB, $endB) {
             return ($startA < $endB) && ($endA > $startB);
@@ -102,6 +107,11 @@ class AvailabilityService
 
         $available = [];
         foreach ($slots as $candidate) {
+            // Si es hoy, ocultar slots ya pasados
+            if ($isToday && $candidate->lt($now)) {
+                continue;
+            }
+
             $candidateStart = $candidate->copy();
             // Duración requerida + buffer al final
             $candidateEnd   = $candidate->copy()->addMinutes($requiredMinutes + $buffer);
