@@ -68,7 +68,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($items as $item)
+                            @foreach ($citas as $item)
                                 @php
                                     $fecha = optional($item->starts_at)->format('d/m/Y');
                                     $hora = optional($item->starts_at)->format('H:i');
@@ -216,10 +216,6 @@
                             @endforeach
                         </tbody>
                     </table>
-                </div>
-
-                <div class="px-2">
-                    {{ $items->withQueryString()->links() }}
                 </div>
             </div>
         </div>

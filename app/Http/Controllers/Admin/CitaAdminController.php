@@ -12,11 +12,11 @@ class CitaAdminController extends Controller
 {
     public function index(Request $request)
     {
-        $q = Cita::with(['barbero'])
+        $citas = Cita::with(['barbero'])
             ->orderByDesc('starts_at')
-            ->paginate(20);
+            ->get();
 
-        return view('admin.citas.index', ['items' => $q]);
+        return view('admin.citas.index', compact('citas'));
     }
 
     // Dentro de CitaAdminController@myIndex ya filtramos por barbero_id

@@ -101,7 +101,7 @@ class AvailabilityService
         }
 
         // Hora "ahora" (solo filtrar si la fecha consultada es hoy)
-        $now    = Carbon::now(); // Considera TZ: Carbon::now(config('app.timezone'))
+        $now     = Carbon::now(); // Considera TZ: Carbon::now(config('app.timezone'))
         $isToday = $dateYmd === $now->toDateString();
 
         // Función de traslape con arrays de intervalos
@@ -111,9 +111,7 @@ class AvailabilityService
 
         $available = [];
 
-        // End efectivo (para validar candidateEnd). En sábado, permitimos que el último
-        // inicio (17:45) sea válido aunque su duración+buffer pase el work_end,
-        // extendiendo sólo la validación (no el horario real).
+        // End efectivo para permitir último inicio del sábado
         $effectiveEnd = $end->copy();
         if ($isSaturday) {
             $endNeededForLast = $lastStartSat->copy()->addMinutes($requiredMinutes + $buffer);
@@ -123,26 +121,14 @@ class AvailabilityService
         }
 
         foreach ($slots as $candidate) {
-            // Limitar sábados: no permitir inicios posteriores a 17:45
-            if ($isSaturday && $candidate->gt($lastStartSat)) {
-                continue;
-            }
-
-            // Si es hoy, ocultar slots ya pasados
-            if ($isToday && $candidate->lt($now)) {
-                continue;
-            }
+            if ($isSaturday && $candidate->gt($lastStartSat)) continue;
+            if ($isToday && $candidate->lt($now)) continue;
 
             $candidateStart = $candidate->copy();
-            // Duración requerida + buffer al final
             $candidateEnd   = $candidate->copy()->addMinutes($requiredMinutes + $buffer);
 
-            // Validación de tope por fin de jornada (usamos end efectivo)
-            if ($candidateEnd->gt($effectiveEnd)) {
-                continue;
-            }
+            if ($candidateEnd->gt($effectiveEnd)) continue;
 
-            // Traslape con citas
             $busy = false;
             foreach ($citas as $c) {
                 if ($overlaps($candidateStart, $candidateEnd, $c->starts_at, $c->ends_at)) {
@@ -152,7 +138,6 @@ class AvailabilityService
             }
             if ($busy) continue;
 
-            // Traslape con bloques
             foreach ($bloques as $b) {
                 if ($overlaps($candidateStart, $candidateEnd, $b['starts_at'], $b['ends_at'])) {
                     $busy = true;
@@ -161,7 +146,8 @@ class AvailabilityService
             }
             if ($busy) continue;
 
-            $available[] = $candidate->format('H:i');
+            // 👇 Siempre en formato 12 horas
+            $available[] = $candidate->format('g:i A');
         }
 
         return $available;

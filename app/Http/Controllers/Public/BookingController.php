@@ -132,10 +132,18 @@ class BookingController extends Controller
             'servicios' => ['required', 'array', 'min:1'],
             'servicios.*' => ['integer', 'exists:servicios,id'],
             'date' => ['required', 'date_format:Y-m-d', 'after_or_equal:' . now()->toDateString()],
-            'time' => ['required', 'date_format:H:i'],
+            'time' => ['required', 'string'],
         ]);
 
         $barbero = Barbero::findOrFail($data['barbero_id']);
+
+        $timeInput = trim($data['time']);
+        $parsedTime = $this->parseTimeFlexible($timeInput);
+        if (!$parsedTime) {
+            return back()->withErrors(['time' => 'La hora no tiene un formato válido.'])
+                ->withInput();
+        }
+        $time24 = $parsedTime->format('H:i');
 
         // Cotizar total y construir snapshot
         [$totalCents, $detalle] = $pricing->quoteFor($barbero, $data['servicios']); // devuelve total + [servicio_id, price_cents, duration_minutes]...
@@ -144,15 +152,15 @@ class BookingController extends Controller
         $durTotal = collect($detalle)->sum('duration_minutes');
 
         // Validar que el slot esté libre todavía
-        $startsAt = Carbon::createFromFormat('Y-m-d H:i', $data['date'] . ' ' . $data['time']);
+        $startsAt = Carbon::createFromFormat('Y-m-d H:i', $data['date'] . ' ' . $time24);
         $endsAt   = $startsAt->copy()->addMinutes($durTotal);
 
         // Revalidar disponibilidad atómica antes de insertar (evita doble booking)
-        $slots = $availability->availableSlots($barbero, $data['date'], $durTotal);
-        if (!in_array($startsAt->format('H:i'), $slots)) {
+        $slots = $availability->availableSlots($barbero, $data['date'], $durTotal); // ['9:00 AM', ...]
+        $startsAt12 = $startsAt->format('g:i A'); // '5:45 PM'
+        if (!in_array($startsAt12, $slots, true)) {
             return back()->withErrors('Ese horario acaba de ocuparse. Elige otro.')->withInput();
         }
-
         // Crear cita y snapshot de servicios
         DB::transaction(function () use ($barbero, $data, $totalCents, $detalle, $startsAt, $endsAt, $request) {
 
@@ -175,10 +183,14 @@ class BookingController extends Controller
                     'last_seen_at' => now(),
                 ])->save();
             }
-            $lastCitaStatus = Cita::where('client_id',$client?->id)->orderByDesc('ends_at')->first()->status;
-            if(isset($lastCitaStatus) && $lastCitaStatus === 'not_arrive'){
+            $lastCita = Cita::where('client_id', $client?->id)
+                ->orderByDesc('ends_at')
+                ->first();
+
+            if ($lastCita && $lastCita->status === 'not_arrive') {
                 $totalCents = $totalCents + ($client->due_price * 100);
             }
+
             $cita = Cita::create([
                 'barbero_id' => $barbero->id,
                 'user_id' => auth()->id(),
@@ -258,7 +270,7 @@ class BookingController extends Controller
                 $tenantId = TenantInfo::first()->tenant;
                 $tenant = TenantSettings::get($tenantId);
                 $domain = $tenantId == "muebleriasarchi" || $tenantId == "avelectromecanica" ? "https://{$tenantId}.com" : "https://{$tenantId}.safeworsolutions.com";
-                
+
                 URL::forceRootUrl($domain);
                 URL::forceScheme('https');
                 // Links firmados
@@ -272,7 +284,7 @@ class BookingController extends Controller
                 $viewData = [
                     'clienteNombre' => $cita->cliente_nombre,
                     'barberoNombre' => $cita->barbero->nombre,
-                     'fechaHuman'     => $fechaHuman,
+                    'fechaHuman'     => $fechaHuman,
                     'horaHuman'      => $horaHuman,
                     'duracionMin'    => $duracionMin,
                     'serviciosResumen' => $servicios,
@@ -301,5 +313,41 @@ class BookingController extends Controller
         });
 
         return redirect()->back()->with('ok', '¡Cita reservada! Te contactaremos para confirmar.');
+    }
+
+    private function parseTimeFlexible(string $value): ?\Carbon\Carbon
+    {
+        $value = trim($value);
+        $candidates = [
+            'g:i A',
+            'g:iA',
+            'h:i A',
+            'h:iA', // 12h variantes con/ sin espacio
+            'G:i',
+            'H:i',                    // 24h
+        ];
+
+        foreach ($candidates as $fmt) {
+            try {
+                $t = \Carbon\Carbon::createFromFormat($fmt, $value);
+                if ($t !== false) {
+                    // normalizamos a hoy, pero sólo usaremos la parte de la hora
+                    return \Carbon\Carbon::today()->setTimeFromTimeString($t->format('H:i'));
+                }
+            } catch (\Throwable $e) {
+                // continúa probando
+            }
+        }
+        // Extra: permitir '5 PM' sin minutos -> asumir ':00'
+        if (preg_match('/^\s*(\d{1,2})\s*([AP]M)\s*$/i', $value, $m)) {
+            $fix = sprintf('%d:00 %s', (int)$m[1], strtoupper($m[2]));
+            try {
+                $t = \Carbon\Carbon::createFromFormat('g:i A', $fix);
+                return \Carbon\Carbon::today()->setTimeFromTimeString($t->format('H:i'));
+            } catch (\Throwable $e) {
+            }
+        }
+
+        return null;
     }
 }
