@@ -23,7 +23,8 @@ class Client extends Model
         'next_due_at',
         'discount',
         'auto_book_frequency',
-        'auto_book_lookahead_days'
+        'auto_book_lookahead_days',
+        'due_price'
     ];
     protected $casts = [
         'auto_book_opt_in' => 'bool',

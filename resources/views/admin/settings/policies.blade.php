@@ -71,7 +71,7 @@
                     <div class="col-md-6">
                         <div
                             class="input-group input-group-lg input-group-outline {{ isset($noShowFeeColones) && $noShowFeeColones !== null ? 'is-filled' : '' }} my-3">
-                            <label class="form-label">Cargo por no-presentarse (₡)</label>
+                            <label class="form-label">Cargo por no-presentarse (%)</label>
                             <input type="number" name="no_show_fee_colones" id="no_show_fee_colones"
                                 class="form-control form-control-lg @error('no_show_fee_colones') is-invalid @enderror"
                                 value="{{ old('no_show_fee_colones', $noShowFeeColones) }}" min="0">

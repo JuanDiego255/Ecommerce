@@ -175,7 +175,10 @@ class BookingController extends Controller
                     'last_seen_at' => now(),
                 ])->save();
             }
-
+            $lastCitaStatus = Cita::where('client_id',$client?->id)->orderByDesc('ends_at')->first()->status;
+            if(isset($lastCitaStatus) && $lastCitaStatus === 'not_arrive'){
+                $totalCents = $totalCents + ($client->due_price * 100);
+            }
             $cita = Cita::create([
                 'barbero_id' => $barbero->id,
                 'user_id' => auth()->id(),

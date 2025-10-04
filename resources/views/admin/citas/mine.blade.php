@@ -95,6 +95,27 @@
                                         </button>
                                     </form>
                                 @endif
+                                {{-- Ausentar --}}
+                                @if ($item->status !== 'not_arrive')
+                                    <form method="post" action="{{ url('/citas/' . $item->id . '/status') }}"
+                                        class="d-inline" onsubmit="return confirm('¿Desea ausentar al cliente?');">
+                                        {{ csrf_field() }} {{ method_field('PUT') }}
+                                        <input type="hidden" name="status" value="not_arrive">
+                                        <button type="submit" class="btn btn-link text-warning border-0"
+                                            data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ausentar">
+                                            <i class="material-icons text-lg">event_busy</i>
+                                        </button>
+                                    </form>
+                                @endif
+
+                                <form method="post" action="{{ url('/citas/' . $item->id) }}" class="d-inline"
+                                    onsubmit="return confirm('¿Eliminar definitivamente?');">
+                                    {{ csrf_field() }} {{ method_field('DELETE') }}
+                                    <button type="submit" class="btn btn-link text-danger border-0"
+                                        data-bs-toggle="tooltip" data-bs-placement="bottom" title="Eliminar">
+                                        <i class="material-icons text-lg">delete</i>
+                                    </button>
+                                </form>
                             </td>
 
                             <td class="align-middle text-sm">
@@ -139,6 +160,10 @@
 
                                     @case('cancelled')
                                         <span class="badge bg-danger">Cancelada</span>
+                                    @break
+
+                                    @case('not_arrive')
+                                        <span class="badge bg-danger">Ausente</span>
                                     @break
                                 @endswitch
                             </td>

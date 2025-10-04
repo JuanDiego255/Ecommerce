@@ -117,16 +117,30 @@
                                                     </button>
                                                 </form>
                                             @endif
+                                            {{-- Ausentar --}}
+                                            @if ($item->status !== 'not_arrive')
+                                                <form method="post" action="{{ url('/citas/' . $item->id . '/status') }}"
+                                                    class="d-inline" onsubmit="return confirm('¿Desea ausentar al cliente?');">
+                                                    {{ csrf_field() }} {{ method_field('PUT') }}
+                                                    <input type="hidden" name="status" value="not_arrive">
+                                                    <button type="submit" class="btn btn-link text-warning border-0"
+                                                        data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ausentar">
+                                                        <i class="material-icons text-lg">event_busy</i>
+                                                    </button>
+                                                </form>
+                                            @endif
 
                                             {{-- Eliminar --}}
-                                            <form method="post" action="{{ url('/citas/' . $item->id) }}" class="d-inline"
-                                                onsubmit="return confirm('¿Eliminar definitivamente?');">
-                                                {{ csrf_field() }} {{ method_field('DELETE') }}
-                                                <button type="submit" class="btn btn-link text-danger border-0"
-                                                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="Eliminar">
-                                                    <i class="material-icons text-lg">delete</i>
-                                                </button>
-                                            </form>
+                                            @can('barberos.manage')
+                                                <form method="post" action="{{ url('/citas/' . $item->id) }}" class="d-inline"
+                                                    onsubmit="return confirm('¿Eliminar definitivamente?');">
+                                                    {{ csrf_field() }} {{ method_field('DELETE') }}
+                                                    <button type="submit" class="btn btn-link text-danger border-0"
+                                                        data-bs-toggle="tooltip" data-bs-placement="bottom" title="Eliminar">
+                                                        <i class="material-icons text-lg">delete</i>
+                                                    </button>
+                                                </form>
+                                            @endcan
                                         @endcan
                                         @php $current = request()->fullUrl(); @endphp
                                         <a href="{{ route('citas.show', ['id' => $item->id, 'back' => $current]) }}"
@@ -163,10 +177,10 @@
                                         <form method="post" action="{{ url('/update/cita/total/' . $item->id) }}"
                                             class="d-flex align-items-center gap-2">
                                             {{ csrf_field() }} {{ method_field('PUT') }}
-                                            <div class="input-group input-group-sm input-group-outline is-filled"                                                >
+                                            <div class="input-group input-group-sm input-group-outline is-filled">
                                                 <label class="form-label">Total</label>
-                                                <input value="{{ $item->total_cents / 100 }}" name="total" id="total"
-                                                    type="number" class="form-control">
+                                                <input value="{{ $item->total_cents / 100 }}" name="total"
+                                                    id="total" type="number" class="form-control">
                                             </div>
 
                                             <button type="submit" class="btn btn-link text-success border-0"
@@ -192,6 +206,9 @@
 
                                             @case('cancelled')
                                                 <span class="badge bg-danger">Cancelada</span>
+                                            @break
+                                            @case('not_arrive')
+                                                <span class="badge bg-danger">Ausente</span>
                                             @break
                                         @endswitch
                                     </td>

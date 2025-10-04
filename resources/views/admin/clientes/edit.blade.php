@@ -133,34 +133,37 @@
                             @endforeach
                         </div>
                     </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="input-group input-group-lg input-group-outline is-filled my-3">
-                        <label class="form-label">Hora inicio</label>
-                        <input type="time" name="preferred_start"
-                            value="{{ old('preferred_start', $client->preferred_start) }}" class="form-control">
+                    <div class="col-md-4">
+                        <div class="input-group input-group-lg input-group-outline is-filled my-3">
+                            <label class="form-label">Hora inicio</label>
+                            <input type="time" name="preferred_start"
+                                value="{{ old('preferred_start', \Carbon\Carbon::parse($client->preferred_start)->format('H:i')) }}"
+                                class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="input-group input-group-lg input-group-outline is-filled my-3">
+                            <label class="form-label">Hora fin</label>
+                            <input type="time" name="preferred_end"
+                                value="{{ old('preferred_end', \Carbon\Carbon::parse($client->preferred_end)->format('H:i')) }}"
+                                class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="input-group input-group-lg input-group-outline is-filled my-3">
+                            <label class="form-label">Precio con descuento</label>
+                            <input type="number" name="discount" value="{{ old('discount', $client->discount) }}"
+                                class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="input-group input-group-lg input-group-outline my-3 is-filled">
+                            <label class="form-label">Notas</label>
+                            <textarea name="notes" class="form-control" rows="3">{{ old('notes', $client->notes) }}</textarea>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="input-group input-group-lg input-group-outline is-filled my-3">
-                        <label class="form-label">Hora fin</label>
-                        <input type="time" name="preferred_end"
-                            value="{{ old('preferred_end', $client->preferred_end) }}" class="form-control">
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="input-group input-group-lg input-group-outline is-filled my-3">
-                        <label class="form-label">Precio con descuento</label>
-                        <input type="number" name="discount" value="{{ old('discount', $client->discount) }}"
-                            class="form-control">
-                    </div>
-                </div>
-                <div class="col-md-12">
-                    <div class="input-group input-group-lg input-group-outline my-3 is-filled">
-                        <label class="form-label">Notas</label>
-                        <textarea name="notes" class="form-control" rows="3">{{ old('notes', $client->notes) }}</textarea>
-                    </div>
-                </div>
+
             </div>
             <div class="text-center mt-3">
                 <button type="submit" class="btn btn-accion">Guardar</button>

@@ -112,6 +112,18 @@
                         </button>
                     </form>
                 @endif
+                {{-- Ausentar --}}
+                @if ($cita->status !== 'not_arrive')
+                    <form method="post" action="{{ url('/citas/' . $cita->id . '/status') }}" class="d-inline"
+                        onsubmit="return confirm('¿Desea ausentar al cliente?');">
+                        {{ csrf_field() }} {{ method_field('PUT') }}
+                        <input type="hidden" name="status" value="not_arrive">
+                        <button type="submit" class="btn btn-link text-warning border-0" data-bs-toggle="tooltip"
+                            data-bs-placement="bottom" title="Ausentar">
+                            <i class="material-icons text-lg">event_busy</i>
+                        </button>
+                    </form>
+                @endif
                 @can('barberos.manage')
                     @if ($cita->status !== 'cancelled')
                         <form method="post" action="{{ url('/citas/' . $cita->id . '/status') }}"

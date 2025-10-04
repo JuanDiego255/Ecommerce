@@ -35,7 +35,7 @@ class CitaAdminController extends Controller
             }
         }
 
-        $data = $request->validate(['status' => 'required|in:pending,confirmed,completed,cancelled']);
+        $data = $request->validate(['status' => 'required|in:pending,confirmed,completed,cancelled,not_arrive']);
         $cita->update(['status' => $data['status']]);
 
         return back()->with('ok', 'Estado actualizado');

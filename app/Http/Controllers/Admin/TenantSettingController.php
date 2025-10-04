@@ -27,8 +27,7 @@ class TenantSettingController extends Controller
 
     public function update(Request $request)
     {
-        $tenantId = tenant('id') ?? config('app.name');
-
+        $tenantId = TenantInfo::first()->tenant;
         $data = $request->validate([
             'cancel_window_hours'     => 'required|integer|min:0|max:168',
             'reschedule_window_hours' => 'required|integer|min:0|max:168',

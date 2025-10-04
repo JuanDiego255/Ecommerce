@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\TenantInfo;
 use App\Providers\RouteServiceProvider;
 use Closure;
 use Illuminate\Http\Request;
@@ -23,7 +24,19 @@ class RedirectIfAuthenticated
 
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
-                return redirect(RouteServiceProvider::HOME);
+                if (Auth::user()->role_as == 1) {
+                    $tenantinfo = TenantInfo::first();
+                    if (isset($tenantinfo) && $tenantinfo->tenant !== 'andresbarberiacr') {
+                        return redirect('/categories');
+                    } else {
+                        if (Auth::user()->role === "owner") {
+                            return redirect('/owner/dashboard');
+                        }
+                        return redirect('/mis-citas');
+                    }
+                } else {
+                    return redirect('/');
+                }
             }
         }
 

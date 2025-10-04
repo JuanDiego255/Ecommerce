@@ -7,6 +7,9 @@ use App\Mail\AppointmentApproved;
 use App\Mail\AppointmentCancelled;
 use App\Services\AutoSchedulerService;
 use App\Models\Cita;
+use App\Models\Tenant;
+use App\Models\TenantInfo;
+use App\Models\TenantSetting;
 use App\Support\TenantSettings;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\URL;
@@ -23,6 +26,7 @@ class CitaObserver
         $new = $cita->status;
         $tenantId = tenant('id') ?? config('app.name'); // ajusta según tu tenancy
         $tenant = TenantSettings::get($tenantId);
+        $client = $cita->client;
         // Aprobada (confirmada)
         if ($old !== 'confirmed' && $new === 'confirmed' && $cita->cliente_email) {
             Mail::to($cita->cliente_email)->queue(new AppointmentApproved($cita));
@@ -34,13 +38,23 @@ class CitaObserver
         }
 
         if ($cita->wasChanged('status') && $cita->status === 'completed' && $cita->client_id) {
-            $client = $cita->client;
+
             if ($client && $client->auto_book_opt_in) {
                 //Logica para proponer nueva cita
                 $best = $svc->findBestSlotFor($client, true);
                 $this->createCita($best, $client, $tenant, $tenantId);
                 //Logica para proponer nueva cita
             }
+        }
+        if ($cita->wasChanged('status') && $cita->status === 'not_arrive' && $cita->client_id) {
+            $tenantId = TenantInfo::first()->tenant;
+            $settings_barber = TenantSetting::where('tenant_id', $tenantId)->first();
+            $total_cents = $cita->total_cents / 100;
+            $porc = (int) round(($settings_barber->no_show_fee_cents ?? 0) / 100);
+            $due = $total_cents * ($porc / 100);
+            $client->update([
+                'due_price' => $due
+            ]);
         }
     }
 

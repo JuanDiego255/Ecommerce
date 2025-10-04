@@ -65,6 +65,10 @@ class AvailabilityService
         $start = Carbon::createFromFormat('Y-m-d H:i', $dateYmd . ' ' . $workStart);
         $end   = Carbon::createFromFormat('Y-m-d H:i', $dateYmd . ' ' . $workEnd);
 
+        // --- Regla especial sábado: último inicio 17:45
+        $isSaturday   = ($dayIdx === 6);
+        $lastStartSat = Carbon::createFromFormat('Y-m-d H:i', $dateYmd . ' 17:45');
+
         // Citas del día (que ocupan)
         $citas = Cita::where('barbero_id', $barbero->id)
             ->whereIn('status', ['pending', 'confirmed', 'completed'])
@@ -97,7 +101,7 @@ class AvailabilityService
         }
 
         // Hora "ahora" (solo filtrar si la fecha consultada es hoy)
-        $now = Carbon::now(); // Ajusta TZ si corresponde: Carbon::now(config('app.timezone'))
+        $now    = Carbon::now(); // Considera TZ: Carbon::now(config('app.timezone'))
         $isToday = $dateYmd === $now->toDateString();
 
         // Función de traslape con arrays de intervalos
@@ -106,7 +110,24 @@ class AvailabilityService
         };
 
         $available = [];
+
+        // End efectivo (para validar candidateEnd). En sábado, permitimos que el último
+        // inicio (17:45) sea válido aunque su duración+buffer pase el work_end,
+        // extendiendo sólo la validación (no el horario real).
+        $effectiveEnd = $end->copy();
+        if ($isSaturday) {
+            $endNeededForLast = $lastStartSat->copy()->addMinutes($requiredMinutes + $buffer);
+            if ($endNeededForLast->gt($effectiveEnd)) {
+                $effectiveEnd = $endNeededForLast;
+            }
+        }
+
         foreach ($slots as $candidate) {
+            // Limitar sábados: no permitir inicios posteriores a 17:45
+            if ($isSaturday && $candidate->gt($lastStartSat)) {
+                continue;
+            }
+
             // Si es hoy, ocultar slots ya pasados
             if ($isToday && $candidate->lt($now)) {
                 continue;
@@ -115,7 +136,11 @@ class AvailabilityService
             $candidateStart = $candidate->copy();
             // Duración requerida + buffer al final
             $candidateEnd   = $candidate->copy()->addMinutes($requiredMinutes + $buffer);
-            if ($candidateEnd->gt($end)) continue;
+
+            // Validación de tope por fin de jornada (usamos end efectivo)
+            if ($candidateEnd->gt($effectiveEnd)) {
+                continue;
+            }
 
             // Traslape con citas
             $busy = false;
