@@ -154,9 +154,13 @@
                         <li>
                             <a href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/about_us') }}">ACERCA DE</a>
                         </li> --}}
-                        <li>
-                            <a href="#">Favoritos</a>
-                        </li>
+                        @auth
+                            <li>
+                                <a
+                                    href="{{ isset(Auth::user()->code_love) ? url('/check/list-fav/' . Auth::user()->code_love) : '#' }}">Favoritos</a>
+                            </li>
+                        @endauth
+
                     </ul>
                 </div>
 
@@ -171,7 +175,7 @@
                         <i class="zmdi zmdi-shopping-cart icon-text-color-desk"></i>
                     </button>
                     @auth
-                        <a href="{{ url('/check/list-fav/' . Auth::user()->code_love) }}"
+                        <a href="{{ isset(Auth::user()->code_love) ? url('/check/list-fav/' . Auth::user()->code_love) : '#' }}"
                             class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti icon-fav icon-text-color-desk"
                             data-notify="{{ $favNumber }}">
                             <i class="zmdi zmdi-favorite-outline icon-text-color-desk"></i>
@@ -319,9 +323,12 @@
                     <a href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/registrations/show') }}">EVENTOS</a>
                 </li>
             @endif
-            <li>
-                <a href="#">FAVORITOS</a>
-            </li>
+            @auth
+                <li>
+                    <a
+                        href="{{ isset(Auth::user()->code_love) ? url('/check/list-fav/' . Auth::user()->code_love) : '#' }}">Favoritos</a>
+                </li>
+            @endauth
         </ul>
     </div>
 
