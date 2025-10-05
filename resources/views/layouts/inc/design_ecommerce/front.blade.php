@@ -81,7 +81,13 @@
                             <a href="javascript:void(0);" id="toggleMenu">Explorar</a>
                         </li>
                         <li>
-                            <a href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/category') }}">Categorías</a>
+                            @if ($tenantinfo->manage_department == 1)
+                                <a
+                                    href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/departments/index') }}">Departamentos</a>
+                            @else
+                                <a
+                                    href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/category') }}">Categorías</a>
+                            @endif
                         </li>
                         <!-- Menú expandido -->
                         <div id="fullScreenMenu" class="fullscreen-menu">
@@ -265,9 +271,12 @@
                 <a href="javascript:void(0);" id="toggleMenuMobile">EXPLORAR</a>
             </li>
             <li>
-                <a href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/category') }}">CATEGORIAS</a>
+                @if ($tenantinfo->manage_department == 1)
+                    <a href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/departments/index') }}">Departamentos</a>
+                @else
+                    <a href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/category') }}">Categorías</a>
+                @endif
             </li>
-
             <div id="fullScreenMenuMobile" class="fullscreen-menu-mobile">
                 <button id="closeMenuMobile" class="close-menu-mobile">&times;</button>
                 <div class="menu-content">
