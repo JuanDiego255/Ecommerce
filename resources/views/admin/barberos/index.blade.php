@@ -41,6 +41,15 @@
                     </div>
                 </div>
             </div>
+            @if (session('ok'))
+                <div class="alert alert-success text-white mt-3 mb-0">{{ session('ok') }}</div>
+            @endif
+            @if (session('error'))
+                <div class="alert alert-danger text-white mt-3 mb-0">{{ session('error') }}</div>
+            @endif
+            @if ($errors->any())
+                <div class="alert alert-danger text-white mt-3 mb-0">{{ $errors->first() }}</div>
+            @endif
         </div>
     </div>
 

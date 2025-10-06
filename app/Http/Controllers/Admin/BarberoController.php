@@ -89,15 +89,15 @@ class BarberoController extends Controller
             'work_days.*' => ['integer', 'between:0,6'],
             'activo' => ['sometimes', 'boolean'],
             'buffer_minutes' => 'nullable|integer|min:0|max:120',
-            'image' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
         ]);
 
         $data['work_days'] = json_encode($data['work_days']);
         $data['activo'] = (bool)($data['activo'] ?? true);
         if ($request->hasFile('image')) {
             $image = $request->file('image')->store('uploads', 'public');
+              $data['photo_path'] = $image;
         }
-        $data['photo_path'] = $image;
+      
         Barbero::create($data);
         return back()->with('ok', 'Barbero creado');
     }
