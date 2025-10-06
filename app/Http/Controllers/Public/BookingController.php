@@ -191,6 +191,13 @@ class BookingController extends Controller
                 $totalCents = $totalCents + ($client->due_price * 100);
             }
 
+            $existCita = Cita::where('client_id', $client?->id)
+                ->where('starts_at', $startsAt)
+                ->exists();
+            if ($existCita) {
+                return back()->withErrors('Ya existe una cita agendada para tí en el horario indicado.')->withInput();
+            }
+
             $cita = Cita::create([
                 'barbero_id' => $barbero->id,
                 'user_id' => auth()->id(),

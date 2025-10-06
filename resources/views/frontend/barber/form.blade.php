@@ -105,7 +105,7 @@
 @endphp
 @section('content')
     <main>
-       <div class="slider-area position-relative fix pb-120 {{ $heroImg }}">
+        <div class="slider-area position-relative fix pb-120 {{ $heroImg }}">
             <div class="slider-active">
                 <!-- Single Slider -->
                 <div class="single-slider slider-height d-flex align-items-center">
@@ -241,6 +241,7 @@
             const timeEl = document.getElementById('time');
             const checks = document.querySelectorAll('.servicio-check');
             const form = document.getElementById('formBooking');
+            const submitBtn = form.querySelector('button[type="submit"]');
 
             function getSelectedServicios() {
                 // Toma SIEMPRE los actuales, ya con la nueva clase
@@ -283,6 +284,14 @@
                     console.error(e);
                 }
             }
+
+            // 🔹 Deshabilitar el botón al enviar el formulario
+            form.addEventListener('submit', function(e) {
+                // Evita múltiples clics
+                submitBtn.disabled = true;
+                submitBtn.innerText = 'Reservando...';
+                submitBtn.classList.add('disabled');
+            });
 
             dateEl.addEventListener('change', fetchSlots);
             checks.forEach(c => c.addEventListener('change', fetchSlots));
