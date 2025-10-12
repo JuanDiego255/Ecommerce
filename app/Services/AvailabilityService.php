@@ -65,9 +65,20 @@ class AvailabilityService
         $start = Carbon::createFromFormat('Y-m-d H:i', $dateYmd . ' ' . $workStart);
         $end   = Carbon::createFromFormat('Y-m-d H:i', $dateYmd . ' ' . $workEnd);
 
-        // --- Regla especial sábado: último inicio 17:45
-        $isSaturday   = ($dayIdx === 6);
-        $lastStartSat = Carbon::createFromFormat('Y-m-d H:i', $dateYmd . ' 17:45');
+        // --- Reglas específicas sábado (no exceder 18:00)
+        $isSaturday     = ($dayIdx === 6);
+        $hardSaturdayEnd = Carbon::createFromFormat('Y-m-d H:i', $dateYmd . ' 18:00');
+
+        // Límite real de fin de jornada para validar servicios (en sábado no se puede pasar de 18:00)
+        $dayEndLimit = $isSaturday
+            ? (($end->lt($hardSaturdayEnd)) ? $end->copy() : $hardSaturdayEnd->copy())
+            : $end->copy();
+
+        // Último inicio permitido en sábado según la duración requerida (servicio + buffer)
+        // (en otros días no aplicamos tope extra)
+        $lastStartAllowedSat = $isSaturday
+            ? $dayEndLimit->copy()->subMinutes($requiredMinutes + $buffer)
+            : null;
 
         // Citas del día (que ocupan)
         $citas = Cita::where('barbero_id', $barbero->id)
@@ -111,22 +122,19 @@ class AvailabilityService
 
         $available = [];
 
-        // End efectivo para permitir último inicio del sábado
-        $effectiveEnd = $end->copy();
-        if ($isSaturday) {
-            $endNeededForLast = $lastStartSat->copy()->addMinutes($requiredMinutes + $buffer);
-            if ($endNeededForLast->gt($effectiveEnd)) {
-                $effectiveEnd = $endNeededForLast;
-            }
-        }
+        // Ya no extendemos el fin de jornada en sábado; usamos siempre $dayEndLimit
+        $effectiveEnd = $dayEndLimit->copy();
 
         foreach ($slots as $candidate) {
-            if ($isSaturday && $candidate->gt($lastStartSat)) continue;
+            // Tope de último inicio en sábado (dinámico según duración)
+            if ($isSaturday && $candidate->gt($lastStartAllowedSat)) continue;
+
             if ($isToday && $candidate->lt($now)) continue;
 
             $candidateStart = $candidate->copy();
             $candidateEnd   = $candidate->copy()->addMinutes($requiredMinutes + $buffer);
 
+            // Validamos contra el fin real del día (en sábado no pasar de 18:00)
             if ($candidateEnd->gt($effectiveEnd)) continue;
 
             $busy = false;
@@ -146,7 +154,7 @@ class AvailabilityService
             }
             if ($busy) continue;
 
-            // 👇 Siempre en formato 12 horas
+            // Siempre en formato 12 horas
             $available[] = $candidate->format('g:i A');
         }
 

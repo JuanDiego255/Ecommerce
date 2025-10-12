@@ -134,14 +134,27 @@
                                     {{ csrf_field() }} {{ method_field('PUT') }}
                                     <div class="input-group input-group-sm input-group-outline is-filled">
                                         <label class="form-label">Total</label>
-                                        <input value="{{ $item->total_cents / 100 }}" name="total" id="total"
-                                            type="number" class="form-control">
-                                    </div>
+                                        @can('barberos.manage')
+                                            <input value="{{ $item->total_cents / 100 }}" name="total" id="total"
+                                                type="number" class="form-control">
+                                        @else
+                                            <input disabled value="{{ $item->total_cents / 100 }}" name="total"
+                                                id="total" type="number" class="form-control">
+                                        @endcan
 
-                                    <button type="submit" class="btn btn-link text-success border-0"
-                                        data-bs-toggle="tooltip" title="Guardar total">
-                                        <i class="material-icons text-lg">save</i>
-                                    </button>
+                                    </div>
+                                    @can('barberos.manage')
+                                        <button type="submit" class="btn btn-link text-success border-0"
+                                            data-bs-toggle="tooltip" title="Guardar total">
+                                            <i class="material-icons text-lg">save</i>
+                                        </button>
+                                    @else
+                                        <button disabled type="submit" class="btn btn-link text-success border-0"
+                                            data-bs-toggle="tooltip" title="Guardar total">
+                                            <i class="material-icons text-lg">save</i>
+                                        </button>
+                                    @endcan
+
                                 </form>
                             </td>
                             <td class="align-middle text-sm">

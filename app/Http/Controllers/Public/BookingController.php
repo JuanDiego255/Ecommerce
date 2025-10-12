@@ -278,12 +278,27 @@ class BookingController extends Controller
                 $tenant = TenantSettings::get($tenantId);
                 $domain = $tenantId == "muebleriasarchi" || $tenantId == "avelectromecanica" ? "https://{$tenantId}.com" : "https://{$tenantId}.safeworsolutions.com";
 
+                $appTz = config('app.timezone', 'America/Costa_Rica');
+
+                // Aseguramos que la fecha de inicio esté en el timezone de la app para el cálculo
+                $startsAtTz = $startsAt->copy()->timezone($appTz);
+
+                // Vence 2 horas antes de la cita
+                $expiresAt = $startsAtTz->copy()->subHours(2);
+
+                // Si por alguna razón la cita es en <= 2 horas, el link vencería en el pasado;
+                // en ese caso, forzamos un mínimo de 1 minuto para evitar una firma ya expirada.
+                if ($expiresAt->lessThanOrEqualTo(now($appTz))) {
+                    $expiresAt = now($appTz)->addMinute();
+                }
+
                 URL::forceRootUrl($domain);
                 URL::forceScheme('https');
-                // Links firmados
-                $acceptUrl  = URL::temporarySignedRoute('auto.accept',  now()->addHours(36), ['cita' => $cita->id]);
-                $reschedUrl = URL::temporarySignedRoute('auto.resched', now()->addHours(36), ['cita' => $cita->id]);
-                $declineUrl = URL::temporarySignedRoute('auto.decline', now()->addHours(36), ['cita' => $cita->id]);
+                $acceptUrl  = URL::temporarySignedRoute('auto.accept',  $expiresAt, ['cita' => $cita->id]);
+                $reschedUrl = URL::temporarySignedRoute('auto.resched', $expiresAt, ['cita' => $cita->id]);
+                $declineUrl = URL::temporarySignedRoute('auto.decline', $expiresAt, ['cita' => $cita->id]);
+
+                // Restaurar configuración de URL para el resto de la app
                 URL::forceRootUrl(config('app.url'));
                 URL::forceScheme(null);
                 // Datos para el blade del correo (ya lo tienes: auto_proposed)
@@ -319,7 +334,7 @@ class BookingController extends Controller
             }
         });
 
-        return redirect()->back()->with('ok', '¡Cita reservada! Te contactaremos para confirmar.');
+        return redirect()->back()->with('ok', '¡Cita reservada! Gracias por confiar en nuestros barberos.');
     }
 
     private function parseTimeFlexible(string $value): ?\Carbon\Carbon
