@@ -165,7 +165,7 @@
 
                                 {{-- Servicios --}}
                                 <div class="form-group mb-3">
-                                    <label class="form-label fw-bold">Selecciona tus servicios</label>
+                                    <label class="form-label fw-bold">Selecciona tus servicios (Debes seleccionarlos antes de seleccionar la fecha)</label>
                                     <div class="row">
                                         @foreach ($servicios as $s)
                                             <div class="col-md-6 svc-item">
@@ -239,7 +239,7 @@
         (function() {
             const dateEl = document.getElementById('date');
             const timeEl = document.getElementById('time');
-            const checks = document.querySelectorAll('.servicio-check');
+            const checks = document.querySelectorAll('.svc-check');
             const form = document.getElementById('formBooking');
             const submitBtn = form.querySelector('button[type="submit"]');
 
