@@ -283,8 +283,8 @@ class BookingController extends Controller
                 // Aseguramos que la fecha de inicio esté en el timezone de la app para el cálculo
                 $startsAtTz = $startsAt->copy()->timezone($appTz);
 
-                // Vence 2 horas antes de la cita
-                $expiresAt = $startsAtTz->copy()->subHours(2);
+                // Vence 1 horas antes de la cita
+                $expiresAt = $startsAtTz->copy()->subHours(1);
 
                 // Si por alguna razón la cita es en <= 2 horas, el link vencería en el pasado;
                 // en ese caso, forzamos un mínimo de 1 minuto para evitar una firma ya expirada.

@@ -108,6 +108,7 @@
                 <span class="badge" style="background:#0ea5e9">Confirmada</span>
                 <span class="badge" style="background:#10b981">Completada</span>
                 <span class="badge" style="background:#ef4444">Cancelada</span>
+                <span class="badge" style="background:#fd5800">Ausente</span>
                 <span class="badge" style="background:#f59e0b">Bloque</span>
                 <span class="badge" style="background:#ffe2e2; color:#333">Día libre</span>
             </div>

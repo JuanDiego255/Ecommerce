@@ -81,7 +81,7 @@ class CitaAdminController extends Controller
         $items = \App\Models\Cita::with('barbero')
             ->where('barbero_id', $barbero->id)
             ->orderByDesc('starts_at')
-            ->paginate(20);
+            ->get();
 
         return view('admin.citas.mine', compact('items', 'barbero'));
     }

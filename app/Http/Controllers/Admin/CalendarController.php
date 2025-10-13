@@ -45,6 +45,7 @@ class CalendarController extends Controller
             'confirmed' => '#0ea5e9',
             'completed' => '#10b981',
             'cancelled' => '#ef4444',
+            'not_arrive' => '#fd5800',
         ];
 
         $events = [];
