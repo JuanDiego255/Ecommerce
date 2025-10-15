@@ -37,7 +37,7 @@ class AutoBookingController extends Controller
     // ❌ Rechazar propuesta automática
     public function decline(Request $request, Cita $cita)
     {
-        if (!$cita->is_auto || $cita->status !== 'pending') {
+        if ($cita->status === 'completed') {
             return $this->backWithMsg('Esta propuesta ya no está disponible.', 'danger');
         }
 
