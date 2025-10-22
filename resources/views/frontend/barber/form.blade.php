@@ -165,7 +165,8 @@
 
                                 {{-- Servicios --}}
                                 <div class="form-group mb-3">
-                                    <label class="form-label fw-bold">Selecciona tus servicios (Debes seleccionarlos antes de seleccionar la fecha)</label>
+                                    <label class="form-label fw-bold">Selecciona tus servicios (Debes seleccionarlos antes
+                                        de seleccionar la fecha)</label>
                                     <div class="row">
                                         @foreach ($servicios as $s)
                                             <div class="col-md-6 svc-item">
@@ -259,11 +260,14 @@
                 const date = dateEl.value;
                 const servicios = getSelectedServicios();
                 const sel = $('#time');
+
                 // Limpia opciones
                 sel.empty().append('<option value="">Selecciona hora</option>');
                 clearSelect();
+                hideNoSlotsMsg(); // por si venía de un estado anterior
+
                 if (!date || servicios.length === 0) {
-                    sel.niceSelect('update'); // refresca la UI
+                    sel.niceSelect('update');
                     return;
                 }
 
@@ -275,15 +279,58 @@
                     const res = await fetch(url);
                     const data = await res.json();
 
-                    (data.slots || []).forEach(h => {
+                    const slots = data.slots || [];
+
+                    if (slots.length === 0) {
+                        // 1) Opción deshabilitada dentro del <select>
+                        sel.append('<option value="" disabled selected>No hay horas disponibles</option>');
+
+                        // 2) (Opcional) Mensaje debajo del select
+                        showNoSlotsMsg('No hay horas disponibles para esa fecha para este barbero.');
+
+                        // 3) (Opcional) Deshabilitar el select completo:
+                        // sel.prop('disabled', true);
+
+                        sel.niceSelect('update');
+                        return; // importante: no seguir
+                    }
+
+                    // Si hay slots, habilitar por si antes se deshabilitó
+                    sel.prop('disabled', false);
+
+                    slots.forEach(h => {
                         sel.append(new Option(h, h));
                     });
 
-                    sel.niceSelect('update'); // 🔑 refrescar aquí
+                    sel.niceSelect('update'); // refrescar UI
                 } catch (e) {
                     console.error(e);
+                    showNoSlotsMsg('Ocurrió un error al cargar la disponibilidad.');
+                    sel.niceSelect('update');
                 }
             }
+
+            // helpers simples para mostrar/ocultar un mensajito bajo el select
+            function showNoSlotsMsg(texto) {
+                // Si ya existe, solo actualiza el texto
+                let $msg = $('#no-slots-msg');
+                if ($msg.length === 0) {
+                    // Inserta el mensaje justo después del div que contiene el input de fecha
+                    const dateGroup = $('#date').closest('.form-group');
+                    $msg = $('<div id="no-slots-msg" class="alert alert-danger text-center mt-2"></div>');
+                    dateGroup.after($msg);
+                }
+                $msg.text(texto).show();
+            }
+
+            function hideNoSlotsMsg() {
+                $('#no-slots-msg').hide();
+            }
+
+
+            dateEl.addEventListener('change', fetchSlots);
+            checks.forEach(c => c.addEventListener('change', fetchSlots));
+
 
             // 🔹 Deshabilitar el botón al enviar el formulario
             form.addEventListener('submit', function(e) {
