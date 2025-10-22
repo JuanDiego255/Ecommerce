@@ -2284,13 +2284,13 @@ hr {
     background-size: cover;
     background-attachment: fixed;
 }
-.hero-img {   
+.hero-img {
     background-image: url("../img/hero/h1_hero.png"); /* Imagen por defecto (laptops/desktop) */
 }
-.hero-img-jp {   
+.hero-img-jp {
     background-image: url("../img/hero/h1_jp.png"); /* Imagen por defecto (laptops/desktop) */
 }
-.hero-img-andres {   
+.hero-img-andres {
     background-image: url("../img/hero/h1_andres.png"); /* Imagen por defecto (laptops/desktop) */
 }
 
@@ -3043,6 +3043,13 @@ hr {
     width: 300px !important;
     transform: scale(1);
     transition: all 0.6s ease-out 0s;
+}
+@media (max-width: 768px) {
+    .team-area .single-team .team-img img {
+        width: 200px !important;
+        transform: scale(1);
+        transition: all 0.6s ease-out 0s;
+    }
 }
 .service-img img {
     width: 300px;
