@@ -193,6 +193,7 @@ class BookingController extends Controller
 
             $existCita = Cita::where('client_id', $client?->id)
                 ->where('starts_at', $startsAt)
+                ->where('status','confirmed')
                 ->exists();
             if ($existCita) {
                 return back()->withErrors('Ya existe una cita agendada para tí en el horario indicado.')->withInput();
