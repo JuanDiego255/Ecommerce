@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7cbdca012fa0ce48ed15d710daba0929",
+    "content-hash": "89b769b47ec96e5c30e3057c0e85b72d",
     "packages": [
         {
             "name": "adrianorosa/laravel-geolocation",
@@ -1156,23 +1156,23 @@
         },
         {
             "name": "google/auth",
-            "version": "v1.41.0",
+            "version": "v1.44.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-auth-library-php.git",
-                "reference": "1043ea18fe7f5dfbf5b208ce3ee6d6b6ab8cb038"
+                "reference": "5670e56307d7a2eac931f677c0e59a4f8abb2e43"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-auth-library-php/zipball/1043ea18fe7f5dfbf5b208ce3ee6d6b6ab8cb038",
-                "reference": "1043ea18fe7f5dfbf5b208ce3ee6d6b6ab8cb038",
+                "url": "https://api.github.com/repos/googleapis/google-auth-library-php/zipball/5670e56307d7a2eac931f677c0e59a4f8abb2e43",
+                "reference": "5670e56307d7a2eac931f677c0e59a4f8abb2e43",
                 "shasum": ""
             },
             "require": {
                 "firebase/php-jwt": "^6.0",
                 "guzzlehttp/guzzle": "^7.4.5",
                 "guzzlehttp/psr7": "^2.4.5",
-                "php": "^8.0",
+                "php": "^8.1",
                 "psr/cache": "^2.0||^3.0",
                 "psr/http-message": "^1.1||^2.0"
             },
@@ -1210,9 +1210,9 @@
             "support": {
                 "docs": "https://googleapis.github.io/google-auth-library-php/main/",
                 "issues": "https://github.com/googleapis/google-auth-library-php/issues",
-                "source": "https://github.com/googleapis/google-auth-library-php/tree/v1.41.0"
+                "source": "https://github.com/googleapis/google-auth-library-php/tree/v1.44.0"
             },
-            "time": "2024-07-10T15:21:07+00:00"
+            "time": "2024-12-04T15:34:58+00:00"
         },
         {
             "name": "google/cloud-core",
