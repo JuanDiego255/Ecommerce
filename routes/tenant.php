@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\AddressUserController;
+use App\Http\Controllers\Admin\AdminPushTokenController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\FrontendController;
@@ -65,6 +66,7 @@ use App\Http\Controllers\Public\BookingController;
 use App\Http\Controllers\PublicBookingController;
 use App\Http\Controllers\PublicEventController;
 use App\Http\Controllers\PublicRegistrationController;
+use App\Services\FcmHttpV1;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
 
@@ -181,6 +183,28 @@ Route::middleware([
             Route::get('/registrations/show', [PublicRegistrationController::class, 'show'])->name('registrations.show');
         });
 
+        Route::get('/test-fcm', function () {
+            // Este es el token FCM del navegador/admin que quieras probar.
+            // Debes haber obtenido este token en el front con messaging.getToken(...)
+            $deviceToken = 'ACA_VA_TU_TOKEN_DEL_NAVEGADOR_O_MOVIL';
+
+            $message = [
+                'token' => $deviceToken,
+                'notification' => [
+                    'title' => 'Nueva cita reservada',
+                    'body'  => 'Cliente Juan Pérez hoy a las 3:30pm',
+                ],
+                'data' => [
+                    'type'    => 'appointment',
+                    'cita_id' => '123',
+                    'url'     => url('/admin/citas/123'),
+                ],
+            ];
+
+            $result = FcmHttpV1::send(env('FCM_PROJECT_ID'), $message);
+
+            dd($result);
+        });
         Auth::routes();
 
         Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
@@ -521,6 +545,7 @@ Route::middleware([
                 Route::put('/clientes/{client}', [\App\Http\Controllers\Admin\ClientController::class, 'update'])->name('clientes.update');
                 // si quieres crear manualmente:
                 Route::post('/clientes', [\App\Http\Controllers\Admin\ClientController::class, 'store'])->name('clientes.store');
+               
             });
 
             // Dueño o manager: ver/gestionar citas de TODOS
@@ -531,6 +556,10 @@ Route::middleware([
 
             // Mis citas: todos los roles autenticados que sean barbero vinculado
             Route::middleware('role:owner,manager,barber')->group(function () {
+                 Route::post(
+                    '/admin/push-token',
+                    [AdminPushTokenController::class, 'store']
+                )->name('admin.push-token.store');
                 Route::put('/citas/{id}/status', [CitaAdminController::class, 'updateStatus']);
                 Route::get('/citas/{id}', [CitaAdminController::class, 'show'])->name('citas.show');
                 Route::get('/mis-citas', [CitaAdminController::class, 'myIndex'])->name('citas.mine');

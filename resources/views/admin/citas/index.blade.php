@@ -207,6 +207,7 @@
                                             @case('cancelled')
                                                 <span class="badge bg-danger">Cancelada</span>
                                             @break
+
                                             @case('not_arrive')
                                                 <span class="badge bg-danger">Ausente</span>
                                             @break

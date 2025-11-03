@@ -193,7 +193,7 @@ class BookingController extends Controller
 
             $existCita = Cita::where('client_id', $client?->id)
                 ->where('starts_at', $startsAt)
-                ->where('status','confirmed')
+                ->where('status', 'confirmed')
                 ->exists();
             if ($existCita) {
                 return back()->withErrors('Ya existe una cita agendada para tí en el horario indicado.')->withInput();
@@ -212,6 +212,17 @@ class BookingController extends Controller
                 'status' => 'confirmed',
                 'notas' => null,
                 'source' => 'landing',
+            ]);
+
+            $tenantId = TenantInfo::first()->tenant;
+            $adminShowUrl = route('citas.mine');
+
+            // Aquí metemos nuestro push a todos los admins/barberos logueados de este tenant:
+            \App\Services\AppointmentNotifier::nuevaCitaParaTenant($tenantId, [
+                'title' => 'Nueva cita reservada',
+                'body'  => $cita->cliente_nombre . ' ' . $cita->starts_at->format('d/m/Y H:i') . ' con ' . $cita->barbero->nombre,
+                'cita_id' => $cita->id,
+                'url'   => $adminShowUrl,
             ]);
 
             $syncData = [];

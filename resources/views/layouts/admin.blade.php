@@ -138,6 +138,128 @@
             Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
         }
     </script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js"></script>
+    <script>
+        // Config pública de tu proyecto Firebase (usa valores de tu .env)
+        const firebaseConfig = {
+            apiKey: "{{ env('FIREBASE_API_KEY') }}",
+            authDomain: "{{ env('FIREBASE_AUTH_DOMAIN') }}",
+            projectId: "{{ env('FIREBASE_PROJECT_ID') }}",
+            messagingSenderId: "{{ env('FIREBASE_MESSAGING_SENDER_ID') }}",
+            appId: "{{ env('FIREBASE_APP_ID') }}",
+        };
+
+        // Inicializa Firebase en el navegador
+        firebase.initializeApp(firebaseConfig);
+
+        const messaging = firebase.messaging();
+
+        // Registrar service worker, necesario para notificaciones en background
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/firebase-messaging-sw.js').then(async (registration) => {
+
+                // 👇 OJO: en Firebase 9/10 ya no existe messaging.useServiceWorker
+                // messaging.useServiceWorker(registration); // <-- esto daba el error
+
+                // Pedir permiso al usuario para notificaciones
+                const permission = await Notification.requestPermission();
+                if (permission !== 'granted') {
+                    console.warn('Notificaciones bloqueadas por el usuario');
+                    return;
+                }
+
+                try {
+                    // Obtener el registration token (el que FCM necesita)
+                    const currentToken = await messaging.getToken({
+                        vapidKey: "{{ env('FIREBASE_VAPID_KEY') }}", // tu VAPID KEY
+                        serviceWorkerRegistration: registration, // 👈 se pasa aquí ahora
+                    });
+
+                    if (currentToken) {
+                        console.log('FCM token (admin panel):', currentToken);
+
+                        // Enviarlo al backend para guardarlo en BD
+                        fetch("{{ route('admin.push-token.store') }}", {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                                },
+                                body: JSON.stringify({
+                                    token: currentToken,
+                                    platform: 'web',
+                                }),
+                            })
+                            .then(async r => {
+                                const text = await r.text();
+                                console.log('Respuesta cruda backend /admin/push-token:', r.status,
+                                    text);
+
+                                // si quieres seguir esperando JSON solo cuando sea 200:
+                                if (r.ok) {
+                                    try {
+                                        const data = JSON.parse(text);
+                                        console.log('Token registrado en backend:', data);
+                                    } catch (e) {
+                                        console.error('Error parseando JSON de backend:', e);
+                                    }
+                                }
+                            })
+                            .catch(err => {
+                                console.error('Error registrando token en backend:', err);
+                            });
+
+
+                    } else {
+                        console.warn('No pude obtener token FCM (quizá no tiene permiso)');
+                    }
+                } catch (e) {
+                    console.error('Error al pedir token FCM:', e);
+                }
+
+                // Mensajes cuando la pestaña está en primer plano
+                messaging.onMessage((payload) => {
+                    console.log('Push recibido en foreground:', payload);
+
+                    // Extraer información del mensaje
+                    const title = payload?.notification?.title || 'Nueva notificación';
+                    const body = payload?.notification?.body || 'Tienes una nueva cita.';
+                    const url = payload?.data?.url || '/mis-citas';
+
+                    // 🔊 Reproducir sonido de alerta
+                    const audio = new Audio('/sounds/notify.mp3');
+                    audio.play().catch(err => console.warn('No se pudo reproducir el sonido:', err));
+
+                    // 🪄 Mostrar SweetAlert2
+                    Swal.fire({
+                        title: title,
+                        text: body,
+                        icon: 'info',
+                        showCancelButton: true,
+                        confirmButtonText: 'Ver mis citas',
+                        cancelButtonText: 'Cerrar',
+                        allowOutsideClick: false,
+                        customClass: {
+                            confirmButton: 'bg-primary text-white',
+                            cancelButton: 'bg-gray-300'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // 🔁 Redirigir al panel de citas
+                            window.location.href = url;
+                        }
+                    });
+                });
+
+
+            }).catch(err => {
+                console.error('Error registrando Service Worker para FCM:', err);
+            });
+        } else {
+            console.warn('Service workers no soportados en este navegador.');
+        }
+    </script>
     @yield('script')
 
 
