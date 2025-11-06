@@ -60,6 +60,12 @@
             <span class="comment-label">¡Deja un testimonio!</span> <!-- Etiqueta -->
             <img src="{{ asset('avstyles/img/svg_icon/comment.svg') }}" alt="WhatsApp" width="40" height="40">
         </div>
+        <a href="{{ url('/aclimate') }}">
+            <div class="aclimate-button aclimate-button-click">
+                <span class="aclimate-label">¡Visita Aclímate!</span> <!-- Etiqueta -->
+                <img src="{{ asset('avstyles/img/svg_icon/copo.svg') }}" alt="WhatsApp" width="40" height="40">
+            </div>
+        </a>
         <div>
             @include('layouts.inc.av.frontav')
             @yield('content')
