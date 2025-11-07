@@ -58,6 +58,7 @@
                         <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Fecha') }}</th>
                         <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Hora') }}</th>
                         <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Total') }}</th>
+                        <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Forma Pago') }}</th>
                         <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Estado') }}</th>
                     </tr>
                 </thead>
@@ -155,6 +156,47 @@
                                         </button>
                                     @endcan
 
+                                </form>
+                            </td>
+                            <td class="align-middle text-sm">
+                                <form method="post" action="{{ url('/update/cita/pago/' . $item->id) }}"
+                                    class="d-flex align-items-center gap-2">
+                                    {{ csrf_field() }} {{ method_field('PUT') }}
+                                    <div class="input-group input-group-lg input-group-static my-3 w-100">
+                                        <select id="payment_type" name="payment_type"
+                                            class="form-control form-control-lg @error('payment_type') is-invalid @enderror"
+                                            autocomplete="payment_type" autofocus>
+                                            <option selected value="{{ $item->payment_type }}">
+                                                @switch($item->payment_type)
+                                                    @case(1)
+                                                        {{ __('Efectivo') }}
+                                                    @break
+
+                                                    @case(2)
+                                                        {{ __('SINPE') }}
+                                                    @break
+
+                                                    @case(3)
+                                                        {{ __('Tarjeta') }}
+                                                    @break
+                                                @endswitch
+                                            </option>
+                                            <option value="1">
+                                                {{ __('Efectivo') }}
+                                            </option>
+                                            <option value="2">
+                                                {{ __('SINPE') }}
+                                            </option>
+                                            <option value="3">
+                                                {{ __('Tarjeta') }}
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-link text-success border-0"
+                                        data-bs-toggle="tooltip" title="Guardar tipo">
+                                        <i class="material-icons text-lg">save</i>
+                                    </button>
                                 </form>
                             </td>
                             <td class="align-middle text-sm">

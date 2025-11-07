@@ -545,18 +545,19 @@ Route::middleware([
                 Route::put('/clientes/{client}', [\App\Http\Controllers\Admin\ClientController::class, 'update'])->name('clientes.update');
                 // si quieres crear manualmente:
                 Route::post('/clientes', [\App\Http\Controllers\Admin\ClientController::class, 'store'])->name('clientes.store');
-               
             });
 
             // Dueño o manager: ver/gestionar citas de TODOS
             Route::middleware('role:owner,manager')->group(function () {
                 Route::get('/citas', [CitaAdminController::class, 'index'])->name('citas.index');
                 Route::delete('/citas/{id}', [CitaAdminController::class, 'destroy']);
+                Route::put('update/cita/total/{id}', [CitaAdminController::class, 'updateTotal'])->name('cita.updateTotal');
+                Route::put('update/cita/pago/{id}', [CitaAdminController::class, 'updateTipoPago'])->name('cita.updateTipoPago');
             });
 
             // Mis citas: todos los roles autenticados que sean barbero vinculado
             Route::middleware('role:owner,manager,barber')->group(function () {
-                 Route::post(
+                Route::post(
                     '/admin/push-token',
                     [AdminPushTokenController::class, 'store']
                 )->name('admin.push-token.store');
@@ -598,7 +599,6 @@ Route::middleware([
                 Route::get('/booking/{cita}/cancel', [PublicBookingController::class, 'cancel'])->name('booking.cancel');     // GET por simplicidad
                 Route::get('/booking/{cita}/reschedule', [PublicBookingController::class, 'reschedule'])->name('booking.reschedule');
             });
-            Route::put('update/cita/total/{id}', [CitaAdminController::class, 'updateTotal'])->name('cita.updateTotal');
             //Rutas para form de ciclismo
             Route::get('/events', [EventController::class, 'index'])->name('events.index');
             Route::post('/events/store', [EventController::class, 'store'])->name('events.store');

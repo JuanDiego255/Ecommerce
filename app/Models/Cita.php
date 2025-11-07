@@ -25,7 +25,8 @@ class Cita extends Model
         'status',
         'is_auto',
         'notas',
-        'source',        
+        'source',   
+        'payment_type'     
     ];
 
 

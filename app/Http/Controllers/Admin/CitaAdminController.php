@@ -98,4 +98,16 @@ class CitaAdminController extends Controller
 
         return back()->with('ok', 'Monto de la cita actualizado.');
     }
+    public function updateTipoPago(Request $request, $id)
+    {
+        //abort_unless(Gate::allows('tenant.settings'), 403);
+        $data = $request->validate([
+            'payment_type' => ['required'],
+        ]);
+
+        $cita = Cita::findOrFail($id);
+        $cita->update(['payment_type' => $data['payment_type']]);
+
+        return back()->with('ok', 'Tipo de pago de la cita actualizado.');
+    }
 }
