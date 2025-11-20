@@ -14,6 +14,7 @@ class TenantSetting extends Model
         'allow_online_cancel',
         'allow_online_reschedule',
         'no_show_fee_cents',
-        'email_bcc'
+        'email_bcc',
+        'payroll_time'
     ];
 }

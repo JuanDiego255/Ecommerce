@@ -125,6 +125,41 @@
                 </div>
             </div>
         </div>
+        <div class="col-md-4">
+            <div class="card mt-3">
+                <div class="card-body">
+                    <form action="{{ route('settings.payroll.update') }}" method="POST" class="form-horizontal">
+                        @csrf
+                        @method('PUT')
+
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <div class="input-group input-group-sm input-group-outline is-filled"
+                                    style="min-width: 150px;">
+                                    <label class="form-label">Pago Nómina</label>
+                                    <select name="payroll_time" class="form-control">
+                                        <option {{ $settings_barber->payroll_time == 1 ? 'selected' : '' }} value="1">
+                                            Diario</option>
+                                        <option value="7" {{ $settings_barber->payroll_time == 7 ? 'selected' : '' }}>
+                                            Semanal</option>
+                                        <option value="15"
+                                            {{ $settings_barber->payroll_time == 15 ? 'selected' : '' }}>
+                                            Quincenal</option>
+                                        <option value="30"
+                                            {{ $settings_barber->payroll_time == 30 ? 'selected' : '' }}>
+                                            Mensual</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <center>
+                            <button type="submit" class="btn btn-accion">Guardar</button>
+                        </center>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 @endsection
 

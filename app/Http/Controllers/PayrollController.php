@@ -7,6 +7,8 @@ use App\Models\Barbero;
 use App\Models\Cita;
 use App\Models\Payroll;
 use App\Models\PayrollItem;
+use App\Models\TenantInfo;
+use App\Models\TenantSetting;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -19,11 +21,26 @@ class PayrollController extends Controller
     public function index(Request $request)
     {
         $payrolls = Payroll::orderByDesc('week_start')->paginate(12);
+        $tenantId = TenantInfo::first()->tenant;
+        $payroll_time = TenantSetting::where('tenant_id', $tenantId)->first()->payroll_time;
 
         // sugerir semana actual (lunes-domingo)
         $tz = config('app.timezone', 'America/Costa_Rica');
-        $start = Carbon::now($tz)->startOfWeek(Carbon::MONDAY)->toDateString();
-        $end   = Carbon::now($tz)->endOfWeek(Carbon::SUNDAY)->toDateString();
+        switch ($payroll_time) {
+            case 1:
+                $start = Carbon::now($tz)->startOfDay()->toDateString();
+                $end   = Carbon::now($tz)->endOfDay()->toDateString();
+                break;
+            case 15:
+                break;
+            case 30:
+                break;
+            default:
+                $start = Carbon::now($tz)->startOfWeek(Carbon::MONDAY)->toDateString();
+                $end   = Carbon::now($tz)->endOfWeek(Carbon::SUNDAY)->toDateString();
+                break;
+        }
+
 
         return view('admin.payroll.index', compact('payrolls', 'start', 'end'));
     }

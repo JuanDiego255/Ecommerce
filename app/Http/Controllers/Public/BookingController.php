@@ -15,6 +15,7 @@ use App\Models\Servicio;
 use App\Models\TenantInfo;
 use App\Services\PricingService;
 use App\Services\AvailabilityService;
+use App\Services\TenantMailService;
 use App\Support\TenantSettings;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -122,7 +123,7 @@ class BookingController extends Controller
     }
 
 
-    public function reservar(Request $request, PricingService $pricing, AvailabilityService $availability)
+    public function reservar(Request $request, PricingService $pricing, AvailabilityService $availability,  TenantMailService $tenantMailService)
     {
         $data = $request->validate([
             'barbero_id' => ['required', 'integer', 'exists:barberos,id'],
@@ -134,7 +135,7 @@ class BookingController extends Controller
             'date' => ['required', 'date_format:Y-m-d', 'after_or_equal:' . now()->toDateString()],
             'time' => ['required', 'string'],
         ]);
-
+        $mailer = $tenantMailService->forCurrentTenant();
         $barbero = Barbero::findOrFail($data['barbero_id']);
 
         $timeInput = trim($data['time']);
@@ -162,7 +163,7 @@ class BookingController extends Controller
             return back()->withErrors('Ese horario acaba de ocuparse. Elige otro.')->withInput();
         }
         // Crear cita y snapshot de servicios
-        DB::transaction(function () use ($barbero, $data, $totalCents, $detalle, $startsAt, $endsAt, $request) {
+        DB::transaction(function () use ($barbero, $data, $totalCents, $detalle, $startsAt, $endsAt, $request, $mailer) {
 
             $email  = trim((string)$request->input('cliente_email'));
             $nombre = trim((string)$request->input('cliente_nombre'));
@@ -276,7 +277,7 @@ class BookingController extends Controller
                 ];
 
                 // Si prefieres encolar, puedes usar un Mailable. Como pediste Mail::send, lo dejo así:
-                Mail::send(
+                /* Mail::send(
                     ['html' => 'emails.citas.new_for_barber'],
                     $viewData,
                     function ($m) use ($barberoEmail, $cita) {
@@ -284,7 +285,19 @@ class BookingController extends Controller
                             ->from(env('MAIL_FROM_ADDRESS'), 'Info Barbería') // 👈 aquí cambias el nombre visible
                             ->subject('📅 Nueva cita agendada — #' . $cita->id);
                     }
+                ); */
+                $mailer->send(
+                    ['html' => 'emails.citas.new_for_barber'],
+                    $viewData,
+                    function ($m) use ($barberoEmail, $cita) {
+                        $m->to($barberoEmail)
+                            // from ya viene por config('mail.from.*'),
+                            // solo lo pones aquí si quieres sobreescribirlo:
+                            // ->from($settings->from_address, $settings->from_name)
+                            ->subject('📅 Nueva cita agendada — #' . $cita->id);
+                    }
                 );
+
                 //Enviar correo al cliente para que pueda eliminar, cancelar la cita
                 $tenantId = TenantInfo::first()->tenant;
                 $tenant = TenantSettings::get($tenantId);
@@ -331,16 +344,17 @@ class BookingController extends Controller
                 ];
 
                 // Enviar con tu estilo Mail::send
-                Mail::send(
-                    ['html' => 'emails.auto_proposed', 'text' => 'emails.auto_proposed_text'],
+                $mailer->send(
+                    [
+                        'html' => 'emails.auto_proposed',
+                        'text' => 'emails.auto_proposed_text'
+                    ],
                     $viewData,
                     function ($m) use ($cita, $barbero, $startsAt) {
                         $m->to($cita->cliente_email)
-                            ->from(
-                                env('MAIL_FROM_ADDRESS'),   // usa MAIL_FROM_ADDRESS del .env
-                                'Info Barbería'       // usa MAIL_FROM_NAME del .env
-                            )
-                            ->subject('Cita confirmada con ' . $barbero->nombre . ' — ' . $startsAt->format('d/m/Y'));
+                            ->subject(
+                                'Cita confirmada con ' . $barbero->nombre . ' — ' . $startsAt->format('d/m/Y')
+                            );
                     }
                 );
             }

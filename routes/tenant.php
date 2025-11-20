@@ -52,6 +52,7 @@ use App\Http\Controllers\Admin\BarberoController;
 use App\Http\Controllers\Admin\BarberoTrabajoController;
 use App\Http\Controllers\Admin\CalendarController;
 use App\Http\Controllers\Admin\CitaAdminController;
+use App\Http\Controllers\Admin\EmailSettingController;
 use App\Http\Controllers\Admin\EventCategoryController;
 use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\RegistrationController;
@@ -592,6 +593,9 @@ Route::middleware([
                     ->name('barberos.bloques.quick');
                 Route::get('/settings/policies', [TenantSettingController::class, 'index'])->name('settings.policies');
                 Route::put('/settings/policies', [TenantSettingController::class, 'update'])->name('settings.policies.update');
+                Route::get('/settings/email', [EmailSettingController::class, 'index'])->name('settings.email');
+                Route::put('/settings/email', [EmailSettingController::class, 'update'])->name('settings.email.update');
+                Route::put('/settings/payroll', [TenantSettingController::class, 'updateTimePayroll'])->name('settings.payroll.update');
                 Route::get('/barberos/{barbero}', [BarberoController::class, 'show'])->name('barberos.show');
             });
 

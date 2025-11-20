@@ -62,4 +62,17 @@ class TenantSettingController extends Controller
 
         return back()->with('ok', 'Políticas guardadas correctamente.');
     }
+    public function updateTimePayroll(Request $request)
+    {
+        $tenantId = TenantInfo::first()->tenant;
+        $data = $request->validate([
+            'payroll_time'     => 'required|integer|min:0|max:168'
+        ]);
+        $settings = TenantSetting::firstOrCreate(['tenant_id' => $tenantId]);
+        $settings->fill([
+            'payroll_time'     => $data['payroll_time']
+        ])->save();
+
+        return back()->with('ok', 'Se guardó correctamente el pago de la nómina.');
+    }
 }

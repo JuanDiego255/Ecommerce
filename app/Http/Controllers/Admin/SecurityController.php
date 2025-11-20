@@ -6,6 +6,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Barbero;
+use App\Models\TenantInfo;
+use App\Models\TenantSetting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
@@ -18,8 +20,10 @@ class SecurityController extends Controller
 
         $users = User::orderBy('name')->paginate(20);
         $barberos = Barbero::orderBy('nombre')->get();
+        $tenantId = TenantInfo::first()->tenant;
+        $settings_barber = TenantSetting::where('tenant_id', $tenantId)->first();
 
-        return view('admin.security.index', compact('users', 'barberos'));
+        return view('admin.security.index', compact('users', 'barberos','settings_barber'));
     }
 
     public function updateRole(Request $request, $userId)
