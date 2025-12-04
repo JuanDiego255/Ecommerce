@@ -3910,3 +3910,160 @@ input.num-product::-webkit-inner-spin-button {
         padding-top: 60px !important;
     }
 }
+/* ===========================
+   CONTENEDOR BARRA INFERIOR
+   =========================== */
+.social-sharing {
+    position: sticky;
+    bottom: 0;
+    width: 100%;
+    z-index: 1020;
+}
+
+/* Barra unificada */
+.social-sharing ul.menu-social {
+    display: flex;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    background: #ffffff; /* toda la barra comparte el mismo fondo */
+    box-shadow: 0 -6px 12px rgba(0, 0, 0, 0.15); /* sombra arriba */
+}
+
+/* Cada item ocupa el mismo espacio */
+.social-sharing ul.menu-social li {
+    flex: 1;
+    margin: 0;
+    padding: 0;
+}
+
+/* Enlaces sin separación y centrados (icono + texto) */
+.social-sharing ul.menu-social li a {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    padding-top: 4px;
+    height: 55px;
+    text-decoration: none;
+
+    background: transparent !important; /* sin divisiones */
+    border: none !important;
+
+    color: #6d6d6d;
+}
+
+/* ===========================
+   ICONOS BASE
+   =========================== */
+
+ul.menu-social li a::before {
+    font-family: FontAwesome;
+    font-size: 20px;
+    line-height: 20px;
+    margin-bottom: 2px;      /* separación entre icono y texto */
+    content: "\f135";        /* icono por defecto */
+}
+
+/* Texto pequeño bajo el icono */
+ul.menu-social li a .label {
+    font-size: 10px;
+    font-weight: 500;
+    color: #5a5a5a;
+    margin-top: 2px;
+}
+
+/* ===========================
+   ICONOS REDES SOCIALES
+   =========================== */
+
+ul.menu-social li a[href*="facebook.com"]::before  { content: "\f09a"; }
+ul.menu-social li a[href*="instagram.com"]::before { content: "\f16d"; }
+ul.menu-social li a[href*="wa.me"]::before         { content: "\f232"; }
+ul.menu-social li a[href*="blog/index"]::before    { content: "\f02d"; }
+ul.menu-social li a[href*="x.com"]::before         { content: "\f099"; }
+ul.menu-social li a[href*="youtube.com"]::before   { content: "\f167"; }
+ul.menu-social li a[href*="tiktok.com"]::before    { content: "\f3e5"; }
+ul.menu-social li a[href*="wordpress.com"]::before { content: "\f19a"; }
+
+/* ===========================
+   TIENDA / WISHLIST / CARRITO
+   =========================== */
+
+/* Ícono de tienda */
+ul.menu-social li.store-item a::before {
+    content: "\f54e"; /* fa-store */
+    font-family: FontAwesome;
+    font-size: 22px;
+    line-height: 22px;
+}
+
+/* Ícono de wishlist (corazón) */
+ul.menu-social li.wishlist-item a::before {
+    content: "\f004"; /* fa-heart */
+    font-family: FontAwesome;
+    font-size: 22px;
+    line-height: 22px;
+}
+
+/* Ícono de carrito */
+ul.menu-social li.cart-item a::before {
+    content: "\f07a"; /* fa-shopping-cart */
+    font-family: FontAwesome;
+    font-size: 22px;
+    line-height: 22px;
+}
+
+/* Posicionar contenedor para badges */
+ul.menu-social li.wishlist-item,
+ul.menu-social li.cart-item {
+    position: relative;
+}
+
+/* Badge de wishlist y carrito */
+ul.menu-social li.wishlist-item .wishlist-badge,
+ul.menu-social li.cart-item .cart-badge {
+    position: absolute;
+    top: 4px;
+    right: 18px;
+
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: var(--btn_cart); /* morado como en tu ejemplo */
+    color: #fff;
+    font-size: 11px;
+    font-weight: bold;
+    border-radius: 999px; /* píldora / círculo */
+}
+
+/* ===========================
+   OTROS
+   =========================== */
+
+/* Quitar estilos raros del newsletter si lo usas */
+.social-sharing ul.menu-social li.newsletter {
+    background: transparent !important;
+}
+
+/* Solo lectores de pantalla */
+.screen-reader-text {
+    position: absolute;
+    top: -9999em;
+    left: -9999em;
+}
+
+/* Ocultar barra en laptops / desktop */
+@media (min-width: 1025px) {
+    .social-sharing {
+        display: none !important;
+    }
+}
+/*Fin contenedor mobile abajo*/

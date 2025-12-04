@@ -62,6 +62,7 @@
     <div>
         @include('layouts.inc.design_ecommerce.front')
         @yield('content')
+        @include('layouts.inc.social-footer')
     </div>
 
     <script src="{{ asset('/design_ecommerce/vendor/jquery/jquery-3.2.1.min.js') }}"></script>
@@ -368,6 +369,8 @@
                             '.icon-cart-mobile');
                         button.dataset.notify = newCartNumber;
                         buttonMobile.dataset.notify = newCartNumber;
+                        $('.cart-badge')
+                            .text(newCartNumber);
                         $button.closest('.header-cart-item').remove();
                         calcularTotal();
                     }
@@ -420,13 +423,19 @@
                     success: function(response) {
                         const button = document.querySelector('.icon-fav');
                         const buttonMobile = document.querySelector('.icon-fav-mobile');
+
                         if (response.status === 'added') {
                             icon.addClass('text-danger');
                         } else {
                             icon.removeClass('text-danger');
                         }
-                        button.dataset.notify = response.favNumber;
-                        buttonMobile.dataset.notify = response.favNumber;
+
+                        // Si aún usas estos data-notify:
+                        if (button) button.dataset.notify = response.favNumber;
+                        if (buttonMobile) buttonMobile.dataset.notify = response.favNumber;
+                        // 🔥 Actualizar badge numérico de la barra inferior
+                        $('.wishlist-badge')
+                            .text(response.favNumber);
                     },
                     error: function(xhr) {
                         console.error('Error al añadir a favoritos', xhr.responseText);
@@ -722,6 +731,8 @@
                                     '.icon-cart-mobile');
                                 button.dataset.notify = newCartNumber;
                                 buttonMobile.dataset.notify = newCartNumber;
+                                $('.cart-badge')
+                                    .text(newCartNumber);
                                 getCart();
                             }
                         }

@@ -625,6 +625,8 @@
                         '.icon-cart-mobile');
                     button.dataset.notify = newCartNumber;
                     buttonMobile.dataset.notify = newCartNumber;
+                     $('.cart-badge')
+                            .text(newCartNumber);
                     getCart();
                 }
             }

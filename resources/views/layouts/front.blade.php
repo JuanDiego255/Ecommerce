@@ -119,7 +119,8 @@
         <div class="snow">&#10052;</div>
     </div> --}}
 
-<body class="g-sidenav-show  bg-gray-200">
+<body
+    class="g-sidenav-show {{ isset($tenantinfo->tenant) && $tenantinfo->tenant == 'sakura318' ? 'bg-white-200' : 'bg-gray-200' }}">
     <div id="preloader-active">
         <div class="preloader d-flex align-items-center justify-content-center">
             <div class="preloader-inner position-relative">
@@ -262,6 +263,8 @@
                             $('.badge').text(newCartNumber);
                             $('.badge-sk').text(newCartNumber);
                             $('.cartIcon').text(' ' + newCartNumber);
+                             $('.cart-badge')
+                            .text(newCartNumber);
                             if (response.refresh == true && view_name == "frontend_view-cart") {
                                 window.location.href = "{{ url('/') }}";
                             }
@@ -328,6 +331,7 @@
             }
             var isAuthenticated = {{ Auth::check() ? 'true' : 'false' }};
             var isMayor = {{ Auth::check() && Auth::user()->mayor == '1' ? 'true' : 'false' }};
+
             function getCart() {
                 // Nueva solicitud AJAX para cargar el contenido del carrito actualizado
                 $.ajax({
@@ -453,6 +457,8 @@
                         } else {
                             icon.removeClass('text-danger'); // Remover ambas clases
                         }
+                        $('.wishlist-badge')
+                            .text(response.favNumber);
                     },
                     error: function(xhr) {
                         console.error('Error al añadir a favoritos', xhr.responseText);

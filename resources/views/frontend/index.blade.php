@@ -140,7 +140,7 @@
                                             </h3> --}}
                                             <h3
                                                 class="sakura-font {{ isset($tenantinfo->tenant) && $tenantinfo->tenant != 'fragsperfumecr' ? 'text-muted' : 'title-frags' }}">
-                                                <a class="sakura-color"
+                                                <a class="sakura-color-trend"
                                                     href="{{ url('detail-clothing/' . $item->id . '/' . $item->category_id) }}">{{ $item->name }}
                                                     @if ($item->total_stock == 0)
                                                         <s class="text-danger"> Agotado</s>

@@ -11172,6 +11172,9 @@ fieldset:disabled .btn {
 .bg-gray-200 {
     background-color: #f0f2f5 !important;
 }
+.bg-white-200 {
+    background-color: #fff !important;
+}
 
 .bg-gray-300 {
     background-color: #dee2e6 !important;
@@ -30226,154 +30229,161 @@ input.card {
     font-size: 1.8em;
 }
 
+/* ===========================
+   CONTENEDOR BARRA INFERIOR
+   =========================== */
 .social-sharing {
-    display: block;
     position: sticky;
+    bottom: 0;
     width: 100%;
     z-index: 1020;
-    bottom: 0;
 }
 
+/* Barra unificada */
 .social-sharing ul.menu-social {
-    list-style: none;
-    text-align: center;
+    display: flex;
     margin: 0;
     padding: 0;
-    display: -webkit-box;
-    display: -webkit-flex;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-flex-wrap: nowrap;
-    -ms-flex-wrap: nowrapwrap;
-    flex-wrap: nowrap;
+    list-style: none;
+
+    background: #ffffff; /* toda la barra comparte el mismo fondo */
+    box-shadow: 0 -6px 12px rgba(0, 0, 0, 0.15); /* sombra arriba */
 }
 
+/* Cada item ocupa el mismo espacio */
 .social-sharing ul.menu-social li {
-    flex: 0 1 100%;
-    height: 40px;
+    flex: 1;
+    margin: 0;
+    padding: 0;
 }
 
-.social-sharing ul.menu-social li.newsletter {
-    flex: 0 1 100%;
-    height: 40px;
-    position: relative;
-    color: #fff;
-    background-color: #779cdd !important;
-    /*   background-image: repeating-linear-gradient(135deg, #f9c1bb 0px, #f9c1bb 5px, transparent 5px, transparent 10px, #9fc6e6 10px, #9fc6e6 15px, transparent 15px, transparent 20px); */
-}
-
-.social-sharing ul.menu-social li.next {
-    flex: 1 1 auto;
-}
-
+/* Enlaces sin separación y centrados (icono + texto) */
 .social-sharing ul.menu-social li a {
-    display: block;
-    color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    padding-top: 4px;
+    height: 55px;
     text-decoration: none;
-    width: 100%;
-    height: 100%;
-    line-height: 40px;
+
+    background: transparent !important; /* sin divisiones */
+    border: none !important;
+
+    color: #6d6d6d;
 }
 
-ul.menu-social li a[href*="facebook.com"] {
-    background-color: #42c0f9;
-}
-
-ul.menu-social li a[href*="twitter.com"] {
-    background-color: #43d2e4;
-}
-
-ul.menu-social li a[href*="instagram.com"] {
-    background-color: #fcc58d;
-}
-ul.menu-social li a[href*="youtube.com"] {
-    background-color: #ff0000;
-}
-
-ul.menu-social li a[href*="x.com"] {
-    background-color: #43d2e4;
-}
-
-ul.menu-social li a[href*="tiktok.com"] {
-    background-color: #69c9d0;
-}
-ul.menu-social li a[href*="wordpress.com"] {
-    background-color: #21759b;
-}
-
-ul.menu-social li a[href*="wa.me"] {
-    background-color: #a8d673;
-}
-
-ul.menu-social li a[href*="#"] {
-    background-color: #8dc1fc;
-}
-
-.social-sharing ul.menu-social li.newsletter span {
-    color: #779cdd;
-    display: inline-block;
-    cursor: pointer;
-}
-.mr-15 {
-    margin-right: 15px;
-}
-
-.social-sharing ul.menu-social li.next a {
-    color: #807f7f;
-    background-color: #ffecb8;
-}
+/* ===========================
+   ICONOS BASE
+   =========================== */
 
 ul.menu-social li a::before {
-    content: "\f135";
-    display: inline-block;
     font-family: FontAwesome;
     font-size: 20px;
-    vertical-align: middle;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    line-height: 40px;
+    line-height: 20px;
+    margin-bottom: 2px;      /* separación entre icono y texto */
+    content: "\f135";        /* icono por defecto */
 }
 
-ul.menu-social li a[href*="facebook.com"]::before {
-    content: "\f09a";
+/* Texto pequeño bajo el icono */
+ul.menu-social li a .label {
+    font-size: 10px;
+    font-weight: 500;
+    color: #5a5a5a;
+    margin-top: 2px;
 }
 
-ul.menu-social li a[href*="instagram.com"]::before {
-    content: "\f16d";
+/* ===========================
+   ICONOS REDES SOCIALES
+   =========================== */
+
+ul.menu-social li a[href*="facebook.com"]::before  { content: "\f09a"; }
+ul.menu-social li a[href*="instagram.com"]::before { content: "\f16d"; }
+ul.menu-social li a[href*="wa.me"]::before         { content: "\f232"; }
+ul.menu-social li a[href*="blog/index"]::before    { content: "\f02d"; }
+ul.menu-social li a[href*="x.com"]::before         { content: "\f099"; }
+ul.menu-social li a[href*="youtube.com"]::before   { content: "\f167"; }
+ul.menu-social li a[href*="tiktok.com"]::before    { content: "\f3e5"; }
+ul.menu-social li a[href*="wordpress.com"]::before { content: "\f19a"; }
+
+/* ===========================
+   TIENDA / WISHLIST / CARRITO
+   =========================== */
+
+/* Ícono de tienda */
+ul.menu-social li.store-item a::before {
+    content: "\f54e"; /* fa-store */
+    font-family: FontAwesome;
+    font-size: 22px;
+    line-height: 22px;
 }
 
-ul.menu-social li a[href*="wa.me"]::before {
-    content: "\f232";
+/* Ícono de wishlist (corazón) */
+ul.menu-social li.wishlist-item a::before {
+    content: "\f004"; /* fa-heart */
+    font-family: FontAwesome;
+    font-size: 22px;
+    line-height: 22px;
 }
 
-ul.menu-social li a[href*="blog/index"]::before {
-    content: "\f02d";
-}
-ul.menu-social li a[href*="x.com"]::before {
-    content: "\f099";
-}
-ul.menu-social li a[href*="youtube.com"]::before {
-    content: "\f167";
-}
-ul.menu-social li a[href*="wordpress.com"]::before {
-    content: "\f19a";
-}
-ul.menu-social li a[href*="tiktok.com"]::before {
-    content: "\f3e5";
+/* Ícono de carrito */
+ul.menu-social li.cart-item a::before {
+    content: "\f07a"; /* fa-shopping-cart */
+    font-family: FontAwesome;
+    font-size: 22px;
+    line-height: 22px;
 }
 
-ul.menu-social li a[href*="#"]::before {
-    content: "\f075";
+/* Posicionar contenedor para badges */
+ul.menu-social li.wishlist-item,
+ul.menu-social li.cart-item {
+    position: relative;
 }
 
-.social-sharing ul.menu-social li.next a::before {
-    content: none;
+/* Badge de wishlist y carrito */
+ul.menu-social li.wishlist-item .wishlist-badge,
+ul.menu-social li.cart-item .cart-badge {
+    position: absolute;
+    top: 4px;
+    right: 18px;
+
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: var(--btn_cart); /* morado como en tu ejemplo */
+    color: #fff;
+    font-size: 11px;
+    font-weight: bold;
+    border-radius: 999px; /* píldora / círculo */
 }
 
+/* ===========================
+   OTROS
+   =========================== */
+
+/* Quitar estilos raros del newsletter si lo usas */
+.social-sharing ul.menu-social li.newsletter {
+    background: transparent !important;
+}
+
+/* Solo lectores de pantalla */
 .screen-reader-text {
     position: absolute;
     top: -9999em;
     left: -9999em;
+}
+
+/* Ocultar barra en laptops / desktop */
+@media (min-width: 1025px) {
+    .social-sharing {
+        display: none !important;
+    }
 }
 
 /* demo stuff */
@@ -30875,6 +30885,9 @@ a.more-link {
 }
 .sakura-color {
     color: var(--navbar) !important;
+}
+.sakura-color-trend {
+    color: #000 !important;
 }
 .sakura-color-wh {
     color: #fff !important;

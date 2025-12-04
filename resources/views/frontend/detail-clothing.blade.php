@@ -947,7 +947,8 @@
                 $('.badge').text(newCartNumber);
                 $('.badge-sk').text(newCartNumber);
                 $('.cartIcon').text(' ' + newCartNumber);
-
+                $('.cart-badge')
+                            .text(newCartNumber);
                 getCart();
             }
         });

@@ -292,7 +292,7 @@
                     <div class="header-right2 d-flex align-items-center">
                         <!-- Social -->
                         <div class="header-social  d-block d-md-none">
-                            @foreach ($social_network as $social)
+                           {{--  @foreach ($social_network as $social)
                                 @php
                                     $social_logo = null;
                                     if (stripos($social->social_network, 'Facebook') !== false) {
@@ -321,7 +321,7 @@
                                 <a href="{{ url('/buys') }}"><i class="fas fa-{{ $icon->shopping }}"></i></a>
                             @else
                                 <a href="{{ url('/register') }}"><i class="fas fa-user"></i></a>
-                            @endguest
+                            @endguest --}}
                         </div>
                         <!-- Search Box -->
                         <div class="search-sk d-block d-md-none">
@@ -332,10 +332,9 @@
                                     </div>
                                 </li> --}}
                                 <li>
-                                    <div class="card-stor" data-bs-toggle="modal" data-bs-target="#modalMiniCart"
+                                    <div class="card-stor" data-bs-toggle="modal" data-bs-target="#add-comment-modal"
                                         style="cursor: pointer;">
-                                        <a href="#"><i class="fa fa-shopping-cart card-stor-color"></i></a>
-                                        <span class="badge-sk">{{ $cartNumber }}</span>
+                                        <a href="#"><i class="fa fa-comment card-stor-color"></i></a>
                                     </div>
                                 </li>
                             </ul>
