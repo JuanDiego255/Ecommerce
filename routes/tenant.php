@@ -67,6 +67,7 @@ use App\Http\Controllers\Public\BookingController;
 use App\Http\Controllers\PublicBookingController;
 use App\Http\Controllers\PublicEventController;
 use App\Http\Controllers\PublicRegistrationController;
+use App\Http\Controllers\RouletteController;
 use App\Services\FcmHttpV1;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
@@ -133,6 +134,9 @@ Route::middleware([
         Route::get('/facebook-auth/redirect', [AuthController::class, 'redirectFacebook']);
         Route::get('/facebook-auth/callback', [AuthController::class, 'callbackFacebook']);
         //Facebook authentication <------
+        Route::get('/roulette', [RouletteController::class, 'index']);
+        Route::post('/roulette/spin', [RouletteController::class, 'spin'])
+            ->name('roulette.spin');
 
         Route::group(['middleware' => 'isAre'], function () {
             Route::get('category', [FrontendController::class, 'category']);
