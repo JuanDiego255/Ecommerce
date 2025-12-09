@@ -608,9 +608,24 @@ class BuyController extends Controller
             DB::beginTransaction();
             $buy = Buy::findOrfail($id);
             $buy->guide_number = $request->guide_number;
+            $buy->delivered = 1;                        
             $buy->update();
             DB::commit();
             return redirect()->back()->with(['status' => 'Se ha modificado el número de guía', 'icon' => 'success']);
+        } catch (Exception $th) {
+            DB::rollBack();
+            return redirect()->back()->with(['status' => $th->getMessage(), 'icon' => 'success']);
+        }
+    }
+     public function updateDetailBuy(Request $request, $id)
+    {
+        try {
+            DB::beginTransaction();
+            $buy = Buy::findOrfail($id);
+            $buy->detail = $request->detail;                  
+            $buy->update();
+            DB::commit();
+            return redirect()->back()->with(['status' => 'Se ha modificado la nota del pedido', 'icon' => 'success']);
         } catch (Exception $th) {
             DB::rollBack();
             return redirect()->back()->with(['status' => $th->getMessage(), 'icon' => 'success']);

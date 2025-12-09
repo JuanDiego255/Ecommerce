@@ -68,6 +68,26 @@
                             </select>
                         </div>
                     </div>
+                    <div class="col-md-6">
+                        <form action="{{ url('save/detail/' . $currentBuy->id) }}" method="POST"
+                            enctype="multipart/form-data">
+                            <div class="row align-items-end">
+
+                                @csrf
+                                <div class="col-md-9">
+                                    <div class="input-group input-group-lg input-group-static my-3 w-100">
+                                        <label>Notas</label>
+                                        <textarea rows="1" type="text" class="form-control form-control-lg" name="detail" id="detail">{{ $currentBuy->detail }}</textarea>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <button type="submit" class="btn btn-add_to_cart w-50 d-block h8 mt-3"><i
+                                            class="material-icons opacity-10">save</i>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -130,7 +150,8 @@
                                                         @csrf
 
                                                         <input type="hidden" name="action" value="0">
-                                                        <input type="hidden" name="buy" value="{{ $buy->buy }}">
+                                                        <input type="hidden" name="buy"
+                                                            value="{{ $buy->buy }}">
                                                         <button class="btn btn-accion text-white btn-tooltip"
                                                             data-bs-toggle="tooltip" data-bs-placement="top"
                                                             title="Desaprobar Cancelación" data-container="body"
@@ -243,7 +264,8 @@
                                 </div>
                                 <button type="submit" class="btn btn-add_to_cart w-100 d-block h8 mt-3">Realizar
                                     pago</button>
-                                <a href="{{url('/new-buy/'. $currentBuy->id)}}" class="btn btn-add_to_cart w-100 d-block h8 mt-3">Editar Pedido</a>
+                                <a href="{{ url('/new-buy/' . $currentBuy->id) }}"
+                                    class="btn btn-add_to_cart w-100 d-block h8 mt-3">Editar Pedido</a>
                             </form>
                         </div>
                     </div>

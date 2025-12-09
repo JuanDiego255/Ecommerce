@@ -294,6 +294,7 @@ Route::middleware([
             Route::get('/buys-admin', [BuyController::class, 'indexAdmin']);
             Route::post('/size-by-cloth', [BuyController::class, 'sizeByCloth']);
             Route::post('/save/guide-number/{id}', [BuyController::class, 'updateGuideNumber']);
+            Route::post('/save/detail/{id}', [BuyController::class, 'updateDetailBuy']);
             Route::get('/total-buys', [BuyController::class, 'indexTotalBuys']);
             Route::get('/new-buy/{id}', [BuyController::class, 'indexBuy']);
             Route::get('/buy/details/admin/{id}', [BuyController::class, 'buyDetailsAdmin']);
