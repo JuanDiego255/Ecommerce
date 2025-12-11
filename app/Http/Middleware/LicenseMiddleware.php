@@ -21,7 +21,7 @@ class LicenseMiddleware
         if ($tenant->license == 1) {
             return $next($request);
         } else {
-            return redirect('/')->with(['status' => 'Sitio deshabilitado, comunícate con el admin del servicio para reactivarlo', 'icon' => 'warning']);
+            return redirect('/vencido')->with(['status' => 'Sitio deshabilitado, comunícate con el admin del servicio para reactivarlo', 'icon' => 'warning']);
         }
     }
 }

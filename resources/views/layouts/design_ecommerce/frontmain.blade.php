@@ -60,9 +60,15 @@
 <body class="animsition">
     {{-- @include('frontend.av.add-comment') --}}
     <div>
-        @include('layouts.inc.design_ecommerce.front')
-        @yield('content')
-        @include('layouts.inc.social-footer')
+        @if ($tenantinfo->license == 1)
+            @include('layouts.inc.design_ecommerce.front')
+            @yield('content')
+            @include('layouts.inc.social-footer')
+        @else
+            @include('layouts.inc.design_ecommerce.frontvenc')
+            @yield('content')
+        @endif
+
     </div>
 
     <script src="{{ asset('/design_ecommerce/vendor/jquery/jquery-3.2.1.min.js') }}"></script>

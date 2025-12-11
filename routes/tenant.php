@@ -122,9 +122,13 @@ Route::middleware([
             return response()->file($path);
         })->where('path', '.*')->name('aclifile');
     });
+    Route::get('/vencido', function () {
+        return view('frontend.design_ecommerce.vencido'); // Nombre de tu vista
+    });
+
     //Con prefijo aclimate
     Route::group(['middleware' => 'isLicense'], function () {
-
+        Route::get('/', [FrontendController::class, 'index']);
         //Google authentication ----->
         Route::get('/google-auth/redirect', [AuthController::class, 'redirectGoogle']);
         Route::get('/google-auth/callback', [AuthController::class, 'callbackGoogle']);
