@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Barbero;
 use App\Models\Servicio;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -95,9 +96,9 @@ class BarberoController extends Controller
         $data['activo'] = (bool)($data['activo'] ?? true);
         if ($request->hasFile('image')) {
             $image = $request->file('image')->store('uploads', 'public');
-              $data['photo_path'] = $image;
+            $data['photo_path'] = $image;
         }
-      
+
         Barbero::create($data);
         return back()->with('ok', 'Barbero creado');
     }
@@ -216,10 +217,34 @@ class BarberoController extends Controller
     {
         $data = $request->validate([
             'date' => 'required|date|after_or_equal:today',
-            'motivo' => 'nullable|string|max:120',
+            'date_to'   => 'required|date|after_or_equal:date',
+            'motivo'    => 'nullable|string|max:120',
         ]);
-        $barbero->excepciones()->create($data);
-        return back()->with('ok', 'Día bloqueado');
+
+        $from = Carbon::parse($data['date'])->toDateString();
+        $to   = Carbon::parse($data['date_to'])->toDateString();
+
+        // SOLAPAMIENTO: (A <= D) && (C <= B)
+        // nuevo[from,to] solapa con existente[date_from,date_to] si:
+        // existente.date_from <= to  AND existente.date_to >= from
+        $solapa = $barbero->excepciones()
+            ->whereDate('date', '<=', $to)
+            ->whereDate('date_to', '>=', $from)
+            ->exists();
+
+        if ($solapa) {
+            return back()
+                ->withErrors(['date' => 'El rango se solapa con una excepción ya registrada.'])
+                ->withInput();
+        }
+
+        $barbero->excepciones()->create([
+            'date' => $from,
+            'date_to'   => $to,
+            'motivo'    => $data['motivo'] ?? null,
+        ]);
+
+        return back()->with('ok', 'Rango bloqueado');
     }
     public function destroyExcepcion(Barbero $barbero, $id)
     {

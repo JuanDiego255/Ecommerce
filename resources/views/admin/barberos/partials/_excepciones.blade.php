@@ -41,8 +41,16 @@
             {{ csrf_field() }}
             <div class="col-md-4">
                 <div class="input-group input-group-lg input-group-outline my-3 is-filled">
-                    <label class="form-label">Fecha (YYYY-MM-DD)</label>
+                    <label class="form-label">Fecha Inicial(YYYY-MM-DD)</label>
                     <input type="date" class="form-control" name="date" min="{{ now()->toDateString() }}"
+                        onfocus="this.placeholder=''" onblur="this.placeholder='Fecha (YYYY-MM-DD)'" placeholder=""
+                        required>
+                </div>
+            </div>
+             <div class="col-md-4">
+                <div class="input-group input-group-lg input-group-outline my-3 is-filled">
+                    <label class="form-label">Fecha Final (YYYY-MM-DD)</label>
+                    <input type="date" class="form-control" name="date_to" min="{{ now()->toDateString() }}"
                         onfocus="this.placeholder=''" onblur="this.placeholder='Fecha (YYYY-MM-DD)'" placeholder=""
                         required>
                 </div>
@@ -73,7 +81,8 @@
             <table class="table align-items-center mb-0">
                 <thead>
                     <tr>
-                        <th class="text-secondary font-weight-bolder opacity-7 ps-2">Fecha</th>
+                        <th class="text-secondary font-weight-bolder opacity-7 ps-2">Fecha Inicial</th>
+                        <th class="text-secondary font-weight-bolder opacity-7 ps-2">Fecha Final</th>
                         <th class="text-secondary font-weight-bolder opacity-7 ps-2">Motivo</th>
                         <th class="text-secondary font-weight-bolder opacity-7">Acciones</th>
                     </tr>
@@ -84,6 +93,9 @@
 
                             <td class="align-middle text-sm">
                                 <p class="mb-0">{{ \Carbon\Carbon::parse($ex->date)->format('d/m/Y') }}</p>
+                            </td>
+                            <td class="align-middle text-sm">
+                                <p class="mb-0">{{ \Carbon\Carbon::parse($ex->date_to)->format('d/m/Y') }}</p>
                             </td>
                             <td class="align-middle text-sm">
                                 <p class="mb-0">{{ $ex->motivo ?? '—' }}</p>

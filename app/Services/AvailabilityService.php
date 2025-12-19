@@ -60,7 +60,13 @@ class AvailabilityService
         if (!in_array($dayIdx, $workDays ?? [])) return [];
 
         // Excepción: día libre/feriado
-        if ($barbero->excepciones()->whereDate('date', $dateYmd)->exists()) return [];
+        //if ($barbero->excepciones()->whereDate('date', $dateYmd)->exists()) return [];
+        $hasException = $barbero->excepciones()
+            ->whereDate('date', '<=', $dateYmd)
+            ->whereDate('date_to',   '>=', $dateYmd)
+            ->exists();
+
+        if ($hasException) return [];
 
         $start = Carbon::createFromFormat('Y-m-d H:i', $dateYmd . ' ' . $workStart);
         $end   = Carbon::createFromFormat('Y-m-d H:i', $dateYmd . ' ' . $workEnd);
