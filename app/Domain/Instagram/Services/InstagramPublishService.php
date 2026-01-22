@@ -27,7 +27,7 @@ class InstagramPublishService
             $containerId = $this->createImageContainer(
                 igUserId: $igUserId,
                 token: $token,
-                imageUrl: $this->buildTenantFileUrl($post, $post->media->first()->media_url),
+                imageUrl: $this->buildTenantFileUrl($post, $post->media->first()->media_path),
                 caption: (string) $post->caption
             );
 
@@ -42,7 +42,7 @@ class InstagramPublishService
             $childContainerId = $this->createCarouselItemContainer(
                 igUserId: $igUserId,
                 token: $token,
-                imageUrl: $this->buildTenantFileUrl($post, $m->media_url)
+                imageUrl: $this->buildTenantFileUrl($post, $m->media_path)
             );
             $children[] = $childContainerId;
         }
