@@ -1,26 +1,27 @@
 @extends('layouts.admin') {{-- ajusta a tu layout real --}}
 
 @section('content')
-
     <div class="container-fluid">
 
         @if (session('ok'))
-            <div class="alert alert-success">{{ session('ok') }}</div>
+            <div class="alert alert-success text-white">{{ session('ok') }}</div>
         @endif
         @if (session('error'))
-            <div class="alert alert-danger">{{ session('error') }}</div>
+            <div class="alert alert-danger text-white">{{ session('error') }}</div>
         @endif
 
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h4>Instagram - Publicaciones</h4>
+        <center>
+            <h2 class="text-center font-title"><strong>{{ __('Gestiona publicaciones en Instagram') }}</strong></h2>
+        </center>
 
+       <div class="d-flex gap-2">
             <button class="btn btn-accion" data-bs-toggle="modal" data-bs-target="#modalAddPost">
                 Nueva publicación
             </button>
         </div>
 
         {{-- Estado de cuenta --}}
-        <div class="card mb-3">
+        <div class="card mt-3">
             <div class="card-body">
                 @if ($account)
                     <div><strong>Cuenta conectada:</strong> {{ $account->instagram_username ?? 'N/A' }}</div>
@@ -33,31 +34,38 @@
         </div>
 
         {{-- Filtros --}}
-        <form class="row g-2 mb-3" method="GET" action="{{ route('instagram.posts.index') }}">
-            <div class="col-md-3">
-                <select name="status" class="form-control">
-                    <option value="">-- Estado (todos) --</option>
-                    @foreach (['draft', 'scheduled', 'publishing', 'published', 'failed', 'cancelled'] as $st)
-                        <option value="{{ $st }}" {{ $status == $st ? 'selected' : '' }}>{{ $st }}</option>
-                    @endforeach
-                </select>
+        <div class="card mt-3">
+            <div class="card-body">
+                <div class="row w-100">
+                    <div class="col-md-6">
+                        <div class="input-group input-group-lg input-group-static my-3 w-100">
+                            <label>Filtrar</label>
+                            <input value="" placeholder="Escribe para filtrar...." type="text"
+                                class="form-control form-control-lg" name="searchfor" id="searchfor">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="input-group input-group-lg input-group-static my-3 w-100">
+                            <label>Mostrar</label>
+                            <select id="recordsPerPage" name="recordsPerPage" class="form-control form-control-lg"
+                                autocomplete="recordsPerPage">
+                                <option value="5">5 Registros</option>
+                                <option value="10">10 Registros</option>
+                                <option selected value="15">15 Registros</option>
+                                <option value="50">50 Registros</option>
+                            </select>
+
+                        </div>
+                    </div>
+
+                </div>
             </div>
-            <div class="col-md-3">
-                <select name="type" class="form-control">
-                    <option value="">-- Tipo (todos) --</option>
-                    <option value="feed" {{ $type == 'feed' ? 'selected' : '' }}>feed</option>
-                    <option value="story" {{ $type == 'story' ? 'selected' : '' }}>story</option>
-                </select>
-            </div>
-            <div class="col-md-3">
-                <button class="btn btn-secondary">Filtrar</button>
-            </div>
-        </form>
+        </div>
 
         {{-- Tabla --}}
-        <div class="card">
+        <div class="card mt-3">
             <div class="card-body table-responsive">
-                <table class="table table-bordered table-sm">
+                <table class="table table-bordered table-sm" id="table">
                     <thead>
                         <tr>
                             <th>#</th>
@@ -71,7 +79,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($posts as $post)
+                        @foreach ($posts as $post)
                             <tr>
                                 <td>{{ $post->id }}</td>
                                 <td>{{ $post->type }}</td>
@@ -101,12 +109,12 @@
                                     <form method="POST" action="{{ route('instagram.posts.publishNow', $post->id) }}"
                                         style="display:inline-block;">
                                         @csrf
-                                        <button class="btn btn-success btn-sm"
+                                        <button class="btn btn-accion btn-sm"
                                             {{ $account ? '' : 'disabled' }}>Publicar</button>
                                     </form>
 
                                     {{-- Editar (simple inline) --}}
-                                    <button class="btn btn-warning btn-sm" data-bs-toggle="modal"
+                                    <button class="btn btn-accion btn-sm" data-bs-toggle="modal"
                                         data-bs-target="#modalEditPost{{ $post->id }}">
                                         Editar
                                     </button>
@@ -116,27 +124,22 @@
                                         style="display:inline-block;">
                                         @csrf
                                         @method('DELETE')
-                                        <button class="btn btn-danger btn-sm"
+                                        <button class="btn btn-accion btn-sm"
                                             onclick="return confirm('¿Eliminar publicación?')">Eliminar</button>
                                     </form>
 
                                     @include('admin.instagram.posts.edit', ['post' => $post])
                                 </td>
                             </tr>
-                        @empty
-                            <tr>
-                                <td colspan="8" class="text-center">Sin publicaciones</td>
-                            </tr>
-                        @endforelse
+                        @endforeach
                     </tbody>
                 </table>
-
-                {{ $posts->links() }}
             </div>
         </div>
-
     </div>
 
     @include('admin.instagram.posts.add')
-
+@endsection
+@section('script')
+    <script src="{{ asset('js/datatables.js') }}"></script>
 @endsection

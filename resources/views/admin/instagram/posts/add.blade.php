@@ -15,8 +15,8 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Cerrar</button>
-                    <button class="btn btn-primary" type="submit" {{ $account ? '' : 'disabled' }}>
+                    <button class="btn btn-accion" type="button" data-bs-dismiss="modal">Cerrar</button>
+                    <button class="btn btn-accion" type="submit" {{ $account ? '' : 'disabled' }}>
                         Guardar
                     </button>
                 </div>

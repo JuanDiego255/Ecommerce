@@ -7,33 +7,42 @@
                 @method('PUT')
 
                 <div class="modal-header">
-                    <h5 class="modal-title">Editar publicación #{{ $post->id }}</h5>
+                    <h5 class="modal-title">{{ __('Editar publicación # ') }}{{ $post->id }}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
 
                 <div class="modal-body">
                     <div class="mb-2">
-                        <label>Estado</label>
-                        <select name="status" class="form-control">
-                            <option value="draft" {{ $post->status == 'draft' ? 'selected' : '' }}>draft</option>
-                            <option value="scheduled" {{ $post->status == 'scheduled' ? 'selected' : '' }}>scheduled</option>
-                            <option value="cancelled" {{ $post->status == 'cancelled' ? 'selected' : '' }}>cancelled</option>
-                        </select>
+                        <div class="input-group input-group-lg input-group-outline is-filled my-3">
+                            <label class="form-label">Estado</label>
+                            <select name="status" class="form-control form-control-lg">
+                                <option value="draft" {{ $post->status == 'draft' ? 'selected' : '' }}>Fija</option>
+                                <option value="scheduled" {{ $post->status == 'scheduled' ? 'selected' : '' }}>
+                                    Programado
+                                </option>
+                                <option value="cancelled" {{ $post->status == 'cancelled' ? 'selected' : '' }}>Cancelado
+                                </option>
+                            </select>
+                        </div>
                     </div>
 
                     <div class="mb-2">
-                        <label>Programado (opcional)</label>
-                        <input type="datetime-local" name="scheduled_at" class="form-control"
-                            value="{{ $post->scheduled_at ? $post->scheduled_at->format('Y-m-d\TH:i') : '' }}">
+                        <div class="input-group input-group-lg input-group-outline is-filled my-3">
+                            <label class="form-label">Programar (Opcional)</label>
+                            <input type="datetime-local" name="scheduled_at" class="form-control"
+                                value="{{ $post->scheduled_at ? $post->scheduled_at->format('Y-m-d\TH:i') : '' }}">
+                        </div>
                     </div>
 
                     <div class="mb-2">
-                        <label>Caption</label>
-                        <textarea name="caption" rows="5" class="form-control">{{ $post->caption }}</textarea>
+                        <div class="input-group input-group-static">
+                            <label>{{ __('Descripción (opcional)') }}</label>
+                            <textarea name="caption" rows="1" class="form-control">{{ $post->caption }}</textarea>
+                        </div>
                     </div>
 
                     <div class="mb-2">
-                        <label>Imágenes</label>
+                        <label>{{ __('Imágenes') }}</label>
                         <div class="d-flex gap-2 flex-wrap">
                             @foreach ($post->media as $m)
                                 <img src="{{ $m->media_url }}"
@@ -44,8 +53,8 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Cerrar</button>
-                    <button class="btn btn-primary" type="submit">Guardar cambios</button>
+                    <button class="btn btn-accion" type="button" data-bs-dismiss="modal">Cerrar</button>
+                    <button class="btn btn-accion" type="submit">Guardar cambios</button>
                 </div>
 
             </form>
