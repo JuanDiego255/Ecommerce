@@ -55,6 +55,8 @@ use App\Http\Controllers\Admin\CitaAdminController;
 use App\Http\Controllers\Admin\EmailSettingController;
 use App\Http\Controllers\Admin\EventCategoryController;
 use App\Http\Controllers\Admin\EventController;
+use App\Http\Controllers\Admin\InstagramController;
+use App\Http\Controllers\Admin\InstagramPostController;
 use App\Http\Controllers\Admin\RegistrationController;
 use App\Http\Controllers\Admin\SecurityController;
 use App\Http\Controllers\Admin\ServicioController;
@@ -555,6 +557,20 @@ Route::middleware([
                 Route::put('/clientes/{client}', [\App\Http\Controllers\Admin\ClientController::class, 'update'])->name('clientes.update');
                 // si quieres crear manualmente:
                 Route::post('/clientes', [\App\Http\Controllers\Admin\ClientController::class, 'store'])->name('clientes.store');
+                // Instagram - cuentas
+                Route::get('/instagram', [InstagramController::class, 'index'])->name('instagram.index');
+                Route::get('/instagram/connect', [InstagramController::class, 'connect'])->name('instagram.connect');
+                Route::get('/instagram/callback', [InstagramController::class, 'callback'])->name('instagram.callback');
+                Route::delete('/instagram/disconnect/{id}', [InstagramController::class, 'disconnect'])->name('instagram.disconnect');
+
+                // Instagram - publicaciones
+                Route::get('/instagram/posts', [InstagramPostController::class, 'index'])->name('instagram.posts.index');
+                Route::post('/instagram/posts/store', [InstagramPostController::class, 'store'])->name('instagram.posts.store');
+                Route::put('/instagram/posts/update/{id}', [InstagramPostController::class, 'update'])->name('instagram.posts.update');
+                Route::delete('/instagram/posts/destroy/{id}', [InstagramPostController::class, 'destroy'])->name('instagram.posts.destroy');
+
+                Route::post('/instagram/posts/{id}/publish-now', [InstagramPostController::class, 'publishNow'])->name('instagram.posts.publishNow');
+                Route::post('/instagram/posts/{id}/reschedule', [InstagramPostController::class, 'reschedule'])->name('instagram.posts.reschedule');
             });
 
             // Dueño o manager: ver/gestionar citas de TODOS
