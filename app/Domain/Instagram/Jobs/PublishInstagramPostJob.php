@@ -30,7 +30,7 @@ class PublishInstagramPostJob implements ShouldQueue
         if (!$post) return;
 
         // Si ya está publicada o cancelada, no hacemos nada
-        if (in_array($post->status, ['published', 'cancelled'])) return;
+        if (in_array($post->status, ['publishing','published','cancelled'])) return;
 
         $post->update([
             'status' => 'publishing',
