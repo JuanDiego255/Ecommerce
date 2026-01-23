@@ -34,9 +34,9 @@ class InstagramPost extends Model
 
     public function media()
     {
-        return $this->hasMany(InstagramPostMedia::class, 'instagram_post_id')
-            ->orderBy('sort_order');
+        return $this->hasMany(InstagramPostMedia::class)->orderBy('sort_order')->orderBy('id');
     }
+
 
     // Helpers rápidos (útiles en vistas)
     public function isFeed(): bool

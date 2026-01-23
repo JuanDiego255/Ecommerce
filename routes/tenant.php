@@ -55,6 +55,7 @@ use App\Http\Controllers\Admin\CitaAdminController;
 use App\Http\Controllers\Admin\EmailSettingController;
 use App\Http\Controllers\Admin\EventCategoryController;
 use App\Http\Controllers\Admin\EventController;
+use App\Http\Controllers\Admin\InstagramCollectionController;
 use App\Http\Controllers\Admin\InstagramController;
 use App\Http\Controllers\Admin\InstagramPostController;
 use App\Http\Controllers\Admin\RegistrationController;
@@ -557,13 +558,17 @@ Route::middleware([
                 Route::put('/clientes/{client}', [\App\Http\Controllers\Admin\ClientController::class, 'update'])->name('clientes.update');
                 // si quieres crear manualmente:
                 Route::post('/clientes', [\App\Http\Controllers\Admin\ClientController::class, 'store'])->name('clientes.store');
-                // Instagram - cuentas
+                /**
+                 * Instagram - conexión
+                 */
                 Route::get('/instagram', [InstagramController::class, 'index'])->name('instagram.index');
                 Route::get('/instagram/connect', [InstagramController::class, 'connect'])->name('instagram.connect');
                 Route::get('/instagram/callback', [InstagramController::class, 'callback'])->name('instagram.callback');
                 Route::delete('/instagram/disconnect/{id}', [InstagramController::class, 'disconnect'])->name('instagram.disconnect');
 
-                // Instagram - publicaciones
+                /**
+                 * Instagram - publicaciones individuales
+                 */
                 Route::get('/instagram/posts', [InstagramPostController::class, 'index'])->name('instagram.posts.index');
                 Route::post('/instagram/posts/store', [InstagramPostController::class, 'store'])->name('instagram.posts.store');
                 Route::put('/instagram/posts/update/{id}', [InstagramPostController::class, 'update'])->name('instagram.posts.update');
@@ -571,6 +576,52 @@ Route::middleware([
 
                 Route::post('/instagram/posts/{id}/publish-now', [InstagramPostController::class, 'publishNow'])->name('instagram.posts.publishNow');
                 Route::post('/instagram/posts/{id}/reschedule', [InstagramPostController::class, 'reschedule'])->name('instagram.posts.reschedule');
+
+                /**
+                 * Instagram - colecciones
+                 */
+                Route::get('/instagram/collections', [InstagramCollectionController::class, 'index'])->name('ig.collections.index');
+                Route::get('/instagram/collections/create', [InstagramCollectionController::class, 'create'])->name('ig.collections.create');
+                Route::post('/instagram/collections/store', [InstagramCollectionController::class, 'store'])->name('ig.collections.store');
+                Route::get('/instagram/collections/{id}/edit', [InstagramCollectionController::class, 'edit'])->name('ig.collections.edit');
+                Route::put('/instagram/collections/update/{id}', [InstagramCollectionController::class, 'update'])->name('ig.collections.update');
+                Route::delete('/instagram/collections/destroy/{id}', [InstagramCollectionController::class, 'destroy'])->name('ig.collections.destroy');
+
+                /**
+                 * Instagram - items (imágenes)
+                 */
+                Route::post('/instagram/collections/{collection}/items/upload', [InstagramCollectionController::class, 'uploadItems'])
+                    ->name('ig.collections.items.upload');
+
+                Route::delete('/instagram/collections/{collection}/items/{item}', [InstagramCollectionController::class, 'deleteItem'])
+                    ->name('ig.collections.items.delete');
+
+                Route::post('/instagram/collections/{collection}/items/reorder', [InstagramCollectionController::class, 'reorderItems'])
+                    ->name('ig.collections.items.reorder');
+
+                /**
+                 * Instagram - carruseles (groups)
+                 */
+                Route::post('/instagram/collections/{collection}/groups/create', [InstagramCollectionController::class, 'createGroup'])
+                    ->name('ig.collections.groups.create');
+
+                Route::delete('/instagram/collections/{collection}/groups/{group}', [InstagramCollectionController::class, 'deleteGroup'])
+                    ->name('ig.collections.groups.delete');
+
+                Route::post('/instagram/collections/{collection}/items/move', [InstagramCollectionController::class, 'moveItem'])
+                    ->name('ig.collections.items.move');
+
+                /**
+                 * Instagram - generar post individual por carrusel
+                 */
+                Route::post('/instagram/collections/{collection}/groups/{group}/generate-post', [InstagramCollectionController::class, 'generatePostForGroup'])
+                    ->name('ig.collections.groups.generatePost');
+
+                /**
+                 * (Opcional / legacy) generar posts automáticos por colección
+                 */
+                Route::post('/instagram/collections/{collection}/generate-posts', [InstagramCollectionController::class, 'generatePosts'])
+                    ->name('ig.collections.generatePosts');
             });
 
             // Dueño o manager: ver/gestionar citas de TODOS
