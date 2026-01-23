@@ -39,7 +39,7 @@ class ProposeAutoAppointmentJob implements ShouldQueue
         // Evitar duplicados: ¿ya existe una propuesta auto en ese día/franja?
         $dup = Cita::where('client_id', $client->id)
             ->where('barbero_id', $barbero->id)
-            ->where('status', 'pending')
+            ->where('status', 'confirmed')
             ->where('is_auto', true)
             ->whereDate('starts_at', $startLocal->toDateString())
             ->exists();
@@ -50,7 +50,7 @@ class ProposeAutoAppointmentJob implements ShouldQueue
         $cita = Cita::create([
             'client_id'     => $client->id,
             'barbero_id'    => $barbero->id,
-            'status'        => 'pending',
+            'status'        => 'confirmed',
             'is_auto'       => true,
             'hold_expires_at' => now()->addHours($holdHours),
             'starts_at'     => $startLocal, // si guardas en UTC: ->copy()->timezone('UTC')
