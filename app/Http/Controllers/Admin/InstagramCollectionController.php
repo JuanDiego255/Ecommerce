@@ -12,6 +12,7 @@ use App\Models\InstagramPostMedia;
 use App\Domain\Instagram\Jobs\PublishInstagramPostJob;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
@@ -307,8 +308,15 @@ class InstagramCollectionController extends Controller
                 return back()->with('error', 'Debes indicar fecha y hora para programar.');
             }
 
-            $scheduledAt = Carbon::createFromFormat('Y-m-d\TH:i', $request->scheduled_at, config('app.timezone'))->utc();
+            $scheduledAt = Carbon::createFromFormat(
+                'Y-m-d\TH:i',
+                $request->scheduled_at,
+                config('app.timezone')
+            );
+
             $status = 'scheduled';
+        } else {
+            $status = 'publishing';
         }
 
         $caption = trim((string) $request->input('caption', ''));
@@ -338,9 +346,10 @@ class InstagramCollectionController extends Controller
         }
 
         if ($request->publish_mode === 'now') {
-            $collection->update(['status' => 'publishing']);
-            dispatch(new PublishInstagramPostJob($post->id));
-            return back()->with('ok', "Carrusel '{$group->name}' enviado a publicar.");
+            //$collection->update(['status' => 'publishing']);
+            // Ejecuta inmediatamente (no requiere queue:work)
+            Bus::dispatchSync(new PublishInstagramPostJob($post->id));
+            return back()->with('ok', "Carrusel '{$group->name}' publicado (o en proceso).");
         }
 
         $collection->update(['status' => 'scheduled']);
