@@ -523,19 +523,24 @@
                         @php
                             $post = $group->post;
                             $status = $post->status ?? null;
+                            $statusText = '';
 
                             $badgeClass = 'ig-status ig-status--draft';
                             if ($status === 'scheduled') {
                                 $badgeClass = 'ig-status ig-status--scheduled';
+                                $statusText = 'Programado';
                             }
                             if ($status === 'publishing') {
                                 $badgeClass = 'ig-status ig-status--publishing';
+                                $statusText = 'Publicando...';
                             }
                             if ($status === 'published') {
                                 $badgeClass = 'ig-status ig-status--published';
+                                $statusText = 'Publicado';
                             }
                             if ($status === 'failed') {
                                 $badgeClass = 'ig-status ig-status--failed';
+                                $statusText = 'Fallido';
                             }
 
                             $scheduledLocal = null;
@@ -608,7 +613,7 @@
                                         <div class="ig-postbox mt-2">
                                             <div class="d-flex justify-content-between align-items-center">
                                                 <div class="ig-postbox-title">Post #{{ $post->id }}</div>
-                                                <span class="{{ $badgeClass }}">{{ strtoupper($post->status) }}</span>
+                                                <span class="{{ $badgeClass }}">{{ strtoupper($statusText) }}</span>
                                             </div>
 
                                             @if ($scheduledLocal)
