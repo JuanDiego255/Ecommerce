@@ -139,7 +139,7 @@ class AutoBookingController extends Controller
             return back()->with('alert', [
                 'type' => 'danger',
                 'msg' => sprintf(
-                    'Este horario está reservado de forma fija para %s. Por favor selecciona otro horario.',
+                    'Este horario está reservado de forma fija para un cliente. Por favor selecciona otro horario.',
                     $blockedByAutoBooking->nombre
                 )
             ]);
