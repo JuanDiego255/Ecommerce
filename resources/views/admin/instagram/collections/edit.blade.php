@@ -329,6 +329,23 @@
         .ig-savebar {
             padding: 10px 16px 16px;
         }
+
+        .ig-group-title {
+            cursor: text;
+            padding: 2px 0;
+        }
+
+        .ig-group-title-hint {
+            font-size: 11px;
+            color: #868e96;
+            margin-top: 2px;
+        }
+
+        .ig-group-title.is-editing {
+            outline: 2px solid #111;
+            border-radius: 10px;
+            padding: 2px 8px;
+        }
     </style>
     <div class="container-fluid">
 
@@ -357,7 +374,8 @@
             <div class="ig-step">Paso 2 - Crear carruseles</div>
             <div class="ig-step">Paso 3 - Arrastrar fotos</div>
             <div class="ig-step">Paso 4 - Publicar / Programar</div>
-            <div class="ig-step ig-step-hint">Tip: máximo <strong>10</strong> imágenes por carrusel</div>
+            <div class="ig-step ig-step-hint">Tip: {{ __('máximo') }} <strong>10</strong> {{ __('imágenes') }} por carrusel
+            </div>
         </div>
 
         {{-- FORM UPDATE --}}
@@ -429,7 +447,8 @@
             <div class="ig-card-head ig-card-head-board">
                 <div>
                     <div class="ig-card-title">Armar carruseles</div>
-                    <div class="ig-card-sub">Arrastra las imágenes a cada carrusel. Cada carrusel genera 1 post.</div>
+                    <div class="ig-card-sub">Arrastra las {{ __('imágenes') }} a cada carrusel. Cada carrusel genera 1
+                        post.</div>
                 </div>
                 <div class="d-flex gap-2 align-items-center">
                     <button class="btn btn-accion" id="btn-create-group" type="button">+ Nuevo carrusel</button>
@@ -521,7 +540,12 @@
                                 <div class="w-100">
                                     <div class="d-flex justify-content-between align-items-start">
                                         <div>
-                                            <div class="ig-col-title">{{ $group->name }}</div>
+                                            <div class="ig-col-title ig-group-title" data-group-id="{{ $group->id }}"
+                                                data-locked="{{ $isLocked ? 1 : 0 }}" title="Click para renombrar">
+                                                {{ $group->name }}
+                                            </div>
+                                            <div class="ig-group-title-hint">Click para editar</div>
+
                                             <div class="ig-col-sub">
                                                 <span class="ig-pill ig-count"
                                                     data-count-for="{{ $group->id }}">{{ $itemsCount }}</span>
@@ -610,35 +634,30 @@
                                 @else
                                     <form method="POST"
                                         action="{{ route('ig.collections.groups.generatePost', [$collection, $group]) }}"
-                                        class="ig-generate-form">
+                                        class="ig-generate-form" data-group-id="{{ $group->id }}">
                                         @csrf
 
-                                        <div class="input-group input-group-static">
-                                            <label>{{ __('Descripción') }} (opcional)</label>
-                                            <textarea name="caption" class="form-control" rows="2"
-                                                placeholder="Si lo dejas vacío, se usa el caption base de la colección."></textarea>
-                                        </div>
+                                        <label class="form-label mb-1">{{ __('Descripción') }} (opcional)</label>
+                                        <textarea name="caption" class="form-control" rows="2"
+                                            placeholder="Si lo dejas vacío, se usa la descripción base de la colección."></textarea>
 
-                                        <div class="row mt-2">
-                                            <div class="col-6">
-                                                <select name="publish_mode" class="form-control publish-mode">
-                                                    <option value="now">Publicar ahora</option>
-                                                    <option value="scheduled">Programar</option>
-                                                </select>
-                                            </div>
-                                            <div class="col-6">
-                                                <input type="datetime-local" name="scheduled_at"
-                                                    class="form-control scheduled-at" style="display:none;">
-                                            </div>
-                                        </div>
+                                        {{-- inputs ocultos para el backend --}}
+                                        <input type="hidden" name="publish_mode" value="now">
+                                        <input type="hidden" name="scheduled_at" value="">
 
-                                        <button class="btn btn-accion w-100 mt-2" type="submit">Generar</button>
+                                        <div class="d-flex gap-2 mt-2">
+                                            <button type="submit" class="btn btn-accion w-100">Publicar ahora</button>
+
+                                            <button type="button" class="btn btn-outline-dark w-100 btn-open-schedule"
+                                                data-group-id="{{ $group->id }}"
+                                                data-group-name="{{ $group->name }}">Programar…
+                                            </button>
+                                        </div>
                                     </form>
                                 @endif
                             </div>
                         </div>
                     @endforeach
-
                 </div>
             </div>
 
@@ -647,6 +666,33 @@
             </div>
         </div>
 
+    </div>
+    {{-- Modal Programar --}}
+    <div class="modal fade" id="scheduleModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="border-radius:18px;">
+                <div class="modal-header">
+                    <h5 class="modal-title">Programar {{ __('publicación') }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="text-muted mb-2" id="scheduleModalTitle"></div>
+                    <div class="col-md-12">
+                        <div class="input-group input-group-lg input-group-outline is-filled my-3">
+                            <label class="form-label">Fecha y hora</label>
+                            <input type="datetime-local" class="form-control" id="scheduleDatetime" required>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-accion" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-accion" id="btnConfirmSchedule">Programar</button>
+                </div>
+            </div>
+        </div>
     </div>
 @endsection
 
@@ -854,6 +900,132 @@
                         }
                     }
                 });
+            });
+            // ---- Inline rename (Group title) ----
+            async function updateGroupName(groupId, newName) {
+                const url = @json(url('/instagram/collections/' . $collection->id . '/groups')) + '/' + groupId;
+
+                const resp = await fetch(url, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': @json(csrf_token()),
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: newName
+                    })
+                });
+
+                if (!resp.ok) {
+                    const data = await resp.json().catch(() => null);
+                    throw new Error((data && data.message) ? data.message : 'No se pudo renombrar');
+                }
+                return resp.json();
+            }
+
+            document.querySelectorAll('.ig-group-title').forEach(el => {
+                const locked = el.getAttribute('data-locked') === '1';
+                if (locked) return;
+
+                el.addEventListener('click', () => {
+                    if (el.getAttribute('contenteditable') === 'true') return;
+
+                    el.classList.add('is-editing');
+                    el.setAttribute('contenteditable', 'true');
+                    el.focus();
+
+                    // selecciona todo
+                    document.getSelection().selectAllChildren(el);
+                });
+
+                const commit = async () => {
+                    if (el.getAttribute('contenteditable') !== 'true') return;
+
+                    el.classList.remove('is-editing');
+                    el.setAttribute('contenteditable', 'false');
+
+                    const groupId = el.getAttribute('data-group-id');
+                    const newName = (el.textContent || '').trim();
+
+                    if (!newName) {
+                        window.location.reload();
+                        return;
+                    }
+
+                    try {
+                        setStatus('Guardando nombre...');
+                        await updateGroupName(groupId, newName);
+                        setStatus('Nombre guardado ✅');
+                        setTimeout(() => setStatus(''), 1200);
+                    } catch (e) {
+                        alert(e.message || 'No se pudo renombrar');
+                        window.location.reload();
+                    }
+                };
+
+                el.addEventListener('blur', commit);
+                el.addEventListener('keydown', (ev) => {
+                    if (ev.key === 'Enter') {
+                        ev.preventDefault();
+                        el.blur();
+                    }
+                    if (ev.key === 'Escape') {
+                        ev.preventDefault();
+                        window.location.reload();
+                    }
+                });
+            });
+
+
+            // ---- Modal Schedule ----
+            let scheduleForGroupId = null;
+            let scheduleModal = null;
+
+            function getBootstrapModal() {
+                // Bootstrap 5: window.bootstrap
+                if (window.bootstrap && bootstrap.Modal) {
+                    return bootstrap.Modal;
+                }
+                return null;
+            }
+
+            document.querySelectorAll('.btn-open-schedule').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    scheduleForGroupId = btn.getAttribute('data-group-id');
+                    const name = btn.getAttribute('data-group-name') || 'Carrusel';
+
+                    document.getElementById('scheduleModalTitle').textContent = `Carrusel: ${name}`;
+                    document.getElementById('scheduleDatetime').value = '';
+
+                    const ModalClass = getBootstrapModal();
+                    if (!ModalClass) {
+                        alert('Bootstrap modal no disponible. (Asegura Bootstrap 5 en layouts.admin)');
+                        return;
+                    }
+                    scheduleModal = new ModalClass(document.getElementById('scheduleModal'));
+                    scheduleModal.show();
+                });
+            });
+
+            document.getElementById('btnConfirmSchedule')?.addEventListener('click', () => {
+                const dt = document.getElementById('scheduleDatetime').value;
+                if (!dt) {
+                    alert('Selecciona fecha y hora.');
+                    return;
+                }
+
+                const form = document.querySelector(`.ig-generate-form[data-group-id="${scheduleForGroupId}"]`);
+                if (!form) return;
+
+                // setea hidden inputs
+                form.querySelector('input[name="publish_mode"]').value = 'scheduled';
+                form.querySelector('input[name="scheduled_at"]').value = dt;
+
+                if (scheduleModal) scheduleModal.hide();
+
+                // submit
+                form.submit();
             });
 
             refreshCounts();

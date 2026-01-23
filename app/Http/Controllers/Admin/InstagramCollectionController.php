@@ -418,4 +418,25 @@ class InstagramCollectionController extends Controller
 
         return back()->with('ok', 'Posts generados: ' . count($created));
     }
+    public function updateGroup(Request $request, InstagramCollection $collection, InstagramCollectionGroup $group)
+    {
+        if ($group->instagram_collection_id !== $collection->id) {
+            abort(404);
+        }
+
+        // si ya generó post, bloquear cambios
+        if (!empty($group->instagram_post_id)) {
+            return response()->json(['ok' => false, 'message' => 'Este carrusel está bloqueado.'], 422);
+        }
+
+        $request->validate([
+            'name' => 'required|string|max:60',
+        ]);
+
+        $group->update([
+            'name' => $request->name,
+        ]);
+
+        return response()->json(['ok' => true, 'name' => $group->name]);
+    }
 }

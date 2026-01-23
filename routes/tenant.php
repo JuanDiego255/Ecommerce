@@ -622,6 +622,8 @@ Route::middleware([
                  */
                 Route::post('/instagram/collections/{collection}/generate-posts', [InstagramCollectionController::class, 'generatePosts'])
                     ->name('ig.collections.generatePosts');
+                Route::put('/instagram/collections/{collection}/groups/{group}', [InstagramCollectionController::class, 'updateGroup'])
+                    ->name('ig.collections.groups.update');
             });
 
             // Dueño o manager: ver/gestionar citas de TODOS
