@@ -106,6 +106,45 @@ class AutoBookingController extends Controller
             return back()->with('alert', ['type' => 'danger', 'msg' => 'Ese horario no está disponible. Intenta con otro.']);
         }
 
+        // Validar que el slot no esté reservado por un cliente con auto-booking fijo
+        $dayOfWeek = $startLocal->dayOfWeek; // 0=domingo, 1=lunes, ..., 6=sábado
+        $time24 = $startLocal->format('H:i');
+        $clientEmail = $cita->cliente_email;
+
+        $blockedByAutoBooking = \App\Models\Client::where('auto_book_opt_in', true)
+            ->where('preferred_barbero_id', $barbero->id)
+            ->where('email', '!=', $clientEmail) // Excluir al cliente que está reprogramando
+            ->get()
+            ->filter(function ($client) use ($dayOfWeek, $time24) {
+                // Verificar que preferred_days contenga el día de la semana
+                $preferredDays = $client->preferred_days;
+                if (!is_array($preferredDays) || !in_array($dayOfWeek, $preferredDays)) {
+                    return false;
+                }
+
+                // Verificar que la hora coincida
+                $preferredStart = $client->preferred_start;
+                if (!$preferredStart) {
+                    return false;
+                }
+
+                // Normalizar la hora preferida a formato H:i
+                $preferredStartNormalized = substr($preferredStart, 0, 5);
+
+                return $preferredStartNormalized === $time24;
+            })
+            ->first();
+
+        if ($blockedByAutoBooking) {
+            return back()->with('alert', [
+                'type' => 'danger',
+                'msg' => sprintf(
+                    'Este horario está reservado de forma fija para %s. Por favor selecciona otro horario.',
+                    $blockedByAutoBooking->nombre
+                )
+            ]);
+        }
+
         // Guardar
         $cita->update([
             'starts_at' => $startLocal, // si guardas UTC: ->copy()->timezone('UTC')

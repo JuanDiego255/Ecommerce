@@ -162,6 +162,44 @@ class BookingController extends Controller
         if (!in_array($startsAt12, $slots, true)) {
             return back()->withErrors('Ese horario acaba de ocuparse. Elige otro.')->withInput();
         }
+
+        // Validar que el slot no esté reservado por un cliente con auto-booking fijo
+        $email = trim((string)$request->input('cliente_email'));
+        $dayOfWeek = $startsAt->dayOfWeek; // 0=domingo, 1=lunes, ..., 6=sábado
+
+        $blockedByAutoBooking = Client::where('auto_book_opt_in', true)
+            ->where('preferred_barbero_id', $barbero->id)
+            ->where('email', '!=', $email) // Excluir al cliente que está reservando
+            ->get()
+            ->filter(function ($client) use ($dayOfWeek, $time24) {
+                // Verificar que preferred_days contenga el día de la semana
+                $preferredDays = $client->preferred_days;
+                if (!is_array($preferredDays) || !in_array($dayOfWeek, $preferredDays)) {
+                    return false;
+                }
+
+                // Verificar que la hora coincida (preferred_start puede estar en formato H:i o H:i:s)
+                $preferredStart = $client->preferred_start;
+                if (!$preferredStart) {
+                    return false;
+                }
+
+                // Normalizar la hora preferida a formato H:i
+                $preferredStartNormalized = substr($preferredStart, 0, 5); // Toma solo H:i
+
+                return $preferredStartNormalized === $time24;
+            })
+            ->first();
+
+        if ($blockedByAutoBooking) {
+            return back()->withErrors([
+                'time' => sprintf(
+                    'Este horario está reservado de forma fija para %s. Por favor selecciona otro horario.',
+                    $blockedByAutoBooking->nombre
+                )
+            ])->withInput();
+        }
+
         // Crear cita y snapshot de servicios
         DB::transaction(function () use ($barbero, $data, $totalCents, $detalle, $startsAt, $endsAt, $request, $mailer) {
 

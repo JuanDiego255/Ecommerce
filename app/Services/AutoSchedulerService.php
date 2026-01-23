@@ -121,6 +121,44 @@ class AutoSchedulerService
                 ];
             });
 
+        // Bloques por clientes con auto-booking fijo
+        $dayOfWeek = Carbon::parse($dateYmd, $tz)->dayOfWeek; // 0=domingo, 1=lunes, ..., 6=sábado
+        $autoBookingBlocks = Client::where('auto_book_opt_in', true)
+            ->where('preferred_barbero_id', $barbero->id)
+            ->get()
+            ->filter(function ($client) use ($dayOfWeek) {
+                $preferredDays = $client->preferred_days;
+                return is_array($preferredDays) && in_array($dayOfWeek, $preferredDays);
+            })
+            ->map(function ($client) use ($dateYmd, $tz) {
+                $preferredStart = $client->preferred_start;
+                if (!$preferredStart) {
+                    return null;
+                }
+
+                // Normalizar la hora preferida a formato H:i
+                $preferredStartNormalized = substr($preferredStart, 0, 5);
+
+                // Duración: usar preferred_end si existe, o asumir slot estándar
+                $preferredEnd = $client->preferred_end;
+                if ($preferredEnd) {
+                    $startTime = Carbon::createFromFormat('Y-m-d H:i', $dateYmd . ' ' . $preferredStartNormalized, $tz);
+                    $endTimeNormalized = substr($preferredEnd, 0, 5);
+                    $endTime = Carbon::createFromFormat('Y-m-d H:i', $dateYmd . ' ' . $endTimeNormalized, $tz);
+                } else {
+                    // Si no hay preferred_end, bloquear 30 minutos por defecto
+                    $startTime = Carbon::createFromFormat('Y-m-d H:i', $dateYmd . ' ' . $preferredStartNormalized, $tz);
+                    $endTime = $startTime->copy()->addMinutes(30);
+                }
+
+                return [
+                    'starts_at' => $startTime,
+                    'ends_at'   => $endTime,
+                ];
+            })
+            ->filter() // Eliminar nulls
+            ->values();
+
         // Generar slots base
         $slots = [];
         for ($t = $start->copy(); $t->lt($end); $t->addMinutes($slot)) {
@@ -152,6 +190,15 @@ class AutoSchedulerService
             // Traslape con bloques
             foreach ($bloques as $b) {
                 if ($overlaps($candidateStart, $candidateEnd, $b['starts_at'], $b['ends_at'])) {
+                    $busy = true;
+                    break;
+                }
+            }
+            if ($busy) continue;
+
+            // Traslape con bloques de auto-booking
+            foreach ($autoBookingBlocks as $ab) {
+                if ($overlaps($candidateStart, $candidateEnd, $ab['starts_at'], $ab['ends_at'])) {
                     $busy = true;
                     break;
                 }
