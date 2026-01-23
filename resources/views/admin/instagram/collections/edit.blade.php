@@ -346,6 +346,27 @@
             border-radius: 10px;
             padding: 2px 8px;
         }
+
+        .ig-title-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .ig-pen {
+            border: none;
+            background: #f1f3f5;
+            border-radius: 12px;
+            padding: 6px 10px;
+            cursor: pointer;
+            font-weight: 900;
+            line-height: 1;
+        }
+
+        .ig-pen:hover {
+            background: #e9ecef;
+        }
     </style>
     <div class="container-fluid">
 
@@ -540,11 +561,21 @@
                                 <div class="w-100">
                                     <div class="d-flex justify-content-between align-items-start">
                                         <div>
-                                            <div class="ig-col-title ig-group-title" data-group-id="{{ $group->id }}"
-                                                data-locked="{{ $isLocked ? 1 : 0 }}" title="Click para renombrar">
-                                                {{ $group->name }}
+                                            <div class="ig-title-row">
+                                                <div class="ig-col-title ig-group-title"
+                                                    data-group-id="{{ $group->id }}"
+                                                    data-locked="{{ $isLocked ? 1 : 0 }}" title="Click para renombrar">
+                                                    {{ $group->name }}
+                                                </div>
+
+                                                @if (!$isLocked)
+                                                    <button type="button" class="ig-pen" title="Renombrar carrusel"
+                                                        data-edit-group="{{ $group->id }}">
+                                                        ✏️
+                                                    </button>
+                                                @endif
                                             </div>
-                                            <div class="ig-group-title-hint">Click para editar</div>
+
 
                                             <div class="ig-col-sub">
                                                 <span class="ig-pill ig-count"
@@ -667,6 +698,7 @@
         </div>
 
     </div>
+
     {{-- Modal Programar --}}
     <div class="modal fade" id="scheduleModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -678,11 +710,22 @@
 
                 <div class="modal-body">
                     <div class="text-muted mb-2" id="scheduleModalTitle"></div>
+
+                    <div class="d-flex gap-2 mb-3">
+                        <button type="button" class="btn btn-outline-dark w-100" id="btnQuickToday">Hoy 7:00 PM</button>
+                        <button type="button" class="btn btn-outline-dark w-100" id="btnQuickTomorrow">Mañana 7:00
+                            PM</button>
+                    </div>
+
                     <div class="col-md-12">
                         <div class="input-group input-group-lg input-group-outline is-filled my-3">
                             <label class="form-label">Fecha y hora</label>
                             <input type="datetime-local" class="form-control" id="scheduleDatetime" required>
                         </div>
+                    </div>
+
+                    <div class="mt-2">
+                        <small class="text-muted d-block" id="schedulePreview">Se {{ __('publicará') }}: —</small>
                     </div>
 
                 </div>
@@ -706,6 +749,8 @@
             const routes = {
                 createGroup: @json(route('ig.collections.groups.create', $collection)),
                 moveItem: @json(route('ig.collections.items.move', $collection)),
+                // Endpoint REST para renombrar: /instagram/collections/{collection}/groups/{group}
+                updateGroupBase: @json(url('/instagram/collections/' . $collection->id . '/groups')),
             };
 
             function setStatus(msg) {
@@ -713,44 +758,21 @@
                 saveStatus.textContent = msg || '';
             }
 
-            // Toggle datetime-local in each group form
-            document.querySelectorAll('.ig-generate-form').forEach(form => {
-                const mode = form.querySelector('.publish-mode');
-                const dt = form.querySelector('.scheduled-at');
-                if (!mode || !dt) return;
-                const toggle = () => dt.style.display = (mode.value === 'scheduled') ? 'block' : 'none';
-                mode.addEventListener('change', toggle);
-                toggle();
-            });
+            // -----------------------------------------
+            // Helpers
+            // -----------------------------------------
+            function parseNullableInt(v) {
+                if (v === null || v === undefined) return null;
+                v = String(v).trim();
+                if (v === '') return null;
+                const n = parseInt(v, 10);
+                return Number.isNaN(n) ? null : n;
+            }
 
-            // Create group (AJAX)
-            if (btnCreateGroup) {
-                btnCreateGroup.addEventListener('click', async () => {
-                    try {
-                        btnCreateGroup.disabled = true;
-                        setStatus('Creando carrusel...');
-
-                        const resp = await fetch(routes.createGroup, {
-                            method: 'POST',
-                            headers: {
-                                'X-CSRF-TOKEN': @json(csrf_token()),
-                                'Accept': 'application/json'
-                            }
-                        });
-
-                        if (!resp.ok) {
-                            const txt = await resp.text();
-                            throw new Error(txt);
-                        }
-
-                        setStatus('Carrusel creado ✅. Recargando...');
-                        window.location.reload();
-                    } catch (e) {
-                        console.error(e);
-                        setStatus('No se pudo crear el carrusel ❌');
-                        btnCreateGroup.disabled = false;
-                    }
-                });
+            function idsFromList(listEl) {
+                return Array.from(listEl.querySelectorAll('.ig-item'))
+                    .map(el => parseInt(el.getAttribute('data-id'), 10))
+                    .filter(n => Number.isInteger(n) && n > 0);
             }
 
             function refreshCounts() {
@@ -769,23 +791,44 @@
                 });
             }
 
-            function idsFromList(listEl) {
-                return Array.from(listEl.querySelectorAll('.ig-item'))
-                    .map(el => parseInt(el.getAttribute('data-id'), 10))
-                    .filter(n => Number.isInteger(n) && n > 0);
+            function getBootstrapModalClass() {
+                return (window.bootstrap && bootstrap.Modal) ? bootstrap.Modal : null;
             }
 
-            function parseNullableInt(v) {
-                if (v === null || v === undefined) return null;
-                v = String(v).trim();
-                if (v === '') return null;
-                const n = parseInt(v, 10);
-                return Number.isNaN(n) ? null : n;
+            function swalWarn(title) {
+                if (window.Swal) {
+                    Swal.fire({
+                        title,
+                        icon: "warning"
+                    });
+                } else {
+                    alert(title);
+                }
             }
 
-            const lists = document.querySelectorAll('.ig-list');
-            lists.forEach(listEl => {
+            function pad2(n) {
+                return String(n).padStart(2, '0');
+            }
 
+            function toDatetimeLocalValue(d) {
+                return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()) +
+                    'T' + pad2(d.getHours()) + ':' + pad2(d.getMinutes());
+            }
+
+            function formatPretty(d) {
+                const days = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+                let h = d.getHours();
+                const m = pad2(d.getMinutes());
+                const ampm = h >= 12 ? 'PM' : 'AM';
+                h = h % 12;
+                if (h === 0) h = 12;
+                return `${days[d.getDay()]} ${h}:${m} ${ampm}`;
+            }
+
+            // -----------------------------------------
+            // Drag & Drop (Sortable)
+            // -----------------------------------------
+            document.querySelectorAll('.ig-list').forEach(listEl => {
                 new Sortable(listEl, {
                     group: 'ig-items',
                     animation: 150,
@@ -794,8 +837,7 @@
                     chosenClass: 'ig-chosen',
 
                     onMove: function(evt) {
-                        const to = evt.to;
-                        const locked = to.getAttribute('data-locked');
+                        const locked = evt.to.getAttribute('data-locked');
                         if (locked === '1') return false;
                         return true;
                     },
@@ -808,10 +850,11 @@
                         const toGroupId = parseNullableInt(to.getAttribute('data-group-id'));
                         const fromGroupId = parseNullableInt(from.getAttribute('data-group-id'));
 
+                        // Límite 10 por carrusel
                         if (toGroupId) {
                             const count = to.querySelectorAll('.ig-item').length;
                             if (count > 10) {
-                                alert('Un carrusel no puede tener más de 10 imágenes.');
+                                swalWarn('Un carrusel no puede tener más de 10 imágenes.');
                                 from.insertBefore(itemEl, from.children[evt.oldIndex] || null);
                                 refreshCounts();
                                 return;
@@ -848,11 +891,11 @@
                             }
 
                             setStatus('Cambios guardados ✅');
-                            setTimeout(() => setStatus(''), 1500);
+                            setTimeout(() => setStatus(''), 1200);
                             refreshCounts();
                         } catch (e) {
                             console.error(e);
-                            alert(e.message || 'No se pudo mover la imagen.');
+                            swalWarn(e.message || 'No se pudo mover la imagen.');
                             from.insertBefore(itemEl, from.children[evt.oldIndex] || null);
                             refreshCounts();
                             setStatus('No se pudo guardar ❌');
@@ -861,14 +904,13 @@
 
                     onUpdate: async function(evt) {
                         const list = evt.to;
-                        const groupId = parseNullableInt(list.getAttribute('data-group-id'));
-
                         const locked = list.getAttribute('data-locked');
                         if (locked === '1') {
                             window.location.reload();
                             return;
                         }
 
+                        const groupId = parseNullableInt(list.getAttribute('data-group-id'));
                         const itemId = parseInt(evt.item.getAttribute('data-id'), 10);
                         const order = idsFromList(list);
 
@@ -892,7 +934,7 @@
 
                             if (!resp.ok) throw new Error('No se pudo guardar el orden.');
                             setStatus('Orden guardado ✅');
-                            setTimeout(() => setStatus(''), 1500);
+                            setTimeout(() => setStatus(''), 1200);
                             refreshCounts();
                         } catch (e) {
                             console.error(e);
@@ -901,9 +943,12 @@
                     }
                 });
             });
-            // ---- Inline rename (Group title) ----
+
+            // -----------------------------------------
+            // Inline Rename + ✏️ button
+            // -----------------------------------------
             async function updateGroupName(groupId, newName) {
-                const url = @json(url('/instagram/collections/' . $collection->id . '/groups')) + '/' + groupId;
+                const url = routes.updateGroupBase + '/' + groupId;
 
                 const resp = await fetch(url, {
                     method: 'PUT',
@@ -924,7 +969,7 @@
                 return resp.json();
             }
 
-            document.querySelectorAll('.ig-group-title').forEach(el => {
+            function enableInlineRename(el) {
                 const locked = el.getAttribute('data-locked') === '1';
                 if (locked) return;
 
@@ -934,8 +979,6 @@
                     el.classList.add('is-editing');
                     el.setAttribute('contenteditable', 'true');
                     el.focus();
-
-                    // selecciona todo
                     document.getSelection().selectAllChildren(el);
                 });
 
@@ -959,7 +1002,7 @@
                         setStatus('Nombre guardado ✅');
                         setTimeout(() => setStatus(''), 1200);
                     } catch (e) {
-                        alert(e.message || 'No se pudo renombrar');
+                        swalWarn(e.message || 'No se pudo renombrar');
                         window.location.reload();
                     }
                 };
@@ -975,59 +1018,165 @@
                         window.location.reload();
                     }
                 });
+            }
+
+            document.querySelectorAll('.ig-group-title').forEach(enableInlineRename);
+
+            document.querySelectorAll('[data-edit-group]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const gid = btn.getAttribute('data-edit-group');
+                    const titleEl = document.querySelector('.ig-group-title[data-group-id="' + gid +
+                        '"]');
+                    if (titleEl) titleEl.click();
+                });
             });
 
+            // -----------------------------------------
+            // Create Group (AJAX)
+            // -----------------------------------------
+            if (btnCreateGroup) {
+                btnCreateGroup.addEventListener('click', async () => {
+                    try {
+                        btnCreateGroup.disabled = true;
+                        setStatus('Creando carrusel...');
 
-            // ---- Modal Schedule ----
+                        const resp = await fetch(routes.createGroup, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': @json(csrf_token()),
+                                'Accept': 'application/json'
+                            }
+                        });
+
+                        if (!resp.ok) {
+                            const txt = await resp.text();
+                            throw new Error(txt);
+                        }
+
+                        setStatus('Carrusel creado ✅. Recargando...');
+                        window.location.reload();
+                    } catch (e) {
+                        console.error(e);
+                        setStatus('No se pudo crear el carrusel ❌');
+                        btnCreateGroup.disabled = false;
+                    }
+                });
+            }
+
+            // -----------------------------------------
+            // Modal Schedule (Premium)
+            // -----------------------------------------
             let scheduleForGroupId = null;
             let scheduleModal = null;
 
-            function getBootstrapModal() {
-                // Bootstrap 5: window.bootstrap
-                if (window.bootstrap && bootstrap.Modal) {
-                    return bootstrap.Modal;
+            function setSchedulePreviewFromInput() {
+                const el = document.getElementById('scheduleDatetime');
+                const preview = document.getElementById('schedulePreview');
+                if (!el || !preview) return;
+
+                const v = el.value;
+                if (!v) {
+                    preview.textContent = 'Se publicará: —';
+                    return;
                 }
-                return null;
+
+                const d = new Date(v);
+                if (isNaN(d.getTime())) {
+                    preview.textContent = 'Se publicará: —';
+                    return;
+                }
+
+                preview.textContent = 'Se publicará: ' + formatPretty(d);
             }
+
+            function suggestedToday7pm() {
+                const now = new Date();
+                let d = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 19, 0, 0, 0);
+                if (d.getTime() <= now.getTime()) {
+                    d = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 19, 0, 0, 0);
+                }
+                return d;
+            }
+
+            function tomorrow7pm() {
+                const now = new Date();
+                return new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 19, 0, 0, 0);
+            }
+
+            document.getElementById('scheduleDatetime')?.addEventListener('input', setSchedulePreviewFromInput);
+
+            document.getElementById('btnQuickToday')?.addEventListener('click', () => {
+                const d = suggestedToday7pm();
+                document.getElementById('scheduleDatetime').value = toDatetimeLocalValue(d);
+                setSchedulePreviewFromInput();
+            });
+
+            document.getElementById('btnQuickTomorrow')?.addEventListener('click', () => {
+                const d = tomorrow7pm();
+                document.getElementById('scheduleDatetime').value = toDatetimeLocalValue(d);
+                setSchedulePreviewFromInput();
+            });
 
             document.querySelectorAll('.btn-open-schedule').forEach(btn => {
                 btn.addEventListener('click', () => {
                     scheduleForGroupId = btn.getAttribute('data-group-id');
                     const name = btn.getAttribute('data-group-name') || 'Carrusel';
 
-                    document.getElementById('scheduleModalTitle').textContent = `Carrusel: ${name}`;
-                    document.getElementById('scheduleDatetime').value = '';
+                    const titleEl = document.getElementById('scheduleModalTitle');
+                    if (titleEl) titleEl.textContent = `Carrusel: ${name}`;
 
-                    const ModalClass = getBootstrapModal();
+                    // Prefill: hoy 7pm (o mañana si ya pasó)
+                    const d = suggestedToday7pm();
+                    const dtInput = document.getElementById('scheduleDatetime');
+                    if (dtInput) dtInput.value = toDatetimeLocalValue(d);
+                    setSchedulePreviewFromInput();
+
+                    const ModalClass = getBootstrapModalClass();
                     if (!ModalClass) {
-                        alert('Bootstrap modal no disponible. (Asegura Bootstrap 5 en layouts.admin)');
+                        swalWarn('Bootstrap modal no disponible.');
                         return;
                     }
+
                     scheduleModal = new ModalClass(document.getElementById('scheduleModal'));
                     scheduleModal.show();
                 });
             });
 
             document.getElementById('btnConfirmSchedule')?.addEventListener('click', () => {
-                const dt = document.getElementById('scheduleDatetime').value;
+                const dtInput = document.getElementById('scheduleDatetime');
+                const dt = dtInput ? dtInput.value : '';
+
                 if (!dt) {
-                    alert('Selecciona fecha y hora.');
+                    swalWarn('Selecciona fecha y hora.');
+                    return;
+                }
+
+                // Validación futuro (1 min)
+                const selected = new Date(dt);
+                const now = new Date();
+                const minFutureMs = 60 * 1000;
+
+                if (isNaN(selected.getTime())) {
+                    swalWarn('Fecha/hora inválida.');
+                    return;
+                }
+
+                if (selected.getTime() < now.getTime() + minFutureMs) {
+                    swalWarn('La fecha/hora debe ser al menos 1 minuto en el futuro.');
                     return;
                 }
 
                 const form = document.querySelector(`.ig-generate-form[data-group-id="${scheduleForGroupId}"]`);
                 if (!form) return;
 
-                // setea hidden inputs
                 form.querySelector('input[name="publish_mode"]').value = 'scheduled';
                 form.querySelector('input[name="scheduled_at"]').value = dt;
 
                 if (scheduleModal) scheduleModal.hide();
-
-                // submit
                 form.submit();
             });
 
+            // Init
             refreshCounts();
         })();
     </script>
