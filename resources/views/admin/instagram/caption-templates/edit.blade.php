@@ -65,13 +65,25 @@
                                     required>{{ old('template_text', $template->template_text) }}</textarea>
                             </div>
 
-                            <div class="form-check mb-4">
-                                <input type="hidden" name="is_active" value="0">
-                                <input type="checkbox" name="is_active" value="1" class="form-check-input"
-                                    id="isActive" {{ old('is_active', $template->is_active) ? 'checked' : '' }}>
-                                <label class="form-check-label" for="isActive">
-                                    Plantilla activa
-                                </label>
+                            <div class="row">
+                                <div class="col-md-6 mb-4">
+                                    <div class="input-group input-group-static">
+                                        <label>Peso (probabilidad) *</label>
+                                        <input type="number" name="weight" class="form-control"
+                                            value="{{ old('weight', $template->weight ?? 1) }}" min="1" max="100" required>
+                                    </div>
+                                    <small class="text-muted">Mayor peso = mayor probabilidad de selección</small>
+                                </div>
+                                <div class="col-md-6 mb-4">
+                                    <div class="form-check mt-4">
+                                        <input type="hidden" name="is_active" value="0">
+                                        <input type="checkbox" name="is_active" value="1" class="form-check-input"
+                                            id="isActive" {{ old('is_active', $template->is_active) ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="isActive">
+                                            Plantilla activa
+                                        </label>
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="d-flex gap-2">

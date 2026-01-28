@@ -38,6 +38,7 @@ class InstagramCaptionTemplateController extends Controller
         $request->validate([
             'name' => 'required|string|max:100',
             'template_text' => 'required|string',
+            'weight' => 'required|integer|min:1|max:100',
         ]);
 
         $templateText = $request->template_text;
@@ -52,6 +53,7 @@ class InstagramCaptionTemplateController extends Controller
         InstagramCaptionTemplate::create([
             'name' => $request->name,
             'template_text' => $templateText,
+            'weight' => $request->weight,
             'is_active' => true,
             'tenant_domain' => request()->getHost(),
         ]);
@@ -79,6 +81,7 @@ class InstagramCaptionTemplateController extends Controller
         $request->validate([
             'name' => 'required|string|max:100',
             'template_text' => 'required|string',
+            'weight' => 'required|integer|min:1|max:100',
             'is_active' => 'nullable|boolean',
         ]);
 
@@ -94,6 +97,7 @@ class InstagramCaptionTemplateController extends Controller
         $template->update([
             'name' => $request->name,
             'template_text' => $templateText,
+            'weight' => $request->weight,
             'is_active' => $request->boolean('is_active', true),
         ]);
 

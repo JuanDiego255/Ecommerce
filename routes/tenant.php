@@ -55,6 +55,7 @@ use App\Http\Controllers\Admin\CitaAdminController;
 use App\Http\Controllers\Admin\EmailSettingController;
 use App\Http\Controllers\Admin\EventCategoryController;
 use App\Http\Controllers\Admin\EventController;
+use App\Http\Controllers\Admin\InstagramCaptionSettingsController;
 use App\Http\Controllers\Admin\InstagramCaptionTemplateController;
 use App\Http\Controllers\Admin\InstagramCollectionController;
 use App\Http\Controllers\Admin\InstagramController;
@@ -645,6 +646,40 @@ Route::middleware([
                     ->name('ig.caption-templates.preview');
                 Route::post('/instagram/caption-templates/generate', [InstagramCaptionTemplateController::class, 'generate'])
                     ->name('ig.caption-templates.generate');
+
+                /**
+                 * Instagram - configuración de generación de captions
+                 */
+                Route::get('/instagram/caption-settings', [InstagramCaptionSettingsController::class, 'index'])
+                    ->name('ig.caption-settings.index');
+                Route::put('/instagram/caption-settings/update', [InstagramCaptionSettingsController::class, 'updateSettings'])
+                    ->name('ig.caption-settings.update');
+                Route::post('/instagram/caption-settings/preview', [InstagramCaptionSettingsController::class, 'previewCaption'])
+                    ->name('ig.caption-settings.preview');
+
+                // Hashtag Pools
+                Route::get('/instagram/caption-settings/hashtag-pools/create', [InstagramCaptionSettingsController::class, 'createHashtagPool'])
+                    ->name('ig.hashtag-pools.create');
+                Route::post('/instagram/caption-settings/hashtag-pools/store', [InstagramCaptionSettingsController::class, 'storeHashtagPool'])
+                    ->name('ig.hashtag-pools.store');
+                Route::get('/instagram/caption-settings/hashtag-pools/{id}/edit', [InstagramCaptionSettingsController::class, 'editHashtagPool'])
+                    ->name('ig.hashtag-pools.edit');
+                Route::put('/instagram/caption-settings/hashtag-pools/{id}', [InstagramCaptionSettingsController::class, 'updateHashtagPool'])
+                    ->name('ig.hashtag-pools.update');
+                Route::delete('/instagram/caption-settings/hashtag-pools/{id}', [InstagramCaptionSettingsController::class, 'destroyHashtagPool'])
+                    ->name('ig.hashtag-pools.destroy');
+
+                // CTAs
+                Route::get('/instagram/caption-settings/ctas/create', [InstagramCaptionSettingsController::class, 'createCta'])
+                    ->name('ig.ctas.create');
+                Route::post('/instagram/caption-settings/ctas/store', [InstagramCaptionSettingsController::class, 'storeCta'])
+                    ->name('ig.ctas.store');
+                Route::get('/instagram/caption-settings/ctas/{id}/edit', [InstagramCaptionSettingsController::class, 'editCta'])
+                    ->name('ig.ctas.edit');
+                Route::put('/instagram/caption-settings/ctas/{id}', [InstagramCaptionSettingsController::class, 'updateCta'])
+                    ->name('ig.ctas.update');
+                Route::delete('/instagram/caption-settings/ctas/{id}', [InstagramCaptionSettingsController::class, 'destroyCta'])
+                    ->name('ig.ctas.destroy');
             });
 
             // Dueño o manager: ver/gestionar citas de TODOS

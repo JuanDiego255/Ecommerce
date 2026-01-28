@@ -99,6 +99,16 @@
                                     required>{{ old('template_text') }}</textarea>
                             </div>
 
+                            <div class="input-group input-group-static mb-4">
+                                <label>Peso (probabilidad de selección) *</label>
+                                <input type="number" name="weight" class="form-control"
+                                    value="{{ old('weight', 1) }}" min="1" max="100" required>
+                                <small class="text-muted">
+                                    Mayor peso = mayor probabilidad de ser seleccionada automáticamente.
+                                    Ejemplo: peso 3 tiene 3x más probabilidad que peso 1.
+                                </small>
+                            </div>
+
                             <div class="d-flex gap-2">
                                 <button type="button" class="btn btn-outline-dark" id="btnPreview">
                                     Ver variaciones

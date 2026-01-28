@@ -14,7 +14,7 @@
 
         {{-- Navegación rápida --}}
         <div class="row mt-3 mb-4">
-            <div class="col-md-4 mb-3">
+            <div class="col-md-3 mb-3">
                 <a href="{{ url('/instagram/posts') }}" class="card text-decoration-none h-100">
                     <div class="card-body text-center">
                         <h5 class="mb-2">📸 Publicaciones</h5>
@@ -22,7 +22,7 @@
                     </div>
                 </a>
             </div>
-            <div class="col-md-4 mb-3">
+            <div class="col-md-3 mb-3">
                 <a href="{{ url('/instagram/collections') }}" class="card text-decoration-none h-100">
                     <div class="card-body text-center">
                         <h5 class="mb-2">🎠 Colecciones</h5>
@@ -30,11 +30,19 @@
                     </div>
                 </a>
             </div>
-            <div class="col-md-4 mb-3">
+            <div class="col-md-3 mb-3">
                 <a href="{{ url('/instagram/caption-templates') }}" class="card text-decoration-none h-100">
                     <div class="card-body text-center">
                         <h5 class="mb-2">✨ Plantillas</h5>
                         <p class="text-muted small mb-0">Captions variados con Spintax</p>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-3 mb-3">
+                <a href="{{ url('/instagram/caption-settings') }}" class="card text-decoration-none h-100">
+                    <div class="card-body text-center">
+                        <h5 class="mb-2">⚙️ Configuración</h5>
+                        <p class="text-muted small mb-0">Hashtags, CTAs y opciones</p>
                     </div>
                 </a>
             </div>

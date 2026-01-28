@@ -11,6 +11,7 @@ use App\Models\InstagramCollectionItem;
 use App\Models\InstagramPost;
 use App\Models\InstagramPostMedia;
 use App\Domain\Instagram\Jobs\PublishInstagramPostJob;
+use App\Domain\Instagram\Services\CaptionGeneratorService;
 use App\Domain\Instagram\Services\SpintaxService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -333,7 +334,7 @@ class InstagramCollectionController extends Controller
         // Determinar el caption a usar
         $caption = trim((string) $request->input('caption', ''));
 
-        // Si se solicita usar plantilla y hay una asignada, procesar spintax
+        // Si se solicita usar plantilla específica de la colección
         if ($request->boolean('use_template') && $collection->caption_template_id) {
             $collection->load('captionTemplate');
             if ($collection->captionTemplate) {
@@ -341,8 +342,15 @@ class InstagramCollectionController extends Controller
                 $caption = $spintaxService->process($collection->captionTemplate->template_text);
             }
         } elseif ($caption === '') {
-            // Fallback al caption por defecto de la colección
-            $caption = $collection->default_caption ?? '';
+            // Caption vacío: usar generador automático completo
+            // (plantilla aleatoria ponderada + hashtags mezclados + CTA rotativo)
+            $captionGenerator = app(CaptionGeneratorService::class);
+            $caption = $captionGenerator->generateForCarousel($collection->caption_template_id);
+
+            // Si aún está vacío (no hay plantillas/CTAs/hashtags configurados), usar default
+            if (trim($caption) === '') {
+                $caption = $collection->default_caption ?? '';
+            }
         }
 
         $post = InstagramPost::create([
