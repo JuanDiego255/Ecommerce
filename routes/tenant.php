@@ -619,6 +619,9 @@ Route::middleware([
                 Route::post('/instagram/collections/{collection}/groups/{group}/generate-post', [InstagramCollectionController::class, 'generatePostForGroup'])
                     ->name('ig.collections.groups.generatePost');
 
+                Route::post('/instagram/collections/{collection}/groups/{group}/analyze-images', [InstagramCollectionController::class, 'analyzeGroupImages'])
+                    ->name('ig.collections.groups.analyzeImages');
+
                 /**
                  * (Opcional / legacy) generar posts automáticos por colección
                  */

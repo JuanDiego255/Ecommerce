@@ -295,6 +295,7 @@ class InstagramCollectionController extends Controller
             'scheduled_at' => 'nullable|string', // datetime-local
             'caption' => 'nullable|string',
             'use_template' => 'nullable|boolean',
+            'analyze_images' => 'nullable|boolean',
         ]);
 
         $account = InstagramAccount::where('is_active', true)->latest()->first();
@@ -333,19 +334,44 @@ class InstagramCollectionController extends Controller
 
         // Determinar el caption a usar
         $caption = trim((string) $request->input('caption', ''));
+        $useTemplate = $request->boolean('use_template');
+        $analyzeImages = $request->boolean('analyze_images');
 
-        // Si se solicita usar plantilla específica de la colección
-        if ($request->boolean('use_template') && $collection->caption_template_id) {
+        // Obtener rutas de imágenes para posible análisis
+        $imagePaths = $group->items->pluck('image_path')->toArray();
+
+        // Si se solicita usar plantilla con análisis de imágenes
+        if ($useTemplate && $analyzeImages && $collection->caption_template_id) {
+            $captionGenerator = app(CaptionGeneratorService::class);
+
+            // Analizar imágenes y obtener variables
+            $imageData = $captionGenerator->analyzeImages($imagePaths);
+
+            // Generar caption con la plantilla y variables de imagen
+            $collection->load('captionTemplate');
+            if ($collection->captionTemplate) {
+                $caption = $captionGenerator->generateTemplateText(
+                    $collection->caption_template_id,
+                    $imageData['variables']
+                );
+            }
+        }
+        // Si solo se usa plantilla sin análisis
+        elseif ($useTemplate && $collection->caption_template_id) {
             $collection->load('captionTemplate');
             if ($collection->captionTemplate) {
                 $spintaxService = app(SpintaxService::class);
                 $caption = $spintaxService->process($collection->captionTemplate->template_text);
             }
-        } elseif ($caption === '') {
-            // Caption vacío: usar generador automático completo
-            // (plantilla aleatoria ponderada + hashtags mezclados + CTA rotativo)
+        }
+        // Caption vacío: usar generador automático completo
+        elseif ($caption === '') {
             $captionGenerator = app(CaptionGeneratorService::class);
-            $caption = $captionGenerator->generateForCarousel($collection->caption_template_id);
+            $caption = $captionGenerator->generateForCarousel(
+                $collection->caption_template_id,
+                $imagePaths,
+                $analyzeImages
+            );
 
             // Si aún está vacío (no hay plantillas/CTAs/hashtags configurados), usar default
             if (trim($caption) === '') {
@@ -383,6 +409,37 @@ class InstagramCollectionController extends Controller
 
         $collection->update(['status' => 'scheduled']);
         return back()->with('ok', "Carrusel '{$group->name}' programado.");
+    }
+
+    /**
+     * Analiza las imágenes de un grupo y devuelve el resultado (AJAX)
+     */
+    public function analyzeGroupImages(Request $request, InstagramCollection $collection, InstagramCollectionGroup $group)
+    {
+        if ($group->instagram_collection_id !== $collection->id) {
+            return response()->json(['ok' => false, 'message' => 'Grupo no válido'], 404);
+        }
+
+        $group->load('items');
+
+        if ($group->items->isEmpty()) {
+            return response()->json([
+                'ok' => false,
+                'message' => 'Este carrusel no tiene imágenes para analizar.',
+            ]);
+        }
+
+        $imagePaths = $group->items->pluck('image_path')->toArray();
+
+        $captionGenerator = app(CaptionGeneratorService::class);
+        $result = $captionGenerator->analyzeImages($imagePaths);
+
+        return response()->json([
+            'ok' => true,
+            'analysis' => $result['analysis'],
+            'variables' => $result['variables'],
+            'description' => $result['description'],
+        ]);
     }
 
     /**

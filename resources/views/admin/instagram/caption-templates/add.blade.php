@@ -62,19 +62,27 @@
         @endif
 
         <div class="spintax-help">
-            <h5 class="mb-2">Sintaxis Spintax</h5>
-            <p class="mb-2">Usa <code>{opción1|opción2|opción3}</code> para crear variaciones. El sistema elegirá una opción aleatoria de cada bloque.</p>
-            <div class="spintax-example">{Nueva|Hermosa|Linda} {colección|pieza|prenda} ✨
+            <h5 class="mb-2">Sintaxis Spintax + Variables de Imagen</h5>
+            <p class="mb-2">Usa <code>{opción1|opción2|opción3}</code> para crear variaciones aleatorias.</p>
+            <p class="mb-2">Con <strong>Analizar imágenes</strong> activado, también puedes usar estas variables:</p>
+            <ul class="small mb-2" style="opacity: 0.9;">
+                <li><code>{color}</code> → Color detectado (negro, rojo, azul...)</li>
+                <li><code>{tipo_prenda}</code> → Tipo detectado (vestido, blusa...)</li>
+                <li><code>{adjetivo_color}</code> → Ej: "elegante negro"</li>
+                <li><code>{caracteristica}</code> → Estampado, tela suave...</li>
+                <li><code>{estilo}</code> → casual, elegante, femenino...</li>
+                <li><code>{ocasion}</code> → salidas, día a día...</li>
+            </ul>
+            <div class="spintax-example">{Nueva|Hermosa|Linda} {tipo_prenda} en {adjetivo_color} ✨
 {Disponible|Ya disponible} {hoy|esta semana}.
 
 {Detalles:|Características:}
-• {Tela suave|Material cómodo|Acabado premium}
-• {Ideal para|Perfecto para} {salidas|el día a día|ocasiones especiales}
+• {caracteristica}
+• {Ideal para|Perfecto para} {ocasion}
+• Estilo {estilo}
 
 {Envíos a todo CR|Entrega rápida|Pick-up disponible}
-{Escríbenos por DM|Pídelo por WhatsApp} 💬
-
-{#modaCR #outfit #fashion|#tiendacr #mujer #style|#lookdeldia #ootd #costarica}</div>
+{Escríbenos por DM|Pídelo por WhatsApp} 💬</div>
         </div>
 
         <div class="row">

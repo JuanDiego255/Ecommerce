@@ -713,15 +713,42 @@
                                                         <strong>Usar plantilla:</strong> {{ $collection->captionTemplate->name ?? 'Sin nombre' }}
                                                     </label>
                                                 </div>
-                                                <button type="button" class="btn btn-sm btn-outline-secondary mt-1 btn-preview-template"
-                                                    data-group-id="{{ $group->id }}"
-                                                    data-template-id="{{ $collection->caption_template_id }}">
-                                                    ✨ Ver variación
-                                                </button>
+
+                                                {{-- Opción para analizar imágenes --}}
+                                                <div class="form-check mt-1">
+                                                    <input type="checkbox" name="analyze_images" value="1"
+                                                        class="form-check-input analyze-images-check"
+                                                        id="analyzeImages{{ $group->id }}"
+                                                        data-group-id="{{ $group->id }}">
+                                                    <label class="form-check-label" for="analyzeImages{{ $group->id }}">
+                                                        <strong>Analizar imágenes</strong>
+                                                        <small class="text-muted d-block">Detecta color, tipo de prenda y estampado</small>
+                                                    </label>
+                                                </div>
+
+                                                <div class="d-flex gap-1 mt-2">
+                                                    <button type="button" class="btn btn-sm btn-outline-secondary btn-preview-template"
+                                                        data-group-id="{{ $group->id }}"
+                                                        data-template-id="{{ $collection->caption_template_id }}">
+                                                        ✨ Ver variación
+                                                    </button>
+                                                    <button type="button" class="btn btn-sm btn-outline-info btn-analyze-preview"
+                                                        data-group-id="{{ $group->id }}"
+                                                        data-collection-id="{{ $collection->id }}">
+                                                        🔍 Ver análisis
+                                                    </button>
+                                                </div>
+
                                                 <div class="caption-preview mt-2" id="captionPreview{{ $group->id }}" style="display: none;">
                                                     <small class="text-muted">Vista previa:</small>
                                                     <div class="bg-light p-2 rounded mt-1" style="font-size: 12px; white-space: pre-wrap;"
                                                         id="captionPreviewText{{ $group->id }}"></div>
+                                                </div>
+
+                                                <div class="analysis-preview mt-2" id="analysisPreview{{ $group->id }}" style="display: none;">
+                                                    <small class="text-muted">Análisis de imágenes:</small>
+                                                    <div class="bg-info bg-opacity-10 p-2 rounded mt-1" style="font-size: 12px;"
+                                                        id="analysisPreviewText{{ $group->id }}"></div>
                                                 </div>
                                             </div>
                                             <hr class="my-2">
@@ -1315,6 +1342,77 @@
                         if (previewDiv) {
                             previewDiv.style.display = 'none';
                         }
+                    }
+                });
+            });
+
+            // -----------------------------------------
+            // Image Analysis Preview
+            // -----------------------------------------
+            document.querySelectorAll('.btn-analyze-preview').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const groupId = btn.getAttribute('data-group-id');
+                    const collectionId = btn.getAttribute('data-collection-id');
+                    const analysisDiv = document.getElementById('analysisPreview' + groupId);
+                    const analysisText = document.getElementById('analysisPreviewText' + groupId);
+                    const analyzeCheck = document.getElementById('analyzeImages' + groupId);
+
+                    btn.disabled = true;
+                    btn.textContent = 'Analizando...';
+
+                    try {
+                        const resp = await fetch(`/instagram/collections/${collectionId}/groups/${groupId}/analyze-images`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': @json(csrf_token()),
+                                'Accept': 'application/json'
+                            }
+                        });
+
+                        const data = await resp.json();
+
+                        if (!data.ok) {
+                            throw new Error(data.message || 'Error al analizar imágenes');
+                        }
+
+                        const analysis = data.analysis;
+                        let html = `<div class="mb-2">`;
+                        html += `<strong>Color principal:</strong> ${analysis.color_principal || 'No detectado'}<br>`;
+                        if (analysis.tipo_prenda) {
+                            html += `<strong>Tipo de prenda:</strong> ${analysis.tipo_prenda}<br>`;
+                        }
+                        html += `<strong>Estampado:</strong> ${analysis.tiene_estampado ? 'Sí' : 'No'}<br>`;
+                        html += `<strong>Total imágenes:</strong> ${analysis.total_imagenes}`;
+                        html += `</div>`;
+
+                        if (data.variables) {
+                            html += `<div class="mt-2"><strong>Variables disponibles:</strong><br>`;
+                            html += `<small class="text-muted">`;
+                            for (const [key, value] of Object.entries(data.variables)) {
+                                html += `${key} → "${value}"<br>`;
+                            }
+                            html += `</small></div>`;
+                        }
+
+                        if (data.description) {
+                            html += `<div class="mt-2"><strong>Descripción sugerida:</strong> ${data.description}</div>`;
+                        }
+
+                        analysisText.innerHTML = html;
+                        analysisDiv.style.display = 'block';
+
+                        // Auto-marcar analizar imágenes
+                        if (analyzeCheck) {
+                            analyzeCheck.checked = true;
+                        }
+
+                    } catch (e) {
+                        console.error(e);
+                        swalWarn(e.message || 'Error al analizar las imágenes');
+                    } finally {
+                        btn.disabled = false;
+                        btn.textContent = '🔍 Ver análisis';
                     }
                 });
             });
