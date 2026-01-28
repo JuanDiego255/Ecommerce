@@ -19,10 +19,19 @@ class InstagramCollection extends Model
     {
         return $this->hasMany(InstagramCollectionItem::class)->orderBy('sort_order')->orderBy('id');
     }
+
     public function groups()
     {
         return $this->hasMany(InstagramCollectionGroup::class)
             ->orderBy('sort_order')
             ->orderBy('id');
+    }
+
+    /**
+     * Relación con la plantilla de caption
+     */
+    public function captionTemplate()
+    {
+        return $this->belongsTo(InstagramCaptionTemplate::class, 'caption_template_id');
     }
 }

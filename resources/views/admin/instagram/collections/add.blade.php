@@ -35,11 +35,28 @@
                             </div>
                         </div>
 
-                        <div class="col-md-12">
+                        <div class="col-md-12 mb-3">
                             <div class="input-group input-group-static">
                                 <label>{{ __('Descripción') }} base (opcional)</label>
                                 <textarea name="default_caption" class="form-control" rows="1"></textarea>
                             </div>
+                            <small class="text-muted">Se usará como descripción por defecto si un carrusel no define descripción propio.</small>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <div class="input-group input-group-static">
+                                <label>Plantilla de caption (Spintax)</label>
+                                <select name="caption_template_id" class="form-control">
+                                    <option value="">— Sin plantilla —</option>
+                                    @foreach ($templates as $tpl)
+                                        <option value="{{ $tpl->id }}">{{ $tpl->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <small class="text-muted">
+                                Selecciona una plantilla para generar captions variados automáticamente.
+                                <a href="{{ url('/instagram/caption-templates') }}" target="_blank">Gestionar plantillas</a>
+                            </small>
                         </div>
                     </div>
 

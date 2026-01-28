@@ -4,12 +4,14 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\InstagramAccount;
+use App\Models\InstagramCaptionTemplate;
 use App\Models\InstagramCollection;
 use App\Models\InstagramCollectionGroup;
 use App\Models\InstagramCollectionItem;
 use App\Models\InstagramPost;
 use App\Models\InstagramPostMedia;
 use App\Domain\Instagram\Jobs\PublishInstagramPostJob;
+use App\Domain\Instagram\Services\SpintaxService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Bus;
@@ -26,7 +28,8 @@ class InstagramCollectionController extends Controller
 
     public function create()
     {
-        return view('admin.instagram.collections.add');
+        $templates = InstagramCaptionTemplate::active()->orderBy('name')->get();
+        return view('admin.instagram.collections.add', compact('templates'));
     }
 
     public function store(Request $request)
@@ -35,6 +38,7 @@ class InstagramCollectionController extends Controller
             'name' => 'required|string|max:255',
             'notes' => 'nullable|string',
             'default_caption' => 'nullable|string',
+            'caption_template_id' => 'nullable|integer|exists:instagram_caption_templates,id',
         ]);
 
         $tenantDomain = request()->getHost();
@@ -43,6 +47,7 @@ class InstagramCollectionController extends Controller
             'name' => $request->name,
             'notes' => $request->notes,
             'default_caption' => $request->default_caption,
+            'caption_template_id' => $request->caption_template_id ?: null,
             'status' => 'draft',
             'tenant_domain' => $tenantDomain,
         ]);
@@ -57,9 +62,12 @@ class InstagramCollectionController extends Controller
             'items',
             'groups.items',
             'groups.post',
+            'captionTemplate',
         ])->findOrFail($id);
 
-        return view('admin.instagram.collections.edit', compact('collection'));
+        $templates = InstagramCaptionTemplate::active()->orderBy('name')->get();
+
+        return view('admin.instagram.collections.edit', compact('collection', 'templates'));
     }
 
     public function update(Request $request, $id)
@@ -70,12 +78,14 @@ class InstagramCollectionController extends Controller
             'name' => 'required|string|max:255',
             'notes' => 'nullable|string',
             'default_caption' => 'nullable|string',
+            'caption_template_id' => 'nullable|integer|exists:instagram_caption_templates,id',
         ]);
 
         $collection->update([
             'name' => $request->name,
             'notes' => $request->notes,
             'default_caption' => $request->default_caption,
+            'caption_template_id' => $request->caption_template_id ?: null,
         ]);
 
         return back()->with('ok', 'Colección actualizada.');
@@ -283,6 +293,7 @@ class InstagramCollectionController extends Controller
             'publish_mode' => 'required|in:now,scheduled',
             'scheduled_at' => 'nullable|string', // datetime-local
             'caption' => 'nullable|string',
+            'use_template' => 'nullable|boolean',
         ]);
 
         $account = InstagramAccount::where('is_active', true)->latest()->first();
@@ -319,8 +330,18 @@ class InstagramCollectionController extends Controller
             $status = 'publishing';
         }
 
+        // Determinar el caption a usar
         $caption = trim((string) $request->input('caption', ''));
-        if ($caption === '') {
+
+        // Si se solicita usar plantilla y hay una asignada, procesar spintax
+        if ($request->boolean('use_template') && $collection->caption_template_id) {
+            $collection->load('captionTemplate');
+            if ($collection->captionTemplate) {
+                $spintaxService = app(SpintaxService::class);
+                $caption = $spintaxService->process($collection->captionTemplate->template_text);
+            }
+        } elseif ($caption === '') {
+            // Fallback al caption por defecto de la colección
             $caption = $collection->default_caption ?? '';
         }
 

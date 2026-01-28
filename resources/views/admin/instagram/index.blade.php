@@ -12,8 +12,37 @@
 
         <h2 class="text-center font-title"><strong>{{ __('Gestión de API de Instagram') }}</strong></h2>
 
+        {{-- Navegación rápida --}}
+        <div class="row mt-3 mb-4">
+            <div class="col-md-4 mb-3">
+                <a href="{{ url('/instagram/posts') }}" class="card text-decoration-none h-100">
+                    <div class="card-body text-center">
+                        <h5 class="mb-2">📸 Publicaciones</h5>
+                        <p class="text-muted small mb-0">Ver y gestionar posts individuales</p>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4 mb-3">
+                <a href="{{ url('/instagram/collections') }}" class="card text-decoration-none h-100">
+                    <div class="card-body text-center">
+                        <h5 class="mb-2">🎠 Colecciones</h5>
+                        <p class="text-muted small mb-0">Organizar carruseles con drag & drop</p>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4 mb-3">
+                <a href="{{ url('/instagram/caption-templates') }}" class="card text-decoration-none h-100">
+                    <div class="card-body text-center">
+                        <h5 class="mb-2">✨ Plantillas</h5>
+                        <p class="text-muted small mb-0">Captions variados con Spintax</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+
         <div class="card mt-3">
             <div class="card-body">
+                <h5 class="mb-3">Cuenta conectada</h5>
 
                 @if ($account)
                     <div><strong>Conectado:</strong> {{ $account->instagram_username ?? 'N/A' }}</div>

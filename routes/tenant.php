@@ -55,6 +55,7 @@ use App\Http\Controllers\Admin\CitaAdminController;
 use App\Http\Controllers\Admin\EmailSettingController;
 use App\Http\Controllers\Admin\EventCategoryController;
 use App\Http\Controllers\Admin\EventController;
+use App\Http\Controllers\Admin\InstagramCaptionTemplateController;
 use App\Http\Controllers\Admin\InstagramCollectionController;
 use App\Http\Controllers\Admin\InstagramController;
 use App\Http\Controllers\Admin\InstagramPostController;
@@ -624,6 +625,26 @@ Route::middleware([
                     ->name('ig.collections.generatePosts');
                 Route::put('/instagram/collections/{collection}/groups/{group}', [InstagramCollectionController::class, 'updateGroup'])
                     ->name('ig.collections.groups.update');
+
+                /**
+                 * Instagram - plantillas de caption (Spintax)
+                 */
+                Route::get('/instagram/caption-templates', [InstagramCaptionTemplateController::class, 'index'])
+                    ->name('ig.caption-templates.index');
+                Route::get('/instagram/caption-templates/create', [InstagramCaptionTemplateController::class, 'create'])
+                    ->name('ig.caption-templates.create');
+                Route::post('/instagram/caption-templates/store', [InstagramCaptionTemplateController::class, 'store'])
+                    ->name('ig.caption-templates.store');
+                Route::get('/instagram/caption-templates/{id}/edit', [InstagramCaptionTemplateController::class, 'edit'])
+                    ->name('ig.caption-templates.edit');
+                Route::put('/instagram/caption-templates/{id}', [InstagramCaptionTemplateController::class, 'update'])
+                    ->name('ig.caption-templates.update');
+                Route::delete('/instagram/caption-templates/{id}', [InstagramCaptionTemplateController::class, 'destroy'])
+                    ->name('ig.caption-templates.destroy');
+                Route::post('/instagram/caption-templates/preview', [InstagramCaptionTemplateController::class, 'preview'])
+                    ->name('ig.caption-templates.preview');
+                Route::post('/instagram/caption-templates/generate', [InstagramCaptionTemplateController::class, 'generate'])
+                    ->name('ig.caption-templates.generate');
             });
 
             // Dueño o manager: ver/gestionar citas de TODOS

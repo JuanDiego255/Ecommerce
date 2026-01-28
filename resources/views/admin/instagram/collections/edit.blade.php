@@ -433,6 +433,34 @@
                                 {{ __('descripción') }} propio.
                             </small>
                         </div>
+
+                        <div class="col-md-6 mb-3">
+                            <div class="input-group input-group-static mb-4">
+                                <label>Plantilla de caption (Spintax)</label>
+                                <select name="caption_template_id" class="form-control">
+                                    <option value="">— Sin plantilla —</option>
+                                    @foreach ($templates as $tpl)
+                                        <option value="{{ $tpl->id }}"
+                                            {{ old('caption_template_id', $collection->caption_template_id) == $tpl->id ? 'selected' : '' }}>
+                                            {{ $tpl->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <small class="text-muted">
+                                Selecciona una plantilla para generar captions variados automáticamente.
+                                <a href="{{ url('/instagram/caption-templates') }}" target="_blank">Gestionar plantillas</a>
+                            </small>
+                        </div>
+
+                        @if ($collection->captionTemplate)
+                            <div class="col-md-6 mb-3">
+                                <div class="alert alert-info mb-0" style="font-size: 13px;">
+                                    <strong>Plantilla activa:</strong> {{ $collection->captionTemplate->name }}<br>
+                                    <small class="text-muted">Al publicar con "Usar plantilla", se generará un caption único cada vez.</small>
+                                </div>
+                            </div>
+                        @endif
                     </div>
 
                     <button class="btn btn-accion" type="submit">Guardar</button>
@@ -673,9 +701,36 @@
                                         class="ig-generate-form" data-group-id="{{ $group->id }}">
                                         @csrf
 
+                                        @if ($collection->caption_template_id)
+                                            {{-- Opción para usar plantilla spintax --}}
+                                            <div class="mb-2">
+                                                <div class="form-check">
+                                                    <input type="checkbox" name="use_template" value="1"
+                                                        class="form-check-input use-template-check"
+                                                        id="useTemplate{{ $group->id }}"
+                                                        data-group-id="{{ $group->id }}">
+                                                    <label class="form-check-label" for="useTemplate{{ $group->id }}">
+                                                        <strong>Usar plantilla:</strong> {{ $collection->captionTemplate->name ?? 'Sin nombre' }}
+                                                    </label>
+                                                </div>
+                                                <button type="button" class="btn btn-sm btn-outline-secondary mt-1 btn-preview-template"
+                                                    data-group-id="{{ $group->id }}"
+                                                    data-template-id="{{ $collection->caption_template_id }}">
+                                                    ✨ Ver variación
+                                                </button>
+                                                <div class="caption-preview mt-2" id="captionPreview{{ $group->id }}" style="display: none;">
+                                                    <small class="text-muted">Vista previa:</small>
+                                                    <div class="bg-light p-2 rounded mt-1" style="font-size: 12px; white-space: pre-wrap;"
+                                                        id="captionPreviewText{{ $group->id }}"></div>
+                                                </div>
+                                            </div>
+                                            <hr class="my-2">
+                                        @endif
+
                                         <label class="form-label mb-1">{{ __('Descripción') }} (opcional)</label>
-                                        <textarea name="caption" class="form-control" rows="2"
-                                            placeholder="Si lo dejas vacío, se usa la descripción base de la colección."></textarea>
+                                        <textarea name="caption" class="form-control caption-textarea" rows="2"
+                                            id="caption{{ $group->id }}"
+                                            placeholder="Si lo dejas vacío, se usa la descripción base{{ $collection->caption_template_id ? ' o la plantilla seleccionada' : '' }}."></textarea>
 
                                         {{-- inputs ocultos para el backend --}}
                                         <input type="hidden" name="publish_mode" value="now">
@@ -1179,6 +1234,89 @@
 
                 if (scheduleModal) scheduleModal.hide();
                 form.submit();
+            });
+
+            // -----------------------------------------
+            // Template Preview (Spintax)
+            // -----------------------------------------
+            document.querySelectorAll('.btn-preview-template').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const groupId = btn.getAttribute('data-group-id');
+                    const templateId = btn.getAttribute('data-template-id');
+                    const previewDiv = document.getElementById('captionPreview' + groupId);
+                    const previewText = document.getElementById('captionPreviewText' + groupId);
+                    const captionTextarea = document.getElementById('caption' + groupId);
+                    const useTemplateCheck = document.getElementById('useTemplate' + groupId);
+
+                    if (!templateId) {
+                        swalWarn('No hay plantilla configurada para esta colección.');
+                        return;
+                    }
+
+                    btn.disabled = true;
+                    btn.textContent = 'Generando...';
+
+                    try {
+                        const resp = await fetch(@json(route('ig.caption-templates.generate')), {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': @json(csrf_token()),
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                template_id: templateId
+                            })
+                        });
+
+                        const data = await resp.json();
+
+                        if (!data.ok) {
+                            throw new Error(data.message || 'Error al generar caption');
+                        }
+
+                        previewText.textContent = data.caption;
+                        previewDiv.style.display = 'block';
+
+                        // Auto-seleccionar usar plantilla y limpiar textarea
+                        if (useTemplateCheck) {
+                            useTemplateCheck.checked = true;
+                        }
+                        if (captionTextarea) {
+                            captionTextarea.value = '';
+                            captionTextarea.placeholder = 'Usando plantilla. Deja vacío para usar la variación generada.';
+                        }
+
+                    } catch (e) {
+                        console.error(e);
+                        swalWarn(e.message || 'Error al generar la vista previa');
+                    } finally {
+                        btn.disabled = false;
+                        btn.textContent = '✨ Ver variación';
+                    }
+                });
+            });
+
+            // Toggle template usage
+            document.querySelectorAll('.use-template-check').forEach(check => {
+                check.addEventListener('change', () => {
+                    const groupId = check.getAttribute('data-group-id');
+                    const captionTextarea = document.getElementById('caption' + groupId);
+                    const previewDiv = document.getElementById('captionPreview' + groupId);
+
+                    if (check.checked) {
+                        if (captionTextarea) {
+                            captionTextarea.placeholder = 'Usando plantilla. Deja vacío para usar la variación generada.';
+                        }
+                    } else {
+                        if (captionTextarea) {
+                            captionTextarea.placeholder = 'Si lo dejas vacío, se usa la descripción base de la colección.';
+                        }
+                        if (previewDiv) {
+                            previewDiv.style.display = 'none';
+                        }
+                    }
+                });
             });
 
             // Init
