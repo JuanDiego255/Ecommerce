@@ -456,8 +456,8 @@
                         @if ($collection->captionTemplate)
                             <div class="col-md-6 mb-3">
                                 <div class="alert alert-info mb-0" style="font-size: 13px;">
-                                    <strong>Plantilla activa:</strong> {{ $collection->captionTemplate->name }}<br>
-                                    <small class="text-muted">Al publicar con "Usar plantilla", se generará un caption único cada vez.</small>
+                                    <strong class="text-white">Plantilla activa:</strong> {{ $collection->captionTemplate->name }}<br>
+                                    <small class="text-white">Al publicar con "Usar plantilla", se generará un caption único cada vez.</small>
                                 </div>
                             </div>
                         @endif
@@ -722,7 +722,7 @@
                                                         data-group-id="{{ $group->id }}">
                                                     <label class="form-check-label" for="analyzeImages{{ $group->id }}">
                                                         <strong>Analizar imágenes</strong>
-                                                        <small class="text-muted d-block">Detecta color, tipo de prenda y estampado</small>
+                                                        {{-- <small class="text-muted d-block">Detecta color, tipo de prenda y estampado</small> --}}
                                                     </label>
                                                 </div>
 
