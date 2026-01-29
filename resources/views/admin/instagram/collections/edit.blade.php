@@ -800,6 +800,8 @@
                                         {{-- inputs ocultos para el backend --}}
                                         <input type="hidden" name="publish_mode" value="now">
                                         <input type="hidden" name="scheduled_at" value="">
+                                        <input type="hidden" name="generated_caption" id="generatedCaption{{ $group->id }}" value="">
+                                        <input type="hidden" name="caption_type" id="captionType{{ $group->id }}" value="">
 
                                         <div class="d-flex gap-2 mt-2">
                                             <button type="submit" class="btn btn-accion w-100">Publicar ahora</button>
@@ -1397,6 +1399,8 @@
                     const useTemplateCheck = document.getElementById('useTemplate' + groupId);
                     const captionTextarea = document.getElementById('caption' + groupId);
                     const ecommerceAnalysisData = document.getElementById('ecommerceAnalysisData' + groupId);
+                    const generatedCaption = document.getElementById('generatedCaption' + groupId);
+                    const captionType = document.getElementById('captionType' + groupId);
 
                     btn.disabled = true;
                     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
@@ -1420,6 +1424,14 @@
                         // Mostrar el caption generado en Vista previa
                         previewText.textContent = data.caption;
                         previewDiv.style.display = 'block';
+
+                        // Guardar caption generado para usar al publicar
+                        if (generatedCaption) {
+                            generatedCaption.value = data.caption;
+                        }
+                        if (captionType) {
+                            captionType.value = 'instagram';
+                        }
 
                         // Guardar datos de análisis para E-commerce
                         if (ecommerceAnalysisData && data.analysis_data) {
@@ -1460,6 +1472,8 @@
                     const previewDiv = document.getElementById('captionPreview' + groupId);
                     const previewText = document.getElementById('captionPreviewText' + groupId);
                     const ecommerceAnalysisData = document.getElementById('ecommerceAnalysisData' + groupId);
+                    const generatedCaption = document.getElementById('generatedCaption' + groupId);
+                    const captionType = document.getElementById('captionType' + groupId);
 
                     btn.disabled = true;
                     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
@@ -1483,6 +1497,14 @@
                         // Mostrar la descripción E-commerce en Vista previa
                         previewText.textContent = data.description;
                         previewDiv.style.display = 'block';
+
+                        // Guardar caption generado para usar al publicar
+                        if (generatedCaption) {
+                            generatedCaption.value = data.description;
+                        }
+                        if (captionType) {
+                            captionType.value = 'ecommerce';
+                        }
 
                         // Guardar datos de análisis para E-commerce
                         if (ecommerceAnalysisData && data.analysis_data) {

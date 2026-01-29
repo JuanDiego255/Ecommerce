@@ -307,6 +307,8 @@ class InstagramCollectionController extends Controller
             'ecommerce_price' => 'nullable|numeric|min:0',
             'ecommerce_stock' => 'nullable|integer|min:0',
             'ecommerce_analysis_data' => 'nullable|string',
+            'generated_caption' => 'nullable|string',
+            'caption_type' => 'nullable|string|in:instagram,ecommerce',
         ]);
 
         $account = InstagramAccount::where('is_active', true)->latest()->first();
@@ -347,12 +349,18 @@ class InstagramCollectionController extends Controller
         $caption = trim((string) $request->input('caption', ''));
         $useTemplate = $request->boolean('use_template');
         $analyzeImages = $request->boolean('analyze_images');
+        $generatedCaption = trim((string) $request->input('generated_caption', ''));
+        $captionType = $request->input('caption_type', '');
 
         // Obtener rutas de imágenes para posible análisis
         $imagePaths = $group->items->pluck('image_path')->toArray();
 
-        // Si se solicita usar plantilla con análisis de imágenes
-        if ($useTemplate && $analyzeImages && $collection->caption_template_id) {
+        // PRIORIDAD 1: Si hay un caption pre-generado (desde análisis Instagram o E-commerce), usarlo directamente
+        if (!empty($generatedCaption) && in_array($captionType, ['instagram', 'ecommerce'])) {
+            $caption = $generatedCaption;
+        }
+        // PRIORIDAD 2: Si se solicita usar plantilla con análisis de imágenes
+        elseif ($useTemplate && $analyzeImages && $collection->caption_template_id) {
             $captionGenerator = app(CaptionGeneratorService::class);
 
             // Analizar imágenes y obtener variables
@@ -361,21 +369,26 @@ class InstagramCollectionController extends Controller
             // Generar caption con la plantilla y variables de imagen
             $collection->load('captionTemplate');
             if ($collection->captionTemplate) {
-                $caption = $captionGenerator->generateTemplateText(
+                $templateCaption = $captionGenerator->generateTemplateText(
                     $collection->caption_template_id,
                     $imageData['variables']
                 );
+                // Agregar hashtags/CTAs solo si la plantilla no los tiene
+                $caption = $captionGenerator->appendHashtagsAndCta($templateCaption ?? '');
             }
         }
-        // Si solo se usa plantilla sin análisis
+        // PRIORIDAD 3: Si solo se usa plantilla sin análisis
         elseif ($useTemplate && $collection->caption_template_id) {
             $collection->load('captionTemplate');
             if ($collection->captionTemplate) {
                 $spintaxService = app(SpintaxService::class);
-                $caption = $spintaxService->process($collection->captionTemplate->template_text);
+                $templateCaption = $spintaxService->process($collection->captionTemplate->template_text);
+                // Agregar hashtags/CTAs solo si la plantilla no los tiene
+                $captionGenerator = app(CaptionGeneratorService::class);
+                $caption = $captionGenerator->appendHashtagsAndCta($templateCaption ?? '');
             }
         }
-        // Caption vacío: usar generador automático completo
+        // PRIORIDAD 4: Caption vacío: usar generador automático completo
         elseif ($caption === '') {
             $captionGenerator = app(CaptionGeneratorService::class);
             $caption = $captionGenerator->generateForCarousel(
@@ -504,6 +517,7 @@ class InstagramCollectionController extends Controller
 
         $imagePaths = $group->items->pluck('image_path')->toArray();
         $imageAnalyzer = app(\App\Domain\Instagram\Services\ImageAnalyzerService::class);
+        $captionGenerator = app(CaptionGeneratorService::class);
 
         // Analizar imágenes
         $analysis = $imageAnalyzer->analyzeMultiple($imagePaths);
@@ -511,9 +525,12 @@ class InstagramCollectionController extends Controller
         // Generar descripción E-commerce
         $description = $imageAnalyzer->generateEcommerceDescription($analysis);
 
+        // Agregar hashtags y CTAs de configuración
+        $descriptionWithExtras = $captionGenerator->appendHashtagsAndCta($description);
+
         return response()->json([
             'ok' => true,
-            'description' => $description,
+            'description' => $descriptionWithExtras,
             'analysis_data' => $analysis,
         ]);
     }

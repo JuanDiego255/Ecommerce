@@ -53,6 +53,7 @@ class CaptionGeneratorService
         }
 
         $parts = [];
+        $templateText = null;
 
         // 1. Generar texto principal desde plantilla
         if ($includeTemplate) {
@@ -62,16 +63,16 @@ class CaptionGeneratorService
             }
         }
 
-        // 2. Agregar CTA
-        if ($includeCta) {
+        // 2. Agregar CTA (solo si la plantilla no tiene uno)
+        if ($includeCta && !$this->templateHasCta($templateText)) {
             $ctaText = $this->generateCta();
             if ($ctaText) {
                 $parts[] = $ctaText;
             }
         }
 
-        // 3. Agregar hashtags al final
-        if ($includeHashtags) {
+        // 3. Agregar hashtags al final (solo si la plantilla no tiene)
+        if ($includeHashtags && !$this->templateHasHashtags($templateText)) {
             $hashtags = $this->generateHashtags($hashtagPoolId, $maxHashtags);
             if ($hashtags) {
                 $parts[] = $hashtags;
@@ -79,6 +80,49 @@ class CaptionGeneratorService
         }
 
         return implode("\n\n", array_filter($parts));
+    }
+
+    /**
+     * Verifica si el texto de la plantilla ya contiene hashtags
+     */
+    protected function templateHasHashtags(?string $templateText): bool
+    {
+        if (empty($templateText)) {
+            return false;
+        }
+        // Buscar hashtags (# seguido de palabra)
+        return (bool) preg_match('/#\w+/', $templateText);
+    }
+
+    /**
+     * Verifica si el texto de la plantilla ya contiene un CTA
+     */
+    protected function templateHasCta(?string $templateText): bool
+    {
+        if (empty($templateText)) {
+            return false;
+        }
+        // Patrones comunes de CTA
+        $ctaPatterns = [
+            '/escr[íi]benos/iu',
+            '/cont[áa]ctanos/iu',
+            '/env[íi]a\s*(un\s*)?mensaje/iu',
+            '/whatsapp/iu',
+            '/dm\s*(para|directo)/iu',
+            '/mensaje\s*directo/iu',
+            '/link\s*(en\s*)?(bio|perfil)/iu',
+            '/visita\s*(nuestra\s*)?tienda/iu',
+            '/compra\s*(ahora|ya)/iu',
+            '/haz\s*(tu\s*)?pedido/iu',
+        ];
+
+        foreach ($ctaPatterns as $pattern) {
+            if (preg_match($pattern, $templateText)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -231,6 +275,34 @@ class CaptionGeneratorService
             'variables' => $variables,
             'description' => $description,
         ];
+    }
+
+    /**
+     * Agrega hashtags y CTAs de configuración a un texto dado
+     * Solo agrega si el texto no los tiene ya incluidos
+     */
+    public function appendHashtagsAndCta(string $text): string
+    {
+        $settings = InstagramCaptionSettings::getOrCreate();
+        $parts = [$text];
+
+        // Agregar CTA si está configurado y el texto no tiene uno
+        if ($settings->auto_add_cta && !$this->templateHasCta($text)) {
+            $ctaText = $this->generateCta();
+            if ($ctaText) {
+                $parts[] = $ctaText;
+            }
+        }
+
+        // Agregar hashtags si está configurado y el texto no tiene
+        if ($settings->auto_add_hashtags && !$this->templateHasHashtags($text)) {
+            $hashtags = $this->generateHashtags($settings->hashtag_pool_id, $settings->max_hashtags);
+            if ($hashtags) {
+                $parts[] = $hashtags;
+            }
+        }
+
+        return implode("\n\n", array_filter($parts));
     }
 
     /**
