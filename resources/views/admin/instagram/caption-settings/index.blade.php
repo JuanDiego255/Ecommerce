@@ -8,7 +8,7 @@
             margin-bottom: 20px;
         }
         .config-card .card-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #E8E6E6;
             color: #fff;
             border-radius: 16px 16px 0 0;
             padding: 16px 20px;
@@ -37,7 +37,6 @@
             border: 1px solid #e9ecef;
             border-radius: 12px;
             padding: 16px;
-            white-space: pre-wrap;
             font-size: 14px;
             min-height: 150px;
         }
@@ -78,8 +77,8 @@
     <div class="container-fluid">
 
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h2 class="text-center font-title"><strong>Configuración de Captions</strong></h2>
-            <a href="{{ url('/instagram') }}" class="btn btn-outline-dark">Volver</a>
+            <h2 class="text-center font-title"><strong>Configuración de Descripciones</strong></h2>
+            <a href="{{ url('/instagram') }}" class="btn btn-accion">Volver</a>
         </div>
 
         @if (session('ok'))
@@ -118,7 +117,7 @@
         </div>
 
         <div class="row">
-            <div class="col-lg-6">
+            <div class="col-lg-5">
                 {{-- Configuración general --}}
                 <div class="card config-card">
                     <div class="card-header">
@@ -133,7 +132,7 @@
                                 <input type="hidden" name="auto_select_template" value="0">
                                 <input type="checkbox" name="auto_select_template" value="1"
                                     class="form-check-input" id="autoTemplate"
-                                    {{ $settings->auto_select_template ? 'checked' : '' }}>
+                                    {{ $settingsCaption->auto_select_template ? 'checked' : '' }}>
                                 <label class="form-check-label" for="autoTemplate">
                                     <strong>Seleccionar plantilla automáticamente</strong><br>
                                     <small class="text-muted">Elige una plantilla al azar (por peso) cuando el caption está vacío</small>
@@ -144,7 +143,7 @@
                                 <input type="hidden" name="auto_add_hashtags" value="0">
                                 <input type="checkbox" name="auto_add_hashtags" value="1"
                                     class="form-check-input" id="autoHashtags"
-                                    {{ $settings->auto_add_hashtags ? 'checked' : '' }}>
+                                    {{ $settingsCaption->auto_add_hashtags ? 'checked' : '' }}>
                                 <label class="form-check-label" for="autoHashtags">
                                     <strong>Agregar hashtags automáticamente</strong><br>
                                     <small class="text-muted">Añade hashtags mezclados al final del caption</small>
@@ -155,7 +154,7 @@
                                 <input type="hidden" name="auto_add_cta" value="0">
                                 <input type="checkbox" name="auto_add_cta" value="1"
                                     class="form-check-input" id="autoCta"
-                                    {{ $settings->auto_add_cta ? 'checked' : '' }}>
+                                    {{ $settingsCaption->auto_add_cta ? 'checked' : '' }}>
                                 <label class="form-check-label" for="autoCta">
                                     <strong>Agregar CTA automáticamente</strong><br>
                                     <small class="text-muted">Incluye un llamado a la acción rotativo</small>
@@ -169,7 +168,7 @@
                                         <option value="">— Aleatorio —</option>
                                         @foreach ($hashtagPools as $pool)
                                             <option value="{{ $pool->id }}"
-                                                {{ $settings->hashtag_pool_id == $pool->id ? 'selected' : '' }}>
+                                                {{ $settingsCaption->hashtag_pool_id == $pool->id ? 'selected' : '' }}>
                                                 {{ $pool->name }}
                                             </option>
                                         @endforeach
@@ -178,7 +177,7 @@
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Máximo de hashtags</label>
                                     <input type="number" name="max_hashtags" class="form-control"
-                                        value="{{ $settings->max_hashtags }}" min="1" max="30">
+                                        value="{{ $settingsCaption->max_hashtags }}" min="1" max="30">
                                 </div>
                             </div>
 
@@ -196,14 +195,14 @@
                         <button type="button" class="btn btn-outline-dark mb-3" id="btnGeneratePreview">
                             Generar caption de prueba
                         </button>
-                        <div class="preview-box" id="previewBox">
+                        <div class="preview-box text-center" id="previewBox">
                             Haz clic en "Generar caption de prueba" para ver cómo quedará un caption automático.
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="col-lg-6">
+            <div class="col-lg-7">
                 {{-- Pools de hashtags --}}
                 <div class="card config-card">
                     <div class="card-header d-flex justify-content-between align-items-center">

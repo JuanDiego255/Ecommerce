@@ -17,7 +17,7 @@ class InstagramCaptionSettingsController extends Controller
 
     public function index()
     {
-        $settings = InstagramCaptionSettings::getOrCreate();
+        $settingsCaption= InstagramCaptionSettings::getOrCreate();
         $hashtagPools = InstagramHashtagPool::orderBy('name')->get();
         $ctas = InstagramCta::orderByDesc('id')->get();
 
@@ -25,7 +25,7 @@ class InstagramCaptionSettingsController extends Controller
         $info = $captionGenerator->getConfigurationInfo();
 
         return view('admin.instagram.caption-settings.index', compact(
-            'settings',
+            'settingsCaption',
             'hashtagPools',
             'ctas',
             'info'
