@@ -412,7 +412,7 @@ class InstagramCollectionController extends Controller
     }
 
     /**
-     * Analiza las imágenes de un grupo y devuelve el resultado (AJAX)
+     * Analiza las imágenes de un grupo y genera un caption con las variables detectadas (AJAX)
      */
     public function analyzeGroupImages(Request $request, InstagramCollection $collection, InstagramCollectionGroup $group)
     {
@@ -432,13 +432,17 @@ class InstagramCollectionController extends Controller
         $imagePaths = $group->items->pluck('image_path')->toArray();
 
         $captionGenerator = app(CaptionGeneratorService::class);
-        $result = $captionGenerator->analyzeImages($imagePaths);
+
+        // Generar caption completo usando la plantilla de la colección + análisis de imágenes
+        $caption = $captionGenerator->generateForCarousel(
+            $collection->caption_template_id,
+            $imagePaths,
+            true // analyze_images = true
+        );
 
         return response()->json([
             'ok' => true,
-            'analysis' => $result['analysis'],
-            'variables' => $result['variables'],
-            'description' => $result['description'],
+            'caption' => $caption,
         ]);
     }
 

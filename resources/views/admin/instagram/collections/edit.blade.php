@@ -735,7 +735,7 @@
                                                     <button type="button" class="btn btn-sm btn-outline-info btn-analyze-preview"
                                                         data-group-id="{{ $group->id }}"
                                                         data-collection-id="{{ $collection->id }}">
-                                                        🔍 Ver análisis
+                                                        🔍 Analizar y generar
                                                     </button>
                                                 </div>
 
@@ -743,12 +743,6 @@
                                                     <small class="text-muted">Vista previa:</small>
                                                     <div class="bg-light p-2 rounded mt-1" style="font-size: 12px; white-space: pre-wrap;"
                                                         id="captionPreviewText{{ $group->id }}"></div>
-                                                </div>
-
-                                                <div class="analysis-preview mt-2" id="analysisPreview{{ $group->id }}" style="display: none;">
-                                                    <small class="text-muted">Análisis de imágenes:</small>
-                                                    <div class="bg-info bg-opacity-10 p-2 rounded mt-1" style="font-size: 12px;"
-                                                        id="analysisPreviewText{{ $group->id }}"></div>
                                                 </div>
                                             </div>
                                             <hr class="my-2">
@@ -1347,15 +1341,17 @@
             });
 
             // -----------------------------------------
-            // Image Analysis Preview
+            // Image Analysis + Caption Generation
             // -----------------------------------------
             document.querySelectorAll('.btn-analyze-preview').forEach(btn => {
                 btn.addEventListener('click', async () => {
                     const groupId = btn.getAttribute('data-group-id');
                     const collectionId = btn.getAttribute('data-collection-id');
-                    const analysisDiv = document.getElementById('analysisPreview' + groupId);
-                    const analysisText = document.getElementById('analysisPreviewText' + groupId);
+                    const previewDiv = document.getElementById('captionPreview' + groupId);
+                    const previewText = document.getElementById('captionPreviewText' + groupId);
                     const analyzeCheck = document.getElementById('analyzeImages' + groupId);
+                    const useTemplateCheck = document.getElementById('useTemplate' + groupId);
+                    const captionTextarea = document.getElementById('caption' + groupId);
 
                     btn.disabled = true;
                     btn.textContent = 'Analizando...';
@@ -1376,35 +1372,22 @@
                             throw new Error(data.message || 'Error al analizar imágenes');
                         }
 
-                        const analysis = data.analysis;
-                        let html = `<div class="mb-2">`;
-                        html += `<strong>Color principal:</strong> ${analysis.color_principal || 'No detectado'}<br>`;
-                        if (analysis.tipo_prenda) {
-                            html += `<strong>Tipo de prenda:</strong> ${analysis.tipo_prenda}<br>`;
-                        }
-                        html += `<strong>Estampado:</strong> ${analysis.tiene_estampado ? 'Sí' : 'No'}<br>`;
-                        html += `<strong>Total imágenes:</strong> ${analysis.total_imagenes}`;
-                        html += `</div>`;
+                        // Mostrar el caption generado en Vista previa
+                        previewText.textContent = data.caption;
+                        previewDiv.style.display = 'block';
 
-                        if (data.variables) {
-                            html += `<div class="mt-2"><strong>Variables disponibles:</strong><br>`;
-                            html += `<small class="text-muted">`;
-                            for (const [key, value] of Object.entries(data.variables)) {
-                                html += `${key} → "${value}"<br>`;
-                            }
-                            html += `</small></div>`;
-                        }
-
-                        if (data.description) {
-                            html += `<div class="mt-2"><strong>Descripción sugerida:</strong> ${data.description}</div>`;
-                        }
-
-                        analysisText.innerHTML = html;
-                        analysisDiv.style.display = 'block';
-
-                        // Auto-marcar analizar imágenes
+                        // Auto-marcar checkboxes
                         if (analyzeCheck) {
                             analyzeCheck.checked = true;
+                        }
+                        if (useTemplateCheck) {
+                            useTemplateCheck.checked = true;
+                        }
+
+                        // Limpiar textarea
+                        if (captionTextarea) {
+                            captionTextarea.value = '';
+                            captionTextarea.placeholder = 'Usando plantilla con análisis. Deja vacío para usar la variación generada.';
                         }
 
                     } catch (e) {
@@ -1412,7 +1395,7 @@
                         swalWarn(e.message || 'Error al analizar las imágenes');
                     } finally {
                         btn.disabled = false;
-                        btn.textContent = '🔍 Ver análisis';
+                        btn.textContent = '🔍 Analizar y generar';
                     }
                 });
             });
