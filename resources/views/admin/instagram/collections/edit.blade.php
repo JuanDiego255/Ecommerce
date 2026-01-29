@@ -1269,39 +1269,7 @@
                 });
             });
 
-            document.getElementById('btnConfirmSchedule')?.addEventListener('click', () => {
-                const dtInput = document.getElementById('scheduleDatetime');
-                const dt = dtInput ? dtInput.value : '';
-
-                if (!dt) {
-                    swalWarn('Selecciona fecha y hora.');
-                    return;
-                }
-
-                // Validación futuro (1 min)
-                const selected = new Date(dt);
-                const now = new Date();
-                const minFutureMs = 60 * 1000;
-
-                if (isNaN(selected.getTime())) {
-                    swalWarn('Fecha/hora inválida.');
-                    return;
-                }
-
-                if (selected.getTime() < now.getTime() + minFutureMs) {
-                    swalWarn('La fecha/hora debe ser al menos 1 minuto en el futuro.');
-                    return;
-                }
-
-                const form = document.querySelector(`.ig-generate-form[data-group-id="${scheduleForGroupId}"]`);
-                if (!form) return;
-
-                form.querySelector('input[name="publish_mode"]').value = 'scheduled';
-                form.querySelector('input[name="scheduled_at"]').value = dt;
-
-                if (scheduleModal) scheduleModal.hide();
-                form.submit();
-            });
+            // El handler de btnConfirmSchedule está al final con el AJAX submit
 
             // -----------------------------------------
             // Template Preview (Spintax)
@@ -1542,6 +1510,217 @@
             // -----------------------------------------
             const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
             const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+
+            // -----------------------------------------
+            // AJAX Form Submission for Publishing
+            // -----------------------------------------
+            function getStatusBadgeClass(status) {
+                const classes = {
+                    'scheduled': 'ig-status ig-status--scheduled',
+                    'publishing': 'ig-status ig-status--publishing',
+                    'published': 'ig-status ig-status--published',
+                    'failed': 'ig-status ig-status--failed',
+                };
+                return classes[status] || 'ig-status ig-status--draft';
+            }
+
+            function updateCarouselToLocked(groupId, postData) {
+                // Find the carousel column
+                const colBody = document.querySelector(`.ig-list[data-group-id="${groupId}"]`);
+                if (!colBody) return;
+
+                const column = colBody.closest('.ig-col');
+                if (!column) return;
+
+                // Mark the list as locked (disable drag)
+                colBody.setAttribute('data-locked', '1');
+
+                // Add LOCK pill to header
+                const colSub = column.querySelector('.ig-col-sub');
+                if (colSub && !colSub.querySelector('.ig-pill-dark')) {
+                    colSub.insertAdjacentHTML('beforeend', '<span class="ig-pill ig-pill-dark ms-2">LOCK</span>');
+                }
+
+                // Hide the edit button
+                const editBtn = column.querySelector(`[data-edit-group="${groupId}"]`);
+                if (editBtn) editBtn.style.display = 'none';
+
+                // Update or create the post box
+                const colHeader = column.querySelector('.ig-col-header > div');
+                let postBox = colHeader.querySelector('.ig-postbox');
+
+                const statusClass = getStatusBadgeClass(postData.status);
+                const statusText = postData.status_text || postData.status.toUpperCase();
+
+                let postBoxHtml = `
+                    <div class="ig-postbox mt-2">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="ig-postbox-title">Post #${postData.id}</div>
+                            <span class="${statusClass}">${statusText.toUpperCase()}</span>
+                        </div>
+                `;
+
+                if (postData.scheduled_at) {
+                    postBoxHtml += `
+                        <div class="ig-postbox-line">Programado: <strong>${postData.scheduled_at}</strong> ({{ config('app.timezone') }})</div>
+                    `;
+                }
+
+                if (postData.published_at) {
+                    postBoxHtml += `
+                        <div class="ig-postbox-line">Publicado: <strong>${postData.published_at}</strong> ({{ config('app.timezone') }})</div>
+                    `;
+                }
+
+                if (postData.status === 'failed' && postData.error_message) {
+                    postBoxHtml += `
+                        <div class="ig-postbox-error">
+                            <strong>Error:</strong> ${postData.error_message}
+                        </div>
+                    `;
+                }
+
+                postBoxHtml += '</div>';
+
+                if (postBox) {
+                    postBox.outerHTML = postBoxHtml;
+                } else {
+                    colHeader.insertAdjacentHTML('beforeend', postBoxHtml);
+                }
+
+                // Replace footer with locked state
+                const footer = column.querySelector('.ig-col-footer');
+                if (footer) {
+                    footer.innerHTML = `
+                        <button class="ig-btn-muted w-100" disabled>Ya generado</button>
+                        <div class="ig-hint mt-2">Este carrusel ya generó un post. Crea uno nuevo si necesitas otro.</div>
+                    `;
+                }
+
+                // Disable drag handles in this carousel
+                colBody.querySelectorAll('.ig-handle').forEach(handle => {
+                    handle.style.opacity = '0.5';
+                    handle.style.cursor = 'not-allowed';
+                });
+            }
+
+            function showSuccessNotification(message) {
+                if (window.Swal) {
+                    Swal.fire({
+                        title: '¡Éxito!',
+                        text: message,
+                        icon: 'success',
+                        timer: 3000,
+                        showConfirmButton: false
+                    });
+                } else {
+                    // Create a simple toast notification
+                    const toast = document.createElement('div');
+                    toast.className = 'alert alert-success position-fixed';
+                    toast.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+                    toast.innerHTML = `<strong>¡Éxito!</strong> ${message}`;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
+                }
+            }
+
+            function showErrorNotification(message) {
+                if (window.Swal) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: message,
+                        icon: 'error'
+                    });
+                } else {
+                    alert(message);
+                }
+            }
+
+            // Intercept form submissions
+            document.querySelectorAll('.ig-generate-form').forEach(form => {
+                form.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+
+                    const groupId = form.getAttribute('data-group-id');
+                    const submitBtn = form.querySelector('button[type="submit"]');
+                    const originalBtnText = submitBtn.innerHTML;
+
+                    // Disable submit button and show loading
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Publicando...';
+
+                    try {
+                        const formData = new FormData(form);
+
+                        const resp = await fetch(form.action, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': @json(csrf_token()),
+                                'Accept': 'application/json'
+                            },
+                            body: formData
+                        });
+
+                        const data = await resp.json();
+
+                        if (!resp.ok || !data.ok) {
+                            throw new Error(data.message || 'Error al publicar');
+                        }
+
+                        // Success - update the UI
+                        updateCarouselToLocked(groupId, data.post);
+                        showSuccessNotification(data.message);
+
+                    } catch (error) {
+                        console.error('Error publishing:', error);
+                        showErrorNotification(error.message || 'Error al publicar el carrusel');
+
+                        // Re-enable the button
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalBtnText;
+                    }
+                });
+            });
+
+            // Update schedule confirmation to use AJAX
+            document.getElementById('btnConfirmSchedule')?.addEventListener('click', async () => {
+                const dtInput = document.getElementById('scheduleDatetime');
+                const dt = dtInput ? dtInput.value : '';
+
+                if (!dt) {
+                    swalWarn('Selecciona fecha y hora.');
+                    return;
+                }
+
+                // Validation (keep existing)
+                const selected = new Date(dt);
+                const now = new Date();
+                const minFutureMs = 60 * 1000;
+
+                if (isNaN(selected.getTime())) {
+                    swalWarn('Fecha/hora inválida.');
+                    return;
+                }
+
+                if (selected.getTime() < now.getTime() + minFutureMs) {
+                    swalWarn('La fecha/hora debe ser al menos 1 minuto en el futuro.');
+                    return;
+                }
+
+                const form = document.querySelector(`.ig-generate-form[data-group-id="${scheduleForGroupId}"]`);
+                if (!form) return;
+
+                // Set form values
+                form.querySelector('input[name="publish_mode"]').value = 'scheduled';
+                form.querySelector('input[name="scheduled_at"]').value = dt;
+
+                // Close modal
+                if (scheduleModal) scheduleModal.hide();
+
+                // Submit the form (will be intercepted by our AJAX handler)
+                const submitEvent = new Event('submit', { bubbles: true, cancelable: true });
+                form.dispatchEvent(submitEvent);
+            });
 
             // Init
             refreshCounts();

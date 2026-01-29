@@ -288,13 +288,22 @@ class InstagramCollectionController extends Controller
      */
     public function generatePostForGroup(Request $request, InstagramCollection $collection, InstagramCollectionGroup $group)
     {
+        $isAjax = $request->expectsJson() || $request->ajax();
+
         if ($group->instagram_collection_id !== $collection->id) {
+            if ($isAjax) {
+                return response()->json(['ok' => false, 'message' => 'Grupo no válido'], 404);
+            }
             abort(404);
         }
 
         // Solo 1 post por carrusel
         if (!empty($group->instagram_post_id)) {
-            return back()->with('error', "Este carrusel ya generó un post (ID: {$group->instagram_post_id}).");
+            $msg = "Este carrusel ya generó un post (ID: {$group->instagram_post_id}).";
+            if ($isAjax) {
+                return response()->json(['ok' => false, 'message' => $msg], 422);
+            }
+            return back()->with('error', $msg);
         }
 
         $request->validate([
@@ -313,17 +322,29 @@ class InstagramCollectionController extends Controller
 
         $account = InstagramAccount::where('is_active', true)->latest()->first();
         if (!$account) {
-            return back()->with('error', 'No hay cuenta Instagram conectada.');
+            $msg = 'No hay cuenta Instagram conectada.';
+            if ($isAjax) {
+                return response()->json(['ok' => false, 'message' => $msg], 422);
+            }
+            return back()->with('error', $msg);
         }
 
         $group->load('items');
 
         if ($group->items->count() < 1) {
-            return back()->with('error', 'Este carrusel no tiene imágenes.');
+            $msg = 'Este carrusel no tiene imágenes.';
+            if ($isAjax) {
+                return response()->json(['ok' => false, 'message' => $msg], 422);
+            }
+            return back()->with('error', $msg);
         }
 
         if ($group->items->count() > 10) {
-            return back()->with('error', 'Un carrusel no puede tener más de 10 imágenes.');
+            $msg = 'Un carrusel no puede tener más de 10 imágenes.';
+            if ($isAjax) {
+                return response()->json(['ok' => false, 'message' => $msg], 422);
+            }
+            return back()->with('error', $msg);
         }
 
         $scheduledAt = null;
@@ -331,7 +352,11 @@ class InstagramCollectionController extends Controller
 
         if ($request->publish_mode === 'scheduled') {
             if (!$request->filled('scheduled_at')) {
-                return back()->with('error', 'Debes indicar fecha y hora para programar.');
+                $msg = 'Debes indicar fecha y hora para programar.';
+                if ($isAjax) {
+                    return response()->json(['ok' => false, 'message' => $msg], 422);
+                }
+                return back()->with('error', $msg);
             }
 
             $scheduledAt = Carbon::createFromFormat(
@@ -429,7 +454,11 @@ class InstagramCollectionController extends Controller
             $analysisData = $request->input('ecommerce_analysis_data');
 
             if (empty($analysisData)) {
-                return back()->with('error', 'Debe analizar las imágenes antes de crear el producto en E-commerce.');
+                $msg = 'Debe analizar las imágenes antes de crear el producto en E-commerce.';
+                if ($isAjax) {
+                    return response()->json(['ok' => false, 'message' => $msg], 422);
+                }
+                return back()->with('error', $msg);
             }
 
             try {
@@ -446,15 +475,74 @@ class InstagramCollectionController extends Controller
             }
         }
 
+        // Recargar el post para obtener datos actualizados
+        $post->refresh();
+
         if ($request->publish_mode === 'now') {
-            //$collection->update(['status' => 'publishing']);
             // Ejecuta inmediatamente (no requiere queue:work)
             Bus::dispatchSync(new PublishInstagramPostJob($post->id));
-            return back()->with('ok', "Carrusel '{$group->name}' publicado (o en proceso).");
+
+            // Recargar para obtener status actualizado después de publicar
+            $post->refresh();
+
+            $msg = "Carrusel '{$group->name}' publicado (o en proceso).";
+
+            if ($isAjax) {
+                return response()->json([
+                    'ok' => true,
+                    'message' => $msg,
+                    'post' => [
+                        'id' => $post->id,
+                        'status' => $post->status,
+                        'status_text' => $this->getStatusText($post->status),
+                        'published_at' => $post->published_at ? Carbon::parse($post->published_at)->timezone(config('app.timezone'))->format('Y-m-d H:i') : null,
+                        'error_message' => $post->error_message,
+                    ],
+                    'group' => [
+                        'id' => $group->id,
+                        'name' => $group->name,
+                    ],
+                ]);
+            }
+
+            return back()->with('ok', $msg);
         }
 
         $collection->update(['status' => 'scheduled']);
-        return back()->with('ok', "Carrusel '{$group->name}' programado.");
+        $msg = "Carrusel '{$group->name}' programado.";
+
+        if ($isAjax) {
+            return response()->json([
+                'ok' => true,
+                'message' => $msg,
+                'post' => [
+                    'id' => $post->id,
+                    'status' => $post->status,
+                    'status_text' => $this->getStatusText($post->status),
+                    'scheduled_at' => $scheduledAt ? $scheduledAt->timezone(config('app.timezone'))->format('Y-m-d H:i') : null,
+                ],
+                'group' => [
+                    'id' => $group->id,
+                    'name' => $group->name,
+                ],
+            ]);
+        }
+
+        return back()->with('ok', $msg);
+    }
+
+    /**
+     * Obtiene el texto de estado legible
+     */
+    protected function getStatusText(string $status): string
+    {
+        return match ($status) {
+            'scheduled' => 'Programado',
+            'publishing' => 'Publicando...',
+            'published' => 'Publicado',
+            'failed' => 'Fallido',
+            default => 'Borrador',
+        };
     }
 
     /**
