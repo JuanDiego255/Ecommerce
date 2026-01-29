@@ -600,6 +600,113 @@ class ImageAnalyzerService
     }
 
     /**
+     * Genera descripción E-commerce estilo párrafo justificado
+     * Formato: "Añade un toque [adjetivo] a tu look con nuestro/a [prenda] [color]. [Características], es perfecto/a para [ocasión]."
+     */
+    public function generateEcommerceDescription(array $analysis): string
+    {
+        $color = $analysis['color_principal'] ?? null;
+        $prenda = $analysis['tipo_prenda'] ?? 'prenda';
+        $material = $analysis['material'] ?? null;
+        $patron = $analysis['patron'] ?? null;
+        $estilo = $analysis['estilo'] ?? null;
+        $detalles = $analysis['detalles'] ?? [];
+        $hasPattern = $analysis['tiene_estampado'] ?? false;
+
+        // Intro variada
+        $intros = [
+            'Añade un toque especial a tu look',
+            'Transforma tu estilo',
+            'Destaca con elegancia',
+            'Eleva tu outfit',
+            'Complementa tu guardarropa',
+            'Dale un giro a tu look',
+        ];
+        $intro = $this->getRandomElement($intros);
+
+        // Género del artículo según prenda
+        $femeninas = ['blusa', 'falda', 'camisa', 'chaqueta', 'camiseta', 'prenda'];
+        $articulo = in_array($prenda, $femeninas) ? 'nuestra' : 'nuestro';
+        $perfecta = in_array($prenda, $femeninas) ? 'perfecta' : 'perfecto';
+
+        // Construir descripción de producto
+        $productDesc = "{$articulo} {$prenda}";
+        if ($color && $color !== 'variado' && $color !== 'neutro') {
+            $productDesc .= " {$color}";
+        }
+        if ($hasPattern && $patron) {
+            $productDesc .= " con diseño {$patron}";
+        }
+
+        // Características
+        $caracteristicas = [];
+        if ($material) {
+            $caracteristicas[] = ucfirst($material);
+        }
+        if ($estilo) {
+            $caracteristicas[] = "estilo {$estilo}";
+        }
+        if (!empty($detalles)) {
+            $caracteristicas = array_merge($caracteristicas, array_slice($detalles, 0, 2));
+        }
+
+        // Si no hay características detectadas, usar genéricas
+        if (empty($caracteristicas)) {
+            $caracteristicas = [$this->getRandomElement([
+                'Suave y cómodo',
+                'Material de calidad',
+                'Acabado premium',
+                'Diseño moderno',
+                'Versátil y elegante',
+            ])];
+        }
+
+        $caracteristicasText = implode(', ', array_slice($caracteristicas, 0, 3));
+
+        // Ocasión
+        $ocasion = $this->getOcasion($prenda);
+
+        // Cierre variado
+        $cierres = [
+            "es {$perfecta} para {$ocasion}",
+            "ideal para {$ocasion}",
+            "{$perfecta} para lucir en {$ocasion}",
+            "combina con todo para {$ocasion}",
+        ];
+        $cierre = $this->getRandomElement($cierres);
+
+        return "{$intro} con {$productDesc}. {$caracteristicasText}, {$cierre}.";
+    }
+
+    /**
+     * Genera nombre de producto basado en análisis (max 50 caracteres)
+     */
+    public function generateProductName(array $analysis): string
+    {
+        $color = $analysis['color_principal'] ?? null;
+        $prenda = $analysis['tipo_prenda'] ?? 'Prenda';
+        $patron = $analysis['patron'] ?? null;
+        $hasPattern = $analysis['tiene_estampado'] ?? false;
+
+        $name = ucfirst($prenda);
+
+        if ($color && $color !== 'variado' && $color !== 'neutro') {
+            $name .= ' ' . ucfirst($color);
+        }
+
+        if ($hasPattern && $patron) {
+            $name .= ' ' . ucfirst($patron);
+        }
+
+        // Truncar a 50 caracteres
+        if (strlen($name) > 50) {
+            $name = substr($name, 0, 47) . '...';
+        }
+
+        return $name;
+    }
+
+    /**
      * Genera variables para usar en plantillas spintax
      */
     public function generateTemplateVariables(array $analysis): array

@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Categories;
+use App\Models\ClothingCategory;
+use App\Models\Department;
 use App\Models\InstagramAccount;
 use App\Models\InstagramCaptionTemplate;
 use App\Models\InstagramCollection;
@@ -10,8 +13,12 @@ use App\Models\InstagramCollectionGroup;
 use App\Models\InstagramCollectionItem;
 use App\Models\InstagramPost;
 use App\Models\InstagramPostMedia;
+use App\Models\PivotClothingCategory;
+use App\Models\ProductImage;
+use App\Models\TenantInfo;
 use App\Domain\Instagram\Jobs\PublishInstagramPostJob;
 use App\Domain\Instagram\Services\CaptionGeneratorService;
+use App\Domain\Instagram\Services\ImageAnalyzerService;
 use App\Domain\Instagram\Services\SpintaxService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -296,6 +303,10 @@ class InstagramCollectionController extends Controller
             'caption' => 'nullable|string',
             'use_template' => 'nullable|boolean',
             'analyze_images' => 'nullable|boolean',
+            'create_ecommerce' => 'nullable|boolean',
+            'ecommerce_price' => 'nullable|numeric|min:0',
+            'ecommerce_stock' => 'nullable|integer|min:0',
+            'ecommerce_analysis_data' => 'nullable|string',
         ]);
 
         $account = InstagramAccount::where('is_active', true)->latest()->first();
@@ -400,6 +411,28 @@ class InstagramCollectionController extends Controller
             ]);
         }
 
+        // Crear producto en E-commerce si se solicita
+        if ($request->boolean('create_ecommerce')) {
+            $analysisData = $request->input('ecommerce_analysis_data');
+
+            if (empty($analysisData)) {
+                return back()->with('error', 'Debe analizar las imágenes antes de crear el producto en E-commerce.');
+            }
+
+            try {
+                $analysis = json_decode($analysisData, true);
+                $this->createEcommerceProduct(
+                    $analysis,
+                    $group->items()->orderBy('sort_order')->orderBy('id')->take(4)->get(),
+                    $request->input('ecommerce_price'),
+                    $request->input('ecommerce_stock')
+                );
+            } catch (\Exception $e) {
+                Log::error('Error creando producto E-commerce desde Instagram: ' . $e->getMessage());
+                // No retornamos error para no interrumpir la publicación de Instagram
+            }
+        }
+
         if ($request->publish_mode === 'now') {
             //$collection->update(['status' => 'publishing']);
             // Ejecuta inmediatamente (no requiere queue:work)
@@ -432,6 +465,10 @@ class InstagramCollectionController extends Controller
         $imagePaths = $group->items->pluck('image_path')->toArray();
 
         $captionGenerator = app(CaptionGeneratorService::class);
+        $imageAnalyzer = app(\App\Domain\Instagram\Services\ImageAnalyzerService::class);
+
+        // Analizar imágenes
+        $analysis = $imageAnalyzer->analyzeMultiple($imagePaths);
 
         // Generar caption completo usando la plantilla de la colección + análisis de imágenes
         $caption = $captionGenerator->generateForCarousel(
@@ -443,7 +480,168 @@ class InstagramCollectionController extends Controller
         return response()->json([
             'ok' => true,
             'caption' => $caption,
+            'analysis_data' => $analysis,
         ]);
+    }
+
+    /**
+     * Analiza las imágenes y genera una descripción E-commerce (AJAX)
+     */
+    public function analyzeEcommerce(Request $request, InstagramCollection $collection, InstagramCollectionGroup $group)
+    {
+        if ($group->instagram_collection_id !== $collection->id) {
+            return response()->json(['ok' => false, 'message' => 'Grupo no válido'], 404);
+        }
+
+        $group->load('items');
+
+        if ($group->items->isEmpty()) {
+            return response()->json([
+                'ok' => false,
+                'message' => 'Este carrusel no tiene imágenes para analizar.',
+            ]);
+        }
+
+        $imagePaths = $group->items->pluck('image_path')->toArray();
+        $imageAnalyzer = app(\App\Domain\Instagram\Services\ImageAnalyzerService::class);
+
+        // Analizar imágenes
+        $analysis = $imageAnalyzer->analyzeMultiple($imagePaths);
+
+        // Generar descripción E-commerce
+        $description = $imageAnalyzer->generateEcommerceDescription($analysis);
+
+        return response()->json([
+            'ok' => true,
+            'description' => $description,
+            'analysis_data' => $analysis,
+        ]);
+    }
+
+    /**
+     * Crea un producto en E-commerce basado en el análisis de imágenes
+     */
+    protected function createEcommerceProduct(array $analysis, $items, ?float $price, ?int $stock): void
+    {
+        $tenantinfo = TenantInfo::first();
+        $imageAnalyzer = app(ImageAnalyzerService::class);
+
+        // Generar nombre y descripción del producto
+        $productName = $imageAnalyzer->generateProductName($analysis);
+        $productDescription = $imageAnalyzer->generateEcommerceDescription($analysis);
+
+        // Obtener o crear categoría "Otros"
+        $categoryId = $this->getOrCreateOtrosCategory($tenantinfo);
+
+        // Generar código único
+        $code = $this->generateProductCode();
+
+        // Determinar manage_stock
+        $manageStock = ($stock !== null && $stock > 0) ? 1 : 0;
+
+        // Crear producto
+        $clothing = new ClothingCategory();
+        $clothing->name = $productName;
+        $clothing->code = $code;
+        $clothing->description = htmlspecialchars($productDescription);
+        $clothing->price = $price ?? 0;
+        $clothing->stock = $stock ?? 0;
+        $clothing->manage_stock = $manageStock;
+        $clothing->status = 1;
+        $clothing->trending = 0;
+        $clothing->is_contra_pedido = 0;
+        $clothing->save();
+
+        // Ligar categoría al producto
+        $pivotCategory = new PivotClothingCategory();
+        $pivotCategory->category_id = $categoryId;
+        $pivotCategory->clothing_id = $clothing->id;
+        $pivotCategory->save();
+
+        // Guardar hasta 4 imágenes
+        $imageCount = 0;
+        foreach ($items as $item) {
+            if ($imageCount >= 4) break;
+
+            $productImage = new ProductImage();
+            $productImage->clothing_id = $clothing->id;
+            $productImage->image = $item->image_path;
+            $productImage->save();
+
+            $imageCount++;
+        }
+
+        Log::info("Producto E-commerce creado desde Instagram: {$clothing->id} - {$productName}");
+    }
+
+    /**
+     * Obtiene o crea la categoría "Otros" y departamento si es necesario
+     */
+    protected function getOrCreateOtrosCategory(?TenantInfo $tenantinfo): int
+    {
+        // Si el tenant maneja departamentos
+        if ($tenantinfo && isset($tenantinfo->manage_department) && $tenantinfo->manage_department == 1) {
+            // Buscar o crear departamento "Otros"
+            $department = Department::firstOrCreate(
+                ['department' => 'Otros'],
+                ['department' => 'Otros']
+            );
+
+            // Buscar o crear categoría "Otros" en ese departamento
+            $category = Categories::where('name', 'Otros')
+                ->where('department_id', $department->id)
+                ->first();
+
+            if (!$category) {
+                $category = new Categories();
+                $category->name = 'Otros';
+                $category->slug = 'otros';
+                $category->department_id = $department->id;
+                $category->status = 1;
+                $category->save();
+            }
+
+            return $category->id;
+        }
+
+        // Sin departamentos, buscar o crear categoría "Otros"
+        $category = Categories::where('name', 'Otros')->first();
+
+        if (!$category) {
+            // Obtener cualquier departamento existente o crear uno default
+            $department = Department::first();
+
+            if (!$department) {
+                $department = Department::create(['department' => 'Default']);
+            }
+
+            $category = new Categories();
+            $category->name = 'Otros';
+            $category->slug = 'otros';
+            $category->department_id = $department->id;
+            $category->status = 1;
+            $category->save();
+        }
+
+        return $category->id;
+    }
+
+    /**
+     * Genera un código de producto único
+     */
+    protected function generateProductCode(): string
+    {
+        $prefix = 'P';
+        $randomNumbers = str_pad(mt_rand(1, 9999999999999), 13, '0', STR_PAD_LEFT);
+        $code = $prefix . $randomNumbers;
+
+        // Verificar unicidad
+        while (ClothingCategory::where('code', $code)->exists()) {
+            $randomNumbers = str_pad(mt_rand(1, 9999999999999), 13, '0', STR_PAD_LEFT);
+            $code = $prefix . $randomNumbers;
+        }
+
+        return $code;
     }
 
     /**

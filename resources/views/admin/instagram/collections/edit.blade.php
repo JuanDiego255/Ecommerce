@@ -729,24 +729,68 @@
                                                 <div class="d-flex gap-1 mt-2">
                                                     <button type="button" class="btn btn-sm btn-outline-secondary btn-preview-template"
                                                         data-group-id="{{ $group->id }}"
-                                                        data-template-id="{{ $collection->caption_template_id }}">
-                                                        ✨ Ver variación
+                                                        data-template-id="{{ $collection->caption_template_id }}"
+                                                        data-bs-toggle="tooltip" data-bs-placement="top" title="Ver variación de plantilla">
+                                                        <i class="fas fa-magic"></i>
                                                     </button>
                                                     <button type="button" class="btn btn-sm btn-outline-info btn-analyze-preview"
                                                         data-group-id="{{ $group->id }}"
-                                                        data-collection-id="{{ $collection->id }}">
-                                                        🔍 Analizar y generar
+                                                        data-collection-id="{{ $collection->id }}"
+                                                        data-bs-toggle="tooltip" data-bs-placement="top" title="Analizar y generar descripción Instagram">
+                                                        <i class="fas fa-search"></i>
+                                                    </button>
+                                                    <button type="button" class="btn btn-sm btn-outline-success btn-analyze-ecommerce"
+                                                        data-group-id="{{ $group->id }}"
+                                                        data-collection-id="{{ $collection->id }}"
+                                                        data-bs-toggle="tooltip" data-bs-placement="top" title="Analizar y generar descripción E-commerce">
+                                                        <i class="fas fa-store"></i>
                                                     </button>
                                                 </div>
 
                                                 <div class="caption-preview mt-2" id="captionPreview{{ $group->id }}" style="display: none;">
                                                     <small class="text-muted">Vista previa:</small>
-                                                    <div class="bg-light p-2 rounded mt-1" style="font-size: 12px; white-space: pre-wrap;"
+                                                    <div class="bg-light p-2 rounded mt-1" style="font-size: 12px; white-space: pre-wrap; text-align: justify;"
                                                         id="captionPreviewText{{ $group->id }}"></div>
                                                 </div>
                                             </div>
                                             <hr class="my-2">
                                         @endif
+
+                                        {{-- Opción para crear en E-commerce --}}
+                                        <div class="mb-2">
+                                            <div class="form-check">
+                                                <input type="checkbox" name="create_ecommerce" value="1"
+                                                    class="form-check-input create-ecommerce-check"
+                                                    id="createEcommerce{{ $group->id }}"
+                                                    data-group-id="{{ $group->id }}">
+                                                <label class="form-check-label" for="createEcommerce{{ $group->id }}">
+                                                    <strong>Crear en E-commerce</strong>
+                                                </label>
+                                            </div>
+
+                                            <div class="ecommerce-fields mt-2" id="ecommerceFields{{ $group->id }}" style="display: none;">
+                                                <div class="row g-2">
+                                                    <div class="col-6">
+                                                        <div class="input-group input-group-sm">
+                                                            <span class="input-group-text">₡</span>
+                                                            <input type="number" name="ecommerce_price" class="form-control"
+                                                                id="ecommercePrice{{ $group->id }}"
+                                                                placeholder="Precio" min="0" step="0.01">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <input type="number" name="ecommerce_stock" class="form-control form-control-sm"
+                                                            id="ecommerceStock{{ $group->id }}"
+                                                            placeholder="Stock (opcional)" min="0">
+                                                    </div>
+                                                </div>
+                                                <input type="hidden" name="ecommerce_analysis_data" id="ecommerceAnalysisData{{ $group->id }}" value="">
+                                                <small class="text-muted d-block mt-1">
+                                                    <i class="fas fa-info-circle"></i> Debe analizar las imágenes primero
+                                                </small>
+                                            </div>
+                                        </div>
+                                        <hr class="my-2">
 
                                         <label class="form-label mb-1">{{ __('Descripción') }} (opcional)</label>
                                         <textarea name="caption" class="form-control caption-textarea" rows="2"
@@ -1341,7 +1385,7 @@
             });
 
             // -----------------------------------------
-            // Image Analysis + Caption Generation
+            // Image Analysis + Caption Generation (Instagram)
             // -----------------------------------------
             document.querySelectorAll('.btn-analyze-preview').forEach(btn => {
                 btn.addEventListener('click', async () => {
@@ -1352,9 +1396,10 @@
                     const analyzeCheck = document.getElementById('analyzeImages' + groupId);
                     const useTemplateCheck = document.getElementById('useTemplate' + groupId);
                     const captionTextarea = document.getElementById('caption' + groupId);
+                    const ecommerceAnalysisData = document.getElementById('ecommerceAnalysisData' + groupId);
 
                     btn.disabled = true;
-                    btn.textContent = 'Analizando...';
+                    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
 
                     try {
                         const resp = await fetch(`/instagram/collections/${collectionId}/groups/${groupId}/analyze-images`, {
@@ -1376,6 +1421,11 @@
                         previewText.textContent = data.caption;
                         previewDiv.style.display = 'block';
 
+                        // Guardar datos de análisis para E-commerce
+                        if (ecommerceAnalysisData && data.analysis_data) {
+                            ecommerceAnalysisData.value = JSON.stringify(data.analysis_data);
+                        }
+
                         // Auto-marcar checkboxes
                         if (analyzeCheck) {
                             analyzeCheck.checked = true;
@@ -1395,10 +1445,81 @@
                         swalWarn(e.message || 'Error al analizar las imágenes');
                     } finally {
                         btn.disabled = false;
-                        btn.textContent = '🔍 Analizar y generar';
+                        btn.innerHTML = '<i class="fas fa-search"></i>';
                     }
                 });
             });
+
+            // -----------------------------------------
+            // Image Analysis + E-commerce Description
+            // -----------------------------------------
+            document.querySelectorAll('.btn-analyze-ecommerce').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const groupId = btn.getAttribute('data-group-id');
+                    const collectionId = btn.getAttribute('data-collection-id');
+                    const previewDiv = document.getElementById('captionPreview' + groupId);
+                    const previewText = document.getElementById('captionPreviewText' + groupId);
+                    const ecommerceAnalysisData = document.getElementById('ecommerceAnalysisData' + groupId);
+
+                    btn.disabled = true;
+                    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+                    try {
+                        const resp = await fetch(`/instagram/collections/${collectionId}/groups/${groupId}/analyze-ecommerce`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': @json(csrf_token()),
+                                'Accept': 'application/json'
+                            }
+                        });
+
+                        const data = await resp.json();
+
+                        if (!data.ok) {
+                            throw new Error(data.message || 'Error al analizar imágenes');
+                        }
+
+                        // Mostrar la descripción E-commerce en Vista previa
+                        previewText.textContent = data.description;
+                        previewDiv.style.display = 'block';
+
+                        // Guardar datos de análisis para E-commerce
+                        if (ecommerceAnalysisData && data.analysis_data) {
+                            ecommerceAnalysisData.value = JSON.stringify(data.analysis_data);
+                        }
+
+                    } catch (e) {
+                        console.error(e);
+                        swalWarn(e.message || 'Error al analizar las imágenes');
+                    } finally {
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fas fa-store"></i>';
+                    }
+                });
+            });
+
+            // -----------------------------------------
+            // Toggle E-commerce Fields
+            // -----------------------------------------
+            document.querySelectorAll('.create-ecommerce-check').forEach(check => {
+                check.addEventListener('change', () => {
+                    const groupId = check.getAttribute('data-group-id');
+                    const fieldsDiv = document.getElementById('ecommerceFields' + groupId);
+
+                    if (check.checked) {
+                        fieldsDiv.style.display = 'block';
+                    } else {
+                        fieldsDiv.style.display = 'none';
+                    }
+                });
+            });
+
+            // -----------------------------------------
+            // Initialize Tooltips
+            // -----------------------------------------
+            const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+            const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
 
             // Init
             refreshCounts();
