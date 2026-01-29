@@ -1636,51 +1636,68 @@
                 }
             }
 
-            // Intercept form submissions
-            document.querySelectorAll('.ig-generate-form').forEach(form => {
-                form.addEventListener('submit', async (e) => {
-                    e.preventDefault();
+            // Intercept form submissions using event delegation
+            document.addEventListener('submit', async function(e) {
+                const form = e.target;
 
-                    const groupId = form.getAttribute('data-group-id');
-                    const submitBtn = form.querySelector('button[type="submit"]');
-                    const originalBtnText = submitBtn.innerHTML;
+                // Only handle our generate forms
+                if (!form.classList.contains('ig-generate-form')) {
+                    return;
+                }
 
-                    // Disable submit button and show loading
+                e.preventDefault();
+                e.stopPropagation();
+
+                const groupId = form.getAttribute('data-group-id');
+                const submitBtn = form.querySelector('button[type="submit"]');
+                const scheduleBtn = form.querySelector('.btn-open-schedule');
+                const originalBtnText = submitBtn ? submitBtn.innerHTML : '';
+
+                // Disable buttons and show loading
+                if (submitBtn) {
                     submitBtn.disabled = true;
                     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Publicando...';
+                }
+                if (scheduleBtn) {
+                    scheduleBtn.disabled = true;
+                }
 
-                    try {
-                        const formData = new FormData(form);
+                try {
+                    const formData = new FormData(form);
 
-                        const resp = await fetch(form.action, {
-                            method: 'POST',
-                            headers: {
-                                'X-CSRF-TOKEN': @json(csrf_token()),
-                                'Accept': 'application/json'
-                            },
-                            body: formData
-                        });
+                    const resp = await fetch(form.action, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': @json(csrf_token()),
+                            'Accept': 'application/json'
+                        },
+                        body: formData
+                    });
 
-                        const data = await resp.json();
+                    const data = await resp.json();
 
-                        if (!resp.ok || !data.ok) {
-                            throw new Error(data.message || 'Error al publicar');
-                        }
+                    if (!resp.ok || !data.ok) {
+                        throw new Error(data.message || 'Error al publicar');
+                    }
 
-                        // Success - update the UI
-                        updateCarouselToLocked(groupId, data.post);
-                        showSuccessNotification(data.message);
+                    // Success - update the UI
+                    updateCarouselToLocked(groupId, data.post);
+                    showSuccessNotification(data.message);
 
-                    } catch (error) {
-                        console.error('Error publishing:', error);
-                        showErrorNotification(error.message || 'Error al publicar el carrusel');
+                } catch (error) {
+                    console.error('Error publishing:', error);
+                    showErrorNotification(error.message || 'Error al publicar el carrusel');
 
-                        // Re-enable the button
+                    // Re-enable the buttons
+                    if (submitBtn) {
                         submitBtn.disabled = false;
                         submitBtn.innerHTML = originalBtnText;
                     }
-                });
-            });
+                    if (scheduleBtn) {
+                        scheduleBtn.disabled = false;
+                    }
+                }
+            }, true); // Use capture phase
 
             // Update schedule confirmation to use AJAX
             document.getElementById('btnConfirmSchedule')?.addEventListener('click', async () => {
