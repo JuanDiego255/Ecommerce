@@ -582,11 +582,15 @@ class InstagramCollectionController extends Controller
         // Si el tenant maneja departamentos
         if ($tenantinfo && isset($tenantinfo->manage_department) && $tenantinfo->manage_department == 1) {
             // Buscar o crear departamento "Otros"
-            $department = Department::firstOrCreate(
-                ['department' => 'Otros'],
-                ['department' => 'Otros']
-            );
-
+            $departmentExist = Department::where('department', 'Otros')
+                ->first();
+            if (!$departmentExist) {
+                $order = Department::orderBy('order', 'desc')->first();
+                $department = new Department();
+                $department->department = 'Otros';
+                $department->order = $order->order + 1;
+                $department->save();
+            }
             // Buscar o crear categoría "Otros" en ese departamento
             $category = Categories::where('name', 'Otros')
                 ->where('department_id', $department->id)
@@ -595,6 +599,7 @@ class InstagramCollectionController extends Controller
             if (!$category) {
                 $category = new Categories();
                 $category->name = 'Otros';
+                $category->description = 'Otros';
                 $category->slug = 'otros';
                 $category->department_id = $department->id;
                 $category->status = 1;
