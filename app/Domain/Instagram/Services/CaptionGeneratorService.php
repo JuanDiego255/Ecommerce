@@ -84,6 +84,7 @@ class CaptionGeneratorService
     /**
      * Genera texto desde una plantilla (específica o aleatoria ponderada)
      * Soporta variables de imagen: {color}, {tipo_prenda}, {caracteristica}, etc.
+     * Reemplaza la sección "Detalles:" con características detectadas del análisis
      */
     public function generateTemplateText(?int $templateId = null, array $variables = []): ?string
     {
@@ -99,12 +100,47 @@ class CaptionGeneratorService
 
         $text = $template->template_text;
 
+        // Si hay sección de detalles generada por análisis de imagen, reemplazar la sección del template
+        if (!empty($variables['{detalles_section}'])) {
+            $text = $this->replaceDetallesSection($text, $variables['{detalles_section}']);
+        }
+
         // Reemplazar variables de imagen antes de procesar spintax
         if (!empty($variables)) {
-            $text = str_replace(array_keys($variables), array_values($variables), $text);
+            // Remover la variable especial antes del reemplazo
+            $varsToReplace = $variables;
+            unset($varsToReplace['{detalles_section}']);
+
+            $text = str_replace(array_keys($varsToReplace), array_values($varsToReplace), $text);
         }
 
         return $this->spintaxService->process($text);
+    }
+
+    /**
+     * Reemplaza la sección "Detalles:" o "Características:" del template con detalles dinámicos
+     */
+    protected function replaceDetallesSection(string $text, string $dynamicDetalles): string
+    {
+        // Patrón para detectar la sección de detalles/características con sus bullet points
+        // Busca: {Detalles:|Características:} seguido de líneas con bullets (•)
+        $pattern = '/\{Detalles:\|Características:\}[\s\S]*?(?=\n\n|\z)/u';
+
+        // Si encontramos el patrón spintax de Detalles/Características
+        if (preg_match($pattern, $text)) {
+            $replacement = "{Detalles:|Características:}\n" . $dynamicDetalles;
+            $text = preg_replace($pattern, $replacement, $text, 1);
+        }
+        // También buscar versiones más simples
+        else {
+            // Buscar "Detalles:" o "Características:" seguido de bullets
+            $simplePattern = '/(Detalles:|Características:)\s*(•[^\n]*\n?)+/u';
+            if (preg_match($simplePattern, $text)) {
+                $text = preg_replace($simplePattern, "Detalles:\n" . $dynamicDetalles, $text, 1);
+            }
+        }
+
+        return $text;
     }
 
     /**
@@ -227,6 +263,8 @@ class CaptionGeneratorService
             '{TIPO_PRENDA}' => 'Tipo de prenda en mayúscula',
             '{adjetivo_color}' => 'Adjetivo + color (ej: elegante negro)',
             '{caracteristica}' => 'Característica de la tela/diseño',
+            '{material}' => 'Material detectado (ej: seda, algodón, encaje)',
+            '{patron}' => 'Patrón detectado (ej: floral, rayas, liso)',
             '{estilo}' => 'Estilo de la prenda (ej: casual, elegante)',
             '{ocasion}' => 'Ocasión sugerida (ej: salidas, día a día)',
         ];

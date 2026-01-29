@@ -2,14 +2,324 @@
 
 namespace App\Domain\Instagram\Services;
 
+use Google\Cloud\Vision\V1\ImageAnnotatorClient;
+use Google\Cloud\Vision\V1\Feature\Type;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 /**
  * Servicio para analizar imágenes y extraer características visuales
- * Sin usar IA de costo - utiliza GD de PHP para análisis básico
+ * Usa Google Cloud Vision API para análisis avanzado con fallback a GD de PHP
  */
 class ImageAnalyzerService
 {
+    protected ?ImageAnnotatorClient $visionClient = null;
+    protected bool $visionAvailable = false;
+
+    /**
+     * Mapeo de labels de Google Vision a descripciones en español
+     */
+    protected array $labelTranslations = [
+        // Prendas
+        'dress' => 'vestido',
+        'gown' => 'vestido de gala',
+        'skirt' => 'falda',
+        'blouse' => 'blusa',
+        'shirt' => 'camisa',
+        't-shirt' => 'camiseta',
+        'top' => 'top',
+        'pants' => 'pantalón',
+        'trousers' => 'pantalón',
+        'jeans' => 'jeans',
+        'shorts' => 'shorts',
+        'jacket' => 'chaqueta',
+        'coat' => 'abrigo',
+        'sweater' => 'suéter',
+        'cardigan' => 'cardigan',
+        'jumpsuit' => 'enterizo',
+        'romper' => 'enterizo corto',
+        'bodysuit' => 'body',
+        'swimsuit' => 'traje de baño',
+        'bikini' => 'bikini',
+        'lingerie' => 'lencería',
+        'underwear' => 'ropa interior',
+        'pajamas' => 'pijama',
+        'suit' => 'traje',
+        'blazer' => 'blazer',
+        'vest' => 'chaleco',
+        'hoodie' => 'hoodie',
+        'leggings' => 'leggins',
+        'clothing' => 'prenda',
+        'outerwear' => 'ropa de abrigo',
+        'sportswear' => 'ropa deportiva',
+        'activewear' => 'ropa deportiva',
+        'formal wear' => 'ropa formal',
+        'cocktail dress' => 'vestido de cóctel',
+        'evening dress' => 'vestido de noche',
+        'maxi dress' => 'maxi vestido',
+        'mini dress' => 'mini vestido',
+        'wrap dress' => 'vestido cruzado',
+
+        // Materiales y texturas
+        'silk' => 'seda',
+        'cotton' => 'algodón',
+        'linen' => 'lino',
+        'denim' => 'mezclilla',
+        'leather' => 'cuero',
+        'lace' => 'encaje',
+        'velvet' => 'terciopelo',
+        'satin' => 'satén',
+        'chiffon' => 'gasa',
+        'knit' => 'tejido de punto',
+        'wool' => 'lana',
+        'polyester' => 'poliéster',
+        'sequin' => 'lentejuelas',
+        'embroidery' => 'bordado',
+        'crochet' => 'crochet',
+        'tulle' => 'tul',
+        'mesh' => 'malla',
+
+        // Patrones
+        'pattern' => 'estampado',
+        'floral' => 'floral',
+        'stripes' => 'rayas',
+        'striped' => 'rayado',
+        'polka dot' => 'lunares',
+        'plaid' => 'cuadros',
+        'checkered' => 'a cuadros',
+        'animal print' => 'animal print',
+        'leopard print' => 'estampado de leopardo',
+        'geometric' => 'geométrico',
+        'abstract' => 'abstracto',
+        'paisley' => 'paisley',
+        'tie-dye' => 'tie-dye',
+        'camouflage' => 'camuflaje',
+        'tropical' => 'tropical',
+
+        // Estilos
+        'elegant' => 'elegante',
+        'casual' => 'casual',
+        'formal' => 'formal',
+        'vintage' => 'vintage',
+        'bohemian' => 'bohemio',
+        'minimalist' => 'minimalista',
+        'romantic' => 'romántico',
+        'sporty' => 'deportivo',
+        'chic' => 'chic',
+        'trendy' => 'trendy',
+        'classic' => 'clásico',
+        'modern' => 'moderno',
+
+        // Detalles
+        'ruffle' => 'con volantes',
+        'bow' => 'con lazo',
+        'button' => 'con botones',
+        'zipper' => 'con cierre',
+        'pocket' => 'con bolsillos',
+        'collar' => 'con cuello',
+        'sleeve' => 'manga',
+        'v-neck' => 'escote en V',
+        'off-shoulder' => 'hombros descubiertos',
+        'backless' => 'espalda descubierta',
+        'high-waisted' => 'tiro alto',
+        'low-cut' => 'escotado',
+        'fitted' => 'ajustado',
+        'loose' => 'holgado',
+        'flowing' => 'fluido',
+        'structured' => 'estructurado',
+        'asymmetric' => 'asimétrico',
+        'pleated' => 'plisado',
+        'gathered' => 'fruncido',
+        'tiered' => 'escalonado',
+        'layered' => 'en capas',
+        'cropped' => 'corto',
+        'long' => 'largo',
+        'midi' => 'midi',
+
+        // Ocasiones
+        'party' => 'fiesta',
+        'wedding' => 'boda',
+        'beach' => 'playa',
+        'office' => 'oficina',
+        'date' => 'cita',
+        'vacation' => 'vacaciones',
+    ];
+
+    public function __construct()
+    {
+        $this->initializeVisionClient();
+    }
+
+    /**
+     * Inicializa el cliente de Google Cloud Vision si las credenciales están disponibles
+     */
+    protected function initializeVisionClient(): void
+    {
+        try {
+            $credentialsPath = env('GOOGLE_CLOUD_CREDENTIALS');
+
+            if ($credentialsPath && file_exists($credentialsPath)) {
+                $this->visionClient = new ImageAnnotatorClient([
+                    'credentials' => $credentialsPath,
+                ]);
+                $this->visionAvailable = true;
+            } elseif (env('GOOGLE_APPLICATION_CREDENTIALS')) {
+                $this->visionClient = new ImageAnnotatorClient();
+                $this->visionAvailable = true;
+            }
+        } catch (\Exception $e) {
+            Log::warning('Google Cloud Vision no disponible: ' . $e->getMessage());
+            $this->visionAvailable = false;
+        }
+    }
+
+    /**
+     * Analiza imagen usando Google Cloud Vision API
+     */
+    public function analyzeWithVision(string $imagePath): ?array
+    {
+        if (!$this->visionAvailable || !$this->visionClient) {
+            return null;
+        }
+
+        try {
+            $fullPath = Storage::disk('public')->path($imagePath);
+
+            if (!file_exists($fullPath)) {
+                return null;
+            }
+
+            $imageContent = file_get_contents($fullPath);
+
+            $response = $this->visionClient->annotateImage($imageContent, [
+                Type::LABEL_DETECTION,
+                Type::IMAGE_PROPERTIES,
+                Type::OBJECT_LOCALIZATION,
+            ]);
+
+            $result = [
+                'labels' => [],
+                'labels_es' => [],
+                'colors' => [],
+                'objects' => [],
+                'detected_prenda' => null,
+                'detected_material' => null,
+                'detected_pattern' => null,
+                'detected_style' => null,
+                'detected_details' => [],
+            ];
+
+            // Procesar etiquetas
+            $labels = $response->getLabelAnnotations();
+            foreach ($labels as $label) {
+                $labelText = strtolower($label->getDescription());
+                $score = $label->getScore();
+
+                if ($score >= 0.6) {
+                    $result['labels'][] = ['text' => $labelText, 'score' => $score];
+                    $translated = $this->translateLabel($labelText);
+                    if ($translated) {
+                        $result['labels_es'][] = $translated;
+                        $this->categorizeLabel($labelText, $translated, $result);
+                    }
+                }
+            }
+
+            // Procesar colores dominantes
+            $imageProps = $response->getImagePropertiesAnnotation();
+            if ($imageProps) {
+                $dominantColors = $imageProps->getDominantColors();
+                if ($dominantColors) {
+                    foreach ($dominantColors->getColors() as $colorInfo) {
+                        $color = $colorInfo->getColor();
+                        $result['colors'][] = [
+                            'r' => (int)$color->getRed(),
+                            'g' => (int)$color->getGreen(),
+                            'b' => (int)$color->getBlue(),
+                            'score' => $colorInfo->getScore(),
+                            'pixel_fraction' => $colorInfo->getPixelFraction(),
+                        ];
+                    }
+                }
+            }
+
+            // Procesar objetos detectados
+            $objects = $response->getLocalizedObjectAnnotations();
+            foreach ($objects as $object) {
+                $objectName = strtolower($object->getName());
+                $result['objects'][] = ['name' => $objectName, 'score' => $object->getScore()];
+                $translated = $this->translateLabel($objectName);
+                if ($translated && !in_array($translated, $result['labels_es'])) {
+                    $result['labels_es'][] = $translated;
+                    $this->categorizeLabel($objectName, $translated, $result);
+                }
+            }
+
+            return $result;
+
+        } catch (\Exception $e) {
+            Log::error('Error en análisis de Vision API: ' . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Traduce un label de inglés a español
+     */
+    protected function translateLabel(string $label): ?string
+    {
+        $label = strtolower(trim($label));
+
+        if (isset($this->labelTranslations[$label])) {
+            return $this->labelTranslations[$label];
+        }
+
+        foreach ($this->labelTranslations as $en => $es) {
+            if (str_contains($label, $en) || str_contains($en, $label)) {
+                return $es;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Categoriza un label detectado en prenda, material, patrón, estilo o detalle
+     */
+    protected function categorizeLabel(string $labelEn, string $labelEs, array &$result): void
+    {
+        $prendas = ['vestido', 'falda', 'blusa', 'camisa', 'camiseta', 'top', 'pantalón', 'jeans',
+            'shorts', 'chaqueta', 'abrigo', 'suéter', 'cardigan', 'enterizo', 'body', 'bikini',
+            'traje de baño', 'blazer', 'hoodie', 'leggins', 'prenda', 'maxi vestido', 'mini vestido'];
+
+        $materiales = ['seda', 'algodón', 'lino', 'mezclilla', 'cuero', 'encaje', 'terciopelo',
+            'satén', 'gasa', 'tejido de punto', 'lana', 'lentejuelas', 'bordado', 'crochet', 'tul', 'malla'];
+
+        $patrones = ['estampado', 'floral', 'rayas', 'rayado', 'lunares', 'cuadros', 'animal print',
+            'geométrico', 'abstracto', 'tropical', 'tie-dye'];
+
+        $estilos = ['elegante', 'casual', 'formal', 'vintage', 'bohemio', 'minimalista',
+            'romántico', 'deportivo', 'chic', 'trendy', 'clásico', 'moderno'];
+
+        $detalles = ['con volantes', 'con lazo', 'con botones', 'con cierre', 'con bolsillos',
+            'con cuello', 'escote en V', 'hombros descubiertos', 'espalda descubierta',
+            'ajustado', 'holgado', 'fluido', 'plisado', 'asimétrico'];
+
+        if (in_array($labelEs, $prendas) && !$result['detected_prenda']) {
+            $result['detected_prenda'] = $labelEs;
+        } elseif (in_array($labelEs, $materiales) && !$result['detected_material']) {
+            $result['detected_material'] = $labelEs;
+        } elseif (in_array($labelEs, $patrones) && !$result['detected_pattern']) {
+            $result['detected_pattern'] = $labelEs;
+        } elseif (in_array($labelEs, $estilos) && !$result['detected_style']) {
+            $result['detected_style'] = $labelEs;
+        } elseif (in_array($labelEs, $detalles)) {
+            if (!in_array($labelEs, $result['detected_details'])) {
+                $result['detected_details'][] = $labelEs;
+            }
+        }
+    }
+
     /**
      * Mapeo de colores RGB a nombres en español
      */
@@ -62,8 +372,44 @@ class ImageAnalyzerService
 
     /**
      * Analiza una imagen y extrae sus características
+     * Intenta usar Google Cloud Vision primero, luego fallback a GD
      */
     public function analyze(string $imagePath): array
+    {
+        // Intentar con Google Cloud Vision primero
+        $visionResult = $this->analyzeWithVision($imagePath);
+
+        if ($visionResult) {
+            // Obtener color principal del análisis de Vision
+            $mainColor = null;
+            if (!empty($visionResult['colors'])) {
+                $firstColor = $visionResult['colors'][0];
+                $mainColor = $this->getColorName([$firstColor['r'], $firstColor['g'], $firstColor['b']]);
+            }
+
+            return [
+                'color_principal' => $mainColor,
+                'color_secundario' => null,
+                'colores_hex' => array_map(function($c) {
+                    return sprintf('#%02x%02x%02x', $c['r'], $c['g'], $c['b']);
+                }, array_slice($visionResult['colors'], 0, 5)),
+                'es_claro' => false,
+                'es_oscuro' => false,
+                'tiene_estampado' => !empty($visionResult['detected_pattern']),
+                'tipo_prenda' => $visionResult['detected_prenda'],
+                'caracteristica_tela' => $visionResult['detected_material'],
+                'vision_data' => $visionResult,
+            ];
+        }
+
+        // Fallback a análisis con GD
+        return $this->analyzeWithGD($imagePath);
+    }
+
+    /**
+     * Analiza imagen usando PHP GD (fallback)
+     */
+    protected function analyzeWithGD(string $imagePath): array
     {
         $fullPath = Storage::disk('public')->path($imagePath);
 
@@ -103,6 +449,7 @@ class ImageAnalyzerService
                 'tiene_estampado' => $isPattern,
                 'tipo_prenda' => $prendaType,
                 'caracteristica_tela' => $this->getTipoTela($isPattern, $brightness),
+                'vision_data' => null,
             ];
         } catch (\Exception $e) {
             if (isset($image) && $image) {
@@ -119,8 +466,14 @@ class ImageAnalyzerService
     {
         $allColors = [];
         $allPrendas = [];
+        $allMateriales = [];
+        $allPatrones = [];
+        $allEstilos = [];
+        $allDetalles = [];
+        $allLabels = [];
         $patterns = [];
         $analyses = [];
+        $hasVisionData = false;
 
         foreach ($imagePaths as $path) {
             $analysis = $this->analyze($path);
@@ -132,7 +485,32 @@ class ImageAnalyzerService
             if ($analysis['tipo_prenda']) {
                 $allPrendas[] = $analysis['tipo_prenda'];
             }
+            if (!empty($analysis['caracteristica_tela'])) {
+                $allMateriales[] = $analysis['caracteristica_tela'];
+            }
             $patterns[] = $analysis['tiene_estampado'];
+
+            // Combinar datos de Vision API si está disponible
+            if (!empty($analysis['vision_data'])) {
+                $hasVisionData = true;
+                $vd = $analysis['vision_data'];
+
+                if ($vd['detected_material']) {
+                    $allMateriales[] = $vd['detected_material'];
+                }
+                if ($vd['detected_pattern']) {
+                    $allPatrones[] = $vd['detected_pattern'];
+                }
+                if ($vd['detected_style']) {
+                    $allEstilos[] = $vd['detected_style'];
+                }
+                foreach ($vd['detected_details'] ?? [] as $detail) {
+                    $allDetalles[] = $detail;
+                }
+                foreach ($vd['labels_es'] ?? [] as $label) {
+                    $allLabels[] = $label;
+                }
+            }
         }
 
         // Color más frecuente
@@ -151,18 +529,45 @@ class ImageAnalyzerService
         arsort($prendaCounts);
         $mainPrenda = array_key_first($prendaCounts);
 
+        // Material más frecuente
+        $materialCounts = array_count_values(array_filter($allMateriales));
+        arsort($materialCounts);
+        $mainMaterial = array_key_first($materialCounts);
+
+        // Patrón más frecuente
+        $patternCounts = array_count_values(array_filter($allPatrones));
+        arsort($patternCounts);
+        $mainPattern = array_key_first($patternCounts);
+
+        // Estilo más frecuente
+        $estiloCounts = array_count_values(array_filter($allEstilos));
+        arsort($estiloCounts);
+        $mainEstilo = array_key_first($estiloCounts);
+
         // Mayoría tiene estampado?
         $patternCount = count(array_filter($patterns));
-        $hasPattern = $patternCount > count($patterns) / 2;
+        $hasPattern = $patternCount > count($patterns) / 2 || !empty($mainPattern);
+
+        // Detalles únicos detectados
+        $uniqueDetalles = array_unique($allDetalles);
+
+        // Labels únicos detectados (para características adicionales)
+        $uniqueLabels = array_unique($allLabels);
 
         return [
             'color_principal' => $mainColor,
             'colores_descripcion' => $colorDescription,
             'colores_unicos' => $uniqueColors,
             'tipo_prenda' => $mainPrenda,
+            'material' => $mainMaterial,
+            'patron' => $mainPattern,
+            'estilo' => $mainEstilo,
+            'detalles' => $uniqueDetalles,
             'tiene_estampado' => $hasPattern,
             'total_imagenes' => count($imagePaths),
             'analisis_individual' => $analyses,
+            'labels_detectados' => $uniqueLabels,
+            'tiene_vision_data' => $hasVisionData,
         ];
     }
 
@@ -202,6 +607,13 @@ class ImageAnalyzerService
         $color = $analysis['color_principal'] ?? 'elegante';
         $prenda = $analysis['tipo_prenda'] ?? 'prenda';
         $hasPattern = $analysis['tiene_estampado'] ?? false;
+        $material = $analysis['material'] ?? null;
+        $patron = $analysis['patron'] ?? null;
+        $estilo = $analysis['estilo'] ?? null;
+        $detalles = $analysis['detalles'] ?? [];
+
+        // Generar la sección de detalles dinámicamente
+        $detallesSection = $this->generateDetallesSection($analysis);
 
         return [
             '{color}' => $color,
@@ -209,12 +621,86 @@ class ImageAnalyzerService
             '{tipo_prenda}' => $prenda,
             '{TIPO_PRENDA}' => ucfirst($prenda),
             '{adjetivo_color}' => $this->getColorAdjective($color),
-            '{caracteristica}' => $hasPattern
-                ? $this->getRandomElement(['estampado único', 'diseño exclusivo', 'patrón moderno'])
-                : $this->getRandomElement(['tela suave', 'acabado premium', 'material de calidad']),
-            '{estilo}' => $this->getEstilo($prenda, $hasPattern),
+            '{caracteristica}' => $this->getCaracteristica($material, $hasPattern, $patron),
+            '{estilo}' => $estilo ?: $this->getEstilo($prenda, $hasPattern),
             '{ocasion}' => $this->getOcasion($prenda),
+            '{material}' => $material ?: $this->getRandomElement(['tela suave', 'material cómodo', 'acabado premium']),
+            '{patron}' => $patron ?: ($hasPattern ? 'estampado' : 'liso'),
+            '{detalles_section}' => $detallesSection,
         ];
+    }
+
+    /**
+     * Genera la sección de "Detalles:" con bullet points basados en el análisis
+     */
+    protected function generateDetallesSection(array $analysis): string
+    {
+        $bullets = [];
+        $color = $analysis['color_principal'] ?? null;
+        $prenda = $analysis['tipo_prenda'] ?? null;
+        $material = $analysis['material'] ?? null;
+        $patron = $analysis['patron'] ?? null;
+        $estilo = $analysis['estilo'] ?? null;
+        $detalles = $analysis['detalles'] ?? [];
+        $hasPattern = $analysis['tiene_estampado'] ?? false;
+        $labels = $analysis['labels_detectados'] ?? [];
+
+        // Bullet 1: Material o característica de tela
+        if ($material) {
+            $bullets[] = "• Material: {$material}";
+        } elseif ($hasPattern && $patron) {
+            $bullets[] = "• Diseño: {$patron}";
+        } else {
+            $bullets[] = "• " . $this->getRandomElement(['Tela suave', 'Material cómodo', 'Acabado premium']);
+        }
+
+        // Bullet 2: Color y estilo
+        if ($color && $color !== 'variado' && $color !== 'neutro') {
+            $bullets[] = "• Color {$color}" . ($estilo ? ", estilo {$estilo}" : '');
+        } elseif ($estilo) {
+            $bullets[] = "• Estilo {$estilo}";
+        } else {
+            $bullets[] = "• " . $this->getRandomElement([
+                'Ideal para cualquier ocasión',
+                'Versátil y cómodo',
+                'Diseño moderno',
+            ]);
+        }
+
+        // Bullet 3: Detalles adicionales detectados o ocasión
+        if (!empty($detalles)) {
+            $detailList = array_slice($detalles, 0, 2);
+            $bullets[] = "• " . ucfirst(implode(', ', $detailList));
+        } elseif ($prenda) {
+            $bullets[] = "• Perfecto para " . $this->getOcasion($prenda);
+        } else {
+            $bullets[] = "• " . $this->getRandomElement([
+                'Perfecto para salidas',
+                'Ideal para el día a día',
+                'Para ocasiones especiales',
+            ]);
+        }
+
+        return implode("\n", $bullets);
+    }
+
+    /**
+     * Obtiene una característica basada en material y patrón
+     */
+    protected function getCaracteristica(?string $material, bool $hasPattern, ?string $patron): string
+    {
+        if ($material) {
+            return $material;
+        }
+
+        if ($hasPattern) {
+            if ($patron) {
+                return "diseño {$patron}";
+            }
+            return $this->getRandomElement(['estampado único', 'diseño exclusivo', 'patrón moderno']);
+        }
+
+        return $this->getRandomElement(['tela suave', 'acabado premium', 'material de calidad']);
     }
 
     // =========================================
