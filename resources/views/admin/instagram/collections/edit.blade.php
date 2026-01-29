@@ -804,7 +804,8 @@
                                         <input type="hidden" name="caption_type" id="captionType{{ $group->id }}" value="">
 
                                         <div class="d-flex gap-2 mt-2">
-                                            <button type="submit" class="btn btn-accion w-100">Publicar ahora</button>
+                                            <button type="button" class="btn btn-accion w-100 btn-publish-now"
+                                                data-group-id="{{ $group->id }}">Publicar ahora</button>
 
                                             <button type="button" class="btn btn-outline-dark w-100 btn-open-schedule"
                                                 data-group-id="{{ $group->id }}"
@@ -1636,27 +1637,16 @@
                 }
             }
 
-            // Intercept form submissions using event delegation
-            document.addEventListener('submit', async function(e) {
-                const form = e.target;
-
-                // Only handle our generate forms
-                if (!form.classList.contains('ig-generate-form')) {
-                    return;
-                }
-
-                e.preventDefault();
-                e.stopPropagation();
-
+            // Handle publish button click via AJAX
+            async function submitFormAjax(form, publishBtn) {
                 const groupId = form.getAttribute('data-group-id');
-                const submitBtn = form.querySelector('button[type="submit"]');
                 const scheduleBtn = form.querySelector('.btn-open-schedule');
-                const originalBtnText = submitBtn ? submitBtn.innerHTML : '';
+                const originalBtnText = publishBtn ? publishBtn.innerHTML : 'Publicar ahora';
 
                 // Disable buttons and show loading
-                if (submitBtn) {
-                    submitBtn.disabled = true;
-                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Publicando...';
+                if (publishBtn) {
+                    publishBtn.disabled = true;
+                    publishBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Publicando...';
                 }
                 if (scheduleBtn) {
                     scheduleBtn.disabled = true;
@@ -1689,15 +1679,28 @@
                     showErrorNotification(error.message || 'Error al publicar el carrusel');
 
                     // Re-enable the buttons
-                    if (submitBtn) {
-                        submitBtn.disabled = false;
-                        submitBtn.innerHTML = originalBtnText;
+                    if (publishBtn) {
+                        publishBtn.disabled = false;
+                        publishBtn.innerHTML = originalBtnText;
                     }
                     if (scheduleBtn) {
                         scheduleBtn.disabled = false;
                     }
                 }
-            }, true); // Use capture phase
+            }
+
+            // Click handler for "Publicar ahora" buttons
+            document.querySelectorAll('.btn-publish-now').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const groupId = this.getAttribute('data-group-id');
+                    const form = document.querySelector(`.ig-generate-form[data-group-id="${groupId}"]`);
+                    if (form) {
+                        // Ensure publish_mode is 'now'
+                        form.querySelector('input[name="publish_mode"]').value = 'now';
+                        submitFormAjax(form, this);
+                    }
+                });
+            });
 
             // Update schedule confirmation to use AJAX
             document.getElementById('btnConfirmSchedule')?.addEventListener('click', async () => {
@@ -1734,9 +1737,11 @@
                 // Close modal
                 if (scheduleModal) scheduleModal.hide();
 
-                // Submit the form (will be intercepted by our AJAX handler)
-                const submitEvent = new Event('submit', { bubbles: true, cancelable: true });
-                form.dispatchEvent(submitEvent);
+                // Get the publish button for this form
+                const publishBtn = form.querySelector('.btn-publish-now');
+
+                // Submit via AJAX
+                submitFormAjax(form, publishBtn);
             });
 
             // Init
