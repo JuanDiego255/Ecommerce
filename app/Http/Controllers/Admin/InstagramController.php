@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use App\Models\InstagramAccount;
+use App\Models\TenantInfo;
 
 class InstagramController extends Controller
 {
@@ -17,8 +18,17 @@ class InstagramController extends Controller
 
     public function connect()
     {
+        $tenantinfo = TenantInfo::first();
+        $config = "meta.redirect_uri";
+        switch ($tenantinfo->tenant) {
+            case "magnoliajoycr":
+                $config = "meta.redirect_uri_magnolia";
+                break;
+            default:
+                break;
+        }
         $appId = config('meta.app_id');
-        $redirect = config('meta.redirect_uri');
+        $redirect = config($config);
 
         // Permisos mínimos para:
         // - leer páginas
@@ -55,10 +65,19 @@ class InstagramController extends Controller
         }
 
         try {
+            $tenantinfo = TenantInfo::first();
+            $config = "meta.redirect_uri";
+            switch ($tenantinfo->tenant) {
+                case "magnoliajoycr":
+                    $config = "meta.redirect_uri_magnolia";
+                    break;
+                default:
+                    break;
+            }
             // 1) Intercambiar code por user access token
             $tokenResp = Http::get($this->graphUrl('/oauth/access_token'), [
                 'client_id' => config('meta.app_id'),
-                'redirect_uri' => config('meta.redirect_uri'),
+                'redirect_uri' => config($config),
                 'client_secret' => config('meta.app_secret'),
                 'code' => $code,
             ]);
