@@ -625,6 +625,9 @@ Route::middleware([
                 Route::post('/instagram/collections/{collection}/groups/{group}/analyze-ecommerce', [InstagramCollectionController::class, 'analyzeEcommerce'])
                     ->name('ig.collections.groups.analyzeEcommerce');
 
+                Route::post('/instagram/collections/{collection}/groups/{group}/save-caption', [InstagramCollectionController::class, 'saveGroupCaption'])
+                    ->name('ig.collections.groups.saveCaption');
+
                 /**
                  * (Opcional / legacy) generar posts automáticos por colección
                  */

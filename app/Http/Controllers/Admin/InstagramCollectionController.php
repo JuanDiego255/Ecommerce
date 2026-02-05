@@ -121,20 +121,53 @@ class InstagramCollectionController extends Controller
 
         $maxOrder = (int) $collection->items()->max('sort_order');
 
+        // Obtener el siguiente número de código disponible para esta colección
+        $nextCode = $this->getNextImageCode($collection->id);
+
         foreach ($request->file('images') as $file) {
-            $path = $file->store('uploads/ig-collections', 'public');
+            $extension = $file->getClientOriginalExtension() ?: 'jpg';
+
+            // Generar nombre corto: ig0001.jpg, ig0002.jpg, etc.
+            $shortName = sprintf('ig%04d.%s', $nextCode, strtolower($extension));
+
+            // Guardar con el nombre corto
+            $path = $file->storeAs('uploads/ig-collections', $shortName, 'public');
             $maxOrder++;
+            $nextCode++;
 
             InstagramCollectionItem::create([
                 'instagram_collection_id' => $collection->id,
                 'group_id' => null,
                 'sort_order' => $maxOrder,
                 'image_path' => $path,
-                'original_name' => $file->getClientOriginalName(),
+                'original_name' => $shortName, // Usar el nombre corto como display name
             ]);
         }
 
         return back()->with('ok', 'Imágenes subidas.');
+    }
+
+    /**
+     * Obtiene el siguiente código disponible para imágenes
+     */
+    protected function getNextImageCode(int $collectionId): int
+    {
+        // Buscar el código más alto usado en cualquier imagen de esta colección
+        $lastItem = InstagramCollectionItem::where('instagram_collection_id', $collectionId)
+            ->where('original_name', 'like', 'ig%')
+            ->orderByDesc('id')
+            ->first();
+
+        if (!$lastItem) {
+            return 1;
+        }
+
+        // Extraer el número del nombre (ig0001.jpg -> 1)
+        if (preg_match('/ig(\d+)\./', $lastItem->original_name, $matches)) {
+            return (int) $matches[1] + 1;
+        }
+
+        return 1;
     }
 
     public function deleteItem(InstagramCollection $collection, InstagramCollectionItem $item)
@@ -845,5 +878,36 @@ class InstagramCollectionController extends Controller
         ]);
 
         return response()->json(['ok' => true, 'name' => $group->name]);
+    }
+
+    /**
+     * Guarda el caption generado para un grupo (AJAX)
+     */
+    public function saveGroupCaption(Request $request, InstagramCollection $collection, InstagramCollectionGroup $group)
+    {
+        if ($group->instagram_collection_id !== $collection->id) {
+            return response()->json(['ok' => false, 'message' => 'Grupo no válido'], 404);
+        }
+
+        // Si ya generó post, no permitir cambios
+        if (!empty($group->instagram_post_id)) {
+            return response()->json(['ok' => false, 'message' => 'Este carrusel está bloqueado.'], 422);
+        }
+
+        $request->validate([
+            'generated_caption' => 'nullable|string',
+            'caption_type' => 'nullable|string|in:template,instagram,ecommerce',
+            'use_template' => 'nullable|boolean',
+            'analyze_images' => 'nullable|boolean',
+        ]);
+
+        $group->update([
+            'generated_caption' => $request->input('generated_caption'),
+            'caption_type' => $request->input('caption_type'),
+            'use_template' => $request->boolean('use_template'),
+            'analyze_images' => $request->boolean('analyze_images'),
+        ]);
+
+        return response()->json(['ok' => true]);
     }
 }

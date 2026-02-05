@@ -10,7 +10,16 @@ class InstagramCollectionGroup extends Model
         'instagram_collection_id',
         'instagram_post_id',
         'name',
-        'sort_order'
+        'sort_order',
+        'generated_caption',
+        'caption_type',
+        'use_template',
+        'analyze_images',
+    ];
+
+    protected $casts = [
+        'use_template' => 'boolean',
+        'analyze_images' => 'boolean',
     ];
 
     public function collection()

@@ -708,7 +708,8 @@
                                                     <input type="checkbox" name="use_template" value="1"
                                                         class="form-check-input use-template-check"
                                                         id="useTemplate{{ $group->id }}"
-                                                        data-group-id="{{ $group->id }}">
+                                                        data-group-id="{{ $group->id }}"
+                                                        {{ $group->use_template ? 'checked' : '' }}>
                                                     <label class="form-check-label" for="useTemplate{{ $group->id }}">
                                                         <strong>Usar plantilla:</strong> {{ $collection->captionTemplate->name ?? 'Sin nombre' }}
                                                     </label>
@@ -719,10 +720,10 @@
                                                     <input type="checkbox" name="analyze_images" value="1"
                                                         class="form-check-input analyze-images-check"
                                                         id="analyzeImages{{ $group->id }}"
-                                                        data-group-id="{{ $group->id }}">
+                                                        data-group-id="{{ $group->id }}"
+                                                        {{ $group->analyze_images ? 'checked' : '' }}>
                                                     <label class="form-check-label" for="analyzeImages{{ $group->id }}">
                                                         <strong>Analizar imágenes</strong>
-                                                        {{-- <small class="text-muted d-block">Detecta color, tipo de prenda y estampado</small> --}}
                                                     </label>
                                                 </div>
 
@@ -747,10 +748,13 @@
                                                     </button>
                                                 </div>
 
-                                                <div class="caption-preview mt-2" id="captionPreview{{ $group->id }}" style="display: none;">
+                                                <div class="caption-preview mt-2" id="captionPreview{{ $group->id }}"
+                                                    style="{{ $group->generated_caption ? '' : 'display: none;' }}"
+                                                    data-saved-caption="{{ $group->generated_caption }}"
+                                                    data-saved-caption-type="{{ $group->caption_type }}">
                                                     <small class="text-muted">Vista previa:</small>
                                                     <div class="bg-light p-2 rounded mt-1" style="font-size: 12px; white-space: pre-wrap; text-align: justify;"
-                                                        id="captionPreviewText{{ $group->id }}"></div>
+                                                        id="captionPreviewText{{ $group->id }}">{{ $group->generated_caption }}</div>
                                                 </div>
                                             </div>
                                             <hr class="my-2">
@@ -800,8 +804,9 @@
                                         {{-- inputs ocultos para el backend --}}
                                         <input type="hidden" name="publish_mode" value="now">
                                         <input type="hidden" name="scheduled_at" value="">
-                                        <input type="hidden" name="generated_caption" id="generatedCaption{{ $group->id }}" value="">
-                                        <input type="hidden" name="caption_type" id="captionType{{ $group->id }}" value="">
+                                        <input type="hidden" name="generated_caption" id="generatedCaption{{ $group->id }}" value="{{ $group->generated_caption }}">
+                                        <input type="hidden" name="caption_type" id="captionType{{ $group->id }}" value="{{ $group->caption_type }}"
+                                            data-save-url="{{ route('ig.collections.groups.saveCaption', [$collection, $group]) }}">
 
                                         <div class="d-flex gap-2 mt-2">
                                             <button type="button" class="btn btn-accion w-100 btn-publish-now"
@@ -1273,6 +1278,40 @@
             // El handler de btnConfirmSchedule está al final con el AJAX submit
 
             // -----------------------------------------
+            // Helper: Guardar caption en BD
+            // -----------------------------------------
+            async function saveGroupCaption(groupId, caption, captionType, useTemplate, analyzeImages) {
+                const captionTypeInput = document.getElementById('captionType' + groupId);
+                const saveUrl = captionTypeInput ? captionTypeInput.getAttribute('data-save-url') : null;
+
+                if (!saveUrl) {
+                    console.warn('No save URL for group', groupId);
+                    return;
+                }
+
+                try {
+                    await fetch(saveUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': @json(csrf_token()),
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            generated_caption: caption,
+                            caption_type: captionType,
+                            use_template: useTemplate,
+                            analyze_images: analyzeImages
+                        })
+                    });
+                    setStatus('Caption guardado ✅');
+                    setTimeout(() => setStatus(''), 1500);
+                } catch (e) {
+                    console.error('Error saving caption:', e);
+                }
+            }
+
+            // -----------------------------------------
             // Template Preview (Spintax)
             // -----------------------------------------
             document.querySelectorAll('.btn-preview-template').forEach(btn => {
@@ -1283,6 +1322,8 @@
                     const previewText = document.getElementById('captionPreviewText' + groupId);
                     const captionTextarea = document.getElementById('caption' + groupId);
                     const useTemplateCheck = document.getElementById('useTemplate' + groupId);
+                    const generatedCaption = document.getElementById('generatedCaption' + groupId);
+                    const captionType = document.getElementById('captionType' + groupId);
 
                     if (!templateId) {
                         swalWarn('No hay plantilla configurada para esta colección.');
@@ -1290,7 +1331,8 @@
                     }
 
                     btn.disabled = true;
-                    btn.textContent = 'Generando...';
+                    const originalHtml = btn.innerHTML;
+                    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
 
                     try {
                         const resp = await fetch(@json(route('ig.caption-templates.generate')), {
@@ -1314,6 +1356,10 @@
                         previewText.textContent = data.caption;
                         previewDiv.style.display = 'block';
 
+                        // Guardar en inputs ocultos
+                        if (generatedCaption) generatedCaption.value = data.caption;
+                        if (captionType) captionType.value = 'template';
+
                         // Auto-seleccionar usar plantilla y limpiar textarea
                         if (useTemplateCheck) {
                             useTemplateCheck.checked = true;
@@ -1323,12 +1369,15 @@
                             captionTextarea.placeholder = 'Usando plantilla. Deja vacío para usar la variación generada.';
                         }
 
+                        // Guardar en BD
+                        await saveGroupCaption(groupId, data.caption, 'template', true, false);
+
                     } catch (e) {
                         console.error(e);
                         swalWarn(e.message || 'Error al generar la vista previa');
                     } finally {
                         btn.disabled = false;
-                        btn.textContent = '✨ Ver variación';
+                        btn.innerHTML = originalHtml;
                     }
                 });
             });
@@ -1421,6 +1470,9 @@
                             captionTextarea.placeholder = 'Usando plantilla con análisis. Deja vacío para usar la variación generada.';
                         }
 
+                        // Guardar en BD
+                        await saveGroupCaption(groupId, data.caption, 'instagram', true, true);
+
                     } catch (e) {
                         console.error(e);
                         swalWarn(e.message || 'Error al analizar las imágenes');
@@ -1479,6 +1531,9 @@
                         if (ecommerceAnalysisData && data.analysis_data) {
                             ecommerceAnalysisData.value = JSON.stringify(data.analysis_data);
                         }
+
+                        // Guardar en BD
+                        await saveGroupCaption(groupId, data.description, 'ecommerce', false, true);
 
                     } catch (e) {
                         console.error(e);
