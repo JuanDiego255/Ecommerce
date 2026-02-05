@@ -438,7 +438,7 @@
                                                 </a>
                                             </li>
                                         @endcan
-                                         @can('tenant.settings')
+                                        @can('tenant.settings')
                                             <li class="nav-item">
                                                 <a @if ($view_name == 'admin_settings_email') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
                                                     href="{{ route('settings.email') }}">
@@ -479,6 +479,73 @@
                                 </a>
                             </li>
                         @endif
+                        @can('is-owner')
+                            <li class="nav-item">
+                                <a @if ($view_name == 'admin_citas_index' || $view_name == 'admin_citas_mine') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
+                                    href="javascript:void(0);">
+                                    <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                                        <i class="material-icons opacity-10">photo_camera</i>
+                                    </div>
+                                    <span class="nav-link-text ms-1">Instagram Post</span>
+                                </a>
+
+                                <!-- Lista desplegable de "Mi Negocio" -->
+                                <ul class="submenu">
+
+                                    <li class="nav-item">
+                                        <a @if ($view_name == 'admin_instagram_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
+                                            href="{{ url('/instagram') }}">
+                                            <div
+                                                class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                                                <i class="material-icons opacity-10">arrow_right_alt</i>
+                                            </div>
+                                            <span class="nav-link-text ms-1">Menú</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a @if (
+                                            $view_name == 'admin_instagram_collections_index' ||
+                                                $view_name == 'admin_instagram_collections_edit' ||
+                                                $view_name == 'admin_instagram_collections_add') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
+                                            href="{{ url('/instagram/collections') }}">
+                                            <div
+                                                class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                                                <i class="material-icons opacity-10">arrow_right_alt</i>
+                                            </div>
+                                            <span class="nav-link-text ms-1">Colecciones</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a @if (
+                                            $view_name == 'admin_instagram_caption-templates_index' ||
+                                                $view_name == 'admin_instagram_caption-templates_add' ||
+                                                $view_name == 'admin_instagram_caption-templates_edit') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
+                                            href="{{ url('/instagram/caption-templates') }}">
+                                            <div
+                                                class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                                                <i class="material-icons opacity-10">arrow_right_alt</i>
+                                            </div>
+                                            <span class="nav-link-text ms-1">Plantillas</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a @if (
+                                            $view_name == 'admin_instagram_caption-settings_index' ||
+                                                $view_name == 'admin_instagram_caption-settings_cta-add' ||
+                                                $view_name == 'admin_instagram_caption-settings_cta-edit' ||
+                                                $view_name == 'admin_instagram_caption-settings_hashtag-pool-add' ||
+                                                $view_name == 'admin_instagram_caption-settings_hashtag-pool-edit') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
+                                            href="{{ url('/instagram/caption-settings') }}">
+                                            <div
+                                                class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                                                <i class="material-icons opacity-10">arrow_right_alt</i>
+                                            </div>
+                                            <span class="nav-link-text ms-1">Configuración</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        @endcan
                         @if (isset($tenantinfo->tenant) && $tenantinfo->tenant === 'solociclismocrc')
                             <li class="nav-item">
                                 <a @if ($view_name == 'admin_events_index' || $view_name == 'admin_event_categories_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
