@@ -96,6 +96,7 @@
             gap: 14px;
             overflow-x: auto;
             padding-bottom: 10px;
+            align-items: flex-start;
         }
 
         .ig-col {
