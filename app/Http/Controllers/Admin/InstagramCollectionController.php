@@ -20,6 +20,7 @@ use App\Domain\Instagram\Jobs\PublishInstagramPostJob;
 use App\Domain\Instagram\Services\CaptionGeneratorService;
 use App\Domain\Instagram\Services\ImageAnalyzerService;
 use App\Domain\Instagram\Services\SpintaxService;
+use App\Models\InstagramCaptionSettings;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Bus;
