@@ -186,6 +186,79 @@
                     </div>
                 </div>
 
+                {{-- Configuración de Cola --}}
+                <div class="card config-card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-clock me-2"></i>Cola de Publicación Automática</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted mb-3">
+                            Configura el comportamiento de la cola automática. Cuando usas "Agregar a cola",
+                            el sistema calcula automáticamente el próximo horario disponible.
+                        </p>
+                        <form method="POST" action="{{ url('/instagram/caption-settings/update') }}">
+                            @csrf
+                            @method('PUT')
+
+                            {{-- Campos ocultos para mantener la config anterior --}}
+                            <input type="hidden" name="auto_select_template" value="{{ $settingsCaption->auto_select_template ? '1' : '0' }}">
+                            <input type="hidden" name="auto_add_hashtags" value="{{ $settingsCaption->auto_add_hashtags ? '1' : '0' }}">
+                            <input type="hidden" name="auto_add_cta" value="{{ $settingsCaption->auto_add_cta ? '1' : '0' }}">
+                            <input type="hidden" name="hashtag_pool_id" value="{{ $settingsCaption->hashtag_pool_id }}">
+                            <input type="hidden" name="max_hashtags" value="{{ $settingsCaption->max_hashtags }}">
+
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label fw-bold">Intervalo entre publicaciones</label>
+                                    <select name="queue_interval_hours" class="form-control">
+                                        @foreach ([1, 2, 3, 4, 6, 8, 12, 24] as $h)
+                                            <option value="{{ $h }}" {{ ($settingsCaption->queue_interval_hours ?? 4) == $h ? 'selected' : '' }}>
+                                                {{ $h }} hora{{ $h > 1 ? 's' : '' }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <small class="text-muted">Tiempo mínimo entre publicaciones</small>
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label fw-bold">Hora de inicio</label>
+                                    <input type="time" name="queue_start_hour" class="form-control"
+                                        value="{{ $settingsCaption->queue_start_hour ?? '09:00' }}">
+                                    <small class="text-muted">No publicar antes de esta hora</small>
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label fw-bold">Hora de fin</label>
+                                    <input type="time" name="queue_end_hour" class="form-control"
+                                        value="{{ $settingsCaption->queue_end_hour ?? '21:00' }}">
+                                    <small class="text-muted">No publicar después de esta hora</small>
+                                </div>
+                            </div>
+
+                            <div class="alert alert-info py-2 mb-3">
+                                <small>
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    <strong>Ejemplo:</strong> Con intervalo de {{ $settingsCaption->queue_interval_hours ?? 4 }}h,
+                                    inicio {{ $settingsCaption->queue_start_hour ?? '09:00' }} y fin {{ $settingsCaption->queue_end_hour ?? '21:00' }},
+                                    los posts se programarían aproximadamente a:
+                                    @php
+                                        $interval = $settingsCaption->queue_interval_hours ?? 4;
+                                        $start = (int) explode(':', $settingsCaption->queue_start_hour ?? '09:00')[0];
+                                        $end = (int) explode(':', $settingsCaption->queue_end_hour ?? '21:00')[0];
+                                        $times = [];
+                                        for ($h = $start; $h <= $end; $h += $interval) {
+                                            $times[] = sprintf('%02d:00', $h);
+                                        }
+                                    @endphp
+                                    <strong>{{ implode(', ', $times) }}</strong>
+                                </small>
+                            </div>
+
+                            <button type="submit" class="btn btn-accion">Guardar configuración de cola</button>
+                        </form>
+                    </div>
+                </div>
+
                 {{-- Vista previa --}}
                 <div class="card config-card">
                     <div class="card-header">

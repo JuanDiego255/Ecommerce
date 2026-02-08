@@ -40,6 +40,10 @@ class InstagramCaptionSettingsController extends Controller
             'auto_add_hashtags' => 'nullable|boolean',
             'auto_add_cta' => 'nullable|boolean',
             'max_hashtags' => 'required|integer|min:1|max:30',
+            // Cola de publicación
+            'queue_interval_hours' => 'nullable|integer|min:1|max:48',
+            'queue_start_hour' => 'nullable|string|regex:/^\d{2}:\d{2}$/',
+            'queue_end_hour' => 'nullable|string|regex:/^\d{2}:\d{2}$/',
         ]);
 
         $settings = InstagramCaptionSettings::getOrCreate();
@@ -49,6 +53,10 @@ class InstagramCaptionSettingsController extends Controller
             'auto_add_hashtags' => $request->boolean('auto_add_hashtags'),
             'auto_add_cta' => $request->boolean('auto_add_cta'),
             'max_hashtags' => $request->max_hashtags,
+            // Cola de publicación
+            'queue_interval_hours' => $request->queue_interval_hours ?: 4,
+            'queue_start_hour' => $request->queue_start_hour ?: '09:00',
+            'queue_end_hour' => $request->queue_end_hour ?: '21:00',
         ]);
 
         return back()->with('ok', 'Configuración guardada.');
