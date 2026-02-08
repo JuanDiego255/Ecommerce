@@ -628,6 +628,12 @@ Route::middleware([
                 Route::post('/instagram/collections/{collection}/groups/{group}/save-caption', [InstagramCollectionController::class, 'saveGroupCaption'])
                     ->name('ig.collections.groups.saveCaption');
 
+                Route::post('/instagram/collections/{collection}/mass-schedule', [InstagramCollectionController::class, 'massSchedule'])
+                    ->name('ig.collections.massSchedule');
+
+                Route::post('/instagram/collections/{collection}/groups/{group}/add-to-queue', [InstagramCollectionController::class, 'addToQueue'])
+                    ->name('ig.collections.groups.addToQueue');
+
                 /**
                  * (Opcional / legacy) generar posts automáticos por colección
                  */

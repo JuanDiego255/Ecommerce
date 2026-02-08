@@ -881,6 +881,302 @@ class InstagramCollectionController extends Controller
     }
 
     /**
+     * Programa múltiples carruseles en lote (AJAX)
+     */
+    public function massSchedule(Request $request, InstagramCollection $collection)
+    {
+        $request->validate([
+            'start_time' => 'required|string',
+            'interval_hours' => 'required|integer|min:1|max:48',
+            'group_ids' => 'required|array|min:1',
+            'group_ids.*' => 'integer',
+        ]);
+
+        $account = InstagramAccount::where('is_active', true)->latest()->first();
+        if (!$account) {
+            return response()->json(['ok' => false, 'message' => 'No hay cuenta Instagram conectada.'], 422);
+        }
+
+        $startTime = Carbon::createFromFormat('Y-m-d\TH:i', $request->start_time, config('app.timezone'));
+        $intervalHours = $request->interval_hours;
+        $groupIds = $request->group_ids;
+
+        if ($startTime->isPast()) {
+            return response()->json(['ok' => false, 'message' => 'La fecha de inicio debe ser en el futuro.'], 422);
+        }
+
+        $scheduledCount = 0;
+        $currentTime = $startTime->copy();
+
+        foreach ($groupIds as $groupId) {
+            $group = InstagramCollectionGroup::where('id', $groupId)
+                ->where('instagram_collection_id', $collection->id)
+                ->whereNull('instagram_post_id')
+                ->first();
+
+            if (!$group) {
+                continue; // Skip if already published or doesn't belong to collection
+            }
+
+            $group->load('items');
+
+            if ($group->items->count() < 1 || $group->items->count() > 10) {
+                continue; // Skip invalid groups
+            }
+
+            // Determinar el caption a usar
+            $caption = '';
+
+            // PRIORIDAD 1: Usar el caption pre-generado si existe
+            if (!empty($group->generated_caption)) {
+                $caption = $group->generated_caption;
+            }
+            // PRIORIDAD 2: Generar con plantilla si está marcado
+            elseif ($group->use_template && $collection->caption_template_id) {
+                $captionGenerator = app(CaptionGeneratorService::class);
+                $imagePaths = $group->items->pluck('image_path')->toArray();
+
+                if ($group->analyze_images) {
+                    $imageData = $captionGenerator->analyzeImages($imagePaths);
+                    $collection->load('captionTemplate');
+                    if ($collection->captionTemplate) {
+                        $templateCaption = $captionGenerator->generateTemplateText(
+                            $collection->caption_template_id,
+                            $imageData['variables']
+                        );
+                        $caption = $captionGenerator->appendHashtagsAndCta($templateCaption ?? '');
+                    }
+                } else {
+                    $spintaxService = app(SpintaxService::class);
+                    $collection->load('captionTemplate');
+                    if ($collection->captionTemplate) {
+                        $templateCaption = $spintaxService->process($collection->captionTemplate->template_text);
+                        $caption = $captionGenerator->appendHashtagsAndCta($templateCaption ?? '');
+                    }
+                }
+            }
+            // PRIORIDAD 3: Usar caption default
+            else {
+                $caption = $collection->default_caption ?? '';
+            }
+
+            // Crear el post programado
+            $post = InstagramPost::create([
+                'instagram_account_id' => $account->id,
+                'clothing_id' => null,
+                'tenant_domain' => $collection->tenant_domain,
+                'type' => 'feed',
+                'caption' => $caption,
+                'status' => 'scheduled',
+                'scheduled_at' => $currentTime->copy(),
+            ]);
+
+            // Bloquear el grupo
+            $group->update(['instagram_post_id' => $post->id]);
+
+            // Agregar medios al post
+            foreach ($group->items()->orderBy('sort_order')->orderBy('id')->get() as $item) {
+                InstagramPostMedia::create([
+                    'instagram_post_id' => $post->id,
+                    'media_path' => $item->image_path,
+                    'sort_order' => $item->sort_order,
+                ]);
+            }
+
+            $scheduledCount++;
+            $currentTime->addHours($intervalHours);
+        }
+
+        if ($scheduledCount === 0) {
+            return response()->json([
+                'ok' => false,
+                'message' => 'No se pudo programar ningún carrusel. Verifica que tengan imágenes y no estén publicados.',
+            ], 422);
+        }
+
+        return response()->json([
+            'ok' => true,
+            'message' => "Se programaron {$scheduledCount} carrusel(es) exitosamente.",
+            'scheduled_count' => $scheduledCount,
+        ]);
+    }
+
+    /**
+     * Agrega un carrusel a la cola de publicación automática (AJAX)
+     */
+    public function addToQueue(Request $request, InstagramCollection $collection, InstagramCollectionGroup $group)
+    {
+        if ($group->instagram_collection_id !== $collection->id) {
+            return response()->json(['ok' => false, 'message' => 'Grupo no válido'], 404);
+        }
+
+        if (!empty($group->instagram_post_id)) {
+            return response()->json(['ok' => false, 'message' => 'Este carrusel ya fue publicado/programado.'], 422);
+        }
+
+        $account = InstagramAccount::where('is_active', true)->latest()->first();
+        if (!$account) {
+            return response()->json(['ok' => false, 'message' => 'No hay cuenta Instagram conectada.'], 422);
+        }
+
+        $group->load('items');
+
+        if ($group->items->count() < 1) {
+            return response()->json(['ok' => false, 'message' => 'Este carrusel no tiene imágenes.'], 422);
+        }
+
+        if ($group->items->count() > 10) {
+            return response()->json(['ok' => false, 'message' => 'Un carrusel no puede tener más de 10 imágenes.'], 422);
+        }
+
+        // Obtener configuración de cola
+        $settings = InstagramCaptionSettings::getOrCreate();
+        $intervalHours = $settings->queue_interval_hours ?? 4;
+        $startHour = $settings->queue_start_hour ?? '09:00';
+        $endHour = $settings->queue_end_hour ?? '21:00';
+
+        // Calcular próximo slot disponible
+        $nextSlot = $this->calculateNextQueueSlot($intervalHours, $startHour, $endHour);
+
+        // Determinar el caption a usar
+        $caption = '';
+        if (!empty($group->generated_caption)) {
+            $caption = $group->generated_caption;
+        } elseif ($group->use_template && $collection->caption_template_id) {
+            $captionGenerator = app(CaptionGeneratorService::class);
+            $imagePaths = $group->items->pluck('image_path')->toArray();
+
+            if ($group->analyze_images) {
+                $imageData = $captionGenerator->analyzeImages($imagePaths);
+                $collection->load('captionTemplate');
+                if ($collection->captionTemplate) {
+                    $templateCaption = $captionGenerator->generateTemplateText(
+                        $collection->caption_template_id,
+                        $imageData['variables']
+                    );
+                    $caption = $captionGenerator->appendHashtagsAndCta($templateCaption ?? '');
+                }
+            } else {
+                $spintaxService = app(SpintaxService::class);
+                $collection->load('captionTemplate');
+                if ($collection->captionTemplate) {
+                    $templateCaption = $spintaxService->process($collection->captionTemplate->template_text);
+                    $caption = $captionGenerator->appendHashtagsAndCta($templateCaption ?? '');
+                }
+            }
+        } else {
+            $caption = $collection->default_caption ?? '';
+        }
+
+        // Crear el post programado
+        $post = InstagramPost::create([
+            'instagram_account_id' => $account->id,
+            'clothing_id' => null,
+            'tenant_domain' => $collection->tenant_domain,
+            'type' => 'feed',
+            'caption' => $caption,
+            'status' => 'scheduled',
+            'scheduled_at' => $nextSlot,
+        ]);
+
+        // Bloquear el grupo
+        $group->update(['instagram_post_id' => $post->id]);
+
+        // Agregar medios al post
+        foreach ($group->items()->orderBy('sort_order')->orderBy('id')->get() as $item) {
+            InstagramPostMedia::create([
+                'instagram_post_id' => $post->id,
+                'media_path' => $item->image_path,
+                'sort_order' => $item->sort_order,
+            ]);
+        }
+
+        return response()->json([
+            'ok' => true,
+            'message' => "Carrusel agregado a la cola para {$nextSlot->format('d/m/Y H:i')}",
+            'post' => [
+                'id' => $post->id,
+                'status' => 'scheduled',
+                'status_text' => 'Programado',
+                'scheduled_at' => $nextSlot->timezone(config('app.timezone'))->format('Y-m-d H:i'),
+            ],
+            'group' => [
+                'id' => $group->id,
+                'name' => $group->name,
+            ],
+        ]);
+    }
+
+    /**
+     * Calcula el próximo slot disponible en la cola
+     */
+    protected function calculateNextQueueSlot(int $intervalHours, string $startHour, string $endHour): Carbon
+    {
+        $timezone = config('app.timezone');
+
+        // Obtener el último post programado
+        $lastScheduledPost = InstagramPost::where('status', 'scheduled')
+            ->whereNotNull('scheduled_at')
+            ->orderByDesc('scheduled_at')
+            ->first();
+
+        // Obtener también el último post publicado
+        $lastPublishedPost = InstagramPost::where('status', 'published')
+            ->whereNotNull('published_at')
+            ->orderByDesc('published_at')
+            ->first();
+
+        $now = Carbon::now($timezone);
+
+        // Determinar el punto de partida
+        $startFrom = $now->copy();
+
+        if ($lastScheduledPost && $lastScheduledPost->scheduled_at) {
+            $lastScheduledTime = Carbon::parse($lastScheduledPost->scheduled_at, $timezone);
+            if ($lastScheduledTime->gt($startFrom)) {
+                $startFrom = $lastScheduledTime->copy();
+            }
+        }
+
+        // Agregar el intervalo
+        $nextSlot = $startFrom->copy()->addHours($intervalHours);
+
+        // Parsear horas de inicio y fin
+        [$startH, $startM] = explode(':', $startHour);
+        [$endH, $endM] = explode(':', $endHour);
+
+        // Ajustar si está fuera del horario activo
+        $slotHour = (int) $nextSlot->format('H');
+        $slotMinute = (int) $nextSlot->format('i');
+        $startHourInt = (int) $startH;
+        $endHourInt = (int) $endH;
+
+        // Si el slot es antes de la hora de inicio, mover a la hora de inicio
+        if ($slotHour < $startHourInt || ($slotHour == $startHourInt && $slotMinute < (int) $startM)) {
+            $nextSlot->setTime($startHourInt, (int) $startM, 0);
+        }
+
+        // Si el slot es después de la hora de fin, mover al día siguiente a la hora de inicio
+        if ($slotHour > $endHourInt || ($slotHour == $endHourInt && $slotMinute > (int) $endM)) {
+            $nextSlot->addDay()->setTime($startHourInt, (int) $startM, 0);
+        }
+
+        // Asegurar que no sea en el pasado
+        if ($nextSlot->lte($now)) {
+            $nextSlot = $now->copy()->addMinutes(5);
+            // Ajustar horario nuevamente
+            $slotHour = (int) $nextSlot->format('H');
+            if ($slotHour < $startHourInt) {
+                $nextSlot->setTime($startHourInt, (int) $startM, 0);
+            } elseif ($slotHour > $endHourInt) {
+                $nextSlot->addDay()->setTime($startHourInt, (int) $startM, 0);
+            }
+        }
+
+        return $nextSlot;
+    }
+
+    /**
      * Guarda el caption generado para un grupo (AJAX)
      */
     public function saveGroupCaption(Request $request, InstagramCollection $collection, InstagramCollectionGroup $group)

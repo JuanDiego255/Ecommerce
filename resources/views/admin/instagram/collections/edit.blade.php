@@ -501,6 +501,10 @@
                         post.</div>
                 </div>
                 <div class="d-flex gap-2 align-items-center">
+                    <button class="btn btn-outline-primary" id="btn-mass-schedule" type="button"
+                        data-bs-toggle="tooltip" title="Programar todos los carruseles pendientes">
+                        <i class="fas fa-calendar-alt"></i> Programar todos
+                    </button>
                     <button class="btn btn-accion" id="btn-create-group" type="button">+ Nuevo carrusel</button>
                 </div>
             </div>
@@ -818,6 +822,12 @@
                                                 data-group-name="{{ $group->name }}">Programar…
                                             </button>
                                         </div>
+                                        <button type="button" class="btn btn-outline-primary btn-sm w-100 mt-2 btn-add-to-queue"
+                                            data-group-id="{{ $group->id }}"
+                                            data-queue-url="{{ route('ig.collections.groups.addToQueue', [$collection, $group]) }}"
+                                            data-bs-toggle="tooltip" title="Agrega a la cola automática (próximo slot disponible)">
+                                            <i class="fas fa-clock"></i> Agregar a cola
+                                        </button>
                                     </form>
                                 @endif
                             </div>
@@ -867,6 +877,62 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-accion" data-bs-dismiss="modal">Cancelar</button>
                     <button type="button" class="btn btn-accion" id="btnConfirmSchedule">Programar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Modal Programar Todos (Masivo) --}}
+    <div class="modal fade" id="massScheduleModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="border-radius:18px;">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-calendar-alt me-2"></i>Programar todos los carruseles</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="alert alert-info py-2">
+                        <small><i class="fas fa-info-circle me-1"></i> Se programarán todos los carruseles pendientes (no publicados) de esta colección.</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Carruseles pendientes:</label>
+                        <div id="massSchedulePendingCount" class="text-muted">Calculando...</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Primer publicación</label>
+                        <input type="datetime-local" class="form-control" id="massScheduleStart" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Intervalo entre publicaciones</label>
+                        <select class="form-select" id="massScheduleInterval">
+                            <option value="1">Cada 1 hora</option>
+                            <option value="2">Cada 2 horas</option>
+                            <option value="3">Cada 3 horas</option>
+                            <option value="4" selected>Cada 4 horas</option>
+                            <option value="6">Cada 6 horas</option>
+                            <option value="8">Cada 8 horas</option>
+                            <option value="12">Cada 12 horas</option>
+                            <option value="24">Cada 24 horas (1 por día)</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Vista previa de horarios</label>
+                        <div id="massSchedulePreview" class="bg-light p-2 rounded" style="max-height: 150px; overflow-y: auto; font-size: 13px;">
+                            <em class="text-muted">Selecciona fecha de inicio para ver los horarios</em>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="btnConfirmMassSchedule">
+                        <i class="fas fa-check me-1"></i> Programar todos
+                    </button>
                 </div>
             </div>
         </div>
@@ -1760,6 +1826,45 @@
                 });
             });
 
+            // Click handler for "Agregar a cola" buttons
+            document.querySelectorAll('.btn-add-to-queue').forEach(btn => {
+                btn.addEventListener('click', async function() {
+                    const groupId = this.getAttribute('data-group-id');
+                    const queueUrl = this.getAttribute('data-queue-url');
+                    const originalText = this.innerHTML;
+
+                    this.disabled = true;
+                    this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Agregando...';
+
+                    try {
+                        const resp = await fetch(queueUrl, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': @json(csrf_token()),
+                                'Accept': 'application/json'
+                            }
+                        });
+
+                        const data = await resp.json();
+
+                        if (!resp.ok || !data.ok) {
+                            throw new Error(data.message || 'Error al agregar a cola');
+                        }
+
+                        // Update UI to locked state
+                        updateCarouselToLocked(groupId, data.post);
+                        showSuccessNotification(data.message);
+
+                    } catch (error) {
+                        console.error('Error adding to queue:', error);
+                        showErrorNotification(error.message || 'Error al agregar a la cola');
+                        this.disabled = false;
+                        this.innerHTML = originalText;
+                    }
+                });
+            });
+
             // Update schedule confirmation to use AJAX
             document.getElementById('btnConfirmSchedule')?.addEventListener('click', async () => {
                 const dtInput = document.getElementById('scheduleDatetime');
@@ -1800,6 +1905,166 @@
 
                 // Submit via AJAX
                 submitFormAjax(form, publishBtn);
+            });
+
+            // -----------------------------------------
+            // Mass Schedule (Programar todos)
+            // -----------------------------------------
+            const btnMassSchedule = document.getElementById('btn-mass-schedule');
+            let massScheduleModal = null;
+
+            // Get pending groups (not locked)
+            function getPendingGroups() {
+                const allLists = document.querySelectorAll('.ig-list[data-group-id]');
+                const pending = [];
+                allLists.forEach(list => {
+                    const locked = list.getAttribute('data-locked') === '1';
+                    const groupId = list.getAttribute('data-group-id');
+                    const itemCount = list.querySelectorAll('.ig-item').length;
+                    if (!locked && itemCount > 0) {
+                        const col = list.closest('.ig-col');
+                        const name = col ? col.querySelector('.ig-col-title')?.textContent || `Carrusel ${groupId}` : `Carrusel ${groupId}`;
+                        pending.push({ id: groupId, name: name.trim() });
+                    }
+                });
+                return pending;
+            }
+
+            // Format date for display
+            function formatDateTimeDisplay(date) {
+                return date.toLocaleString('es-CR', {
+                    weekday: 'short',
+                    day: 'numeric',
+                    month: 'short',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            }
+
+            // Update preview of scheduled times
+            function updateMassSchedulePreview() {
+                const startInput = document.getElementById('massScheduleStart');
+                const intervalSelect = document.getElementById('massScheduleInterval');
+                const previewDiv = document.getElementById('massSchedulePreview');
+                const pendingGroups = getPendingGroups();
+
+                if (!startInput.value || pendingGroups.length === 0) {
+                    previewDiv.innerHTML = '<em class="text-muted">Selecciona fecha de inicio para ver los horarios</em>';
+                    return;
+                }
+
+                const startDate = new Date(startInput.value);
+                const intervalHours = parseInt(intervalSelect.value);
+
+                let html = '<ul class="list-unstyled mb-0">';
+                pendingGroups.forEach((group, index) => {
+                    const scheduleTime = new Date(startDate.getTime() + (index * intervalHours * 60 * 60 * 1000));
+                    html += `<li class="py-1 border-bottom">
+                        <strong>${group.name}</strong>
+                        <span class="text-muted float-end">${formatDateTimeDisplay(scheduleTime)}</span>
+                    </li>`;
+                });
+                html += '</ul>';
+                previewDiv.innerHTML = html;
+            }
+
+            btnMassSchedule?.addEventListener('click', () => {
+                const pendingGroups = getPendingGroups();
+
+                // Update pending count
+                const countDiv = document.getElementById('massSchedulePendingCount');
+                if (pendingGroups.length === 0) {
+                    countDiv.innerHTML = '<span class="text-warning"><i class="fas fa-exclamation-triangle me-1"></i>No hay carruseles pendientes para programar</span>';
+                    document.getElementById('btnConfirmMassSchedule').disabled = true;
+                } else {
+                    countDiv.innerHTML = `<span class="badge bg-primary">${pendingGroups.length}</span> carrusel(es) listos para programar`;
+                    document.getElementById('btnConfirmMassSchedule').disabled = false;
+                }
+
+                // Set default start time (next hour)
+                const now = new Date();
+                now.setHours(now.getHours() + 1, 0, 0, 0);
+                const startInput = document.getElementById('massScheduleStart');
+                startInput.value = now.toISOString().slice(0, 16);
+
+                updateMassSchedulePreview();
+
+                // Open modal
+                const ModalClass = window.bootstrap?.Modal || window.Modal;
+                if (!ModalClass) {
+                    swalWarn('Bootstrap Modal no disponible');
+                    return;
+                }
+                massScheduleModal = new ModalClass(document.getElementById('massScheduleModal'));
+                massScheduleModal.show();
+            });
+
+            // Update preview when inputs change
+            document.getElementById('massScheduleStart')?.addEventListener('change', updateMassSchedulePreview);
+            document.getElementById('massScheduleInterval')?.addEventListener('change', updateMassSchedulePreview);
+
+            // Confirm mass schedule
+            document.getElementById('btnConfirmMassSchedule')?.addEventListener('click', async () => {
+                const startInput = document.getElementById('massScheduleStart');
+                const intervalSelect = document.getElementById('massScheduleInterval');
+                const pendingGroups = getPendingGroups();
+                const confirmBtn = document.getElementById('btnConfirmMassSchedule');
+
+                if (!startInput.value) {
+                    swalWarn('Selecciona la fecha y hora de inicio.');
+                    return;
+                }
+
+                if (pendingGroups.length === 0) {
+                    swalWarn('No hay carruseles pendientes para programar.');
+                    return;
+                }
+
+                const startDate = new Date(startInput.value);
+                const now = new Date();
+
+                if (startDate <= now) {
+                    swalWarn('La fecha de inicio debe ser en el futuro.');
+                    return;
+                }
+
+                confirmBtn.disabled = true;
+                confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Programando...';
+
+                try {
+                    const resp = await fetch(@json(route('ig.collections.massSchedule', $collection)), {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': @json(csrf_token()),
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            start_time: startInput.value,
+                            interval_hours: parseInt(intervalSelect.value),
+                            group_ids: pendingGroups.map(g => g.id)
+                        })
+                    });
+
+                    const data = await resp.json();
+
+                    if (!resp.ok || !data.ok) {
+                        throw new Error(data.message || 'Error al programar');
+                    }
+
+                    // Close modal and show success
+                    if (massScheduleModal) massScheduleModal.hide();
+                    showSuccessNotification(data.message);
+
+                    // Reload page to show updated state
+                    setTimeout(() => window.location.reload(), 1500);
+
+                } catch (error) {
+                    console.error('Error mass scheduling:', error);
+                    showErrorNotification(error.message || 'Error al programar los carruseles');
+                    confirmBtn.disabled = false;
+                    confirmBtn.innerHTML = '<i class="fas fa-check me-1"></i> Programar todos';
+                }
             });
 
             // Init

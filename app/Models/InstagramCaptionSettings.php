@@ -14,6 +14,9 @@ class InstagramCaptionSettings extends Model
         'auto_add_hashtags',
         'auto_add_cta',
         'max_hashtags',
+        'queue_interval_hours',
+        'queue_start_hour',
+        'queue_end_hour',
         'tenant_domain',
     ];
 
@@ -22,6 +25,7 @@ class InstagramCaptionSettings extends Model
         'auto_add_hashtags' => 'boolean',
         'auto_add_cta' => 'boolean',
         'max_hashtags' => 'integer',
+        'queue_interval_hours' => 'integer',
     ];
 
     public function hashtagPool()
@@ -43,6 +47,9 @@ class InstagramCaptionSettings extends Model
                 'auto_add_hashtags' => true,
                 'auto_add_cta' => true,
                 'max_hashtags' => 15,
+                'queue_interval_hours' => 4,
+                'queue_start_hour' => '09:00',
+                'queue_end_hour' => '21:00',
             ]
         );
     }
