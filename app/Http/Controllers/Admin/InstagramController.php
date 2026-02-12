@@ -24,6 +24,9 @@ class InstagramController extends Controller
             case "magnoliajoycr":
                 $config = "meta.redirect_uri_magnolia";
                 break;
+            case "solociclismocrc":
+                $config = "meta.redirect_uri_sc";
+                break;
             default:
                 break;
         }
@@ -70,6 +73,9 @@ class InstagramController extends Controller
             switch ($tenantinfo->tenant) {
                 case "magnoliajoycr":
                     $config = "meta.redirect_uri_magnolia";
+                    break;
+                case "solociclismocrc":
+                    $config = "meta.redirect_uri_sc";
                     break;
                 default:
                     break;
