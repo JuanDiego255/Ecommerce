@@ -135,7 +135,7 @@ class AutoBookingController extends Controller
             })
             ->first();
 
-        if ($blockedByAutoBooking) {
+       if ($blockedByAutoBooking->email !== $clientEmail) {
             return back()->with('alert', [
                 'type' => 'danger',
                 'msg' => sprintf(

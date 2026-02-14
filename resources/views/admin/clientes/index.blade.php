@@ -93,10 +93,6 @@
                     </tbody>
                 </table>
             </div>
-
-            <div class="mt-3">
-                {{ $clientes->links() }}
-            </div>
         </div>
     </div>
 @endsection

@@ -190,8 +190,8 @@ class BookingController extends Controller
                 return $preferredStartNormalized === $time24;
             })
             ->first();
-
-        if ($blockedByAutoBooking) {
+        
+        if ($blockedByAutoBooking->email !== $email) {
             return back()->withErrors([
                 'time' => sprintf(
                     'Este horario está reservado de forma fija para un cliente. Por favor selecciona otro horario.',
