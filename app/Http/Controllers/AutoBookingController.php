@@ -135,14 +135,15 @@ class AutoBookingController extends Controller
             })
             ->first();
 
-       if ($blockedByAutoBooking->email !== $clientEmail) {
-            return back()->with('alert', [
-                'type' => 'danger',
-                'msg' => sprintf(
-                    'Este horario está reservado de forma fija para un cliente. Por favor selecciona otro horario.',
-                    $blockedByAutoBooking->nombre
-                )
-            ]);
+        if ($blockedByAutoBooking) {
+            if ($blockedByAutoBooking->email !== $clientEmail)
+                return back()->with('alert', [
+                    'type' => 'danger',
+                    'msg' => sprintf(
+                        'Este horario está reservado de forma fija para un cliente. Por favor selecciona otro horario.',
+                        $blockedByAutoBooking->nombre
+                    )
+                ]);
         }
 
         // Guardar
