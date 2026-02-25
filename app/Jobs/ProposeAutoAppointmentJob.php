@@ -27,87 +27,114 @@ class ProposeAutoAppointmentJob implements ShouldQueue
     {
         $client = Client::find($this->clientId);
         if (!$client || !$client->auto_book_opt_in) return;
-        $tenantId = tenant('id') ?? config('app.name'); // ajusta según tu tenancy
-        $tenant = TenantSettings::get($tenantId);
-        $best = $svc->findBestSlotFor($client);
+
+        $tenantId = tenant('id') ?? config('app.name');
+        $tenant   = TenantSettings::get($tenantId);
+
+        // ── Guarda de doble-disparo ──────────────────────────────────────────────
+        // Si ya existe una cita auto futura confirmada (puede ocurrir si el comando
+        // fue ejecutado más de una vez antes de que el job actualizara next_due_at),
+        // sincronizamos next_due_at con esa cita y salimos sin duplicar.
+        $existingFuture = Cita::where('client_id', $client->id)
+            ->where('is_auto', true)
+            ->where('status', 'confirmed')
+            ->where('starts_at', '>', now())
+            ->orderBy('starts_at')
+            ->first();
+
+        if ($existingFuture) {
+            $client->update(['next_due_at' => $existingFuture->starts_at]);
+            return;
+        }
+
+        // ── Buscar el siguiente hueco usando findInUpdate (frecuencia fija) ──────
+        // activeInUpdate=true → findInUpdate: busca el próximo día preferido después
+        // de la última cita que ya ocurrió (confirmed/completed con starts_at ≤ now).
+        $best = $svc->findBestSlotFor($client, true);
         if (!$best) return;
 
-        $barbero = $best['barbero'];
+        $barbero    = $best['barbero'];
         $startLocal = $best['start'];
         $endLocal   = $best['end'];
 
-        // Evitar duplicados: ¿ya existe una propuesta auto en ese día/franja?
+        // Guarda adicional: no crear si ya hay cita auto ese mismo día con ese barbero
         $dup = Cita::where('client_id', $client->id)
             ->where('barbero_id', $barbero->id)
-            ->where('status', 'confirmed')
             ->where('is_auto', true)
+            ->where('status', 'confirmed')
             ->whereDate('starts_at', $startLocal->toDateString())
             ->exists();
         if ($dup) return;
 
-        // Crear cita tentativa (guarda en TZ local o UTC según tu convención)
+        // ── Crear la cita auto-agendada ─────────────────────────────────────────
         $holdHours = (int)($tenant->auto_book_confirm_hold_hours ?? 36);
+
         $cita = Cita::create([
-            'client_id'     => $client->id,
-            'barbero_id'    => $barbero->id,
-            'status'        => 'confirmed',
-            'is_auto'       => true,
-            'hold_expires_at' => now()->addHours($holdHours),
-            'starts_at'     => $startLocal, // si guardas en UTC: ->copy()->timezone('UTC')
-            'ends_at'       => $endLocal,
-            'cliente_nombre' => $client->nombre,
-            'cliente_email'  => $client->email,
-            'cliente_phone'  => $client->telefono,
-            'resumen_servicios' => 'Propuesta automática', // ajusta si infieres servicios
-            'total_cents'   => 0, // opcional si estimas costo
+            'client_id'         => $client->id,
+            'barbero_id'        => $barbero->id,
+            'status'            => 'confirmed',
+            'is_auto'           => true,
+            'hold_expires_at'   => now()->addHours($holdHours),
+            'starts_at'         => $startLocal,
+            'ends_at'           => $endLocal,
+            'cliente_nombre'    => $client->nombre,
+            'cliente_email'     => $client->email,
+            'cliente_phone'     => $client->telefono,
+            'resumen_servicios' => 'Propuesta automática',
+            'total_cents'       => 0,
         ]);
-        $domain = $tenantId == "muebleriasarchi" || $tenantId == "avelectromecanica" ? "https://{$tenantId}.com" : "https://{$tenantId}.safeworsolutions.com";
+
+        // ── Generar links firmados para el correo ───────────────────────────────
+        $domain = in_array($tenantId, ['muebleriasarchi', 'avelectromecanica'])
+            ? "https://{$tenantId}.com"
+            : "https://{$tenantId}.safeworsolutions.com";
+
         URL::forceRootUrl($domain);
         URL::forceScheme('https');
-        // Links firmados
-        $acceptUrl  = URL::temporarySignedRoute('auto.accept',  now()->addHours(36), ['cita' => $cita->id]);
-        $reschedUrl = URL::temporarySignedRoute('auto.resched', now()->addHours(36), ['cita' => $cita->id]);
-        $declineUrl = URL::temporarySignedRoute('auto.decline', now()->addHours(36), ['cita' => $cita->id]);
+
+        $linkExpiry = now()->addHours(max($holdHours, 36));
+        $acceptUrl  = URL::temporarySignedRoute('auto.accept',  $linkExpiry, ['cita' => $cita->id]);
+        $reschedUrl = URL::temporarySignedRoute('auto.resched', $linkExpiry, ['cita' => $cita->id]);
+        $declineUrl = URL::temporarySignedRoute('auto.decline', $linkExpiry, ['cita' => $cita->id]);
+
         URL::forceRootUrl(config('app.url'));
         URL::forceScheme(null);
-        // Datos para el blade del correo (ya lo tienes: auto_proposed)
+
+        // ── Enviar correo de propuesta al cliente ───────────────────────────────
         $tz = config('app.timezone', 'America/Costa_Rica');
+
         $viewData = [
-            'clienteNombre' => $client->nombre ?: 'Cliente',
-            'barberoNombre' => $barbero->nombre,
-            'fechaHuman'    => $startLocal->timezone($tz)->isoFormat('dddd D [de] MMMM YYYY'),
-            'horaHuman'     => $startLocal->timezone($tz)->format('H:i'),
-            'duracionMin'   => $endLocal->diffInMinutes($startLocal),
+            'clienteNombre'    => $client->nombre ?: 'Cliente',
+            'barberoNombre'    => $barbero->nombre,
+            'fechaHuman'       => $startLocal->timezone($tz)->isoFormat('dddd D [de] MMMM YYYY'),
+            'horaHuman'        => $startLocal->timezone($tz)->format('H:i'),
+            'duracionMin'      => $endLocal->diffInMinutes($startLocal),
             'serviciosResumen' => $cita->resumen_servicios,
-            'totalColones'  => (int)($cita->total_cents / 100),
-            'acceptUrl'     => $acceptUrl,
-            'reschedUrl'    => $reschedUrl,
-            'declineUrl'    => $declineUrl,
-            'cancelHours'   => optional($tenant)->cancel_window_hours,
-            'reschedHours'  => optional($tenant)->reschedule_window_hours,
+            'totalColones'     => (int)($cita->total_cents / 100),
+            'acceptUrl'        => $acceptUrl,
+            'reschedUrl'       => $reschedUrl,
+            'declineUrl'       => $declineUrl,
+            'cancelHours'      => optional($tenant)->cancel_window_hours,
+            'reschedHours'     => optional($tenant)->reschedule_window_hours,
         ];
 
-        // Enviar con tu estilo Mail::send
         Mail::send(
             ['html' => 'emails.auto_proposed', 'text' => 'emails.auto_proposed_text'],
             $viewData,
             function ($m) use ($client, $barbero, $startLocal) {
                 $m->to($client->email)
-                    ->from(
-                        env('MAIL_FROM_ADDRESS'),   // usa MAIL_FROM_ADDRESS del .env
-                        'Info Barbería'       // usa MAIL_FROM_NAME del .env
-                    )
-                    ->subject('Propuesta de cita con ' . $barbero->nombre . ' — ' . $startLocal->format('d/m/Y'));
+                  ->from(env('MAIL_FROM_ADDRESS'), 'Info Barbería')
+                  ->subject('Cita agendada con ' . $barbero->nombre . ' — ' . $startLocal->format('d/m/Y'));
             }
         );
-        // marcar para no repetir
-        $cadence = $client->effective_cadence_days ?? ($tenant->auto_book_default_cadence_days ?? 7);
-        // opcional: anclar al mismo weekday/hora de la cita propuesta
-        $next = $startLocal->copy()->addDays($cadence);
-        $next = $next->setTimeFromTimeString($client->preferred_start?->format('H:i') ?? $startLocal->format('H:i'));
+
+        // ── Actualizar tracking del cliente ─────────────────────────────────────
+        // next_due_at = starts_at de la cita recién creada.
+        // El scheduler volverá a disparar exactamente cuando llegue ese momento,
+        // cerrando el ciclo semanal/quincenal automáticamente.
         $client->update([
             'last_auto_booked_at' => now(),
-            'next_due_at' => $next->timezone('UTC'),
+            'next_due_at'         => $startLocal->copy()->timezone('UTC'),
         ]);
     }
 }

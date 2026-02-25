@@ -27,8 +27,13 @@ class Kernel extends ConsoleKernel
             ->hourly()
             ->timezone(config('app.timezone', 'America/Costa_Rica'))
             ->appendOutputTo(storage_path('logs/auto_reminder_run.log'));
-        /* $schedule->command('tenants:auto-book-run')->hourly()->withoutOverlapping(10)
-            ->appendOutputTo(storage_path('logs/auto_book_run.log')); */
+        // Agenda la siguiente cita automáticamente cuando llega la hora de la cita actual.
+        // Corre cada hora; withoutOverlapping(10) evita ejecuciones paralelas.
+        $schedule->command('tenants:auto-book-run')
+            ->hourly()
+            ->withoutOverlapping(10)
+            ->timezone(config('app.timezone', 'America/Costa_Rica'))
+            ->appendOutputTo(storage_path('logs/auto_book_run.log'));
         $schedule->command('tenants:auto-book:expire-holds')->everyFiveMinutes()
             ->appendOutputTo(storage_path('logs/auto_book_expire_run.log'));
     }

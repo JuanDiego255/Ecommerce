@@ -312,9 +312,12 @@ class AutoSchedulerService
         $tenant = TenantSettings::get($tenantId);
         if (!$tenant || $tenant->auto_book_enabled != 1) return null;
 
-        // 2) Última cita como ancla (si no hay, usar ahora)
+        // 2) Última cita que ya ocurrió (confirmed o completed con starts_at ≤ ahora) como ancla.
+        //    No se exige status=completed: el scheduler dispara cuando llega la hora de la cita,
+        //    independientemente de que el admin la haya marcado manualmente como completada.
         $lastDone = Cita::where('client_id', $client->id)
-            ->where('status', 'completed')
+            ->whereIn('status', ['confirmed', 'completed'])
+            ->where('starts_at', '<=', now())
             ->orderByDesc('starts_at')
             ->first();
 
