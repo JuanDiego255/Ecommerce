@@ -602,7 +602,12 @@
         updateSteps();
     });
 
-    timeEl.addEventListener('change', updateSteps);
+    /* nice-select fires jQuery's change, not the native DOM event */
+    if (window.jQuery) {
+        jQuery(timeEl).on('change', updateSteps);
+    } else {
+        timeEl.addEventListener('change', updateSteps);
+    }
 
     /* ── General-barber modal ────────────────────────────── */
     @if ($isGeneral)
