@@ -10,6 +10,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
 
@@ -26,7 +27,14 @@ class ProposeAutoAppointmentJob implements ShouldQueue
     public function handle(AutoSchedulerService $svc): void
     {
         $client = Client::find($this->clientId);
-        if (!$client || !$client->auto_book_opt_in) return;
+        if (!$client || !$client->auto_book_opt_in) {
+            Log::channel('auto_book')->warning('[AutoBook] Cliente no encontrado o sin opt-in', [
+                'client_id' => $this->clientId,
+            ]);
+            return;
+        }
+
+        $ctx = ['client_id' => $client->id, 'cliente' => $client->nombre];
 
         $tenantId = tenant('id') ?? config('app.name');
         $tenant   = TenantSettings::get($tenantId);
@@ -44,6 +52,11 @@ class ProposeAutoAppointmentJob implements ShouldQueue
 
         if ($existingFuture) {
             $client->update(['next_due_at' => $existingFuture->starts_at]);
+            Log::channel('auto_book')->info('[AutoBook] Guard: ya existe cita auto futura, se omite', array_merge($ctx, [
+                'cita_id'    => $existingFuture->id,
+                'starts_at'  => $existingFuture->starts_at,
+                'next_due_at_actualizado' => $existingFuture->starts_at,
+            ]));
             return;
         }
 
@@ -51,7 +64,10 @@ class ProposeAutoAppointmentJob implements ShouldQueue
         // activeInUpdate=true → findInUpdate: busca el próximo día preferido después
         // de la última cita que ya ocurrió (confirmed/completed con starts_at ≤ now).
         $best = $svc->findBestSlotFor($client, true);
-        if (!$best) return;
+        if (!$best) {
+            Log::channel('auto_book')->warning('[AutoBook] No se encontró slot disponible', $ctx);
+            return;
+        }
 
         $barbero    = $best['barbero'];
         $startLocal = $best['start'];
@@ -64,7 +80,13 @@ class ProposeAutoAppointmentJob implements ShouldQueue
             ->where('status', 'confirmed')
             ->whereDate('starts_at', $startLocal->toDateString())
             ->exists();
-        if ($dup) return;
+        if ($dup) {
+            Log::channel('auto_book')->warning('[AutoBook] Duplicado: ya existe cita auto ese día con este barbero', array_merge($ctx, [
+                'barbero_id' => $barbero->id,
+                'fecha'      => $startLocal->toDateString(),
+            ]));
+            return;
+        }
 
         // ── Crear la cita auto-agendada ─────────────────────────────────────────
         $holdHours = (int)($tenant->auto_book_confirm_hold_hours ?? 36);
@@ -83,6 +105,13 @@ class ProposeAutoAppointmentJob implements ShouldQueue
             'resumen_servicios' => 'Propuesta automática',
             'total_cents'       => 0,
         ]);
+
+        Log::channel('auto_book')->info('[AutoBook] Cita creada exitosamente', array_merge($ctx, [
+            'cita_id'    => $cita->id,
+            'barbero'    => $barbero->nombre,
+            'starts_at'  => $startLocal->toDateTimeString(),
+            'ends_at'    => $endLocal->toDateTimeString(),
+        ]));
 
         // ── Generar links firmados para el correo ───────────────────────────────
         $domain = in_array($tenantId, ['muebleriasarchi', 'avelectromecanica'])
@@ -128,6 +157,10 @@ class ProposeAutoAppointmentJob implements ShouldQueue
             }
         );
 
+        Log::channel('auto_book')->info('[AutoBook] Correo de propuesta enviado', array_merge($ctx, [
+            'email' => $client->email,
+        ]));
+
         // ── Actualizar tracking del cliente ─────────────────────────────────────
         // next_due_at = starts_at de la cita recién creada.
         // El scheduler volverá a disparar exactamente cuando llegue ese momento,
@@ -136,5 +169,10 @@ class ProposeAutoAppointmentJob implements ShouldQueue
             'last_auto_booked_at' => now(),
             'next_due_at'         => $startLocal->copy()->timezone('UTC'),
         ]);
+
+        Log::channel('auto_book')->info('[AutoBook] next_due_at actualizado', array_merge($ctx, [
+            'next_due_at' => $startLocal->copy()->timezone('UTC')->toDateTimeString(),
+            'proximo_disparo' => 'cuando now() >= ' . $startLocal->copy()->timezone('UTC')->toDateTimeString(),
+        ]));
     }
 }

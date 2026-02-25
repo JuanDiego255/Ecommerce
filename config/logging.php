@@ -58,6 +58,12 @@ return [
             'path'   => storage_path('logs/auto_scheduler.log'),
             'level'  => 'debug',
         ],
+        'auto_book' => [
+            'driver' => 'daily',
+            'path'   => storage_path('logs/auto_book.log'),
+            'level'  => 'debug',
+            'days'   => 30,
+        ],
         'single' => [
             'driver' => 'single',
             'path' => storage_path('logs/laravel.log'),
