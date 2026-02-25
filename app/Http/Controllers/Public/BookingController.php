@@ -42,22 +42,97 @@ class BookingController extends Controller
             OpenGraph::setTitle($tag->title);
             OpenGraph::setDescription($tag->meta_og_description);
         }
-        // Servicios activos con precio/duración efectivo (pivot o base)
-        $servicios = $barbero->servicios()
-            ->wherePivot('activo', true)
-            ->where('servicios.activo', true)
-            ->orderBy('servicios.nombre')
-            ->get()
-            ->map(function ($s) {
-                return [
-                    'id' => $s->id,
-                    'nombre' => $s->nombre,
-                    'price_cents' => $s->pivot->price_cents ?? $s->base_price_cents,
-                    'duration_minutes' => $s->pivot->duration_minutes ?? $s->duration_minutes,
-                ];
-            });
 
-        return view('frontend.barber.form', compact('barbero', 'servicios'));
+        $isGeneral = (bool) $barbero->is_general;
+
+        if ($isGeneral) {
+            // General barber: show all active services with base prices
+            $servicios = Servicio::where('activo', true)
+                ->orderBy('nombre')
+                ->get()
+                ->map(function ($s) {
+                    return [
+                        'id'               => $s->id,
+                        'nombre'           => $s->nombre,
+                        'price_cents'      => $s->base_price_cents,
+                        'duration_minutes' => $s->duration_minutes,
+                    ];
+                });
+        } else {
+            // Regular barber: only their assigned active services
+            $servicios = $barbero->servicios()
+                ->wherePivot('activo', true)
+                ->where('servicios.activo', true)
+                ->orderBy('servicios.nombre')
+                ->get()
+                ->map(function ($s) {
+                    return [
+                        'id'               => $s->id,
+                        'nombre'           => $s->nombre,
+                        'price_cents'      => $s->pivot->price_cents ?? $s->base_price_cents,
+                        'duration_minutes' => $s->pivot->duration_minutes ?? $s->duration_minutes,
+                    ];
+                });
+        }
+
+        return view('frontend.barber.form', compact('barbero', 'servicios', 'isGeneral'));
+    }
+
+    /**
+     * Returns active non-general barbers that have ALL requested services
+     * and at least one available slot on the given date.
+     */
+    public function barberosDisponibles(Request $request, AvailabilityService $availability)
+    {
+        $data = $request->validate([
+            'date'        => ['required', 'date_format:Y-m-d', 'after_or_equal:' . now()->toDateString()],
+            'servicios'   => ['required', 'array', 'min:1'],
+            'servicios.*' => ['integer', 'exists:servicios,id'],
+        ]);
+
+        $servs    = Servicio::whereIn('id', $data['servicios'])->get();
+        $barberos = Barbero::where('activo', true)->where('is_general', false)->get();
+
+        $result = [];
+
+        foreach ($barberos as $barbero) {
+            $duracion      = 0;
+            $hasAllServices = true;
+
+            foreach ($servs as $srv) {
+                $pivot = $barbero->servicios()
+                    ->wherePivot('activo', true)
+                    ->where('servicios.id', $srv->id)
+                    ->first();
+
+                if (!$pivot) {
+                    $hasAllServices = false;
+                    break;
+                }
+
+                $dur       = $pivot->pivot->duration_minutes ?? $srv->duration_minutes;
+                $duracion += (int) $dur;
+            }
+
+            if (!$hasAllServices) {
+                continue;
+            }
+
+            $slots = $availability->availableSlots($barbero, $data['date'], $duracion);
+
+            if (empty($slots)) {
+                continue;
+            }
+
+            $result[] = [
+                'id'         => $barbero->id,
+                'nombre'     => $barbero->nombre,
+                'photo_path' => $barbero->photo_path,
+                'slots'      => $slots,
+            ];
+        }
+
+        return response()->json($result);
     }
 
     public function servicios(Barbero $barbero)

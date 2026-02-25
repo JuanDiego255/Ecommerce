@@ -27,6 +27,7 @@ class Barbero extends Model
         'work_end',
         'work_days',
         'activo',
+        'is_general',
         'user_id',
         'buffer_minutes',
         'photo_path',
@@ -35,7 +36,8 @@ class Barbero extends Model
 
 
     protected $casts = [
-        'activo' => 'boolean',
+        'activo'     => 'boolean',
+        'is_general' => 'boolean',
     ];
 
 

@@ -172,6 +172,7 @@ Route::middleware([
             Route::get('/catalogo/{barber}', [FrontendController::class, 'index']);
 
             //rutas barberia
+            Route::get('/barberos/disponibles-para', [BookingController::class, 'barberosDisponibles']);
             Route::get('/barberos/{barbero}/agendar', [BookingController::class, 'showForm']);
             Route::get('/barberos/{barbero}/servicios', [BookingController::class, 'servicios']);
             Route::get('/barberos/{barbero}/disponibilidad', [BookingController::class, 'disponibilidad']);
