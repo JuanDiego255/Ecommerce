@@ -12,8 +12,7 @@ class ServicioController extends Controller
 {
     public function index(Request $request)
     {
-        $items = Servicio::when($request->q, fn($q) => $q->where('nombre', 'like', '%' . $request->q . '%'))
-            ->orderBy('nombre')->paginate(20);
+        $items = Servicio::orderBy('nombre')->get();
         return view('admin.servicios.index', compact('items'));
     }
 

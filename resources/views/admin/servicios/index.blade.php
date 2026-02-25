@@ -113,10 +113,6 @@
                         </tbody>
                     </table>
                 </div>
-
-                <div class="px-2">
-                    {{ $items->withQueryString()->links() }}
-                </div>
             </div>
         </div>
     </div>

@@ -29,12 +29,17 @@
         transition: all .18s ease-in-out;
         box-shadow: 0 1px 2px rgba(0, 0, 0, .04);
         user-select: none;
+        overflow: hidden;
     }
 
     /* Título + meta */
     .svc-title {
+        flex: 1;
         font-weight: 600;
         color: #1f2937;
+        word-break: break-word;
+        /* 🔥 rompe palabras largas */
+        white-space: normal;
     }
 
     /* gris 800 */
@@ -76,7 +81,8 @@
     /* Layout interno opcional */
     .svc-row {
         display: flex;
-        align-items: center;
+        align-items: flex-start;
+        /* 👈 importante */
         justify-content: space-between;
         gap: .75rem;
     }
@@ -94,9 +100,13 @@
 </style>
 @php
     $heroImg = 'hero-img';
+    $barberName = 'Andrés Barbería';
+    $col = '6';
     switch ($tenantinfo->tenant) {
         case 'barberiajp':
             $heroImg = 'hero-img-jp';
+            $barberName = 'J.P Barbería';
+            $col = '3';
             break;
         case 'andresbarberiacr':
             $heroImg = 'hero-img-andres';
@@ -116,7 +126,7 @@
                                     <span data-animation="fadeInUp" data-delay="0.2s">Reserva tu estilo, nosotros nos
                                         encargamos del resto ✨</span>
                                     <h1 data-animation="fadeInUp" data-delay="0.5s">
-                                        Andres Barbería
+                                        {{ $barberName }}
                                     </h1>
                                 </div>
                             </div>
@@ -147,7 +157,7 @@
         </div>
         <div class="container py-5">
             <div class="row justify-content-center">
-                <div class="col-lg-8">
+                <div class="col-lg-10">
                     <div class="blog_right_sidebar">
                         <aside class="single_sidebar_widget newsletter_widget">
                             <h2 class="mb-4 text-center">Completar formulario</h2>
@@ -169,7 +179,7 @@
                                         de seleccionar la fecha)</label>
                                     <div class="row">
                                         @foreach ($servicios as $s)
-                                            <div class="col-md-6 svc-item">
+                                            <div class="col-md-{{ $col }} svc-item">
                                                 <input class="svc-check" type="checkbox" id="srv{{ $s['id'] }}"
                                                     value="{{ $s['id'] }}" name="servicios[]">
 
