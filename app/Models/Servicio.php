@@ -19,7 +19,8 @@ class Servicio extends Model
         'duration_minutes',
         'base_price_cents',
         'activo',
-        'image'
+        'image',
+        'category_service_id',
     ];
 
 
@@ -28,5 +29,10 @@ class Servicio extends Model
         return $this->belongsToMany(Especialista::class)
             ->withPivot(['price_cents', 'duration_minutes', 'activo'])
             ->withTimestamps();
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(CategoryService::class, 'category_service_id');
     }
 }

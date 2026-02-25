@@ -120,40 +120,132 @@
         </section>
         <!-- About-2 Area End -->
         <!--? Services Area Start -->
-        @if (isset($barber_services))
+        @if (isset($service_categories) && $service_categories->count() > 0)
             <section class="service-area pb-120" id="services">
                 <div class="container">
                     <!-- Section Tittle -->
                     <div class="row d-flex justify-content-center">
                         <div class="col-xl-7 col-lg-8 col-md-11 col-sm-11">
                             <div class="section-tittle text-center mb-90">
-                                <span>Servicios profesionales</span>
-                                <h2>Nuestros mejores servicios para ofrecerte</h2>
+                                <span>Lo que ofrecemos</span>
+                                <h2>Nuestras categorías de servicios</h2>
                             </div>
                         </div>
                     </div>
-                    <!-- Section caption -->
-                    <div class="row">
-                        @foreach ($barber_services as $item)
+                    <!-- Category cards -->
+                    <div class="row justify-content-center">
+                        @foreach ($service_categories as $category)
                             <div class="col-xl-4 col-lg-4 col-md-6">
-                                <div class="services-caption text-center mb-30">
+                                <div class="services-caption text-center mb-30" style="cursor:pointer;"
+                                    data-toggle="modal" data-target="#categoryModal{{ $category->id }}">
                                     <div class="service-icon">
-                                        @if (isset($item->image))
-                                            <div class="service-img mb-5">
-                                                <img src="{{ route('file', $item->image) }}" alt="">
-                                            </div>
-                                        @else
-                                            <i class="fas fa-scissors"></i>
-                                        @endif
-
+                                        <i class="fas fa-scissors"></i>
                                     </div>
                                     <div class="service-cap">
-                                        <h4><a href="#">{{ $item->nombre }}</a></h4>
-                                        <p>{{ $item->descripcion }}
-                                        </p>
+                                        <h4>
+                                            <a href="#" data-toggle="modal"
+                                                data-target="#categoryModal{{ $category->id }}"
+                                                onclick="return false;">
+                                                {{ $category->nombre }}
+                                            </a>
+                                        </h4>
+                                        @if ($category->descripcion)
+                                            <p>{{ $category->descripcion }}</p>
+                                        @endif
+                                        <span class="btn-style-1 btn btn-sm mt-2"
+                                            style="background:var(--btn_cart);color:var(--btn_cart_text);border:none;">
+                                            Ver servicios
+                                            <i class="fas fa-chevron-right ml-1"></i>
+                                        </span>
                                     </div>
                                 </div>
                             </div>
+
+                            <!-- Modal for this category -->
+                            <div class="modal fade" id="categoryModal{{ $category->id }}" tabindex="-1"
+                                role="dialog" aria-labelledby="categoryModalLabel{{ $category->id }}"
+                                aria-hidden="true">
+                                <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+                                    <div class="modal-content"
+                                        style="background:#1a1a1a;border:1px solid #333;border-radius:8px;">
+                                        <div class="modal-header"
+                                            style="border-bottom:1px solid #333;background:var(--navbar);">
+                                            <h5 class="modal-title"
+                                                id="categoryModalLabel{{ $category->id }}"
+                                                style="color:var(--navbar_text);font-weight:700;letter-spacing:1px;">
+                                                <i class="fas fa-scissors mr-2"></i>
+                                                {{ strtoupper($category->nombre) }}
+                                            </h5>
+                                            <button type="button" class="close" data-dismiss="modal"
+                                                aria-label="Close"
+                                                style="color:var(--navbar_text);opacity:1;">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body" style="padding:30px;">
+                                            @if ($category->servicios->count() > 0)
+                                                <div class="row">
+                                                    @foreach ($category->servicios as $servicio)
+                                                        <div class="col-md-6 mb-4">
+                                                            <div style="background:#222;border-radius:8px;padding:20px;border:1px solid #333;height:100%;">
+                                                                @if ($servicio->image)
+                                                                    <div class="mb-3 text-center">
+                                                                        <img src="{{ route('file', $servicio->image) }}"
+                                                                            alt="{{ $servicio->nombre }}"
+                                                                            style="width:100%;height:160px;object-fit:cover;border-radius:6px;">
+                                                                    </div>
+                                                                @else
+                                                                    <div class="mb-3 text-center"
+                                                                        style="height:60px;line-height:60px;">
+                                                                        <i class="fas fa-cut"
+                                                                            style="font-size:2rem;color:var(--btn_cart);"></i>
+                                                                    </div>
+                                                                @endif
+                                                                <h6 style="color:#fff;font-weight:700;margin-bottom:8px;">
+                                                                    {{ $servicio->nombre }}
+                                                                </h6>
+                                                                @if ($servicio->descripcion)
+                                                                    <p style="color:#aaa;font-size:.85rem;margin-bottom:10px;">
+                                                                        {{ $servicio->descripcion }}
+                                                                    </p>
+                                                                @endif
+                                                                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:auto;">
+                                                                    @if ($servicio->base_price_cents > 0)
+                                                                        <span style="color:var(--btn_cart);font-weight:700;font-size:1rem;">
+                                                                            ₡{{ number_format($servicio->base_price_cents / 100, 0, ',', '.') }}
+                                                                        </span>
+                                                                    @else
+                                                                        <span style="color:#888;font-size:.85rem;">Precio a consultar</span>
+                                                                    @endif
+                                                                    <span style="color:#888;font-size:.8rem;">
+                                                                        <i class="fas fa-clock mr-1"></i>
+                                                                        {{ $servicio->duration_minutes }} min
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                            @else
+                                                <p class="text-center" style="color:#888;">
+                                                    No hay servicios disponibles en esta categoría.
+                                                </p>
+                                            @endif
+                                        </div>
+                                        <div class="modal-footer" style="border-top:1px solid #333;">
+                                            <a href="#reservation"
+                                                class="btn"
+                                                style="background:var(--btn_cart);color:var(--btn_cart_text);border:none;font-weight:700;"
+                                                data-dismiss="modal">
+                                                Reservar ahora
+                                            </a>
+                                            <button type="button" class="btn btn-secondary"
+                                                data-dismiss="modal">Cerrar</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- End modal -->
                         @endforeach
                     </div>
                 </div>
