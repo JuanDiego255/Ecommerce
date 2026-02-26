@@ -448,7 +448,7 @@
                             <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
                         </div>
                         <p class="stext-102 cl6 p-b-20" style="font-style:italic;">
-                            "{{ $comment->comment }}"
+                            "{{ $comment->description }}"
                         </p>
                         <div class="flex-w flex-m">
                             <div>
@@ -486,7 +486,7 @@
                 @if (isset($tenantinfo->email) && $tenantinfo->email)
                 <a href="mailto:{{ $tenantinfo->email }}"
                     class="flex-c-m stext-101 cl3 size-116 bor2 bg0 hov-btn3 p-lr-15 trans-04"
-                    style="display:inline-flex; gap:8px; border:2px solid #fff; color:#fff !important;">
+                    style="display:inline-flex; gap:8px; border:2px solid #fff; color:#000 !important;">
                     <i class="fa fa-envelope"></i> Enviar un correo
                 </a>
                 @endif
