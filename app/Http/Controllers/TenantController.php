@@ -141,6 +141,16 @@ class TenantController extends Controller
         ]);
     }
 
+    public function terms()
+    {
+        $tenantinfo = TenantInfo::first();
+        return view('public.terms', [
+            'tenantTitle'    => $tenantinfo->title ?? config('app.name'),
+            'tenantEmail'    => $tenantinfo->email ?? env('MAIL_FROM_ADDRESS'),
+            'tenantWhatsapp' => $tenantinfo->whatsapp ?? null,
+        ]);
+    }
+
     public function getData($tenant)
     {
         $tenants = Tenant::where('id', $tenant)->first();

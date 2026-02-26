@@ -58,6 +58,8 @@ Route::get('/proyectos', [TenantController::class, 'projects'])->name('central.p
 
 Route::get('/privacy-policy', [TenantController::class, 'privacyPolicy'])->name('privacy.policy');
 
+Route::get('/terminos', [TenantController::class, 'terms'])->name('terms');
+
 // ── Callbacks requeridos por Meta para aprobación LIVE ───────────────────────
 // POST: Meta los llama con un signed_request (exentos de CSRF en VerifyCsrfToken)
 Route::post('/facebook/data-deletion',   [MetaDeletionController::class, 'deletionCallback'])->name('meta.data.deletion');
