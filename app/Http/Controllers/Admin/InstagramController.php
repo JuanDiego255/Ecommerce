@@ -34,10 +34,9 @@ class InstagramController extends Controller
         $redirect = config($config);
 
         $scopes = implode(',', [
-            'pages_show_list',
-            'pages_read_engagement',
-            'instagram_basic',
-            'instagram_content_publish',
+            'pages_show_list',          // listar páginas del usuario y obtener su page access token
+            'instagram_basic',          // leer el ig_user_id vinculado a la página y el username
+            'instagram_content_publish', // crear containers y publicar en la cuenta de IG Business
         ]);
 
         // State aleatorio guardado en sesión para validar en el callback
