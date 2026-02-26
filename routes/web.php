@@ -54,13 +54,11 @@ Route::post('/payment', [CheckOutController::class, 'payment']);
 Route::get('/paypal/process/{orderId}', [CheckOutController::class, 'process']);
 Route::post('/comments/store/', [TestimonialController::class, 'store']);
 Route::get('/get-stock/{cloth_id}/{attr_id}/{value_attr}', [FrontendController::class, 'getStock']);
-Route::get('/privacy-policy', function () {
-    return view('public.privacy', [
-        'tenantTitle'    => config('app.name'),
-        'tenantEmail'    => env('MAIL_FROM_ADDRESS'),
-        'tenantWhatsapp' => null,
-    ]);
-})->name('privacy.policy');
+Route::get('/proyectos', [TenantController::class, 'projects'])->name('central.projects');
+
+Route::get('/privacy-policy', [TenantController::class, 'privacyPolicy'])->name('privacy.policy');
+
+Route::get('/terminos', [TenantController::class, 'terms'])->name('terms');
 
 // ── Callbacks requeridos por Meta para aprobación LIVE ───────────────────────
 // POST: Meta los llama con un signed_request (exentos de CSRF en VerifyCsrfToken)

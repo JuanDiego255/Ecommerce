@@ -31,7 +31,78 @@
 @endphp
 <input type="hidden" name="view_name" value="{{ $view_name }}" id="view_name">
 <input type="hidden" name="iva_tenant" id="iva_tenant" value="{{ $iva }}">
-<header class="{{ $view_name == 'frontend_design_ecommerce_blog_index' ? 'header-v4' : '' }}">
+@if (isset($tenantinfo->tenant) && $tenantinfo->tenant === 'main')
+<style>
+    /* ── Safewor central: navbar negro al hacer scroll ── */
+    .sw-central-header .fix-menu-desktop .wrap-menu-desktop {
+        background-color: #111 !important;
+        box-shadow: 0 2px 10px rgba(0,0,0,.4) !important;
+    }
+    .sw-central-header .fix-menu-desktop .main-menu > li > a,
+    .sw-central-header .fix-menu-desktop .wrap-icon-header .icon-text-color-desk {
+        color: #fff !important;
+    }
+    /* ── Blog page & proyectos: navbar negro al cargar ── */
+    .sw-central-header.header-v4 .wrap-menu-desktop {
+        background-color: #111 !important;
+    }
+    .sw-central-header.header-v4 .main-menu > li > a,
+    .sw-central-header.header-v4 .wrap-icon-header .icon-text-color-desk {
+        color: #fff !important;
+    }
+
+    /* ══ MOBILE ══════════════════════════════════════════ */
+
+    /* Barra superior mobile (logo + iconos + hamburger): negro */
+    .sw-central-header .wrap-header-mobile {
+        background-color: #111 !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,.4) !important;
+    }
+
+    /* Iconos de búsqueda, carrito y favoritos en mobile: blancos */
+    .sw-central-header .wrap-header-mobile .icon-text-color-desk,
+    .sw-central-header .wrap-header-mobile i {
+        color: #fff !important;
+    }
+
+    /* Barras del hamburger: blancas */
+    .sw-central-header .wrap-header-mobile .hamburger-inner,
+    .sw-central-header .wrap-header-mobile .hamburger-inner::before,
+    .sw-central-header .wrap-header-mobile .hamburger-inner::after {
+        background-color: #fff !important;
+    }
+
+    /* Panel colapsable completo: negro */
+    .sw-central-header .menu-mobile {
+        background-color: #111 !important;
+    }
+
+    /* Items del menú mobile: blanco sobre negro */
+    .sw-central-header .main-menu-m {
+        background-color: #111 !important;
+    }
+    .sw-central-header .main-menu-m > li > a {
+        color: #fff !important;
+    }
+    .sw-central-header .main-menu-m > li {
+        border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+
+    /* Cintillo mobile (topbar-mobile): blanco con texto negro */
+    .sw-central-header .topbar-mobile li {
+        background-color: #fff !important;
+        border-color: rgba(0,0,0,.08) !important;
+    }
+    .sw-central-header .topbar-mobile .left-top-bar {
+        color: #111 !important;
+    }
+    .sw-central-header .topbar-mobile .right-top-bar a,
+    .sw-central-header .topbar-mobile .right-top-bar i {
+        color: #111 !important;
+    }
+</style>
+@endif
+<header class="{{ $view_name == 'frontend_design_ecommerce_blog_index' ? 'header-v4' : '' }} {{ isset($tenantinfo->tenant) && $tenantinfo->tenant === 'main' ? 'sw-central-header' : '' }}">
     <!-- Header desktop -->
     <div class="container-menu-desktop">
         <!-- Topbar -->
@@ -73,99 +144,110 @@
                 <!-- Menu desktop -->
                 <div class="menu-desktop">
                     <ul class="main-menu">
-                        <li class="{{ $view_name == 'frontend_design_ecommerce_index' ? 'active-menu' : '' }}">
+                        <li class="{{ in_array($view_name, ['frontend_central_index', 'frontend_design_ecommerce_index']) ? 'active-menu' : '' }}">
                             <a
                                 href="{{ $tenantinfo->kind_business != 5 ? url(($prefix == 'aclimate' ? $prefix : '') . '/') : url(($prefix == 'aclimate' ? $prefix : '') . '/catalogo/barber') }}">Inicio</a>
                         </li>
-                        <li>
-                            <a href="javascript:void(0);" id="toggleMenu">Explorar</a>
-                        </li>
-                        <li>
-                            @if ($tenantinfo->manage_department == 1)
-                                <a
-                                    href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/departments/index') }}">Departamentos</a>
-                            @else
-                                <a
-                                    href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/category') }}">Categorías</a>
-                            @endif
-                        </li>
-                        <!-- Menú expandido -->
-                        <div id="fullScreenMenu" class="fullscreen-menu">
-                            <div class="menu-content">
-                                <button id="closeMenu" class="close-menu">&times;</button>
-                                @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
-                                    <h2 class="text-center mb-3 category-menu">
-                                        Categorías
-                                    </h2>
-                                @endif
 
-                                <div class="departments-container">
-                                    @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department == 1)
-                                        @foreach ($departments as $department)
-                                            <div class="department-section">
-                                                <h3 class="text-uppercase">{{ $department->department }}</h3>
-                                                <ul>
-                                                    @foreach ($department->categories as $categoria)
-                                                        <li>
-                                                            <a
-                                                                href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/clothes-category/' . $categoria->id . '/' . $department->id) }}">
-                                                                {{ $categoria->name }}
-                                                            </a>
-                                                        </li>
-                                                    @endforeach
-                                                </ul>
-                                            </div>
-                                        @endforeach
-                                    @else
-                                        @php
-                                            $chunks = $categories->chunk(5); // Divide la colección en partes de 5
-                                        @endphp
-                                        @foreach ($chunks as $chunk)
-                                            <div class="department-section">
-                                                <ul>
-                                                    @foreach ($chunk as $item)
-                                                        <li>
-                                                            <a
-                                                                href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/clothes-category/' . $item->category_id . '/' . $item->department_id) }}">
-                                                                {{ $item->name }}
-                                                            </a>
-                                                        </li>
-                                                    @endforeach
-                                                </ul>
-                                            </div>
-                                        @endforeach
+                        @if (isset($tenantinfo->tenant) && $tenantinfo->tenant === 'main')
+                            {{-- Menú central Safewor Solutions --}}
+                            <li>
+                                <a href="{{ url('/#servicios') }}">Servicios</a>
+                            </li>
+                            <li class="{{ $view_name == 'frontend_central_projects' ? 'active-menu' : '' }}">
+                                <a href="{{ url('/proyectos') }}">Proyectos</a>
+                            </li>
+                            <li>
+                                <a href="{{ url('/blog/index') }}">Blog</a>
+                            </li>
+                            <li>
+                                <a href="{{ url('/#contacto') }}">Contacto</a>
+                            </li>
+                        @else
+                            {{-- Menú tenants normales --}}
+                            <li>
+                                <a href="javascript:void(0);" id="toggleMenu">Explorar</a>
+                            </li>
+                            <li>
+                                @if ($tenantinfo->manage_department == 1)
+                                    <a
+                                        href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/departments/index') }}">Departamentos</a>
+                                @else
+                                    <a
+                                        href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/category') }}">Categorías</a>
+                                @endif
+                            </li>
+                            <!-- Menú expandido -->
+                            <div id="fullScreenMenu" class="fullscreen-menu">
+                                <div class="menu-content">
+                                    <button id="closeMenu" class="close-menu">&times;</button>
+                                    @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
+                                        <h2 class="text-center mb-3 category-menu">
+                                            Categorías
+                                        </h2>
                                     @endif
+
+                                    <div class="departments-container">
+                                        @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department == 1)
+                                            @foreach ($departments as $department)
+                                                <div class="department-section">
+                                                    <h3 class="text-uppercase">{{ $department->department }}</h3>
+                                                    <ul>
+                                                        @foreach ($department->categories as $categoria)
+                                                            <li>
+                                                                <a
+                                                                    href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/clothes-category/' . $categoria->id . '/' . $department->id) }}">
+                                                                    {{ $categoria->name }}
+                                                                </a>
+                                                            </li>
+                                                        @endforeach
+                                                    </ul>
+                                                </div>
+                                            @endforeach
+                                        @else
+                                            @php
+                                                $chunks = $categories->chunk(5);
+                                            @endphp
+                                            @foreach ($chunks as $chunk)
+                                                <div class="department-section">
+                                                    <ul>
+                                                        @foreach ($chunk as $item)
+                                                            <li>
+                                                                <a
+                                                                    href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/clothes-category/' . $item->category_id . '/' . $item->department_id) }}">
+                                                                    {{ $item->name }}
+                                                                </a>
+                                                            </li>
+                                                        @endforeach
+                                                    </ul>
+                                                </div>
+                                            @endforeach
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        {{-- <li class="label1" data-label1="hot">
-                            <a href="shoping-cart.html">Features</a>
-                        </li> --}}
-                        @if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'mitaibabyboutique' && $tenantinfo->kind_business !== 5)
-                            <li>
-                                <a href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/blog/index') }}">Blog</a>
-                            </li>
+                            @if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'mitaibabyboutique' && $tenantinfo->kind_business !== 5)
+                                <li>
+                                    <a href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/blog/index') }}">Blog</a>
+                                </li>
+                            @endif
+                            @if (isset($tenantinfo->tenant) && $tenantinfo->kind_business == 5)
+                                <li>
+                                    <a href="{{ url('/') }}">Barbería</a>
+                                </li>
+                            @endif
+                            @if (isset($tenantinfo->tenant) && $tenantinfo->tenant === 'solociclismocrc')
+                                <li>
+                                    <a href="{{ url('registrations/show') }}">Eventos</a>
+                                </li>
+                            @endif
+                            @auth
+                                <li>
+                                    <a
+                                        href="{{ isset(Auth::user()->code_love) ? url('/check/list-fav/' . Auth::user()->code_love) : '#' }}">Favoritos</a>
+                                </li>
+                            @endauth
                         @endif
-                        @if (isset($tenantinfo->tenant) && $tenantinfo->kind_business == 5)
-                            <li>
-                                <a href="{{ url('/') }}">Barbería</a>
-                            </li>
-                        @endif
-                        @if (isset($tenantinfo->tenant) && $tenantinfo->tenant === 'solociclismocrc')
-                            <li>
-                                <a href="{{ url('registrations/show') }}">Eventos</a>
-                            </li>
-                        @endif
-                        {{-- 
-                        <li>
-                            <a href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/about_us') }}">ACERCA DE</a>
-                        </li> --}}
-                        @auth
-                            <li>
-                                <a
-                                    href="{{ isset(Auth::user()->code_love) ? url('/check/list-fav/' . Auth::user()->code_love) : '#' }}">Favoritos</a>
-                            </li>
-                        @endauth
 
                     </ul>
                 </div>
@@ -267,77 +349,94 @@
                     href="{{ $tenantinfo->kind_business != 5 ? url(($prefix == 'aclimate' ? $prefix : '') . '/') : url(($prefix == 'aclimate' ? $prefix : '') . '/catalogo/barber') }}">INICIO</a>
             </li>
 
-            <li>
-                <a href="javascript:void(0);" id="toggleMenuMobile">EXPLORAR</a>
-            </li>
-            <li>
-                @if ($tenantinfo->manage_department == 1)
-                    <a href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/departments/index') }}">Departamentos</a>
-                @else
-                    <a href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/category') }}">Categorías</a>
-                @endif
-            </li>
-            <div id="fullScreenMenuMobile" class="fullscreen-menu-mobile">
-                <button id="closeMenuMobile" class="close-menu-mobile">&times;</button>
-                <div class="menu-content">
-                    <h2>{{ isset($tenantinfo->manage_department) && $tenantinfo->manage_department == 1 ? 'Departamentos' : 'Categorías' }}
-                    </h2>
-                    <div class="departments-container">
-                        @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department == 1)
-                            @foreach ($departments as $department)
-                                <div class="department-section">
-                                    <h3>{{ $department->department }}</h3>
-                                    <ul>
-                                        @foreach ($department->categories as $categoria)
-                                            <li>
-                                                <a
-                                                    href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/clothes-category/' . $categoria->id . '/' . $department->id) }}">
-                                                    {{ $categoria->name }}
-                                                </a>
-                                            </li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                            @endforeach
-                        @else
-                            <ul>
-                                <li><a href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/category/') }}"
-                                        class="nav-submenu-item">Todas las
-                                        Categorías</a></li>
-                                @foreach ($categories as $item)
-                                    <li>
-                                        <a
-                                            href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/clothes-category/' . $item->category_id . '/' . $item->department_id) }}">
-                                            {{ $item->name }}
-                                        </a>
-                                    </li>
+            @if (isset($tenantinfo->tenant) && $tenantinfo->tenant === 'main')
+                {{-- Menú móvil central Safewor Solutions --}}
+                <li>
+                    <a href="{{ url('/#servicios') }}">SERVICIOS</a>
+                </li>
+                <li>
+                    <a href="{{ url('/proyectos') }}">PROYECTOS</a>
+                </li>
+                <li>
+                    <a href="{{ url('/blog/index') }}">BLOG</a>
+                </li>
+                <li>
+                    <a href="{{ url('/#contacto') }}">CONTACTO</a>
+                </li>
+            @else
+                {{-- Menú móvil tenants normales --}}
+                <li>
+                    <a href="javascript:void(0);" id="toggleMenuMobile">EXPLORAR</a>
+                </li>
+                <li>
+                    @if ($tenantinfo->manage_department == 1)
+                        <a href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/departments/index') }}">Departamentos</a>
+                    @else
+                        <a href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/category') }}">Categorías</a>
+                    @endif
+                </li>
+                <div id="fullScreenMenuMobile" class="fullscreen-menu-mobile">
+                    <button id="closeMenuMobile" class="close-menu-mobile">&times;</button>
+                    <div class="menu-content">
+                        <h2>{{ isset($tenantinfo->manage_department) && $tenantinfo->manage_department == 1 ? 'Departamentos' : 'Categorías' }}
+                        </h2>
+                        <div class="departments-container">
+                            @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department == 1)
+                                @foreach ($departments as $department)
+                                    <div class="department-section">
+                                        <h3>{{ $department->department }}</h3>
+                                        <ul>
+                                            @foreach ($department->categories as $categoria)
+                                                <li>
+                                                    <a
+                                                        href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/clothes-category/' . $categoria->id . '/' . $department->id) }}">
+                                                        {{ $categoria->name }}
+                                                    </a>
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
                                 @endforeach
-                            </ul>
-                        @endif
+                            @else
+                                <ul>
+                                    <li><a href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/category/') }}"
+                                            class="nav-submenu-item">Todas las
+                                            Categorías</a></li>
+                                    @foreach ($categories as $item)
+                                        <li>
+                                            <a
+                                                href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/clothes-category/' . $item->category_id . '/' . $item->department_id) }}">
+                                                {{ $item->name }}
+                                            </a>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            @endif
+                        </div>
                     </div>
                 </div>
-            </div>
-            @if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'mitaibabyboutique' && $tenantinfo->kind_business !== 5)
-                <li>
-                    <a href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/blog/index') }}">BLOG</a>
-                </li>
+                @if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'mitaibabyboutique' && $tenantinfo->kind_business !== 5)
+                    <li>
+                        <a href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/blog/index') }}">BLOG</a>
+                    </li>
+                @endif
+                @if (isset($tenantinfo->tenant) && $tenantinfo->kind_business == 5)
+                    <li>
+                        <a href="{{ url('/') }}">BARBERIA</a>
+                    </li>
+                @endif
+                @if (isset($tenantinfo->tenant) && $tenantinfo->tenant === 'solociclismocrc')
+                    <li>
+                        <a href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/registrations/show') }}">EVENTOS</a>
+                    </li>
+                @endif
+                @auth
+                    <li>
+                        <a
+                            href="{{ isset(Auth::user()->code_love) ? url('/check/list-fav/' . Auth::user()->code_love) : '#' }}">Favoritos</a>
+                    </li>
+                @endauth
             @endif
-            @if (isset($tenantinfo->tenant) && $tenantinfo->kind_business == 5)
-                <li>
-                    <a href="{{ url('/') }}">BARBERIA</a>
-                </li>
-            @endif
-            @if (isset($tenantinfo->tenant) && $tenantinfo->tenant === 'solociclismocrc')
-                <li>
-                    <a href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/registrations/show') }}">EVENTOS</a>
-                </li>
-            @endif
-            @auth
-                <li>
-                    <a
-                        href="{{ isset(Auth::user()->code_love) ? url('/check/list-fav/' . Auth::user()->code_love) : '#' }}">Favoritos</a>
-                </li>
-            @endauth
         </ul>
     </div>
 

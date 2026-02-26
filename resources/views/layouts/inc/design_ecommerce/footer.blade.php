@@ -132,15 +132,29 @@
                 </h4>
 
                 <ul>
-                    <li class="p-b-10">
-                        <a href="{{ url('/buys') }}" class="stext-107 cl7 hov-cl1 trans-04">
-                            Mis Compras
-                        </a>
-                    </li>
+                    @if (!isset($tenantinfo->tenant) || $tenantinfo->tenant !== 'main')
+                        <li class="p-b-10">
+                            <a href="{{ url('/buys') }}" class="stext-107 cl7 hov-cl1 trans-04">
+                                Mis Compras
+                            </a>
+                        </li>
+                    @endif
 
                     <li class="p-b-10">
                         <a href="{{ url('/about_us') }}" class="stext-107 cl7 hov-cl1 trans-04">
                             Acerca De
+                        </a>
+                    </li>
+
+                    <li class="p-b-10">
+                        <a href="{{ url('/privacy-policy') }}" class="stext-107 cl7 hov-cl1 trans-04">
+                            Política de Privacidad
+                        </a>
+                    </li>
+
+                    <li class="p-b-10">
+                        <a href="{{ url('/terminos') }}" class="stext-107 cl7 hov-cl1 trans-04">
+                            Términos y Condiciones
                         </a>
                     </li>
                 </ul>
