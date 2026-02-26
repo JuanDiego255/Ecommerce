@@ -20,6 +20,7 @@ use App\Http\Controllers\TenantInfoController;
 use App\Http\Controllers\TenantPaymentController;
 use App\Http\Controllers\TenantSocialNetworkController;
 use App\Http\Controllers\TestimonialController;
+use App\Http\Controllers\MetaDeletionController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
@@ -60,6 +61,13 @@ Route::get('/privacy-policy', function () {
         'tenantWhatsapp' => null,
     ]);
 })->name('privacy.policy');
+
+// ── Callbacks requeridos por Meta para aprobación LIVE ───────────────────────
+// POST: Meta los llama con un signed_request (exentos de CSRF en VerifyCsrfToken)
+Route::post('/facebook/data-deletion',   [MetaDeletionController::class, 'deletionCallback'])->name('meta.data.deletion');
+Route::post('/facebook/deauthorize',     [MetaDeletionController::class, 'deauthorizeCallback'])->name('meta.deauthorize');
+// GET: Página pública de estado de eliminación (para el usuario)
+Route::get('/facebook/deletion-status/{code}', [MetaDeletionController::class, 'deletionStatus'])->name('meta.deletion.status');
 
 Auth::routes();
 
