@@ -31,7 +31,28 @@
 @endphp
 <input type="hidden" name="view_name" value="{{ $view_name }}" id="view_name">
 <input type="hidden" name="iva_tenant" id="iva_tenant" value="{{ $iva }}">
-<header class="{{ $view_name == 'frontend_design_ecommerce_blog_index' ? 'header-v4' : '' }}">
+@if (isset($tenantinfo->tenant) && $tenantinfo->tenant === 'main')
+<style>
+    /* ── Safewor central: navbar negro al hacer scroll ── */
+    .sw-central-header .fix-menu-desktop .wrap-menu-desktop {
+        background-color: #111 !important;
+        box-shadow: 0 2px 10px rgba(0,0,0,.4) !important;
+    }
+    .sw-central-header .fix-menu-desktop .main-menu > li > a,
+    .sw-central-header .fix-menu-desktop .wrap-icon-header .icon-text-color-desk {
+        color: #fff !important;
+    }
+    /* ── Blog page & proyectos: navbar negro al cargar ── */
+    .sw-central-header.header-v4 .wrap-menu-desktop {
+        background-color: #111 !important;
+    }
+    .sw-central-header.header-v4 .main-menu > li > a,
+    .sw-central-header.header-v4 .wrap-icon-header .icon-text-color-desk {
+        color: #fff !important;
+    }
+</style>
+@endif
+<header class="{{ $view_name == 'frontend_design_ecommerce_blog_index' ? 'header-v4' : '' }} {{ isset($tenantinfo->tenant) && $tenantinfo->tenant === 'main' ? 'sw-central-header' : '' }}">
     <!-- Header desktop -->
     <div class="container-menu-desktop">
         <!-- Topbar -->
@@ -80,7 +101,7 @@
 
                         @if (isset($tenantinfo->tenant) && $tenantinfo->tenant === 'main')
                             {{-- Menú central Safewor Solutions --}}
-                            <li class="{{ $view_name == 'frontend_central_index' ? 'active-menu' : '' }}">
+                            <li>
                                 <a href="{{ url('/#servicios') }}">Servicios</a>
                             </li>
                             <li class="{{ $view_name == 'frontend_central_projects' ? 'active-menu' : '' }}">
