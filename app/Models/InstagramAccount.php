@@ -10,6 +10,7 @@ class InstagramAccount extends Model
 
     protected $fillable = [
         'user_id',
+        'facebook_user_id',
         'facebook_page_id',
         'facebook_page_access_token',
         'instagram_business_account_id',

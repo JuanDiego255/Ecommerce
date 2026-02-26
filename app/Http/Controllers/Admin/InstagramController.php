@@ -30,13 +30,9 @@ class InstagramController extends Controller
             default:
                 break;
         }
-        $appId = config('meta.app_id');
+        $appId    = config('meta.app_id');
         $redirect = config($config);
 
-        // Permisos mínimos para:
-        // - leer páginas
-        // - publicar en IG
-        // Nota: permisos exactos se afinan en Paso 4 según tu caso.
         $scopes = implode(',', [
             'pages_show_list',
             'pages_read_engagement',
@@ -44,7 +40,10 @@ class InstagramController extends Controller
             'instagram_content_publish',
         ]);
 
-        $state = csrf_token(); // simple, puedes mejorar con session si deseas
+        // State aleatorio guardado en sesión para validar en el callback
+        // y prevenir ataques CSRF en el flujo OAuth de Meta.
+        $state = bin2hex(random_bytes(16));
+        session(['meta_oauth_state' => $state]);
 
         $authUrl = "https://www.facebook.com/{$this->graphVersion()}/dialog/oauth"
             . "?client_id={$appId}"
@@ -60,6 +59,15 @@ class InstagramController extends Controller
     {
         if ($request->has('error')) {
             return redirect('/instagram')->with('error', 'Autorización cancelada o denegada.');
+        }
+
+        // Validar el state para prevenir CSRF en el flujo OAuth
+        $returnedState  = $request->get('state');
+        $expectedState  = session('meta_oauth_state');
+        session()->forget('meta_oauth_state');
+
+        if (!$returnedState || !$expectedState || !hash_equals($expectedState, $returnedState)) {
+            return redirect('/instagram')->with('error', 'Estado OAuth inválido. Intenta conectar nuevamente.');
         }
 
         $code = $request->get('code');
@@ -80,12 +88,13 @@ class InstagramController extends Controller
                 default:
                     break;
             }
-            // 1) Intercambiar code por user access token
+
+            // 1) Intercambiar code por user access token (short-lived)
             $tokenResp = Http::get($this->graphUrl('/oauth/access_token'), [
-                'client_id' => config('meta.app_id'),
-                'redirect_uri' => config($config),
+                'client_id'     => config('meta.app_id'),
+                'redirect_uri'  => config($config),
                 'client_secret' => config('meta.app_secret'),
-                'code' => $code,
+                'code'          => $code,
             ]);
 
             if (!$tokenResp->ok()) {
@@ -97,20 +106,28 @@ class InstagramController extends Controller
                 return redirect('/instagram')->with('error', 'Token inválido recibido.');
             }
 
-            // 2) (Recomendado) Intercambiar a long-lived token
+            // 2) Intercambiar a long-lived token (~60 días)
             $longResp = Http::get($this->graphUrl('/oauth/access_token'), [
-                'grant_type' => 'fb_exchange_token',
-                'client_id' => config('meta.app_id'),
-                'client_secret' => config('meta.app_secret'),
+                'grant_type'        => 'fb_exchange_token',
+                'client_id'         => config('meta.app_id'),
+                'client_secret'     => config('meta.app_secret'),
                 'fb_exchange_token' => $userAccessToken,
             ]);
 
             $longToken = $longResp->ok() ? $longResp->json('access_token') : $userAccessToken;
 
-            // 3) Obtener páginas del usuario
+            // 3) Obtener el facebook_user_id del usuario que autorizó la app.
+            //    Necesario para el Data Deletion Callback de Meta.
+            $meResp = Http::get($this->graphUrl('/me'), [
+                'access_token' => $longToken,
+                'fields'       => 'id',
+            ]);
+            $facebookUserId = $meResp->ok() ? ($meResp->json('id') ?? null) : null;
+
+            // 4) Obtener páginas del usuario
             $pagesResp = Http::get($this->graphUrl('/me/accounts'), [
                 'access_token' => $longToken,
-                'fields' => 'id,name,access_token',
+                'fields'       => 'id,name,access_token',
             ]);
 
             if (!$pagesResp->ok()) {
@@ -123,19 +140,18 @@ class InstagramController extends Controller
             }
 
             // MVP: elegimos la primera página
-            // (Luego podemos hacer UI para seleccionar si tiene varias)
-            $page = $pages[0];
-            $pageId = $page['id'] ?? null;
+            $page      = $pages[0];
+            $pageId    = $page['id'] ?? null;
             $pageToken = $page['access_token'] ?? null;
 
             if (!$pageId || !$pageToken) {
                 return redirect('/instagram')->with('error', 'No se pudo obtener token de página.');
             }
 
-            // 4) Obtener la cuenta de IG conectada a esa página
+            // 5) Obtener la cuenta de IG conectada a esa página
             $igResp = Http::get($this->graphUrl("/{$pageId}"), [
                 'access_token' => $pageToken,
-                'fields' => 'instagram_business_account',
+                'fields'       => 'instagram_business_account',
             ]);
 
             if (!$igResp->ok()) {
@@ -147,26 +163,25 @@ class InstagramController extends Controller
                 return redirect('/instagram')->with('error', 'Esta Página no tiene una cuenta de Instagram Business vinculada.');
             }
 
-            // 5) Obtener username (opcional pero útil)
+            // 6) Obtener username de Instagram
             $igInfoResp = Http::get($this->graphUrl("/{$igId}"), [
                 'access_token' => $pageToken,
-                'fields' => 'username',
+                'fields'       => 'username',
             ]);
-
             $username = $igInfoResp->ok() ? ($igInfoResp->json('username') ?? null) : null;
 
-            // 6) Guardar cuenta (desactivamos otras para dejar una activa)
+            // 7) Guardar cuenta (desactivamos otras para dejar una activa)
             InstagramAccount::query()->update(['is_active' => false]);
 
             InstagramAccount::create([
-                'user_id' => auth()->id(),
-                'facebook_page_id' => $pageId,
-                'facebook_page_access_token' => $pageToken,
-                'instagram_business_account_id' => $igId,
-                'instagram_username' => $username,
-                'account_type' => 'business', // porque viene por instagram_business_account
-                'is_active' => true,
-                // token_expires_at: Meta devuelve expires_in en algunos casos. Se puede calcular luego si quieres.
+                'user_id'                        => auth()->id(),
+                'facebook_user_id'               => $facebookUserId,
+                'facebook_page_id'               => $pageId,
+                'facebook_page_access_token'     => $pageToken,
+                'instagram_business_account_id'  => $igId,
+                'instagram_username'             => $username,
+                'account_type'                   => 'business',
+                'is_active'                      => true,
             ]);
 
             return redirect('/instagram')->with('ok', 'Cuenta de Instagram conectada correctamente.');
@@ -180,9 +195,9 @@ class InstagramController extends Controller
         $acc = InstagramAccount::findOrFail($id);
 
         $acc->update([
-            'is_active' => false,
+            'is_active'                  => false,
             'facebook_page_access_token' => null,
-            'token_expires_at' => null,
+            'token_expires_at'           => null,
         ]);
 
         return back()->with('ok', 'Cuenta desconectada.');

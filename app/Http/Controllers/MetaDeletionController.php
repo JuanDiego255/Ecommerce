@@ -43,12 +43,12 @@ class MetaDeletionController extends Controller
         ]);
 
         // ── Borrar tokens/cuentas asociadas al usuario de Facebook ────────────
-        // La tabla instagram_accounts almacena page access tokens del usuario.
-        // No hay facebook_user_id directo, así que eliminamos todas las cuentas
-        // activas (el usuario puede reconectar si lo desea).
-        // Ajusta esta lógica si agregas facebook_user_id a instagram_accounts.
+        // Borramos por facebook_user_id (guardado durante el flujo OAuth).
+        // Si por alguna razón el campo fuera null, no tocamos nada (no-op seguro).
         try {
-            InstagramAccount::where('is_active', true)->delete();
+            if ($facebookUserId) {
+                InstagramAccount::where('facebook_user_id', $facebookUserId)->delete();
+            }
 
             DB::table('meta_deletion_requests')
                 ->where('confirmation_code', $confirmationCode)
@@ -123,8 +123,11 @@ class MetaDeletionController extends Controller
             'facebook_user_id' => $facebookUserId,
         ]);
 
-        // Marcar la cuenta como inactiva (no borramos para conservar historial de posts)
-        InstagramAccount::where('is_active', true)->update(['is_active' => false]);
+        // Marcar la cuenta como inactiva por facebook_user_id (conservamos historial de posts)
+        if ($facebookUserId) {
+            InstagramAccount::where('facebook_user_id', $facebookUserId)
+                ->update(['is_active' => false]);
+        }
 
         return response()->json(['success' => true]);
     }
