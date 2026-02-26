@@ -126,6 +126,21 @@ class TenantController extends Controller
             ->get();
         return view('frontend.central.index', compact('blogs', 'social', 'category', 'comments'));
     }
+    public function projects()
+    {
+        return view('frontend.central.projects');
+    }
+
+    public function privacyPolicy()
+    {
+        $tenantinfo = TenantInfo::first();
+        return view('public.privacy', [
+            'tenantTitle'    => $tenantinfo->title ?? config('app.name'),
+            'tenantEmail'    => $tenantinfo->email ?? env('MAIL_FROM_ADDRESS'),
+            'tenantWhatsapp' => $tenantinfo->whatsapp ?? null,
+        ]);
+    }
+
     public function getData($tenant)
     {
         $tenants = Tenant::where('id', $tenant)->first();
