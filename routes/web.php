@@ -53,6 +53,14 @@ Route::post('/payment', [CheckOutController::class, 'payment']);
 Route::get('/paypal/process/{orderId}', [CheckOutController::class, 'process']);
 Route::post('/comments/store/', [TestimonialController::class, 'store']);
 Route::get('/get-stock/{cloth_id}/{attr_id}/{value_attr}', [FrontendController::class, 'getStock']);
+Route::get('/privacy-policy', function () {
+    return view('public.privacy', [
+        'tenantTitle'    => config('app.name'),
+        'tenantEmail'    => env('MAIL_FROM_ADDRESS'),
+        'tenantWhatsapp' => null,
+    ]);
+})->name('privacy.policy');
+
 Auth::routes();
 
 Route::group(['middleware' => 'isAdmin'], function () {
