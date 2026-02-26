@@ -50,6 +50,56 @@
     .sw-central-header.header-v4 .wrap-icon-header .icon-text-color-desk {
         color: #fff !important;
     }
+
+    /* ══ MOBILE ══════════════════════════════════════════ */
+
+    /* Barra superior mobile (logo + iconos + hamburger): negro */
+    .sw-central-header .wrap-header-mobile {
+        background-color: #111 !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,.4) !important;
+    }
+
+    /* Iconos de búsqueda, carrito y favoritos en mobile: blancos */
+    .sw-central-header .wrap-header-mobile .icon-text-color-desk,
+    .sw-central-header .wrap-header-mobile i {
+        color: #fff !important;
+    }
+
+    /* Barras del hamburger: blancas */
+    .sw-central-header .wrap-header-mobile .hamburger-inner,
+    .sw-central-header .wrap-header-mobile .hamburger-inner::before,
+    .sw-central-header .wrap-header-mobile .hamburger-inner::after {
+        background-color: #fff !important;
+    }
+
+    /* Panel colapsable completo: negro */
+    .sw-central-header .menu-mobile {
+        background-color: #111 !important;
+    }
+
+    /* Items del menú mobile: blanco sobre negro */
+    .sw-central-header .main-menu-m {
+        background-color: #111 !important;
+    }
+    .sw-central-header .main-menu-m > li > a {
+        color: #fff !important;
+    }
+    .sw-central-header .main-menu-m > li {
+        border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+
+    /* Cintillo mobile (topbar-mobile): blanco con texto negro */
+    .sw-central-header .topbar-mobile li {
+        background-color: #fff !important;
+        border-color: rgba(0,0,0,.08) !important;
+    }
+    .sw-central-header .topbar-mobile .left-top-bar {
+        color: #111 !important;
+    }
+    .sw-central-header .topbar-mobile .right-top-bar a,
+    .sw-central-header .topbar-mobile .right-top-bar i {
+        color: #111 !important;
+    }
 </style>
 @endif
 <header class="{{ $view_name == 'frontend_design_ecommerce_blog_index' ? 'header-v4' : '' }} {{ isset($tenantinfo->tenant) && $tenantinfo->tenant === 'main' ? 'sw-central-header' : '' }}">
