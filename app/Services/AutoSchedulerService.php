@@ -37,11 +37,12 @@ class AutoSchedulerService
         Barbero $barbero,
         Carbon $from,
         Carbon $to,
-        array $prefDays,      // ej [1,2,3,4,5] (0=Dom..6=Sáb)
-        string $prefStart,    // "09:00"
-        string $prefEnd,      // "18:00"
-        int $requiredMinutes, // duración deseada
-        string $tz            // "America/Costa_Rica"
+        array $prefDays,           // ej [1,2,3,4,5] (0=Dom..6=Sáb)
+        string $prefStart,         // "09:00"
+        string $prefEnd,           // "18:00"
+        int $requiredMinutes,      // duración deseada
+        string $tz,                // "America/Costa_Rica"
+        ?int $excludeClientId = null // excluir este cliente de autoBookingBlocks (evita self-blocking)
     ): ?array {
         $day = $from->copy()->startOfDay();
         $prefDaysArray = array_map('intval', $prefDays);
@@ -59,7 +60,7 @@ class AutoSchedulerService
                 continue;
             }
             // Horas disponibles de ese día como Carbon
-            $hhmmList = $this->availableSlots($barbero, $day->toDateString(), $requiredMinutes, $tz);
+            $hhmmList = $this->availableSlots($barbero, $day->toDateString(), $requiredMinutes, $tz, $excludeClientId);
 
             foreach ($hhmmList  as $hhmm) {
                 // Filtra por ventana preferida
@@ -85,7 +86,7 @@ class AutoSchedulerService
 
         return null;
     }
-    public function availableSlots(Barbero $barbero, string $dateYmd, int $requiredMinutes, string $tz): array
+    public function availableSlots(Barbero $barbero, string $dateYmd, int $requiredMinutes, string $tz, ?int $excludeClientId = null): array
     {
         $slot       = (int)($barbero->slot_minutes ?? 30);
         $buffer     = (int)($barbero->buffer_minutes ?? 0);
@@ -125,6 +126,7 @@ class AutoSchedulerService
         $dayOfWeek = Carbon::parse($dateYmd, $tz)->dayOfWeek; // 0=domingo, 1=lunes, ..., 6=sábado
         $autoBookingBlocks = Client::where('auto_book_opt_in', true)
             ->where('preferred_barbero_id', $barbero->id)
+            ->when($excludeClientId, fn($q) => $q->where('id', '!=', $excludeClientId))
             ->get()
             ->filter(function ($client) use ($dayOfWeek) {
                 $preferredDays = $client->preferred_days;
@@ -281,7 +283,8 @@ class AutoSchedulerService
             $prefStart,
             $prefEnd,
             $duration,
-            $tz
+            $tz,
+            $client->id  // excluir al propio cliente del bloqueo de auto-booking
         );
 
         if (!$result) {
@@ -294,7 +297,8 @@ class AutoSchedulerService
                 $prefStart,
                 $prefEnd,
                 $duration,
-                $tz
+                $tz,
+                $client->id
             );
         }
         return $result;
@@ -398,7 +402,8 @@ class AutoSchedulerService
                 $prefStart,
                 $prefEnd,
                 $duration,
-                $tz
+                $tz,
+                $client->id  // excluir al propio cliente para que no bloquee su slot preferido
             );
 
             if ($result) {
