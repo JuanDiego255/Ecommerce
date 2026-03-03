@@ -40,6 +40,123 @@
             height: 100%;
             object-fit: cover;
         }
+
+        /* ── Cómo Funciona ── */
+        .sw-step-circle {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: var(--btn_cart, #333);
+            color: #fff;
+            font-size: 1.6rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 6px 20px rgba(0,0,0,.3);
+        }
+        .sw-step-connector {
+            position: absolute;
+            top: 36px;
+            left: calc(50% + 36px);
+            width: calc(100% - 72px);
+            height: 3px;
+            background: rgba(255,255,255,.2);
+            z-index: 0;
+        }
+        @media (max-width: 767px) {
+            .sw-step-connector { display: none !important; }
+        }
+
+        /* ── Stack Tech Badges ── */
+        .sw-tech-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 18px;
+            border-radius: 50px;
+            font-size: .82rem;
+            font-weight: 600;
+            margin: 5px;
+            color: #fff;
+            letter-spacing: .3px;
+            box-shadow: 0 2px 8px rgba(0,0,0,.15);
+        }
+
+        /* ── FAQ Accordion ── */
+        .sw-faq-btn {
+            background: #fff;
+            border: none;
+            width: 100%;
+            text-align: left;
+            padding: 18px 24px;
+            font-weight: 600;
+            font-size: .95rem;
+            color: #222;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background .2s;
+        }
+        .sw-faq-btn:hover { background: #f9f9f9; }
+        .sw-faq-btn[aria-expanded="true"] { color: var(--btn_cart, #333); }
+        .sw-faq-body {
+            padding: 16px 24px;
+            font-size: .9rem;
+            color: #555;
+            background: #fff;
+            border-bottom: 1px solid #eee;
+            line-height: 1.7;
+        }
+        .sw-faq-wrap {
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 3px 16px rgba(0,0,0,.07);
+        }
+
+        /* ── Calculadora ── */
+        .sw-calc-card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 6px 30px rgba(0,0,0,.08);
+            padding: 32px;
+        }
+        .sw-calc-option {
+            display: flex;
+            align-items: center;
+            padding: 13px 16px;
+            border: 2px solid #e8e8e8;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: border-color .2s, background .2s;
+            margin-bottom: 10px;
+        }
+        .sw-calc-option:hover { border-color: var(--btn_cart, #333); background: #f9f9f9; }
+        .sw-calc-option input[type="radio"],
+        .sw-calc-option input[type="checkbox"] {
+            margin-right: 12px;
+            cursor: pointer;
+            accent-color: var(--btn_cart, #333);
+            min-width: 16px;
+        }
+        .sw-calc-price-display {
+            background: linear-gradient(135deg, var(--navbar, #1a1a2e) 0%, #16213e 100%);
+            border-radius: 12px;
+            padding: 32px 24px;
+            text-align: center;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .sw-calc-total { font-size: 2.4rem; font-weight: 800; color: #fff; line-height: 1.1; }
+        .sw-calc-label { font-size: .78rem; color: rgba(255,255,255,.6); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
     </style>
     {{-- Carousel Start --}}
     @if (count($tenantcarousel) != 0)
@@ -197,6 +314,61 @@
          SECCIÓN: SERVICIOS
     ════════════════════════════════════════════════════════════════ --}}
     @if (isset($tenantinfo->tenant) && $tenantinfo->tenant === 'main')
+
+    {{-- ═══════════════════════════════════════════════════════════════
+         SECCIÓN: CÓMO FUNCIONA
+    ════════════════════════════════════════════════════════════════ --}}
+    <section class="p-t-80 p-b-80" style="background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 100%);">
+        <div class="container">
+            <div class="text-center p-b-50">
+                <h2 class="ltext-103 cl0" style="font-size:2rem; font-weight:700; letter-spacing:1px;">
+                    ¿Cómo funciona?
+                </h2>
+                <p class="stext-102 cl7 p-t-15" style="max-width:560px; margin:0 auto;">
+                    Desde la idea hasta el lanzamiento, te acompañamos en cada etapa del proceso.
+                </p>
+                <div class="dis-block" style="width:60px; height:4px; background:var(--btn_cart,#e8b84b); margin:18px auto 0;"></div>
+            </div>
+
+            <div class="row justify-content-center">
+                {{-- Paso 1: Cotizar --}}
+                <div class="col-md-4 p-b-40 text-center position-relative">
+                    <div class="sw-step-circle">1</div>
+                    <div class="sw-step-connector d-none d-md-block"></div>
+                    <h5 class="mtext-112 cl0 p-b-12" style="font-weight:700; font-size:1.15rem;">
+                        <i class="fa fa-comments m-r-8" style="color:var(--btn_cart,#e8b84b);"></i> Cotizar
+                    </h5>
+                    <p class="stext-107 cl7" style="max-width:260px; margin:0 auto;">
+                        Cuéntanos tu idea. Analizamos tu proyecto, tus objetivos y preparamos una propuesta personalizada sin costo.
+                    </p>
+                </div>
+
+                {{-- Paso 2: Desarrollar --}}
+                <div class="col-md-4 p-b-40 text-center position-relative">
+                    <div class="sw-step-circle">2</div>
+                    <div class="sw-step-connector d-none d-md-block"></div>
+                    <h5 class="mtext-112 cl0 p-b-12" style="font-weight:700; font-size:1.15rem;">
+                        <i class="fa fa-code m-r-8" style="color:var(--btn_cart,#e8b84b);"></i> Desarrollar
+                    </h5>
+                    <p class="stext-107 cl7" style="max-width:260px; margin:0 auto;">
+                        Construimos tu solución de forma iterativa. Revisiones continuas para que el resultado sea exactamente lo que necesitas.
+                    </p>
+                </div>
+
+                {{-- Paso 3: Lanzar --}}
+                <div class="col-md-4 p-b-40 text-center position-relative">
+                    <div class="sw-step-circle">3</div>
+                    <h5 class="mtext-112 cl0 p-b-12" style="font-weight:700; font-size:1.15rem;">
+                        <i class="fa fa-rocket m-r-8" style="color:var(--btn_cart,#e8b84b);"></i> Lanzar
+                    </h5>
+                    <p class="stext-107 cl7" style="max-width:260px; margin:0 auto;">
+                        Publicamos tu proyecto, migramos datos si aplica y te capacitamos. Soporte post-lanzamiento incluido.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <section id="servicios" class="bg0 p-t-80 p-b-80">
         <div class="container">
             <div class="text-center p-b-50">
@@ -304,6 +476,40 @@
                     <div class="ltext-103 cl0" style="font-size:2.8rem; font-weight:800; line-height:1;">100%</div>
                     <div class="stext-107 cl7 p-t-10">Compromiso</div>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    {{-- ═══════════════════════════════════════════════════════════════
+         SECCIÓN: STACK TECNOLÓGICO
+    ════════════════════════════════════════════════════════════════ --}}
+    <section class="bg0 p-t-70 p-b-70">
+        <div class="container">
+            <div class="text-center p-b-40">
+                <h2 class="ltext-103 cl3" style="font-size:2rem; font-weight:700; letter-spacing:1px;">
+                    Stack Tecnológico
+                </h2>
+                <p class="stext-102 cl6 p-t-15" style="max-width:540px; margin:0 auto;">
+                    Construimos con tecnologías robustas y probadas que garantizan rendimiento, seguridad y escalabilidad.
+                </p>
+                <div class="dis-block" style="width:60px; height:4px; background:var(--btn_cart,#333); margin:18px auto 0;"></div>
+            </div>
+
+            <div class="text-center">
+                <span class="sw-tech-badge" style="background:#f05340;"><i class="fa fa-leaf"></i> Laravel</span>
+                <span class="sw-tech-badge" style="background:#8892be;"><i class="fa fa-code"></i> PHP 8</span>
+                <span class="sw-tech-badge" style="background:#00758f;"><i class="fa fa-database"></i> MySQL</span>
+                <span class="sw-tech-badge" style="background:#7952b3;"><i class="fa fa-columns"></i> Bootstrap 5</span>
+                <span class="sw-tech-badge" style="background:#c9a800; color:#222;"><i class="fa fa-terminal"></i> JavaScript</span>
+                <span class="sw-tech-badge" style="background:#e1306c;"><i class="fa fa-instagram"></i> Instagram Graph API</span>
+                <span class="sw-tech-badge" style="background:#003087;"><i class="fa fa-paypal"></i> PayPal API</span>
+                <span class="sw-tech-badge" style="background:#e34f26;"><i class="fa fa-html5"></i> HTML5</span>
+                <span class="sw-tech-badge" style="background:#264de4;"><i class="fa fa-css3"></i> CSS3</span>
+                <span class="sw-tech-badge" style="background:#0769ad;"><i class="fa fa-code"></i> jQuery</span>
+                <span class="sw-tech-badge" style="background:#25d366;"><i class="fa fa-whatsapp"></i> WhatsApp API</span>
+                <span class="sw-tech-badge" style="background:#0866ff;"><i class="fa fa-facebook"></i> Meta Platform</span>
+                <span class="sw-tech-badge" style="background:#4078c0;"><i class="fa fa-github"></i> Git / GitHub</span>
+                <span class="sw-tech-badge" style="background:#326ce5;"><i class="fa fa-server"></i> VPS / Cloud</span>
             </div>
         </div>
     </section>
@@ -429,6 +635,115 @@
     </section>
 
     {{-- ═══════════════════════════════════════════════════════════════
+         SECCIÓN: PREGUNTAS FRECUENTES (FAQ)
+    ════════════════════════════════════════════════════════════════ --}}
+    <section class="p-t-80 p-b-80" style="background:#f4f4f4;">
+        <div class="container">
+            <div class="text-center p-b-50">
+                <h2 class="ltext-103 cl3" style="font-size:2rem; font-weight:700; letter-spacing:1px;">
+                    Preguntas Frecuentes
+                </h2>
+                <p class="stext-102 cl6 p-t-15" style="max-width:540px; margin:0 auto;">
+                    Resolvemos las dudas más comunes antes de que empieces tu proyecto.
+                </p>
+                <div class="dis-block" style="width:60px; height:4px; background:var(--btn_cart,#333); margin:18px auto 0;"></div>
+            </div>
+
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="sw-faq-wrap" id="sw-faq-accordion">
+
+                        <div>
+                            <button class="sw-faq-btn collapsed" type="button" data-toggle="collapse" data-target="#faq1" aria-expanded="false" aria-controls="faq1">
+                                ¿Cuánto cuesta desarrollar un proyecto?
+                                <i class="fa fa-plus sw-faq-icon"></i>
+                            </button>
+                            <div id="faq1" class="collapse" data-parent="#sw-faq-accordion">
+                                <div class="sw-faq-body">
+                                    El costo varía según el tipo de proyecto y los módulos requeridos. Una <strong>Landing Page</strong> parte desde $500 USD, un <strong>E-commerce Básico</strong> desde $1,200 USD y los <strong>Sistemas a la Medida</strong> desde $3,000 USD. Usa nuestra <a href="#calculadora" style="color:var(--btn_cart,#333);">calculadora de cotización</a> para obtener un estimado inicial sin compromiso.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <button class="sw-faq-btn collapsed" type="button" data-toggle="collapse" data-target="#faq2" aria-expanded="false" aria-controls="faq2">
+                                ¿Qué incluye el precio del proyecto?
+                                <i class="fa fa-plus sw-faq-icon"></i>
+                            </button>
+                            <div id="faq2" class="collapse" data-parent="#sw-faq-accordion">
+                                <div class="sw-faq-body">
+                                    El precio incluye diseño responsivo, desarrollo back-end y front-end, panel de administración, configuración inicial del servidor, capacitación básica de uso y <strong>30 días de soporte post-lanzamiento</strong>. El dominio y el hosting no están incluidos en el precio base.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <button class="sw-faq-btn collapsed" type="button" data-toggle="collapse" data-target="#faq3" aria-expanded="false" aria-controls="faq3">
+                                ¿Puedo personalizar los colores, logo y diseño?
+                                <i class="fa fa-plus sw-faq-icon"></i>
+                            </button>
+                            <div id="faq3" class="collapse" data-parent="#sw-faq-accordion">
+                                <div class="sw-faq-body">
+                                    Absolutamente. Cada proyecto es <strong>100% personalizado</strong> a la identidad visual de tu marca. Trabajamos con tu paleta de colores, tipografías y activos de diseño. Si no tienes identidad visual, también ofrecemos servicios de branding básico como módulo adicional.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <button class="sw-faq-btn collapsed" type="button" data-toggle="collapse" data-target="#faq4" aria-expanded="false" aria-controls="faq4">
+                                ¿Cuánto tiempo tarda el desarrollo?
+                                <i class="fa fa-plus sw-faq-icon"></i>
+                            </button>
+                            <div id="faq4" class="collapse" data-parent="#sw-faq-accordion">
+                                <div class="sw-faq-body">
+                                    Los tiempos estimados son: <strong>Landing Page</strong> 1–2 semanas, <strong>E-commerce Básico</strong> 3–5 semanas, <strong>E-commerce Multi Sucursal</strong> 6–10 semanas, <strong>Sistemas a la Medida</strong> 8–16 semanas según complejidad. Trabajamos con entregas iterativas para que puedas ver el avance en todo momento.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <button class="sw-faq-btn collapsed" type="button" data-toggle="collapse" data-target="#faq5" aria-expanded="false" aria-controls="faq5">
+                                ¿Cómo funciona la integración con Instagram?
+                                <i class="fa fa-plus sw-faq-icon"></i>
+                            </button>
+                            <div id="faq5" class="collapse" data-parent="#sw-faq-accordion">
+                                <div class="sw-faq-body">
+                                    Utilizamos la <strong>API oficial de Instagram Graph (Meta)</strong>. Tu negocio conecta su Cuenta Profesional de Instagram y puede publicar directamente desde el panel de administración, programar posts y sincronizar catálogos de productos. Gestionamos todo el proceso de verificación de la App de Meta para que funcione de forma nativa y aprobada.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <button class="sw-faq-btn collapsed" type="button" data-toggle="collapse" data-target="#faq6" aria-expanded="false" aria-controls="faq6">
+                                ¿Qué soporte ofrecen después del lanzamiento?
+                                <i class="fa fa-plus sw-faq-icon"></i>
+                            </button>
+                            <div id="faq6" class="collapse" data-parent="#sw-faq-accordion">
+                                <div class="sw-faq-body">
+                                    Incluimos <strong>30 días de soporte correctivo</strong> post-lanzamiento sin costo adicional. Después de ese período ofrecemos planes de mantenimiento mensual que incluyen actualizaciones, corrección de errores, respaldo de datos y mejoras menores. Puedes contactarnos en cualquier momento vía WhatsApp.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <button class="sw-faq-btn collapsed" type="button" data-toggle="collapse" data-target="#faq7" aria-expanded="false" aria-controls="faq7">
+                                ¿El sitio funciona bien en dispositivos móviles?
+                                <i class="fa fa-plus sw-faq-icon"></i>
+                            </button>
+                            <div id="faq7" class="collapse" data-parent="#sw-faq-accordion">
+                                <div class="sw-faq-body">
+                                    Sí, todos nuestros proyectos son <strong>100% responsivos</strong>. Diseñamos con la metodología Mobile First, garantizando que la experiencia sea óptima en smartphones, tablets y escritorios. Además optimizamos el rendimiento con imágenes comprimidas y código limpio para cargas rápidas incluso en conexiones móviles.
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {{-- ═══════════════════════════════════════════════════════════════
          SECCIÓN: TESTIMONIOS
     ════════════════════════════════════════════════════════════════ --}}
     @if (isset($comments) && count($comments) > 0)
@@ -462,6 +777,147 @@
         </div>
     </section>
     @endif
+
+    {{-- ═══════════════════════════════════════════════════════════════
+         SECCIÓN: CALCULADORA DE COTIZACIÓN
+    ════════════════════════════════════════════════════════════════ --}}
+    <section id="calculadora" class="bg0 p-t-80 p-b-80">
+        <div class="container">
+            <div class="text-center p-b-50">
+                <h2 class="ltext-103 cl3" style="font-size:2rem; font-weight:700; letter-spacing:1px;">
+                    Calculadora de Cotización
+                </h2>
+                <p class="stext-102 cl6 p-t-15" style="max-width:560px; margin:0 auto;">
+                    Obtén un estimado de inversión al instante. Selecciona el tipo de proyecto y los módulos adicionales.
+                </p>
+                <div class="dis-block" style="width:60px; height:4px; background:var(--btn_cart,#333); margin:18px auto 0;"></div>
+            </div>
+
+            <div class="row">
+                {{-- Columna 1: Tipo de proyecto --}}
+                <div class="col-lg-5 p-b-30">
+                    <div class="sw-calc-card" style="height:100%;">
+                        <h5 class="mtext-112 cl2 p-b-20" style="font-weight:700;">
+                            <i class="fa fa-list-alt m-r-10" style="color:var(--btn_cart,#333);"></i> Tipo de Proyecto
+                        </h5>
+
+                        <label class="sw-calc-option">
+                            <input type="radio" name="calc_type" value="500,800" data-label="Landing Page" onchange="swCalcUpdate()">
+                            <div>
+                                <strong style="display:block; font-size:.92rem;">Landing Page</strong>
+                                <span style="font-size:.8rem; color:#888;">Desde $500 – $800 USD</span>
+                            </div>
+                        </label>
+
+                        <label class="sw-calc-option">
+                            <input type="radio" name="calc_type" value="1200,1800" data-label="E-commerce Básico" onchange="swCalcUpdate()">
+                            <div>
+                                <strong style="display:block; font-size:.92rem;">E-commerce Básico</strong>
+                                <span style="font-size:.8rem; color:#888;">Desde $1,200 – $1,800 USD</span>
+                            </div>
+                        </label>
+
+                        <label class="sw-calc-option">
+                            <input type="radio" name="calc_type" value="2500,4000" data-label="E-commerce Multi Sucursal" onchange="swCalcUpdate()">
+                            <div>
+                                <strong style="display:block; font-size:.92rem;">E-commerce Multi Sucursal</strong>
+                                <span style="font-size:.8rem; color:#888;">Desde $2,500 – $4,000 USD</span>
+                            </div>
+                        </label>
+
+                        <label class="sw-calc-option">
+                            <input type="radio" name="calc_type" value="3000,8000" data-label="Sistema a la Medida" onchange="swCalcUpdate()">
+                            <div>
+                                <strong style="display:block; font-size:.92rem;">Sistema a la Medida</strong>
+                                <span style="font-size:.8rem; color:#888;">Desde $3,000 – $8,000+ USD</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                {{-- Columna 2: Módulos adicionales --}}
+                <div class="col-lg-4 p-b-30">
+                    <div class="sw-calc-card" style="height:100%;">
+                        <h5 class="mtext-112 cl2 p-b-20" style="font-weight:700;">
+                            <i class="fa fa-puzzle-piece m-r-10" style="color:var(--btn_cart,#333);"></i> Módulos Adicionales
+                        </h5>
+
+                        <label class="sw-calc-option">
+                            <input type="checkbox" name="calc_addon" value="300" data-label="Blog Integrado" onchange="swCalcUpdate()">
+                            <div>
+                                <strong style="display:block; font-size:.92rem;">Blog Integrado</strong>
+                                <span style="font-size:.8rem; color:#888;">+$300 USD</span>
+                            </div>
+                        </label>
+
+                        <label class="sw-calc-option">
+                            <input type="checkbox" name="calc_addon" value="400" data-label="Sistema de Reservas (Booking)" onchange="swCalcUpdate()">
+                            <div>
+                                <strong style="display:block; font-size:.92rem;">Sistema de Reservas</strong>
+                                <span style="font-size:.8rem; color:#888;">+$400 USD</span>
+                            </div>
+                        </label>
+
+                        <label class="sw-calc-option">
+                            <input type="checkbox" name="calc_addon" value="350" data-label="Integración Instagram API" onchange="swCalcUpdate()">
+                            <div>
+                                <strong style="display:block; font-size:.92rem;">Integración Instagram API</strong>
+                                <span style="font-size:.8rem; color:#888;">+$350 USD</span>
+                            </div>
+                        </label>
+
+                        <label class="sw-calc-option">
+                            <input type="checkbox" name="calc_addon" value="500" data-label="Virtual Tour 360°" onchange="swCalcUpdate()">
+                            <div>
+                                <strong style="display:block; font-size:.92rem;">Virtual Tour 360°</strong>
+                                <span style="font-size:.8rem; color:#888;">+$500 USD</span>
+                            </div>
+                        </label>
+
+                        <label class="sw-calc-option">
+                            <input type="checkbox" name="calc_addon" value="200" data-label="Pasarela de Pagos (PayPal/SINPE)" onchange="swCalcUpdate()">
+                            <div>
+                                <strong style="display:block; font-size:.92rem;">Pasarela de Pagos</strong>
+                                <span style="font-size:.8rem; color:#888;">+$200 USD</span>
+                            </div>
+                        </label>
+
+                        <label class="sw-calc-option">
+                            <input type="checkbox" name="calc_addon" value="500" data-label="Panel Admin Avanzado" onchange="swCalcUpdate()">
+                            <div>
+                                <strong style="display:block; font-size:.92rem;">Panel Admin Avanzado</strong>
+                                <span style="font-size:.8rem; color:#888;">+$500 USD</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                {{-- Columna 3: Resultado --}}
+                <div class="col-lg-3 p-b-30">
+                    <div class="sw-calc-price-display" style="height:100%; min-height:380px;">
+                        <div class="sw-calc-label">Estimado de Inversión</div>
+                        <div class="sw-calc-total" id="sw-calc-result">$0</div>
+                        <div class="stext-107 p-t-8" id="sw-calc-range"
+                             style="font-size:.82rem; color:rgba(255,255,255,.6); min-height:24px;">
+                            Selecciona un tipo de proyecto
+                        </div>
+                        <div class="p-t-16 p-b-10" id="sw-calc-selection"
+                             style="font-size:.8rem; text-align:left; color:rgba(255,255,255,.75); min-height:80px; line-height:1.8;">
+                        </div>
+                        @if (isset($tenantinfo->whatsapp) && $tenantinfo->whatsapp)
+                        <a id="sw-calc-wa"
+                           href="https://wa.me/506{{ $tenantinfo->whatsapp }}?text=Hola%20Safewor%2C%20estoy%20interesado%20en%20un%20proyecto."
+                           target="_blank"
+                           class="flex-c-m stext-101 cl0 size-116 bg1 bor1 hov-btn1 p-lr-15 trans-04 m-t-10"
+                           style="display:inline-flex; gap:8px; text-decoration:none; width:100%; justify-content:center;">
+                            <i class="fa fa-whatsapp"></i> Solicitar Cotización
+                        </a>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
     {{-- ═══════════════════════════════════════════════════════════════
          SECCIÓN: CTA CONTACTO
@@ -532,6 +988,76 @@
                     }
                 });
             });
+
+            // ── FAQ icon toggle ──
+            document.querySelectorAll('.sw-faq-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    var icon = btn.querySelector('.sw-faq-icon');
+                    var targetId = btn.getAttribute('data-target');
+                    var target = document.querySelector(targetId);
+                    // Wait for Bootstrap collapse animation to start
+                    setTimeout(function() {
+                        if (target && target.classList.contains('show')) {
+                            if (icon) icon.className = 'fa fa-minus sw-faq-icon';
+                            btn.setAttribute('aria-expanded', 'true');
+                        } else {
+                            if (icon) icon.className = 'fa fa-plus sw-faq-icon';
+                            btn.setAttribute('aria-expanded', 'false');
+                        }
+                    }, 50);
+                });
+            });
         });
+
+        // ── Calculadora de Cotización ──
+        function swCalcUpdate() {
+            var typeInput = document.querySelector('input[name="calc_type"]:checked');
+            var addonInputs = document.querySelectorAll('input[name="calc_addon"]:checked');
+            var baseMin = 0, baseMax = 0, addonsTotal = 0;
+            var selectionParts = [];
+
+            if (typeInput) {
+                var vals = typeInput.value.split(',');
+                baseMin = parseInt(vals[0]);
+                baseMax = parseInt(vals[1]);
+                selectionParts.push('<span style="color:#7ef7b1;">✔</span> ' + typeInput.getAttribute('data-label'));
+            }
+
+            addonInputs.forEach(function(inp) {
+                addonsTotal += parseInt(inp.value);
+                selectionParts.push('<span style="color:#7ef7b1;">✔</span> ' + inp.getAttribute('data-label'));
+            });
+
+            var totalMin = baseMin + addonsTotal;
+            var totalMax = baseMax + addonsTotal;
+
+            var resultEl = document.getElementById('sw-calc-result');
+            var rangeEl  = document.getElementById('sw-calc-range');
+            var selEl    = document.getElementById('sw-calc-selection');
+            var waBtn    = document.getElementById('sw-calc-wa');
+
+            if (totalMin === 0) {
+                resultEl.textContent = '$0';
+                rangeEl.textContent  = 'Selecciona un tipo de proyecto';
+            } else {
+                resultEl.textContent = '$' + totalMin.toLocaleString();
+                rangeEl.textContent  = 'Hasta $' + totalMax.toLocaleString() + ' USD (estimado)';
+            }
+
+            selEl.innerHTML = selectionParts.map(function(s) { return '<div>' + s + '</div>'; }).join('');
+
+            if (waBtn && typeInput) {
+                var addonLabels = Array.from(addonInputs).map(function(i) { return i.getAttribute('data-label'); });
+                var msgParts = [
+                    'Hola Safewor, estoy interesado en un proyecto.',
+                    'Tipo: ' + typeInput.getAttribute('data-label'),
+                ];
+                if (addonLabels.length > 0) {
+                    msgParts.push('Módulos: ' + addonLabels.join(', '));
+                }
+                msgParts.push('Estimado: $' + totalMin.toLocaleString() + ' – $' + totalMax.toLocaleString() + ' USD');
+                waBtn.href = 'https://wa.me/506{{ $tenantinfo->whatsapp ?? "" }}?text=' + encodeURIComponent(msgParts.join('\n'));
+            }
+        }
     </script>
 @endsection
