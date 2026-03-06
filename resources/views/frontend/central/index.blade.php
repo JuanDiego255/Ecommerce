@@ -502,14 +502,9 @@
                 <span class="sw-tech-badge" style="background:#7952b3;"><i class="fa fa-columns"></i> Bootstrap 5</span>
                 <span class="sw-tech-badge" style="background:#c9a800; color:#222;"><i class="fa fa-terminal"></i> JavaScript</span>
                 <span class="sw-tech-badge" style="background:#e1306c;"><i class="fa fa-instagram"></i> Instagram Graph API</span>
-                <span class="sw-tech-badge" style="background:#003087;"><i class="fa fa-paypal"></i> PayPal API</span>
                 <span class="sw-tech-badge" style="background:#e34f26;"><i class="fa fa-html5"></i> HTML5</span>
                 <span class="sw-tech-badge" style="background:#264de4;"><i class="fa fa-css3"></i> CSS3</span>
                 <span class="sw-tech-badge" style="background:#0769ad;"><i class="fa fa-code"></i> jQuery</span>
-                <span class="sw-tech-badge" style="background:#25d366;"><i class="fa fa-whatsapp"></i> WhatsApp API</span>
-                <span class="sw-tech-badge" style="background:#0866ff;"><i class="fa fa-facebook"></i> Meta Platform</span>
-                <span class="sw-tech-badge" style="background:#4078c0;"><i class="fa fa-github"></i> Git / GitHub</span>
-                <span class="sw-tech-badge" style="background:#326ce5;"><i class="fa fa-server"></i> VPS / Cloud</span>
             </div>
         </div>
     </section>
@@ -660,7 +655,7 @@
                             </button>
                             <div id="faq1" class="collapse" data-parent="#sw-faq-accordion">
                                 <div class="sw-faq-body">
-                                    El costo varía según el tipo de proyecto y los módulos requeridos. Una <strong>Landing Page</strong> parte desde $500 USD, un <strong>E-commerce Básico</strong> desde $1,200 USD y los <strong>Sistemas a la Medida</strong> desde $3,000 USD. Usa nuestra <a href="#calculadora" style="color:var(--btn_cart,#333);">calculadora de cotización</a> para obtener un estimado inicial sin compromiso.
+                                    El costo varía según el tipo de proyecto y los módulos requeridos. Una <strong>Landing Page</strong> parte desde $200 USD, un <strong>E-commerce Básico</strong> desde $500 USD y los <strong>Sistemas a la Medida</strong> desde $1,000 USD. Usa nuestra <a href="#calculadora" style="color:var(--btn_cart,#333);">calculadora de cotización</a> para obtener un estimado inicial sin compromiso.
                                 </div>
                             </div>
                         </div>
@@ -697,18 +692,6 @@
                             <div id="faq4" class="collapse" data-parent="#sw-faq-accordion">
                                 <div class="sw-faq-body">
                                     Los tiempos estimados son: <strong>Landing Page</strong> 1–2 semanas, <strong>E-commerce Básico</strong> 3–5 semanas, <strong>E-commerce Multi Sucursal</strong> 6–10 semanas, <strong>Sistemas a la Medida</strong> 8–16 semanas según complejidad. Trabajamos con entregas iterativas para que puedas ver el avance en todo momento.
-                                </div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <button class="sw-faq-btn collapsed" type="button" data-toggle="collapse" data-target="#faq5" aria-expanded="false" aria-controls="faq5">
-                                ¿Cómo funciona la integración con Instagram?
-                                <i class="fa fa-plus sw-faq-icon"></i>
-                            </button>
-                            <div id="faq5" class="collapse" data-parent="#sw-faq-accordion">
-                                <div class="sw-faq-body">
-                                    Utilizamos la <strong>API oficial de Instagram Graph (Meta)</strong>. Tu negocio conecta su Cuenta Profesional de Instagram y puede publicar directamente desde el panel de administración, programar posts y sincronizar catálogos de productos. Gestionamos todo el proceso de verificación de la App de Meta para que funcione de forma nativa y aprobada.
                                 </div>
                             </div>
                         </div>
@@ -802,34 +785,26 @@
                         </h5>
 
                         <label class="sw-calc-option">
-                            <input type="radio" name="calc_type" value="500,800" data-label="Landing Page" onchange="swCalcUpdate()">
+                            <input type="radio" name="calc_type" value="200,500" data-label="Landing Page" onchange="swCalcUpdate()">
                             <div>
                                 <strong style="display:block; font-size:.92rem;">Landing Page</strong>
+                                <span style="font-size:.8rem; color:#888;">Desde $200 – $500 USD</span>
+                            </div>
+                        </label>
+
+                        <label class="sw-calc-option">
+                            <input type="radio" name="calc_type" value="500,800" data-label="E-commerce potente" onchange="swCalcUpdate()">
+                            <div>
+                                <strong style="display:block; font-size:.92rem;">E-commerce potente</strong>
                                 <span style="font-size:.8rem; color:#888;">Desde $500 – $800 USD</span>
                             </div>
                         </label>
 
                         <label class="sw-calc-option">
-                            <input type="radio" name="calc_type" value="1200,1800" data-label="E-commerce Básico" onchange="swCalcUpdate()">
-                            <div>
-                                <strong style="display:block; font-size:.92rem;">E-commerce Básico</strong>
-                                <span style="font-size:.8rem; color:#888;">Desde $1,200 – $1,800 USD</span>
-                            </div>
-                        </label>
-
-                        <label class="sw-calc-option">
-                            <input type="radio" name="calc_type" value="2500,4000" data-label="E-commerce Multi Sucursal" onchange="swCalcUpdate()">
-                            <div>
-                                <strong style="display:block; font-size:.92rem;">E-commerce Multi Sucursal</strong>
-                                <span style="font-size:.8rem; color:#888;">Desde $2,500 – $4,000 USD</span>
-                            </div>
-                        </label>
-
-                        <label class="sw-calc-option">
-                            <input type="radio" name="calc_type" value="3000,8000" data-label="Sistema a la Medida" onchange="swCalcUpdate()">
+                            <input type="radio" name="calc_type" value="1500,5000" data-label="Sistema a la Medida" onchange="swCalcUpdate()">
                             <div>
                                 <strong style="display:block; font-size:.92rem;">Sistema a la Medida</strong>
-                                <span style="font-size:.8rem; color:#888;">Desde $3,000 – $8,000+ USD</span>
+                                <span style="font-size:.8rem; color:#888;">Desde $1,500 – $5,000+ USD</span>
                             </div>
                         </label>
                     </div>
