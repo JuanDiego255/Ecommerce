@@ -366,6 +366,9 @@ class TenantInfoController extends Controller
             $tenantinfo->email = $request->email;
             $tenantinfo->delivery = $request->delivery;
             $tenantinfo->about = $request->about;
+            if ($request->has('kind_business')) {
+                $tenantinfo->kind_business = (int) $request->kind_business;
+            }
             $tenantinfo->update();
             DB::commit();
             return redirect('/tenant-info')->with(['status' => 'Se ha editado la información del negocio con éxito', 'icon' => 'success']);

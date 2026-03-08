@@ -354,6 +354,36 @@ is-invalid
                                     <label class="custom-control-label" for="customCheck1">{{ __('Eliminar') }}</label>
                                 </div>
                             </div>
+
+                            {{-- ── Tipo de negocio ──────────────────────────────── --}}
+                            <div class="col-md-12 mt-4">
+                                <div class="card border">
+                                    <div class="card-header py-2">
+                                        <h6 class="mb-0 text-dark">
+                                            <i class="material-icons align-middle me-1" style="font-size:1rem;">settings</i>
+                                            Tipo de Negocio
+                                        </h6>
+                                    </div>
+                                    <div class="card-body py-3">
+                                        <label class="form-label">Selecciona el tipo de sitio web</label>
+                                        <select name="kind_business" class="form-select">
+                                            <option value="0"  {{ ($item->kind_business ?? 0) == 0  ? 'selected' : '' }}>E-commerce estándar</option>
+                                            <option value="1"  {{ ($item->kind_business ?? 0) == 1  ? 'selected' : '' }}>E-commerce con vendedores</option>
+                                            <option value="2"  {{ ($item->kind_business ?? 0) == 2  ? 'selected' : '' }}>Tipo 2</option>
+                                            <option value="3"  {{ ($item->kind_business ?? 0) == 3  ? 'selected' : '' }}>Tipo 3</option>
+                                            <option value="4"  {{ ($item->kind_business ?? 0) == 4  ? 'selected' : '' }}>Tipo 4</option>
+                                            <option value="5"  {{ ($item->kind_business ?? 0) == 5  ? 'selected' : '' }}>Barbería / Salón</option>
+                                            <option value="6"  {{ ($item->kind_business ?? 0) == 6  ? 'selected' : '' }}>Tipo 6 (AV)</option>
+                                            <option value="7"  {{ ($item->kind_business ?? 0) == 7  ? 'selected' : '' }}>Tipo 7</option>
+                                            <option value="8"  {{ ($item->kind_business ?? 0) == 8  ? 'selected' : '' }}>Landing Page informativa</option>
+                                        </select>
+                                        <small class="text-muted">
+                                            <strong>Landing Page informativa (8):</strong> activa el módulo de secciones dinámicas (Nosotros, Servicios, FAQ, Blog, Contacto).
+                                            Requiere recargar la página para ver el menú actualizado.
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                     </div>
