@@ -170,6 +170,79 @@
             <div class="collapse navbar-collapse  w-auto " id="sidenav-collapse-main">
                 <ul class="navbar-nav">
                     @if (isset($tenantinfo->tenant) && $tenantinfo->tenant != 'main')
+                        {{-- ── LANDING PAGE (kind_business = 8) ─────────────────────────── --}}
+                        @if (isset($tenantinfo->kind_business) && $tenantinfo->kind_business == 8)
+                            {{-- Secciones --}}
+                            <li class="nav-item">
+                                <a @if(request()->routeIs('admin.landing.sections*')) class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
+                                    href="{{ route('admin.landing.sections') }}">
+                                    <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                                        <i class="material-icons opacity-10">view_module</i>
+                                    </div>
+                                    <span class="nav-link-text ms-1">Secciones del Sitio</span>
+                                </a>
+                            </li>
+                            {{-- FAQs --}}
+                            <li class="nav-item">
+                                <a @if(request()->routeIs('admin.landing.faq*')) class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
+                                    href="{{ route('admin.landing.faq') }}">
+                                    <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                                        <i class="material-icons opacity-10">quiz</i>
+                                    </div>
+                                    <span class="nav-link-text ms-1">Preguntas Frecuentes</span>
+                                </a>
+                            </li>
+                            {{-- Apariencia --}}
+                            <li class="nav-item">
+                                <a @if(request()->routeIs('admin.landing.settings*')) class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
+                                    href="{{ route('admin.landing.settings') }}">
+                                    <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                                        <i class="material-icons opacity-10">palette</i>
+                                    </div>
+                                    <span class="nav-link-text ms-1">Apariencia</span>
+                                </a>
+                            </li>
+                            {{-- Blog --}}
+                            <li class="nav-item">
+                                <a @if ($view_name == 'admin_blog_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
+                                    href="{{ url('blogs') }}">
+                                    <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                                        <i class="material-icons opacity-10">article</i>
+                                    </div>
+                                    <span class="nav-link-text ms-1">Blog</span>
+                                </a>
+                            </li>
+                            {{-- Servicios (del modelo de barbería) --}}
+                            <li class="nav-item">
+                                <a class="nav-link text-sidebar"
+                                    href="{{ url('servicios') }}">
+                                    <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                                        <i class="material-icons opacity-10">star</i>
+                                    </div>
+                                    <span class="nav-link-text ms-1">Servicios</span>
+                                </a>
+                            </li>
+                            {{-- Información del Negocio --}}
+                            <li class="nav-item">
+                                <a class="nav-link text-sidebar" href="{{ url('tenant-info') }}">
+                                    <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                                        <i class="material-icons opacity-10">business</i>
+                                    </div>
+                                    <span class="nav-link-text ms-1">Información del Negocio</span>
+                                </a>
+                            </li>
+                            {{-- Usuarios --}}
+                            <li class="nav-item">
+                                <a @if ($view_name == 'admin_users_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
+                                    href="{{ url('users') }}">
+                                    <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                                        <i class="material-icons opacity-10">group</i>
+                                    </div>
+                                    <span class="nav-link-text ms-1">Usuarios</span>
+                                </a>
+                            </li>
+                        @endif
+                        {{-- ── FIN LANDING PAGE ──────────────────────────────────────────── --}}
                         @if (isset($tenantinfo->kind_business) && $tenantinfo->kind_business == 5)
                             @can('barberos.manage')
                                 <li class="nav-item">

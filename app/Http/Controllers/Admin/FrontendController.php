@@ -18,7 +18,9 @@ use App\Models\Seller;
 use App\Models\Servicio;
 use App\Models\SocialNetwork;
 use App\Models\Stock;
+use App\Models\LandingSection;
 use App\Models\TenantInfo;
+use App\Models\TenantSocialNetwork;
 use App\Models\Testimonial;
 use Artesaos\SEOTools\Facades\OpenGraph;
 use Artesaos\SEOTools\Facades\SEOMeta;
@@ -39,6 +41,16 @@ class FrontendController extends Controller
     public function index($showModal = null)
     {
         $tenantinfo = TenantInfo::first();
+
+        // Landing page (kind_business = 8): redirigir al home de la landing
+        if ((int) ($tenantinfo->kind_business ?? 0) === 8) {
+            $settings = \App\Models\Settings::first();
+            $sections = \App\Models\LandingSection::activas()->get();
+            $social   = \App\Models\TenantSocialNetwork::all();
+            $section  = \App\Models\LandingSection::where('section_key', 'inicio')->first();
+            return view('frontend.landing.home', compact('tenantinfo', 'settings', 'sections', 'social', 'section'));
+        }
+
         $clothings_skincare = null;
 
         $social = Cache::remember('social_networks', $this->expirationTime, function () {
@@ -1084,11 +1096,11 @@ class FrontendController extends Controller
         $tenantinfo = Cache::remember('tenant_info', $this->expirationTime, function () {
             return TenantInfo::first();
         });
-        switch ($tenantinfo->kind_business) {
-
-            case (6):
+        switch ((int) ($tenantinfo->kind_business ?? 0)) {
+            case 6:
                 return view('frontend.av.about_us');
-                break;
+            case 8:
+                return redirect()->route('landing.nosotros');
             default:
                 if ($tenantinfo->kind_of_features == 1) {
                     return view('frontend.design_ecommerce.about_us');
@@ -1096,15 +1108,17 @@ class FrontendController extends Controller
                 return view('frontend.about_us');
         }
     }
+
     public function contact()
     {
         $tenantinfo = Cache::remember('tenant_info', $this->expirationTime, function () {
             return TenantInfo::first();
         });
-        switch ($tenantinfo->kind_business) {
-            case (6):
+        switch ((int) ($tenantinfo->kind_business ?? 0)) {
+            case 6:
                 return view('frontend.av.contact');
-                break;
+            case 8:
+                return redirect()->route('landing.contacto');
             default:
                 return view('frontend.contact');
         }

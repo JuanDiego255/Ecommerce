@@ -782,6 +782,41 @@ Route::middleware([
             Route::get('/registrations/{id}/comprobante', [RegistrationController::class, 'descargarComprobante'])->name('registrations.download');
         });
     });
+    // ─────────────────────────────────────────────────────────────────────────
+    // LANDING PAGE (kind_business = 8) - Rutas públicas
+    // ─────────────────────────────────────────────────────────────────────────
+    Route::group([], function () {
+        Route::get('/nosotros',              [\App\Http\Controllers\LandingController::class, 'nosotros'])->name('landing.nosotros');
+        Route::get('/servicios-info',        [\App\Http\Controllers\LandingController::class, 'servicios'])->name('landing.servicios');
+        Route::get('/preguntas-frecuentes',  [\App\Http\Controllers\LandingController::class, 'faq'])->name('landing.faq');
+        Route::get('/nuestro-blog',          [\App\Http\Controllers\LandingController::class, 'blog'])->name('landing.blog');
+        Route::get('/contacto',             [\App\Http\Controllers\LandingController::class, 'contacto'])->name('landing.contacto');
+        Route::post('/contacto/send',       [\App\Http\Controllers\LandingController::class, 'sendContacto'])->name('landing.contacto.send');
+    });
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // LANDING PAGE - Rutas Admin (requieren isAdmin)
+    // ─────────────────────────────────────────────────────────────────────────
+    Route::middleware(['isAdmin'])->group(function () {
+        // Gestión de secciones
+        Route::get('/landing/sections',                     [\App\Http\Controllers\Admin\LandingAdminController::class, 'sectionsIndex'])->name('admin.landing.sections');
+        Route::put('/landing/sections/{section}',           [\App\Http\Controllers\Admin\LandingAdminController::class, 'sectionsUpdate'])->name('admin.landing.sections.update');
+        Route::patch('/landing/sections/{section}/toggle',  [\App\Http\Controllers\Admin\LandingAdminController::class, 'sectionsToggle'])->name('admin.landing.sections.toggle');
+        Route::post('/landing/sections/reorder',            [\App\Http\Controllers\Admin\LandingAdminController::class, 'sectionsReorder'])->name('admin.landing.sections.reorder');
+
+        // Apariencia / Settings landing
+        Route::get('/landing/settings',  [\App\Http\Controllers\Admin\LandingAdminController::class, 'settingsIndex'])->name('admin.landing.settings');
+        Route::put('/landing/settings',  [\App\Http\Controllers\Admin\LandingAdminController::class, 'settingsUpdate'])->name('admin.landing.settings.update');
+
+        // FAQs
+        Route::get('/landing/faq',                   [\App\Http\Controllers\Admin\LandingAdminController::class, 'faqIndex'])->name('admin.landing.faq');
+        Route::get('/landing/faq/create',            [\App\Http\Controllers\Admin\LandingAdminController::class, 'faqCreate'])->name('admin.landing.faq.create');
+        Route::post('/landing/faq',                  [\App\Http\Controllers\Admin\LandingAdminController::class, 'faqStore'])->name('admin.landing.faq.store');
+        Route::get('/landing/faq/{faq}/edit',        [\App\Http\Controllers\Admin\LandingAdminController::class, 'faqEdit'])->name('admin.landing.faq.edit');
+        Route::put('/landing/faq/{faq}',             [\App\Http\Controllers\Admin\LandingAdminController::class, 'faqUpdate'])->name('admin.landing.faq.update');
+        Route::delete('/landing/faq/{faq}',          [\App\Http\Controllers\Admin\LandingAdminController::class, 'faqDestroy'])->name('admin.landing.faq.destroy');
+    });
+
     //images Tenant
     Route::get('/file/{path}', function ($path) {
         $path = Storage::path($path);
