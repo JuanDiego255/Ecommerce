@@ -50,26 +50,35 @@
     50%{transform:translateX(-50%) translateY(10px)}
 }
 
-/* Cards de presentación */
-.lp-feature-card {
-    border: none;
-    border-radius: 16px;
-    padding: 2rem;
-    height: 100%;
-    transition: box-shadow .25s, transform .25s;
-    background: #fff;
+/* Items de secciones */
+.lp-section-item {
+    display: block;
+    text-align: center;
+    padding: 2rem 1rem;
+    text-decoration: none;
+    border-top: 2px solid transparent;
+    transition: border-color .2s;
 }
-.lp-feature-card:hover {
-    box-shadow: 0 12px 40px rgba(0,0,0,.1);
-    transform: translateY(-4px);
+.lp-section-item:hover {
+    border-top-color: var(--lp-primary);
 }
-.lp-feature-icon {
-    width: 56px; height: 56px;
-    border-radius: 12px;
-    background: var(--lp-primary);
-    display: flex; align-items: center; justify-content: center;
-    margin-bottom: 1.2rem;
-    color: #fff; font-size: 1.4rem;
+.lp-section-item-icon {
+    font-size: 2rem;
+    color: var(--lp-primary);
+    margin-bottom: 1rem;
+    display: block;
+}
+.lp-section-item-title {
+    font-weight: 700;
+    color: var(--lp-text, #1a1a1a);
+    margin-bottom: .4rem;
+    font-size: 1.05rem;
+}
+.lp-section-item-sub {
+    color: #6c757d;
+    font-size: .88rem;
+    margin-bottom: 0;
+    line-height: 1.6;
 }
 @endsection
 
@@ -127,7 +136,7 @@
             <p class="lp-section-subtitle">Conoce todo lo que tenemos para ti</p>
         </div>
 
-        <div class="row g-4 justify-content-center">
+        <div class="row g-0 justify-content-center" style="border-bottom: 1px solid #eee;">
             @foreach($cardSections as $sec)
                 @php
                     $icons = [
@@ -147,21 +156,13 @@
                     $icon = $icons[$sec->section_key] ?? 'fa-circle';
                     $href = $cardRoutes[$sec->section_key] ?? '#';
                 @endphp
-                <div class="col-lg-4 col-md-6">
-                    <a href="{{ $href }}" class="text-decoration-none">
-                        <div class="lp-feature-card">
-                            <div class="lp-feature-icon">
-                                <i class="fa {{ $icon }}"></i>
-                            </div>
-                            <h5 style="font-weight:700;color:var(--lp-primary);margin-bottom:.5rem;">
-                                {{ $sec->titulo }}
-                            </h5>
-                            @if($sec->subtitulo)
-                                <p style="color:#6c757d;font-size:.9rem;margin-bottom:0;">
-                                    {{ $sec->subtitulo }}
-                                </p>
-                            @endif
-                        </div>
+                <div class="col-lg-3 col-md-6" style="border-top: 1px solid #eee; border-left: 1px solid #eee;">
+                    <a href="{{ $href }}" class="lp-section-item">
+                        <i class="fa {{ $icon }} lp-section-item-icon"></i>
+                        <div class="lp-section-item-title">{{ $sec->titulo }}</div>
+                        @if($sec->subtitulo)
+                            <p class="lp-section-item-sub">{{ $sec->subtitulo }}</p>
+                        @endif
                     </a>
                 </div>
             @endforeach
