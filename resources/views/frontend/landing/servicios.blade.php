@@ -1,140 +1,135 @@
-@extends('layouts.landing.main')
+@extends('layouts.design_ecommerce.frontmain')
 
-@section('title', ($section->titulo ?? 'Servicios') . ' - ' . ($tenantinfo->title ?? ''))
-
-@section('styles')
-.lp-page-hero {
-    background: var(--lp-primary);
-    color: #fff;
-    padding: 80px 0 60px;
-    text-align: center;
-}
-.lp-page-hero h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(1.8rem, 4vw, 3rem);
-    font-weight: 700;
-    margin-bottom: .75rem;
-}
-.lp-page-hero p { opacity: .8; font-size: 1.05rem; }
-
-.service-card {
-    background: #fff;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0,0,0,.07);
-    transition: box-shadow .25s, transform .25s;
-    height: 100%;
-}
-.service-card:hover {
-    box-shadow: 0 12px 40px rgba(0,0,0,.14);
-    transform: translateY(-4px);
-}
-.service-card-img {
-    width: 100%; height: 200px;
-    object-fit: cover;
-    background: var(--lp-bg-section);
-}
-.service-card-img-placeholder {
-    width: 100%; height: 200px;
-    background: linear-gradient(135deg, var(--lp-primary) 0%, var(--lp-secondary) 100%);
-    display: flex; align-items: center; justify-content: center;
-    color: #fff; font-size: 2.5rem;
-}
-.service-card-body { padding: 1.5rem; }
-.service-price {
-    font-weight: 700;
-    font-size: 1.3rem;
-    color: var(--lp-secondary);
-}
-.service-duration {
-    font-size: .85rem;
-    color: #6c757d;
-}
-.service-badge {
-    display: inline-block;
-    background: var(--lp-primary);
-    color: #fff;
-    font-size: .75rem;
-    padding: .25rem .75rem;
-    border-radius: 50px;
-    margin-bottom: .75rem;
-}
+@section('metatag')
+    <title>{{ ($section->titulo ?? 'Servicios') . ' - ' . ($tenantinfo->title ?? '') }}</title>
 @endsection
 
 @section('content')
+<style>
+    .service-wrap {
+        background: #fff;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0,0,0,.08);
+        transition: box-shadow .25s, transform .25s;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    .service-wrap:hover {
+        box-shadow: 0 12px 40px rgba(0,0,0,.14);
+        transform: translateY(-4px);
+    }
+    .service-img {
+        width: 100%;
+        height: 210px;
+        object-fit: cover;
+        display: block;
+    }
+    .service-img-placeholder {
+        width: 100%;
+        height: 210px;
+        background: linear-gradient(135deg, var(--navbar,#222) 0%, var(--btn_cart,#888) 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: rgba(255,255,255,.35);
+        font-size: 3rem;
+    }
+    .service-body { padding: 1.4rem 1.5rem; flex: 1; display: flex; flex-direction: column; }
+    .service-badge {
+        display: inline-block;
+        background: var(--navbar, #222);
+        color: #fff;
+        font-size: .71rem;
+        padding: .2rem .75rem;
+        border-radius: 40px;
+        margin-bottom: .7rem;
+        letter-spacing: .05em;
+        text-transform: uppercase;
+    }
+    .service-price { font-size: 1.2rem; font-weight: 700; color: var(--btn_cart, #333); }
+    .service-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top: 1px solid #f0f0f0;
+        padding-top: .9rem;
+        margin-top: auto;
+    }
+</style>
 
-{{-- ── Page Hero ── --}}
-<section class="lp-page-hero">
-    <div class="container">
-        <h1>{{ $section->titulo ?? 'Nuestros Servicios' }}</h1>
-        @if($section->subtitulo)
-            <p>{{ $section->subtitulo }}</p>
-        @endif
-    </div>
+{{-- ── Page Banner ── --}}
+<section style="background:var(--navbar);padding:72px 0 60px;text-align:center;">
+    <h1 class="ltext-105 cl0">{{ $section->titulo ?? 'Nuestros Servicios' }}</h1>
+    @if($section->subtitulo)
+        <p class="stext-102 cl7 p-t-15" style="opacity:.82;max-width:560px;margin:0 auto;">{{ $section->subtitulo }}</p>
+    @endif
 </section>
 
 {{-- ── Listado de Servicios ── --}}
-<section class="lp-section">
+<div class="bg0 p-t-80 p-b-50">
     <div class="container">
 
         @if($services->isEmpty())
-            <div class="text-center py-5">
-                <i class="fa fa-briefcase" style="font-size:3rem;color:#dee2e6;"></i>
-                <p class="mt-3" style="color:#6c757d;">Próximamente publicaremos nuestros servicios.</p>
+            <div class="txt-center p-t-50 p-b-50">
+                <i class="fa fa-briefcase" style="font-size:3.5rem;color:#dee2e6;"></i>
+                <p class="stext-102 cl6 p-t-20">Próximamente publicaremos nuestros servicios.</p>
             </div>
         @else
-            @php
-                // Agrupar por categoría si existe
-                $grouped = $services->groupBy(fn($s) => $s->category?->nombre ?? 'Servicios');
-            @endphp
+            @php $grouped = $services->groupBy(fn($s) => $s->category?->nombre ?? ''); @endphp
 
             @foreach($grouped as $categoryName => $group)
-                @if($grouped->count() > 1)
-                    <div class="mb-4">
-                        <h3 style="font-family:'Playfair Display',serif;color:var(--lp-primary);font-size:1.6rem;">
+
+                @if($grouped->count() > 1 && $categoryName)
+                    <div class="p-b-20 p-t-20">
+                        <h3 class="ltext-103 cl3" style="font-size:1.5rem;font-weight:700;">
                             {{ $categoryName }}
                         </h3>
-                        <hr style="border-color:var(--lp-secondary);border-width:2px;width:60px;margin-top:.5rem;">
+                        <div style="width:50px;height:3px;background:var(--btn_cart,#333);margin-top:.5rem;"></div>
                     </div>
                 @endif
 
-                <div class="row g-4 mb-5">
+                <div class="row p-b-50">
                     @foreach($group as $service)
-                        <div class="col-lg-4 col-md-6">
-                            <div class="service-card">
-                                {{-- Imagen del servicio --}}
+                        <div class="col-md-6 col-xl-4 p-b-30">
+                            <div class="service-wrap">
+
                                 @if($service->image)
-                                    <img src="{{ route('file', $service->image) }}"
-                                         alt="{{ $service->nombre }}" class="service-card-img">
+                                    <img src="{{ route($ruta, $service->image) }}"
+                                         alt="{{ $service->nombre }}" class="service-img">
                                 @else
-                                    <div class="service-card-img-placeholder">
+                                    <div class="service-img-placeholder">
                                         <i class="fa fa-scissors"></i>
                                     </div>
                                 @endif
 
-                                <div class="service-card-body">
+                                <div class="service-body">
                                     @if($service->category?->nombre)
                                         <span class="service-badge">{{ $service->category->nombre }}</span>
                                     @endif
-                                    <h5 style="font-weight:700;color:var(--lp-primary);margin-bottom:.4rem;">
+
+                                    <h5 class="mtext-112 cl2 p-b-8" style="font-weight:700;">
                                         {{ $service->nombre }}
                                     </h5>
+
                                     @if($service->descripcion)
-                                        <p style="color:#6c757d;font-size:.9rem;line-height:1.6;margin-bottom:1rem;">
+                                        <p class="stext-102 cl6" style="font-size:.87rem;line-height:1.65;flex:1;margin-bottom:.5rem;">
                                             {{ Str::limit($service->descripcion, 120) }}
                                         </p>
                                     @endif
-                                    <div class="d-flex align-items-center justify-content-between">
-                                        @if($service->base_price_cents > 0)
-                                            <span class="service-price">
+
+                                    <div class="service-footer">
+                                        <span class="service-price">
+                                            @if($service->base_price_cents > 0)
                                                 ₡{{ number_format($service->base_price_cents / 100, 0) }}
-                                            </span>
-                                        @else
-                                            <span class="service-price">Consultar</span>
-                                        @endif
+                                            @else
+                                                Consultar
+                                            @endif
+                                        </span>
                                         @if($service->duration_minutes)
-                                            <span class="service-duration">
-                                                <i class="fa fa-clock-o me-1"></i>{{ $service->duration_minutes }} min
+                                            <span class="stext-102 cl6" style="font-size:.82rem;">
+                                                <i class="fa fa-clock-o" style="margin-right:4px;"></i>{{ $service->duration_minutes }} min
                                             </span>
                                         @endif
                                     </div>
@@ -143,29 +138,37 @@
                         </div>
                     @endforeach
                 </div>
+
             @endforeach
         @endif
 
     </div>
-</section>
+</div>
 
 {{-- ── CTA ── --}}
 @foreach($sections as $sec)
     @if($sec->section_key === 'contacto')
-        <section class="lp-section" style="background:var(--lp-bg-section);text-align:center;">
+        <section style="background:#f8f8f8;padding:72px 0;text-align:center;">
             <div class="container">
-                <h2 class="lp-section-title">¿Te interesa algún servicio?</h2>
-                <div class="lp-divider"></div>
-                <p class="lp-section-subtitle">Contáctanos y con gusto te asesoramos</p>
-                <a href="{{ route('landing.contacto') }}" class="btn btn-lp-primary btn-lg">
-                    Solicitar Información
-                </a>
-                @if(isset($tenantinfo->whatsapp) && $tenantinfo->whatsapp)
-                    <a href="https://wa.me/506{{ $tenantinfo->whatsapp }}" target="_blank"
-                       class="btn btn-lp-secondary btn-lg ms-3">
-                        <i class="fa fa-whatsapp me-1"></i> WhatsApp
+                <h2 class="ltext-103 cl3" style="font-size:2rem;font-weight:700;margin-bottom:.5rem;">
+                    ¿Te interesa algún servicio?
+                </h2>
+                <div style="width:60px;height:4px;background:var(--btn_cart,#333);margin:16px auto 1.5rem;"></div>
+                <p class="stext-102 cl6 p-b-30">Contáctanos y con gusto te asesoramos</p>
+                <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:.75rem;">
+                    <a href="{{ route('landing.contacto') }}"
+                       class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04"
+                       style="display:inline-flex;">
+                        Solicitar Información
                     </a>
-                @endif
+                    @if(isset($tenantinfo->whatsapp) && $tenantinfo->whatsapp)
+                        <a href="https://wa.me/506{{ $tenantinfo->whatsapp }}" target="_blank"
+                           class="flex-c-m stext-101 cl0 size-101 bor1 p-lr-15 trans-04"
+                           style="display:inline-flex;background:var(--navbar);">
+                            <i class="fa fa-whatsapp" style="margin-right:6px;"></i> WhatsApp
+                        </a>
+                    @endif
+                </div>
             </div>
         </section>
         @break

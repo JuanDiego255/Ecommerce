@@ -1,141 +1,143 @@
-@extends('layouts.landing.main')
+@extends('layouts.design_ecommerce.frontmain')
 
-@section('title', ($section->titulo ?? 'Blog') . ' - ' . ($tenantinfo->title ?? ''))
-
-@section('styles')
-.lp-page-hero {
-    background: var(--lp-primary);
-    color: #fff;
-    padding: 80px 0 60px;
-    text-align: center;
-}
-.lp-page-hero h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(1.8rem, 4vw, 3rem);
-    font-weight: 700;
-    margin-bottom: .75rem;
-}
-.lp-page-hero p { opacity: .8; font-size: 1.05rem; }
-
-.blog-card {
-    background: #fff;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0,0,0,.07);
-    transition: box-shadow .25s, transform .25s;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-}
-.blog-card:hover {
-    box-shadow: 0 12px 40px rgba(0,0,0,.14);
-    transform: translateY(-4px);
-}
-.blog-card-img {
-    width: 100%; height: 220px;
-    object-fit: cover;
-}
-.blog-card-img-placeholder {
-    width: 100%; height: 220px;
-    background: linear-gradient(135deg, var(--lp-primary) 0%, var(--lp-secondary) 100%);
-    display: flex; align-items: center; justify-content: center;
-    color: rgba(255,255,255,.4); font-size: 3rem;
-}
-.blog-card-body { padding: 1.5rem; flex: 1; display: flex; flex-direction: column; }
-.blog-card-date {
-    font-size: .8rem;
-    color: var(--lp-secondary);
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: .06em;
-    margin-bottom: .5rem;
-}
-.blog-card-title {
-    font-weight: 700;
-    color: var(--lp-primary);
-    font-size: 1.05rem;
-    margin-bottom: .6rem;
-    flex: 1;
-}
-.blog-card-excerpt {
-    color: #6c757d;
-    font-size: .88rem;
-    line-height: 1.65;
-    margin-bottom: 1rem;
-}
-.blog-card-link {
-    color: var(--lp-secondary);
-    font-weight: 600;
-    font-size: .9rem;
-    text-decoration: none;
-}
-.blog-card-link:hover { color: var(--lp-primary); }
+@section('metatag')
+    <title>{{ ($section->titulo ?? 'Blog') . ' - ' . ($tenantinfo->title ?? '') }}</title>
 @endsection
 
 @section('content')
+<style>
+    /* Tarjeta de blog con imagen overlay (estilo block1) */
+    .blog-block {
+        position: relative;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0,0,0,.1);
+        display: block;
+        text-decoration: none;
+        background: #111;
+    }
+    .blog-block img {
+        width: 100%;
+        height: 270px;
+        object-fit: cover;
+        display: block;
+        transition: transform .45s, opacity .45s;
+        opacity: .88;
+    }
+    .blog-block:hover img { transform: scale(1.05); opacity: .7; }
+    .blog-block-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, rgba(0,0,0,.78) 0%, rgba(0,0,0,.08) 55%);
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        transition: background .3s;
+    }
+    .blog-block-date {
+        font-size: .74rem;
+        color: rgba(255,255,255,.65);
+        text-transform: uppercase;
+        letter-spacing: .07em;
+        margin-bottom: .4rem;
+    }
+    .blog-block-title {
+        color: #fff;
+        font-weight: 700;
+        font-size: 1rem;
+        line-height: 1.45;
+        margin-bottom: .7rem;
+    }
+    .blog-block-cta {
+        display: inline-flex;
+        align-items: center;
+        gap: .4rem;
+        font-size: .82rem;
+        font-weight: 700;
+        color: #fff;
+        background: var(--btn_cart, #333);
+        padding: .35rem .9rem;
+        border-radius: 40px;
+        width: fit-content;
+        transition: opacity .2s;
+        text-decoration: none;
+    }
+    .blog-block:hover .blog-block-cta { opacity: .88; }
+    .blog-no-img {
+        height: 270px;
+        background: linear-gradient(135deg, var(--navbar,#222) 0%, var(--btn_cart,#888) 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        padding: 1.5rem;
+        text-align: center;
+        flex-direction: column;
+        gap: .8rem;
+    }
+</style>
 
-{{-- ── Page Hero ── --}}
-<section class="lp-page-hero">
-    <div class="container">
-        <h1>{{ $section->titulo ?? 'Blog' }}</h1>
-        @if($section->subtitulo)
-            <p>{{ $section->subtitulo }}</p>
-        @endif
-    </div>
+{{-- ── Page Banner ── --}}
+<section style="background:var(--navbar);padding:72px 0 60px;text-align:center;">
+    <h1 class="ltext-105 cl0">{{ $section->titulo ?? 'Blog' }}</h1>
+    @if($section->subtitulo)
+        <p class="stext-102 cl7 p-t-15" style="opacity:.82;max-width:560px;margin:0 auto;">{{ $section->subtitulo }}</p>
+    @endif
 </section>
 
 {{-- ── Blog posts ── --}}
-<section class="lp-section">
+<div class="bg0 p-t-80 p-b-80">
     <div class="container">
 
         @if($blogs->isEmpty())
-            <div class="text-center py-5">
-                <i class="fa fa-pencil" style="font-size:3rem;color:#dee2e6;"></i>
-                <p class="mt-3" style="color:#6c757d;">Próximamente publicaremos nuestros artículos.</p>
+            <div class="txt-center p-t-50 p-b-50">
+                <i class="fa fa-pencil" style="font-size:3.5rem;color:#dee2e6;"></i>
+                <p class="stext-102 cl6 p-t-20">Próximamente publicaremos nuestros artículos.</p>
             </div>
         @else
-            <div class="row g-4">
+            <div class="row">
                 @foreach($blogs as $blog)
-                    <div class="col-lg-4 col-md-6">
-                        <div class="blog-card">
-                            {{-- Imagen --}}
-                            @php
-                                $imgField = $blog->image ?? $blog->horizontal_image ?? $blog->image_path ?? null;
-                            @endphp
-                            @if($imgField)
-                                <img src="{{ route('file', $imgField) }}"
-                                     alt="{{ $blog->title }}" class="blog-card-img">
-                            @else
-                                <div class="blog-card-img-placeholder">
-                                    <i class="fa fa-pencil-square-o"></i>
-                                </div>
-                            @endif
+                    @php
+                        $imgField = $blog->image ?? $blog->horizontal_image ?? $blog->image_path ?? null;
+                        $blogUrl  = $blog->name_url
+                                    ? url('blog/' . $blog->id . '/' . $blog->name_url)
+                                    : '#';
+                    @endphp
+                    <div class="col-md-6 col-xl-4 p-b-30">
 
-                            <div class="blog-card-body">
-                                <div class="blog-card-date">
-                                    <i class="fa fa-calendar-o me-1"></i>
-                                    {{ $blog->created_at->format('d M, Y') }}
+                        @if($imgField)
+                            <a href="{{ $blogUrl }}" class="blog-block">
+                                <img src="{{ route($ruta, $imgField) }}" alt="{{ $blog->title }}">
+                                <div class="blog-block-overlay">
+                                    <div class="blog-block-date">
+                                        <i class="fa fa-calendar-o" style="margin-right:4px;"></i>
+                                        {{ $blog->created_at->format('d M, Y') }}
+                                    </div>
+                                    <div class="blog-block-title">{{ $blog->title }}</div>
+                                    <span class="blog-block-cta">
+                                        Leer más <i class="fa fa-arrow-right"></i>
+                                    </span>
                                 </div>
-                                <h5 class="blog-card-title">{{ $blog->title }}</h5>
-                                @if($blog->title_opcional ?? $blog->description ?? null)
-                                    <p class="blog-card-excerpt">
-                                        {{ Str::limit($blog->title_opcional ?? $blog->description ?? '', 100) }}
-                                    </p>
-                                @endif
-                                @if($blog->name_url ?? null)
-                                    <a href="{{ url('blog/' . $blog->id . '/' . $blog->name_url) }}"
-                                       class="blog-card-link">
-                                        Leer más <i class="fa fa-arrow-right ms-1"></i>
+                            </a>
+                        @else
+                            <div class="blog-no-img">
+                                <i class="fa fa-pencil-square-o" style="font-size:2.5rem;color:rgba(255,255,255,.35);"></i>
+                                <strong style="color:#fff;font-size:1rem;line-height:1.4;">{{ $blog->title }}</strong>
+                                @if($blogUrl !== '#')
+                                    <a href="{{ $blogUrl }}" class="blog-block-cta">
+                                        Leer más <i class="fa fa-arrow-right"></i>
                                     </a>
                                 @endif
                             </div>
-                        </div>
+                        @endif
+
                     </div>
                 @endforeach
             </div>
         @endif
 
     </div>
-</section>
+</div>
 
 @endsection

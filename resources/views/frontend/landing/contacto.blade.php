@@ -1,109 +1,148 @@
-@extends('layouts.landing.main')
+@extends('layouts.design_ecommerce.frontmain')
 
-@section('title', ($section->titulo ?? 'Contacto') . ' - ' . ($tenantinfo->title ?? ''))
-
-@section('styles')
-.lp-page-hero {
-    background: var(--lp-primary);
-    color: #fff;
-    padding: 80px 0 60px;
-    text-align: center;
-}
-.lp-page-hero h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(1.8rem, 4vw, 3rem);
-    font-weight: 700;
-    margin-bottom: .75rem;
-}
-.lp-page-hero p { opacity: .8; font-size: 1.05rem; }
-
-.contact-card {
-    background: #fff;
-    border-radius: 20px;
-    padding: 2.5rem;
-    box-shadow: 0 8px 40px rgba(0,0,0,.09);
-}
-.contact-info-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 1rem;
-    margin-bottom: 1.75rem;
-}
-.contact-info-icon {
-    width: 48px; height: 48px;
-    border-radius: 12px;
-    background: var(--lp-primary);
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-    color: #fff; font-size: 1.1rem;
-}
-.contact-info-text strong { display: block; color: var(--lp-primary); font-weight: 600; }
-.contact-info-text span { color: #6c757d; font-size: .92rem; }
-.contact-info-text a { color: #6c757d; text-decoration: none; }
-.contact-info-text a:hover { color: var(--lp-secondary); }
-
-.form-control-lp {
-    border: 1.5px solid #e0e0e0;
-    border-radius: 10px;
-    padding: .875rem 1rem;
-    font-size: .95rem;
-    transition: border-color .2s, box-shadow .2s;
-}
-.form-control-lp:focus {
-    border-color: var(--lp-secondary);
-    box-shadow: 0 0 0 .2rem rgba(201,168,76,.18);
-    outline: none;
-}
-.form-label-lp {
-    font-weight: 600;
-    color: var(--lp-primary);
-    font-size: .9rem;
-    margin-bottom: .4rem;
-}
+@section('metatag')
+    <title>{{ ($section->titulo ?? 'Contacto') . ' - ' . ($tenantinfo->title ?? '') }}</title>
 @endsection
 
 @section('content')
+<style>
+    .contact-panel {
+        background: linear-gradient(160deg, var(--navbar,#1a1a2e) 0%, #16213e 100%);
+        padding: 72px 0 80px;
+    }
+    .contact-info-card {
+        background: rgba(255,255,255,.08);
+        border: 1px solid rgba(255,255,255,.14);
+        border-radius: 14px;
+        padding: 1.35rem 1.4rem;
+        display: flex;
+        gap: 1rem;
+        align-items: flex-start;
+        margin-bottom: .9rem;
+        transition: background .2s;
+    }
+    .contact-info-card:hover { background: rgba(255,255,255,.12); }
+    .contact-info-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 10px;
+        background: var(--btn_cart, #333);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 1.05rem;
+        flex-shrink: 0;
+    }
+    .contact-info-label {
+        font-size: .72rem;
+        color: rgba(255,255,255,.55);
+        text-transform: uppercase;
+        letter-spacing: .09em;
+        margin-bottom: .2rem;
+    }
+    .contact-info-value {
+        color: #fff;
+        font-weight: 600;
+        font-size: .93rem;
+        text-decoration: none;
+        display: block;
+    }
+    .contact-info-value:hover { color: var(--btn_cart, #ccc); }
+    .sn-btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background: rgba(255,255,255,.12);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        text-decoration: none;
+        font-size: 1.05rem;
+        transition: background .2s;
+    }
+    .sn-btn:hover { background: var(--btn_cart, #555); color: #fff; }
+    .contact-form-card {
+        background: #fff;
+        border-radius: 16px;
+        padding: 2.5rem 2.5rem 2rem;
+        box-shadow: 0 12px 50px rgba(0,0,0,.18);
+    }
+    .cf-label {
+        font-weight: 600;
+        color: var(--navbar, #222);
+        font-size: .87rem;
+        margin-bottom: .4rem;
+        display: block;
+    }
+    .cf-control {
+        display: block;
+        width: 100%;
+        border: 1.5px solid #e8e8e8;
+        border-radius: 10px;
+        padding: .8rem 1rem;
+        font-size: .91rem;
+        outline: none;
+        transition: border-color .2s, box-shadow .2s;
+        background: #fafafa;
+        color: #333;
+    }
+    .cf-control:focus {
+        border-color: var(--btn_cart, #333);
+        box-shadow: 0 0 0 3px rgba(0,0,0,.06);
+        background: #fff;
+    }
+    .cf-error { color: #dc3545; font-size: .81rem; margin-top: .25rem; display: block; }
+    .cf-success {
+        background: #d4edda;
+        border: 1px solid #c3e6cb;
+        border-radius: 10px;
+        padding: 1rem 1.25rem;
+        margin-bottom: 1.5rem;
+        color: #155724;
+        font-size: .9rem;
+    }
+</style>
 
-{{-- ── Page Hero ── --}}
-<section class="lp-page-hero">
-    <div class="container">
-        <h1>{{ $section->titulo ?? 'Contáctanos' }}</h1>
-        @if($section->subtitulo)
-            <p>{{ $section->subtitulo }}</p>
-        @endif
-    </div>
+{{-- ── Page Banner ── --}}
+<section style="background:var(--navbar);padding:72px 0 60px;text-align:center;">
+    <h1 class="ltext-105 cl0">{{ $section->titulo ?? 'Contáctanos' }}</h1>
+    @if($section->subtitulo)
+        <p class="stext-102 cl7 p-t-15" style="opacity:.82;max-width:560px;margin:0 auto;">{{ $section->subtitulo }}</p>
+    @endif
 </section>
 
 {{-- ── Contacto ── --}}
-<section class="lp-section">
+<div class="contact-panel">
     <div class="container">
-        <div class="row g-5 justify-content-center">
+        <div class="row" style="gap:2.5rem 0;">
 
             {{-- ─ Info de contacto ─ --}}
             <div class="col-lg-4">
-                <h2 class="lp-section-title" style="font-size:1.7rem;">Información de contacto</h2>
-                <div class="lp-divider" style="margin-left:0;margin-bottom:2rem;"></div>
+                <h3 class="ltext-103 cl0 p-b-25" style="font-size:1.45rem;font-weight:700;">
+                    Información de contacto
+                </h3>
 
                 @if(isset($tenantinfo->email) && $tenantinfo->email)
-                    <div class="contact-info-item">
-                        <div class="contact-info-icon">
-                            <i class="fa fa-envelope-o"></i>
-                        </div>
-                        <div class="contact-info-text">
-                            <strong>Correo electrónico</strong>
-                            <a href="mailto:{{ $tenantinfo->email }}">{{ $tenantinfo->email }}</a>
+                    <div class="contact-info-card">
+                        <div class="contact-info-icon"><i class="fa fa-envelope-o"></i></div>
+                        <div>
+                            <div class="contact-info-label">Correo electrónico</div>
+                            <a href="mailto:{{ $tenantinfo->email }}" class="contact-info-value">
+                                {{ $tenantinfo->email }}
+                            </a>
                         </div>
                     </div>
                 @endif
 
                 @if(isset($tenantinfo->whatsapp) && $tenantinfo->whatsapp)
-                    <div class="contact-info-item">
-                        <div class="contact-info-icon" style="background:var(--lp-secondary);">
-                            <i class="fa fa-whatsapp"></i>
-                        </div>
-                        <div class="contact-info-text">
-                            <strong>WhatsApp</strong>
-                            <a href="https://wa.me/506{{ $tenantinfo->whatsapp }}" target="_blank">
+                    <div class="contact-info-card">
+                        <div class="contact-info-icon"><i class="fa fa-whatsapp"></i></div>
+                        <div>
+                            <div class="contact-info-label">WhatsApp</div>
+                            <a href="https://wa.me/506{{ $tenantinfo->whatsapp }}" target="_blank"
+                               class="contact-info-value">
                                 +506 {{ $tenantinfo->whatsapp }}
                             </a>
                         </div>
@@ -111,56 +150,52 @@
                 @endif
 
                 @if(isset($settings->landing_direccion) && $settings->landing_direccion)
-                    <div class="contact-info-item">
-                        <div class="contact-info-icon">
-                            <i class="fa fa-map-marker"></i>
-                        </div>
-                        <div class="contact-info-text">
-                            <strong>Dirección</strong>
-                            <span>{{ $settings->landing_direccion }}</span>
+                    <div class="contact-info-card">
+                        <div class="contact-info-icon"><i class="fa fa-map-marker"></i></div>
+                        <div>
+                            <div class="contact-info-label">Dirección</div>
+                            <span class="contact-info-value">{{ $settings->landing_direccion }}</span>
                         </div>
                     </div>
                 @endif
 
                 @if(isset($settings->landing_horario) && $settings->landing_horario)
-                    <div class="contact-info-item">
-                        <div class="contact-info-icon">
-                            <i class="fa fa-clock-o"></i>
-                        </div>
-                        <div class="contact-info-text">
-                            <strong>Horario</strong>
-                            <span>{{ $settings->landing_horario }}</span>
+                    <div class="contact-info-card">
+                        <div class="contact-info-icon"><i class="fa fa-clock-o"></i></div>
+                        <div>
+                            <div class="contact-info-label">Horario</div>
+                            <span class="contact-info-value">{{ $settings->landing_horario }}</span>
                         </div>
                     </div>
                 @endif
 
-                {{-- Redes sociales --}}
+                {{-- Redes Sociales --}}
                 @if($social->count() > 0 || (isset($tenantinfo->whatsapp) && $tenantinfo->whatsapp))
-                    <div class="mt-4">
-                        <h6 style="color:var(--lp-primary);font-weight:700;margin-bottom:1rem;">Síguenos</h6>
-                        <div class="d-flex gap-2 flex-wrap">
+                    <div style="margin-top:1.5rem;">
+                        <h6 style="color:rgba(255,255,255,.55);font-size:.72rem;text-transform:uppercase;
+                                   letter-spacing:.1em;margin-bottom:1rem;">
+                            Síguenos
+                        </h6>
+                        <div style="display:flex;flex-wrap:wrap;gap:.5rem;">
                             @if(isset($tenantinfo->whatsapp) && $tenantinfo->whatsapp)
                                 <a href="https://wa.me/506{{ $tenantinfo->whatsapp }}" target="_blank"
-                                   style="width:40px;height:40px;border-radius:10px;background:var(--lp-primary);
-                                          display:flex;align-items:center;justify-content:center;color:#fff;
-                                          text-decoration:none;font-size:1.1rem;">
+                                   class="sn-btn" title="WhatsApp">
                                     <i class="fa fa-whatsapp"></i>
                                 </a>
                             @endif
                             @foreach($social as $sn)
                                 @php
-                                    $icon = 'fa-globe';
-                                    $name = $sn->social_network ?? $sn->name ?? '';
-                                    if (stripos($name, 'facebook') !== false)  $icon = 'fa-facebook';
-                                    elseif (stripos($name, 'instagram') !== false) $icon = 'fa-instagram';
-                                    elseif (stripos($name, 'twitter') !== false)   $icon = 'fa-twitter';
-                                    elseif (stripos($name, 'linkedin') !== false)  $icon = 'fa-linkedin';
+                                    $snIcon = 'fa-globe';
+                                    $snName = $sn->social_network ?? $sn->name ?? '';
+                                    if (stripos($snName, 'facebook')  !== false) $snIcon = 'fa-facebook';
+                                    elseif (stripos($snName, 'instagram') !== false) $snIcon = 'fa-instagram';
+                                    elseif (stripos($snName, 'twitter')   !== false) $snIcon = 'fa-twitter';
+                                    elseif (stripos($snName, 'linkedin')  !== false) $snIcon = 'fa-linkedin';
+                                    elseif (stripos($snName, 'youtube')   !== false) $snIcon = 'fa-youtube';
                                 @endphp
                                 <a href="{{ $sn->url ?? '#' }}" target="_blank"
-                                   style="width:40px;height:40px;border-radius:10px;background:var(--lp-primary);
-                                          display:flex;align-items:center;justify-content:center;color:#fff;
-                                          text-decoration:none;font-size:1.1rem;">
-                                    <i class="fa {{ $icon }}"></i>
+                                   class="sn-btn" title="{{ $snName }}">
+                                    <i class="fa {{ $snIcon }}"></i>
                                 </a>
                             @endforeach
                         </div>
@@ -169,59 +204,65 @@
             </div>
 
             {{-- ─ Formulario ─ --}}
-            <div class="col-lg-7">
-                <div class="contact-card">
-                    <h3 style="font-family:'Playfair Display',serif;color:var(--lp-primary);
-                               font-size:1.6rem;margin-bottom:1.5rem;">
+            <div class="col-lg-7 offset-lg-1">
+                <div class="contact-form-card">
+                    <h3 class="mtext-112 cl2 p-b-25" style="font-weight:700;font-size:1.35rem;">
+                        <i class="fa fa-paper-plane" style="color:var(--btn_cart,#333);margin-right:10px;"></i>
                         Envíanos un mensaje
                     </h3>
 
                     @if(session('success'))
-                        <div class="alert alert-success alert-dismissible fade show">
-                            {{ session('success') }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        <div class="cf-success">
+                            <i class="fa fa-check-circle" style="margin-right:8px;"></i>{{ session('success') }}
                         </div>
                     @endif
 
                     <form action="{{ route('landing.contacto.send') }}" method="POST">
                         @csrf
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label class="form-label-lp">Nombre *</label>
+                        <div class="row">
+                            <div class="col-sm-6" style="margin-bottom:1.2rem;">
+                                <label class="cf-label">Nombre *</label>
                                 <input type="text" name="nombre"
-                                       class="form-control form-control-lp @error('nombre') is-invalid @enderror"
-                                       value="{{ old('nombre') }}" required placeholder="Tu nombre completo">
+                                       class="cf-control"
+                                       value="{{ old('nombre') }}" required
+                                       placeholder="Tu nombre completo">
                                 @error('nombre')
-                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    <span class="cf-error">{{ $message }}</span>
                                 @enderror
                             </div>
-                            <div class="col-md-6">
-                                <label class="form-label-lp">Correo electrónico *</label>
+                            <div class="col-sm-6" style="margin-bottom:1.2rem;">
+                                <label class="cf-label">Correo electrónico *</label>
                                 <input type="email" name="email"
-                                       class="form-control form-control-lp @error('email') is-invalid @enderror"
-                                       value="{{ old('email') }}" required placeholder="tu@correo.com">
+                                       class="cf-control"
+                                       value="{{ old('email') }}" required
+                                       placeholder="tu@correo.com">
                                 @error('email')
-                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    <span class="cf-error">{{ $message }}</span>
                                 @enderror
                             </div>
-                            <div class="col-12">
-                                <label class="form-label-lp">Teléfono (opcional)</label>
+                            <div class="col-12" style="margin-bottom:1.2rem;">
+                                <label class="cf-label">Teléfono (opcional)</label>
                                 <input type="text" name="telefono"
-                                       class="form-control form-control-lp"
-                                       value="{{ old('telefono') }}" placeholder="Ej: 8888-8888">
+                                       class="cf-control"
+                                       value="{{ old('telefono') }}"
+                                       placeholder="Ej: 8888-8888">
                             </div>
-                            <div class="col-12">
-                                <label class="form-label-lp">Mensaje *</label>
+                            <div class="col-12" style="margin-bottom:1.5rem;">
+                                <label class="cf-label">Mensaje *</label>
                                 <textarea name="mensaje" rows="5"
-                                          class="form-control form-control-lp @error('mensaje') is-invalid @enderror"
-                                          required placeholder="¿En qué podemos ayudarte?">{{ old('mensaje') }}</textarea>
+                                          class="cf-control"
+                                          required
+                                          placeholder="¿En qué podemos ayudarte?">{{ old('mensaje') }}</textarea>
                                 @error('mensaje')
-                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    <span class="cf-error">{{ $message }}</span>
                                 @enderror
                             </div>
-                            <div class="col-12 pt-1">
-                                <button type="submit" class="btn btn-lp-primary w-100 py-3">
-                                    <i class="fa fa-paper-plane me-2"></i>Enviar Mensaje
+                            <div class="col-12">
+                                <button type="submit"
+                                        class="flex-c-m stext-101 cl0 bg1 bor1 hov-btn1 trans-04"
+                                        style="display:flex;width:100%;height:52px;border-radius:10px;
+                                               font-size:.95rem;font-weight:700;cursor:pointer;">
+                                    <i class="fa fa-paper-plane" style="margin-right:8px;"></i> Enviar Mensaje
                                 </button>
                             </div>
                         </div>
@@ -231,6 +272,6 @@
 
         </div>
     </div>
-</section>
+</div>
 
 @endsection
