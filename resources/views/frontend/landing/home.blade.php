@@ -1,97 +1,78 @@
-@extends('layouts.landing.main')
+@extends('layouts.design_ecommerce.frontmain')
 
-@section('title', ($section->titulo ?? 'Inicio') . ' - ' . ($tenantinfo->title ?? ''))
-
-@section('styles')
-.lp-hero {
-    position: relative;
-    min-height: 92vh;
-    display: flex;
-    align-items: center;
-    background: var(--lp-primary);
-    overflow: hidden;
-}
-.lp-hero-bg {
-    position: absolute;
-    inset: 0;
-    background-size: cover;
-    background-position: center;
-    opacity: .35;
-}
-.lp-hero-content {
-    position: relative;
-    z-index: 2;
-    color: var(--lp-text-hero);
-}
-.lp-hero-title {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(2.2rem, 6vw, 4.5rem);
-    font-weight: 700;
-    line-height: 1.15;
-    margin-bottom: 1.25rem;
-}
-.lp-hero-subtitle {
-    font-size: clamp(1rem, 2.5vw, 1.3rem);
-    opacity: .85;
-    max-width: 560px;
-    line-height: 1.7;
-    margin-bottom: 2rem;
-}
-.lp-scroll-indicator {
-    position: absolute;
-    bottom: 2rem;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 2;
-    animation: bounce 2s infinite;
-}
-@keyframes bounce {
-    0%,100%{transform:translateX(-50%) translateY(0)}
-    50%{transform:translateX(-50%) translateY(10px)}
-}
-
-/* Items de secciones */
-.lp-section-item {
-    display: block;
-    text-align: center;
-    padding: 2rem 1rem;
-    text-decoration: none;
-    border-top: 2px solid transparent;
-    transition: border-color .2s;
-}
-.lp-section-item:hover {
-    border-top-color: var(--lp-primary);
-}
-.lp-section-item-icon {
-    font-size: 2rem;
-    color: var(--lp-primary);
-    margin-bottom: 1rem;
-    display: block;
-}
-.lp-section-item-title {
-    font-weight: 700;
-    color: var(--lp-text, #1a1a1a);
-    margin-bottom: .4rem;
-    font-size: 1.05rem;
-}
-.lp-section-item-sub {
-    color: #6c757d;
-    font-size: .88rem;
-    margin-bottom: 0;
-    line-height: 1.6;
-}
+@section('metatag')
+    <title>{{ ($section->titulo ?? 'Inicio') . ' - ' . ($tenantinfo->title ?? '') }}</title>
 @endsection
 
 @section('content')
+<style>
+    .lp-hero {
+        position: relative;
+        min-height: 92vh;
+        display: flex;
+        align-items: center;
+        background: var(--navbar, #1a1a2e);
+        overflow: hidden;
+    }
+    .lp-hero-bg {
+        position: absolute;
+        inset: 0;
+        background-size: cover;
+        background-position: center;
+        opacity: .35;
+    }
+    .lp-hero-content {
+        position: relative;
+        z-index: 2;
+    }
+    .lp-hero-title {
+        font-size: clamp(2.2rem, 6vw, 4.5rem);
+        font-weight: 700;
+        line-height: 1.15;
+        margin-bottom: 1.25rem;
+        color: #fff;
+    }
+    .lp-hero-subtitle {
+        font-size: clamp(1rem, 2.5vw, 1.25rem);
+        opacity: .85;
+        max-width: 560px;
+        line-height: 1.7;
+        margin-bottom: 2rem;
+        color: #fff;
+    }
+    .lp-scroll-indicator {
+        position: absolute;
+        bottom: 2rem;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 2;
+        animation: lp-bounce 2s infinite;
+    }
+    @keyframes lp-bounce {
+        0%,100% { transform: translateX(-50%) translateY(0); }
+        50%      { transform: translateX(-50%) translateY(10px); }
+    }
+    .lp-section-card {
+        border-radius: 8px;
+        background: #f8f8f8;
+        height: 100%;
+        padding: 2rem 1.8rem;
+        transition: box-shadow .2s;
+        text-decoration: none;
+        display: block;
+    }
+    .lp-section-card:hover {
+        box-shadow: 0 6px 24px rgba(0,0,0,.1);
+        text-decoration: none;
+    }
+</style>
 
 {{-- ── Hero ── --}}
 <section class="lp-hero">
-    @php
-        $heroImage = $settings->landing_hero_image ?? null;
-    @endphp
+    @php $heroImage = $settings->landing_hero_image ?? null; @endphp
     @if($heroImage)
         <div class="lp-hero-bg"
-             style="background-image:url('{{ Storage::url($heroImage) }}')"></div>
+             style="background-image:url('{{ \Illuminate\Support\Facades\Storage::url($heroImage) }}')"></div>
     @endif
 
     <div class="container">
@@ -103,19 +84,25 @@
                 <p class="lp-hero-subtitle">
                     {!! $settings->landing_hero_subtitulo ?? ($tenantinfo->mision ?? '') !!}
                 </p>
-                @if($settings->landing_hero_btn_texto ?? null)
-                    <a href="{{ $settings->landing_hero_btn_url ?? route('landing.contacto') }}"
-                       class="btn btn-lp-secondary btn-lg me-3">
-                        {{ $settings->landing_hero_btn_texto }}
-                    </a>
-                @endif
-                @foreach($sections as $sec)
-                    @if($sec->section_key === 'contacto')
-                        <a href="{{ route('landing.contacto') }}" class="btn btn-lp-primary btn-lg">
-                            Contáctanos
+
+                <div class="d-flex flex-wrap gap-2">
+                    @if($settings->landing_hero_btn_texto ?? null)
+                        <a href="{{ $settings->landing_hero_btn_url ?? route('landing.contacto') }}"
+                           class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04"
+                           style="display:inline-flex;">
+                            {{ $settings->landing_hero_btn_texto }}
                         </a>
                     @endif
-                @endforeach
+                    @foreach($sections as $sec)
+                        @if($sec->section_key === 'contacto')
+                            <a href="{{ route('landing.contacto') }}"
+                               class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04"
+                               style="display:inline-flex;">
+                                Contáctanos
+                            </a>
+                        @endif
+                    @endforeach
+                </div>
             </div>
         </div>
     </div>
@@ -125,18 +112,20 @@
     </div>
 </section>
 
-{{-- ── Cards rápidas de secciones activas ── --}}
+{{-- ── Cards de secciones ── --}}
 @php $cardSections = $sections->whereNotIn('section_key', ['inicio']); @endphp
 @if($cardSections->count() > 0)
-<section class="lp-section lp-section-alt">
+<div class="sec-banner bg0 p-t-80 p-b-30">
     <div class="container">
-        <div class="text-center mb-5">
-            <h2 class="lp-section-title">¿Qué ofrecemos?</h2>
-            <div class="lp-divider"></div>
-            <p class="lp-section-subtitle">Conoce todo lo que tenemos para ti</p>
+
+        <div class="text-center p-b-50">
+            <h2 class="ltext-103 cl3" style="font-size:2rem; font-weight:700; letter-spacing:1px;">
+                ¿Qué ofrecemos?
+            </h2>
+            <div class="dis-block" style="width:60px; height:4px; background:var(--btn_cart,#333); margin:18px auto 0;"></div>
         </div>
 
-        <div class="row g-0 justify-content-center" style="border-bottom: 1px solid #eee;">
+        <div class="row">
             @foreach($cardSections as $sec)
                 @php
                     $icons = [
@@ -156,44 +145,54 @@
                     $icon = $icons[$sec->section_key] ?? 'fa-circle';
                     $href = $cardRoutes[$sec->section_key] ?? '#';
                 @endphp
-                <div class="col-lg-3 col-md-6" style="border-top: 1px solid #eee; border-left: 1px solid #eee;">
-                    <a href="{{ $href }}" class="lp-section-item">
-                        <i class="fa {{ $icon }} lp-section-item-icon"></i>
-                        <div class="lp-section-item-title">{{ $sec->titulo }}</div>
+                <div class="col-md-6 col-xl-4 p-b-30 m-lr-auto">
+                    <a href="{{ $href }}" class="lp-section-card">
+                        <div class="p-b-12" style="font-size:2.2rem; color:var(--btn_cart,#333);">
+                            <i class="fa {{ $icon }}"></i>
+                        </div>
+                        <h5 class="mtext-112 cl2 p-b-10" style="font-weight:700;">
+                            {{ $sec->titulo }}
+                        </h5>
                         @if($sec->subtitulo)
-                            <p class="lp-section-item-sub">{{ $sec->subtitulo }}</p>
+                            <p class="stext-102 cl6" style="font-size:.88rem; margin-bottom:0;">
+                                {{ $sec->subtitulo }}
+                            </p>
                         @endif
                     </a>
                 </div>
             @endforeach
         </div>
     </div>
-</section>
+</div>
 @endif
 
 {{-- ── CTA Final ── --}}
-<section class="lp-section" style="background:var(--lp-primary);color:#fff;text-align:center;">
+<section class="p-t-80 p-b-80" style="background:linear-gradient(135deg,var(--navbar,#1a1a2e) 0%,#16213e 100%);text-align:center;">
     <div class="container">
-        <h2 style="font-family:'Playfair Display',serif;font-size:2rem;margin-bottom:1rem;">
+        <h2 class="ltext-103 cl0" style="font-size:2rem;font-weight:700;margin-bottom:1rem;">
             ¿Listo para comenzar?
         </h2>
-        <p style="opacity:.8;max-width:500px;margin:0 auto 2rem;">
+        <p class="stext-102 cl7" style="max-width:500px;margin:0 auto 2rem;opacity:.8;">
             Contáctanos hoy y cuéntanos sobre tu proyecto.
         </p>
-        @foreach($sections as $sec)
-            @if($sec->section_key === 'contacto')
-                <a href="{{ route('landing.contacto') }}" class="btn btn-lp-secondary btn-lg">
-                    Hablemos <i class="fa fa-arrow-right ms-2"></i>
+        <div class="d-flex flex-wrap justify-content-center gap-2">
+            @foreach($sections as $sec)
+                @if($sec->section_key === 'contacto')
+                    <a href="{{ route('landing.contacto') }}"
+                       class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04"
+                       style="display:inline-flex;">
+                        Hablemos <i class="fa fa-arrow-right m-l-10"></i>
+                    </a>
+                @endif
+            @endforeach
+            @if(isset($tenantinfo->whatsapp) && $tenantinfo->whatsapp)
+                <a href="https://wa.me/506{{ $tenantinfo->whatsapp }}" target="_blank"
+                   class="flex-c-m stext-101 cl0 size-116 bor1 p-lr-15 trans-04"
+                   style="display:inline-flex;background:rgba(255,255,255,.15);">
+                    <i class="fa fa-whatsapp m-r-5"></i> WhatsApp
                 </a>
             @endif
-        @endforeach
-        @if(isset($tenantinfo->whatsapp) && $tenantinfo->whatsapp)
-            <a href="https://wa.me/506{{ $tenantinfo->whatsapp }}" target="_blank"
-               class="btn btn-lg ms-3"
-               style="background:rgba(255,255,255,.15);color:#fff;border-radius:50px;">
-                <i class="fa fa-whatsapp me-1"></i> WhatsApp
-            </a>
-        @endif
+        </div>
     </div>
 </section>
 
