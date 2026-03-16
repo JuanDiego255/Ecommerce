@@ -809,6 +809,7 @@ class CheckOutController extends Controller
                         'clothing.status as status',
                         'carts.quantity as quantity',
                         'carts.id as cart_id',
+                        'carts.custom_price as custom_price',
                         'attributes.name as name_attr',
                         'attribute_values.value as value',
                         DB::raw('COALESCE(stocks.price, clothing.price) as price'),
@@ -827,7 +828,7 @@ class CheckOutController extends Controller
                             JOIN attribute_values ON attribute_value_cars.value_attr = attribute_values.id
                             WHERE attribute_value_cars.cart_id = carts.id
                         ) as attributes_values_str'),
-                        DB::raw('IFNULL(product_images.image, "") as image'), // Obtener la primera imagen del producto
+                        DB::raw('IFNULL(product_images.image, "") as image'),
 
                     )
                     ->groupBy(
@@ -848,24 +849,24 @@ class CheckOutController extends Controller
                         'clothing.discount',
                         'carts.quantity',
                         'carts.id',
+                        'carts.custom_price',
                         'product_images.image'
                     )
                     ->get();
                 $cloth_price = 0;
                 foreach ($cartItems as $cart) {
-                    $precio = $cart->price != 0 ? $cart->price : $cart->price_cloth;
-                    if (isset($tenantinfo->custom_size) && $tenantinfo->custom_size == 1 && $cart->stock_price > 0) {
-                        $precio = $cart->stock_price;
+                    if ($cart->custom_price > 0) {
+                        $cloth_price += $cart->custom_price * $cart->quantity;
+                    } else {
+                        $precio = $cart->price != 0 ? $cart->price : $cart->price_cloth;
+                        if (Auth::check() && Auth::user()->mayor == '1' && $cart->mayor_price > 0) {
+                            $precio = $cart->mayor_price;
+                        }
+                        $descuentoPorcentaje = $cart->discount;
+                        $descuento = ($precio * $descuentoPorcentaje) / 100;
+                        $precioConDescuento = $precio - $descuento;
+                        $cloth_price += $precioConDescuento * $cart->quantity;
                     }
-                    if (Auth::check() && Auth::user()->mayor == '1' && $cart->mayor_price > 0) {
-                        $precio = $cart->mayor_price;
-                    }
-                    $descuentoPorcentaje = $cart->discount;
-                    // Calcular el descuento
-                    $descuento = ($precio * $descuentoPorcentaje) / 100;
-                    // Calcular el precio con el descuento aplicado
-                    $precioConDescuento = $precio - $descuento;
-                    $cloth_price += $precioConDescuento * $cart->quantity;
                 }
                 $iva = $cloth_price * $tenantinfo->iva;
                 $total_price = $cloth_price + $iva;
@@ -922,20 +923,20 @@ class CheckOutController extends Controller
                 $buy_id = $buy->id;
 
                 foreach ($cartItems as $cart) {
-                    $precio = $cart->price != 0 ? $cart->price : $cart->price_cloth;
+                    if ($cart->custom_price > 0) {
+                        $precioConDescuento = $cart->custom_price;
+                    } else {
+                        $precioConDescuento = $cart->price != 0 ? $cart->price : $cart->price_cloth;
+                        if (Auth::check() && Auth::user()->mayor == '1' && $cart->mayor_price > 0) {
+                            $precioConDescuento = $cart->mayor_price;
+                        }
+                        $descuentoPorcentaje = $cart->discount;
+                        $descuento = ($precioConDescuento * $descuentoPorcentaje) / 100;
+                        $precioConDescuento = $precioConDescuento - $descuento;
+                    }
+                    $precio = $precioConDescuento;
 
                     if ($precio > 0) {
-                        if (isset($tenantinfo->custom_size) && $tenantinfo->custom_size == 1 && $cart->stock_price > 0) {
-                            $precio = $cart->stock_price;
-                        }
-
-                        if (Auth::check() && Auth::user()->mayor == '1' && $cart->mayor_price > 0) {
-                            $precio = $cart->mayor_price;
-                        }
-
-                        $descuentoPorcentaje = $cart->discount;
-                        $descuento = ($precio * $descuentoPorcentaje) / 100;
-                        $precioConDescuento = $precio - $descuento;
 
                         // Verificar si el detalle ya existe (por ID de compra y prenda)
                         $buy_detail = BuyDetail::where('buy_id', $buy_id)

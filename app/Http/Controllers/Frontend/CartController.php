@@ -310,6 +310,27 @@ class CartController extends Controller
             return response()->json(['error' => $th->getMessage()]);
         }
     }
+
+    public function updatePrice(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $custom_price = $request->custom_price;
+            $cart_id = $request->cart_id;
+            $cartitem = Cart::find($cart_id);
+            if (!$cartitem) {
+                return response()->json(['error' => 'Item not found'], 404);
+            }
+            // Store null if price is 0 or empty (means use original price)
+            $cartitem->custom_price = ($custom_price > 0) ? $custom_price : null;
+            $cartitem->update();
+            DB::commit();
+            return response()->json(['status' => 'success']);
+        } catch (Exception $th) {
+            DB::rollBack();
+            return response()->json(['error' => $th->getMessage()]);
+        }
+    }
     public function getCartItems($unique_cart_id)
     {
         $cart_items = Cache::remember('cart_items', $this->expirationTime, function () use ($unique_cart_id) {

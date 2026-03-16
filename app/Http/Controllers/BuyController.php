@@ -430,20 +430,31 @@ class BuyController extends Controller
             $buy = Buy::where('id', $id)->first();
         }
         $tenantinfo = TenantInfo::first();
-        $clothings = ClothingCategory::where('status', 1)
-            ->leftJoin('product_images', function ($join) {
-                $join->on('clothing.id', '=', 'product_images.clothing_id')->whereRaw('product_images.id = (
-                                SELECT MIN(id) FROM product_images
-                                WHERE product_images.clothing_id = clothing.id
-                            )');
-            })
-            ->select(
-                'clothing.id as id',
-                'clothing.name as name',
-                'clothing.code as code',
-                DB::raw('IFNULL(product_images.image, "") as image'), // Obtener la primera imagen del producto
-            )
-            ->get();
+        $clothings = Cache::remember('clothings_for_sale', 30, function () {
+            return ClothingCategory::where('status', 1)
+                ->where(function ($query) {
+                    $query->where('clothing.stock', '>', 0)
+                        ->orWhereExists(function ($subquery) {
+                            $subquery->select(DB::raw(1))
+                                ->from('stocks')
+                                ->whereColumn('stocks.clothing_id', 'clothing.id')
+                                ->where('stocks.stock', '>', 0);
+                        });
+                })
+                ->leftJoin('product_images', function ($join) {
+                    $join->on('clothing.id', '=', 'product_images.clothing_id')->whereRaw('product_images.id = (
+                                    SELECT MIN(id) FROM product_images
+                                    WHERE product_images.clothing_id = clothing.id
+                                )');
+                })
+                ->select(
+                    'clothing.id as id',
+                    'clothing.name as name',
+                    'clothing.code as code',
+                    DB::raw('IFNULL(product_images.image, "") as image'),
+                )
+                ->get();
+        });
         $cart_items = Cache::remember('cart_items_' . $id, $this->expirationTime, function () use ($id) {
             $cart_items = Cart::whereNull('carts.user_id')
                 ->whereNull('carts.session_id')
@@ -483,6 +494,7 @@ class BuyController extends Controller
                     'clothing.price as price_cloth',
                     'carts.quantity as quantity',
                     'carts.id as cart_id',
+                    'carts.custom_price as custom_price',
                     'attributes.name as name_attr',
                     'attribute_values.value as value',
                     DB::raw('COALESCE(stocks.price, clothing.price) as price'),
@@ -513,6 +525,7 @@ class BuyController extends Controller
                     'clothing.discount',
                     'carts.quantity',
                     'carts.id',
+                    'carts.custom_price',
                     'product_images.image'
                 )
                 ->get();
@@ -537,15 +550,16 @@ class BuyController extends Controller
         $cloth_price = 0;
         $you_save = 0;
         foreach ($cart_items as $item) {
-            $precio = $item->price != 0 ? $item->price : $item->price_cloth;
-            $descuentoPorcentaje = $item->discount;
-            // Calcular el descuento
-            $descuento = ($precio * $descuentoPorcentaje) / 100;
-
-            $you_save += $descuento * $item->quantity;
-            // Calcular el precio con el descuento aplicado
-            $precioConDescuento = $precio - $descuento;
-            $cloth_price += $precioConDescuento * $item->quantity;
+            if ($item->custom_price > 0) {
+                $cloth_price += $item->custom_price * $item->quantity;
+            } else {
+                $precio = $item->price != 0 ? $item->price : $item->price_cloth;
+                $descuentoPorcentaje = $item->discount;
+                $descuento = ($precio * $descuentoPorcentaje) / 100;
+                $you_save += $descuento * $item->quantity;
+                $precioConDescuento = $precio - $descuento;
+                $cloth_price += $precioConDescuento * $item->quantity;
+            }
         }
 
         $iva = $cloth_price * $tenantinfo->iva;
