@@ -25,20 +25,6 @@
 /* ── Layout ─────────────────────────────────────────────── */
 .sale-wrap { max-width: 860px; margin: 0 auto; }
 
-/* ── Page header ────────────────────────────────────────── */
-.sale-page-title {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--black);
-    letter-spacing: -.02em;
-    margin: 0;
-}
-.sale-page-sub {
-    font-size: .8rem;
-    color: var(--gray3);
-    margin: 2px 0 0;
-}
-
 /* ── Step pill ──────────────────────────────────────────── */
 .step-pill {
     display: flex;
@@ -492,9 +478,10 @@
     <div class="sale-wrap py-3 px-2 px-md-0">
 
         {{-- Page header --}}
-        <div class="mb-4">
-            <h1 class="sale-page-title">{{ $id != 0 ? 'Editar venta #'.$id : 'Nueva venta' }}</h1>
-            <p class="sale-page-sub">{{ $id != 0 ? 'Actualiza los datos de la venta' : 'Registra una venta interna paso a paso' }}</p>
+        <div class="mb-4 d-flex align-items-center gap-2" style="flex-wrap:wrap;">
+            <span style="font-size:.72rem;color:var(--gray3);font-weight:500;letter-spacing:.01em;">Ventas</span>
+            <i class="material-icons" style="font-size:.8rem;color:var(--gray2);">chevron_right</i>
+            <span style="font-size:.72rem;color:var(--black);font-weight:600;letter-spacing:.01em;">{{ $id != 0 ? 'Editar venta #'.$id : 'Nueva venta' }}</span>
         </div>
 
         {{-- ╔═══════════════════════════════╗ --}}
