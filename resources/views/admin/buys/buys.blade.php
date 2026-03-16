@@ -5,752 +5,1126 @@
 @endsection
 @section('content')
 <style>
-    .step-badge {
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        background: linear-gradient(195deg, #42424a, #191919);
-        color: #fff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 700;
-        font-size: 1rem;
-        flex-shrink: 0;
-        box-shadow: 0 4px 6px -1px rgba(0,0,0,.3);
-    }
-    .step-header {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        margin-bottom: 1rem;
-        padding-bottom: 0.75rem;
-        border-bottom: 1px solid rgba(0,0,0,.08);
-    }
-    .step-header h5 { margin: 0; font-size: 1rem; font-weight: 600; }
-    .step-header small { color: #7b809a; font-size: .78rem; }
-    .step-card { border-radius: 0.75rem !important; }
-    .price-input-cell input[type="number"] {
-        max-width: 110px;
-        text-align: center;
-    }
-    .price-original-badge {
-        font-size: 0.72rem;
-        color: #7b809a;
-        display: block;
-    }
-    .apartado-section {
-        background: rgba(66,66,74,.04);
-        border-radius: 0.5rem;
-        padding: 1rem;
-        margin-top: 1rem;
-    }
-    .table-cart th { font-size: 0.78rem; text-transform: uppercase; letter-spacing: .04em; }
-    .step-connector {
-        width: 2px;
-        height: 18px;
-        background: rgba(0,0,0,.12);
-        margin: 0 auto;
-    }
+/* ── Variables ──────────────────────────────────────────── */
+:root {
+    --blue:   #007aff;
+    --green:  #34c759;
+    --red:    #ff3b30;
+    --orange: #ff9500;
+    --gray0:  #f5f5f7;
+    --gray1:  #e5e5ea;
+    --gray2:  #c7c7cc;
+    --gray3:  #86868b;
+    --gray4:  #3a3a3c;
+    --black:  #1d1d1f;
+    --white:  #ffffff;
+    --radius: 14px;
+    --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+}
+
+/* ── Layout ─────────────────────────────────────────────── */
+.sale-wrap { max-width: 860px; margin: 0 auto; }
+
+/* ── Page header ────────────────────────────────────────── */
+.sale-page-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--black);
+    letter-spacing: -.02em;
+    margin: 0;
+}
+.sale-page-sub {
+    font-size: .8rem;
+    color: var(--gray3);
+    margin: 2px 0 0;
+}
+
+/* ── Step pill ──────────────────────────────────────────── */
+.step-pill {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 1.25rem;
+}
+.step-pill-num {
+    min-width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--blue);
+    color: #fff;
+    font-size: .72rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.step-pill-label {
+    font-size: .875rem;
+    font-weight: 600;
+    color: var(--black);
+    line-height: 1;
+}
+.step-pill-sub {
+    font-size: .72rem;
+    color: var(--gray3);
+    margin-top: 1px;
+}
+
+/* ── Card ───────────────────────────────────────────────── */
+.s-card {
+    background: var(--white);
+    border: 1px solid var(--gray1);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 10px;
+    overflow: hidden;
+}
+.s-card-body { padding: 20px 24px; }
+
+/* ── Search row ─────────────────────────────────────────── */
+.search-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+.search-field {
+    position: relative;
+    flex: 1;
+}
+.search-field i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1rem;
+    color: var(--gray3);
+    pointer-events: none;
+}
+.search-field input {
+    width: 100%;
+    padding: 9px 14px 9px 38px;
+    border: 1.5px solid var(--gray1);
+    border-radius: 10px;
+    font-size: .875rem;
+    color: var(--black);
+    background: var(--gray0);
+    outline: none;
+    transition: border-color .15s, background .15s;
+}
+.search-field input:focus {
+    border-color: var(--blue);
+    background: var(--white);
+}
+.btn-catalog {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 18px;
+    background: var(--blue);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: .85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity .15s, transform .1s;
+    white-space: nowrap;
+}
+.btn-catalog:hover { opacity: .88; }
+.btn-catalog:active { transform: scale(.97); }
+
+/* ── Attribute selector area ────────────────────────────── */
+.attr-area {
+    margin-top: 14px;
+    padding: 16px;
+    background: var(--gray0);
+    border-radius: 10px;
+    border: 1px solid var(--gray1);
+}
+.attr-area label {
+    font-size: .72rem;
+    font-weight: 600;
+    color: var(--gray3);
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    display: block;
+    margin-bottom: 4px;
+}
+.attr-area select, .attr-area input[type="number"] {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1.5px solid var(--gray1);
+    border-radius: 8px;
+    font-size: .875rem;
+    color: var(--black);
+    background: var(--white);
+    outline: none;
+}
+.attr-area select:focus, .attr-area input[type="number"]:focus {
+    border-color: var(--blue);
+}
+.btn-add-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 20px;
+    background: var(--black);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: .85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity .15s;
+    margin-top: 10px;
+}
+.btn-add-item:hover { opacity: .8; }
+
+/* ── Cart table ─────────────────────────────────────────── */
+.cart-table { width: 100%; border-collapse: collapse; }
+.cart-table thead th {
+    font-size: .68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--gray3);
+    padding: 0 12px 10px;
+    border-bottom: 1px solid var(--gray1);
+    white-space: nowrap;
+}
+.cart-table tbody tr {
+    transition: background .12s;
+}
+.cart-table tbody tr:hover { background: var(--gray0); }
+.cart-table td {
+    padding: 12px;
+    border-bottom: 1px solid var(--gray1);
+    vertical-align: middle;
+}
+.cart-table tbody tr:last-child td { border-bottom: none; }
+
+.prod-img {
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    object-fit: cover;
+    flex-shrink: 0;
+    background: var(--gray0);
+}
+.prod-name {
+    font-size: .875rem;
+    font-weight: 600;
+    color: var(--black);
+    margin: 0;
+}
+.prod-code {
+    font-size: .72rem;
+    color: var(--gray3);
+    font-family: monospace;
+    margin: 0;
+}
+.price-input {
+    width: 100px;
+    padding: 6px 10px;
+    border: 1.5px solid var(--gray1);
+    border-radius: 8px;
+    font-size: .875rem;
+    font-weight: 600;
+    color: var(--black);
+    text-align: right;
+    outline: none;
+    transition: border-color .15s;
+}
+.price-input:focus { border-color: var(--blue); }
+.price-hint {
+    font-size: .68rem;
+    color: var(--gray3);
+    margin-top: 2px;
+    text-align: right;
+    display: block;
+}
+.attr-pill {
+    display: inline-block;
+    padding: 2px 8px;
+    background: var(--gray0);
+    border: 1px solid var(--gray1);
+    border-radius: 20px;
+    font-size: .7rem;
+    color: var(--gray4);
+    margin: 1px;
+}
+.qty-input {
+    width: 60px;
+    padding: 6px 8px;
+    border: 1.5px solid var(--gray1);
+    border-radius: 8px;
+    font-size: .875rem;
+    text-align: center;
+    color: var(--black);
+    outline: none;
+    transition: border-color .15s;
+}
+.qty-input:focus { border-color: var(--blue); }
+.qty-input:disabled { background: var(--gray0); color: var(--gray3); cursor: not-allowed; }
+.btn-del {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    border: 1px solid var(--gray1);
+    background: var(--white);
+    color: var(--gray3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all .15s;
+    padding: 0;
+}
+.btn-del:hover { background: #fff0ee; border-color: var(--red); color: var(--red); }
+.cart-empty {
+    padding: 32px;
+    text-align: center;
+    color: var(--gray3);
+    font-size: .875rem;
+}
+
+/* ── Totals strip ───────────────────────────────────────── */
+.totals-strip {
+    border-top: 1px solid var(--gray1);
+    padding: 14px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    background: var(--gray0);
+}
+.totals-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: .82rem;
+    color: var(--gray4);
+}
+.totals-row.total-final {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--black);
+    padding-top: 8px;
+    border-top: 1px solid var(--gray1);
+    margin-top: 2px;
+}
+
+/* ── Form fields ────────────────────────────────────────── */
+.field-group {
+    margin-bottom: 14px;
+}
+.field-group label {
+    display: block;
+    font-size: .72rem;
+    font-weight: 600;
+    color: var(--gray3);
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    margin-bottom: 5px;
+}
+.field-group input, .field-group select {
+    width: 100%;
+    padding: 9px 13px;
+    border: 1.5px solid var(--gray1);
+    border-radius: 9px;
+    font-size: .875rem;
+    color: var(--black);
+    background: var(--white);
+    outline: none;
+    transition: border-color .15s;
+}
+.field-group input:focus, .field-group select:focus {
+    border-color: var(--blue);
+}
+.field-group input[readonly] {
+    background: var(--gray0);
+    color: var(--gray3);
+    cursor: default;
+}
+
+/* ── Apartado box ───────────────────────────────────────── */
+.apartado-box {
+    border: 1.5px dashed var(--orange);
+    border-radius: 12px;
+    padding: 16px;
+    background: #fffbf0;
+    margin-top: 12px;
+}
+.apartado-toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    user-select: none;
+}
+.apartado-toggle input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--orange);
+    cursor: pointer;
+    flex-shrink: 0;
+}
+.apartado-label-text {
+    font-size: .875rem;
+    font-weight: 600;
+    color: var(--black);
+}
+.apartado-desc {
+    font-size: .75rem;
+    color: var(--gray3);
+    margin: 6px 0 0 28px;
+}
+
+/* ── Summary card ───────────────────────────────────────── */
+.summary-card {
+    border: 1px solid var(--gray1);
+    border-radius: var(--radius);
+    overflow: hidden;
+}
+.summary-card-header {
+    background: var(--black);
+    padding: 14px 18px;
+}
+.summary-card-header .total-lbl { font-size: .72rem; color: rgba(255,255,255,.55); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; }
+.summary-card-header .total-val { font-size: 1.75rem; font-weight: 700; color: #fff; margin-top: 2px; letter-spacing: -.02em; }
+.summary-card-body { padding: 14px 18px; background: var(--white); }
+.summary-line {
+    display: flex;
+    justify-content: space-between;
+    font-size: .82rem;
+    color: var(--gray4);
+    padding: 4px 0;
+}
+.summary-line .val { font-weight: 600; color: var(--black); }
+.summary-line .discount-val { color: var(--green); }
+
+/* ── CTA button ─────────────────────────────────────────── */
+.btn-confirm {
+    width: 100%;
+    padding: 14px;
+    background: var(--blue);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-size: .95rem;
+    font-weight: 700;
+    letter-spacing: -.01em;
+    cursor: pointer;
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: opacity .15s, transform .1s;
+}
+.btn-confirm:hover { opacity: .88; }
+.btn-confirm:active { transform: scale(.98); }
+.btn-confirm:disabled { background: var(--gray2); cursor: not-allowed; opacity: 1; }
+
+/* ── Step connector ─────────────────────────────────────── */
+.step-connector {
+    width: 1px;
+    height: 16px;
+    background: var(--gray1);
+    margin: 0 auto 10px;
+}
+
+/* ── Alert ──────────────────────────────────────────────── */
+.info-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    background: #f0f6ff;
+    border: 1px solid #c8dcff;
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin-bottom: 14px;
+}
+.info-banner i { font-size: 1rem; color: var(--blue); margin-top: 1px; flex-shrink: 0; }
+.info-banner p { font-size: .78rem; color: #1a3a6e; margin: 0; line-height: 1.4; }
+
+/* ── Badge optional ─────────────────────────────────────── */
+.badge-opt {
+    font-size: .65rem;
+    font-weight: 600;
+    color: var(--gray3);
+    background: var(--gray0);
+    border: 1px solid var(--gray1);
+    border-radius: 20px;
+    padding: 1px 7px;
+    vertical-align: middle;
+    letter-spacing: .02em;
+    text-transform: uppercase;
+}
+
+/* ── Collapsed section ──────────────────────────────────── */
+.collapsible-header {
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    border-bottom: 1px solid transparent;
+    transition: border-color .15s;
+}
+.collapsible-header.open { border-bottom-color: var(--gray1); }
+.collapsible-body { padding: 20px 24px; }
+.chevron { transition: transform .2s; color: var(--gray3); font-size: 1.1rem; }
+.chevron.open { transform: rotate(180deg); }
 </style>
 
-    <h1 class="font-title text-center mb-1">{{ $id != 0 ? 'Editar Venta #'.$id : 'Nueva Venta' }}</h1>
-    <p class="text-center text-muted mb-4" style="font-size:.85rem">Sigue los pasos para registrar la venta</p>
+    @include('admin.buys.products')
 
-    <div class="container">
-        @include('admin.buys.products')
+    <form action="{{ url('payment') }}" method="POST" id="saleForm">
+        @csrf
+        <input type="hidden" value="F" name="kind_of">
+        <input type="hidden" name="updateId" value="{{ $id }}" id="updateId">
+        <input type="hidden" value="{{ $tenantinfo->tenant }}" name="tenant" id="tenant">
+        <input type="hidden" name="iva_tenant" id="iva_tenant" value="{{ $iva_tenant }}">
+    </form>
 
-        {{-- PASO 1: Productos --}}
-        <div class="card step-card mt-3 mb-1">
-            <div class="card-body">
-                <div class="step-header">
-                    <div class="step-badge">1</div>
+    <div class="sale-wrap py-3 px-2 px-md-0">
+
+        {{-- Page header --}}
+        <div class="mb-4">
+            <h1 class="sale-page-title">{{ $id != 0 ? 'Editar venta #'.$id : 'Nueva venta' }}</h1>
+            <p class="sale-page-sub">{{ $id != 0 ? 'Actualiza los datos de la venta' : 'Registra una venta interna paso a paso' }}</p>
+        </div>
+
+        {{-- ╔═══════════════════════════════╗ --}}
+        {{-- ║  PASO 1 · PRODUCTOS           ║ --}}
+        {{-- ╚═══════════════════════════════╝ --}}
+        <div class="s-card">
+            <div class="s-card-body">
+                <div class="step-pill">
+                    <div class="step-pill-num">1</div>
                     <div>
-                        <h5>Agregar Productos</h5>
-                        <small>Busca por código o usa el botón "Productos" para seleccionar del catálogo</small>
+                        <div class="step-pill-label">Productos</div>
+                        <div class="step-pill-sub">Busca por código o abre el catálogo</div>
                     </div>
                 </div>
 
                 @if ($id != 0)
-                    <div class="alert alert-info alert-sm py-2 mb-3" role="alert">
-                        <i class="material-icons me-1" style="vertical-align:middle;font-size:1rem">info</i>
-                        Al editar un pedido existente, la cantidad en la tabla no puede modificarse para evitar inconsistencias en stock. Los productos nuevos que agregues sí permiten definir la cantidad.
-                    </div>
+                <div class="info-banner mb-3">
+                    <i class="material-icons">info</i>
+                    <p>Edición de pedido: la cantidad existente no se puede cambiar para evitar inconsistencias en stock. Los nuevos productos agregados sí permiten definir cantidad.</p>
+                </div>
                 @endif
 
-                <div class="row align-items-end">
-                    <div class="col-md-4">
-                        <div class="input-group input-group-lg input-group-static my-2 w-100">
-                            <label>Código del Producto</label>
-                            <input value="" placeholder="Ej: PROD-001" type="text"
-                                class="form-control form-control-lg" name="code" id="code">
-                        </div>
+                {{-- Search row --}}
+                <div class="search-row">
+                    <div class="search-field">
+                        <i class="material-icons">qr_code</i>
+                        <input type="text" id="code" name="code" placeholder="Código del producto…" autocomplete="off">
                     </div>
-                    <div class="col-md-4">
-                        <button type="button" data-bs-toggle="modal" data-bs-target="#add-products-modal"
-                            data-name="products" class="btn btn-accion icon-button mb-2">
-                            <i class="material-icons me-1" style="vertical-align:middle;font-size:1.1rem">inventory_2</i>
-                            Productos
-                        </button>
-                    </div>
-                    <input type="hidden" value="{{ $tenantinfo->manage_size }}" id="manage_size">
+                    <button type="button" class="btn-catalog icon-button"
+                            data-bs-toggle="modal" data-bs-target="#add-products-modal"
+                            data-name="products">
+                        <i class="material-icons" style="font-size:1rem;">grid_view</i>
+                        Catálogo
+                    </button>
                 </div>
 
-                <div id="container" class="d-none mt-2">
-                    <div id="select-container" class="d-none"></div>
+                {{-- Attribute / add area (hidden until product selected) --}}
+                <div id="container" class="d-none">
+                    <div class="attr-area" id="select-container"></div>
                 </div>
+            </div>
 
-                {{-- Tabla del carrito --}}
-                <div class="mt-3">
-                    <div class="table-responsive">
-                        <input type="hidden" name="iva_tenant" id="iva_tenant" value="{{ $iva_tenant }}">
-                        <table class="table align-items-center mb-0 table-cart" id="cartTable">
-                            <thead>
-                                <tr>
-                                    <th class="text-secondary font-weight-bolder opacity-7 ps-2">Producto</th>
-                                    <th class="text-center text-secondary font-weight-bolder opacity-7">Precio Unit.</th>
-                                    <th class="text-center text-secondary font-weight-bolder opacity-7">Atributos</th>
-                                    <th class="text-center text-secondary font-weight-bolder opacity-7">Cant.</th>
-                                    <th class="text-secondary opacity-7"></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($cart_items as $item)
-                                    @php
-                                        $precio = $item->price != 0 ? $item->price : $item->price_cloth;
-                                        $descuentoPorcentaje = $item->discount;
-                                        $descuento = ($precio * $descuentoPorcentaje) / 100;
-                                        $precioConDescuento = $precio - $descuento;
-                                        $precioEfectivo = $item->custom_price > 0
-                                            ? $item->custom_price
-                                            : ($item->discount > 0 ? $precioConDescuento : $precio);
-                                        $precioOriginal = $item->discount > 0 ? $precioConDescuento : $precio;
-                                        $attributesValues = !empty($item->attributes_values)
-                                            ? explode(', ', $item->attributes_values)
-                                            : [];
-                                    @endphp
-                                    <tr>
-                                        <input type="hidden" name="prod_id" value="{{ $item->id }}" class="prod_id">
-                                        <input type="hidden" value="{{ $item->custom_price > 0 ? 0 : $descuento }}" class="discount" name="discount">
-                                        <td class="w-40">
-                                            <div class="d-flex px-2 py-1 align-items-center">
-                                                <div>
-                                                    <a target="blank" data-fancybox="gallery"
-                                                        href="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
-                                                        <img src="{{ isset($item->image) && $item->image ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"
-                                                            class="avatar avatar-md me-3">
-                                                    </a>
-                                                </div>
-                                                <div class="d-flex flex-column justify-content-center">
-                                                    <h4 class="mb-0 text-lg">{{ $item->name }}</h4>
-                                                    <p class="text-xs text-secondary mb-0">Código: {{ $item->code }}</p>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="align-middle text-center text-sm price-input-cell">
-                                            <input type="number"
-                                                class="form-control price text-center mx-auto"
-                                                value="{{ $precioEfectivo }}"
-                                                data-cart-id="{{ $item->cart_id }}"
-                                                data-original="{{ $precioOriginal }}"
-                                                min="0" step="1"
-                                                title="Edita para cambiar el precio de esta línea">
-                                            @if($item->custom_price > 0)
-                                                <span class="price-original-badge">Original: ₡{{ number_format($precioOriginal) }}</span>
-                                            @elseif($item->discount > 0)
-                                                <span class="price-original-badge"><s>₡{{ number_format($precio) }}</s></span>
-                                            @endif
-                                        </td>
-                                        <td class="align-middle text-center text-sm">
-                                            @foreach ($attributesValues as $attributeValue)
-                                                @php
-                                                    $parts = explode(': ', $attributeValue, 2);
-                                                    $attribute = $parts[0] ?? '';
-                                                    $value = $parts[1] ?? '';
-                                                @endphp
-                                                @if ($attribute !== '')
-                                                    <span class="badge badge-sm bg-gradient-secondary">{{ $attribute }}: {{ $value }}</span><br>
-                                                @endif
-                                            @endforeach
-                                        </td>
-                                        <td class="align-middle text-center text-sm">
-                                            <div class="input-group text-center input-group-static" style="max-width:80px;margin:auto">
-                                                <input @if ($id != 0) disabled @endif
-                                                    min="1"
-                                                    max="{{ $item->stock > 0 ? $item->stock : '' }}"
-                                                    data-cart-id="{{ $item->cart_id }}"
-                                                    value="{{ $item->quantity }}"
-                                                    type="number" name="quantity"
-                                                    class="form-control btnQuantity text-center quantity">
-                                            </div>
-                                        </td>
-                                        <td class="align-middle">
-                                            <form name="delete-item-cart" class="delete-form">
-                                                {{ csrf_field() }}
-                                                {{ method_field('DELETE') }}
-                                                <button data-item-id="{{ $item->cart_id }}"
-                                                    class="btn btn-icon btn-3 btn-danger btnDeleteCart" type="button">
-                                                    <span class="btn-inner--icon"><i class="material-icons">delete</i></span>
-                                                </button>
-                                            </form>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+            {{-- Cart table --}}
+            @if(count($cart_items) > 0)
+            <div style="border-top:1px solid var(--gray1);">
+                <table class="cart-table" id="cartTable">
+                    <thead>
+                        <tr>
+                            <th style="width:40%">Producto</th>
+                            <th style="width:16%;text-align:right">Precio unit.</th>
+                            <th style="width:20%;text-align:center">Atributos</th>
+                            <th style="width:12%;text-align:center">Cant.</th>
+                            <th style="width:6%"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($cart_items as $item)
+                            @php
+                                $precio = $item->price != 0 ? $item->price : $item->price_cloth;
+                                $descuento = ($precio * $item->discount) / 100;
+                                $precioConDescuento = $precio - $descuento;
+                                $precioEfectivo = $item->custom_price > 0
+                                    ? $item->custom_price
+                                    : ($item->discount > 0 ? $precioConDescuento : $precio);
+                                $precioOriginal = $item->discount > 0 ? $precioConDescuento : $precio;
+                                $attributesValues = !empty($item->attributes_values)
+                                    ? explode(', ', $item->attributes_values) : [];
+                            @endphp
+                            <tr>
+                                <input type="hidden" class="discount" value="{{ $item->custom_price > 0 ? 0 : $descuento }}">
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <a href="{{ isset($item->image) && $item->image ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"
+                                           data-fancybox="gallery" target="_blank">
+                                            <img class="prod-img"
+                                                 src="{{ isset($item->image) && $item->image ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"
+                                                 alt="{{ $item->name }}">
+                                        </a>
+                                        <div>
+                                            <p class="prod-name">{{ $item->name }}</p>
+                                            <p class="prod-code">{{ $item->code }}</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td style="text-align:right">
+                                    <input type="number"
+                                           class="price-input price"
+                                           value="{{ $precioEfectivo }}"
+                                           data-cart-id="{{ $item->cart_id }}"
+                                           data-original="{{ $precioOriginal }}"
+                                           min="0" step="1">
+                                    @if($item->custom_price > 0)
+                                        <span class="price-hint">orig. ₡{{ number_format($precioOriginal) }}</span>
+                                    @elseif($item->discount > 0)
+                                        <span class="price-hint"><s>₡{{ number_format($precio) }}</s></span>
+                                    @endif
+                                </td>
+                                <td style="text-align:center">
+                                    @foreach ($attributesValues as $av)
+                                        @php $parts = explode(': ', $av, 2); @endphp
+                                        @if(!empty($parts[0]))
+                                            <span class="attr-pill">{{ $parts[0] }}: {{ $parts[1] ?? '' }}</span>
+                                        @endif
+                                    @endforeach
+                                </td>
+                                <td style="text-align:center">
+                                    <input type="number"
+                                           class="qty-input btnQuantity quantity"
+                                           value="{{ $item->quantity }}"
+                                           data-cart-id="{{ $item->cart_id }}"
+                                           min="1"
+                                           max="{{ $item->stock > 0 ? $item->stock : '' }}"
+                                           @if($id != 0) disabled @endif>
+                                </td>
+                                <td style="text-align:center">
+                                    <button type="button" class="btn-del btnDeleteCart" data-item-id="{{ $item->cart_id }}">
+                                        <i class="material-icons" style="font-size:.9rem;">delete</i>
+                                    </button>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+
+                {{-- Totals strip --}}
+                <div class="totals-strip">
+                    <div class="totals-row">
+                        <span>Subtotal</span>
+                        <span id="totalCloth">₡{{ number_format($cloth_price) }}</span>
                     </div>
-
-                    @if(count($cart_items) > 0)
-                    <div class="d-flex justify-content-end mt-2 pe-2">
-                        <span class="text-secondary text-sm me-2">Subtotal:</span>
-                        <strong class="text-sm" id="subtotalBadge">₡{{ number_format($cloth_price) }}</strong>
+                    @if($iva > 0)
+                    <div class="totals-row">
+                        <span>I.V.A.</span>
+                        <span id="totalIvaElement">₡{{ number_format($iva) }}</span>
                     </div>
                     @endif
+                    @if($you_save > 0)
+                    <div class="totals-row">
+                        <span>Descuento</span>
+                        <span style="color:var(--green)" id="totalDiscountElement">−₡{{ number_format($you_save) }}</span>
+                    </div>
+                    @endif
+                    <div class="totals-row total-final">
+                        <span>Total</span>
+                        <span id="totalPriceElement">₡{{ number_format($total_price) }}</span>
+                    </div>
                 </div>
             </div>
+            @else
+            <div class="cart-empty">
+                <i class="material-icons" style="font-size:2rem;display:block;margin-bottom:6px;color:var(--gray2)">shopping_cart</i>
+                Aún no has agregado productos
+            </div>
+            @endif
         </div>
 
         <div class="step-connector"></div>
 
-        {{-- PASO 2: Datos del Cliente --}}
-        <div class="card step-card mb-1">
-            <div class="card-body">
-                <div class="step-header">
-                    <div class="step-badge">2</div>
+        {{-- ╔═══════════════════════════════╗ --}}
+        {{-- ║  PASO 2 · CLIENTE             ║ --}}
+        {{-- ╚═══════════════════════════════╝ --}}
+        <div class="s-card">
+            {{-- Collapsible header --}}
+            <div class="collapsible-header open" id="step2-toggle" onclick="toggleStep2()">
+                <div class="step-pill mb-0">
+                    <div class="step-pill-num">2</div>
                     <div>
-                        <h5>Datos del Cliente <span class="badge badge-sm bg-gradient-secondary ms-1">Opcional</span></h5>
-                        <small>Información del cliente para identificar la venta</small>
+                        <div class="step-pill-label">
+                            Datos del cliente <span class="badge-opt ms-1">Opcional</span>
+                        </div>
+                        <div class="step-pill-sub">Nombre, contacto y dirección</div>
                     </div>
                 </div>
-                <form action="{{ url('payment') }}" method="POST" enctype="multipart/form-data" id="saleForm">
-                    @csrf
-                    <input type="hidden" value="F" name="kind_of" id="kind_of">
-                    <input type="hidden" name="updateId" value="{{ $id }}" id="updateId">
-                    <input type="hidden" value="{{ $tenantinfo->tenant }}" name="tenant" id="tenant">
-
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <div class="input-group input-group-lg input-group-outline {{ isset($buy->name) && $buy->name ? 'is-filled' : '' }}">
-                                <label class="form-label">Nombre</label>
-                                <input value="{{ isset($buy->name) ? $buy->name : '' }}" type="text"
-                                    class="form-control" name="name">
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="input-group input-group-lg input-group-outline {{ isset($buy->email) && $buy->email ? 'is-filled' : '' }}">
-                                <label class="form-label">E-mail</label>
-                                <input value="{{ isset($buy->email) ? $buy->email : '' }}" type="text"
-                                    class="form-control" name="email">
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="input-group input-group-lg input-group-outline {{ isset($buy->telephone) && $buy->telephone ? 'is-filled' : '' }}">
-                                <label class="form-label">Teléfono</label>
-                                <input value="{{ isset($buy->telephone) ? $buy->telephone : '' }}" type="text"
-                                    class="form-control" name="telephone">
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="input-group input-group-lg input-group-outline is-filled">
-                                <label class="form-label">País</label>
-                                <input type="text" readonly value="Costa Rica"
-                                    class="form-control" name="country">
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="input-group input-group-lg input-group-outline {{ isset($buy->province) && $buy->province ? 'is-filled' : '' }}">
-                                <label class="form-label">Provincia</label>
-                                <input type="text" value="{{ isset($buy->province) ? $buy->province : '' }}"
-                                    class="form-control" name="province">
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="input-group input-group-lg input-group-outline {{ isset($buy->city) && $buy->city ? 'is-filled' : '' }}">
-                                <label class="form-label">Ciudad</label>
-                                <input type="text" value="{{ isset($buy->city) ? $buy->city : '' }}"
-                                    class="form-control" name="city">
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="input-group input-group-lg input-group-outline {{ isset($buy->address_two) && $buy->address_two ? 'is-filled' : '' }}">
-                                <label class="form-label">Distrito</label>
-                                <input type="text" value="{{ isset($buy->address_two) ? $buy->address_two : '' }}"
-                                    class="form-control" name="address_two">
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="input-group input-group-lg input-group-outline {{ isset($buy->address) && $buy->address ? 'is-filled' : '' }}">
-                                <label class="form-label">Dirección Exacta</label>
-                                <input type="text" value="{{ isset($buy->address) ? $buy->address : '' }}"
-                                    class="form-control" name="address">
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="input-group input-group-lg input-group-outline {{ isset($buy->detail) && $buy->detail ? 'is-filled' : '' }}">
-                                <label class="form-label">Nota / Detalle</label>
-                                <input type="text" value="{{ isset($buy->detail) ? $buy->detail : '' }}"
-                                    class="form-control" name="detail">
-                            </div>
-                        </div>
-                    </div>
-                </form>
+                <i class="material-icons chevron open" id="step2-chevron">expand_more</i>
             </div>
-        </div>
-
-        <div class="step-connector"></div>
-
-        {{-- PASO 3: Resumen y Confirmación --}}
-        <div class="card step-card mb-4">
-            <div class="card-body">
-                <div class="step-header">
-                    <div class="step-badge">3</div>
-                    <div>
-                        <h5>Resumen y Confirmación</h5>
-                        <small>Revisa el total, configura el envío o apartado y confirma la venta</small>
-                    </div>
-                </div>
-
+            <div id="step2-body" class="collapsible-body">
                 <div class="row">
-                    {{-- Columna izquierda: Envío + Apartado --}}
-                    <div class="col-md-6 mb-3">
-                        <div class="input-group input-group-lg input-group-outline {{ isset($buy->total_delivery) && $buy->total_delivery ? 'is-filled' : '' }}">
-                            <label class="form-label">Costo de Envío (Opcional)</label>
-                            <input type="number" form="saleForm"
-                                value="{{ isset($buy->total_delivery) ? $buy->total_delivery : '' }}"
-                                class="form-control" name="delivery" id="deliveryInput">
+                    <div class="col-md-4">
+                        <div class="field-group">
+                            <label>Nombre</label>
+                            <input type="text" form="saleForm" name="name"
+                                   value="{{ isset($buy->name) ? $buy->name : '' }}"
+                                   placeholder="Cliente...">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="field-group">
+                            <label>Correo</label>
+                            <input type="email" form="saleForm" name="email"
+                                   value="{{ isset($buy->email) ? $buy->email : '' }}"
+                                   placeholder="correo@ejemplo.com">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="field-group">
+                            <label>Teléfono</label>
+                            <input type="text" form="saleForm" name="telephone"
+                                   value="{{ isset($buy->telephone) ? $buy->telephone : '' }}"
+                                   placeholder="8888-0000">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="field-group">
+                            <label>País</label>
+                            <input type="text" form="saleForm" name="country" value="Costa Rica" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="field-group">
+                            <label>Provincia</label>
+                            <input type="text" form="saleForm" name="province"
+                                   value="{{ isset($buy->province) ? $buy->province : '' }}"
+                                   placeholder="San José...">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="field-group">
+                            <label>Ciudad</label>
+                            <input type="text" form="saleForm" name="city"
+                                   value="{{ isset($buy->city) ? $buy->city : '' }}"
+                                   placeholder="Ciudad...">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="field-group">
+                            <label>Distrito</label>
+                            <input type="text" form="saleForm" name="address_two"
+                                   value="{{ isset($buy->address_two) ? $buy->address_two : '' }}"
+                                   placeholder="Distrito...">
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="field-group">
+                            <label>Dirección exacta</label>
+                            <input type="text" form="saleForm" name="address"
+                                   value="{{ isset($buy->address) ? $buy->address : '' }}"
+                                   placeholder="Señas exactas...">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="field-group">
+                            <label>Nota / detalle</label>
+                            <input type="text" form="saleForm" name="detail"
+                                   value="{{ isset($buy->detail) ? $buy->detail : '' }}"
+                                   placeholder="Ej: pago en efectivo">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="step-connector"></div>
+
+        {{-- ╔═══════════════════════════════╗ --}}
+        {{-- ║  PASO 3 · CONFIRMAR           ║ --}}
+        {{-- ╚═══════════════════════════════╝ --}}
+        <div class="s-card">
+            <div class="s-card-body">
+                <div class="step-pill">
+                    <div class="step-pill-num">3</div>
+                    <div>
+                        <div class="step-pill-label">Confirmar venta</div>
+                        <div class="step-pill-sub">Envío, apartado y total final</div>
+                    </div>
+                </div>
+
+                <div class="row align-items-start">
+                    {{-- Left: envío + apartado --}}
+                    <div class="col-md-5">
+                        <div class="field-group">
+                            <label>
+                                <i class="material-icons" style="font-size:.8rem;vertical-align:middle;">local_shipping</i>
+                                Costo de envío
+                            </label>
+                            <input type="number" form="saleForm" name="delivery" id="deliveryInput"
+                                   value="{{ isset($buy->total_delivery) ? $buy->total_delivery : '' }}"
+                                   placeholder="0" min="0">
                         </div>
 
-                        @if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'rutalimon')
-                        <div class="apartado-section mt-3">
-                            <div class="d-flex align-items-center gap-2 mb-2">
-                                <div class="form-check mb-0">
-                                    <input class="form-check-input" type="checkbox" value="1"
-                                        id="apartado" name="apartado" form="saleForm"
-                                        {{ (isset($buy->apartado) && $buy->apartado == 1) || old('apartado') ? 'checked' : '' }}>
-                                    <label class="form-check-label fw-bold" for="apartado">
-                                        <i class="material-icons me-1" style="vertical-align:middle;font-size:1rem">savings</i>
-                                        Apartado
-                                    </label>
-                                </div>
-                                <span class="badge badge-sm bg-gradient-warning">Pago parcial</span>
-                            </div>
-                            <p class="text-xs text-muted mb-2">El cliente cancela un monto ahora y el resto después. La venta queda registrada con estado "Apartado".</p>
-                            <div class="{{ (isset($buy->monto_apartado) && $buy->monto_apartado) ? '' : 'd-none' }}" id="monto_apartado">
-                                <div class="input-group input-group-lg input-group-outline {{ isset($buy->monto_apartado) && $buy->monto_apartado ? 'is-filled' : '' }}">
-                                    <label class="form-label">Monto del Apartado (₡)</label>
-                                    <input value="{{ isset($buy->monto_apartado) ? $buy->monto_apartado : '' }}"
-                                        type="number" class="form-control" name="monto_apartado" form="saleForm">
+                        @if(isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'rutalimon')
+                        <div class="apartado-box">
+                            <label class="apartado-toggle">
+                                <input type="checkbox" id="apartado" name="apartado" form="saleForm" value="1"
+                                       {{ (isset($buy->apartado) && $buy->apartado == 1) || old('apartado') ? 'checked' : '' }}>
+                                <span>
+                                    <span class="apartado-label-text">Apartado</span>
+                                    <span style="display:inline-block;margin-left:6px;font-size:.65rem;font-weight:700;color:var(--orange);background:#fff3dc;border:1px solid #ffe0a0;border-radius:4px;padding:1px 6px;text-transform:uppercase;letter-spacing:.04em;">Pago parcial</span>
+                                </span>
+                            </label>
+                            <p class="apartado-desc">El cliente cancela un monto inicial y el resto después. La venta queda registrada como apartado.</p>
+                            <div id="monto_apartado" class="{{ (isset($buy->monto_apartado) && $buy->monto_apartado) ? '' : 'd-none' }}" style="margin-top:10px;">
+                                <div class="field-group mb-0">
+                                    <label>Monto del apartado (₡)</label>
+                                    <input type="number" form="saleForm" name="monto_apartado"
+                                           value="{{ isset($buy->monto_apartado) ? $buy->monto_apartado : '' }}"
+                                           placeholder="Ej: 5000">
                                 </div>
                             </div>
                         </div>
                         @endif
                     </div>
 
-                    {{-- Columna derecha: Totales --}}
-                    <div class="col-md-6">
-                        <div class="card bg-gradient-dark mb-3">
-                            <div class="card-body p-3">
-                                <ul class="list-group list-group-flush">
-                                    <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-1"
-                                        style="background:transparent;color:#fff">
-                                        <span class="text-white-50 text-sm">Productos</span>
-                                        <strong id="totalCloth">₡{{ number_format($cloth_price) }}</strong>
-                                    </li>
-                                    @if ($iva > 0)
-                                    <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-1"
-                                        style="background:transparent;color:#fff">
-                                        <span class="text-white-50 text-sm">I.V.A</span>
-                                        <span id="totalIvaElement">₡{{ number_format($iva) }}</span>
-                                    </li>
-                                    @endif
-                                    @if ($you_save > 0)
-                                    <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-1"
-                                        style="background:transparent;color:#fff">
-                                        <span class="text-white-50 text-sm">Descuento</span>
-                                        <span class="text-warning" id="totalDiscountElement">-₡{{ number_format($you_save) }}</span>
-                                    </li>
-                                    @endif
-                                    <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pt-2"
-                                        style="background:transparent;color:#fff;border-top:1px solid rgba(255,255,255,.2) !important">
-                                        <strong class="text-white">TOTAL</strong>
-                                        <strong class="text-white fs-5" id="totalPriceElement">₡{{ number_format($total_price) }}</strong>
-                                    </li>
-                                </ul>
+                    {{-- Right: summary card + CTA --}}
+                    <div class="col-md-7 mt-3 mt-md-0">
+                        <div class="summary-card">
+                            <div class="summary-card-header">
+                                <div class="total-lbl">Total a cobrar</div>
+                                <div class="total-val">₡<span id="totalPriceElement2">{{ number_format($total_price) }}</span></div>
+                            </div>
+                            <div class="summary-card-body">
+                                <div class="summary-line">
+                                    <span>Productos</span>
+                                    <span class="val" id="sc-cloth">₡{{ number_format($cloth_price) }}</span>
+                                </div>
+                                @if($iva > 0)
+                                <div class="summary-line">
+                                    <span>I.V.A.</span>
+                                    <span class="val" id="sc-iva">₡{{ number_format($iva) }}</span>
+                                </div>
+                                @endif
+                                @if($you_save > 0)
+                                <div class="summary-line">
+                                    <span>Descuento</span>
+                                    <span class="discount-val" id="sc-discount">−₡{{ number_format($you_save) }}</span>
+                                </div>
+                                @endif
                             </div>
                         </div>
 
-                        <button @if ($total_price == 0) disabled @endif
-                            id="btnSinpe" type="submit" form="saleForm"
-                            class="btn btn-add_to_cart w-100 d-block h8">
-                            <i class="material-icons me-1" style="vertical-align:middle;font-size:1.1rem">point_of_sale</i>
-                            Realizar Venta &nbsp;₡<span id="btnPay">{{ number_format($total_price) }}</span>
+                        <button type="submit" form="saleForm" id="btnSinpe"
+                                class="btn-confirm"
+                                @if($total_price == 0) disabled @endif>
+                            <i class="material-icons" style="font-size:1.1rem;">point_of_sale</i>
+                            Confirmar venta · ₡<span id="btnPay">{{ number_format($total_price) }}</span>
                         </button>
                     </div>
                 </div>
             </div>
         </div>
 
-    </div>
+    </div><!-- /.sale-wrap -->
+
 @endsection
 @section('script')
-    <script>
-        $(document).ready(function() {
-            var tenant = $('#tenant').val();
-            var updateId = document.getElementById('updateId').value;
+<script>
+$(function() {
+    var tenant   = $('#tenant').val();
+    var updateId = document.getElementById('updateId').value;
 
-            // ── Apartado toggle ──────────────────────────────────────────────
-            if (tenant !== "rutalimon") {
-                const checkbox  = document.getElementById("apartado");
-                const montoDiv  = document.getElementById("monto_apartado");
-                if (checkbox) {
-                    checkbox.addEventListener("click", function() {
-                        montoDiv.classList.toggle("d-none", !this.checked);
-                    });
-                }
-            }
-
-            // ── DataTable (cart) ─────────────────────────────────────────────
-            var dataTable = $('#cartTable').DataTable({
-                searching: false,
-                lengthChange: false,
-                paging: false,
-                info: false,
-                ordering: false,
+    // ── Apartado toggle ────────────────────────────────────────
+    if (tenant !== 'rutalimon') {
+        var cbApartado = document.getElementById('apartado');
+        var montoDiv   = document.getElementById('monto_apartado');
+        if (cbApartado) {
+            cbApartado.addEventListener('change', function() {
+                montoDiv.classList.toggle('d-none', !this.checked);
             });
+        }
+    }
 
-            // ── Código: buscar por Enter ─────────────────────────────────────
-            $('#code').keypress(function(event) {
-                if (event.keyCode === 13) {
-                    event.preventDefault();
-                    fetchProductAttributes($(this).val());
-                }
-            });
+    // ── Código: Enter ─────────────────────────────────────────
+    $('#code').on('keypress', function(e) {
+        if (e.keyCode === 13) { e.preventDefault(); fetchAttrs($(this).val()); }
+    });
 
-            // ── AJAX: obtener atributos del producto ─────────────────────────
-            function fetchProductAttributes(code) {
-                var $container = $('#container');
-                $.ajaxSetup({ headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') } });
-                $.ajax({
-                    method: "POST",
-                    url: "/size-by-cloth",
-                    data: { 'code': code },
-                    success: function(response) {
-                        $container.empty();
-                        if (response.status !== "success") {
-                            Swal.fire({ title: response.status, icon: response.icon });
-                            $container.removeClass('d-block').addClass('d-none');
-                            $('#select-container').removeClass('d-block').addClass('d-none');
-                        } else {
-                            renderAttributes(response.results, $container, updateId);
-                            $container.removeClass('d-none').addClass('d-block');
-                            $('#select-container').removeClass('d-none').addClass('d-block');
-                        }
-                    }
-                });
-            }
-
-            // ── Renderizar selectores de atributos ───────────────────────────
-            function renderAttributes(results, $container, updateId) {
-                var $currentRow;
-                if (results.length > 0) {
-                    $.each(results, function(index, attribute) {
-                        if (index % 2 === 0) {
-                            $currentRow = $('<div>', { class: 'row align-items-end mb-3' });
-                            $container.append($currentRow);
-                        }
-
-                        var values      = attribute.valores.split('/');
-                        var ids         = attribute.ids.split('/');
-                        var stockValues = attribute.stock.split('/');
-
-                        var $label  = $('<label>', { text: attribute.columna_atributo });
-                        var $select = $('<select>', {
-                            required: true,
-                            name: 'size_id',
-                            class: 'size_id form-control form-control-lg'
-                        });
-
-                        $.each(values, function(key, value) {
-                            if (ids[key] !== undefined && stockValues[key] != 0) {
-                                var $option = $('<option>', {
-                                    value: ids[key] + '-' + attribute.attr_id + '-' + attribute.clothing_id,
-                                    id: 'size_' + ids[key],
-                                    text: value + ' (stock: ' + stockValues[key] + ')'
-                                });
-                                if (key === 0) $option.attr('selected', 'selected');
-                                $select.append($option);
-                            }
-                        });
-
-                        var $colAttr = $('<div>', { class: 'col-md-4' })
-                            .append($label).append($select);
-                        $currentRow.append($colAttr);
-
-                        if (typeof updateId !== 'undefined' && updateId != 0) {
-                            var $qtyLabel = $('<label>', { text: 'Cantidad' });
-                            var $qtyInput = $('<input>', {
-                                type: 'number', id: 'quantityBox', name: 'quantityBox',
-                                class: 'form-control', placeholder: 'Cant.', min: 1, value: 1
-                            });
-                            $currentRow.append(
-                                $('<div>', { class: 'col-md-2' }).append($qtyLabel).append($qtyInput)
-                            );
-                        }
-
-                        if (index % 2 === 1 || index === results.length - 1) {
-                            var $btn = $('<button>', { class: 'btn btn-add_to_cart shadow-0 btnAdd' })
-                                .append('<i class="me-1 fa fa-shopping-basket"></i> Agregar');
-                            $currentRow.append(
-                                $('<div>', { class: 'col-md-12 mt-2' }).append($btn)
-                            );
-                        }
-                    });
+    // ── Fetch atributos ───────────────────────────────────────
+    function fetchAttrs(code) {
+        var $cont = $('#container');
+        $.ajax({
+            method: 'POST',
+            url: '/size-by-cloth',
+            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+            data: { code: code },
+            success: function(r) {
+                $cont.find('.attr-area').empty();
+                if (r.status !== 'success') {
+                    Swal.fire({ title: r.status, icon: r.icon });
+                    $cont.addClass('d-none');
                 } else {
-                    // Sin atributos: sólo botón Agregar
-                    var $btn = $('<button>', { class: 'btn btn-add_to_cart shadow-0 btnAdd' })
-                        .append('<i class="me-1 fa fa-shopping-basket"></i> Agregar');
-                    $container.append(
-                        $('<div>', { class: 'row' }).append(
-                            $('<div>', { class: 'col-md-12 text-center' }).append($btn)
-                        )
-                    );
+                    buildAttrs(r.results, $cont.find('.attr-area'), updateId);
+                    $cont.removeClass('d-none');
                 }
             }
+        });
+    }
 
-            // ── Agregar al carrito ───────────────────────────────────────────
-            $('#container').on('click', '.btnAdd', function(e) {
-                e.preventDefault();
-                var code     = document.getElementById('code').value;
-                var updateId = document.getElementById('updateId').value;
-                var quantity = 1;
-                if (updateId != 0) {
-                    var qtyBox = document.getElementById('quantityBox');
-                    if (qtyBox) quantity = qtyBox.value;
+    // ── Construir selectores ──────────────────────────────────
+    function buildAttrs(results, $area, uid) {
+        $area.empty();
+        if (results.length === 0) {
+            // sin atributos
+            $area.append(buildAddBtn());
+            return;
+        }
+        var $row = $('<div class="row g-2 align-items-end">');
+        $.each(results, function(i, attr) {
+            var vals   = attr.valores.split('/');
+            var ids    = attr.ids.split('/');
+            var stocks = attr.stock.split('/');
+
+            var $sel = $('<select>', { name: 'size_id', class: 'size_id' });
+            $.each(vals, function(k, v) {
+                if (ids[k] !== undefined && stocks[k] != 0) {
+                    var $opt = $('<option>', {
+                        value: ids[k] + '-' + attr.attr_id + '-' + attr.clothing_id,
+                        text: v + ' · stock ' + stocks[k]
+                    });
+                    if (k === 0) $opt.attr('selected', true);
+                    $sel.append($opt);
                 }
-                var selected_sizes = [];
-                $('.size_id').each(function() {
-                    var v = $(this).val();
-                    if (v && v.trim() !== "") selected_sizes.push(v);
-                });
-                var attributes = JSON.stringify(selected_sizes);
-
-                $.ajaxSetup({ headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') } });
-                $.ajax({
-                    method: "POST",
-                    url: "/add-to-cart",
-                    data: { 'code': code, 'updateId': updateId, 'attributes': attributes, 'quantity': quantity },
-                    success: function(response) {
-                        if (response.icon === "success") {
-                            location.reload();
-                        } else {
-                            Swal.fire({ title: response.status, icon: response.icon });
-                        }
-                    }
-                });
             });
 
-            // ── Actualizar cantidad ──────────────────────────────────────────
-            $('.btnQuantity').on('change', function() {
-                var quantity = $(this).val();
-                var itemId   = $(this).data('cart-id');
-                $.ajaxSetup({ headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') } });
-                $.ajax({
-                    method: "POST",
-                    url: "/edit-quantity",
-                    data: { 'cart_id': itemId, 'quantity': quantity },
-                    success: function() { calcularTotal(); }
-                });
-            });
-
-            // ── Actualizar precio personalizado ──────────────────────────────
-            $(document).on('change', '.price', function() {
-                var customPrice = $(this).val();
-                var itemId      = $(this).data('cart-id');
-                if (!itemId) return; // no es fila del cart
-                $.ajaxSetup({ headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') } });
-                $.ajax({
-                    method: "POST",
-                    url: "/edit-price",
-                    data: { 'cart_id': itemId, 'custom_price': customPrice },
-                    success: function(response) {
-                        if (response.status === 'success') {
-                            calcularTotal();
-                        }
-                    }
-                });
-            });
-
-            // ── Eliminar item del carrito ────────────────────────────────────
-            $('.btnDeleteCart').on('click', function(e) {
-                e.preventDefault();
-                var itemId = $(this).data('item-id');
-                Swal.fire({
-                    title: '¿Eliminar este producto?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Sí, eliminar',
-                    cancelButtonText: 'Cancelar',
-                    confirmButtonColor: '#d33'
-                }).then(function(result) {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            method: "POST",
-                            url: "/delete-item-cart/" + itemId,
-                            data: { _token: '{{ csrf_token() }}', _method: 'DELETE' },
-                            success: function(response) {
-                                if (response.refresh == true) {
-                                    window.location.href = "{{ url('/') }}";
-                                } else {
-                                    location.reload();
-                                }
-                            },
-                            error: function(xhr) { console.error(xhr.responseText); }
-                        });
-                    }
-                });
-            });
+            var $col = $('<div class="col-auto" style="min-width:140px">');
+            $col.append($('<label>', { text: attr.columna_atributo })).append($sel);
+            $row.append($col);
         });
 
-        // ── Seleccionar producto desde modal ─────────────────────────────────
-        let currentButtonName = null;
-        document.querySelectorAll('.icon-button').forEach(button => {
-            button.addEventListener('click', function() {
-                currentButtonName = this.getAttribute('data-name');
-            });
+        if (uid != 0) {
+            var $qCol = $('<div class="col-auto" style="min-width:80px">');
+            $qCol.append($('<label>', { text: 'Cantidad' }))
+                 .append($('<input>', { type:'number', id:'quantityBox', name:'quantityBox', min:1, value:1 }));
+            $row.append($qCol);
+        }
+
+        $row.append($('<div class="col-auto align-self-end">').append(buildAddBtn()));
+        $area.append($row);
+    }
+
+    function buildAddBtn() {
+        return $('<button>', { type:'button', class:'btn-add-item btnAdd' })
+            .append('<i class="material-icons" style="font-size:1rem">add_shopping_cart</i> Agregar');
+    }
+
+    // ── Agregar al carrito ────────────────────────────────────
+    $('#container').on('click', '.btnAdd', function() {
+        var code = $('#code').val();
+        var uid  = document.getElementById('updateId').value;
+        var qty  = 1;
+        if (uid != 0) { var qb = document.getElementById('quantityBox'); if (qb) qty = qb.value; }
+
+        var sizes = [];
+        $('.size_id').each(function() { var v=$(this).val(); if(v && v.trim()) sizes.push(v); });
+
+        $.ajax({
+            method: 'POST',
+            url: '/add-to-cart',
+            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+            data: { code: code, updateId: uid, attributes: JSON.stringify(sizes), quantity: qty },
+            success: function(r) {
+                if (r.icon === 'success') location.reload();
+                else Swal.fire({ title: r.status, icon: r.icon });
+            }
         });
+    });
 
-        function selectIcon(icon) {
-            if (!currentButtonName) return;
-            document.getElementById("code").value = icon;
-            var modal = bootstrap.Modal.getInstance(document.getElementById('add-products-modal'));
-            modal.hide();
+    // ── Actualizar cantidad ───────────────────────────────────
+    $(document).on('change', '.btnQuantity', function() {
+        $.ajax({
+            method: 'POST',
+            url: '/edit-quantity',
+            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+            data: { cart_id: $(this).data('cart-id'), quantity: $(this).val() },
+            success: function() { calcTotal(); }
+        });
+    });
 
-            var $container = $('#container');
-            var updateId   = document.getElementById('updateId').value;
-            $container.empty();
+    // ── Actualizar precio ─────────────────────────────────────
+    $(document).on('change', '.price-input', function() {
+        var id = $(this).data('cart-id');
+        if (!id) return;
+        $.ajax({
+            method: 'POST',
+            url: '/edit-price',
+            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+            data: { cart_id: id, custom_price: $(this).val() },
+            success: function(r) { if (r.status === 'success') calcTotal(); }
+        });
+    });
 
-            $.ajaxSetup({ headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') } });
+    // ── Eliminar producto ─────────────────────────────────────
+    $(document).on('click', '.btnDeleteCart', function() {
+        var id = $(this).data('item-id');
+        Swal.fire({
+            title: 'Eliminar producto',
+            text: '¿Deseas quitarlo del pedido?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Eliminar',
+            cancelButtonText: 'Cancelar',
+            confirmButtonColor: '#ff3b30',
+            cancelButtonColor: '#e5e5ea',
+        }).then(function(res) {
+            if (!res.isConfirmed) return;
             $.ajax({
-                method: "POST",
-                url: "/size-by-cloth",
-                data: { 'code': icon },
-                success: function(response) {
-                    if (response.status !== "success") {
-                        Swal.fire({ title: response.status, icon: response.icon });
-                        $container.removeClass('d-block').addClass('d-none');
-                        $('#select-container').removeClass('d-block').addClass('d-none');
-                    } else {
-                        renderAttributes(response.results, $container, updateId);
-                        $container.removeClass('d-none').addClass('d-block');
-                        $('#select-container').removeClass('d-none').addClass('d-block');
-                    }
+                method: 'POST',
+                url: '/delete-item-cart/' + id,
+                data: { _token: '{{ csrf_token() }}', _method: 'DELETE' },
+                success: function(r) {
+                    if (r.refresh) window.location.href = '{{ url("/") }}';
+                    else location.reload();
                 }
             });
+        });
+    });
+});
 
-            function renderAttributes(results, $container, updateId) {
-                var $currentRow;
-                if (results.length > 0) {
-                    $.each(results, function(index, attribute) {
-                        if (index % 2 === 0) {
-                            $currentRow = $('<div>', { class: 'row align-items-end mb-3' });
-                            $container.append($currentRow);
-                        }
-                        var values      = attribute.valores.split('/');
-                        var ids         = attribute.ids.split('/');
-                        var stockValues = attribute.stock.split('/');
-                        var $label  = $('<label>', { text: attribute.columna_atributo });
-                        var $select = $('<select>', { required: true, name: 'size_id', class: 'size_id form-control form-control-lg' });
+// ── Modal: seleccionar producto ────────────────────────────
+let _modalTrigger = null;
+document.querySelectorAll('.icon-button').forEach(b => {
+    b.addEventListener('click', () => _modalTrigger = b.dataset.name);
+});
 
-                        $.each(values, function(key, value) {
-                            if (ids[key] !== undefined && stockValues[key] != 0) {
-                                var $option = $('<option>', {
-                                    value: ids[key] + '-' + attribute.attr_id + '-' + attribute.clothing_id,
-                                    id: 'size_' + ids[key],
-                                    text: value + ' (stock: ' + stockValues[key] + ')'
-                                });
-                                if (key === 0) $option.attr('selected', 'selected');
-                                $select.append($option);
-                            }
-                        });
+function selectIcon(code) {
+    if (!_modalTrigger) return;
+    document.getElementById('code').value = code;
+    bootstrap.Modal.getInstance(document.getElementById('add-products-modal')).hide();
 
-                        var $colAttr = $('<div>', { class: 'col-md-4' }).append($label).append($select);
-                        $currentRow.append($colAttr);
+    var $cont    = $('#container');
+    var $area    = $cont.find('.attr-area');
+    var updateId = document.getElementById('updateId').value;
+    $area.empty();
 
-                        if (typeof updateId !== 'undefined' && updateId != 0) {
-                            var $qtyLabel = $('<label>', { text: 'Cantidad' });
-                            var $qtyInput = $('<input>', { type: 'number', id: 'quantityBox', name: 'quantityBox', class: 'form-control', placeholder: 'Cant.', min: 1, value: 1 });
-                            $currentRow.append($('<div>', { class: 'col-md-2' }).append($qtyLabel).append($qtyInput));
-                        }
+    $.ajax({
+        method: 'POST',
+        url: '/size-by-cloth',
+        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+        data: { code: code },
+        success: function(r) {
+            if (r.status !== 'success') {
+                Swal.fire({ title: r.status, icon: r.icon });
+                $cont.addClass('d-none');
+            } else {
+                buildAttrsModal(r.results, $area, updateId);
+                $cont.removeClass('d-none');
+            }
+        }
+    });
 
-                        if (index % 2 === 1 || index === results.length - 1) {
-                            var $btn = $('<button>', { class: 'btn btn-add_to_cart shadow-0 btnAdd' })
-                                .append('<i class="me-1 fa fa-shopping-basket"></i> Agregar');
-                            $currentRow.append($('<div>', { class: 'col-md-12 mt-2' }).append($btn));
-                        }
-                    });
-                } else {
-                    var $btn = $('<button>', { class: 'btn btn-add_to_cart shadow-0 btnAdd' })
-                        .append('<i class="me-1 fa fa-shopping-basket"></i> Agregar');
-                    $container.append($('<div>', { class: 'row' }).append($('<div>', { class: 'col-md-12 text-center' }).append($btn)));
+    function buildAttrsModal(results, $area, uid) {
+        $area.empty();
+        function addBtn() {
+            return $('<button>', { type:'button', class:'btn-add-item btnAdd' })
+                .append('<i class="material-icons" style="font-size:1rem">add_shopping_cart</i> Agregar');
+        }
+        if (results.length === 0) { $area.append(addBtn()); return; }
+
+        var $row = $('<div class="row g-2 align-items-end">');
+        $.each(results, function(i, attr) {
+            var vals=attr.valores.split('/'), ids=attr.ids.split('/'), stocks=attr.stock.split('/');
+            var $sel = $('<select>', { name:'size_id', class:'size_id' });
+            $.each(vals, function(k,v) {
+                if (ids[k] !== undefined && stocks[k] != 0) {
+                    var $o = $('<option>', { value:ids[k]+'-'+attr.attr_id+'-'+attr.clothing_id, text:v+' · stock '+stocks[k] });
+                    if (k===0) $o.attr('selected',true);
+                    $sel.append($o);
                 }
-            }
-        }
-
-        // ── Filtrar productos en el modal ────────────────────────────────────
-        function filterIcons() {
-            var input    = document.getElementById('icon-search');
-            var filter   = input.value.toLowerCase();
-            var iconList = document.getElementById('icon-list');
-            var icons    = iconList.getElementsByClassName('icon-item');
-            for (var i = 0; i < icons.length; i++) {
-                var code = icons[i].getAttribute('data-code').toLowerCase();
-                var name = icons[i].getAttribute('data-name').toLowerCase();
-                icons[i].style.display = (code.indexOf(filter) > -1 || name.indexOf(filter) > -1) ? "" : "none";
-            }
-        }
-
-        // ── Recalcular totales ───────────────────────────────────────────────
-        function calcularTotal() {
-            var total       = 0;
-            var total_cloth = 0;
-            var iva         = parseFloat(document.getElementById("iva_tenant").value);
-            var total_iva   = 0;
-            var you_save    = 0;
-
-            document.querySelectorAll('#cartTable tbody tr').forEach(function(fila) {
-                var priceInput = fila.querySelector('.price');
-                var discInput  = fila.querySelector('.discount');
-                var qtyInput   = fila.querySelector('.quantity');
-                if (!priceInput || !qtyInput) return;
-                var precio    = parseFloat(priceInput.value) || 0;
-                var discount  = parseFloat(discInput ? discInput.value : 0) || 0;
-                var cantidad  = parseInt(qtyInput.value) || 1;
-                you_save += discount * cantidad;
-                total    += precio * cantidad;
             });
-
-            total_iva   = total * iva;
-            total_cloth = total;
-
-            var fmt = function(n) {
-                return '₡' + n.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.');
-            };
-
-            var totalEl    = document.getElementById('totalPriceElement');
-            var ivaEl      = document.getElementById('totalIvaElement');
-            var discountEl = document.getElementById('totalDiscountElement');
-            var clothEl    = document.getElementById('totalCloth');
-            var btnPay     = document.getElementById('btnPay');
-            var subtotal   = document.getElementById('subtotalBadge');
-            var btnSinpe   = document.getElementById('btnSinpe');
-
-            if (totalEl)    totalEl.textContent   = fmt(total + total_iva);
-            if (ivaEl && total_iva > 0) ivaEl.textContent = fmt(total_iva);
-            if (discountEl && you_save > 0) discountEl.textContent = '-' + fmt(you_save);
-            if (clothEl)    clothEl.textContent   = fmt(total_cloth);
-            if (btnPay)     btnPay.textContent     = (total + total_iva).toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.');
-            if (subtotal)   subtotal.textContent   = fmt(total_cloth);
-            if (btnSinpe)   btnSinpe.disabled      = (total === 0);
+            $row.append($('<div class="col-auto" style="min-width:140px">').append($('<label>',{text:attr.columna_atributo})).append($sel));
+        });
+        if (uid != 0) {
+            $row.append($('<div class="col-auto" style="min-width:80px">').append($('<label>',{text:'Cantidad'})).append($('<input>',{type:'number',id:'quantityBox',name:'quantityBox',min:1,value:1})));
         }
-    </script>
+        $row.append($('<div class="col-auto align-self-end">').append(addBtn()));
+        $area.append($row);
+    }
+}
+
+// ── Filtrar modal ─────────────────────────────────────────
+function filterIcons() {
+    var q     = document.getElementById('icon-search').value.toLowerCase();
+    var items = document.getElementById('icon-list').getElementsByClassName('icon-item');
+    var count = 0;
+    for (var i = 0; i < items.length; i++) {
+        var show = items[i].dataset.code.toLowerCase().includes(q)
+                || items[i].dataset.name.toLowerCase().includes(q);
+        items[i].style.display = show ? '' : 'none';
+        if (show) count++;
+    }
+    document.getElementById('product-count').textContent = count;
+    document.getElementById('empty-search').classList.toggle('d-none', count > 0);
+}
+
+// ── Recalcular totales ────────────────────────────────────
+function calcTotal() {
+    var iva      = parseFloat(document.getElementById('iva_tenant').value) || 0;
+    var subtotal = 0, youSave = 0;
+
+    document.querySelectorAll('#cartTable tbody tr').forEach(function(row) {
+        var pi = row.querySelector('.price-input, .price');
+        var di = row.querySelector('.discount');
+        var qi = row.querySelector('.qty-input, .quantity');
+        if (!pi || !qi) return;
+        var p = parseFloat(pi.value) || 0;
+        var d = parseFloat(di ? di.value : 0) || 0;
+        var q = parseInt(qi.value) || 1;
+        youSave  += d * q;
+        subtotal += p * q;
+    });
+
+    var ivaAmt = subtotal * iva;
+    var total  = subtotal + ivaAmt;
+    var fmt    = n => '₡' + n.toLocaleString('es-CR', {minimumFractionDigits:0,maximumFractionDigits:0}).replace(',','.');
+
+    // Strip totals
+    var el = id => document.getElementById(id);
+    if (el('totalCloth'))       el('totalCloth').textContent       = fmt(subtotal);
+    if (el('totalIvaElement'))  el('totalIvaElement').textContent  = fmt(ivaAmt);
+    if (el('totalPriceElement')) el('totalPriceElement').textContent = fmt(total);
+    if (el('totalDiscountElement')) el('totalDiscountElement').textContent = '−' + fmt(youSave);
+
+    // Summary card
+    if (el('sc-cloth'))    el('sc-cloth').textContent    = fmt(subtotal);
+    if (el('sc-iva'))      el('sc-iva').textContent      = fmt(ivaAmt);
+    if (el('sc-discount')) el('sc-discount').textContent = '−' + fmt(youSave);
+    if (el('totalPriceElement2')) el('totalPriceElement2').textContent = total.toLocaleString('es-CR',{minimumFractionDigits:0,maximumFractionDigits:0}).replace(',','.');
+
+    // Button
+    if (el('btnPay'))   el('btnPay').textContent  = total.toLocaleString('es-CR',{minimumFractionDigits:0,maximumFractionDigits:0}).replace(',','.');
+    if (el('btnSinpe')) el('btnSinpe').disabled   = (subtotal === 0);
+}
+
+// ── Step 2 collapse ───────────────────────────────────────
+function toggleStep2() {
+    var body    = document.getElementById('step2-body');
+    var chevron = document.getElementById('step2-chevron');
+    var header  = document.getElementById('step2-toggle');
+    var open    = !body.classList.contains('d-none');
+    body.classList.toggle('d-none', open);
+    chevron.classList.toggle('open', !open);
+    header.classList.toggle('open', !open);
+}
+</script>
 @endsection
