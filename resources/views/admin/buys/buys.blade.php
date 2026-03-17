@@ -902,7 +902,9 @@ document.querySelectorAll('.icon-button').forEach(b => {
 });
 
 function closeProductsModal() {
-    var el = document.getElementById('add-products-modal');
+    var el   = document.getElementById('add-products-modal');
+    var inst = bootstrap.Modal.getInstance(el);
+    if (inst) inst.dispose();   // Reset Bootstrap internal state so next open works first try
     el.classList.remove('show');
     el.style.display = 'none';
     el.setAttribute('aria-hidden', 'true');
