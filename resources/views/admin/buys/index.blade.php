@@ -29,6 +29,7 @@
 .s-card {
     background: var(--white);
     border: 1px solid var(--gray1);
+    border-top: 3px solid var(--blue);
     border-radius: var(--radius);
     box-shadow: var(--shadow);
     margin-bottom: 12px;
@@ -159,8 +160,8 @@ div.dataTables_wrapper div.dataTables_length { display: none; }
     <div class="s-card">
         <div style="padding:18px 22px;">
             <div class="d-flex align-items-center gap-2 mb-3">
-                <div style="width:30px;height:30px;border-radius:9px;background:var(--gray0);display:flex;align-items:center;justify-content:center;">
-                    <i class="material-icons" style="font-size:.95rem;color:var(--black);">tune</i>
+                <div style="width:30px;height:30px;border-radius:9px;background:rgba(0,122,255,.1);display:flex;align-items:center;justify-content:center;">
+                    <i class="material-icons" style="font-size:.95rem;color:#007aff;">tune</i>
                 </div>
                 <span style="font-size:.875rem;font-weight:600;color:var(--black);">Filtros</span>
             </div>

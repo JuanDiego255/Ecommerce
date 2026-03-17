@@ -13,7 +13,7 @@ aside.sidenav {
 aside.sidenav::before { display: none !important; }
 
 /* Header */
-.sidenav-header { border-bottom: 1px solid #e5e5ea; }
+.sidenav-header { border-bottom: 2px solid #007aff; }
 .sidenav-header .navbar-brand h4 {
     color: #1d1d1f !important;
     font-size: .9rem !important;
