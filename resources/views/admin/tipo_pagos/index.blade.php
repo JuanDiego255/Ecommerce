@@ -3,39 +3,35 @@
     {!! SEOMeta::generate() !!}
     {!! OpenGraph::generate() !!}
 @endsection
+@section('breadcrumb')
+    <li class="breadcrumb-item active">Tipos de pago</li>
+@endsection
 @section('content')
-    <center>
-        <h2 class="text-center font-title">
-            <strong>{{ __('Gestionar tipos de pago') }}</strong>
-        </h2>
-    </center>
-    <button type="button" data-bs-toggle="modal" data-bs-target="#add-tipo-modal" class="btn btn-accion">
-        {{ __('Nuevo tipo') }}</button>
+    <div class="d-flex gap-2 mb-0">
+        <button type="button" data-bs-toggle="modal" data-bs-target="#add-tipo-modal" class="btn btn-primary btn-sm">
+            <span class="material-icons">add</span> {{ __('Nuevo tipo') }}
+        </button>
+    </div>
     @include('admin.tipo_pagos.add')
-    <div class="card mt-3">
-        <div class="card-body">
-            <div class="row w-100">
-                <div class="col-md-6">
-                    <div class="input-group input-group-lg input-group-static my-3 w-100">
-                        <label>Filtrar</label>
-                        <input value="" placeholder="Escribe para filtrar...." type="text"
-                            class="form-control form-control-lg" name="searchfor" id="searchfor">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="input-group input-group-lg input-group-static my-3 w-100">
-                        <label>Mostrar</label>
-                        <select id="recordsPerPage" name="recordsPerPage" class="form-control form-control-lg"
-                            autocomplete="recordsPerPage">
-                            <option value="5">5 Registros</option>
-                            <option value="10">10 Registros</option>
-                            <option selected value="15">15 Registros</option>
-                            <option value="50">50 Registros</option>
-                        </select>
-
-                    </div>
-                </div>
-
+    <div class="s-card">
+        <div class="s-card-header">
+            <div class="card-h-icon"><span class="material-icons">tune</span></div>
+            <span class="card-h-title">Filtros</span>
+        </div>
+        <div class="s-card-body" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;">
+            <div>
+                <label class="filter-label">Buscar</label>
+                <input value="" placeholder="Escribe para filtrar..." type="text"
+                    class="filter-input" name="searchfor" id="searchfor">
+            </div>
+            <div>
+                <label class="filter-label">Mostrar</label>
+                <select id="recordsPerPage" name="recordsPerPage" class="filter-input">
+                    <option value="5">5 registros</option>
+                    <option value="10">10 registros</option>
+                    <option selected value="15">15 registros</option>
+                    <option value="50">50 registros</option>
+                </select>
             </div>
         </div>
     </div>

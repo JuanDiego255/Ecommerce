@@ -22,7 +22,54 @@
 
 /* ── Page background ─────────────────────────────────────────── */
 body.g-sidenav-show { background: #f0f0f5 !important; }
-.container-fluid { padding-top: 0 !important; }
+
+/* ── Page container ──────────────────────────────────────────── */
+.admin-page-container {
+    padding: 12px 20px 24px !important;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* ── Breadcrumb ──────────────────────────────────────────────── */
+.admin-breadcrumb {
+    padding: 0;
+    margin: 0;
+}
+.admin-breadcrumb .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex-wrap: wrap;
+}
+.admin-breadcrumb .breadcrumb-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: .75rem !important;
+    color: var(--gray3) !important;
+}
+.admin-breadcrumb .breadcrumb-item a {
+    color: var(--gray3) !important;
+    text-decoration: none;
+    transition: color .12s;
+}
+.admin-breadcrumb .breadcrumb-item a:hover { color: var(--blue) !important; }
+.admin-breadcrumb .breadcrumb-item.active {
+    font-weight: 600;
+    color: var(--black) !important;
+}
+/* Separator via + selector */
+.admin-breadcrumb .breadcrumb-item + .breadcrumb-item::before {
+    content: "›";
+    color: var(--gray2);
+    font-size: .9rem;
+    line-height: 1;
+    margin-right: 4px;
+}
 
 /* ── Breadcrumb ──────────────────────────────────────────────── */
 nav[aria-label="breadcrumb"] .breadcrumb-item,

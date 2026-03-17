@@ -88,7 +88,18 @@
 
 
             @include('layouts.inc.adminnav')
-            <div class="container-fluid py-4">
+            <div class="container-fluid admin-page-container">
+                @hasSection('breadcrumb')
+                <nav class="admin-breadcrumb" aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item">
+                            <span class="material-icons" style="font-size:.75rem;vertical-align:middle;color:var(--gray3);">home</span>
+                            Admin
+                        </li>
+                        @yield('breadcrumb')
+                    </ol>
+                </nav>
+                @endif
                 @yield('content')
             </div>
             @include('layouts.inc.adminfooter')

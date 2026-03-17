@@ -3,6 +3,10 @@
     {!! SEOMeta::generate() !!}
     {!! OpenGraph::generate() !!}
 @endsection
+@section('breadcrumb')
+    <li class="breadcrumb-item"><a href="{{ url('buys-admin') }}">Pedidos</a></li>
+    <li class="breadcrumb-item active">Pedido #{{ $id }}</li>
+@endsection
 @section('content')
 @php
     $firstBuy = $buysDetails->first();
@@ -41,6 +45,11 @@
         <div style="width:220px;">
             <select id="search-select" class="form-control" placeholder="Buscar pedido..." name="search"></select>
         </div>
+
+        {{-- Edit order --}}
+        <a href="{{ url('/new-buy/' . $currentBuy->id) }}" class="btn btn-primary btn-sm">
+            <span class="material-icons">edit</span> Editar pedido
+        </a>
 
         {{-- Prev / Next --}}
         @if($previousBuy)

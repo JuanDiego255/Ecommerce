@@ -3,6 +3,9 @@
     {!! SEOMeta::generate() !!}
     {!! OpenGraph::generate() !!}
 @endsection
+@section('breadcrumb')
+    <li class="breadcrumb-item active">Pedidos</li>
+@endsection
 @section('content')
 <style>
 /* ── Variables ──────────────────────────────────────────── */
