@@ -13210,14 +13210,6 @@ textarea.form-control {
     cursor: pointer;
     font-weight: bold;
 }
-.main-container::before {
-    content: "";
-    height: 235px;
-    width: 100%;
-    position: fixed;
-    background-color: #faaa0b;
-    background-position: center;
-}
 
 .main-container-front::before {
     content: "";

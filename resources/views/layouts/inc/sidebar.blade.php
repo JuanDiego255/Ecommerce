@@ -49,7 +49,7 @@ aside.sidenav .nav-link.bg-gradient-btnVelvet,
 aside.sidenav .nav-link.bg-gradient-btnAc,
 aside.sidenav .nav-link.text-white.bg-gradient-btnVelvet,
 aside.sidenav .nav-link.text-white.bg-gradient-btnAc {
-    background: rgba(0,122,255,.1) !important;
+    background: rgba(0,122,255) !important;
     color: #007aff !important;
     box-shadow: none !important;
 }
