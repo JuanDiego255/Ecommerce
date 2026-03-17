@@ -1,4 +1,4 @@
-<div class="modal fade" id="add-products-modal" tabindex="-1" aria-hidden="true">
+<div class="modal" id="add-products-modal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content" style="border:none;border-radius:16px;overflow:hidden;">
 
@@ -42,6 +42,7 @@
                              style="background:#fff;border:1.5px solid #e5e5ea;border-radius:12px;padding:12px;cursor:pointer;transition:all .18s;text-align:center;user-select:none;">
                             <img src="{{ isset($item->image) && $item->image ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"
                                  alt="{{ $item->name }}"
+                                 loading="lazy"
                                  style="width:72px;height:72px;object-fit:cover;border-radius:8px;margin-bottom:8px;background:#f5f5f7;">
                             <p class="mb-0 fw-semibold" style="font-size:.78rem;color:#1d1d1f;line-height:1.3;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">{{ $item->name }}</p>
                             <p class="mb-0 mt-1" style="font-size:.7rem;color:#86868b;font-family:monospace;">{{ $item->code }}</p>
@@ -70,4 +71,8 @@
     transform: translateY(0);
     box-shadow: none;
 }
+
+/* Instant modal open — no Bootstrap fade delay */
+#add-products-modal { display: none; }
+#add-products-modal.show { display: block; }
 </style>

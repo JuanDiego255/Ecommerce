@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('layouts.pos')
 @section('metatag')
     {!! SEOMeta::generate() !!}
     {!! OpenGraph::generate() !!}
