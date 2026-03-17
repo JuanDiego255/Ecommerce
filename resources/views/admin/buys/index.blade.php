@@ -167,6 +167,36 @@ div.dataTables_wrapper div.dataTables_paginate .paginate_button.current { backgr
 div.dataTables_wrapper div.dataTables_paginate .paginate_button:hover:not(.current) { background: var(--gray1) !important; color: var(--black) !important; border: none !important; }
 div.dataTables_wrapper div.dataTables_filter,
 div.dataTables_wrapper div.dataTables_length { display: none; }
+
+/* ── Excel / PDF export buttons ─────────────────────────── */
+div.dt-buttons { padding: 12px 20px 4px; display: flex; gap: 8px; }
+.dt-button,
+div.dt-buttons a.dt-button,
+div.dt-buttons button.dt-button {
+    background: var(--blue) !important;
+    color: #fff !important;
+    border: none !important;
+    border-radius: 999px !important;
+    padding: 8px 22px !important;
+    font-size: .78rem !important;
+    font-weight: 600 !important;
+    letter-spacing: .01em !important;
+    box-shadow: 0 2px 6px rgba(0,122,255,.3) !important;
+    transition: background .14s, box-shadow .14s !important;
+    cursor: pointer !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    text-transform: none !important;
+}
+.dt-button:hover,
+div.dt-buttons a.dt-button:hover,
+div.dt-buttons button.dt-button:hover {
+    background: #0066d6 !important;
+    box-shadow: 0 4px 12px rgba(0,122,255,.35) !important;
+    color: #fff !important;
+}
+.dt-button:focus { outline: none !important; }
 </style>
 
 <div class="orders-wrap py-3 px-2 px-md-3">
