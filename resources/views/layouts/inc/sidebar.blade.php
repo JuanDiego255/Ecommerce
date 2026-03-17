@@ -1,3 +1,98 @@
+<style>
+/* ═══════════════════════════════════════════════════════════
+   Sidebar — minimal redesign to match card UI
+   ═══════════════════════════════════════════════════════════ */
+
+/* Background & border */
+aside.sidenav {
+    background: #ffffff !important;
+    background-image: none !important;
+    border-right: 1px solid #e5e5ea !important;
+    box-shadow: 2px 0 8px rgba(0,0,0,.04) !important;
+}
+aside.sidenav::before { display: none !important; }
+
+/* Header */
+.sidenav-header { border-bottom: 1px solid #e5e5ea; }
+.sidenav-header .navbar-brand h4 {
+    color: #1d1d1f !important;
+    font-size: .9rem !important;
+    font-weight: 700 !important;
+    letter-spacing: -.01em;
+}
+
+/* Dividers */
+aside.sidenav hr.horizontal.light {
+    border-color: #e5e5ea !important;
+    opacity: 1 !important;
+}
+
+/* Nav links — base */
+aside.sidenav .nav-link,
+aside.sidenav .nav-link.text-sidebar {
+    color: #3a3a3c !important;
+    border-radius: 10px !important;
+    margin: 1px 6px !important;
+    padding: 8px 10px !important;
+    transition: background .12s !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+aside.sidenav .nav-link:hover {
+    background: #f5f5f7 !important;
+    color: #1d1d1f !important;
+}
+
+/* Active / current page */
+aside.sidenav .nav-link.active,
+aside.sidenav .nav-link.bg-gradient-btnVelvet,
+aside.sidenav .nav-link.bg-gradient-btnAc,
+aside.sidenav .nav-link.text-white.bg-gradient-btnVelvet,
+aside.sidenav .nav-link.text-white.bg-gradient-btnAc {
+    background: rgba(0,122,255,.1) !important;
+    color: #007aff !important;
+    box-shadow: none !important;
+}
+
+/* Icons — default gray, blue when active */
+aside.sidenav .material-icons,
+aside.sidenav .material-icons-round {
+    color: #86868b !important;
+    opacity: 1 !important;
+}
+aside.sidenav .nav-link.active .material-icons,
+aside.sidenav .nav-link.active .material-icons-round,
+aside.sidenav .nav-link.bg-gradient-btnVelvet .material-icons,
+aside.sidenav .nav-link.bg-gradient-btnVelvet .material-icons-round {
+    color: #007aff !important;
+}
+
+/* Nav link text */
+aside.sidenav .nav-link-text { color: inherit !important; }
+
+/* Submenu links */
+aside.sidenav .submenu .nav-link {
+    padding-left: 20px !important;
+    font-size: .8rem;
+}
+
+/* Close session button */
+.sidenav-footer .btn {
+    background: #f5f5f7 !important;
+    color: #1d1d1f !important;
+    box-shadow: none !important;
+    border: 1.5px solid #e5e5ea !important;
+    border-radius: 10px !important;
+    font-size: .8rem !important;
+    font-weight: 600 !important;
+    background-image: none !important;
+}
+.sidenav-footer .btn:hover {
+    background: #e5e5ea !important;
+    color: #1d1d1f !important;
+}
+</style>
+
 @php
     $name_category = $tenantinfo->tenant == 'rutalimon' ? 'Mant. Categorías' : 'Categorías';
     $name_atributos = $tenantinfo->tenant == 'rutalimon' ? 'Mant. Atributos' : 'Atributos';
