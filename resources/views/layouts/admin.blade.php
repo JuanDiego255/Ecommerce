@@ -37,6 +37,8 @@
     <link rel="stylesheet" href="{{ asset('css/fontawesome.css') }}">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="{{ asset('css/admin-ui.css') }}" rel="stylesheet">
 </head>
 <style>
     :root {
