@@ -33,7 +33,7 @@
 
             {{-- Grid de productos --}}
             <div class="modal-body p-4" id="products-modal-body" style="background:#fafafa;">
-                <div id="icon-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;contain:layout;">
+                <div id="icon-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;">
                     @foreach ($clothings as $item)
                         <div onclick="selectIcon('{{ $item->code }}')"
                              class="icon-item product-card-modal"
@@ -44,7 +44,7 @@
                                  src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
                                  alt="{{ $item->name }}"
                                  class="product-img-lazy"
-                                 style="width:72px;height:72px;object-fit:cover;border-radius:8px;margin-bottom:8px;background:#f0f0f0;">
+                                 style="width:72px;height:72px;object-fit:cover;border-radius:8px;margin-bottom:8px;background:#ebebeb;">
                             <p class="mb-0 fw-semibold" style="font-size:.78rem;color:#1d1d1f;line-height:1.3;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">{{ $item->name }}</p>
                             <p class="mb-0 mt-1" style="font-size:.7rem;color:#86868b;font-family:monospace;">{{ $item->code }}</p>
                         </div>
@@ -63,34 +63,37 @@
 </div>
 
 <style>
-/* Modal instant open */
+/* Modal: instant open, no Bootstrap fade */
 #add-products-modal { display: none; }
 #add-products-modal.show { display: block; }
 
-/* Cards: only animate specific properties, not "all" */
+/* Cards: hover via border+shadow only — no transform avoids GPU layer creation */
 .product-card-modal {
-    transition: border-color .15s, box-shadow .15s, transform .15s;
-    contain: layout style;
+    border: 1.5px solid #e5e5ea;
+    border-radius: 12px;
+    padding: 12px;
+    cursor: pointer;
+    text-align: center;
+    user-select: none;
+    background: #fff;
+    transition: border-color .12s, box-shadow .12s;
 }
 .product-card-modal:hover {
-    border-color: #007aff !important;
-    box-shadow: 0 4px 16px rgba(0,122,255,.12);
-    transform: translateY(-2px);
+    border-color: #007aff;
+    box-shadow: 0 2px 12px rgba(0,122,255,.14);
 }
 .product-card-modal:active {
-    transform: translateY(0);
     box-shadow: none;
+    border-color: #0051c7;
 }
 
-/* Skeleton placeholder while image loads */
-.product-img-lazy {
-    background: #f0f0f0;
-    transition: opacity .2s;
-}
-.product-img-lazy.loaded { background: transparent; }
+/* Placeholder while image loads */
+.product-img-lazy { transition: opacity .15s; }
+.product-img-lazy.loaded { background: transparent !important; }
 </style>
 
 <script>
+// ── Lazy load images with IntersectionObserver ────────────
 (function () {
     var modalEl   = document.getElementById('add-products-modal');
     var modalBody = document.getElementById('products-modal-body');
@@ -111,7 +114,7 @@
             });
         }, {
             root: modalBody,
-            rootMargin: '300px',   // pre-cargar 300px antes de entrar al viewport
+            rootMargin: '80px',  // load images 80px before they enter view
             threshold: 0
         });
 
@@ -120,29 +123,34 @@
         });
     }
 
-    // Iniciar observer cada vez que se abre el modal
     modalEl.addEventListener('show.bs.modal', buildObserver);
 }());
 
-// ── Filtro con debounce ────────────────────────────────────
+// ── Debounced filter ──────────────────────────────────────
 var _filterTimer = null;
 function filterIcons() {
     clearTimeout(_filterTimer);
-    _filterTimer = setTimeout(_doFilter, 120);
+    _filterTimer = setTimeout(_doFilter, 150);
 }
 function _doFilter() {
     var q     = document.getElementById('icon-search').value.toLowerCase().trim();
     var items = document.getElementById('icon-list').children;
-    var count = 0;
+    var visible = 0;
+    // Batch all DOM changes in one rAF to avoid per-item reflow
+    var toShow = [], toHide = [];
     for (var i = 0; i < items.length; i++) {
         var el   = items[i];
         var show = !q
             || el.dataset.code.toLowerCase().includes(q)
-            || el.dataset.name.includes(q);          // data-name ya está en lowercase
-        el.hidden = !show;
-        if (show) count++;
+            || el.dataset.name.includes(q);
+        if (show) { toShow.push(el); visible++; }
+        else       { toHide.push(el); }
     }
-    document.getElementById('product-count').textContent = count;
-    document.getElementById('empty-search').classList.toggle('d-none', count > 0);
+    requestAnimationFrame(function () {
+        toShow.forEach(function (el) { el.hidden = false; });
+        toHide.forEach(function (el) { el.hidden = true;  });
+        document.getElementById('product-count').textContent = visible;
+        document.getElementById('empty-search').classList.toggle('d-none', visible > 0);
+    });
 }
 </script>

@@ -317,6 +317,7 @@ Route::middleware([
             Route::post('/save/detail/{id}', [BuyController::class, 'updateDetailBuy']);
             Route::get('/total-buys', [BuyController::class, 'indexTotalBuys']);
             Route::get('/new-buy/{id}', [BuyController::class, 'indexBuy']);
+            Route::get('/pos/cart-refresh', [BuyController::class, 'cartRefresh']);
             Route::get('/buy/details/admin/{id}', [BuyController::class, 'buyDetailsAdmin']);
             Route::put('/approve/{id}/{ready}', [BuyController::class, 'approve']);
             Route::put('/ready/{id}/{approved}', [BuyController::class, 'readyToGive']);

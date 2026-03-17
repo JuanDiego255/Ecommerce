@@ -569,6 +569,74 @@ class BuyController extends Controller
 
         return view('admin.buys.buys', compact('cart_items', 'buy', 'clothings', 'id', 'iva_tenant', 'name', 'cloth_price', 'iva', 'total_price', 'you_save'));
     }
+
+    public function cartRefresh()
+    {
+        Cache::forget('cart_items_0');
+
+        $cart_items = Cart::whereNull('carts.user_id')
+            ->whereNull('carts.session_id')
+            ->where('carts.sold', 0)
+            ->leftJoin('attribute_value_cars', 'carts.id', 'attribute_value_cars.cart_id')
+            ->leftJoin('attributes', 'attribute_value_cars.attr_id', 'attributes.id')
+            ->leftJoin('attribute_values', 'attribute_value_cars.value_attr', 'attribute_values.id')
+            ->leftJoin('stocks', function ($join) {
+                $join->on('carts.clothing_id', '=', 'stocks.clothing_id')
+                    ->on('attribute_value_cars.attr_id', '=', 'stocks.attr_id')
+                    ->on('attribute_value_cars.value_attr', '=', 'stocks.value_attr');
+            })
+            ->join('clothing', 'carts.clothing_id', 'clothing.id')
+            ->leftJoin('product_images', function ($join) {
+                $join->on('clothing.id', '=', 'product_images.clothing_id')
+                    ->whereRaw('product_images.id = (SELECT MIN(id) FROM product_images WHERE product_images.clothing_id = clothing.id)');
+            })
+            ->whereRaw('(stocks.price != 0 OR clothing.price != 0)')
+            ->select(
+                'clothing.id as id', 'clothing.name as name', 'clothing.casa as casa',
+                'clothing.code as code', 'clothing.description as description',
+                'clothing.mayor_price as mayor_price', 'clothing.discount as discount',
+                'clothing.status as status', 'clothing.price as price_cloth',
+                'carts.quantity as quantity', 'carts.id as cart_id',
+                'carts.custom_price as custom_price',
+                'attributes.name as name_attr', 'attribute_values.value as value',
+                DB::raw('COALESCE(stocks.price, clothing.price) as price'),
+                DB::raw('COALESCE(stocks.stock, clothing.stock) as stock'),
+                DB::raw('(SELECT GROUP_CONCAT(CONCAT(attributes.name, ": ", attribute_values.value) SEPARATOR ", ") FROM attribute_value_cars JOIN attributes ON attribute_value_cars.attr_id = attributes.id JOIN attribute_values ON attribute_value_cars.value_attr = attribute_values.id WHERE attribute_value_cars.cart_id = carts.id) as attributes_values'),
+                DB::raw('IFNULL(product_images.image, "") as image')
+            )
+            ->groupBy(
+                'clothing.id', 'clothing.name', 'clothing.price', 'clothing.stock',
+                'clothing.casa', 'clothing.code', 'clothing.description', 'stocks.price',
+                'stocks.stock', 'clothing.mayor_price', 'attributes.name',
+                'attribute_values.value', 'clothing.status', 'clothing.discount',
+                'carts.quantity', 'carts.id', 'carts.custom_price', 'product_images.image'
+            )
+            ->get();
+
+        $tenantinfo = TenantInfo::first();
+        $cloth_price = 0;
+        $you_save    = 0;
+        foreach ($cart_items as $item) {
+            if ($item->custom_price > 0) {
+                $cloth_price += $item->custom_price * $item->quantity;
+            } else {
+                $precio     = $item->price != 0 ? $item->price : $item->price_cloth;
+                $descuento  = ($precio * $item->discount) / 100;
+                $you_save  += $descuento * $item->quantity;
+                $cloth_price += ($precio - $descuento) * $item->quantity;
+            }
+        }
+        $iva         = $cloth_price * $tenantinfo->iva;
+        $total_price = $cloth_price + $iva;
+        $id          = 0;
+
+        $html = view('admin.buys._cart_table',
+            compact('cart_items', 'cloth_price', 'iva', 'you_save', 'total_price', 'id')
+        )->render();
+
+        return response()->json(['html' => $html]);
+    }
+
     public function sizeByCloth(Request $request)
     {
         $code = $request->code;

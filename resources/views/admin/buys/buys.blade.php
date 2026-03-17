@@ -525,117 +525,9 @@
             </div>
 
             {{-- Cart table --}}
-            @if(count($cart_items) > 0)
-            <div style="border-top:1px solid var(--gray1);">
-                <table class="cart-table" id="cartTable">
-                    <thead>
-                        <tr>
-                            <th style="width:40%">Producto</th>
-                            <th style="width:16%;text-align:right">Precio unit.</th>
-                            <th style="width:20%;text-align:center">Atributos</th>
-                            <th style="width:12%;text-align:center">Cant.</th>
-                            <th style="width:6%"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($cart_items as $item)
-                            @php
-                                $precio = $item->price != 0 ? $item->price : $item->price_cloth;
-                                $descuento = ($precio * $item->discount) / 100;
-                                $precioConDescuento = $precio - $descuento;
-                                $precioEfectivo = $item->custom_price > 0
-                                    ? $item->custom_price
-                                    : ($item->discount > 0 ? $precioConDescuento : $precio);
-                                $precioOriginal = $item->discount > 0 ? $precioConDescuento : $precio;
-                                $attributesValues = !empty($item->attributes_values)
-                                    ? explode(', ', $item->attributes_values) : [];
-                            @endphp
-                            <tr>
-                                <input type="hidden" class="discount" value="{{ $item->custom_price > 0 ? 0 : $descuento }}">
-                                <td>
-                                    <div class="d-flex align-items-center gap-2">
-                                        <a href="{{ isset($item->image) && $item->image ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"
-                                           data-fancybox="gallery" target="_blank">
-                                            <img class="prod-img"
-                                                 src="{{ isset($item->image) && $item->image ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"
-                                                 alt="{{ $item->name }}">
-                                        </a>
-                                        <div>
-                                            <p class="prod-name">{{ $item->name }}</p>
-                                            <p class="prod-code">{{ $item->code }}</p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td style="text-align:right">
-                                    <input type="number"
-                                           class="price-input price"
-                                           value="{{ $precioEfectivo }}"
-                                           data-cart-id="{{ $item->cart_id }}"
-                                           data-original="{{ $precioOriginal }}"
-                                           min="0" step="1">
-                                    @if($item->custom_price > 0)
-                                        <span class="price-hint">orig. ₡{{ number_format($precioOriginal) }}</span>
-                                    @elseif($item->discount > 0)
-                                        <span class="price-hint"><s>₡{{ number_format($precio) }}</s></span>
-                                    @endif
-                                </td>
-                                <td style="text-align:center">
-                                    @foreach ($attributesValues as $av)
-                                        @php $parts = explode(': ', $av, 2); @endphp
-                                        @if(!empty($parts[0]))
-                                            <span class="attr-pill">{{ $parts[0] }}: {{ $parts[1] ?? '' }}</span>
-                                        @endif
-                                    @endforeach
-                                </td>
-                                <td style="text-align:center">
-                                    <input type="number"
-                                           class="qty-input btnQuantity quantity"
-                                           value="{{ $item->quantity }}"
-                                           data-cart-id="{{ $item->cart_id }}"
-                                           min="1"
-                                           max="{{ $item->stock > 0 ? $item->stock : '' }}"
-                                           @if($id != 0) disabled @endif>
-                                </td>
-                                <td style="text-align:center">
-                                    <button type="button" class="btn-del btnDeleteCart" data-item-id="{{ $item->cart_id }}">
-                                        <i class="material-icons" style="font-size:.9rem;">delete</i>
-                                    </button>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-
-                {{-- Totals strip --}}
-                <div class="totals-strip">
-                    <div class="totals-row">
-                        <span>Subtotal</span>
-                        <span id="totalCloth">₡{{ number_format($cloth_price) }}</span>
-                    </div>
-                    @if($iva > 0)
-                    <div class="totals-row">
-                        <span>I.V.A.</span>
-                        <span id="totalIvaElement">₡{{ number_format($iva) }}</span>
-                    </div>
-                    @endif
-                    @if($you_save > 0)
-                    <div class="totals-row">
-                        <span>Descuento</span>
-                        <span style="color:var(--green)" id="totalDiscountElement">−₡{{ number_format($you_save) }}</span>
-                    </div>
-                    @endif
-                    <div class="totals-row total-final">
-                        <span>Total</span>
-                        <span id="totalPriceElement">₡{{ number_format($total_price) }}</span>
-                    </div>
-                </div>
+            <div id="cart-wrapper">
+                @include('admin.buys._cart_table')
             </div>
-            @else
-            <div class="cart-empty">
-                <i class="material-icons" style="font-size:2rem;display:block;margin-bottom:6px;color:var(--gray2)">shopping_cart</i>
-                Aún no has agregado productos
-            </div>
-            @endif
         </div>
 
         <div class="step-connector"></div>
@@ -925,14 +817,24 @@ $(function() {
         var sizes = [];
         $('.size_id').each(function() { var v=$(this).val(); if(v && v.trim()) sizes.push(v); });
 
+        var $btn = $(this).prop('disabled', true).text('Agregando…');
         $.ajax({
             method: 'POST',
             url: '/add-to-cart',
             headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
             data: { code: code, updateId: uid, attributes: JSON.stringify(sizes), quantity: qty },
             success: function(r) {
-                if (r.icon === 'success') location.reload();
-                else Swal.fire({ title: r.status, icon: r.icon });
+                if (r.icon === 'success') {
+                    $('#container').addClass('d-none');
+                    $('#code').val('');
+                    refreshCartTable();
+                } else {
+                    Swal.fire({ title: r.status, icon: r.icon });
+                    $btn.prop('disabled', false).html('<i class="material-icons" style="font-size:1rem">add_shopping_cart</i> Agregar');
+                }
+            },
+            error: function() {
+                $btn.prop('disabled', false).html('<i class="material-icons" style="font-size:1rem">add_shopping_cart</i> Agregar');
             }
         });
     });
@@ -963,7 +865,8 @@ $(function() {
 
     // ── Eliminar producto ─────────────────────────────────────
     $(document).on('click', '.btnDeleteCart', function() {
-        var id = $(this).data('item-id');
+        var id   = $(this).data('item-id');
+        var $row = $(this).closest('tr');
         Swal.fire({
             title: 'Eliminar producto',
             text: '¿Deseas quitarlo del pedido?',
@@ -980,8 +883,12 @@ $(function() {
                 url: '/delete-item-cart/' + id,
                 data: { _token: '{{ csrf_token() }}', _method: 'DELETE' },
                 success: function(r) {
-                    if (r.refresh) window.location.href = '{{ url("/") }}';
-                    else location.reload();
+                    $row.remove();
+                    if ($('#cartTable tbody tr').length === 0) {
+                        refreshCartTable();
+                    } else {
+                        calcTotal();
+                    }
                 }
             });
         });
@@ -994,10 +901,23 @@ document.querySelectorAll('.icon-button').forEach(b => {
     b.addEventListener('click', () => _modalTrigger = b.dataset.name);
 });
 
+function closeProductsModal() {
+    var el = document.getElementById('add-products-modal');
+    el.classList.remove('show');
+    el.style.display = 'none';
+    el.setAttribute('aria-hidden', 'true');
+    el.removeAttribute('aria-modal');
+    document.body.classList.remove('modal-open');
+    document.body.style.overflow = '';
+    document.body.style.paddingRight = '';
+    var bd = document.querySelector('.modal-backdrop');
+    if (bd) bd.parentNode.removeChild(bd);
+}
+
 function selectIcon(code) {
     if (!_modalTrigger) return;
     document.getElementById('code').value = code;
-    bootstrap.Modal.getInstance(document.getElementById('add-products-modal')).hide();
+    closeProductsModal();
 
     var $cont    = $('#container');
     var $area    = $cont.find('.attr-area');
@@ -1049,19 +969,12 @@ function selectIcon(code) {
     }
 }
 
-// ── Filtrar modal ─────────────────────────────────────────
-function filterIcons() {
-    var q     = document.getElementById('icon-search').value.toLowerCase();
-    var items = document.getElementById('icon-list').getElementsByClassName('icon-item');
-    var count = 0;
-    for (var i = 0; i < items.length; i++) {
-        var show = items[i].dataset.code.toLowerCase().includes(q)
-                || items[i].dataset.name.toLowerCase().includes(q);
-        items[i].style.display = show ? '' : 'none';
-        if (show) count++;
-    }
-    document.getElementById('product-count').textContent = count;
-    document.getElementById('empty-search').classList.toggle('d-none', count > 0);
+// ── Refrescar tabla del carrito via AJAX ──────────────────
+function refreshCartTable() {
+    $.get('/pos/cart-refresh', function(r) {
+        document.getElementById('cart-wrapper').innerHTML = r.html;
+        calcTotal();
+    });
 }
 
 // ── Recalcular totales ────────────────────────────────────
