@@ -8,10 +8,13 @@
     padding: 0 16px;
     height: 50px;
     gap: 10px;
+    /* Mirror sidebar: my-3 ms-3 border-radius-xl (0.75rem ≈ 12px) */
+    margin: 1rem 1rem 0 1rem;
+    border-radius: 0.75rem;
     position: sticky;
-    top: 0;
+    top: 1rem;
     z-index: 200;
-    box-shadow: 0 2px 8px rgba(0,122,255,.25);
+    box-shadow: 0 4px 12px rgba(0,0,0,.12);
 }
 
 /* Toggle / hamburger */

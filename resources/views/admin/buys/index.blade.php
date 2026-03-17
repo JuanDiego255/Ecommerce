@@ -35,26 +35,27 @@
     overflow: hidden;
 }
 .s-card-header {
-    background: var(--blue);
-    padding: 13px 20px;
+    background: var(--gray0);
+    border-bottom: 1px solid var(--gray1);
+    padding: 11px 20px;
     display: flex;
     align-items: center;
     gap: 10px;
 }
 .s-card-header .card-h-icon {
-    width: 28px;
-    height: 28px;
-    border-radius: 8px;
-    background: rgba(255,255,255,.2);
+    width: 26px;
+    height: 26px;
+    border-radius: 7px;
+    background: rgba(0,122,255,.1);
     display: flex;
     align-items: center;
     justify-content: center;
 }
-.s-card-header .card-h-icon .material-icons { font-size: .95rem; color: #fff; }
+.s-card-header .card-h-icon .material-icons { font-size: .9rem; color: var(--blue); }
 .s-card-header .card-h-title {
-    font-size: .875rem;
+    font-size: .82rem;
     font-weight: 600;
-    color: #fff;
+    color: var(--black);
     letter-spacing: -.01em;
 }
 
