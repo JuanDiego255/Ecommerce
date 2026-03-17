@@ -13,13 +13,18 @@ aside.sidenav {
 aside.sidenav::before { display: none !important; }
 
 /* Header */
-.sidenav-header { border-bottom: 2px solid #007aff; }
+.sidenav-header {
+    background: #007aff !important;
+    border-bottom: none;
+}
 .sidenav-header .navbar-brand h4 {
-    color: #1d1d1f !important;
+    color: #ffffff !important;
     font-size: .9rem !important;
     font-weight: 700 !important;
     letter-spacing: -.01em;
 }
+/* X close icon in header stays visible */
+.sidenav-header #iconSidenav { color: rgba(255,255,255,.7) !important; }
 
 /* Dividers */
 aside.sidenav hr.horizontal.light {

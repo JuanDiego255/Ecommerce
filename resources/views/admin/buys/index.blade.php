@@ -29,11 +29,33 @@
 .s-card {
     background: var(--white);
     border: 1px solid var(--gray1);
-    border-top: 3px solid var(--blue);
     border-radius: var(--radius);
     box-shadow: var(--shadow);
     margin-bottom: 12px;
     overflow: hidden;
+}
+.s-card-header {
+    background: var(--blue);
+    padding: 13px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.s-card-header .card-h-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: rgba(255,255,255,.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.s-card-header .card-h-icon .material-icons { font-size: .95rem; color: #fff; }
+.s-card-header .card-h-title {
+    font-size: .875rem;
+    font-weight: 600;
+    color: #fff;
+    letter-spacing: -.01em;
 }
 
 /* ── Filter inputs ──────────────────────────────────────── */
@@ -158,13 +180,11 @@ div.dataTables_wrapper div.dataTables_length { display: none; }
 
     {{-- Filters card --}}
     <div class="s-card">
+        <div class="s-card-header">
+            <div class="card-h-icon"><i class="material-icons">tune</i></div>
+            <span class="card-h-title">Filtros</span>
+        </div>
         <div style="padding:18px 22px;">
-            <div class="d-flex align-items-center gap-2 mb-3">
-                <div style="width:30px;height:30px;border-radius:9px;background:rgba(0,122,255,.1);display:flex;align-items:center;justify-content:center;">
-                    <i class="material-icons" style="font-size:.95rem;color:#007aff;">tune</i>
-                </div>
-                <span style="font-size:.875rem;font-weight:600;color:var(--black);">Filtros</span>
-            </div>
             <div class="row g-3">
                 <div class="col-md-4">
                     <label class="filter-label">Buscar</label>
@@ -197,6 +217,10 @@ div.dataTables_wrapper div.dataTables_length { display: none; }
 
     {{-- Table card --}}
     <div class="s-card">
+        <div class="s-card-header">
+            <div class="card-h-icon"><i class="material-icons">receipt_long</i></div>
+            <span class="card-h-title">Pedidos</span>
+        </div>
         <div class="table-responsive">
             <table id="table" class="orders-table">
                 <thead>
