@@ -32,18 +32,19 @@
             </div>
 
             {{-- Grid de productos --}}
-            <div class="modal-body p-4" style="background:#fafafa;">
-                <div id="icon-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;">
+            <div class="modal-body p-4" id="products-modal-body" style="background:#fafafa;">
+                <div id="icon-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;contain:layout;">
                     @foreach ($clothings as $item)
                         <div onclick="selectIcon('{{ $item->code }}')"
                              class="icon-item product-card-modal"
                              data-code="{{ $item->code }}"
-                             data-name="{{ $item->name }}"
-                             style="background:#fff;border:1.5px solid #e5e5ea;border-radius:12px;padding:12px;cursor:pointer;transition:all .18s;text-align:center;user-select:none;">
-                            <img src="{{ isset($item->image) && $item->image ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"
+                             data-name="{{ strtolower($item->name) }}"
+                             style="background:#fff;border:1.5px solid #e5e5ea;border-radius:12px;padding:12px;cursor:pointer;text-align:center;user-select:none;">
+                            <img data-src="{{ isset($item->image) && $item->image ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"
+                                 src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
                                  alt="{{ $item->name }}"
-                                 loading="lazy"
-                                 style="width:72px;height:72px;object-fit:cover;border-radius:8px;margin-bottom:8px;background:#f5f5f7;">
+                                 class="product-img-lazy"
+                                 style="width:72px;height:72px;object-fit:cover;border-radius:8px;margin-bottom:8px;background:#f0f0f0;">
                             <p class="mb-0 fw-semibold" style="font-size:.78rem;color:#1d1d1f;line-height:1.3;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">{{ $item->name }}</p>
                             <p class="mb-0 mt-1" style="font-size:.7rem;color:#86868b;font-family:monospace;">{{ $item->code }}</p>
                         </div>
@@ -62,6 +63,15 @@
 </div>
 
 <style>
+/* Modal instant open */
+#add-products-modal { display: none; }
+#add-products-modal.show { display: block; }
+
+/* Cards: only animate specific properties, not "all" */
+.product-card-modal {
+    transition: border-color .15s, box-shadow .15s, transform .15s;
+    contain: layout style;
+}
 .product-card-modal:hover {
     border-color: #007aff !important;
     box-shadow: 0 4px 16px rgba(0,122,255,.12);
@@ -72,7 +82,67 @@
     box-shadow: none;
 }
 
-/* Instant modal open — no Bootstrap fade delay */
-#add-products-modal { display: none; }
-#add-products-modal.show { display: block; }
+/* Skeleton placeholder while image loads */
+.product-img-lazy {
+    background: #f0f0f0;
+    transition: opacity .2s;
+}
+.product-img-lazy.loaded { background: transparent; }
 </style>
+
+<script>
+(function () {
+    var modalEl   = document.getElementById('add-products-modal');
+    var modalBody = document.getElementById('products-modal-body');
+    var observer;
+
+    function buildObserver() {
+        if (observer) observer.disconnect();
+        observer = new IntersectionObserver(function (entries) {
+            entries.forEach(function (e) {
+                if (!e.isIntersecting) return;
+                var img = e.target;
+                if (img.dataset.src) {
+                    img.src = img.dataset.src;
+                    img.removeAttribute('data-src');
+                    img.addEventListener('load', function () { img.classList.add('loaded'); }, { once: true });
+                }
+                observer.unobserve(img);
+            });
+        }, {
+            root: modalBody,
+            rootMargin: '300px',   // pre-cargar 300px antes de entrar al viewport
+            threshold: 0
+        });
+
+        modalEl.querySelectorAll('.product-img-lazy[data-src]').forEach(function (img) {
+            observer.observe(img);
+        });
+    }
+
+    // Iniciar observer cada vez que se abre el modal
+    modalEl.addEventListener('show.bs.modal', buildObserver);
+}());
+
+// ── Filtro con debounce ────────────────────────────────────
+var _filterTimer = null;
+function filterIcons() {
+    clearTimeout(_filterTimer);
+    _filterTimer = setTimeout(_doFilter, 120);
+}
+function _doFilter() {
+    var q     = document.getElementById('icon-search').value.toLowerCase().trim();
+    var items = document.getElementById('icon-list').children;
+    var count = 0;
+    for (var i = 0; i < items.length; i++) {
+        var el   = items[i];
+        var show = !q
+            || el.dataset.code.toLowerCase().includes(q)
+            || el.dataset.name.includes(q);          // data-name ya está en lowercase
+        el.hidden = !show;
+        if (show) count++;
+    }
+    document.getElementById('product-count').textContent = count;
+    document.getElementById('empty-search').classList.toggle('d-none', count > 0);
+}
+</script>
