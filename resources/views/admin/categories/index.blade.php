@@ -4,8 +4,12 @@
     {!! OpenGraph::generate() !!}
 @endsection
 @section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{ url('departments') }}">Departamentos</a></li>
-    <li class="breadcrumb-item active">{{ $department_name }}</li>
+    @if(isset($tenantinfo) && $tenantinfo->manage_department == 1)
+        <li class="breadcrumb-item"><a href="{{ url('departments') }}">Departamentos</a></li>
+        <li class="breadcrumb-item active">{{ $department_name }}</li>
+    @else
+        <li class="breadcrumb-item active">Categorías</li>
+    @endif
 @endsection
 @section('content')
 
@@ -14,10 +18,12 @@
 {{-- Header with dept context + search + CTAs --}}
 <div class="s-card" style="margin-bottom:12px;">
     <div class="s-card-header">
+        @if(isset($tenantinfo) && $tenantinfo->manage_department == 1)
         <a href="{{ url('departments') }}" class="act-btn ab-neutral" title="Volver a departamentos"
             style="flex-shrink:0;">
             <span class="material-icons">arrow_back</span>
         </a>
+        @endif
         <div class="card-h-icon"><span class="material-icons">folder</span></div>
         <span class="card-h-title">{{ $department_name }}
             <span id="cat-count"
@@ -38,6 +44,23 @@
         </div>
     </div>
 </div>
+
+{{-- Department switcher (only when manage_department is on and there are multiple depts) --}}
+@if(isset($tenantinfo) && $tenantinfo->manage_department == 1 && $departments->count() > 1)
+<div class="cat-nav-bar" style="margin-bottom:12px;">
+    <a href="{{ url('departments') }}" class="cn-back" title="Ver todos los departamentos">
+        <span class="material-icons">grid_view</span>
+        <span>Departamentos</span>
+    </a>
+    <div class="cat-nav-sep"></div>
+    @foreach($departments as $dept)
+    <a href="{{ url('categories/' . $dept->id) }}"
+        class="cat-chip {{ $dept->id == $department_id ? 'active' : '' }}">
+        {{ $dept->department }}
+    </a>
+    @endforeach
+</div>
+@endif
 
 {{-- Category cards --}}
 <div class="cat-grid" id="cat-grid">

@@ -7,6 +7,7 @@ use App\Models\Categories;
 use App\Models\ClothingCategory;
 use App\Models\Department;
 use App\Models\PivotClothingCategory;
+use App\Models\TenantInfo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -35,8 +36,10 @@ class CategoryController extends Controller
         ->orderBy('categories.name','asc')
         ->get();
         $department_name = $department->department;
+        $tenantinfo = TenantInfo::first();
+        $departments = Department::orderBy('department', 'asc')->get();
 
-        return view('admin.categories.index', compact('categories', 'department_name', 'department_id'));
+        return view('admin.categories.index', compact('categories', 'department_name', 'department_id', 'tenantinfo', 'departments'));
     }
     public function add($id)
     {
