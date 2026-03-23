@@ -28,12 +28,12 @@
                 placeholder="Buscar..." style="width:180px;padding:6px 12px;font-size:.8rem;">
             @if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'rutalimon')
                 <button type="button" data-bs-toggle="modal" data-bs-target="#import-product-modal"
-                    class="btn btn-secondary btn-sm">
-                    <span class="material-icons">upload_file</span> Importar
+                    class="act-btn ab-neutral" title="Importar categorías">
+                    <span class="material-icons">upload_file</span>
                 </button>
             @endif
-            <a href="{{ url('add-category/' . $department_id) }}" class="btn btn-primary btn-sm">
-                <span class="material-icons">add</span> Nueva categoría
+            <a href="{{ url('add-category/' . $department_id) }}" class="act-btn ab-add" title="Nueva categoría">
+                <span class="material-icons">add</span>
             </a>
         </div>
     </div>
