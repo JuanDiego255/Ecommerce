@@ -47,6 +47,23 @@ i.material-icons, i.material-icons-round {
 .main-content .material-icons-round {
     font-family: 'Material Icons Round' !important;
 }
+/* Restore Font Awesome icon fonts (used by DataTables Excel/PDF buttons, social icons, etc.) */
+.fa, .fas, .far, .fal, .fad,
+i.fa, i.fas, i.far, i.fal, i.fad,
+.main-content .fa, .main-content .fas,
+.main-content .far, .main-content .fal {
+    font-family: 'Font Awesome 5 Free', 'FontAwesome', 'Font Awesome 6 Free' !important;
+    font-style: normal !important;
+    display: inline-block !important;
+    text-rendering: auto !important;
+    -webkit-font-smoothing: antialiased !important;
+}
+.fab, i.fab, .main-content .fab {
+    font-family: 'Font Awesome 5 Brands', 'Font Awesome 6 Brands' !important;
+    font-weight: 400 !important;
+    font-style: normal !important;
+    display: inline-block !important;
+}
 
 /* ── Sidebar font — Inter ────────────────────────────────────── */
 .sidenav *:not(.material-icons):not(.material-icons-round) {
