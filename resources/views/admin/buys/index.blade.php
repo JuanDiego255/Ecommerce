@@ -206,11 +206,11 @@ div.dt-buttons button.dt-button:hover {
 <div class="orders-wrap py-3 px-2 px-md-3">
 
     {{-- Breadcrumb --}}
-    <div class="mb-4 d-flex align-items-center gap-2">
+{{--     <div class="mb-4 d-flex align-items-center gap-2">
         <span style="font-size:.72rem;color:var(--gray3);font-weight:500;">Admin</span>
         <i class="material-icons" style="font-size:.8rem;color:var(--gray2);">chevron_right</i>
         <span style="font-size:.72rem;color:var(--black);font-weight:600;">Pedidos</span>
-    </div>
+    </div> --}}
 
     {{-- Filters card --}}
     <div class="s-card">
