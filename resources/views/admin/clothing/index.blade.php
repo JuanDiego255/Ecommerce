@@ -4,9 +4,13 @@
     {!! OpenGraph::generate() !!}
 @endsection
 @section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{ url('departments') }}">Departamentos</a></li>
-    @if(isset($department_name) && $department_name)
-    <li class="breadcrumb-item"><a href="{{ url('categories/' . $department_id) }}">{{ $department_name }}</a></li>
+    @if(isset($tenantinfo) && $tenantinfo->manage_department == 1)
+        <li class="breadcrumb-item"><a href="{{ url('departments') }}">Departamentos</a></li>
+        @if(isset($department_name) && $department_name)
+        <li class="breadcrumb-item"><a href="{{ url('categories/' . $department_id) }}">{{ $department_name }}</a></li>
+        @endif
+    @else
+        <li class="breadcrumb-item"><a href="{{ url('categories') }}">Categorías</a></li>
     @endif
     <li class="breadcrumb-item active">{{ $category_name }}</li>
 @endsection
@@ -17,9 +21,10 @@
 {{-- ── Category quick-nav ──────────────────────────────────── --}}
 @if(isset($categories) && $categories->count() > 1)
 <div class="cat-nav-bar">
-    <a href="{{ url('categories/' . $department_id) }}" class="cn-back" title="Volver a {{ $department_name ?? 'categorías' }}">
+    <a href="{{ url('categories/' . $department_id) }}" class="cn-back"
+        title="Volver a {{ (isset($tenantinfo) && $tenantinfo->manage_department == 1) ? ($department_name ?? 'Categorías') : 'Categorías' }}">
         <span class="material-icons">arrow_back</span>
-        <span>{{ $department_name ?? 'Categorías' }}</span>
+        <span>{{ (isset($tenantinfo) && $tenantinfo->manage_department == 1) ? ($department_name ?? 'Categorías') : 'Categorías' }}</span>
     </a>
     <div class="cat-nav-sep"></div>
     @foreach($categories as $cat)

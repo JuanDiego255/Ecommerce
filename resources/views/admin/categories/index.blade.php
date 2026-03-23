@@ -25,7 +25,7 @@
         </a>
         @endif
         <div class="card-h-icon"><span class="material-icons">folder</span></div>
-        <span class="card-h-title">{{ $department_name }}
+        <span class="card-h-title">{{ (isset($tenantinfo) && $tenantinfo->manage_department == 1) ? $department_name : 'Categorías' }}
             <span id="cat-count"
                 style="font-size:.72rem;font-weight:500;color:var(--gray3);margin-left:4px;">({{ count($categories) }})</span>
         </span>
@@ -45,21 +45,24 @@
     </div>
 </div>
 
-{{-- Department switcher (only when manage_department is on and there are multiple depts) --}}
-@if(isset($tenantinfo) && $tenantinfo->manage_department == 1 && $departments->count() > 1)
+{{-- Department switcher (only when manage_department is on) --}}
+@if(isset($tenantinfo) && $tenantinfo->manage_department == 1)
+@php $nonDefaultDepts = $departments->where('department', '!=', 'Default'); @endphp
+@if($nonDefaultDepts->count() > 1)
 <div class="cat-nav-bar" style="margin-bottom:12px;">
     <a href="{{ url('departments') }}" class="cn-back" title="Ver todos los departamentos">
         <span class="material-icons">grid_view</span>
         <span>Departamentos</span>
     </a>
     <div class="cat-nav-sep"></div>
-    @foreach($departments as $dept)
+    @foreach($nonDefaultDepts as $dept)
     <a href="{{ url('categories/' . $dept->id) }}"
         class="cat-chip {{ $dept->id == $department_id ? 'active' : '' }}">
         {{ $dept->department }}
     </a>
     @endforeach
 </div>
+@endif
 @endif
 
 {{-- Category cards --}}
