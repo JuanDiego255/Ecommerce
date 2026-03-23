@@ -37,8 +37,8 @@
         </div>
     </div>
 
-    <div class="container">
-            <div class="table-responsive">
+    <div class="s-card">
+        <div class="table-responsive">
                 <table id="table" class="table align-items-center mb-0">
                     <thead>
                         <tr>
@@ -80,7 +80,6 @@
                         @endforeach
                     </tbody>
                 </table>
-            </div>
         </div>
     </div>
 @endsection

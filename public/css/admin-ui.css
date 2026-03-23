@@ -25,6 +25,36 @@
 .main-content * {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
 }
+/* Restore Material Icons font (must NOT be overridden by Inter) */
+.material-icons,
+.material-icons-round,
+.main-content .material-icons,
+.main-content .material-icons-round,
+i.material-icons, i.material-icons-round {
+    font-family: 'Material Icons' !important;
+    font-weight: normal !important;
+    font-style: normal !important;
+    display: inline-block !important;
+    line-height: 1 !important;
+    letter-spacing: normal !important;
+    text-transform: none !important;
+    word-wrap: normal !important;
+    white-space: nowrap !important;
+    -webkit-font-feature-settings: 'liga' !important;
+    font-feature-settings: 'liga' !important;
+}
+.material-icons-round,
+.main-content .material-icons-round {
+    font-family: 'Material Icons Round' !important;
+}
+
+/* ── Sidebar font — Inter ────────────────────────────────────── */
+.sidenav *:not(.material-icons):not(.material-icons-round) {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+}
+.sidenav .nav-link .nav-link-text { font-size: .8rem !important; font-weight: 500 !important; letter-spacing: -.01em !important; }
+.sidenav .sidenav-header span  { font-size: .65rem !important; font-weight: 700 !important; letter-spacing: .06em !important; }
+.sidenav h6 { font-size: .78rem !important; font-weight: 700 !important; letter-spacing: -.01em !important; }
 
 /* ── Page background ─────────────────────────────────────────── */
 body.g-sidenav-show { background: #f0f0f5 !important; }
@@ -102,7 +132,7 @@ h1.font-title, h2.font-title, h3.font-title {
     border: 1px solid var(--gray1) !important;
     border-radius: var(--radius) !important;
     box-shadow: var(--shadow) !important;
-    overflow: hidden !important;
+    overflow: visible !important;  /* was hidden — caused floating labels to clip */
 }
 /* Remove gradient/colored headers — make them all light gray */
 .main-content .card-header,
@@ -619,3 +649,51 @@ div.dt-buttons button.dt-button:hover {
 }
 .apartado-box .ap-pending { font-size: .72rem; font-weight: 600; color: var(--gray3); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 2px; }
 .apartado-box .ap-amount  { font-size: 1.4rem; font-weight: 800; color: var(--black); letter-spacing: -.03em; }
+
+/* ═══════════════════════════════════════════════════════════════
+   TENANT-INFO — Tab-based settings UI
+   ═══════════════════════════════════════════════════════════════ */
+/* Tab buttons */
+.ti-tab {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 10px 16px; font-size: .8rem; font-weight: 600;
+    color: var(--gray3); background: transparent; border: none;
+    border-bottom: 2.5px solid transparent; margin-bottom: -1px;
+    cursor: pointer; transition: color .14s, border-color .14s;
+    white-space: nowrap;
+}
+.ti-tab:hover { color: var(--black); }
+.ti-tab.active { color: var(--blue); border-bottom-color: var(--blue); }
+.ti-tab .material-icons { font-size: .85rem; }
+
+/* Media upload slots */
+.ti-media-slot { display: flex; flex-direction: column; gap: 8px; }
+.ti-media-preview {
+    width: 100px; height: 100px; object-fit: cover;
+    border-radius: 12px; border: 1px solid var(--gray1);
+    display: block;
+}
+.ti-media-empty {
+    width: 100px; height: 100px; border-radius: 12px;
+    border: 1.5px dashed var(--gray2);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--gray2); background: var(--gray0);
+}
+.ti-media-empty .material-icons { font-size: 2rem; }
+
+/* Social network cards */
+.ti-social-card {
+    background: var(--gray0); border: 1px solid var(--gray1);
+    border-radius: 12px; padding: 12px 14px;
+    display: flex; align-items: center; gap: 10px;
+}
+.ti-social-icon { font-size: 1.1rem; color: var(--gray4); flex-shrink: 0; width: 20px; text-align: center; }
+.ti-social-name { font-size: .82rem; font-weight: 600; color: var(--black); flex: 1; }
+.ti-social-actions { display: flex; gap: 4px; flex-shrink: 0; }
+
+/* textarea as filter-input */
+textarea.filter-input { resize: vertical; min-height: 64px; }
+
+/* Validation */
+.filter-input.is-invalid { border-color: var(--red) !important; }
+.invalid-feedback { font-size: .72rem; color: var(--red); margin-top: 3px; display: block; }
