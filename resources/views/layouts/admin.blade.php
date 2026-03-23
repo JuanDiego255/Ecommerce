@@ -16,6 +16,10 @@
     <meta property="og:description" content="@yield('og_description', 'Gestiona el sitio web desde el módulo administrativo')">
     <meta property="og:image" content="@yield('og_image', isset($tenantinfo->logo_ico) ? route('file', $tenantinfo->logo_ico) : '')">
     <!--     Fonts and icons     -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" type="text/css"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap">
     <link rel="stylesheet" type="text/css"
         href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
     <!-- Nucleo Icons -->

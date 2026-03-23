@@ -47,8 +47,8 @@
         </div>
 
         {{-- Edit order --}}
-        <a href="{{ url('/new-buy/' . $currentBuy->id) }}" class="btn btn-primary btn-sm">
-            <span class="material-icons">edit</span> Editar pedido
+        <a href="{{ url('/new-buy/' . $currentBuy->id) }}" class="act-btn ab-neutral" title="Editar pedido">
+            <span class="material-icons" style="font-size:1rem;">edit</span>
         </a>
 
         {{-- Prev / Next --}}
@@ -205,19 +205,15 @@
                 </div>
                 <form action="{{ url('payment/apartado/' . $currentBuy->id) }}" method="POST">
                     @csrf
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
-                        <div>
-                            <label class="filter-label">Monto a abonar</label>
-                            <input type="number" min="1000"
-                                max="{{ $currentBuy->total_buy + $currentBuy->total_delivery - $currentBuy->monto_apartado }}"
-                                value="{{ $currentBuy->total_buy + $currentBuy->total_delivery - $currentBuy->monto_apartado }}"
-                                required class="filter-input" name="monto_apartado">
-                        </div>
-                        <div style="display:flex;align-items:flex-end;">
-                            <button type="submit" class="btn btn-primary w-100">
-                                <span class="material-icons">check_circle</span> Registrar pago
-                            </button>
-                        </div>
+                    <div style="margin-bottom:14px;">
+                        <label class="filter-label">Monto a abonar</label>
+                        <input type="number" min="1000"
+                            max="{{ $currentBuy->total_buy + $currentBuy->total_delivery - $currentBuy->monto_apartado }}"
+                            value="{{ $currentBuy->total_buy + $currentBuy->total_delivery - $currentBuy->monto_apartado }}"
+                            required class="filter-input" name="monto_apartado" style="margin-bottom:10px;">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <span class="material-icons">check_circle</span> Registrar pago
+                        </button>
                     </div>
                 </form>
                 <a href="{{ url('/new-buy/' . $currentBuy->id) }}" class="btn btn-secondary w-100">

@@ -26,8 +26,9 @@
         <a href="{{ url('/instagram') }}" class="act-btn ab-neutral" title="Volver al módulo">
             <span class="material-icons" style="font-size:1rem;">arrow_back</span>
         </a>
-        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalAddPost">
-            <span class="material-icons">add</span> Nueva publicación
+        <button class="act-btn ab-view" title="Nueva publicación"
+            data-bs-toggle="modal" data-bs-target="#modalAddPost">
+            <span class="material-icons">add</span>
         </button>
     </div>
 </div>

@@ -3,45 +3,37 @@
     {!! SEOMeta::generate() !!}
     {!! OpenGraph::generate() !!}
 @endsection
+@section('breadcrumb')
+    <li class="breadcrumb-item active">Artículos del post</li>
+@endsection
 @section('content')
-    <center>
-        <h2 class="text-center font-title">
-            <strong>{{ __('Artículos relacionados con este post') }}</strong>
-        </h2>
-    </center>
-    <div class="row w-50">
-        <div class="col-md-6">
-            <a href="{{ url('blog-add/' . $id . '/agregar-info') }}"
-                class="btn btn-accion w-100">{{ __('Nuevo artículo') }}</a>
+<div class="s-card" style="margin-bottom:12px;">
+    <div class="s-card-header">
+        <div class="card-h-icon"><span class="material-icons">filter_list</span></div>
+        <span class="card-h-title">Filtros</span>
+        <div class="card-h-actions">
+            <a href="{{ url('blog-add/' . $id . '/agregar-info') }}" class="btn btn-primary btn-sm">
+                <span class="material-icons">add</span> Nuevo artículo
+            </a>
         </div>
     </div>
-    <div class="card mt-3">
-        <div class="card-body">
-            <div class="row w-100">
-                <div class="col-md-6">
-                    <div class="input-group input-group-lg input-group-static my-3 w-100">
-                        <label>Filtrar</label>
-                        <input value="" placeholder="Escribe para filtrar...." type="text"
-                            class="form-control form-control-lg" name="searchfor" id="searchfor">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="input-group input-group-lg input-group-static my-3 w-100">
-                        <label>Mostrar</label>
-                        <select id="recordsPerPage" name="recordsPerPage" class="form-control form-control-lg"
-                            autocomplete="recordsPerPage">
-                            <option value="5">5 Registros</option>
-                            <option value="10">10 Registros</option>
-                            <option selected value="15">15 Registros</option>
-                            <option value="50">50 Registros</option>
-                        </select>
-
-                    </div>
-                </div>
-
-            </div>
+    <div class="s-card-body" style="display:grid;grid-template-columns:1fr 180px;gap:12px;">
+        <div>
+            <label class="filter-label">Filtrar</label>
+            <input value="" placeholder="Escribe para filtrar...." type="text"
+                class="filter-input" name="searchfor" id="searchfor">
+        </div>
+        <div>
+            <label class="filter-label">Mostrar</label>
+            <select id="recordsPerPage" name="recordsPerPage" class="filter-input">
+                <option value="5">5 Registros</option>
+                <option value="10">10 Registros</option>
+                <option selected value="15">15 Registros</option>
+                <option value="50">50 Registros</option>
+            </select>
         </div>
     </div>
+</div>
     <div class="row row-cols-1 row-cols-md-2 g-4 align-content-center card-group mt-1">
 
         <div class="col-md-12">
