@@ -21,8 +21,8 @@
             <input type="text" id="dept-search" class="filter-input"
                 placeholder="Buscar..." style="width:190px;padding:6px 12px;font-size:.8rem;">
             <button type="button" data-bs-toggle="modal" data-bs-target="#add-department-modal"
-                class="btn btn-primary btn-sm">
-                <span class="material-icons">add</span> Nuevo
+                class="act-btn ab-add" title="Nuevo departamento">
+                <span class="material-icons">add</span>
             </button>
         </div>
     </div>
@@ -37,7 +37,7 @@
                 @if ($item->image)
                     <img src="{{ route('file', $item->image) }}" alt="{{ $item->department }}">
                 @else
-                    {{ strtoupper(substr($item->department, 0, 1)) }}
+                    <img src="{{ url('images/producto-sin-imagen.PNG') }}" alt="{{ $item->department }}">
                 @endif
             </div>
             <div class="act-group">

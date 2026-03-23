@@ -374,6 +374,8 @@ h1.font-title, h2.font-title, h3.font-title {
 .act-btn.ab-del:hover   { background: rgba(255,59,48,.18); }
 .act-btn.ab-neutral{ color: var(--gray4);  border-color: var(--gray1); background: var(--gray0); }
 .act-btn.ab-neutral:hover { background: var(--gray1); }
+.act-btn.ab-add    { color: #fff; border-color: var(--blue); background: var(--blue); }
+.act-btn.ab-add:hover    { background: #0066d6; border-color: #0066d6; }
 .act-divider { width: 1px; height: 18px; background: var(--gray1); margin: 0 2px; flex-shrink: 0; }
 
 /* ═══════════════════════════════════════════════════════════════
