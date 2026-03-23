@@ -6,6 +6,7 @@ use App\Imports\ProductsImport;
 use App\Models\Attribute;
 use App\Models\AttributeValue;
 use App\Models\Categories;
+use App\Models\Department;
 use App\Models\ClothingCategory;
 use App\Models\ClothingDetails;
 use App\Models\PivotClothingCategory;
@@ -86,6 +87,15 @@ class ClothingCategoryController extends Controller
         $category_name = $category->name;
         $category_id = $id;
         $department_id = $category->department_id;
+
+        $categories = Cache::remember('categories_dept_' . $department_id, $this->expirationTime, function () use ($department_id) {
+            return Categories::where('department_id', $department_id)->orderBy('name', 'asc')->get();
+        });
+        $department_name = Cache::remember('department_name_' . $department_id, $this->expirationTime, function () use ($department_id) {
+            $dept = Department::find($department_id);
+            return $dept ? $dept->department : '';
+        });
+
         if (request()->ajax()) {
             return DataTables::of($clothings)
                 ->addColumn('status', function ($item) {
@@ -164,7 +174,7 @@ class ClothingCategoryController extends Controller
                 ->toJson();
         }
 
-        return view('admin.clothing.index', compact('category_name', 'category_id', 'department_id'));
+        return view('admin.clothing.index', compact('category_name', 'category_id', 'department_id', 'department_name', 'categories'));
     }
     public function reportStock()
     {

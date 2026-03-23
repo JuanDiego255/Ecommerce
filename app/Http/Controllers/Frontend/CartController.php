@@ -113,6 +113,7 @@ class CartController extends Controller
                             'cartNumber' => $newCartNumber,
                         ]);
                         DB::commit();
+                        Cache::forget('cart_items_0');
                         return response()->json(['status' => 'Se ha agregado el artículo al carrito', 'icon' => 'success', 'cartNumber' => $newCartNumber]);
                     }
                 } else {
@@ -275,6 +276,7 @@ class CartController extends Controller
                 }
                 Cart::destroy($id);
                 DB::commit();
+                if ($esVentaInterna) Cache::forget('cart_items_0');
                 $newCartNumber = count(Cart::where('user_id', Auth::id())->where('sold', 0)->get());
                 if (count(Cart::where('user_id', Auth::id())->where('sold', 0)->get()) == 0 && $esVentaInterna != true) {
                     return response()->json(['status' => 'Se ha eliminado el último artículo del carrito', 'icon' => 'success', 'cartNumber' => $newCartNumber, 'refresh' => true]);
@@ -302,6 +304,27 @@ class CartController extends Controller
             $cart_id = $request->cart_id;
             $cartitem = Cart::find($cart_id);
             $cartitem->quantity = $quantity;
+            $cartitem->update();
+            DB::commit();
+            return response()->json(['status' => 'success']);
+        } catch (Exception $th) {
+            DB::rollBack();
+            return response()->json(['error' => $th->getMessage()]);
+        }
+    }
+
+    public function updatePrice(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $custom_price = $request->custom_price;
+            $cart_id = $request->cart_id;
+            $cartitem = Cart::find($cart_id);
+            if (!$cartitem) {
+                return response()->json(['error' => 'Item not found'], 404);
+            }
+            // Store null if price is 0 or empty (means use original price)
+            $cartitem->custom_price = ($custom_price > 0) ? $custom_price : null;
             $cartitem->update();
             DB::commit();
             return response()->json(['status' => 'success']);

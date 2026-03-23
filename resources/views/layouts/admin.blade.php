@@ -16,6 +16,10 @@
     <meta property="og:description" content="@yield('og_description', 'Gestiona el sitio web desde el módulo administrativo')">
     <meta property="og:image" content="@yield('og_image', isset($tenantinfo->logo_ico) ? route('file', $tenantinfo->logo_ico) : '')">
     <!--     Fonts and icons     -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" type="text/css"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap">
     <link rel="stylesheet" type="text/css"
         href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
     <!-- Nucleo Icons -->
@@ -37,6 +41,8 @@
     <link rel="stylesheet" href="{{ asset('css/fontawesome.css') }}">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="{{ asset('css/admin-ui.css') }}" rel="stylesheet">
 </head>
 <style>
     :root {
@@ -86,7 +92,18 @@
 
 
             @include('layouts.inc.adminnav')
-            <div class="container-fluid py-4">
+            <div class="container-fluid admin-page-container">
+                @hasSection('breadcrumb')
+                <nav class="admin-breadcrumb" aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item">
+                            <span class="material-icons" style="font-size:.75rem;vertical-align:middle;color:var(--gray3);">home</span>
+                            Admin
+                        </li>
+                        @yield('breadcrumb')
+                    </ol>
+                </nav>
+                @endif
                 @yield('content')
             </div>
             @include('layouts.inc.adminfooter')

@@ -166,6 +166,7 @@ Route::middleware([
             Route::get('detail-clothing/{id}/{cat_id}', [FrontendController::class, 'DetailClothingById']);
             Route::post('/add-to-cart', [CartController::class, 'store']);
             Route::post('/edit-quantity', [CartController::class, 'updateQuantity']);
+            Route::post('/edit-price', [CartController::class, 'updatePrice']);
             Route::get('/view-cart/{unique_cart_id}', [CartController::class, 'viewCart']);
             Route::get('/get-cart-items', [CartController::class, 'getCart']);
             Route::delete('/delete-item-cart/{id}', [CartController::class, 'delete']);
@@ -253,6 +254,7 @@ Route::middleware([
             Route::get('detail-clothing/{id}/{cat_id}', [FrontendController::class, 'DetailClothingById']);
             Route::post('/add-to-cart', [CartController::class, 'store']);
             Route::post('/edit-quantity', [CartController::class, 'updateQuantity']);
+            Route::post('/edit-price', [CartController::class, 'updatePrice']);
             Route::get('/view-cart/{unique_cart_id}', [CartController::class, 'viewCart']);
             Route::get('/get-cart-items', [CartController::class, 'getCart']);
             Route::delete('/delete-item-cart/{id}', [CartController::class, 'delete']);
@@ -315,6 +317,7 @@ Route::middleware([
             Route::post('/save/detail/{id}', [BuyController::class, 'updateDetailBuy']);
             Route::get('/total-buys', [BuyController::class, 'indexTotalBuys']);
             Route::get('/new-buy/{id}', [BuyController::class, 'indexBuy']);
+            Route::get('/pos/cart-refresh', [BuyController::class, 'cartRefresh']);
             Route::get('/buy/details/admin/{id}', [BuyController::class, 'buyDetailsAdmin']);
             Route::put('/approve/{id}/{ready}', [BuyController::class, 'approve']);
             Route::put('/ready/{id}/{approved}', [BuyController::class, 'readyToGive']);

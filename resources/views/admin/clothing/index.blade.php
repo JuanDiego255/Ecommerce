@@ -3,57 +3,73 @@
     {!! SEOMeta::generate() !!}
     {!! OpenGraph::generate() !!}
 @endsection
+@section('breadcrumb')
+    @if(isset($tenantinfo) && $tenantinfo->manage_department == 1)
+        <li class="breadcrumb-item"><a href="{{ url('departments') }}">Departamentos</a></li>
+        @if(isset($department_name) && $department_name)
+        <li class="breadcrumb-item"><a href="{{ url('categories/' . $department_id) }}">{{ $department_name }}</a></li>
+        @endif
+    @else
+        <li class="breadcrumb-item"><a href="{{ url('categories') }}">Categorías</a></li>
+    @endif
+    <li class="breadcrumb-item active">{{ $category_name }}</li>
+@endsection
 @php
     $exist_attr = false;
 @endphp
 @section('content')
-    <center>
-        <h2 class="text-center font-title">
-            <strong>{{ $category_name }}</strong>
-        </h2>
-    </center>
-    <div class="row w-50">
-        <div class="col-md-6">
-            <a href="{{ url('new-item/' . $category_id) }}"
-                class="btn btn-accion w-100">{{ __('Agregar nuevo producto') }}</a>
+{{-- ── Category quick-nav ──────────────────────────────────── --}}
+@if(isset($categories) && $categories->count() > 1)
+<div class="cat-nav-bar">
+    <a href="{{ url('categories/' . $department_id) }}" class="cn-back"
+        title="Volver a {{ (isset($tenantinfo) && $tenantinfo->manage_department == 1) ? ($department_name ?? 'Categorías') : 'Categorías' }}">
+        <span class="material-icons">arrow_back</span>
+        <span>{{ (isset($tenantinfo) && $tenantinfo->manage_department == 1) ? ($department_name ?? 'Categorías') : 'Categorías' }}</span>
+    </a>
+    <div class="cat-nav-sep"></div>
+    @foreach($categories as $cat)
+    <a href="{{ url('/add-item/' . $cat->id) }}"
+        class="cat-chip {{ $cat->id == $category_id ? 'active' : '' }}">
+        {{ $cat->name }}
+    </a>
+    @endforeach
+</div>
+@endif
+<div class="s-card" style="margin-bottom:12px;">
+    <div class="s-card-header">
+        <div class="card-h-icon"><span class="material-icons">filter_list</span></div>
+        <span class="card-h-title">Filtros</span>
+        <div class="card-h-actions">
+            <a href="{{ url('new-item/' . $category_id) }}" class="btn btn-primary btn-sm">
+                <span class="material-icons">add</span> Agregar producto
+            </a>
         </div>
     </div>
-    <div class="card mt-3">
-        <div class="card-body">
-            <div class="row w-100">
-                <div class="col-md-4">
-                    <div class="input-group input-group-lg input-group-static my-3 w-100">
-                        <label>Filtrar</label>
-                        <input value="" placeholder="Escribe para filtrar...." type="text"
-                            class="form-control form-control-lg" name="searchfor" id="searchfor">
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="input-group input-group-lg input-group-static my-3 w-100">
-                        <label>Mostrar</label>
-                        <select id="recordsPerPage" name="recordsPerPage" class="form-control form-control-lg"
-                            autocomplete="recordsPerPage">
-                            <option value="5">5 Registros</option>
-                            <option value="10">10 Registros</option>
-                            <option selected value="15">15 Registros</option>
-                            <option value="50">50 Registros</option>
-                        </select>
-
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="input-group input-group-lg input-group-static my-3 w-100">
-                        <label>Estado</label>
-                        <select id="status" name="status" class="form-control form-control-lg" autocomplete="status">
-                            <option value="2">Todos</option>
-                            <option value="1" selected>Activos</option>
-                            <option value="0">Inactivos</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
+    <div class="s-card-body" style="display:grid;grid-template-columns:1fr 180px 150px;gap:12px;">
+        <div>
+            <label class="filter-label">Filtrar</label>
+            <input value="" placeholder="Escribe para filtrar...." type="text"
+                class="filter-input" name="searchfor" id="searchfor">
+        </div>
+        <div>
+            <label class="filter-label">Mostrar</label>
+            <select id="recordsPerPage" name="recordsPerPage" class="filter-input">
+                <option value="5">5 Registros</option>
+                <option value="10">10 Registros</option>
+                <option selected value="15">15 Registros</option>
+                <option value="50">50 Registros</option>
+            </select>
+        </div>
+        <div>
+            <label class="filter-label">Estado</label>
+            <select id="status" name="status" class="filter-input">
+                <option value="2">Todos</option>
+                <option value="1" selected>Activos</option>
+                <option value="0">Inactivos</option>
+            </select>
         </div>
     </div>
+</div>
     <div class="row row-cols-1 row-cols-md-2 g-4 align-content-center card-group mt-1">
 
         <div class="col-md-12">

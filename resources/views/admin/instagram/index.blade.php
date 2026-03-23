@@ -1,76 +1,91 @@
 @extends('layouts.admin')
 
 @section('content')
-    <div class="container-fluid">
 
-        @if (session('ok'))
-            <div class="alert alert-success text-white">{{ session('ok') }}</div>
-        @endif
-        @if (session('error'))
-            <div class="alert alert-danger text-white">{{ session('error') }}</div>
-        @endif
+@if (session('ok'))
+    <div class="alert alert-success">{{ session('ok') }}</div>
+@endif
+@if (session('error'))
+    <div class="alert alert-danger">{{ session('error') }}</div>
+@endif
 
-        <h2 class="text-center font-title"><strong>{{ __('Gestión de API de Instagram') }}</strong></h2>
-
-        {{-- Navegación rápida --}}
-        <div class="row mt-3 mb-4">
-            <div class="col-md-3 mb-3">
-                <a href="{{ url('/instagram/posts') }}" class="card text-decoration-none h-100">
-                    <div class="card-body text-center">
-                        <h5 class="mb-2">📸 Publicaciones</h5>
-                        <p class="text-muted small mb-0">Ver y gestionar posts individuales</p>
-                    </div>
-                </a>
-            </div>
-            <div class="col-md-3 mb-3">
-                <a href="{{ url('/instagram/collections') }}" class="card text-decoration-none h-100">
-                    <div class="card-body text-center">
-                        <h5 class="mb-2">🎠 Colecciones</h5>
-                        <p class="text-muted small mb-0">Organizar carruseles con drag & drop</p>
-                    </div>
-                </a>
-            </div>
-            <div class="col-md-3 mb-3">
-                <a href="{{ url('/instagram/caption-templates') }}" class="card text-decoration-none h-100">
-                    <div class="card-body text-center">
-                        <h5 class="mb-2">✨ Plantillas</h5>
-                        <p class="text-muted small mb-0">Captions variados con Spintax</p>
-                    </div>
-                </a>
-            </div>
-            <div class="col-md-3 mb-3">
-                <a href="{{ url('/instagram/caption-settings') }}" class="card text-decoration-none h-100">
-                    <div class="card-body text-center">
-                        <h5 class="mb-2">⚙️ Configuración</h5>
-                        <p class="text-muted small mb-0">Hashtags, CTAs y opciones</p>
-                    </div>
-                </a>
-            </div>
+{{-- ── Header ──────────────────────────────────────────────── --}}
+<div class="s-card" style="margin-bottom:16px;">
+    <div class="s-card-header">
+        <div class="card-h-icon">
+            <span class="material-icons">photo_camera</span>
         </div>
+        <span class="card-h-title">Instagram</span>
 
-        <div class="card mt-3">
-            <div class="card-body">
-                <h5 class="mb-3">Cuenta conectada</h5>
-
-                @if ($account)
-                    <div><strong>Conectado:</strong> {{ $account->instagram_username ?? 'N/A' }}</div>
-                    <div><strong>Tipo:</strong> {{ $account->account_type ?? 'N/D' }}</div>
-
-                    <form method="POST" action="{{ route('instagram.disconnect', $account->id) }}" class="mt-3">
-                        @csrf
-                        @method('DELETE')
-                        <button class="btn btn-accion" onclick="return confirm('¿Desconectar cuenta?')">Desconectar</button>
-                    </form>
-                @else
-                    <div class="text-danger"><strong>No hay cuenta conectada.</strong></div>
-
-                    <a href="{{ route('instagram.connect') }}" class="btn btn-accion mt-3">
-                        Conectar Instagram
-                    </a>
-                @endif
-
-            </div>
+        {{-- Account badge --}}
+        <div style="margin-left:auto;">
+            @if($account)
+                <span class="ig-account-badge">
+                    <span class="dot"></span>
+                    {{ $account->instagram_username ?? 'Cuenta conectada' }}
+                    @if($account->account_type)
+                        &nbsp;·&nbsp;<span style="opacity:.7;font-weight:400;">{{ $account->account_type }}</span>
+                    @endif
+                </span>
+            @else
+                <span class="ig-account-badge disconnected">
+                    <span class="dot"></span>
+                    Sin cuenta conectada
+                </span>
+            @endif
         </div>
-
     </div>
+    <div class="s-card-body" style="padding:14px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        @if($account)
+            <form method="POST" action="{{ route('instagram.disconnect', $account->id) }}" style="margin:0;">
+                @csrf
+                @method('DELETE')
+                <button class="btn btn-secondary btn-sm"
+                    onclick="return confirm('¿Desconectar cuenta de Instagram?')">
+                    <span class="material-icons">link_off</span> Desconectar
+                </button>
+            </form>
+        @else
+            <a href="{{ route('instagram.connect') }}" class="btn btn-primary btn-sm">
+                <span class="material-icons">add_link</span> Conectar Instagram
+            </a>
+        @endif
+    </div>
+</div>
+
+{{-- ── Nav cards ───────────────────────────────────────────── --}}
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;">
+    <a href="{{ url('/instagram/posts') }}" class="ig-nav-card">
+        <div class="ig-nav-icon">
+            <span class="material-icons">photo_library</span>
+        </div>
+        <p class="ig-nav-title">Publicaciones</p>
+        <p class="ig-nav-desc">Ver y gestionar posts individuales</p>
+    </a>
+
+    <a href="{{ url('/instagram/collections') }}" class="ig-nav-card">
+        <div class="ig-nav-icon">
+            <span class="material-icons">view_carousel</span>
+        </div>
+        <p class="ig-nav-title">Colecciones</p>
+        <p class="ig-nav-desc">Organizar carruseles con drag &amp; drop</p>
+    </a>
+
+    <a href="{{ url('/instagram/caption-templates') }}" class="ig-nav-card">
+        <div class="ig-nav-icon">
+            <span class="material-icons">auto_awesome</span>
+        </div>
+        <p class="ig-nav-title">Plantillas</p>
+        <p class="ig-nav-desc">Captions variados con Spintax</p>
+    </a>
+
+    <a href="{{ url('/instagram/caption-settings') }}" class="ig-nav-card">
+        <div class="ig-nav-icon">
+            <span class="material-icons">tune</span>
+        </div>
+        <p class="ig-nav-title">Configuración</p>
+        <p class="ig-nav-desc">Hashtags, CTAs y opciones</p>
+    </a>
+</div>
+
 @endsection

@@ -29984,14 +29984,6 @@ input.card {
     }
 }
 
-.main-container::before {
-    content: "";
-    height: 235px;
-    width: 100%;
-    position: fixed;
-    background-color: #faaa0b;
-    background-position: center;
-}
 .main-container-ag::before {
     content: "";
     height: 235px;
