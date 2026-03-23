@@ -4,136 +4,107 @@
     {!! OpenGraph::generate() !!}
 @endsection
 @section('breadcrumb')
-    <li class="breadcrumb-item active">Categorías</li>
+    <li class="breadcrumb-item"><a href="{{ url('departments') }}">Departamentos</a></li>
+    <li class="breadcrumb-item active">{{ $department_name }}</li>
 @endsection
 @section('content')
-    @include('admin.categories.import')
-    <div class="d-flex gap-2 mb-0">
-        <a href="{{ url('add-category/' . $department_id) }}" class="btn btn-primary btn-sm">
-            <span class="material-icons">add</span> {{ __('Nueva categoría') }}
+
+@include('admin.categories.import')
+
+{{-- Header with dept context + search + CTAs --}}
+<div class="s-card" style="margin-bottom:12px;">
+    <div class="s-card-header">
+        <a href="{{ url('departments') }}" class="act-btn ab-neutral" title="Volver a departamentos"
+            style="flex-shrink:0;">
+            <span class="material-icons">arrow_back</span>
         </a>
-        @if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'rutalimon')
-            <button type="button" data-bs-toggle="modal" data-bs-target="#import-product-modal"
-                class="btn btn-secondary btn-sm">
-                <span class="material-icons">upload_file</span> Importar Productos
-            </button>
-        @endif
-    </div>
-
-    <div class="s-card">
-        <div class="s-card-header">
-            <div class="card-h-icon"><span class="material-icons">tune</span></div>
-            <span class="card-h-title">Filtros</span>
-        </div>
-        <div class="s-card-body" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;">
-            <div>
-                <label class="filter-label">Buscar</label>
-                <input value="" placeholder="Escribe para filtrar..." type="text"
-                    class="filter-input" name="searchfor" id="searchfor">
-            </div>
-            <div>
-                <label class="filter-label">Mostrar</label>
-                <select id="recordsPerPage" name="recordsPerPage" class="filter-input">
-                    <option value="5">5 registros</option>
-                    <option value="10">10 registros</option>
-                    <option selected value="15">15 registros</option>
-                    <option value="50">50 registros</option>
-                </select>
-            </div>
+        <div class="card-h-icon"><span class="material-icons">folder</span></div>
+        <span class="card-h-title">{{ $department_name }}
+            <span id="cat-count"
+                style="font-size:.72rem;font-weight:500;color:var(--gray3);margin-left:4px;">({{ count($categories) }})</span>
+        </span>
+        <div class="card-h-actions">
+            <input type="text" id="cat-search" class="filter-input"
+                placeholder="Buscar..." style="width:180px;padding:6px 12px;font-size:.8rem;">
+            @if (isset($tenantinfo->tenant) && $tenantinfo->tenant !== 'rutalimon')
+                <button type="button" data-bs-toggle="modal" data-bs-target="#import-product-modal"
+                    class="btn btn-secondary btn-sm">
+                    <span class="material-icons">upload_file</span> Importar
+                </button>
+            @endif
+            <a href="{{ url('add-category/' . $department_id) }}" class="btn btn-primary btn-sm">
+                <span class="material-icons">add</span> Nueva categoría
+            </a>
         </div>
     </div>
-    <div class="row row-cols-1 row-cols-md-2 g-4 align-content-center card-group mt-1">
-        <div class="col-md-12">
-            <div class="card p-2">
-                <div class="table-responsive">
+</div>
 
-                    <table class="table align-items-center mb-0" id="table">
-                        <thead>
-                            <tr>
-                                <th class="text-center text-secondary font-weight-bolder opacity-7">
-                                    {{ __('Acciones') }}</th>
-                                <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Categoría') }}
-                                </th>{{-- 
-                                <th class="text-secondary font-weight-bolder opacity-7">
-                                    {{ __('Descripción') }}</th> --}}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($categories as $item)
-                                <tr>
-                                    <td class="align-middle text-center">
-
-                                        <form name="delete-category{{ $item->id }}"
-                                            id="delete-category{{ $item->id }}" method="post"
-                                            action="{{ url('/delete-category/' . $item->id) }}">
-                                            {{ csrf_field() }}
-                                            {{ method_field('DELETE') }}
-                                        </form>
-                                        <button class="btn btn-link text-velvet ms-auto border-0" data-bs-toggle="tooltip"
-                                            data-bs-placement="bottom" title="Eliminar"
-                                            class="btn btn-link text-velvet me-auto border-0"
-                                            onclick="submitForm({{ $item->id }})">
-                                            <i class="material-icons text-lg">delete</i>
-                                        </button>
-                                        <a class="btn btn-link text-velvet me-auto border-0"
-                                            href="{{ url('/edit-category') . '/' . $item->id }}" data-bs-toggle="tooltip"
-                                            data-bs-placement="bottom" title="Editar">
-                                            <i class="material-icons text-lg">edit</i>
-                                        </a>
-                                        <a class="btn btn-link text-velvet me-auto border-0"
-                                            href="{{ url('/add-item') . '/' . $item->id }}" data-bs-toggle="tooltip"
-                                            data-bs-placement="bottom" title="Ver colección">
-                                            <i class="material-icons text-lg">visibility</i>
-                                        </a>
-                                    </td>
-                                    <td class="w-50">
-                                        <div class="d-flex px-2 py-1">
-                                            <div>
-                                                <a target="blank" data-fancybox="gallery"
-                                                    href="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}">
-                                                    <img src="{{ isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG') }}"
-                                                        class="avatar avatar-md me-3">
-                                                </a>
-                                            </div>
-                                            <div class="d-flex flex-column justify-content-center">
-                                                <h4 class="mb-0 text-lg">{{ $item->name }}</h4>
-
-                                            </div>
-                                        </div>
-                                    </td>
-
-                                    {{-- <td class="align-middle text-sm">
-                                        <p class="mb-0">{!! $item->description !!}
-                                        </p>
-                                    </td> --}}
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
+{{-- Category cards --}}
+<div class="cat-grid" id="cat-grid">
+    @forelse ($categories as $item)
+    <div class="cat-card" data-name="{{ strtolower($item->name) }}">
+        <div class="cat-card-top">
+            <a href="{{ url('/add-item') . '/' . $item->id }}" class="cat-avatar" title="{{ $item->name }}">
+                @if (isset($item->image) && $item->image)
+                    <img src="{{ route('file', $item->image) }}" alt="{{ $item->name }}">
+                @else
+                    {{ strtoupper(substr($item->name, 0, 1)) }}
+                @endif
+            </a>
+            <div class="act-group">
+                <a class="act-btn ab-neutral" href="{{ url('/edit-category') . '/' . $item->id }}" title="Editar">
+                    <span class="material-icons">edit</span>
+                </a>
+                <form name="delete-category{{ $item->id }}" id="delete-category{{ $item->id }}"
+                    method="post" action="{{ url('/delete-category/' . $item->id) }}" style="display:inline">
+                    {{ csrf_field() }}
+                    {{ method_field('DELETE') }}
+                    <button type="button" class="act-btn ab-del" title="Eliminar"
+                        onclick="submitForm({{ $item->id }})">
+                        <span class="material-icons">delete</span>
+                    </button>
+                </form>
             </div>
-
+        </div>
+        <p class="cat-name">{{ $item->name }}</p>
+        <div class="cat-card-actions">
+            <a href="{{ url('/add-item') . '/' . $item->id }}" class="cat-view-btn">
+                <span class="material-icons">inventory_2</span> Ver productos
+            </a>
         </div>
     </div>
+    @empty
+    <div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--gray3);font-size:.85rem;">
+        No hay categorías en este departamento.
+        <br><a href="{{ url('add-category/' . $department_id) }}" class="btn btn-primary btn-sm" style="margin-top:12px;">
+            <span class="material-icons">add</span> Crear primera categoría
+        </a>
+    </div>
+    @endforelse
+</div>
 
-    @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 0)
-        <center>
-            <div class="col-md-12 mt-3">
-                <a href="{{ url('departments') }}" class="btn btn-accion w-25">Volver</a>
-            </div>
-        </center>
-    @endif
 @endsection
 @section('script')
-    <script>
-        function submitForm(itemId) {
-            var form = document.getElementById('delete-category' + itemId);
-            var confirmDelete = confirm('Deseas borrar esta categoría?');
-
-            if (confirmDelete) {
-                form.submit();
-            }
-        }
-    </script>
-    <script src="{{ asset('js/datatables.js') }}"></script>
+<script>
+function submitForm(itemId) {
+    if (confirm('¿Deseas borrar esta categoría?')) {
+        document.getElementById('delete-category' + itemId).submit();
+    }
+}
+(function () {
+    var input = document.getElementById('cat-search');
+    var cards = document.querySelectorAll('#cat-grid .cat-card');
+    var counter = document.getElementById('cat-count');
+    input.addEventListener('input', function () {
+        var q = this.value.toLowerCase().trim();
+        var visible = 0;
+        cards.forEach(function (card) {
+            var match = !q || card.dataset.name.includes(q);
+            card.style.display = match ? '' : 'none';
+            if (match) visible++;
+        });
+        counter.textContent = '(' + visible + ')';
+    });
+}());
+</script>
 @endsection

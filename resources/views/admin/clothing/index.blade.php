@@ -4,12 +4,32 @@
     {!! OpenGraph::generate() !!}
 @endsection
 @section('breadcrumb')
+    <li class="breadcrumb-item"><a href="{{ url('departments') }}">Departamentos</a></li>
+    @if(isset($department_name) && $department_name)
+    <li class="breadcrumb-item"><a href="{{ url('categories/' . $department_id) }}">{{ $department_name }}</a></li>
+    @endif
     <li class="breadcrumb-item active">{{ $category_name }}</li>
 @endsection
 @php
     $exist_attr = false;
 @endphp
 @section('content')
+{{-- ── Category quick-nav ──────────────────────────────────── --}}
+@if(isset($categories) && $categories->count() > 1)
+<div class="cat-nav-bar">
+    <a href="{{ url('categories/' . $department_id) }}" class="cn-back" title="Volver a {{ $department_name ?? 'categorías' }}">
+        <span class="material-icons">arrow_back</span>
+        <span>{{ $department_name ?? 'Categorías' }}</span>
+    </a>
+    <div class="cat-nav-sep"></div>
+    @foreach($categories as $cat)
+    <a href="{{ url('/add-item/' . $cat->id) }}"
+        class="cat-chip {{ $cat->id == $category_id ? 'active' : '' }}">
+        {{ $cat->name }}
+    </a>
+    @endforeach
+</div>
+@endif
 <div class="s-card" style="margin-bottom:12px;">
     <div class="s-card-header">
         <div class="card-h-icon"><span class="material-icons">filter_list</span></div>
