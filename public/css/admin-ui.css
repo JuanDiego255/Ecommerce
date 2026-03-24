@@ -906,3 +906,28 @@ tr.bulk-row-selected td { background: rgba(0,122,255,.04) !important; }
     border-radius: 4px; cursor: pointer; transition: background .15s;
 }
 .btn-icon:hover { background: var(--gray0); }
+
+/* ── Order status timeline (C1) ───────────────────────────── */
+.order-timeline {
+    display: flex; align-items: center;
+    padding: 14px 20px; margin-bottom: 12px;
+    background: var(--white); border-radius: var(--radius);
+    border: 1.5px solid var(--gray1);
+}
+.tl-step { display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 90px; }
+.tl-dot {
+    width: 34px; height: 34px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+}
+.tl-dot .material-icons { font-size: 1rem; }
+.tl-pending .tl-dot  { background: var(--gray0); color: var(--gray3); }
+.tl-active  .tl-dot  { background: var(--blue);  color: #fff; }
+.tl-done    .tl-dot  { background: rgba(52,199,89,.15); color: #1c6b2e; }
+.tl-label { font-size: .72rem; font-weight: 600; }
+.tl-pending .tl-label { color: var(--gray3); }
+.tl-active  .tl-label { color: var(--blue); }
+.tl-done    .tl-label { color: #1c6b2e; }
+.tl-line { flex: 1; height: 2px; background: var(--gray1); margin: 0 4px; margin-bottom: 18px; }
+.tl-line-done { background: #34c759; }
+.order-timeline.tl-cancelled .tl-active .tl-dot { background: var(--gray0); color: var(--gray3); }
+.order-timeline.tl-cancelled .tl-active .tl-label { color: var(--gray3); }

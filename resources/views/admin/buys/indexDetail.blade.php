@@ -71,6 +71,31 @@
 </div>
 
 {{-- ── Two-column layout ──────────────────────────────────── --}}
+@php
+    $tlSteps   = ['Pendiente' => 'hourglass_empty', 'Aprobado' => 'check_circle', 'Completado' => 'done_all'];
+    $tlNums    = ['Pendiente' => 1, 'Aprobado' => 2, 'Completado' => 3];
+    $estado    = $currentBuy->estado ?? '';
+    $curStep   = $tlNums[$estado] ?? 0;
+    $cancelled = $estado === 'Cancelado';
+@endphp
+<div class="order-timeline {{ $cancelled ? 'tl-cancelled' : '' }}">
+    @foreach($tlSteps as $label => $icon)
+    @php $n = $tlNums[$label]; $done = $curStep > $n; $active = $curStep === $n && !$cancelled; @endphp
+    <div class="tl-step {{ $done ? 'tl-done' : ($active ? 'tl-active' : 'tl-pending') }}">
+        <div class="tl-dot">
+            <span class="material-icons">{{ $done ? 'check' : $icon }}</span>
+        </div>
+        <span class="tl-label">{{ $label }}</span>
+    </div>
+    @if(!$loop->last)
+        <div class="tl-line {{ $done ? 'tl-line-done' : '' }}"></div>
+    @endif
+    @endforeach
+    @if($cancelled)
+        <span class="s-pill pill-red" style="margin-left:auto;font-size:.7rem;align-self:center;">Cancelado</span>
+    @endif
+</div>
+
 <div class="detail-layout">
 
     {{-- LEFT — Items table --}}

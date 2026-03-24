@@ -157,14 +157,18 @@
                                 </div>
                             @endif
                             <div class="col-md-12 mb-3">
-                                @if ($clothing->image)
-                                    <img class="img-fluid img-thumbnail" src="{{ route('file', $clothing->image) }}"
-                                        style="width: 150px; height:150px;" alt="image">
-                                @endif
                                 <label>{{ __('Imagenes (Max 4)') }}</label>
-                                <div class="input-group input-group-static mb-4">
-                                    <input multiple class="form-control form-control-lg" type="file" name="images[]">
+                                <div id="img-current" class="d-flex flex-wrap gap-2 mb-2">
+                                    @foreach(\App\Models\ProductImage::where('clothing_id', $clothing->id)->get() as $pi)
+                                        <img src="{{ route('file', $pi->image) }}" loading="lazy"
+                                            style="width:80px;height:80px;object-fit:cover;border-radius:8px;border:1.5px solid var(--gray1);">
+                                    @endforeach
                                 </div>
+                                <div class="input-group input-group-static mb-2">
+                                    <input multiple class="form-control form-control-lg" type="file"
+                                        name="images[]" id="img-input" accept="image/*">
+                                </div>
+                                <div id="img-preview" class="d-flex flex-wrap gap-2 mt-1"></div>
                             </div>
                             @if (isset($tenantinfo->kind_business) && $tenantinfo->kind_business == 1)
                                 @if ($clothing->horizontal_image)
@@ -814,6 +818,36 @@
                 }
             }
             manageStockCheckbox.addEventListener('change', toggleStockQuantityField);
+
+            /* ── D1: Image preview ─────────────────────────────────── */
+            document.getElementById('img-input').addEventListener('change', function() {
+                var preview = document.getElementById('img-preview');
+                preview.innerHTML = '';
+                Array.from(this.files).forEach(function(file) {
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        var img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.style.cssText = 'width:80px;height:80px;object-fit:cover;border-radius:8px;border:2px solid var(--blue);';
+                        preview.appendChild(img);
+                    };
+                    reader.readAsDataURL(file);
+                });
+            });
+
+            /* ── D2: Unsaved changes guard ─────────────────────────── */
+            var isDirty = false;
+            document.querySelectorAll('#updateForm input, #updateForm textarea, #updateForm select')
+                .forEach(function(el) {
+                    el.addEventListener('change', function() { isDirty = true; });
+                    el.addEventListener('input',  function() { isDirty = true; });
+                });
+            document.getElementById('updateForm').addEventListener('submit', function() {
+                isDirty = false;
+            });
+            window.addEventListener('beforeunload', function(e) {
+                if (isDirty) { e.preventDefault(); e.returnValue = ''; }
+            });
         });
     </script>
 @endsection
