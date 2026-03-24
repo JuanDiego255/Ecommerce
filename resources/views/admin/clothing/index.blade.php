@@ -70,6 +70,23 @@
         </div>
     </div>
 </div>
+{{-- Bulk action toolbar --}}
+<div class="bulk-toolbar" id="bulk-toolbar">
+    <span class="bulk-count" id="bulk-count">0 seleccionados</span>
+    <button class="act-btn ab-neutral" id="bulk-activate" title="Activar seleccionados">
+        <span class="material-icons">visibility</span>
+    </button>
+    <button class="act-btn ab-neutral" id="bulk-deactivate" title="Desactivar seleccionados">
+        <span class="material-icons">visibility_off</span>
+    </button>
+    <button class="act-btn ab-del" id="bulk-delete" title="Eliminar seleccionados">
+        <span class="material-icons">delete</span>
+    </button>
+    <button class="act-btn ab-neutral" id="bulk-cancel" title="Cancelar selección">
+        <span class="material-icons">close</span>
+    </button>
+</div>
+
     <div class="row row-cols-1 row-cols-md-2 g-4 align-content-center card-group mt-1">
 
         <div class="col-md-12">
@@ -79,6 +96,9 @@
                     <table class="table align-items-center mb-0" id="clothing_table">
                         <thead>
                             <tr>
+                                <th style="width:36px;">
+                                    <input type="checkbox" id="bulk-select-all" title="Seleccionar todos">
+                                </th>
                                 <th class="text-secondary font-weight-bolder opacity-7">
                                     {{ __('Activo') }}</th>
                                 <th class=" text-secondary font-weight-bolder opacity-7">
@@ -102,171 +122,232 @@
 
         </div>
     </div>
+
+{{-- Quick-edit modal --}}
+<div class="modal fade" id="quickEditModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius:14px;border:none;">
+            <div class="modal-header border-0 pb-0">
+                <h6 class="modal-title fw-bold" id="qe-product-name">Edición rápida</h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="qe-body">
+                <div class="text-center py-3"><span class="material-icons" style="font-size:2rem;color:var(--gray2)">sync</span></div>
+            </div>
+            <div class="modal-footer border-0 pt-0 gap-2">
+                <button class="s-btn-sec w-auto" data-bs-dismiss="modal">Cancelar</button>
+                <button class="s-btn-primary w-auto" id="qe-save">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 @section('script')
     <script>
-        function submitForm(alias) {
-            var form = document.querySelector('form[name="' + alias + '"]');
-            form.submit();
-        }
+        var CATEGORY_ID = {{ $category_id }};
+        var CSRF_TOKEN  = $('meta[name="csrf-token"]').attr('content');
+
         $(document).ready(function() {
+            /* ── DataTable ─────────────────────────────────────────── */
             var tableClothings = $('#clothing_table').DataTable({
                 searching: true,
                 lengthChange: false,
                 pageLength: 15,
-                serverSide: true, // Carga los datos desde el servidor
-                ajax: {
-                    url: "/add-item/{{ $category_id }}?status=1", // Ruta en Laravel
-                    type: "GET"
-                },
-                columns: [{
-                        data: "status"
-                    },
-                    {
-                        data: "acciones",
-                        orderable: false,
-                        searchable: false
-                    }, // Acciones
-                    {
-                        data: "name"
-                    }, // Servicio
-                    {
-                        data: "price"
-                    }, // Servicio
-                    {
-                        data: "atributos"
-                    }, // Servicio
-                    {
-                        data: "stock"
-                    }
-
+                serverSide: true,
+                ajax: { url: '/add-item/' + CATEGORY_ID + '?status=1', type: 'GET' },
+                columns: [
+                    { data: 'bulk_check', orderable: false, searchable: false },
+                    { data: 'status' },
+                    { data: 'acciones', orderable: false, searchable: false },
+                    { data: 'name' },
+                    { data: 'price' },
+                    { data: 'atributos' },
+                    { data: 'stock' }
                 ],
                 dom: 'Bfrtip',
-                buttons: [{
-                        extend: 'excelHtml5',
-                        text: '<i class="fas fa-file-excel"></i> Excel',
-                        titleAttr: 'Exportar a Excel',
-                        className: 'btn btn-table',
-                        messageTop: 'Mi reporte personalizado de Excel',
-                        title: 'Reporte Excel'
-                    },
-                    {
-                        extend: 'pdfHtml5',
-                        text: '<i class="fas fa-file-pdf"></i> PDF',
-                        titleAttr: 'Exportar a PDF',
-                        className: 'btn btn-table',
-                        messageTop: 'Mi reporte personalizado de PDF',
-                        title: 'Reporte PDF'
-                    }
+                buttons: [
+                    { extend: 'excelHtml5', text: '<i class="fas fa-file-excel"></i> Excel', titleAttr: 'Exportar a Excel', className: 'btn btn-table', title: 'Reporte Excel' },
+                    { extend: 'pdfHtml5',   text: '<i class="fas fa-file-pdf"></i> PDF',   titleAttr: 'Exportar a PDF',   className: 'btn btn-table', title: 'Reporte PDF' }
                 ],
                 language: {
-                    sProcessing: "Procesando...",
-                    sZeroRecords: "No se encontraron resultados",
-                    sEmptyTable: "Ningún dato disponible en esta tabla",
-                    sInfo: "Mostrando _START_ a _END_ de _TOTAL_ registros",
-                    sInfoEmpty: "Mostrando 0 a 0 de 0 registros",
-                    sInfoFiltered: "(filtrado de un total de _MAX_ registros)",
-                    sSearch: "Buscar:",
-                    oPaginate: {
-                        sFirst: "<<",
-                        sLast: "Último",
-                        sNext: ">>",
-                        sPrevious: "<<"
-                    }
+                    sProcessing: 'Procesando...', sZeroRecords: 'No se encontraron resultados',
+                    sEmptyTable: 'Ningún dato disponible en esta tabla',
+                    sInfo: 'Mostrando _START_ a _END_ de _TOTAL_ registros',
+                    sInfoEmpty: 'Mostrando 0 a 0 de 0 registros',
+                    sInfoFiltered: '(filtrado de _MAX_ registros)',
+                    sSearch: 'Buscar:',
+                    oPaginate: { sFirst: '<<', sLast: 'Último', sNext: '>>', sPrevious: '<<' }
                 }
             });
 
-            function getTotal(itemId, callback) {
-                $.ajax({
-                    method: "GET",
-                    url: "/get-total-categories/" + itemId,
-                    success: function(total) {
-                        callback(total); // Llama al callback con el total
-                    }
-                });
-            }
+            /* ── Filters ───────────────────────────────────────────── */
             $('#recordsPerPage').on('change', function() {
-                var recordsPerPage = parseInt($(this).val());
-                tableClothings.page.len(recordsPerPage).draw();
+                tableClothings.page.len(parseInt($(this).val())).draw();
             });
             $('#searchfor').on('input', function() {
-                var searchTerm = $(this).val();
-                tableClothings.search(searchTerm).draw();
+                tableClothings.search($(this).val()).draw();
             });
+            $('#status').on('change', function() {
+                tableClothings.ajax.url('/add-item/' + CATEGORY_ID + '?status=' + $(this).val()).load();
+            });
+
+            /* ── Delete single ─────────────────────────────────────── */
+            function getTotal(itemId, cb) {
+                $.get('/get-total-categories/' + itemId, cb);
+            }
             $(document).on('click', '.btnDeleteItem', function(e) {
                 e.preventDefault();
-
                 var itemId = $(this).data('item-id');
-
-                // Llama a getTotal y maneja el resultado en el callback
                 getTotal(itemId, function(total) {
-                    let message = (total > 1) ?
-                        'Este producto se encuentra ligado a más de una categoría, ¿desea borrarlo?' :
-                        '¿Deseas borrar este artículo?';
-
-                    Swal.fire({
-                        title: 'Confirmación',
-                        text: message,
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonText: 'Borrar',
-                        cancelButtonText: 'Cancelar'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            $.ajax({
-                                method: "POST",
-                                url: "/delete-clothing/" + itemId,
-                                data: {
-                                    _token: $('meta[name="csrf-token"]').attr(
-                                        'content'), // Usar meta tag para CSRF token
-                                    _method: 'DELETE',
-                                },
-                                success: function(response) {
-                                    tableClothings.ajax.reload(null, false);
-                                },
-                                error: function(xhr, status, error) {
-                                    console.error(xhr.responseText);
-                                }
-                            });
-                        }
+                    var msg = total > 1
+                        ? 'Este producto está ligado a más de una categoría. ¿Deseas eliminarlo de todas?'
+                        : '¿Deseas eliminar este artículo?';
+                    Swal.fire({ title: 'Eliminar producto', text: msg, icon: 'warning',
+                        showCancelButton: true, confirmButtonText: 'Eliminar',
+                        cancelButtonText: 'Cancelar', confirmButtonColor: '#ff3b30'
+                    }).then(res => {
+                        if (!res.isConfirmed) return;
+                        $.ajax({ method: 'POST', url: '/delete-clothing/' + itemId,
+                            data: { _token: CSRF_TOKEN, _method: 'DELETE' },
+                            success: () => tableClothings.ajax.reload(null, false),
+                            error: xhr => console.error(xhr.responseText)
+                        });
                     });
                 });
             });
-            $(document).on('change', '.changeStatus', function() {
-                let itemId = $(this).val();
-                let status = $(this).prop('checked') ? 1 : 0;
 
-                $.ajax({
-                    url: "/status/" + itemId,
-                    method: "POST",
-                    data: {
-                        _token: $('meta[name="csrf-token"]').attr('content'),
-                        status: status
-                    },
-                    success: function(response) {
-                        Swal.fire({
-                            title: "Cambio de estado",
-                            text: response.message,
-                            icon: "success",
-                            timer: 1500,
-                            showConfirmButton: false
-                        });
-                    },
-                    error: function(xhr) {
-                        console.error(xhr.responseText);
-                        Swal.fire({
-                            title: "Error",
-                            text: "No se pudo actualizar el estado",
-                            icon: "error"
-                        });
-                    }
+            /* ── Toggle status ─────────────────────────────────────── */
+            $(document).on('change', '.changeStatus', function() {
+                var itemId = $(this).val(), status = $(this).prop('checked') ? 1 : 0;
+                $.ajax({ url: '/status/' + itemId, method: 'POST',
+                    data: { _token: CSRF_TOKEN, status },
+                    success: res => Swal.fire({ title: 'Cambio de estado', text: res.message,
+                        icon: 'success', timer: 1500, showConfirmButton: false }),
+                    error: () => Swal.fire({ title: 'Error', text: 'No se pudo actualizar el estado', icon: 'error' })
                 });
             });
-            $(document).on('change', '#status', function() {
-                var status = $(this).val();
-                tableClothings.ajax.url('/add-item/{{ $category_id }}?status=' + status).load();
+
+            /* ── Bulk selection ────────────────────────────────────── */
+            function updateBulkToolbar() {
+                var count = $('.bulk-cb:checked').length;
+                $('#bulk-count').text(count + ' seleccionado' + (count !== 1 ? 's' : ''));
+                count > 0 ? $('#bulk-toolbar').addClass('visible') : $('#bulk-toolbar').removeClass('visible');
+                $('#bulk-select-all').prop('indeterminate', count > 0 && count < $('.bulk-cb').length);
+                $('#bulk-select-all').prop('checked', count > 0 && count === $('.bulk-cb').length);
+            }
+            $(document).on('change', '.bulk-cb', updateBulkToolbar);
+            $('#bulk-select-all').on('change', function() {
+                $('.bulk-cb').prop('checked', $(this).prop('checked'));
+                updateBulkToolbar();
+            });
+            tableClothings.on('draw', function() {
+                $('#bulk-select-all').prop('checked', false).prop('indeterminate', false);
+                $('#bulk-toolbar').removeClass('visible');
+            });
+            $('#bulk-cancel').on('click', function() {
+                $('.bulk-cb, #bulk-select-all').prop('checked', false).prop('indeterminate', false);
+                $('#bulk-toolbar').removeClass('visible');
             });
 
+            function bulkRequest(action, confirmMsg) {
+                var ids = $('.bulk-cb:checked').map(function() { return $(this).val(); }).get();
+                if (!ids.length) return;
+                Swal.fire({ title: '¿Confirmar acción?', text: confirmMsg, icon: 'warning',
+                    showCancelButton: true, confirmButtonText: 'Confirmar',
+                    cancelButtonText: 'Cancelar',
+                    confirmButtonColor: action === 'delete' ? '#ff3b30' : '#007aff'
+                }).then(res => {
+                    if (!res.isConfirmed) return;
+                    $.ajax({ url: '/clothing/bulk-action', method: 'POST',
+                        data: { _token: CSRF_TOKEN, action, ids, category_id: CATEGORY_ID },
+                        success: () => {
+                            tableClothings.ajax.reload(null, false);
+                            $('#bulk-cancel').trigger('click');
+                        },
+                        error: xhr => Swal.fire('Error', xhr.responseJSON?.error ?? 'Error', 'error')
+                    });
+                });
+            }
+            $('#bulk-activate').on('click',   () => bulkRequest('activate',   'Se activarán los productos seleccionados.'));
+            $('#bulk-deactivate').on('click', () => bulkRequest('deactivate', 'Se desactivarán los productos seleccionados.'));
+            $('#bulk-delete').on('click',     () => bulkRequest('delete',     'Se eliminarán permanentemente los productos seleccionados.'));
+
+            /* ── Quick-edit ────────────────────────────────────────── */
+            var qeItemId = null, qeHasAttr = false;
+
+            $(document).on('click', '.btnQuickEdit', function() {
+                qeItemId  = $(this).data('item-id');
+                qeHasAttr = $(this).data('has-attr') == 1;
+                var name  = $(this).data('item-name');
+                $('#qe-product-name').text(name);
+                $('#qe-body').html('<div class="text-center py-3"><span class="material-icons spin" style="font-size:2rem;color:var(--gray2)">sync</span></div>');
+                var modal = new bootstrap.Modal(document.getElementById('quickEditModal'));
+                modal.show();
+
+                $.get('/clothing/' + qeItemId + '/variants', function(data) {
+                    var html = '';
+                    if (data.has_attr) {
+                        html += '<p class="text-xs text-secondary mb-2">Este producto tiene variantes. Edita precio y stock por variante.</p>';
+                        html += '<table class="qe-variants-table"><thead><tr><th>Variante</th><th>Stock</th><th>Precio (₡)</th></tr></thead><tbody>';
+                        data.variants.forEach(function(v) {
+                            html += '<tr>'
+                                + '<td><span class="qe-attr-chip">' + v.attr + ': ' + v.val + '</span></td>'
+                                + '<td><input type="number" class="filter-input qe-stock" style="width:80px" data-id="' + v.id + '" value="' + v.stock + '" min="0"></td>'
+                                + '<td><input type="number" class="filter-input qe-price" style="width:100px" data-id="' + v.id + '" value="' + v.price + '" min="0"></td>'
+                                + '</tr>';
+                        });
+                        html += '</tbody></table>';
+                    } else {
+                        html += '<div style="display:grid;gap:12px;">';
+                        html += '<div><label class="filter-label">Precio (₡)</label>'
+                            + '<input type="number" id="qe-base-price" class="filter-input" value="' + data.base_price + '" min="0"></div>';
+                        if (data.manage_stock != 0) {
+                            html += '<div><label class="filter-label">Stock</label>'
+                                + '<input type="number" id="qe-base-stock" class="filter-input" value="' + data.base_stock + '" min="0"></div>';
+                        }
+                        html += '</div>';
+                    }
+                    $('#qe-body').html(html);
+                }).fail(function() {
+                    $('#qe-body').html('<p class="text-danger">Error al cargar datos.</p>');
+                });
+            });
+
+            $('#qe-save').on('click', function() {
+                var btn = $(this).prop('disabled', true).text('Guardando...');
+                if (qeHasAttr) {
+                    var variants = [];
+                    $('.qe-stock').each(function() {
+                        var id = $(this).data('id');
+                        variants.push({ id, stock: $(this).val(), price: $('.qe-price[data-id="' + id + '"]').val() });
+                    });
+                    $.ajax({ url: '/clothing/variants/update', method: 'POST',
+                        data: { _token: CSRF_TOKEN, variants, category_id: CATEGORY_ID },
+                        success: function() {
+                            bootstrap.Modal.getInstance(document.getElementById('quickEditModal')).hide();
+                            tableClothings.ajax.reload(null, false);
+                            Swal.fire({ icon: 'success', title: 'Guardado', timer: 1200, showConfirmButton: false });
+                        },
+                        error: xhr => Swal.fire('Error', xhr.responseJSON?.error ?? 'Error', 'error'),
+                        complete: () => btn.prop('disabled', false).text('Guardar')
+                    });
+                } else {
+                    var payload = { _token: CSRF_TOKEN, category_id: CATEGORY_ID };
+                    var price = $('#qe-base-price').val(), stock = $('#qe-base-stock').val();
+                    if (price !== undefined) payload.price = price;
+                    if (stock !== undefined) payload.stock = stock;
+                    $.ajax({ url: '/clothing/' + qeItemId + '/quick-edit', method: 'POST',
+                        data: payload,
+                        success: function() {
+                            bootstrap.Modal.getInstance(document.getElementById('quickEditModal')).hide();
+                            tableClothings.ajax.reload(null, false);
+                            Swal.fire({ icon: 'success', title: 'Guardado', timer: 1200, showConfirmButton: false });
+                        },
+                        error: xhr => Swal.fire('Error', xhr.responseJSON?.error ?? 'Error', 'error'),
+                        complete: () => btn.prop('disabled', false).text('Guardar')
+                    });
+                }
+            });
         });
     </script>
     <script src="{{ asset('js/datatables.js') }}"></script>

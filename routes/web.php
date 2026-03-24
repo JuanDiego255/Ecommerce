@@ -90,6 +90,10 @@ Route::group(['middleware' => 'isAdmin'], function () {
     Route::put('/update-clothing/{id}', [ClothingCategoryController::class, 'update']);
     Route::delete('/delete-clothing/{id}', [ClothingCategoryController::class, 'delete']);
     Route::post('status/{id}', [ClothingCategoryController::class, 'isStatus']);
+    Route::get('/clothing/{id}/variants', [ClothingCategoryController::class, 'getVariants']);
+    Route::post('/clothing/{id}/quick-edit', [ClothingCategoryController::class, 'quickEdit']);
+    Route::post('/clothing/variants/update', [ClothingCategoryController::class, 'updateVariants']);
+    Route::post('/clothing/bulk-action', [ClothingCategoryController::class, 'bulkAction']);
     //Routes for Buys
     Route::get('/buys-admin', [BuyController::class, 'indexAdmin']);
     Route::post('/size-by-cloth', [BuyController::class, 'sizeByCloth']);

@@ -850,3 +850,41 @@ textarea.filter-input { resize: vertical; min-height: 64px; }
     font-size: .8rem !important; box-shadow: var(--shadow) !important;
     padding: 10px 20px !important;
 }
+
+/* ── Bulk action toolbar ──────────────────────────────────── */
+.bulk-toolbar {
+    display: none; align-items: center; gap: 8px;
+    padding: 10px 16px; margin-bottom: 8px;
+    background: var(--white); border: 1.5px solid var(--blue);
+    border-radius: var(--radius); box-shadow: var(--shadow);
+}
+.bulk-toolbar.visible { display: flex; }
+.bulk-count { font-size: .8rem; font-weight: 600; color: var(--blue); flex: 1; }
+
+/* ── Selected row highlight ───────────────────────────────── */
+tr.bulk-row-selected td { background: rgba(0,122,255,.04) !important; }
+
+/* ── Quick-edit variants table ────────────────────────────── */
+.qe-variants-table { width: 100%; border-collapse: collapse; font-size: .82rem; }
+.qe-variants-table th {
+    font-size: .7rem; font-weight: 700; color: var(--gray3);
+    text-transform: uppercase; letter-spacing: .04em;
+    padding: 6px 10px; border-bottom: 1.5px solid var(--gray1); text-align: left;
+}
+.qe-variants-table td { padding: 8px 10px; border-bottom: 1px solid var(--gray0); }
+.qe-variants-table input[type="number"] {
+    width: 80px; padding: 5px 8px;
+    border: 1.5px solid var(--gray1); border-radius: 8px;
+    font-size: .82rem; font-weight: 500; background: var(--gray0);
+    transition: border-color .12s;
+}
+.qe-variants-table input[type="number"]:focus { border-color: var(--blue); outline: none; background: #fff; }
+.qe-attr-chip {
+    display: inline-flex; padding: 2px 8px; border-radius: 999px;
+    background: var(--gray0); border: 1px solid var(--gray1);
+    font-size: .72rem; font-weight: 600; color: var(--gray4);
+}
+/* ── Auto-width variant for full-width buttons ────────────── */
+.s-btn-primary.w-auto, .s-btn-sec.w-auto {
+    width: auto; padding-left: 20px; padding-right: 20px; margin-top: 0;
+}

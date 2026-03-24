@@ -98,32 +98,40 @@ class ClothingCategoryController extends Controller
 
         if (request()->ajax()) {
             return DataTables::of($clothings)
+                ->addColumn('bulk_check', function ($item) {
+                    return '<input type="checkbox" class="bulk-cb" value="' . $item->id . '">';
+                })
                 ->addColumn('status', function ($item) {
-                    return '<td class="align-middle text-center">
-                            <div class="form-check">
+                    return '<div class="form-check d-flex justify-content-center">
                                 <input id="checkLicense' . $item->id . '" class="form-check-input changeStatus"
                                     type="checkbox" value="' . $item->id . '"
                                     ' . ($item->status == 1 ? 'checked' : '') . '>
-                            </div>
-                        </td>';
+                            </div>';
                 })
                 ->addColumn('acciones', function ($item) use ($id) {
-                    return '<td class="align-middle text-center">                                        
-                                <form name="delete-item" id="delete-item" class="delete-form">
-                                    ' . csrf_field() . '
-                                    ' . method_field('DELETE') . '
-                                </form>
-                                <button data-item-id="' . $item->id . '"
-                                    class="btn btn-link text-velvet ms-auto border-0 btnDeleteItem"
-                                    data-toggle="tooltip" data-placement="bottom" title="Eliminar">
-                                    <i class="material-icons text-lg">delete</i>
+                    $attr = explode(',', $item->available_attr ?? '');
+                    $attrPer = explode(',', $item->attr_id_per_size ?? '');
+                    $hasAttr = false;
+                    for ($i = 0; $i < count($attr); $i++) {
+                        if (!empty($attrPer[$i]) && $attr[$i] !== 'Stock') { $hasAttr = true; break; }
+                    }
+                    return '<div class="act-group">
+                                <button class="act-btn ab-del btnDeleteItem"
+                                    data-item-id="' . $item->id . '" title="Eliminar">
+                                    <span class="material-icons">delete</span>
                                 </button>
-                                <a class="btn btn-link text-velvet me-auto border-0"
-                                    href="' . url('/edit-clothing') . '/' . $item->id . '/' . $id . '"
-                                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="Editar">
-                                    <i class="material-icons text-lg">edit</i>
+                                <a class="act-btn ab-neutral"
+                                    href="' . url('/edit-clothing') . '/' . $item->id . '/' . $id . '" title="Editar">
+                                    <span class="material-icons">edit</span>
                                 </a>
-                            </td>';
+                                <button class="act-btn ab-neutral btnQuickEdit"
+                                    data-item-id="' . $item->id . '"
+                                    data-item-name="' . e($item->name) . '"
+                                    data-has-attr="' . ($hasAttr ? '1' : '0') . '"
+                                    title="Edición rápida">
+                                    <span class="material-icons">bolt</span>
+                                </button>
+                            </div>';
                 })
                 ->addColumn('name', function ($item) {
                     return '<td class="w-50">
@@ -166,11 +174,14 @@ class ClothingCategoryController extends Controller
                             </td>';
                 })
                 ->addColumn('stock', function ($item) {
-                    return '<td class="align-middle text-center text-sm">
-                                <p class="text-success mb-0">' . ($item->manage_stock == 0 ? 'No maneja' : $item->total_stock) . '</p>
-                            </td>';
+                    if ($item->manage_stock == 0) {
+                        return '<span class="stock-badge" style="background:var(--gray0);color:var(--gray3)">No maneja</span>';
+                    }
+                    $s = (int) $item->total_stock;
+                    $cls = $s <= 0 ? 'stock-out' : ($s <= 5 ? 'stock-low' : 'stock-ok');
+                    return '<span class="stock-badge ' . $cls . '">' . $s . '</span>';
                 })
-                ->rawColumns(['status', 'acciones', 'name', 'price', 'atributos', 'stock']) // Para renderizar el HTML en la columna "acciones"
+                ->rawColumns(['bulk_check', 'status', 'acciones', 'name', 'price', 'atributos', 'stock'])
                 ->toJson();
         }
 
@@ -745,6 +756,102 @@ class ClothingCategoryController extends Controller
         } catch (\Exception $th) {
             DB::rollBack();
             return response()->json(['error' => 'Ocurrió un error'], 500);
+        }
+    }
+
+    public function getVariants($id)
+    {
+        $clothing = ClothingCategory::find($id);
+        $variants = DB::table('stocks')
+            ->join('attributes', 'stocks.attr_id', '=', 'attributes.id')
+            ->join('attribute_values', 'stocks.value_attr', '=', 'attribute_values.id')
+            ->where('stocks.clothing_id', $id)
+            ->whereNotNull('stocks.attr_id')
+            ->where('attributes.name', '!=', 'Stock')
+            ->select(
+                'stocks.id',
+                'attributes.name as attr',
+                'attribute_values.value as val',
+                DB::raw('CAST(stocks.stock AS SIGNED) as stock'),
+                DB::raw('CAST(stocks.price AS DECIMAL(10,0)) as price'),
+                'stocks.order'
+            )
+            ->orderBy('stocks.order', 'asc')
+            ->get();
+
+        return response()->json([
+            'has_attr'     => $variants->isNotEmpty(),
+            'base_price'   => $clothing ? (int) $clothing->price : 0,
+            'base_stock'   => $clothing ? (int) $clothing->stock : 0,
+            'manage_stock' => $clothing ? $clothing->manage_stock : 1,
+            'variants'     => $variants,
+        ]);
+    }
+
+    public function quickEdit($id, Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $data = [];
+            if ($request->filled('price')) $data['price'] = $request->input('price');
+            if ($request->filled('stock')) $data['stock'] = $request->input('stock');
+            if (!empty($data)) ClothingCategory::where('id', $id)->update($data);
+            DB::commit();
+            $catId = $request->input('category_id');
+            if ($catId) {
+                foreach ([0, 1, 2] as $s) Cache::forget('clothings_' . $catId . '_' . $s);
+            }
+            return response()->json(['message' => 'Producto actualizado']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function updateVariants(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            foreach ($request->input('variants', []) as $v) {
+                Stock::where('id', $v['id'])->update([
+                    'stock' => $v['stock'],
+                    'price' => $v['price'],
+                ]);
+            }
+            DB::commit();
+            $catId = $request->input('category_id');
+            if ($catId) {
+                foreach ([0, 1, 2] as $s) Cache::forget('clothings_' . $catId . '_' . $s);
+            }
+            return response()->json(['message' => 'Variantes actualizadas']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function bulkAction(Request $request)
+    {
+        $ids    = $request->input('ids', []);
+        $action = $request->input('action');
+        if (empty($ids)) return response()->json(['error' => 'Sin selección'], 400);
+        DB::beginTransaction();
+        try {
+            match ($action) {
+                'activate'   => ClothingCategory::whereIn('id', $ids)->update(['status' => 1]),
+                'deactivate' => ClothingCategory::whereIn('id', $ids)->update(['status' => 0]),
+                'delete'     => ClothingCategory::whereIn('id', $ids)->delete(),
+                default      => throw new \Exception('Acción no válida'),
+            };
+            DB::commit();
+            $catId = $request->input('category_id');
+            if ($catId) {
+                foreach ([0, 1, 2] as $s) Cache::forget('clothings_' . $catId . '_' . $s);
+            }
+            return response()->json(['message' => 'Acción ejecutada']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 
