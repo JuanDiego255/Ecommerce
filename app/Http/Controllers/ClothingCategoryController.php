@@ -863,6 +863,33 @@ class ClothingCategoryController extends Controller
         }
     }
 
+    public function bulkPriceAdjust(Request $request)
+    {
+        $ids   = $request->input('ids', []);
+        $type  = $request->input('type'); // 'increase' | 'discount'
+        $pct   = (float) $request->input('pct', 0);
+        if (empty($ids) || !in_array($type, ['increase', 'discount']) || $pct <= 0 || $pct > 100) {
+            return response()->json(['error' => 'Datos inválidos'], 400);
+        }
+        $factor = $type === 'increase' ? (1 + $pct / 100) : (1 - $pct / 100);
+        DB::beginTransaction();
+        try {
+            DB::table('clothing')->whereIn('id', $ids)
+                ->update(['price' => DB::raw("ROUND(price * {$factor})")]);
+            DB::table('stocks')->whereIn('clothing_id', $ids)->where('price', '>', 0)
+                ->update(['price' => DB::raw("ROUND(price * {$factor})")]);
+            DB::commit();
+            $catId = $request->input('category_id');
+            if ($catId) {
+                foreach ([0, 1, 2] as $s) Cache::forget('clothings_' . $catId . '_' . $s . '_');
+            }
+            return response()->json(['message' => 'Precios actualizados']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
     public function getTotalCategories($id)
     {
         $total = PivotClothingCategory::where('clothing_id', $id)->count();

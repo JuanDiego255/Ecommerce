@@ -21,6 +21,7 @@ use App\Http\Controllers\TenantPaymentController;
 use App\Http\Controllers\TenantSocialNetworkController;
 use App\Http\Controllers\TestimonialController;
 use App\Http\Controllers\MetaDeletionController;
+use App\Http\Controllers\AdminSearchController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
@@ -94,6 +95,8 @@ Route::group(['middleware' => 'isAdmin'], function () {
     Route::post('/clothing/{id}/quick-edit', [ClothingCategoryController::class, 'quickEdit']);
     Route::post('/clothing/variants/update', [ClothingCategoryController::class, 'updateVariants']);
     Route::post('/clothing/bulk-action', [ClothingCategoryController::class, 'bulkAction']);
+    Route::post('/clothing/bulk-price-adjust', [ClothingCategoryController::class, 'bulkPriceAdjust']);
+    Route::get('/admin/search', [AdminSearchController::class, 'search']);
     //Routes for Buys
     Route::get('/buys-admin', [BuyController::class, 'indexAdmin']);
     Route::post('/size-by-cloth', [BuyController::class, 'sizeByCloth']);

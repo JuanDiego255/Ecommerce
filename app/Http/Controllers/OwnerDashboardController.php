@@ -6,6 +6,7 @@ use App\Models\Cita;
 use App\Models\Barbero;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class OwnerDashboardController extends Controller
@@ -58,6 +59,27 @@ class OwnerDashboardController extends Controller
         // Barberos activos para filtro rápido (si quieres un select)
         $barberos = Barbero::orderBy('nombre')->get(['id', 'nombre']);
 
+        // ── Ecommerce KPIs ──────────────────────────────────────────
+        $ecom = Cache::remember('dashboard_ecom', 5, function () {
+            $today     = now('America/Costa_Rica')->toDateString();
+            $monthStart = now('America/Costa_Rica')->startOfMonth()->toDateString();
+            return [
+                'pedidos_hoy'       => DB::table('buys')->whereDate('created_at', $today)->count(),
+                'pedidos_pendientes'=> DB::table('buys')->where('approved', 0)->count(),
+                'ingresos_mes'      => DB::table('buys')->where('approved', 2)
+                    ->whereBetween('created_at', [$monthStart . ' 00:00:00', now()->toDateTimeString()])
+                    ->sum('total_buy'),
+                'stock_bajo'        => DB::table(DB::raw('(
+                    SELECT clothing.id,
+                        SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE clothing.stock END) as ts
+                    FROM clothing
+                    LEFT JOIN stocks ON clothing.id = stocks.clothing_id
+                    WHERE clothing.status = 1 AND clothing.manage_stock = 1
+                    GROUP BY clothing.id HAVING ts >= 0 AND ts <= 5
+                ) as t'))->count(),
+            ];
+        });
+
         return view('admin.owner.dashboard', compact(
             'start',
             'end',
@@ -70,7 +92,8 @@ class OwnerDashboardController extends Controller
             'ingresosPorBarbero',
             'porStatus',
             'porDia',
-            'barberos'
+            'barberos',
+            'ecom'
         ));
     }
 

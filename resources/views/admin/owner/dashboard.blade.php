@@ -5,7 +5,43 @@
 @endsection
 
 @section('content')
-    <div class="card">
+{{-- ── Ecommerce quick-stats ──────────────────────────────── --}}
+<div class="ecom-stats-row">
+    <a href="{{ url('buys-admin') }}" class="ecom-stat">
+        <span class="material-icons ecom-stat-icon" style="color:#007aff">receipt_long</span>
+        <div>
+            <div class="ecom-stat-value">{{ $ecom['pedidos_hoy'] }}</div>
+            <div class="ecom-stat-label">Pedidos hoy</div>
+        </div>
+    </a>
+    <a href="{{ url('buys-admin') }}?status=pending" class="ecom-stat">
+        <span class="material-icons ecom-stat-icon" style="color:#ff9500">hourglass_empty</span>
+        <div>
+            <div class="ecom-stat-value {{ $ecom['pedidos_pendientes'] > 0 ? 'text-warning' : '' }}">
+                {{ $ecom['pedidos_pendientes'] }}
+            </div>
+            <div class="ecom-stat-label">Pendientes</div>
+        </div>
+    </a>
+    <a href="{{ url('buys-admin') }}" class="ecom-stat">
+        <span class="material-icons ecom-stat-icon" style="color:#34c759">payments</span>
+        <div>
+            <div class="ecom-stat-value">₡{{ number_format($ecom['ingresos_mes']) }}</div>
+            <div class="ecom-stat-label">Ingresos este mes</div>
+        </div>
+    </a>
+    <a href="{{ url('departments') }}" class="ecom-stat">
+        <span class="material-icons ecom-stat-icon" style="color:{{ $ecom['stock_bajo'] > 0 ? '#ff3b30' : '#34c759' }}">inventory_2</span>
+        <div>
+            <div class="ecom-stat-value {{ $ecom['stock_bajo'] > 0 ? 'text-danger' : '' }}">
+                {{ $ecom['stock_bajo'] }}
+            </div>
+            <div class="ecom-stat-label">Stock bajo (≤5)</div>
+        </div>
+    </a>
+</div>
+
+<div class="card">
         <div class="card-body">
             <div class="barbero-header d-flex flex-wrap align-items-center justify-content-between mb-4">
                 <div>

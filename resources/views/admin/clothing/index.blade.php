@@ -90,9 +90,44 @@
     <button class="act-btn ab-del" id="bulk-delete" title="Eliminar seleccionados">
         <span class="material-icons">delete</span>
     </button>
+    <button class="act-btn ab-neutral" id="bulk-price-adj" title="Ajustar precios">
+        <span class="material-icons">percent</span>
+    </button>
     <button class="act-btn ab-neutral" id="bulk-cancel" title="Cancelar selección">
         <span class="material-icons">close</span>
     </button>
+</div>
+
+{{-- Price adjustment modal --}}
+<div class="modal fade" id="priceAdjModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content" style="border-radius:14px;border:none;">
+            <div class="modal-header border-0 pb-0">
+                <h6 class="modal-title fw-bold">Ajustar precios</h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-xs text-secondary mb-3" id="pa-count-label"></p>
+                <div style="display:grid;gap:12px;">
+                    <div>
+                        <label class="filter-label">Tipo de ajuste</label>
+                        <select id="pa-type" class="filter-input">
+                            <option value="increase">Incrementar (%)</option>
+                            <option value="discount">Descontar (%)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="filter-label">Porcentaje</label>
+                        <input type="number" id="pa-pct" class="filter-input" min="1" max="100" value="10" placeholder="Ej: 10">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-0 pt-0 gap-2">
+                <button class="s-btn-sec w-auto" data-bs-dismiss="modal">Cancelar</button>
+                <button class="s-btn-primary w-auto" id="pa-save">Aplicar</button>
+            </div>
+        </div>
+    </div>
 </div>
 
     <div class="row row-cols-1 row-cols-md-2 g-4 align-content-center card-group mt-1">
@@ -316,6 +351,43 @@
             $('#bulk-activate').on('click',   () => bulkRequest('activate',   'Se activarán los productos seleccionados.'));
             $('#bulk-deactivate').on('click', () => bulkRequest('deactivate', 'Se desactivarán los productos seleccionados.'));
             $('#bulk-delete').on('click',     () => bulkRequest('delete',     'Se eliminarán permanentemente los productos seleccionados.'));
+
+            /* ── Bulk price adjust ─────────────────────────────────── */
+            $('#bulk-price-adj').on('click', function() {
+                var count = $('.bulk-cb:checked').length;
+                if (!count) return;
+                $('#pa-count-label').text(count + ' producto' + (count !== 1 ? 's' : '') + ' seleccionado' + (count !== 1 ? 's' : ''));
+                new bootstrap.Modal(document.getElementById('priceAdjModal')).show();
+            });
+            $('#pa-save').on('click', function() {
+                var ids  = $('.bulk-cb:checked').map(function() { return $(this).val(); }).get();
+                var type = $('#pa-type').val();
+                var pct  = parseFloat($('#pa-pct').val());
+                if (!pct || pct <= 0 || pct > 100) {
+                    Swal.fire('Atención', 'Ingresa un porcentaje válido (1-100)', 'warning');
+                    return;
+                }
+                var label = type === 'increase' ? 'incrementarán' : 'descontarán';
+                Swal.fire({
+                    title: '¿Confirmar ajuste?',
+                    text: 'Se ' + label + ' los precios un ' + pct + '% en ' + ids.length + ' producto(s). Los precios de variantes también serán ajustados.',
+                    icon: 'warning', showCancelButton: true,
+                    confirmButtonText: 'Aplicar', cancelButtonText: 'Cancelar',
+                    confirmButtonColor: '#007aff'
+                }).then(res => {
+                    if (!res.isConfirmed) return;
+                    $.ajax({ url: '/clothing/bulk-price-adjust', method: 'POST',
+                        data: { _token: CSRF_TOKEN, ids, type, pct, category_id: CATEGORY_ID },
+                        success: function() {
+                            bootstrap.Modal.getInstance(document.getElementById('priceAdjModal')).hide();
+                            tableClothings.ajax.reload(null, false);
+                            $('#bulk-cancel').trigger('click');
+                            Swal.fire({ icon: 'success', title: 'Precios actualizados', timer: 1400, showConfirmButton: false });
+                        },
+                        error: xhr => Swal.fire('Error', xhr.responseJSON?.error ?? 'Error', 'error')
+                    });
+                });
+            });
 
             /* ── Quick-edit ────────────────────────────────────────── */
             var qeItemId = null, qeHasAttr = false;

@@ -279,6 +279,104 @@
     </script>
     @yield('script')
 
+    {{-- ── Global search (E1) ──────────────────────────────────── --}}
+    @include('layouts.inc.global-search')
+    <script>
+    (function() {
+        var palette  = document.getElementById('gs-palette');
+        var backdrop = document.getElementById('gs-backdrop');
+        var input    = document.getElementById('gs-input');
+        var results  = document.getElementById('gs-results');
+        var timer    = null;
+        var activeIdx = -1;
+
+        function open() {
+            palette.style.display  = 'block';
+            backdrop.style.display = 'block';
+            input.value = '';
+            results.innerHTML = '<div class="gs-hint">Escribe al menos 2 caracteres…</div>';
+            activeIdx = -1;
+            setTimeout(() => input.focus(), 50);
+        }
+        function close() {
+            palette.style.display  = 'none';
+            backdrop.style.display = 'none';
+        }
+
+        // Cmd/Ctrl + K
+        document.addEventListener('keydown', function(e) {
+            if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+                e.preventDefault();
+                palette.style.display === 'none' ? open() : close();
+            }
+            if (e.key === 'Escape') close();
+            if (e.key === 'ArrowDown' || e.key === 'ArrowUp') navigate(e);
+            if (e.key === 'Enter') selectActive();
+        });
+        backdrop.addEventListener('click', close);
+
+        // Debounced search
+        input.addEventListener('input', function() {
+            clearTimeout(timer);
+            var q = this.value.trim();
+            if (q.length < 2) {
+                results.innerHTML = '<div class="gs-hint">Escribe al menos 2 caracteres…</div>';
+                return;
+            }
+            results.innerHTML = '<div class="gs-hint gs-loading"><span class="material-icons" style="font-size:1.1rem;vertical-align:middle">sync</span> Buscando…</div>';
+            timer = setTimeout(function() { doSearch(q); }, 280);
+        });
+
+        function doSearch(q) {
+            fetch('/admin/search?q=' + encodeURIComponent(q))
+                .then(r => r.json())
+                .then(render)
+                .catch(() => { results.innerHTML = '<div class="gs-hint">Error al buscar.</div>'; });
+        }
+
+        var typeLabel = { product: 'Producto', order: 'Pedido', category: 'Categoría' };
+
+        function render(data) {
+            activeIdx = -1;
+            if (!data.length) {
+                results.innerHTML = '<div class="gs-hint">Sin resultados.</div>';
+                return;
+            }
+            var html = '';
+            var lastType = null;
+            data.forEach(function(r, i) {
+                if (r.type !== lastType) {
+                    html += '<div class="gs-group-label">' + (typeLabel[r.type] ?? r.type) + '</div>';
+                    lastType = r.type;
+                }
+                html += '<a class="gs-item" href="' + r.url + '" data-idx="' + i + '">'
+                    + '<span class="material-icons gs-item-icon">' + r.icon + '</span>'
+                    + '<span class="gs-item-text"><span class="gs-item-label">' + r.label + '</span>'
+                    + '<span class="gs-item-sub">' + r.sub + '</span></span>'
+                    + '</a>';
+            });
+            results.innerHTML = html;
+        }
+
+        function navigate(e) {
+            var items = results.querySelectorAll('.gs-item');
+            if (!items.length) return;
+            e.preventDefault();
+            if (activeIdx >= 0) items[activeIdx].classList.remove('gs-active');
+            activeIdx += e.key === 'ArrowDown' ? 1 : -1;
+            activeIdx = Math.max(0, Math.min(activeIdx, items.length - 1));
+            items[activeIdx].classList.add('gs-active');
+            items[activeIdx].scrollIntoView({ block: 'nearest' });
+        }
+
+        function selectActive() {
+            var items = results.querySelectorAll('.gs-item');
+            if (activeIdx >= 0 && items[activeIdx]) {
+                window.location.href = items[activeIdx].getAttribute('href');
+            }
+        }
+    })();
+    </script>
 
 </body>
 
