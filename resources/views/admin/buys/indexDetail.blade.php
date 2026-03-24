@@ -211,12 +211,12 @@
                             max="{{ $currentBuy->total_buy + $currentBuy->total_delivery - $currentBuy->monto_apartado }}"
                             value="{{ $currentBuy->total_buy + $currentBuy->total_delivery - $currentBuy->monto_apartado }}"
                             required class="filter-input" name="monto_apartado" style="margin-bottom:10px;">
-                        <button type="submit" class="btn btn-primary w-100">
+                        <button type="submit" class="s-btn-primary">
                             <span class="material-icons">check_circle</span> Registrar pago
                         </button>
                     </div>
                 </form>
-                <a href="{{ url('/new-buy/' . $currentBuy->id) }}" class="btn btn-secondary w-100">
+                <a href="{{ url('/new-buy/' . $currentBuy->id) }}" class="s-btn-sec">
                     <span class="material-icons">edit</span> Editar pedido
                 </a>
             </div>
@@ -241,7 +241,7 @@
                         <input value="{{ $currentBuy->guide_number }}" type="text"
                             class="filter-input" name="guide_number" id="guide_number"
                             placeholder="Ej. CR123456789" style="flex:1;">
-                        <button type="submit" class="btn btn-primary" style="padding:9px 14px;">
+                        <button type="submit" class="act-btn ab-add" title="Guardar guía">
                             <span class="material-icons">save</span>
                         </button>
                     </div>
@@ -261,7 +261,7 @@
                     <textarea rows="3" class="filter-input" name="detail" id="detail"
                         placeholder="Agregar nota interna..."
                         style="width:100%;resize:vertical;">{{ $currentBuy->detail }}</textarea>
-                    <button type="submit" class="btn btn-primary w-100 mt-2">
+                    <button type="submit" class="s-btn-primary">
                         <span class="material-icons">save</span> Guardar nota
                     </button>
                 </form>

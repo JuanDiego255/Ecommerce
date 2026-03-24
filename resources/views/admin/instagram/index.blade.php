@@ -37,17 +37,17 @@
     </div>
     <div class="s-card-body" style="padding:14px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
         @if($account)
-            <form method="POST" action="{{ route('instagram.disconnect', $account->id) }}" style="margin:0;">
+            <form method="POST" action="{{ route('instagram.disconnect', $account->id) }}" id="ig-disconnect-form" style="margin:0;">
                 @csrf
                 @method('DELETE')
-                <button class="btn btn-secondary btn-sm"
-                    onclick="return confirm('¿Desconectar cuenta de Instagram?')">
-                    <span class="material-icons">link_off</span> Desconectar
+                <button type="button" class="act-btn ab-del" title="Desconectar cuenta de Instagram"
+                    onclick="confirmDelete('ig-disconnect-form', '¿Desconectar cuenta de Instagram?')">
+                    <span class="material-icons">link_off</span>
                 </button>
             </form>
         @else
-            <a href="{{ route('instagram.connect') }}" class="btn btn-primary btn-sm">
-                <span class="material-icons">add_link</span> Conectar Instagram
+            <a href="{{ route('instagram.connect') }}" class="act-btn ab-add" title="Conectar Instagram">
+                <span class="material-icons">add_link</span>
             </a>
         @endif
     </div>
@@ -88,4 +88,14 @@
     </a>
 </div>
 
+@section('script')
+<script>
+function confirmDelete(formId, message) {
+    Swal.fire({
+        title: 'Confirmación', text: message, icon: 'warning',
+        showCancelButton: true, confirmButtonText: 'Sí, desconectar',
+        cancelButtonText: 'Cancelar', confirmButtonColor: '#ff3b30',
+    }).then((result) => { if (result.isConfirmed) document.getElementById(formId).submit(); });
+}
+</script>
 @endsection

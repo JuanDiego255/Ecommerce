@@ -818,3 +818,35 @@ textarea.filter-input { resize: vertical; min-height: 64px; }
 }
 .cat-chip:hover { border-color: var(--blue); color: var(--blue); text-decoration: none; background: rgba(0,122,255,.06); }
 .cat-chip.active { border-color: var(--blue); background: rgba(0,122,255,.1); color: var(--blue); font-weight: 700; }
+
+/* ── Full-width contextual buttons (form actions inside detail panels) ── */
+.s-btn-primary, .s-btn-sec {
+    display: flex; align-items: center; justify-content: center; gap: 7px;
+    width: 100%; padding: 10px 16px; margin-top: 8px;
+    border-radius: 10px; font-size: .82rem; font-weight: 600;
+    letter-spacing: -.01em; cursor: pointer;
+    text-decoration: none !important; transition: opacity .14s, border-color .12s, color .12s;
+}
+.s-btn-primary { background: var(--blue); color: #fff !important; border: none; }
+.s-btn-primary:hover { opacity: .86; }
+.s-btn-sec { background: var(--gray0); color: var(--gray4) !important; border: 1.5px solid var(--gray1); }
+.s-btn-sec:hover { border-color: var(--blue); color: var(--blue) !important; }
+.s-btn-primary .material-icons, .s-btn-sec .material-icons { font-size: .95rem; }
+
+/* ── Stock level badges (used in product listings) ────────── */
+.stock-badge {
+    display: inline-flex; align-items: center; gap: 3px;
+    padding: 2px 9px; border-radius: 999px;
+    font-size: .72rem; font-weight: 700; white-space: nowrap;
+}
+.stock-ok  { background: rgba(52,199,89,.12);  color: #1c6b2e; }
+.stock-low { background: rgba(255,149,0,.15);  color: #a05900; }
+.stock-out { background: rgba(255,59,48,.12);  color: #c0190f; }
+
+/* ── DataTables processing indicator ─────────────────────── */
+.dataTables_processing {
+    background: var(--white) !important; color: var(--gray3) !important;
+    border: 1px solid var(--gray1) !important; border-radius: 10px !important;
+    font-size: .8rem !important; box-shadow: var(--shadow) !important;
+    padding: 10px 20px !important;
+}

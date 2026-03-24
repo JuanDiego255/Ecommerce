@@ -40,8 +40,8 @@
         <div class="card-h-icon"><span class="material-icons">filter_list</span></div>
         <span class="card-h-title">Filtros</span>
         <div class="card-h-actions">
-            <a href="{{ url('new-item/' . $category_id) }}" class="btn btn-primary btn-sm">
-                <span class="material-icons">add</span> Agregar producto
+            <a href="{{ url('new-item/' . $category_id) }}" class="act-btn ab-add" title="Agregar producto">
+                <span class="material-icons">add</span>
             </a>
         </div>
     </div>
@@ -102,12 +102,6 @@
 
         </div>
     </div>
-    <center>
-
-        <div class="col-md-12 mt-3">
-            <a href="{{ url('categories/' . $department_id) }}" class="btn btn-accion w-25">Volver</a>
-        </div>
-    </center>
 @endsection
 @section('script')
     <script>

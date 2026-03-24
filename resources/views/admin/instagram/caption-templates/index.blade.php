@@ -5,9 +5,13 @@
 
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h2 class="text-center font-title"><strong>{{ __('Plantillas de Caption') }}</strong></h2>
-            <div class="d-flex gap-2">
-                <a href="{{ url('/instagram') }}" class="btn btn-outline-dark">Volver</a>
-                <a href="{{ url('/instagram/caption-templates/create') }}" class="btn btn-accion">{{ __('+ Nueva plantilla') }}</a>
+            <div class="act-group">
+                <a href="{{ url('/instagram') }}" class="act-btn ab-neutral" title="Volver a Instagram">
+                    <span class="material-icons">arrow_back</span>
+                </a>
+                <a href="{{ url('/instagram/caption-templates/create') }}" class="act-btn ab-add" title="Nueva plantilla">
+                    <span class="material-icons">add</span>
+                </a>
             </div>
         </div>
 
@@ -69,17 +73,19 @@
                                         </td>
                                         <td>{{ $t->created_at->format('d/m/Y') }}</td>
                                         <td>
-                                            <div class="d-flex gap-1">
-                                                <a class="btn btn-accion btn-sm"
+                                            <form method="POST" action="{{ url('/instagram/caption-templates/' . $t->id) }}"
+                                                id="delete-tpl{{ $t->id }}">
+                                                @csrf @method('DELETE')
+                                            </form>
+                                            <div class="act-group">
+                                                <a class="act-btn ab-neutral" title="Editar"
                                                     href="{{ url('/instagram/caption-templates/' . $t->id . '/edit') }}">
-                                                    Editar
+                                                    <span class="material-icons">edit</span>
                                                 </a>
-                                                <form method="POST" action="{{ url('/instagram/caption-templates/' . $t->id) }}"
-                                                    onsubmit="return confirm('¿Eliminar esta plantilla?');">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-outline-danger btn-sm">Eliminar</button>
-                                                </form>
+                                                <button type="button" class="act-btn ab-del" title="Eliminar"
+                                                    onclick="confirmDelete('delete-tpl{{ $t->id }}', '¿Eliminar esta plantilla?')">
+                                                    <span class="material-icons">delete</span>
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>
@@ -98,5 +104,14 @@
     </div>
 @endsection
 @section('script')
+    <script>
+    function confirmDelete(formId, message) {
+        Swal.fire({
+            title: 'Confirmación', text: message, icon: 'warning',
+            showCancelButton: true, confirmButtonText: 'Eliminar',
+            cancelButtonText: 'Cancelar', confirmButtonColor: '#ff3b30',
+        }).then((result) => { if (result.isConfirmed) document.getElementById(formId).submit(); });
+    }
+    </script>
     <script src="{{ asset('js/datatables.js') }}"></script>
 @endsection

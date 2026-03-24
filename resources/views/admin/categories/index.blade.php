@@ -72,7 +72,7 @@
         <div class="cat-card-top">
             <a href="{{ url('/add-item') . '/' . $item->id }}" class="cat-avatar" title="{{ $item->name }}">
                 @if (isset($item->image) && $item->image)
-                    <img src="{{ route('file', $item->image) }}" alt="{{ $item->name }}">
+                    <img src="{{ route('file', $item->image) }}" alt="{{ $item->name }}" loading="lazy">
                 @else
                     {{ strtoupper(substr($item->name, 0, 1)) }}
                 @endif
@@ -113,9 +113,19 @@
 @section('script')
 <script>
 function submitForm(itemId) {
-    if (confirm('¿Deseas borrar esta categoría?')) {
-        document.getElementById('delete-category' + itemId).submit();
-    }
+    Swal.fire({
+        title: '¿Eliminar categoría?',
+        text: 'Esta acción no se puede deshacer.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#ff3b30',
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.getElementById('delete-category' + itemId).submit();
+        }
+    });
 }
 (function () {
     var input = document.getElementById('cat-search');

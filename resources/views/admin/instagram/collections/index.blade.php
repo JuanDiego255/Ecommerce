@@ -5,7 +5,9 @@
 
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h2 class="text-center font-title"><strong>{{ __('Colecciones de Instagram') }}</strong></h2>
-            <a href="{{ url('/instagram/collections/create') }}" class="btn btn-accion">{{ __('+ Nueva colección') }}</a>
+            <a href="{{ url('/instagram/collections/create') }}" class="act-btn ab-add" title="Nueva colección">
+                <span class="material-icons">add</span>
+            </a>
         </div>
 
         @if (session('ok'))
@@ -39,9 +41,9 @@
                                         <td>{{ $c->status }}</td>
                                         <td>{{ $c->created_at }}</td>
                                         <td>
-                                            <a class="btn btn-accion btn-sm"
+                                            <a class="act-btn ab-neutral" title="Editar"
                                                 href="{{ url('/instagram/collections/' . $c->id . '/edit') }}">
-                                                Editar
+                                                <span class="material-icons">edit</span>
                                             </a>
                                         </td>
                                     </tr>

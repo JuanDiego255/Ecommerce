@@ -12,8 +12,8 @@
         <div class="card-h-icon"><span class="material-icons">filter_list</span></div>
         <span class="card-h-title">Filtros</span>
         <div class="card-h-actions">
-            <a href="{{ url('metatag/agregar') }}" class="btn btn-primary btn-sm">
-                <span class="material-icons">add</span> Nueva sección
+            <a href="{{ url('metatag/agregar') }}" class="act-btn ab-add" title="Nueva sección">
+                <span class="material-icons">add</span>
             </a>
         </div>
     </div>
@@ -65,25 +65,20 @@
                         @foreach ($metatags as $tag)
                             <tr>
                                 <td class="align-middle">
-                                    <center>
-                                        <a data-bs-toggle="tooltip" data-bs-placement="top" title="Editar"
-                                            data-container="body" data-animation="true" class="btn btn-accion"
-                                            style="text-decoration: none;" href="{{ url('metatag/edit/' . $tag->id) }}"><i
-                                                class="material-icons opacity-10">edit</i></a>
-                                        <form method="post" action="{{ url('/delete-metatag/' . $tag->id) }}"
-                                            style="display:inline">
-                                            {{ csrf_field() }}
-                                            {{ method_field('DELETE') }}
-                                            <button class="btn btn-admin-delete text-white btn-tooltip"
-                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar"
-                                                data-container="body" data-animation="true" type="submit"> <i
-                                                    class="material-icons opacity-10">
-                                                    delete
-
-                                                </i>
-                                            </button>
-                                        </form>
-                                    </center>
+                                    <form method="post" action="{{ url('/delete-metatag/' . $tag->id) }}"
+                                        id="delete-meta{{ $tag->id }}" style="display:inline">
+                                        {{ csrf_field() }}
+                                        {{ method_field('DELETE') }}
+                                    </form>
+                                    <div class="act-group">
+                                        <a class="act-btn ab-neutral" href="{{ url('metatag/edit/' . $tag->id) }}" title="Editar">
+                                            <span class="material-icons">edit</span>
+                                        </a>
+                                        <button type="button" class="act-btn ab-del" title="Eliminar"
+                                            onclick="confirmDelete('delete-meta{{ $tag->id }}', '¿Deseas eliminar este meta tag?')">
+                                            <span class="material-icons">delete</span>
+                                        </button>
+                                    </div>
                                 </td>
                                 <td class="align-middle text-center">{{ $tag->section }}</td>
                                 <td class="align-middle text-center">{{ $tag->title }}</td>
@@ -101,5 +96,14 @@
     </div>
 @endsection
 @section('script')
+    <script>
+    function confirmDelete(formId, message) {
+        Swal.fire({
+            title: 'Confirmación', text: message, icon: 'warning',
+            showCancelButton: true, confirmButtonText: 'Eliminar',
+            cancelButtonText: 'Cancelar', confirmButtonColor: '#ff3b30',
+        }).then((result) => { if (result.isConfirmed) document.getElementById(formId).submit(); });
+    }
+    </script>
     <script src="{{ asset('js/datatables.js') }}"></script>
 @endsection

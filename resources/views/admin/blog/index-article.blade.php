@@ -12,8 +12,8 @@
         <div class="card-h-icon"><span class="material-icons">filter_list</span></div>
         <span class="card-h-title">Filtros</span>
         <div class="card-h-actions">
-            <a href="{{ url('blog-add/' . $id . '/agregar-info') }}" class="btn btn-primary btn-sm">
-                <span class="material-icons">add</span> Nuevo artículo
+            <a href="{{ url('blog-add/' . $id . '/agregar-info') }}" class="act-btn ab-add" title="Nuevo artículo">
+                <span class="material-icons">add</span>
             </a>
         </div>
     </div>
