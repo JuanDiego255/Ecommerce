@@ -45,7 +45,7 @@
             </a>
         </div>
     </div>
-    <div class="s-card-body" style="display:grid;grid-template-columns:1fr 180px 150px;gap:12px;">
+    <div class="s-card-body" style="display:grid;grid-template-columns:1fr 180px 150px 170px;gap:12px;">
         <div>
             <label class="filter-label">Filtrar</label>
             <input value="" placeholder="Escribe para filtrar...." type="text"
@@ -66,6 +66,14 @@
                 <option value="2">Todos</option>
                 <option value="1" selected>Activos</option>
                 <option value="0">Inactivos</option>
+            </select>
+        </div>
+        <div>
+            <label class="filter-label">Stock</label>
+            <select id="stock-filter" name="stock" class="filter-input">
+                <option value="">Todos</option>
+                <option value="low">Bajo (≤5)</option>
+                <option value="out">Sin stock</option>
             </select>
         </div>
     </div>
@@ -147,14 +155,32 @@
         var CATEGORY_ID = {{ $category_id }};
         var CSRF_TOKEN  = $('meta[name="csrf-token"]').attr('content');
 
+        /* ── Persistent filter helpers (B1) ───────────────────────── */
+        var LS_STATUS = 'dt_status_' + CATEGORY_ID;
+        var LS_LEN    = 'dt_len_' + CATEGORY_ID;
+        var LS_STOCK  = 'dt_stock_' + CATEGORY_ID;
+        var savedStatus = localStorage.getItem(LS_STATUS) ?? '1';
+        var savedLen    = parseInt(localStorage.getItem(LS_LEN) ?? '15');
+        var savedStock  = localStorage.getItem(LS_STOCK) ?? '';
+        // Pre-select saved filter values
+        $('#status').val(savedStatus);
+        $('#recordsPerPage').val(savedLen);
+        $('#stock-filter').val(savedStock);
+
+        function buildAjaxUrl() {
+            var status = $('#status').val();
+            var stock  = $('#stock-filter').val();
+            return '/add-item/' + CATEGORY_ID + '?status=' + status + (stock ? '&stock=' + stock : '');
+        }
+
         $(document).ready(function() {
             /* ── DataTable ─────────────────────────────────────────── */
             var tableClothings = $('#clothing_table').DataTable({
                 searching: true,
                 lengthChange: false,
-                pageLength: 15,
+                pageLength: savedLen,
                 serverSide: true,
-                ajax: { url: '/add-item/' + CATEGORY_ID + '?status=1', type: 'GET' },
+                ajax: { url: buildAjaxUrl(), type: 'GET' },
                 columns: [
                     { data: 'bulk_check', orderable: false, searchable: false },
                     { data: 'status' },
@@ -166,8 +192,10 @@
                 ],
                 dom: 'Bfrtip',
                 buttons: [
-                    { extend: 'excelHtml5', text: '<i class="fas fa-file-excel"></i> Excel', titleAttr: 'Exportar a Excel', className: 'btn btn-table', title: 'Reporte Excel' },
-                    { extend: 'pdfHtml5',   text: '<i class="fas fa-file-pdf"></i> PDF',   titleAttr: 'Exportar a PDF',   className: 'btn btn-table', title: 'Reporte PDF' }
+                    { extend: 'excelHtml5', text: '<i class="fas fa-file-excel"></i> Excel', titleAttr: 'Exportar a Excel', className: 'btn btn-table', title: 'Reporte Excel',
+                      exportOptions: { modifier: { search: 'applied', order: 'applied' } } },
+                    { extend: 'pdfHtml5',   text: '<i class="fas fa-file-pdf"></i> PDF',   titleAttr: 'Exportar a PDF',   className: 'btn btn-table', title: 'Reporte PDF',
+                      exportOptions: { modifier: { search: 'applied', order: 'applied' } } }
                 ],
                 language: {
                     sProcessing: 'Procesando...', sZeroRecords: 'No se encontraron resultados',
@@ -182,13 +210,30 @@
 
             /* ── Filters ───────────────────────────────────────────── */
             $('#recordsPerPage').on('change', function() {
+                localStorage.setItem(LS_LEN, $(this).val());
                 tableClothings.page.len(parseInt($(this).val())).draw();
             });
             $('#searchfor').on('input', function() {
                 tableClothings.search($(this).val()).draw();
             });
             $('#status').on('change', function() {
-                tableClothings.ajax.url('/add-item/' + CATEGORY_ID + '?status=' + $(this).val()).load();
+                localStorage.setItem(LS_STATUS, $(this).val());
+                tableClothings.ajax.url(buildAjaxUrl()).load();
+            });
+            $('#stock-filter').on('change', function() {
+                localStorage.setItem(LS_STOCK, $(this).val());
+                tableClothings.ajax.url(buildAjaxUrl()).load();
+            });
+
+            /* ── Copy SKU (B3) ─────────────────────────────────────── */
+            $(document).on('click', '.copy-sku', function(e) {
+                e.stopPropagation();
+                var sku  = $(this).data('sku');
+                var icon = $(this).find('.material-icons');
+                navigator.clipboard.writeText(sku).then(function() {
+                    icon.text('check');
+                    setTimeout(() => icon.text('content_copy'), 1500);
+                });
             });
 
             /* ── Delete single ─────────────────────────────────────── */

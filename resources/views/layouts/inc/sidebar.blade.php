@@ -145,7 +145,7 @@ aside.sidenav .submenu .nav-link {
                                     <i class="material-icons opacity-10">inventory_2</i>
                                 </div>
                                 <span
-                                    class="nav-link-text ms-1">{{ $tenantinfo->tenant == 'rutalimon' ? __('Mant. Catálogo / Inventario') : __('Catálogo') }}</span>
+                                    class="nav-link-text ms-1">{{ $tenantinfo->tenant == 'rutalimon' ? __('Mant. Catálogo / Inventario') : __('Catálogo') }}@if(!empty($lowStockCount) && $lowStockCount > 0)<span class="nav-badge">{{ $lowStockCount }}</span>@endif</span>
                             </a>
 
                             <!-- Lista desplegable de "Mi Negocio" -->
@@ -374,7 +374,7 @@ aside.sidenav .submenu .nav-link {
                                             <i class="material-icons opacity-10">inventory_2</i>
                                         </div>
                                         <span
-                                            class="nav-link-text ms-1">{{ $tenantinfo->tenant == 'rutalimon' ? __('Mant. Catálogo / Inventario') : __('Catálogo') }}</span>
+                                            class="nav-link-text ms-1">{{ $tenantinfo->tenant == 'rutalimon' ? __('Mant. Catálogo / Inventario') : __('Catálogo') }}@if(!empty($lowStockCount) && $lowStockCount > 0)<span class="nav-badge">{{ $lowStockCount }}</span>@endif</span>
                                     </a>
 
                                     <!-- Lista desplegable de "Mi Negocio" -->
@@ -428,7 +428,7 @@ aside.sidenav .submenu .nav-link {
                                         <i class="material-icons opacity-10">inventory_2</i>
                                     </div>
                                     <span
-                                        class="nav-link-text ms-1">{{ $tenantinfo->tenant == 'rutalimon' ? __('Mant. Catálogo / Inventario') : __('Catálogo') }}</span>
+                                        class="nav-link-text ms-1">{{ $tenantinfo->tenant == 'rutalimon' ? __('Mant. Catálogo / Inventario') : __('Catálogo') }}@if(!empty($lowStockCount) && $lowStockCount > 0)<span class="nav-badge">{{ $lowStockCount }}</span>@endif</span>
                                 </a>
 
                                 <!-- Lista desplegable de "Mi Negocio" -->

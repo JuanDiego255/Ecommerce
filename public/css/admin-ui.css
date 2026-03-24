@@ -888,3 +888,21 @@ tr.bulk-row-selected td { background: rgba(0,122,255,.04) !important; }
 .s-btn-primary.w-auto, .s-btn-sec.w-auto {
     width: auto; padding-left: 20px; padding-right: 20px; margin-top: 0;
 }
+
+/* ── Sidebar nav badge (low-stock alert) ──────────────────── */
+.nav-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 18px; height: 18px; padding: 0 5px;
+    margin-left: 6px; border-radius: 999px;
+    background: var(--red); color: #fff;
+    font-size: .65rem; font-weight: 700; line-height: 1;
+    vertical-align: middle;
+}
+
+/* ── Inline icon button (copy SKU etc.) ───────────────────── */
+.btn-icon {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 2px; border: none; background: transparent;
+    border-radius: 4px; cursor: pointer; transition: background .15s;
+}
+.btn-icon:hover { background: var(--gray0); }

@@ -34,9 +34,10 @@ class ClothingCategoryController extends Controller
     }
     public function indexById($id)
     {
-        $statusFilter = request()->get('status', 2); // 2 es el valor predeterminado (todos)
+        $statusFilter = request()->get('status', 2);
+        $stockFilter  = request()->get('stock', ''); // 'low' | 'out' | ''
 
-        $clothings = Cache::remember('clothings_' . $id . '_' . $statusFilter, $this->expirationTime, function () use ($id, $statusFilter) {
+        $clothings = Cache::remember('clothings_' . $id . '_' . $statusFilter . '_' . $stockFilter, $this->expirationTime, function () use ($id, $statusFilter, $stockFilter) {
             $query = DB::table('clothing')
                 ->join('pivot_clothing_categories', 'clothing.id', '=', 'pivot_clothing_categories.clothing_id')
                 ->join('categories', 'pivot_clothing_categories.category_id', '=', 'categories.id')
@@ -50,13 +51,11 @@ class ClothingCategoryController extends Controller
                 })
                 ->where('pivot_clothing_categories.category_id', $id);
 
-            // Filtrar por estado si no es "Todos"
             if ($statusFilter != 2) {
                 $query->where('clothing.status', $statusFilter);
             }
 
-            return $query
-                ->select(
+            $query->select(
                     'categories.name as category',
                     'clothing.id as id',
                     'clothing.trending as trending',
@@ -76,8 +75,15 @@ class ClothingCategoryController extends Controller
                     'product_images.image as image'
                 )
                 ->groupBy('clothing.id', 'clothing.casa', 'clothing.mayor_price', 'clothing.discount', 'categories.name', 'clothing.code', 'clothing.status', 'clothing.manage_stock', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
-                ->orderBy('name', 'asc')
-                ->get();
+                ->orderBy('name', 'asc');
+
+            if ($stockFilter === 'low') {
+                $query->havingRaw('clothing.manage_stock = 1 AND total_stock > 0 AND total_stock <= 5');
+            } elseif ($stockFilter === 'out') {
+                $query->havingRaw('clothing.manage_stock = 1 AND total_stock <= 0');
+            }
+
+            return $query->get();
         });
 
         $category = Cache::remember('category_' . $id, $this->expirationTime, function () use ($id) {
@@ -134,21 +140,23 @@ class ClothingCategoryController extends Controller
                             </div>';
                 })
                 ->addColumn('name', function ($item) {
-                    return '<td class="w-50">
-                                <div class="d-flex px-2 py-1">
-                                    <div>
-                                        <a target="blank" data-fancybox="gallery"
-                                            href="' . (isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG')) . '">
-                                            <img src="' . (isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG')) . '"
-                                                class="avatar avatar-md me-3">
-                                        </a>
-                                    </div>
-                                    <div class="d-flex flex-column justify-content-center">
-                                        <h4 class="mb-0 text-lg">' . e($item->name) . '</h4>
-                                        <p class="text-xs text-secondary mb-0">Código: ' . e($item->code) . '</p>
-                                    </div>
+                    $img = isset($item->image) ? route('file', $item->image) : url('images/producto-sin-imagen.PNG');
+                    return '<div class="d-flex px-2 py-1">
+                                <div>
+                                    <a target="blank" data-fancybox="gallery" href="' . $img . '">
+                                        <img src="' . $img . '" class="avatar avatar-md me-3" loading="lazy">
+                                    </a>
                                 </div>
-                            </td>';
+                                <div class="d-flex flex-column justify-content-center">
+                                    <h4 class="mb-0 text-lg">' . e($item->name) . '</h4>
+                                    <p class="text-xs text-secondary mb-0 d-flex align-items-center gap-1">
+                                        Código: <span>' . e($item->code) . '</span>
+                                        <button class="copy-sku btn-icon" data-sku="' . e($item->code) . '" title="Copiar código">
+                                            <span class="material-icons" style="font-size:.85rem;vertical-align:middle;cursor:pointer;color:var(--gray3)">content_copy</span>
+                                        </button>
+                                    </p>
+                                </div>
+                            </div>';
                 })
                 ->addColumn('price', function ($item) {
                     return '<td class="align-middle text-center text-sm">

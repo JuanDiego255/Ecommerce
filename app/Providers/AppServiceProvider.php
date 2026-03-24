@@ -120,6 +120,17 @@ class AppServiceProvider extends ServiceProvider
 
             $tenantinfo = TenantInfo::first();
             $settings = Settings::first();
+            $lowStockCount = Cache::remember('low_stock_count', 5, function () {
+                return DB::table(DB::raw('(
+                    SELECT clothing.id,
+                        SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE clothing.stock END) as total_stock
+                    FROM clothing
+                    LEFT JOIN stocks ON clothing.id = stocks.clothing_id
+                    WHERE clothing.status = 1 AND clothing.manage_stock = 1
+                    GROUP BY clothing.id
+                    HAVING total_stock >= 0 AND total_stock <= 5
+                ) as low_stock_products'))->count();
+            });
             $icons = ButtonIcon::first();
             $departments = Department::where('department', '!=', 'Default')->with('categories')
                 ->orderBy('departments.order', 'asc')
@@ -403,7 +414,8 @@ class AppServiceProvider extends ServiceProvider
                 'total_price' => $total_price,
                 'you_save' => $you_save,
                 'department_black_friday' => $department_black_friday,
-                'category_black_friday' => $category_black_friday
+                'category_black_friday' => $category_black_friday,
+                'lowStockCount' => $lowStockCount,
             ]);
         });
     }
