@@ -1,87 +1,82 @@
 @extends('layouts.admin')
 
 @section('metatag')
-    {!! SEOMeta::generate() !!}
-    {!! OpenGraph::generate() !!}
+    {!! SEOMeta::generate() !!}{!! OpenGraph::generate() !!}
+@endsection
+
+@section('breadcrumb')
+    <li class="breadcrumb-item active">Configuración de correo</li>
 @endsection
 
 @section('content')
-    <center>
-        <h2 class="text-center font-title"><strong>Configuración para envío de correos</strong></h2>
-    </center>
 
-    @if (session('ok'))
-        <div class="alert alert-success mt-3 text-white">{{ session('ok') }}</div>
-    @endif
+<div class="page-header">
+    <div>
+        <p class="page-header-title">Configuración de correo</p>
+        <p class="page-header-sub">Credenciales SMTP para el envío de notificaciones</p>
+    </div>
+</div>
 
-    <div class="card mt-3">
-        <div class="card-body">
-            <form action="{{ route('settings.email.update') }}" method="POST" class="form-horizontal">
-                @csrf
-                @method('PUT')
+@if(session('ok'))
+    <div class="alert alert-success">{{ session('ok') }}</div>
+@endif
 
-                <div class="row">
-                    <div class="col-md-6">
-                        <div
-                            class="input-group input-group-lg input-group-outline {{ old('username', isset($setting_email->username) ? $setting_email->username : '') !== null ? 'is-filled' : '' }} my-3">
-                            <label class="form-label">Nombre de usuario</label>
-                            <input type="text" name="username" id="username"
-                                class="form-control form-control-lg @error('cancel_window_hours') is-invalid @enderror"
-                                value="{{ old('username', isset($setting_email->username) ? $setting_email->username : '') }}"
-                                min="0" max="168">
-                            @error('username')
-                                <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div
-                            class="input-group input-group-lg input-group-outline {{ old('from_address', isset($setting_email->from_address) ? $setting_email->from_address : '') !== null ? 'is-filled' : '' }} my-3">
-                            <label class="form-label">Dirección de correo</label>
-                            <input type="text" name="from_address" id="from_address"
-                                class="form-control form-control-lg @error('cancel_window_hours') is-invalid @enderror"
-                                value="{{ old('from_address', isset($setting_email->from_address) ? $setting_email->from_address : '') }}"
-                                min="0" max="168">
-                            @error('from_address')
-                                <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div
-                            class="input-group input-group-lg input-group-outline {{ old('from_name', isset($setting_email->from_name) ? $setting_email->from_name : '') !== null ? 'is-filled' : '' }} my-3">
-                            <label class="form-label">Titular</label>
-                            <input type="text" name="from_name" id="from_name"
-                                class="form-control form-control-lg @error('cancel_window_hours') is-invalid @enderror"
-                                value="{{ old('from_name', isset($setting_email->from_name) ? $setting_email->from_name : '') }}"
-                                min="0" max="168">
-                            @error('from_name')
-                                <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
-                            @enderror
-                        </div>
-                    </div>
+<div class="card">
+    <div class="card-body">
+        <form action="{{ route('settings.email.update') }}" method="POST">
+            @csrf @method('PUT')
 
-                    <div class="col-md-6">
-                        <div
-                            class="input-group input-group-lg input-group-outline {{ old('password', isset($setting_email->password) ? $setting_email->password : '') !== null ? 'is-filled' : '' }} my-3">
-                            <label class="form-label">Contraseña</label>
-                            <input type="password" name="password" id="password"
-                                class="form-control form-control-lg @error('password') is-invalid @enderror"
-                                value="{{ old('password', isset($setting_email->password) ? $setting_email->password : '') }}"
-                                min="0" max="168">
-                            @error('password')
-                                <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
-                            @enderror
-                        </div>
-                    </div>
-
-
+            <p class="surface-title mb-3">Cuenta de envío</p>
+            <div class="settings-grid mb-4">
+                <div class="settings-field">
+                    <label class="filter-label" for="username">Nombre de usuario</label>
+                    <input type="text" name="username" id="username"
+                        class="filter-input @error('username') is-invalid @enderror"
+                        value="{{ old('username', $setting_email->username ?? '') }}"
+                        autocomplete="username" placeholder="usuario@gmail.com">
+                    @error('username')
+                        <span class="text-danger" style="font-size:.75rem;">{{ $message }}</span>
+                    @enderror
                 </div>
 
-                <center>
-                    <button type="submit" class="btn btn-accion">Guardar</button>
-                </center>
-            </form>
-        </div>
+                <div class="settings-field">
+                    <label class="filter-label" for="from_address">Dirección de correo remitente</label>
+                    <input type="email" name="from_address" id="from_address"
+                        class="filter-input @error('from_address') is-invalid @enderror"
+                        value="{{ old('from_address', $setting_email->from_address ?? '') }}"
+                        placeholder="noreply@minegocio.com">
+                    @error('from_address')
+                        <span class="text-danger" style="font-size:.75rem;">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="settings-field">
+                    <label class="filter-label" for="from_name">Nombre remitente (titular)</label>
+                    <input type="text" name="from_name" id="from_name"
+                        class="filter-input @error('from_name') is-invalid @enderror"
+                        value="{{ old('from_name', $setting_email->from_name ?? '') }}"
+                        placeholder="Mi Negocio">
+                    @error('from_name')
+                        <span class="text-danger" style="font-size:.75rem;">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="settings-field">
+                    <label class="filter-label" for="password">Contraseña SMTP</label>
+                    <input type="password" name="password" id="password"
+                        class="filter-input @error('password') is-invalid @enderror"
+                        value="{{ old('password', $setting_email->password ?? '') }}"
+                        autocomplete="new-password" placeholder="••••••••">
+                    @error('password')
+                        <span class="text-danger" style="font-size:.75rem;">{{ $message }}</span>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="s-btn-primary">Guardar configuración</button>
+            </div>
+        </form>
     </div>
+</div>
 @endsection

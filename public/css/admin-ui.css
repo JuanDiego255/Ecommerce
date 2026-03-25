@@ -909,7 +909,7 @@ tr.bulk-row-selected td { background: rgba(0,122,255,.04) !important; }
 
 /* ── Order status timeline (C1) ───────────────────────────── */
 .order-timeline {
-    display: flex; align-items: center;
+    display: flex; align-items: flex-start;
     padding: 14px 20px; margin-bottom: 12px;
     background: var(--white); border-radius: var(--radius);
     border: 1.5px solid var(--gray1);
@@ -920,16 +920,17 @@ tr.bulk-row-selected td { background: rgba(0,122,255,.04) !important; }
     display: flex; align-items: center; justify-content: center;
 }
 .tl-dot .material-icons { font-size: 1rem; }
-.tl-pending .tl-dot  { background: var(--gray0); color: var(--gray3); }
-.tl-active  .tl-dot  { background: var(--blue);  color: #fff; }
+.tl-pending .tl-dot  { background: var(--gray0); color: var(--gray3); border: 2px solid var(--gray1); }
+.tl-active  .tl-dot  { background: var(--blue);  color: #fff; box-shadow: 0 0 0 4px rgba(0,122,255,.15); }
 .tl-done    .tl-dot  { background: rgba(52,199,89,.15); color: #1c6b2e; }
 .tl-label { font-size: .72rem; font-weight: 600; }
 .tl-pending .tl-label { color: var(--gray3); }
 .tl-active  .tl-label { color: var(--blue); }
 .tl-done    .tl-label { color: #1c6b2e; }
-.tl-line { flex: 1; height: 2px; background: var(--gray1); margin: 0 4px; margin-bottom: 18px; }
-.tl-line-done { background: #34c759; }
-.order-timeline.tl-cancelled .tl-active .tl-dot { background: var(--gray0); color: var(--gray3); }
+/* Line sits between dots: margin-top aligns it with dot vertical center (34px dot ÷ 2 = 17px) */
+.tl-line { flex: 1; height: 3px; background: var(--gray1); margin: 17px 4px 0; border-radius: 2px; }
+.tl-line-done { background: linear-gradient(90deg, #34c759, #30d158); }
+.order-timeline.tl-cancelled .tl-active .tl-dot { background: var(--gray0); color: var(--gray3); box-shadow: none; border: 2px solid var(--gray1); }
 .order-timeline.tl-cancelled .tl-active .tl-label { color: var(--gray3); }
 
 /* ── Ecommerce quick-stats row (A1) ───────────────────────── */
@@ -992,3 +993,47 @@ tr.bulk-row-selected td { background: rgba(0,122,255,.04) !important; }
 .gs-item-text { display: flex; flex-direction: column; }
 .gs-item-label { font-size: .84rem; font-weight: 600; color: var(--gray5); }
 .gs-item-sub { font-size: .72rem; color: var(--gray3); }
+
+/* ── Surface / section containers ───────────────────────────── */
+.surface {
+    background: var(--white); border-radius: var(--radius);
+    border: 1.5px solid var(--gray1); padding: 16px 20px;
+}
+.surface-title {
+    font-size: .72rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .06em; color: var(--gray3);
+}
+
+/* thead-lite — lightweight table header */
+.thead-lite th {
+    background: var(--gray0) !important;
+    font-size: .67rem !important; font-weight: 700 !important;
+    color: var(--gray3) !important; text-transform: uppercase !important;
+    letter-spacing: .05em !important; padding: 10px 14px !important;
+    border-bottom: 1px solid var(--gray1) !important;
+    white-space: nowrap !important;
+}
+
+/* page-header — standard barbería module header */
+.page-header {
+    display: flex; flex-wrap: wrap; align-items: center;
+    justify-content: space-between; gap: 10px;
+    margin-bottom: 16px;
+}
+.page-header-title { font-size: 1.05rem; font-weight: 700; color: var(--black); margin: 0; }
+.page-header-sub   { font-size: .78rem; color: var(--gray3); margin: 3px 0 0; }
+
+/* settings-form — standard settings/config form */
+.settings-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+}
+@media (max-width: 600px) { .settings-grid { grid-template-columns: 1fr; } }
+.settings-field { display: flex; flex-direction: column; gap: 6px; }
+.settings-field-full { grid-column: 1 / -1; }
+.settings-check-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 0; border-bottom: 1px solid var(--gray1);
+}
+.settings-check-row:last-child { border-bottom: none; }
+.settings-check-label { font-size: .85rem; font-weight: 500; color: var(--black); flex: 1; }
+.settings-check-sub   { font-size: .72rem; color: var(--gray3); margin-top: 2px; }
