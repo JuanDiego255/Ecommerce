@@ -1,39 +1,25 @@
-@php
-    $index = 0;
-@endphp
-
-<div class="row">
-    
-    <div class="col-md-12 mb-3">
-        <div
-            class="input-group input-group-lg input-group-outline  my-3">
-            <label class="form-label">Pago</label>
-            <input required value="" type="number"
-                class="form-control form-control-lg @error('payment') is-invalid @enderror" name="payment"
-                id="payment">
-            @error('payment')
-                <span class="invalid-feedback" role="alert">
-                    <strong>Campo Requerido</strong>
-                </span>
-            @enderror
-        </div>
-        <div
-            class="input-group input-group-lg input-group-outline is-filled  my-3">
-            <label class="form-label">Fecha de pago</label>
-            <input required value="" type="date"
-                class="form-control form-control-lg @error('payment_date') is-invalid @enderror" name="payment_date"
-                id="payment_date">
-            @error('payment_date')
-                <span class="invalid-feedback" role="alert">
-                    <strong>Campo Requerido</strong>
-                </span>
-            @enderror
-        </div>
+<div style="display:grid;gap:12px;">
+    <div>
+        <label class="filter-label">Monto (₡)</label>
+        <input type="number" name="payment"
+            class="filter-input @error('payment') is-invalid @enderror"
+            min="1" step="1" placeholder="Ej: 25000" required>
+        @error('payment')
+            <span class="text-danger" style="font-size:.75rem;">{{ $message }}</span>
+        @enderror
     </div>
-
-    <center>
-        <input class="btn btn-accion" type="submit"
-            value="{{ $Modo == 'crear' ? 'Agregar' : 'Guardar Cambios' }}">
-    </center>
-
+    <div>
+        <label class="filter-label">Fecha de pago</label>
+        <input type="date" name="payment_date"
+            class="filter-input @error('payment_date') is-invalid @enderror"
+            value="{{ now()->toDateString() }}" required>
+        @error('payment_date')
+            <span class="text-danger" style="font-size:.75rem;">{{ $message }}</span>
+        @enderror
+    </div>
+    <div class="d-flex justify-content-end pt-1">
+        <button type="submit" class="s-btn-primary w-auto">
+            {{ $Modo === 'crear' ? 'Agregar' : 'Guardar cambios' }}
+        </button>
+    </div>
 </div>

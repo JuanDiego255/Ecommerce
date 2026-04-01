@@ -1,356 +1,378 @@
 @extends('layouts.admin')
 @section('metatag')
-    {!! SEOMeta::generate() !!}
-    {!! OpenGraph::generate() !!}
+    {!! SEOMeta::generate() !!}{!! OpenGraph::generate() !!}
 @endsection
+
+@section('breadcrumb')
+    <li class="breadcrumb-item active">Contabilidad</li>
+@endsection
+
 @section('content')
-    <div class="container">
+@php
+    $fmt = fn($v) => '₡' . number_format((float)$v, 0, ',', '.');
+@endphp
 
-        <h2 class="text-center font-title"><strong>Pagos y gastos realizados</strong>
-        </h2>
+{{-- ── Modales ────────────────────────────────────────────── --}}
 
-        <hr class="hr-servicios">
-        <center>
-            <div class="card mt-3 mb-4">
-                <div class="card-body">
-                    <div class="row w-100">
-                        <div class="col-md-6">
-                            <div class="input-group input-group-lg input-group-static my-3 w-100">
-                                <label>Filtrar</label>
-                                <input value="" placeholder="Escribe para filtrar...." type="text"
-                                    class="form-control form-control-lg" name="searchfor" id="searchfor">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="input-group input-group-lg input-group-static my-3 w-100">
-                                <label>Mostrar</label>
-                                <select id="recordsPerPage" name="recordsPerPage" class="form-control form-control-lg"
-                                    autocomplete="recordsPerPage">
-                                    <option value="5">5 Registros</option>
-                                    <option value="10">10 Registros</option>
-                                    <option selected value="15">15 Registros</option>
-                                    <option value="50">50 Registros</option>
-                                </select>
-
-                            </div>
-                        </div>
-
+{{-- Modal: Registrar pago rápido (compartido, se llena por JS) --}}
+<div class="modal fade" id="quick-pay-modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content" style="border-radius:14px;border:none;">
+            <div class="modal-header border-0 pb-0">
+                <div>
+                    <h6 class="modal-title fw-bold mb-0">Registrar pago</h6>
+                    <p class="text-xs text-secondary mb-0" id="qp-tenant-label" style="font-size:.75rem;"></p>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="{{ url('tenant-payment/store') }}" method="POST">
+                @csrf
+                <input type="hidden" name="tenant_id" id="qp-tenant-id">
+                <div class="modal-body" style="display:grid;gap:12px;">
+                    <div>
+                        <label class="filter-label">Monto (₡)</label>
+                        <input type="number" name="payment" id="qp-payment" class="filter-input"
+                            min="1" step="1" placeholder="Ej: 25000" required>
+                    </div>
+                    <div>
+                        <label class="filter-label">Fecha de pago</label>
+                        <input type="date" name="payment_date" id="qp-date" class="filter-input" required>
                     </div>
                 </div>
-            </div>
-
-            <div class="row row-cols-1 row-cols-md-2 g-4 align-content-center card-group mt-1">
-                <div class="col-md-8">
-                    <div class="card w-100 mb-4">
-                        <div class="table-responsive">
-                            <table id="tenants-pay" class="table align-items-center mb-0">
-                                <thead>
-                                    <tr>
-                                        <th
-                                            class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                            Inquilino</th>
-                                        <th
-                                            class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                            Fecha de cobro (Siguiente)</th>
-                                        <th
-                                            class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                            Plan</th>
-                                        <th
-                                            class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                            Pago total</th>
-                                        <th
-                                            class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                            Acciones</th>
-
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($tenants as $tenant)
-                                        <tr>
-                                            <td class="align-middle text-xxs text-center">
-                                                <p class=" font-weight-bold mb-0">{{ $tenant->id }}</p>
-                                            </td>
-
-
-                                            <td class="align-middle text-xxs text-center">
-                                                @php
-                                                    date_default_timezone_set('America/Chihuahua');
-                                                    $datetoday = date('Y-m-d', time());
-                                                    $time_to_pay = $tenant->time_to_pay > 1 ? $tenant->time_to_pay : 1;
-                                                @endphp
-
-                                                @if ($datetoday >= \Carbon\Carbon::parse($tenant->payment_date)->addMonths($time_to_pay))
-                                                    <p class=" font-weight-bold mb-0">
-                                                        <span
-                                                            class="badge badge-pill ml-2 {{ $tenant->cool_pay == 1 ? 'badge-date-cool' : 'badge-date animacion' }} badge-date text-white"
-                                                            id="comparison-count">{{ isset($tenant->payment_date)
-                                                                ? \Carbon\Carbon::parse($tenant->payment_date)->addMonths($time_to_pay - 1)->format('Y-m-d')
-                                                                : '' }}</span>
-                                                    </p>
-                                                @else
-                                                    <p class=" font-weight-bold mb-0">
-                                                        <span class="badge badge-pill ml-2 badge-date-blue text-white"
-                                                            id="comparison-count">{{ isset($tenant->payment_date)
-                                                                ? \Carbon\Carbon::parse($tenant->payment_date)->addMonths($time_to_pay - 1)->format('Y-m-d')
-                                                                : '' }}</span>
-                                                    </p>
-                                                @endif
-
-                                            </td>
-                                            <td class="align-middle text-xxs text-center">
-                                                <p class=" font-weight-bold mb-0">Plan de: {{ $tenant->plan }}</p>
-                                            </td>
-                                            <td class="align-middle text-xxs text-center total">
-                                                <p class=" font-weight-bold mb-0">
-                                                    {{ number_format($tenant->total_payment) }}</p>
-                                            </td>
-
-                                            <td class="align-middle">
-                                                <center>
-                                                    <a href="{{ url('tenant/manage-pay/' . $tenant->id) }}"
-                                                        class="btn btn-accion" style="text-decoration: none;">Ver Pagos</a>
-                                                </center>
-
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+                <div class="modal-footer border-0 pt-0 gap-2">
+                    <button type="button" class="s-btn-sec w-auto" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="s-btn-primary w-auto">
+                        <span class="material-icons" style="font-size:.9rem;vertical-align:middle;">payments</span>
+                        Guardar pago
+                    </button>
                 </div>
-                <div class="col-lg-4 bg-transparent">
-                    <div class="card mb-4">
-                        <div class="card-body">
-                            <ul class="list-group list-group-flush">
-                                <li
-                                    class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
-                                    Pagos realizados
-                                    <span><strong id="payments">₡1000</strong></span>
-                                </li>
-                                <li
-                                    class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
-                                    Gastos
-                                    <span><strong id="total_bills">₡1000</strong></span>
-                                </li>
-                                <li
-                                    class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
-                                    Fondo total
-                                    <span><strong id="totalPayment">₡1000</strong></span>
-                                </li>
-
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </center>
-        <button type="button" data-bs-toggle="modal" data-bs-target="#add-bill-modal" class="btn btn-accion">Nuevo
-            gasto</button>
-        <hr class="hr-servicios">
-        @include('admin.tenant.add-bill')
-        <center>
-            <div class="card mt-3 mb-4">
-                <div class="card-body">
-                    <div class="row w-100">
-                        <div class="col-md-6">
-                            <div class="input-group input-group-lg input-group-static my-3 w-100">
-                                <label>Filtrar</label>
-                                <input value="" placeholder="Escribe para filtrar...." type="text"
-                                    class="form-control form-control-lg" name="searchfor_bill" id="searchfor_bill">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="input-group input-group-lg input-group-static my-3 w-100">
-                                <label>Mostrar</label>
-                                <select id="recordsPerPage_bill" name="recordsPerPage_bill"
-                                    class="form-control form-control-lg" autocomplete="recordsPerPage">
-                                    <option value="5">5 Registros</option>
-                                    <option value="10">10 Registros</option>
-                                    <option selected value="15">15 Registros</option>
-                                    <option value="50">50 Registros</option>
-                                </select>
-
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-
-            <div class="card w-100 mb-4">
-                <div class="table-responsive">
-                    <table id="bills" class="table align-items-center mb-0">
-                        <thead>
-                            <tr>
-
-                                <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                    Fecha de gasto</th>
-                                <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                    Total</th>
-                                <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                    Detalle</th>
-                                <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                    Acciones</th>
-
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($bills as $bill)
-                                <tr>
-                                    <td class="align-middle text-xxs text-center">
-                                        <p class=" font-weight-bold mb-0">{{ $bill->bill_date }}</p>
-                                    </td>
-                                    <td class="align-middle text-xxs text-center">
-                                        <p class=" font-weight-bold mb-0">{{ $bill->bill }}</p>
-                                    </td>
-                                    <td class="align-middle text-xxs text-center">
-                                        <p class=" font-weight-bold mb-0">{{ $bill->detail }}</p>
-                                    </td>
-
-                                    <td class="align-middle">
-                                        <center>
-                                            <form method="post" action="{{ url('/delete/bill/' . $bill->id) }}"
-                                                style="display:inline">
-                                                {{ csrf_field() }}
-                                                {{ method_field('DELETE') }}
-                                                <button type="submit" data-bs-toggle="modal"
-                                                    onclick="return confirm('Deseas borrar este gasto?')"
-                                                    class="btn btn-admin-delete"
-                                                    style="text-decoration: none;">Borrar</button>
-                                            </form>
-                                        </center>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <a href="{{ url('tenants/payments') }}" class="btn btn-accion" style="text-decoration: none;">Volver</a>
-        </center>
+            </form>
+        </div>
     </div>
+</div>
+
+{{-- Modal: Nuevo gasto --}}
+<div class="modal fade" id="add-bill-modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content" style="border-radius:14px;border:none;">
+            <div class="modal-header border-0 pb-0">
+                <h6 class="modal-title fw-bold">Nuevo gasto</h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="{{ url('bill/store') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <div class="modal-body" style="display:grid;gap:12px;">
+                    <div>
+                        <label class="filter-label">Monto (₡)</label>
+                        <input type="number" name="bill" class="filter-input"
+                            min="1" step="1" placeholder="Ej: 10000" required>
+                    </div>
+                    <div>
+                        <label class="filter-label">Concepto / Detalle</label>
+                        <input type="text" name="detail" class="filter-input"
+                            placeholder="Ej: Servidor, dominio…" required>
+                    </div>
+                    <div>
+                        <label class="filter-label">Fecha del gasto</label>
+                        <input type="date" name="bill_date" class="filter-input" required>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 pt-0 gap-2">
+                    <button type="button" class="s-btn-sec w-auto" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="s-btn-primary w-auto">
+                        <span class="material-icons" style="font-size:.9rem;vertical-align:middle;">add</span>
+                        Agregar gasto
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{{-- ── Header ─────────────────────────────────────────────── --}}
+<div class="page-header">
+    <div>
+        <p class="page-header-title">Contabilidad</p>
+        <p class="page-header-sub">Ingresos por inquilino · Gastos operativos · Balance</p>
+    </div>
+</div>
+
+{{-- ── KPIs server-side ───────────────────────────────────── --}}
+<div class="tp-kpi-row">
+    <div class="tp-kpi">
+        <span class="material-icons tp-kpi-icon" style="color:#007aff;">payments</span>
+        <div>
+            <div class="tp-kpi-value">{{ $fmt($totalPayments) }}</div>
+            <div class="tp-kpi-label">Total ingresos</div>
+        </div>
+    </div>
+    <div class="tp-kpi">
+        <span class="material-icons tp-kpi-icon" style="color:#ff3b30;">receipt</span>
+        <div>
+            <div class="tp-kpi-value">{{ $fmt($totalBills) }}</div>
+            <div class="tp-kpi-label">Total gastos</div>
+        </div>
+    </div>
+    <div class="tp-kpi tp-kpi-fund {{ $totalFund >= 0 ? '' : 'tp-kpi-neg' }}">
+        <span class="material-icons tp-kpi-icon" style="color:{{ $totalFund >= 0 ? '#34c759' : '#ff3b30' }};">
+            account_balance_wallet
+        </span>
+        <div>
+            <div class="tp-kpi-value" style="color:{{ $totalFund >= 0 ? '#34c759' : '#ff3b30' }};">
+                {{ $fmt($totalFund) }}
+            </div>
+            <div class="tp-kpi-label">Fondo disponible</div>
+        </div>
+    </div>
+    <div class="tp-kpi">
+        <span class="material-icons tp-kpi-icon" style="color:#007aff;">calendar_today</span>
+        <div>
+            <div class="tp-kpi-value">{{ $fmt($monthPayments) }}</div>
+            <div class="tp-kpi-label">Ingresos este mes</div>
+        </div>
+    </div>
+    <div class="tp-kpi">
+        <span class="material-icons tp-kpi-icon" style="color:#ff9500;">trending_down</span>
+        <div>
+            <div class="tp-kpi-value">{{ $fmt($monthBills) }}</div>
+            <div class="tp-kpi-label">Gastos este mes</div>
+        </div>
+    </div>
+    @if($overdueCount > 0)
+    <div class="tp-kpi" style="border-color:#ff3b30;background:rgba(255,59,48,.04);">
+        <span class="material-icons tp-kpi-icon" style="color:#ff3b30;">warning_amber</span>
+        <div>
+            <div class="tp-kpi-value" style="color:#ff3b30;">{{ $overdueCount }}</div>
+            <div class="tp-kpi-label">Con cobro vencido</div>
+        </div>
+    </div>
+    @endif
+</div>
+
+{{-- ── Tabla de inquilinos ─────────────────────────────────── --}}
+<div class="card mb-3">
+    <div class="card-body">
+        {{-- Header de sección --}}
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+            <div>
+                <p class="surface-title mb-0">Inquilinos activos</p>
+                <p style="font-size:.75rem;color:var(--gray3);margin:2px 0 0;">
+                    {{ $tenants->count() }} inquilino{{ $tenants->count() !== 1 ? 's' : '' }}
+                </p>
+            </div>
+            <div style="max-width:220px;width:100%;">
+                <label class="filter-label">Buscar</label>
+                <input type="text" id="searchfor" class="filter-input" placeholder="Filtrar inquilinos…">
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0" id="tenants-pay">
+                <thead class="thead-lite">
+                    <tr>
+                        <th>Inquilino</th>
+                        <th>Plan</th>
+                        <th>Último pago</th>
+                        <th>Próx. cobro</th>
+                        <th class="text-end">Total pagado</th>
+                        <th class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($tenants as $tenant)
+                    @php
+                        date_default_timezone_set('America/Costa_Rica');
+                        $today       = now()->toDateString();
+                        $timePay     = max(1, (int) $tenant->time_to_pay);
+                        $nextDate    = $tenant->payment_date
+                            ? \Carbon\Carbon::parse($tenant->payment_date)
+                                ->addMonths($timePay - 1)->format('Y-m-d')
+                            : null;
+                        $isOverdue   = $nextDate && $today >= $nextDate && $tenant->cool_pay != 1;
+                        $isOk        = $nextDate && $today <  $nextDate;
+                    @endphp
+                    <tr>
+                        <td class="fw-semibold">{{ $tenant->id }}</td>
+                        <td>
+                            <span class="s-pill pill-blue">{{ $tenant->plan }}</span>
+                        </td>
+                        <td style="font-size:.8rem;color:var(--gray3);">
+                            {{ $tenant->last_payment_date
+                                ? \Carbon\Carbon::parse($tenant->last_payment_date)->format('d/m/Y')
+                                : '—' }}
+                        </td>
+                        <td>
+                            @if($nextDate)
+                                @if($isOverdue)
+                                    <span class="s-pill pill-red">
+                                        <span class="material-icons" style="font-size:.75rem;">warning</span>
+                                        {{ \Carbon\Carbon::parse($nextDate)->format('d/m/Y') }}
+                                    </span>
+                                @else
+                                    <span class="s-pill pill-green">{{ \Carbon\Carbon::parse($nextDate)->format('d/m/Y') }}</span>
+                                @endif
+                            @else
+                                <span class="s-pill pill-gray">Sin pagos</span>
+                            @endif
+                        </td>
+                        <td class="text-end fw-semibold total-col">
+                            {{ $fmt($tenant->total_payment ?? 0) }}
+                        </td>
+                        <td class="text-center">
+                            <div class="d-inline-flex gap-2">
+                                <button type="button"
+                                    class="act-btn ab-ok"
+                                    title="Registrar pago"
+                                    onclick="openPayModal('{{ $tenant->id }}', '{{ $tenant->plan }}')">
+                                    <span class="material-icons" style="font-size:.9rem;">payments</span>
+                                </button>
+                                <a href="{{ url('tenant/manage-pay/' . $tenant->id) }}"
+                                    class="act-btn ab-neutral" title="Ver historial">
+                                    <span class="material-icons" style="font-size:.9rem;">history</span>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{{-- ── Tabla de gastos ─────────────────────────────────────── --}}
+<div class="card">
+    <div class="card-body">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+            <div>
+                <p class="surface-title mb-0">Gastos operativos</p>
+                <p style="font-size:.75rem;color:var(--gray3);margin:2px 0 0;">
+                    {{ $bills->count() }} registro{{ $bills->count() !== 1 ? 's' : '' }}
+                </p>
+            </div>
+            <div class="d-flex gap-2 align-items-end">
+                <div>
+                    <label class="filter-label">Buscar</label>
+                    <input type="text" id="searchfor_bill" class="filter-input" placeholder="Filtrar gastos…">
+                </div>
+                <button type="button" data-bs-toggle="modal" data-bs-target="#add-bill-modal"
+                    class="s-btn-primary w-auto">
+                    <span class="material-icons" style="font-size:.9rem;vertical-align:middle;">add</span>
+                    Nuevo gasto
+                </button>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0" id="bills">
+                <thead class="thead-lite">
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Concepto</th>
+                        <th class="text-end">Monto</th>
+                        <th class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($bills as $bill)
+                    <tr>
+                        <td style="font-size:.82rem;">
+                            {{ \Carbon\Carbon::parse($bill->bill_date)->format('d/m/Y') }}
+                        </td>
+                        <td>{{ $bill->detail }}</td>
+                        <td class="text-end fw-semibold">{{ $fmt($bill->bill) }}</td>
+                        <td class="text-center">
+                            <form method="POST" action="{{ url('/delete/bill/' . $bill->id) }}"
+                                style="display:inline"
+                                onsubmit="return confirm('¿Eliminar este gasto?')">
+                                @csrf @method('DELETE')
+                                <button type="submit" class="act-btn ab-del" title="Eliminar">
+                                    <span class="material-icons" style="font-size:.9rem;">delete</span>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="4" class="text-center text-muted py-4">No hay gastos registrados</td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 @endsection
+
 @section('script')
-    <script>
-        var dataTable = $('#tenants-pay').DataTable({
-            searching: true,
-            lengthChange: false,
-            pageLength: 15,
-            "language": {
-                "sProcessing": "Procesando...",
-                "sLengthMenu": "Mostrar _MENU_ registros",
-                "sZeroRecords": "No se encontraron resultados",
-                "sEmptyTable": "Ningún dato disponible en esta tabla",
-                "sInfo": "Mostrando _START_ a _END_ de _TOTAL_ registros",
-                "sInfoEmpty": "Mostrando 0 a 0 de 0 registros",
-                "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
-                "sInfoPostFix": "",
-                "sSearch": "Buscar:",
-                "sUrl": "",
-                "sInfoThousands": ",",
-                "sLoadingRecords": "Cargando...",
-                "oPaginate": {
-                    "sFirst": "<<",
-                    "sLast": "Último",
-                    "sNext": ">>",
-                    "sPrevious": "<<"
-                },
-                "oAria": {
-                    "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
-                    "sSortDescending": ": Activar para ordenar la columna de manera descendente"
-                }
-            }
-        });
+@parent
+<style>
+/* ── KPI strip ─────────────────────────────────────────── */
+.tp-kpi-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 10px; margin-bottom: 16px;
+}
+.tp-kpi {
+    display: flex; align-items: center; gap: 10px;
+    padding: 14px 16px;
+    background: var(--white); border: 1.5px solid var(--gray1);
+    border-radius: var(--radius);
+}
+.tp-kpi-icon { font-size: 1.5rem; }
+.tp-kpi-value { font-size: 1.05rem; font-weight: 700; color: var(--black); line-height: 1.2; }
+.tp-kpi-label { font-size: .7rem; color: var(--gray3); font-weight: 500; }
 
-        calcularTotal();
+/* ── act-btn ok variant ───────────────────────────────── */
+.act-btn.ab-ok {
+    background: rgba(52,199,89,.1); color: #1a7f3c;
+    border-color: rgba(52,199,89,.25);
+}
+.act-btn.ab-ok:hover { background: rgba(52,199,89,.2); }
+</style>
 
-        $('#recordsPerPage').on('change', function() {
-            var recordsPerPage = parseInt($(this).val());
-            dataTable.page.len(recordsPerPage).draw();
-            calcularTotal();
-        });
+<script>
+/* ── Abrir modal de pago rápido ─────────────────────── */
+function openPayModal(tenantId, plan) {
+    document.getElementById('qp-tenant-id').value = tenantId;
+    document.getElementById('qp-tenant-label').textContent = tenantId + ' — Plan: ' + plan;
+    // Fecha por defecto: hoy
+    document.getElementById('qp-date').valueAsDate = new Date();
+    document.getElementById('qp-payment').value = '';
+    bootstrap.Modal.getOrCreateInstance(
+        document.getElementById('quick-pay-modal')
+    ).show();
+}
 
-        // Captura el evento input en el campo de búsqueda
-        $('#searchfor').on('input', function() {
-            var searchTerm = $(this).val();
-            dataTable.search(searchTerm).draw();
-            calcularTotal();
-        });
+/* ── DataTable: inquilinos ──────────────────────────── */
+var dtTenants = $('#tenants-pay').DataTable({
+    searching: true, lengthChange: false, pageLength: 50,
+    order: [[3, 'asc']], // ordena por próx. cobro
+    columnDefs: [{ targets: [3, 5], orderable: false }],
+    language: {
+        sZeroRecords: 'Sin resultados', sEmptyTable: 'Sin inquilinos',
+        sInfo: '_START_–_END_ de _TOTAL_', sInfoEmpty: '0 registros',
+        sInfoFiltered: '(filtrado de _MAX_)',
+        oPaginate: { sNext: '›', sPrevious: '‹', sFirst: '«', sLast: '»' }
+    }
+});
+$('#searchfor').on('input', function() {
+    dtTenants.search(this.value).draw();
+});
 
-        function calcularTotal() {
-
-            let pays = 0;
-            let bills = 0;
-            let total_payment = 0;
-            // Obtener todas las filas de la tabla
-            $('#tenants-pay tbody tr').each(function() {
-                var total = parseFloat($(this).find('td:eq(3)').text().replace(/[^0-9.-]+/g, ""));
-                pays += total;
-            });
-
-            $('#bills tbody tr').each(function() {
-                var bill = parseFloat($(this).find('td:eq(1)').text().replace(/[^0-9.-]+/g, ""));
-                bills += bill;
-            });
-
-            pays = isNaN(pays) ? 0 : pays;
-            bills = isNaN(bills) ? 0 : bills;
-            total_payment = pays - bills;
-
-            // Mostrar el total actualizado en el elemento correspondiente
-            const payments = document.getElementById('payments');
-            const total_bills = document.getElementById('total_bills');
-            const totalPayment = document.getElementById('totalPayment');
-
-            payments.textContent =
-                `₡${pays.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
-            total_bills.textContent =
-                `₡${bills.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
-            totalPayment.textContent =
-                `₡${total_payment.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
-        }
-
-        var dataTable_bills = $('#bills').DataTable({
-            searching: true,
-            lengthChange: false,
-            pageLength: 15,
-            "language": {
-                "sProcessing": "Procesando...",
-                "sLengthMenu": "Mostrar _MENU_ registros",
-                "sZeroRecords": "No se encontraron resultados",
-                "sEmptyTable": "Ningún dato disponible en esta tabla",
-                "sInfo": "Mostrando _START_ a _END_ de _TOTAL_ registros",
-                "sInfoEmpty": "Mostrando 0 a 0 de 0 registros",
-                "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
-                "sInfoPostFix": "",
-                "sSearch": "Buscar:",
-                "sUrl": "",
-                "sInfoThousands": ",",
-                "sLoadingRecords": "Cargando...",
-                "oPaginate": {
-                    "sFirst": "<<",
-                    "sLast": "Último",
-                    "sNext": ">>",
-                    "sPrevious": "<<"
-                },
-                "oAria": {
-                    "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
-                    "sSortDescending": ": Activar para ordenar la columna de manera descendente"
-                }
-            }
-        });
-        $('#recordsPerPage_bill').on('change', function() {
-            var recordsPerPage = parseInt($(this).val());
-            dataTable_bills.page.len(recordsPerPage).draw();
-            calcularTotal();
-        });
-
-        // Captura el evento input en el campo de búsqueda
-        $('#searchfor_bill').on('input', function() {
-            var searchTerm = $(this).val();
-            dataTable_bills.search(searchTerm).draw();
-            calcularTotal();
-        });
-    </script>
+/* ── DataTable: gastos ──────────────────────────────── */
+var dtBills = $('#bills').DataTable({
+    searching: true, lengthChange: false, pageLength: 15,
+    order: [[0, 'desc']],
+    language: {
+        sZeroRecords: 'Sin resultados', sEmptyTable: 'Sin gastos',
+        sInfo: '_START_–_END_ de _TOTAL_', sInfoEmpty: '0 registros',
+        sInfoFiltered: '(filtrado de _MAX_)',
+        oPaginate: { sNext: '›', sPrevious: '‹', sFirst: '«', sLast: '»' }
+    }
+});
+$('#searchfor_bill').on('input', function() {
+    dtBills.search(this.value).draw();
+});
+</script>
 @endsection
