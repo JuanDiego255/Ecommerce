@@ -473,6 +473,7 @@ h1.font-title, h2.font-title, h3.font-title {
 .pill-orange { background: rgba(255,149,0,.12);  color: #7d4a00; }
 .pill-red    { background: rgba(255,59,48,.12);  color: #c41230; }
 .pill-gray   { background: var(--gray1);          color: var(--gray3); }
+.pill-ice    { background: rgba(0,199,255,.12);   color: #006a8a; }  /* congelado */
 
 /* ═══════════════════════════════════════════════════════════════
    ALERTS

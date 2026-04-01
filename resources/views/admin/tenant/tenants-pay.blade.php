@@ -167,11 +167,13 @@
         </div>
 
         <div class="table-responsive">
+            {{-- col 0 oculta: clave de ordenamiento 0=activo-con-pagos 1=congelado 2=sin-pagos --}}
             <table class="table table-hover align-middle mb-0" id="tenants-pay">
                 <thead class="thead-lite">
                     <tr>
+                        <th style="display:none;"></th>{{-- sort key (hidden) --}}
                         <th>Inquilino</th>
-                        <th>Plan</th>
+                        <th>Estado</th>
                         <th>Último pago</th>
                         <th>Próx. cobro</th>
                         <th class="text-end">Total pagado</th>
@@ -182,27 +184,41 @@
                     @foreach($tenants as $tenant)
                     @php
                         date_default_timezone_set('America/Costa_Rica');
-                        $today       = now()->toDateString();
-                        $timePay     = max(1, (int) $tenant->time_to_pay);
-                        $nextDate    = $tenant->payment_date
+                        $today      = now()->toDateString();
+                        $timePay    = max(1, (int) $tenant->time_to_pay);
+                        $frozen     = ! (bool) $tenant->active;
+                        $hasPayment = (bool) $tenant->last_payment_date;
+                        $nextDate   = $hasPayment
                             ? \Carbon\Carbon::parse($tenant->payment_date)
                                 ->addMonths($timePay - 1)->format('Y-m-d')
                             : null;
-                        $isOverdue   = $nextDate && $today >= $nextDate && $tenant->cool_pay != 1;
-                        $isOk        = $nextDate && $today <  $nextDate;
+                        $isOverdue  = $nextDate && $today >= $nextDate && $tenant->cool_pay != 1 && !$frozen;
+                        // orden: 0 = activo con pagos, 1 = congelado, 2 = sin pagos
+                        $sortKey    = $frozen ? 1 : ($hasPayment ? 0 : 2);
                     @endphp
                     <tr>
-                        <td class="fw-semibold">{{ $tenant->id }}</td>
+                        {{-- sort key oculta --}}
+                        <td style="display:none;">{{ $sortKey }}</td>
+                        <td class="fw-semibold" style="{{ $frozen ? 'opacity:.6;' : '' }}">{{ $tenant->id }}</td>
                         <td>
-                            <span class="s-pill pill-blue">{{ $tenant->plan }}</span>
+                            @if($frozen)
+                                <span class="s-pill pill-ice">
+                                    <span class="material-icons" style="font-size:.75rem;">ac_unit</span>
+                                    Congelado
+                                </span>
+                            @else
+                                <span class="s-pill pill-blue">{{ $tenant->plan }}</span>
+                            @endif
                         </td>
                         <td style="font-size:.8rem;color:var(--gray3);">
-                            {{ $tenant->last_payment_date
+                            {{ $hasPayment
                                 ? \Carbon\Carbon::parse($tenant->last_payment_date)->format('d/m/Y')
                                 : '—' }}
                         </td>
                         <td>
-                            @if($nextDate)
+                            @if($frozen)
+                                <span class="s-pill pill-gray" style="opacity:.7;">—</span>
+                            @elseif($nextDate)
                                 @if($isOverdue)
                                     <span class="s-pill pill-red">
                                         <span class="material-icons" style="font-size:.75rem;">warning</span>
@@ -215,17 +231,19 @@
                                 <span class="s-pill pill-gray">Sin pagos</span>
                             @endif
                         </td>
-                        <td class="text-end fw-semibold total-col">
+                        <td class="text-end fw-semibold" style="{{ $frozen ? 'opacity:.6;' : '' }}">
                             {{ $fmt($tenant->total_payment ?? 0) }}
                         </td>
                         <td class="text-center">
                             <div class="d-inline-flex gap-2">
+                                @if(!$frozen)
                                 <button type="button"
                                     class="act-btn ab-ok"
                                     title="Registrar pago"
                                     onclick="openPayModal('{{ $tenant->id }}', '{{ $tenant->plan }}')">
                                     <span class="material-icons" style="font-size:.9rem;">payments</span>
                                 </button>
+                                @endif
                                 <a href="{{ url('tenant/manage-pay/' . $tenant->id) }}"
                                     class="act-btn ab-neutral" title="Ver historial">
                                     <span class="material-icons" style="font-size:.9rem;">history</span>
@@ -345,10 +363,15 @@ function openPayModal(tenantId, plan) {
 }
 
 /* ── DataTable: inquilinos ──────────────────────────── */
+// Orden: col0 (sortKey: 0=activo, 1=congelado, 2=sin pagos) ASC
+//        luego col4 (próx. cobro) ASC dentro de activos
 var dtTenants = $('#tenants-pay').DataTable({
     searching: true, lengthChange: false, pageLength: 50,
-    order: [[3, 'asc']], // ordena por próx. cobro
-    columnDefs: [{ targets: [3, 5], orderable: false }],
+    order: [[0, 'asc'], [4, 'asc']],
+    columnDefs: [
+        { targets: 0, visible: false },          // oculta col sort key
+        { targets: [3, 6], orderable: false }    // últ. pago y acciones no ordenan
+    ],
     language: {
         sZeroRecords: 'Sin resultados', sEmptyTable: 'Sin inquilinos',
         sInfo: '_START_–_END_ de _TOTAL_', sInfoEmpty: '0 registros',
