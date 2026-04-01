@@ -186,13 +186,13 @@
                         date_default_timezone_set('America/Costa_Rica');
                         $today      = now()->toDateString();
                         $timePay    = max(1, (int) $tenant->time_to_pay);
-                        $frozen     = ! (bool) $tenant->active;
+                        $frozen     = (int) $tenant->cool_pay === 1;
                         $hasPayment = (bool) $tenant->last_payment_date;
                         $nextDate   = $hasPayment
                             ? \Carbon\Carbon::parse($tenant->payment_date)
                                 ->addMonths($timePay - 1)->format('Y-m-d')
                             : null;
-                        $isOverdue  = $nextDate && $today >= $nextDate && $tenant->cool_pay != 1 && !$frozen;
+                        $isOverdue  = !$frozen && $nextDate && $today >= $nextDate;
                         // orden: 0 = activo con pagos, 1 = congelado, 2 = sin pagos
                         $sortKey    = $frozen ? 1 : ($hasPayment ? 0 : 2);
                     @endphp
