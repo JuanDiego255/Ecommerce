@@ -3,105 +3,79 @@
     {!! SEOMeta::generate() !!}
     {!! OpenGraph::generate() !!}
 @endsection
+@section('breadcrumb')
+    <li class="breadcrumb-item"><a href="{{ url('/') }}">Inicio</a></li>
+    <li class="breadcrumb-item"><a href="{{ url('/cajas/') }}">Cajas</a></li>
+    <li class="breadcrumb-item active">Arqueos</li>
+@endsection
 @section('content')
-    <center>
-        <h2 class="text-center font-title">
-            <strong>{{ __('Administrar arqueos') }}</strong>
-        </h2>
-    </center>
-    <div class="card mt-3">
-        <div class="card-body">
-            <div class="row w-100">
-                <div class="col-md-6">
-                    <div class="input-group input-group-lg input-group-static my-3 w-100">
-                        <label>Filtrar</label>
-                        <input value="" placeholder="Escribe para filtrar...." type="text"
-                            class="form-control form-control-lg" name="searchfor" id="searchfor">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="input-group input-group-lg input-group-static my-3 w-100">
-                        <label>Mostrar</label>
-                        <select id="recordsPerPage" name="recordsPerPage" class="form-control form-control-lg"
-                            autocomplete="recordsPerPage">
-                            <option value="5">5 Registros</option>
-                            <option value="10">10 Registros</option>
-                            <option selected value="15">15 Registros</option>
-                            <option value="50">50 Registros</option>
-                        </select>
+    <div class="page-header d-flex align-items-center justify-content-between mb-3">
+        <h4 class="mb-0">Administrar Arqueos</h4>
+        <a href="{{ url('/cajas/') }}" class="s-btn-sec">
+            <i class="fas fa-arrow-left me-1"></i> Volver
+        </a>
+    </div>
 
-                    </div>
-                </div>
-
+    <div class="surface p-3 mb-3">
+        <div class="row g-2">
+            <div class="col-md-6">
+                <label class="filter-label">Filtrar</label>
+                <input type="text" class="filter-input" id="searchfor" placeholder="Escribe para filtrar...">
+            </div>
+            <div class="col-md-6">
+                <label class="filter-label">Mostrar</label>
+                <select id="recordsPerPage" class="filter-input">
+                    <option value="5">5 Registros</option>
+                    <option value="10">10 Registros</option>
+                    <option selected value="15">15 Registros</option>
+                    <option value="50">50 Registros</option>
+                </select>
             </div>
         </div>
     </div>
-    <div class="row row-cols-1 row-cols-md-2 g-4 align-content-center card-group mt-1">
 
-        <div class="col-md-12">
-            <div class="card p-2">
-                <div class="table-responsive">
-
-                    <table class="table align-items-center mb-0" id="table">
-                        <thead>
-                            <tr>
-                                <th class="text-secondary font-weight-bolder opacity-7">
-                                    {{ __('Acciones') }}</th>
-                                <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Fecha Apertura') }}
-                                </th>
-                                <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Fecha Final') }}
-                                </th>
-                                <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Estado') }}
-                                </th>
-                                <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Abierta Por') }}
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($arqueos as $item)
-                                <tr>
-                                    <td class="align-middle">
-                                        @if (!$item->estado == 0)
-                                            <form method="post" action="{{ url('/close/cajas/' . $item->caja_id) }}"
-                                                style="display:inline">
-                                                {{ csrf_field() }}
-                                                <button type="submit" data-bs-toggle="modal"
-                                                    onclick="return confirm('Deseas cerrar esta caja?')"
-                                                    class="btn btn-admin-open"
-                                                    style="text-decoration: none;">Cerrar</button>
-                                            </form>
-                                        @endif
-                                    </td>
-                                    <td class="align-middle text-sm">
-                                        <p class="text-success mb-0">{{ $item->fecha_ini }}
-                                        </p>
-                                    </td>
-                                    <td class="align-middle text-sm">
-                                        <p class="text-success mb-0">{{ $item->fecha_fin }}
-                                        </p>
-                                    </td>
-                                    <td class="align-middle text-sm">
-                                        <p class="text-success mb-0">{{ $item->estado == 1 ? 'Abierta' : 'Cerrada' }}
-                                        </p>
-                                    </td>
-                                    <td class="align-middle text-sm">
-                                        <p class="text-success mb-0">{{ $item->name }}
-                                        </p>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
+    <div class="surface">
+        <div class="table-responsive">
+            <table class="table align-items-center mb-0" id="table">
+                <thead class="thead-lite">
+                    <tr>
+                        <th>Acciones</th>
+                        <th>Fecha Apertura</th>
+                        <th>Fecha Final</th>
+                        <th>Estado</th>
+                        <th>Abierta Por</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($arqueos as $item)
+                        <tr>
+                            <td class="align-middle">
+                                @if (!$item->estado == 0)
+                                    <form method="post" action="{{ url('/close/cajas/' . $item->caja_id) }}" style="display:inline">
+                                        @csrf
+                                        <button type="button" class="act-btn ab-neutral" title="Cerrar caja"
+                                            onclick="Swal.fire({title:'¿Cerrar caja?',icon:'question',showCancelButton:true,confirmButtonText:'Sí, cerrar',cancelButtonText:'Cancelar'}).then(r=>{if(r.isConfirmed)this.closest('form').submit()})">
+                                            <i class="fas fa-lock"></i>
+                                        </button>
+                                    </form>
+                                @endif
+                            </td>
+                            <td class="align-middle">{{ $item->fecha_ini }}</td>
+                            <td class="align-middle">{{ $item->fecha_fin }}</td>
+                            <td class="align-middle">
+                                @if ($item->estado == 1)
+                                    <span class="s-pill pill-green">Abierta</span>
+                                @else
+                                    <span class="s-pill pill-red">Cerrada</span>
+                                @endif
+                            </td>
+                            <td class="align-middle">{{ $item->name }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
         </div>
     </div>
-    <center>
-        <div class="col-md-12 mt-3">
-            <a href="{{ url('/cajas/') }}" class="btn btn-accion w-25">{{ __('Volver') }}</a>
-        </div>
-    </center>
 @endsection
 @section('script')
     <script src="{{ asset('js/datatables.js') }}"></script>

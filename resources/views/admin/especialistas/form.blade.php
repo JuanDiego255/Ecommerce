@@ -1,48 +1,33 @@
-<div class="row">
-    <div class="col-md-12 mb-1">
-        <div
-            class="input-group input-group-lg input-group-outline {{ isset($item->nombre) ? 'is-filled' : '' }} my-3">
-            <label class="form-label">Nombre</label>
-            <input value="{{ isset($item->nombre) ? $item->nombre : '' }}" required type="text"
-                class="form-control form-control-lg @error('nombre') is-invalid @enderror" name="nombre"
-                id="nombre">
-            @error('nombre')
-                <span class="invalid-feedback" role="alert">
-                    <strong>Campo Requerido</strong>
-                </span>
-            @enderror
-        </div>       
+<div style="display:grid;gap:12px;">
+    <div>
+        <label class="filter-label">Nombre</label>
+        <input type="text" name="nombre" value="{{ isset($item->nombre) ? $item->nombre : '' }}"
+            class="filter-input @error('nombre') is-invalid @enderror" required>
+        @error('nombre')
+            <span class="text-danger" style="font-size:.75rem;">{{ $message }}</span>
+        @enderror
     </div>
-    <div class="col-md-6">
-        <div
-            class="input-group input-group-lg input-group-outline {{ isset($item->salario_base) ? 'is-filled' : '' }} my-3">
-            <label class="form-label">Salario base</label>
-            <input value="{{ isset($item->salario_base) ? $item->salario_base : '' }}" type="number"
-                class="form-control form-control-lg @error('salario_base') is-invalid @enderror" name="salario_base"
-                id="salario_base">
+    <div class="row g-2">
+        <div class="col-6">
+            <label class="filter-label">Salario base (₡)</label>
+            <input type="number" name="salario_base" value="{{ isset($item->salario_base) ? $item->salario_base : '' }}"
+                class="filter-input @error('salario_base') is-invalid @enderror">
             @error('salario_base')
-                <span class="invalid-feedback" role="alert">
-                    <strong>Campo Requerido</strong>
-                </span>
+                <span class="text-danger" style="font-size:.75rem;">{{ $message }}</span>
             @enderror
-        </div>       
-    </div>
-    <div class="col-md-6">
-        <div
-            class="input-group input-group-lg input-group-outline {{ isset($item->monto_por_servicio) ? 'is-filled' : '' }} my-3">
-            <label class="form-label">Monto por servicio</label>
-            <input value="{{ isset($item->monto_por_servicio) ? $item->monto_por_servicio : '' }}" type="number"
-                class="form-control form-control-lg @error('monto_por_servicio') is-invalid @enderror" name="monto_por_servicio"
-                id="monto_por_servicio">
+        </div>
+        <div class="col-6">
+            <label class="filter-label">Monto por servicio (₡)</label>
+            <input type="number" name="monto_por_servicio" value="{{ isset($item->monto_por_servicio) ? $item->monto_por_servicio : '' }}"
+                class="filter-input @error('monto_por_servicio') is-invalid @enderror">
             @error('monto_por_servicio')
-                <span class="invalid-feedback" role="alert">
-                    <strong>Campo Requerido</strong>
-                </span>
+                <span class="text-danger" style="font-size:.75rem;">{{ $message }}</span>
             @enderror
-        </div>       
+        </div>
     </div>
-    <center>
-        <input class="btn btn-accion" type="submit" value="{{ $Modo == 'crear' ? 'Agregar' : 'Guardar Cambios' }}">
-    </center>
-
+    <div class="d-flex justify-content-end pt-1">
+        <button type="submit" class="s-btn-primary w-auto">
+            {{ $Modo === 'crear' ? 'Agregar' : 'Guardar cambios' }}
+        </button>
+    </div>
 </div>

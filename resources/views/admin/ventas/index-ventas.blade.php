@@ -3,546 +3,359 @@
     {!! SEOMeta::generate() !!}
     {!! OpenGraph::generate() !!}
 @endsection
+@section('breadcrumb')
+    <li class="breadcrumb-item"><a href="{{ url('/') }}">Inicio</a></li>
+    <li class="breadcrumb-item active">Informe de ventas</li>
+@endsection
 @section('content')
-    <center>
-        <h2 class="text-center font-title">
-            <strong>{{ __('Informe de ventas según el arqueo de caja - fecha: ' . $fechaCostaRica) }}</strong>
-        </h2>
-    </center>
-    <div class="card mt-3">
-        <div class="card-body">
-            <div class="row w-100">
-                <div class="col-md-3">
-                    <div class="input-group input-group-lg input-group-static my-3 w-100">
-                        <label>Filtrar</label>
-                        <input value="" placeholder="Escribe para filtrar...." type="text"
-                            class="form-control form-control-lg" name="searchfor" id="searchfor">
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="input-group input-group-lg input-group-static my-3 w-100">
-                        <label>Mostrar</label>
-                        <select id="recordsPerPage" name="recordsPerPage" class="form-control form-control-lg"
-                            autocomplete="recordsPerPage">
-                            <option value="5">5 Registros</option>
-                            <option value="10">10 Registros</option>
-                            <option selected value="15">15 Registros</option>
-                            <option value="50">50 Registros</option>
-                        </select>
+    <div class="page-header mb-3">
+        <h4 class="mb-0">Informe de ventas — {{ $fechaCostaRica }}</h4>
+    </div>
 
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="input-group input-group-lg input-group-static my-3 w-100">
-                        <label>Fecha</label>
-                        <input value="{{ $fechaInicio }}" type="date" class="form-control form-control-lg"
-                            name="fecha_caja" id="fecha_caja">
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="input-group input-group-lg input-group-static my-3 w-100">
-                        <label>Fecha Final</label>
-                        <input value="{{ $fechaFin }}" type="date" class="form-control form-control-lg"
-                            name="fecha_caja_fin" id="fecha_caja_fin">
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="input-group input-group-static">
-                        <label>Especialistas</label>
-                        <select id="select_especialista" name="select_especialista"
-                            class="form-control form-control-lg @error('select_especialista') is-invalid @enderror"
-                            autocomplete="select_especialista" autofocus>
-                            <option @if ($id != 0) selected @endif value="0">Todos los
-                                especialistas</option>
-                            @foreach ($especialistas as $key => $item)
-                                <option @if ($id != 0 && $id == $item->id) selected @endif value="{{ $item->id }}">
-                                    {{ $item->nombre }}
-                                </option>
-                            @endforeach
-
-
-                        </select>
-                        @error('select_especialista')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                        @enderror
-                    </div>
-                </div>
+    <div class="surface p-3 mb-3">
+        <div class="row g-2 align-items-end">
+            <div class="col-md-3">
+                <label class="filter-label">Filtrar</label>
+                <input type="text" class="filter-input" id="searchfor" placeholder="Escribe para filtrar...">
+            </div>
+            <div class="col-md-3">
+                <label class="filter-label">Mostrar</label>
+                <select id="recordsPerPage" class="filter-input">
+                    <option value="5">5 Registros</option>
+                    <option value="10">10 Registros</option>
+                    <option selected value="15">15 Registros</option>
+                    <option value="50">50 Registros</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="filter-label">Fecha inicio</label>
+                <input type="date" class="filter-input" id="fecha_caja" name="fecha_caja" value="{{ $fechaInicio }}">
+            </div>
+            <div class="col-md-2">
+                <label class="filter-label">Fecha final</label>
+                <input type="date" class="filter-input" id="fecha_caja_fin" name="fecha_caja_fin" value="{{ $fechaFin }}">
+            </div>
+            <div class="col-md-2">
+                <label class="filter-label">Especialista</label>
+                <select id="select_especialista" name="select_especialista" class="filter-input">
+                    <option @if ($id != 0) selected @endif value="0">Todos</option>
+                    @foreach ($especialistas as $esp)
+                        <option @if ($id != 0 && $id == $esp->id) selected @endif value="{{ $esp->id }}">
+                            {{ $esp->nombre }}
+                        </option>
+                    @endforeach
+                </select>
             </div>
         </div>
     </div>
-    <div class="row row-cols-1 row-cols-md-2 g-4 align-content-center card-group mt-1">
-        <div class="col-md-12">
-            <div class="card p-2">
-                <h4 class="mb-2 mt-2 text-center">Ventas de los especialistas - Paquetes y tarjetas de regalo</h4>
-                <div class="table-responsive">
-                    <table class="table align-items-center mb-0" id="table">
-                        <thead>
-                            <tr>
-                                <th class="text-secondary font-weight-bolder opacity-7">{{ __('Acciones') }}</th>
-                                <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Nombre') }}</th>
-                                <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Servicio') }}</th>
-                                <th class="text-secondary font-weight-bolder opacity-7">{{ __('Monto Venta') }}</th>
-                                <th class="text-secondary font-weight-bolder opacity-7">{{ __('Porcentaje') }}</th>
-                                <th class="text-secondary font-weight-bolder opacity-7">{{ __('Monto Esp') }}</th>
-                                <th class="text-secondary font-weight-bolder opacity-7">{{ __('Monto Venta Producto') }}
-                                </th>
-                                <th class="text-secondary font-weight-bolder opacity-7">{{ __('Cliente') }}</th>
-                                <th class="text-secondary font-weight-bolder opacity-7">{{ __('Tipo Pago') }}</th>
-                                <th class="text-secondary font-weight-bolder opacity-7">{{ __('Fecha') }}</th>
+
+    {{-- Table 1: Specialist Sales --}}
+    <div class="surface mb-3">
+        <div class="surface-title px-3 pt-3 pb-2">Ventas de especialistas — Paquetes y tarjetas de regalo</div>
+        <div class="table-responsive">
+            <table class="table align-items-center mb-0" id="table">
+                <thead class="thead-lite">
+                    <tr>
+                        <th>Acciones</th>
+                        <th>Nombre</th>
+                        <th>Servicio</th>
+                        <th>Monto Venta</th>
+                        <th>Porcentaje</th>
+                        <th>Monto Esp</th>
+                        <th>Monto Venta Producto</th>
+                        <th>Cliente</th>
+                        <th>Tipo Pago</th>
+                        <th>Fecha</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @php
+                        $subtotalMontoVenta = 0;
+                        $subtotalMontoProducto = 0;
+                        $subtotalMontoEsp = 0;
+                        $especialistaAnterior = null;
+                    @endphp
+
+                    @foreach ($ventas as $item)
+                        @php $nombreActual = $item->nombre ?? 'Paquetes y Tarjetas de regalo'; @endphp
+
+                        @if ($especialistaAnterior !== null && $nombreActual !== $especialistaAnterior)
+                            <tr style="background:var(--surface-bg,#f8f9fa);">
+                                <td></td><td></td>
+                                <td class="text-end fw-semibold">Subtotal:</td>
+                                <td class="fw-semibold text-success">₡{{ number_format($subtotalMontoVenta) }}</td>
+                                <td></td>
+                                <td class="fw-semibold text-success">₡{{ number_format($subtotalMontoEsp) }}</td>
+                                <td class="fw-semibold text-success">₡{{ number_format($subtotalMontoProducto) }}</td>
+                                <td></td><td></td><td></td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            @php
-                                $subtotalMontoVenta = 0;
-                                $subtotalMontoProducto = 0;
-                                $subtotalMontoEsp = 0;
-                                $especialistaAnterior = null;
-                            @endphp
+                            @php $subtotalMontoVenta = 0; $subtotalMontoProducto = 0; $subtotalMontoEsp = 0; @endphp
+                        @endif
 
-                            @foreach ($ventas as $index => $item)
-                                @php
-                                    // Definimos el nombre que usaremos para agrupar
-                                    $nombreActual = $item->nombre ?? 'Paquetes y Tarjetas de regalo';
-                                @endphp
+                        <tr>
+                            <td class="align-middle"></td>
+                            <td class="align-middle">{{ $nombreActual }}</td>
+                            <td class="align-middle">{!! str_replace(',', '<br>', $item->servicios) !!}</td>
+                            <td class="align-middle text-success">₡{{ number_format($item->monto_venta) }}</td>
+                            <td class="align-middle text-danger">{{ $item->porcentaje }}%</td>
+                            <td class="align-middle text-success">₡{{ number_format($item->monto_especialista) }}</td>
+                            <td class="align-middle text-success">₡{{ number_format($item->monto_producto_venta) }}</td>
+                            <td class="align-middle">{{ $item->nombre_cliente }}</td>
+                            <td class="align-middle">{{ $item->tipo }}</td>
+                            <td class="align-middle">{{ $item->created_at }}</td>
+                        </tr>
 
-                                @if ($especialistaAnterior !== null && $nombreActual !== $especialistaAnterior)
-                                    <!-- Fila de subtotal -->
-                                    <tr class="bg-light">
-                                        <td></td>
-                                        <td></td>
-                                        <td class="text-end font-weight-bold">Subtotal:</td>
-                                        <td class="text-success font-weight-bold">₡{{ number_format($subtotalMontoVenta) }}
-                                        </td>
-                                        <td></td>
-                                        <td class="text-success font-weight-bold">₡{{ number_format($subtotalMontoEsp) }}
-                                        </td>
-                                        <td class="text-success font-weight-bold">
-                                            ₡{{ number_format($subtotalMontoProducto) }}</td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                    </tr>
+                        @php
+                            $subtotalMontoVenta += $item->monto_venta;
+                            $subtotalMontoProducto += $item->monto_producto_venta;
+                            $subtotalMontoEsp += $item->monto_especialista;
+                            $especialistaAnterior = $nombreActual;
+                        @endphp
+                    @endforeach
 
-                                    @php
-                                        // Reiniciar subtotales
-                                        $subtotalMontoVenta = 0;
-                                        $subtotalMontoProducto = 0;
-                                        $subtotalMontoEsp = 0;
-                                    @endphp
-                                @endif
-
-                                <!-- Fila de datos -->
-                                <tr>
-                                    <td class="align-middle"></td>
-                                    <td class="align-middle text-sm">
-                                        <p class="text-dark mb-0">
-                                            {{ $nombreActual }}                                            
-                                        </p>
-                                    </td>
-                                    <td class="align-middle text-sm">
-                                        <p class="text-dark mb-0">{!! str_replace(',', '<br>', $item->servicios) !!}</p>
-                                    </td>
-                                    <td class="align-middle text-sm">
-                                        <p class="text-success mb-0">₡{{ number_format($item->monto_venta) }}</p>
-                                    </td>
-                                    <td class="align-middle text-sm">
-                                        <p class="text-danger mb-0">{{ $item->porcentaje }}%</p>
-                                    </td>
-                                    <td class="align-middle text-sm">
-                                        <p class="text-success mb-0">₡{{ number_format($item->monto_especialista) }}</p>
-                                    </td>
-                                    <td class="align-middle text-sm">
-                                        <p class="text-success mb-0">₡{{ number_format($item->monto_producto_venta) }}</p>
-                                    </td>
-                                    <td class="align-middle text-sm">
-                                        <p class="text-dark mb-0">{{ $item->nombre_cliente }}</p>
-                                    </td>
-                                    <td class="align-middle text-sm">
-                                        <p class="text-dark mb-0">{{ $item->tipo }}</p>
-                                    </td>
-                                    <td class="align-middle text-sm">
-                                        <p class="text-dark mb-0">{{ $item->created_at }}</p>
-                                    </td>
-                                </tr>
-
-                                @php
-                                    // Acumular subtotales
-                                    $subtotalMontoVenta += $item->monto_venta;
-                                    $subtotalMontoProducto += $item->monto_producto_venta;
-                                    $subtotalMontoEsp += $item->monto_especialista;
-                                    $especialistaAnterior = $nombreActual;
-                                @endphp
-                            @endforeach
-
-                            <!-- Última fila de subtotales -->
-                            @if ($especialistaAnterior !== null)
-                                <tr class="bg-light">
-                                    <td></td>
-                                    <td></td>
-                                    <td class="text-end font-weight-bold">Subtotal:</td>
-                                    <td class="text-success font-weight-bold">₡{{ number_format($subtotalMontoVenta) }}
-                                    </td>
-                                    <td></td>
-                                    <td class="text-success font-weight-bold">₡{{ number_format($subtotalMontoEsp) }}</td>
-                                    <td class="text-success font-weight-bold">₡{{ number_format($subtotalMontoProducto) }}
-                                    </td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                            @endif
-
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+                    @if ($especialistaAnterior !== null)
+                        <tr style="background:var(--surface-bg,#f8f9fa);">
+                            <td></td><td></td>
+                            <td class="text-end fw-semibold">Subtotal:</td>
+                            <td class="fw-semibold text-success">₡{{ number_format($subtotalMontoVenta) }}</td>
+                            <td></td>
+                            <td class="fw-semibold text-success">₡{{ number_format($subtotalMontoEsp) }}</td>
+                            <td class="fw-semibold text-success">₡{{ number_format($subtotalMontoProducto) }}</td>
+                            <td></td><td></td><td></td>
+                        </tr>
+                    @endif
+                </tbody>
+            </table>
         </div>
     </div>
-    <div class="row row-cols-1 row-cols-md-2 g-4 align-content-center card-group mt-1">
-        <div class="col-md-12">
-            <div class="card p-2">
-                <h4 class="mb-2 mt-2 text-center">Mensualidades de los Estudiantes</h4>
-                <div class="table-responsive">
-                    <table class="table align-items-center mb-0" id="estudiantes_table">
-                        <thead>
-                            <tr>
-                                <th class="text-secondary font-weight-bolder opacity-7">{{ __('Acciones') }}</th>
-                                <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Nombre') }}</th>
-                                <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Curso') }}</th>
-                                <th class="text-secondary font-weight-bolder opacity-7">{{ __('Monto Pago') }}</th>
-                                <th class="text-secondary font-weight-bolder opacity-7">{{ __('Descuento') }}</th>
-                                <th class="text-secondary font-weight-bolder opacity-7">{{ __('Tipo Pago') }}</th>
-                                <th class="text-secondary font-weight-bolder opacity-7">{{ __('Tipo Venta') }}</th>
-                                <th class="text-secondary font-weight-bolder opacity-7">{{ __('Fecha') }}</th>
+
+    {{-- Table 2: Estudiantes mensualidades --}}
+    <div class="surface mb-3">
+        <div class="surface-title px-3 pt-3 pb-2">Mensualidades de los Estudiantes</div>
+        <div class="table-responsive">
+            <table class="table align-items-center mb-0" id="estudiantes_table">
+                <thead class="thead-lite">
+                    <tr>
+                        <th>Acciones</th>
+                        <th>Nombre</th>
+                        <th>Curso</th>
+                        <th>Monto Pago</th>
+                        <th>Descuento</th>
+                        <th>Tipo Pago</th>
+                        <th>Tipo Venta</th>
+                        <th>Fecha</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @php
+                        $subtotalMontoVenta = 0;
+                        $subtotalDescuento = 0;
+                        $estudianteAnterior = null;
+                    @endphp
+
+                    @foreach ($ventasEstudiantes as $item)
+                        @if ($estudianteAnterior !== null && $item->nombre !== $estudianteAnterior)
+                            <tr style="background:var(--surface-bg,#f8f9fa);">
+                                <td></td><td></td>
+                                <td class="text-end fw-semibold">Subtotal:</td>
+                                <td class="fw-semibold text-success">₡{{ number_format($subtotalMontoVenta) }}</td>
+                                <td class="fw-semibold text-success">₡{{ number_format($subtotalDescuento) }}</td>
+                                <td></td><td></td><td></td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            @php
-                                $subtotalMontoVenta = 0;
-                                $subtotalDescuento = 0;
-                                $estudianteAnterior = null;
-                            @endphp
+                            @php $subtotalMontoVenta = 0; $subtotalDescuento = 0; @endphp
+                        @endif
 
-                            @foreach ($ventasEstudiantes as $index => $item)
-                                @if ($estudianteAnterior !== null && $item->nombre !== $estudianteAnterior)
-                                    <!-- Fila de subtotal con el mismo número de columnas -->
-                                    <tr class="bg-light">
-                                        <td></td>
-                                        <td></td>
-                                        <td class="text-end font-weight-bold">Subtotal:</td>
+                        <tr>
+                            <td class="align-middle"></td>
+                            <td class="align-middle">{{ $item->nombre }}</td>
+                            <td class="align-middle">{{ $item->curso }}</td>
+                            <td class="align-middle text-success">₡{{ number_format($item->monto_pago) }}</td>
+                            <td class="align-middle text-success">₡{{ number_format($item->descuento) }}</td>
+                            <td class="align-middle">{{ $item->tipo }}</td>
+                            <td class="align-middle">{{ $item->tipo_venta == '1' ? 'Mensualidad' : 'Otro' }}</td>
+                            <td class="align-middle">{{ $item->created_at }}</td>
+                        </tr>
 
-                                        <td class="text-success font-weight-bold">
-                                            ₡{{ number_format($subtotalMontoVenta) }}
-                                        </td>
-                                        <td class="text-success font-weight-bold">
-                                            ₡{{ number_format($subtotalDescuento) }}</td>
-                                        <td></td>
-                                        <td></td>
+                        @php
+                            $subtotalMontoVenta += $item->monto_pago;
+                            $subtotalDescuento += $item->descuento;
+                            $estudianteAnterior = $item->nombre;
+                        @endphp
+                    @endforeach
 
-                                        <td></td> <!-- Asegurar el mismo número de columnas -->
-                                    </tr>
-
-                                    @php
-                                        // Reiniciar subtotales para el nuevo especialista
-                                        $subtotalMontoVenta = 0;
-                                        $subtotalDescuento = 0;
-                                    @endphp
-                                @endif
-
-                                <!-- Fila de datos -->
-                                <tr>
-                                    <td class="align-middle"></td>
-                                    <td class="align-middle text-sm">
-                                        <p class="text-dark mb-0">{{ $item->nombre }}</p>
-                                    </td>
-                                    <td class="align-middle text-sm">
-                                        <p class="text-dark mb-0">{{ $item->curso }}</p>
-                                    </td>
-                                    <td class="align-middle text-sm">
-                                        <p class="text-success mb-0">₡{{ number_format($item->monto_pago) }}</p>
-                                    </td>
-                                    <td class="align-middle text-sm">
-                                        <p class="text-success mb-0">₡{{ number_format($item->descuento) }}</p>
-                                    </td>
-                                    <td class="align-middle text-sm">
-                                        <p class="text-dark mb-0">{{ $item->tipo }}</p>
-                                    </td>
-                                    <td class="align-middle text-sm">
-                                        <p class="text-dark mb-0">{{ $item->tipo_venta == '1' ? 'Mensualidad' : 'Otro' }}
-                                        </p>
-                                    </td>
-                                    <td class="align-middle text-sm">
-                                        <p class="text-dark mb-0">{{ $item->created_at }}</p>
-                                    </td>
-                                </tr>
-
-                                @php
-                                    // Acumular subtotales
-                                    $subtotalMontoVenta += $item->monto_pago;
-                                    $subtotalMontoProducto += $item->descuento;
-                                    $estudianteAnterior = $item->nombre;
-                                @endphp
-                            @endforeach
-
-                            <!-- Última fila de subtotales al final del bucle -->
-                            @if ($estudianteAnterior !== null)
-                                <tr class="bg-light">
-                                    <td></td>
-                                    <td></td>
-                                    <td class="text-end font-weight-bold">Subtotal:</td>
-                                    <td class="text-success font-weight-bold">₡{{ number_format($subtotalMontoVenta) }}
-                                    </td>
-                                    <td class="text-success font-weight-bold">₡{{ number_format($subtotalDescuento) }}
-                                    </td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                            @endif
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+                    @if ($estudianteAnterior !== null)
+                        <tr style="background:var(--surface-bg,#f8f9fa);">
+                            <td></td><td></td>
+                            <td class="text-end fw-semibold">Subtotal:</td>
+                            <td class="fw-semibold text-success">₡{{ number_format($subtotalMontoVenta) }}</td>
+                            <td class="fw-semibold text-success">₡{{ number_format($subtotalDescuento) }}</td>
+                            <td></td><td></td><td></td>
+                        </tr>
+                    @endif
+                </tbody>
+            </table>
         </div>
     </div>
-    <div class="row row-cols-1 row-cols-md-2 g-4 align-content-center card-group mt-1">
-        <div class="col-md-12">
-            <div class="card p-2">
-                <h4 class="mb-2 mt-2 text-center">Mensualidades de las Clases de Yoga</h4>
-                <div class="table-responsive">
-                    <table class="table align-items-center mb-0" id="estudiantes_table">
-                        <thead>
-                            <tr>
-                                <th class="text-secondary font-weight-bolder opacity-7">{{ __('Acciones') }}</th>
-                                <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Nombre') }}</th>
-                                <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Curso') }}</th>
-                                <th class="text-secondary font-weight-bolder opacity-7">{{ __('Monto Pago') }}</th>
-                                <th class="text-secondary font-weight-bolder opacity-7">{{ __('Descuento') }}</th>
-                                <th class="text-secondary font-weight-bolder opacity-7">{{ __('Tipo Pago') }}</th>
-                                <th class="text-secondary font-weight-bolder opacity-7">{{ __('Tipo Venta') }}</th>
-                                <th class="text-secondary font-weight-bolder opacity-7">{{ __('Fecha') }}</th>
+
+    {{-- Table 3: Yoga mensualidades --}}
+    <div class="surface mb-3">
+        <div class="surface-title px-3 pt-3 pb-2">Mensualidades de Clases de Yoga</div>
+        <div class="table-responsive">
+            <table class="table align-items-center mb-0" id="yoga_table">
+                <thead class="thead-lite">
+                    <tr>
+                        <th>Acciones</th>
+                        <th>Nombre</th>
+                        <th>Curso</th>
+                        <th>Monto Pago</th>
+                        <th>Descuento</th>
+                        <th>Tipo Pago</th>
+                        <th>Tipo Venta</th>
+                        <th>Fecha</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @php
+                        $subtotalMontoVenta = 0;
+                        $subtotalDescuento = 0;
+                        $estudianteAnterior = null;
+                    @endphp
+
+                    @foreach ($ventasEstudiantesYoga as $item)
+                        @if ($estudianteAnterior !== null && $item->nombre !== $estudianteAnterior)
+                            <tr style="background:var(--surface-bg,#f8f9fa);">
+                                <td></td><td></td>
+                                <td class="text-end fw-semibold">Subtotal:</td>
+                                <td class="fw-semibold text-success">₡{{ number_format($subtotalMontoVenta) }}</td>
+                                <td class="fw-semibold text-success">₡{{ number_format($subtotalDescuento) }}</td>
+                                <td></td><td></td><td></td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            @php
-                                $subtotalMontoVenta = 0;
-                                $subtotalDescuento = 0;
-                                $estudianteAnterior = null;
-                            @endphp
+                            @php $subtotalMontoVenta = 0; $subtotalDescuento = 0; @endphp
+                        @endif
 
-                            @foreach ($ventasEstudiantesYoga as $index => $item)
-                                @if ($estudianteAnterior !== null && $item->nombre !== $estudianteAnterior)
-                                    <!-- Fila de subtotal con el mismo número de columnas -->
-                                    <tr class="bg-light">
-                                        <td></td>
-                                        <td></td>
-                                        <td class="text-end font-weight-bold">Subtotal:</td>
+                        <tr>
+                            <td class="align-middle"></td>
+                            <td class="align-middle">{{ $item->nombre }}</td>
+                            <td class="align-middle">{{ $item->curso }}</td>
+                            <td class="align-middle text-success">₡{{ number_format($item->monto_pago) }}</td>
+                            <td class="align-middle text-success">₡{{ number_format($item->descuento) }}</td>
+                            <td class="align-middle">{{ $item->tipo }}</td>
+                            <td class="align-middle">{{ $item->tipo_venta == '1' ? 'Mensualidad' : 'Sesión' }}</td>
+                            <td class="align-middle">{{ $item->created_at }}</td>
+                        </tr>
 
-                                        <td class="text-success font-weight-bold">
-                                            ₡{{ number_format($subtotalMontoVenta) }}
-                                        </td>
-                                        <td class="text-success font-weight-bold">
-                                            ₡{{ number_format($subtotalDescuento) }}</td>
-                                        <td></td>
-                                        <td></td>
+                        @php
+                            $subtotalMontoVenta += $item->monto_pago;
+                            $subtotalDescuento += $item->descuento;
+                            $estudianteAnterior = $item->nombre;
+                        @endphp
+                    @endforeach
 
-                                        <td></td> <!-- Asegurar el mismo número de columnas -->
-                                    </tr>
-
-                                    @php
-                                        // Reiniciar subtotales para el nuevo especialista
-                                        $subtotalMontoVenta = 0;
-                                        $subtotalDescuento = 0;
-                                    @endphp
-                                @endif
-
-                                <!-- Fila de datos -->
-                                <tr>
-                                    <td class="align-middle"></td>
-                                    <td class="align-middle text-sm">
-                                        <p class="text-dark mb-0">{{ $item->nombre }}</p>
-                                    </td>
-                                    <td class="align-middle text-sm">
-                                        <p class="text-dark mb-0">{{ $item->curso }}</p>
-                                    </td>
-                                    <td class="align-middle text-sm">
-                                        <p class="text-success mb-0">₡{{ number_format($item->monto_pago) }}</p>
-                                    </td>
-                                    <td class="align-middle text-sm">
-                                        <p class="text-success mb-0">₡{{ number_format($item->descuento) }}</p>
-                                    </td>
-                                    <td class="align-middle text-sm">
-                                        <p class="text-dark mb-0">{{ $item->tipo }}</p>
-                                    </td>
-                                    <td class="align-middle text-sm">
-                                        <p class="text-dark mb-0">
-                                            {{ $item->tipo_venta == '1' ? 'Mensualidad' : 'Sesión' }}
-                                        </p>
-                                    </td>
-                                    <td class="align-middle text-sm">
-                                        <p class="text-dark mb-0">{{ $item->created_at }}</p>
-                                    </td>
-                                </tr>
-
-                                @php
-                                    // Acumular subtotales
-                                    $subtotalMontoVenta += $item->monto_pago;
-                                    $subtotalMontoProducto += $item->descuento;
-                                    $estudianteAnterior = $item->nombre;
-                                @endphp
-                            @endforeach
-
-                            <!-- Última fila de subtotales al final del bucle -->
-                            @if ($estudianteAnterior !== null)
-                                <tr class="bg-light">
-                                    <td></td>
-                                    <td></td>
-                                    <td class="text-end font-weight-bold">Subtotal:</td>
-                                    <td class="text-success font-weight-bold">₡{{ number_format($subtotalMontoVenta) }}
-                                    </td>
-                                    <td class="text-success font-weight-bold">₡{{ number_format($subtotalDescuento) }}
-                                    </td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                            @endif
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+                    @if ($estudianteAnterior !== null)
+                        <tr style="background:var(--surface-bg,#f8f9fa);">
+                            <td></td><td></td>
+                            <td class="text-end fw-semibold">Subtotal:</td>
+                            <td class="fw-semibold text-success">₡{{ number_format($subtotalMontoVenta) }}</td>
+                            <td class="fw-semibold text-success">₡{{ number_format($subtotalDescuento) }}</td>
+                            <td></td><td></td><td></td>
+                        </tr>
+                    @endif
+                </tbody>
+            </table>
         </div>
     </div>
+
+    {{-- Summary: Specialist breakdown --}}
     @php
         $acumuladoTotalVentas = 0;
         $acumuladoTotalEspecialistas = 0;
         $acumuladoTotalClinica = 0;
         $acumuladoTotalProd = 0;
         $acumuladoTotalDescuentos = 0;
+        $totalGeneralVenta = 0;
+        $totalGeneralEspecialista = 0;
+        $totalGeneralClinica = 0;
+        $totalGeneralProducto = 0;
     @endphp
 
-    <div class="col-12">
-        <div class="card mt-3">
-            <div class="card-body">
-                <h5 class="card-title">Resumen de Salidas por Especialista</h5>
-                @php
-                    $totalGeneralVenta = 0;
-                    $totalGeneralEspecialista = 0;
-                    $totalGeneralClinica = 0;
-                    $totalGeneralProducto = 0;
-                @endphp
-
-                <div class="row">
-                    @foreach ($ventasPorEspecialista as $venta)
-                        @php
-                            $montoClinica = $venta->total_clinica;
-                            $totalGeneralVenta += $venta->total_venta + $venta->total_producto;
-                            $totalGeneralEspecialista += $venta->total_especialista;
-                            $totalGeneralClinica += $montoClinica;
-                            $totalGeneralProducto += $venta->total_producto;
-                        @endphp
-                        <div class="col-md-3 mb-3">
-                            <div class="border rounded p-3 h-100">
-                                <strong>{{ isset($venta->especialista) ? $venta->especialista : 'Paquetes Y Tarjetas de regalo' }}</strong>
-                                <hr>
-                                <div>
-                                    <span
-                                        class="text-success fw-bold">₡{{ number_format($venta->total_venta + $venta->total_producto) }}</span>
-                                    <br>
-                                    <small class="text-primary">Especialista:
-                                        ₡{{ number_format($venta->total_especialista) }}</small>
-                                    <br>
-                                    <small class="text-danger">Clínica: ₡{{ number_format($montoClinica) }}</small>
-                                    <br>
-                                    <small class="text-info">Prod Vendido:
-                                        ₡{{ number_format($venta->total_producto) }}</small>
-                                </div>
-                            </div>
+    <div class="surface mb-3">
+        <div class="surface-title px-3 pt-3 pb-2">Resumen de Salidas por Especialista</div>
+        <div class="p-3">
+            <div class="row g-3">
+                @foreach ($ventasPorEspecialista as $venta)
+                    @php
+                        $montoClinica = $venta->total_clinica;
+                        $totalGeneralVenta += $venta->total_venta + $venta->total_producto;
+                        $totalGeneralEspecialista += $venta->total_especialista;
+                        $totalGeneralClinica += $montoClinica;
+                        $totalGeneralProducto += $venta->total_producto;
+                    @endphp
+                    <div class="col-md-3">
+                        <div class="surface p-3 h-100">
+                            <p class="fw-semibold mb-2">{{ $venta->especialista ?? 'Paquetes y Tarjetas de regalo' }}</p>
+                            <hr class="my-1">
+                            <span class="text-success fw-bold">₡{{ number_format($venta->total_venta + $venta->total_producto) }}</span><br>
+                            <small class="text-primary">Especialista: ₡{{ number_format($venta->total_especialista) }}</small><br>
+                            <small class="text-danger">Clínica: ₡{{ number_format($montoClinica) }}</small><br>
+                            <small class="text-info">Prod Vendido: ₡{{ number_format($venta->total_producto) }}</small>
                         </div>
-                    @endforeach
-                </div>
-
-                <!-- TOTAL GENERAL -->
-                <div class="mt-4 p-3 bg-light border rounded">
-                    <h6><strong>Total General</strong></h6>
-                    <div>
-                        <span class="text-success fw-bold">₡{{ number_format($totalGeneralVenta) }}</span>
-                        <br>
-                        <small class="text-primary">Especialistas:
-                            ₡{{ number_format($totalGeneralEspecialista) }}</small>
-                        <br>
-                        <small class="text-danger">Clínica: ₡{{ number_format($totalGeneralClinica) }}</small>
-                        <br>
-                        <small class="text-info">Productos: ₡{{ number_format($totalGeneralProducto) }}</small>
                     </div>
-                </div>
+                @endforeach
+            </div>
 
+            <div class="surface mt-3 p-3">
+                <p class="fw-semibold mb-1">Total General</p>
+                <span class="text-success fw-bold">₡{{ number_format($totalGeneralVenta) }}</span><br>
+                <small class="text-primary">Especialistas: ₡{{ number_format($totalGeneralEspecialista) }}</small><br>
+                <small class="text-danger">Clínica: ₡{{ number_format($totalGeneralClinica) }}</small><br>
+                <small class="text-info">Productos: ₡{{ number_format($totalGeneralProducto) }}</small>
             </div>
         </div>
     </div>
-    <div class="row row-cols-1 row-cols-md-2 g-4 align-content-center card-group mt-1">
-        @php
-            $acumuladoTotalVentas += $totalGeneralVenta;
-            $acumuladoTotalEspecialistas += $totalGeneralEspecialista;
-            $acumuladoTotalClinica += $totalGeneralClinica;
-            $acumuladoTotalProd += $totalGeneralProducto;
-        @endphp
 
+    @php
+        $acumuladoTotalVentas += $totalGeneralVenta;
+        $acumuladoTotalEspecialistas += $totalGeneralEspecialista;
+        $acumuladoTotalClinica += $totalGeneralClinica;
+        $acumuladoTotalProd += $totalGeneralProducto;
+    @endphp
+
+    <div class="row g-3 mb-3">
+        {{-- Ingresos estudiantes --}}
         <div class="col-md-4">
-            <div class="card mt-3">
-                <div class="card-body">
-                    <h5 class="card-title">Ingresos Por Pagos de Estudiantes</h5>
-                    <ul class="list-group">
-                        @php
-                            $totalGeneralClinica = 0;
-                            $totalGeneralDesc = 0;
-                        @endphp
+            <div class="surface p-3 h-100">
+                <p class="surface-title mb-2">Ingresos Por Pagos de Estudiantes</p>
+                @php $totalGeneralClinica = 0; $totalGeneralDesc = 0; @endphp
+                @foreach ($ventasEstudiantesSum as $venta)
+                    @php
+                        $montoClinica = $venta->total_venta;
+                        $montoDesc = $venta->total_descuento;
+                        $totalGeneralClinica += $montoClinica;
+                        $totalGeneralDesc += $montoDesc;
+                    @endphp
+                    <div class="d-flex justify-content-between align-items-start py-2 border-bottom">
+                        <strong>{{ $venta->nombre }}</strong>
+                        <div class="text-end">
+                            <small class="text-success d-block">Ingreso: ₡{{ number_format($montoClinica) }}</small>
+                            <small class="text-danger">Descuento: ₡{{ number_format($montoDesc) }}</small>
+                        </div>
+                    </div>
+                @endforeach
 
-                        @foreach ($ventasEstudiantesSum as $venta)
-                            @php
-                                $montoClinica = $venta->total_venta;
-                                $montoDesc = $venta->total_descuento;
-                                $totalGeneralClinica += $montoClinica;
-                                $totalGeneralDesc += $montoDesc;
-                            @endphp
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <div>
-                                    <strong>{{ $venta->nombre }}</strong>
-                                </div>
-                                <div>
-                                    <small class="text-success">Ingreso: ₡{{ number_format($montoClinica) }}</small><br>
-                                    <small class="text-danger">Descuento: ₡{{ number_format($montoDesc) }}</small>
-                                </div>
-                            </li>
-                        @endforeach
-                    </ul>
+                <p class="surface-title mt-3 mb-2">Ingreso Por Matrículas</p>
+                @foreach ($ventasPorMatricula as $venta)
+                    @php $totalGeneralClinica += $venta->total_venta; @endphp
+                    <div class="d-flex justify-content-between py-2 border-bottom">
+                        <small class="text-success">Ingreso: ₡{{ number_format($venta->total_venta) }}</small>
+                    </div>
+                @endforeach
 
-                    <h5 class="card-title mt-3">Ingreso Por Matrículas</h5>
-                    <ul class="list-group">
-                        @foreach ($ventasPorMatricula as $venta)
-                            @php
-                                $totalGeneralClinica += $venta->total_venta;
-                            @endphp
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <div>
-                                    <small class="text-success">Ingreso:
-                                        ₡{{ number_format($venta->total_venta) }}</small><br>
-                                </div>
-                            </li>
-                        @endforeach
-
-                        <!-- TOTAL GENERAL -->
-                        <li class="list-group-item d-flex justify-content-between align-items-center bg-light">
-                            <strong>Total General</strong>
-                            <div>
-                                <small class="text-success">Clínica:
-                                    ₡{{ number_format($totalGeneralClinica) }}</small><br>
-                                <small class="text-danger">Descuento: ₡{{ number_format($totalGeneralDesc) }}</small>
-                            </div>
-                        </li>
-                    </ul>
+                <div class="d-flex justify-content-between align-items-start pt-2 mt-1" style="background:var(--surface-bg,#f8f9fa);border-radius:8px;padding:.5rem .75rem;">
+                    <strong>Total General</strong>
+                    <div class="text-end">
+                        <small class="text-success d-block">Clínica: ₡{{ number_format($totalGeneralClinica) }}</small>
+                        <small class="text-danger">Descuento: ₡{{ number_format($totalGeneralDesc) }}</small>
+                    </div>
                 </div>
             </div>
         </div>
@@ -553,70 +366,64 @@
             $acumuladoTotalDescuentos += $totalGeneralDesc;
         @endphp
 
+        {{-- Tipo de pago --}}
         <div class="col-md-4">
-            <div class="card mt-3">
-                <div class="card-body">
-                    <h5 class="card-title">Resumen de Ventas por Tipo de Pago (Entradas)</h5>
-                    <ul class="list-group">
-                        @php $totalVentasEntrada = 0; @endphp
-                        @foreach ($ventasEntrada as $venta)
-                            @php $totalVentasEntrada += $venta->total_venta; @endphp
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <span>{{ $venta->tipo_pago }}</span>
-                                <span class="fw-bold text-success">₡{{ number_format($venta->total_venta) }}</span>
-                            </li>
-                        @endforeach
-                    </ul>
-                </div>
+            <div class="surface p-3 h-100">
+                <p class="surface-title mb-2">Ventas por Tipo de Pago (Entradas)</p>
+                @php $totalVentasEntrada = 0; @endphp
+                @foreach ($ventasEntrada as $venta)
+                    @php $totalVentasEntrada += $venta->total_venta; @endphp
+                    <div class="d-flex justify-content-between py-2 border-bottom">
+                        <span>{{ $venta->tipo_pago }}</span>
+                        <span class="fw-bold text-success">₡{{ number_format($venta->total_venta) }}</span>
+                    </div>
+                @endforeach
             </div>
         </div>
 
+        {{-- Acumulado general --}}
         <div class="col-md-4">
-            <div class="card mt-3">
-                <div class="card-body">
-                    <h5 class="card-title">Acumulado General</h5>
-                    <ul class="list-group">
-                        <li class="list-group-item d-flex justify-content-between align-items-center bg-light">
-                            <strong>Total General Ventas</strong>
-                            <span class="text-success fw-bold">₡{{ number_format($acumuladoTotalVentas) }}</span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center bg-light">
-                            <strong>Total Especialistas</strong>
-                            <span class="text-primary fw-bold">₡{{ number_format($acumuladoTotalEspecialistas) }}</span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center bg-light">
-                            <strong>Total Clínica</strong>
-                            <span class="text-danger fw-bold">₡{{ number_format($acumuladoTotalClinica) }}</span>
-                        </li>
-                         <li class="list-group-item d-flex justify-content-between align-items-center bg-light">
-                            <strong>Total Productos</strong>
-                            <span class="text-warning fw-bold">₡{{ number_format($acumuladoTotalProd) }}</span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center bg-light">
-                            <strong>Total Descuentos</strong>
-                            <span class="text-warning fw-bold">₡{{ number_format($acumuladoTotalDescuentos) }}</span>
-                        </li>                       
-                    </ul>
+            <div class="surface p-3 h-100">
+                <p class="surface-title mb-2">Acumulado General</p>
+                <div class="d-flex justify-content-between py-2 border-bottom">
+                    <strong>Total Ventas</strong>
+                    <span class="text-success fw-bold">₡{{ number_format($acumuladoTotalVentas) }}</span>
+                </div>
+                <div class="d-flex justify-content-between py-2 border-bottom">
+                    <strong>Total Especialistas</strong>
+                    <span class="text-primary fw-bold">₡{{ number_format($acumuladoTotalEspecialistas) }}</span>
+                </div>
+                <div class="d-flex justify-content-between py-2 border-bottom">
+                    <strong>Total Clínica</strong>
+                    <span class="text-danger fw-bold">₡{{ number_format($acumuladoTotalClinica) }}</span>
+                </div>
+                <div class="d-flex justify-content-between py-2 border-bottom">
+                    <strong>Total Productos</strong>
+                    <span class="text-warning fw-bold">₡{{ number_format($acumuladoTotalProd) }}</span>
+                </div>
+                <div class="d-flex justify-content-between py-2">
+                    <strong>Total Descuentos</strong>
+                    <span class="text-warning fw-bold">₡{{ number_format($acumuladoTotalDescuentos) }}</span>
                 </div>
             </div>
         </div>
-
     </div>
 @endsection
 @section('script')
     <script src="{{ asset('js/datatables.js') }}"></script>
     <script>
         $(document).ready(function() {
-            var dataTable = $('#estudiantes_table').DataTable({
+            var dtConfig = {
                 searching: true,
                 lengthChange: false,
                 pageLength: 15,
-                buttons: [{
+                dom: 'Bfrtip',
+                buttons: [
+                    {
                         extend: 'excelHtml5',
                         text: '<i class="fas fa-file-excel"></i> Excel',
                         titleAttr: 'Exportar a Excel',
                         className: 'btn btn-table',
-                        messageTop: 'Mi reporte personalizado de Excel',
                         title: 'Reporte Excel'
                     },
                     {
@@ -624,60 +431,53 @@
                         text: '<i class="fas fa-file-pdf"></i> PDF',
                         titleAttr: 'Exportar a PDF',
                         className: 'btn btn-table',
-                        messageTop: 'Mi reporte personalizado de PDF',
-                        // Opcionalmente, puedes agregar más configuración como la personalización del título:
                         title: 'Reporte PDF'
                     }
                 ],
-                dom: 'Bfrtip', // Para colocar los botones
-                "language": {
-                    "sProcessing": "Procesando...",
-                    "sLengthMenu": "Mostrar _MENU_ registros",
-                    "sZeroRecords": "No se encontraron resultados",
-                    "sEmptyTable": "Ningún dato disponible en esta tabla",
-                    "sInfo": "Mostrando _START_ a _END_ de _TOTAL_ registros",
-                    "sInfoEmpty": "Mostrando 0 a 0 de 0 registros",
-                    "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
-                    "sInfoPostFix": "",
-                    "sSearch": "Buscar:",
-                    "sUrl": "",
-                    "sInfoThousands": ",",
-                    "sLoadingRecords": "Cargando...",
-                    "oPaginate": {
-                        "sFirst": "<<",
-                        "sLast": "Último",
-                        "sNext": ">>",
-                        "sPrevious": "<<"
-                    },
-                    "oAria": {
-                        "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
-                        "sSortDescending": ": Activar para ordenar la columna de manera descendente"
-                    }
+                language: {
+                    sProcessing: "Procesando...",
+                    sLengthMenu: "Mostrar _MENU_ registros",
+                    sZeroRecords: "No se encontraron resultados",
+                    sEmptyTable: "Ningún dato disponible en esta tabla",
+                    sInfo: "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                    sInfoEmpty: "Mostrando 0 a 0 de 0 registros",
+                    sInfoFiltered: "(filtrado de un total de _MAX_ registros)",
+                    sSearch: "Buscar:",
+                    oPaginate: { sFirst: "<<", sLast: "Último", sNext: ">>", sPrevious: "<<" }
                 }
+            };
+
+            var dtMain = $('#table').DataTable(dtConfig);
+            var dtEst = $('#estudiantes_table').DataTable(dtConfig);
+            var dtYoga = $('#yoga_table').DataTable(dtConfig);
+
+            $('#recordsPerPage').on('change', function() {
+                var n = parseInt($(this).val());
+                dtMain.page.len(n).draw();
+                dtEst.page.len(n).draw();
+                dtYoga.page.len(n).draw();
+            });
+            $('#searchfor').on('input', function() {
+                var s = $(this).val();
+                dtMain.search(s).draw();
+                dtEst.search(s).draw();
+                dtYoga.search(s).draw();
             });
 
             $('#fecha_caja').on('change', function() {
-                // Aquí va el código que quieres ejecutar cuando cambie la fecha
                 var fechaFin = $('#fecha_caja_fin').val();
-                let selectedDateIni = $(this).val();
-                var selectedEspecialista = $('#select_especialista').val();
-                window.location.href = '/list-esp/ventas/' + selectedDateIni + '/' + fechaFin + '/' +
-                    selectedEspecialista;;
+                var esp = $('#select_especialista').val();
+                window.location.href = '/list-esp/ventas/' + $(this).val() + '/' + fechaFin + '/' + esp;
             });
             $('#fecha_caja_fin').on('change', function() {
-                // Aquí va el código que quieres ejecutar cuando cambie la fecha
                 var fechaIni = $('#fecha_caja').val();
-                let selectedDateFin = $(this).val();
-                var selectedEspecialista = $('#select_especialista').val();
-                window.location.href = '/list-esp/ventas/' + fechaIni + '/' + selectedDateFin + '/' +
-                    selectedEspecialista;
+                var esp = $('#select_especialista').val();
+                window.location.href = '/list-esp/ventas/' + fechaIni + '/' + $(this).val() + '/' + esp;
             });
             $('#select_especialista').on('change', function() {
-                // Aquí va el código que quieres ejecutar cuando cambie la fecha
                 var fechaIni = $('#fecha_caja').val();
                 var fechaFin = $('#fecha_caja_fin').val();
-                let selectedId = $(this).val();
-                window.location.href = '/list-esp/ventas/' + fechaIni + '/' + fechaFin + '/' + selectedId;
+                window.location.href = '/list-esp/ventas/' + fechaIni + '/' + fechaFin + '/' + $(this).val();
             });
         });
     </script>

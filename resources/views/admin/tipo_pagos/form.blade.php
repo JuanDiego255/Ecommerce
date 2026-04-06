@@ -1,18 +1,15 @@
-<div class="row">
-    <div class="col-md-12">
-        <div class="input-group input-group-lg input-group-outline {{ isset($item->tipo) ? 'is-filled' : '' }} my-3">
-            <label class="form-label">Tipo de pago</label>
-            <input value="{{ isset($item->tipo) ? $item->tipo : '' }}" required type="text"
-                class="form-control form-control-lg @error('tipo') is-invalid @enderror" name="tipo" id="tipo">
-            @error('tipo')
-                <span class="invalid-feedback" role="alert">
-                    <strong>Campo Requerido</strong>
-                </span>
-            @enderror
-        </div>
+<div style="display:grid;gap:12px;">
+    <div>
+        <label class="filter-label">Tipo de pago</label>
+        <input type="text" name="tipo" value="{{ isset($item->tipo) ? $item->tipo : '' }}"
+            class="filter-input @error('tipo') is-invalid @enderror" required>
+        @error('tipo')
+            <span class="text-danger" style="font-size:.75rem;">{{ $message }}</span>
+        @enderror
     </div>
-    <center>
-        <input class="btn btn-accion" type="submit" value="{{ $Modo == 'crear' ? 'Agregar' : 'Guardar Cambios' }}">
-    </center>
-
+    <div class="d-flex justify-content-end pt-1">
+        <button type="submit" class="s-btn-primary w-auto">
+            {{ $Modo === 'crear' ? 'Agregar' : 'Guardar cambios' }}
+        </button>
+    </div>
 </div>

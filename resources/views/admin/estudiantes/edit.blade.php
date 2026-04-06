@@ -1,94 +1,60 @@
-<div class="modal fade" id="edit-estudiante-modal{{ $item->id }}" tabindex="-1" role="dialog"
-    aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title font-weight-normal" id="exampleModalLabel">Editar estudiante</h5>
-                <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+<div class="modal fade" id="edit-estudiante-modal{{ $item->id }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content" style="border-radius:14px;border:none;">
+            <div class="modal-header" style="border-bottom:1px solid #f0f0f0;padding:1.25rem 1.5rem;">
+                <h5 class="modal-title fw-semibold">Editar estudiante</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body">
-                <form class="form-horizontal" action="{{ url('estudiantes/update/' . $item->id) }}" method="post"
-                    enctype="multipart/form-data">
-                    {{ csrf_field() }}
-                    {{ method_field('PUT') }}
+            <div class="modal-body" style="padding:1.5rem;">
+                <form action="{{ url('estudiantes/update/' . $item->id) }}" method="post" enctype="multipart/form-data">
+                    @csrf
+                    @method('PUT')
                     <input type="hidden" value="{{ $tipo }}" name="tipo_est">
-                    <div class="row">
-                        <div class="col-md-12 mb-3">
-                            <div
-                                class="input-group input-group-lg input-group-outline {{ isset($item->nombre) ? 'is-filled' : '' }} my-3">
-                                <label class="form-label">Nombre Completo</label>
-                                <input value="{{ isset($item->nombre) ? $item->nombre : '' }}" required type="text"
-                                    class="form-control form-control-lg @error('nombre') is-invalid @enderror"
-                                    name="nombre" id="nombre">
-                                @error('nombre')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>Campo Requerido</strong>
-                                    </span>
-                                @enderror
-                            </div>
+                    <div style="display:grid;gap:12px;">
+                        <div>
+                            <label class="filter-label">Nombre Completo</label>
+                            <input type="text" name="nombre" value="{{ $item->nombre ?? '' }}"
+                                class="filter-input @error('nombre') is-invalid @enderror" required>
+                            @error('nombre')
+                                <span class="text-danger" style="font-size:.75rem;">{{ $message }}</span>
+                            @enderror
                         </div>
-                        <div class="col-md-12 mb-3">
-                            <div
-                                class="input-group input-group-lg input-group-outline {{ isset($item->telefono) ? 'is-filled' : '' }} my-3">
-                                <label class="form-label">Teléfono</label>
-                                <input value="{{ isset($item->telefono) ? $item->telefono : '' }}" required
-                                    type="text"
-                                    class="form-control form-control-lg @error('telefono') is-invalid @enderror"
-                                    name="telefono" id="telefono">
-                                @error('telefono')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>Campo Requerido</strong>
-                                    </span>
-                                @enderror
-                            </div>
+                        <div>
+                            <label class="filter-label">Teléfono</label>
+                            <input type="text" name="telefono" value="{{ $item->telefono ?? '' }}"
+                                class="filter-input @error('telefono') is-invalid @enderror" required>
+                            @error('telefono')
+                                <span class="text-danger" style="font-size:.75rem;">{{ $message }}</span>
+                            @enderror
                         </div>
-                        <div class="col-md-12 mb-3">
-                            <div
-                                class="input-group input-group-lg input-group-outline {{ isset($item->email) ? 'is-filled' : '' }} my-3">
-                                <label class="form-label">Correo</label>
-                                <input value="{{ isset($item->email) ? $item->email : '' }}" required type="text"
-                                    class="form-control form-control-lg @error('email') is-invalid @enderror"
-                                    name="email" id="email">
-                                @error('email')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>Campo Requerido</strong>
-                                    </span>
-                                @enderror
-                            </div>
+                        <div>
+                            <label class="filter-label">Correo</label>
+                            <input type="text" name="email" value="{{ $item->email ?? '' }}"
+                                class="filter-input @error('email') is-invalid @enderror" required>
+                            @error('email')
+                                <span class="text-danger" style="font-size:.75rem;">{{ $message }}</span>
+                            @enderror
                         </div>
-                        <div class="col-md-12 mb-3">
-                            <div
-                                class="input-group input-group-lg input-group-outline {{ isset($item->edad) ? 'is-filled' : '' }} my-3">
-                                <label class="form-label">Edad</label>
-                                <input value="{{ isset($item->edad) ? $item->edad : '' }}" required type="number"
-                                    class="form-control form-control-lg @error('edad') is-invalid @enderror"
-                                    name="edad" id="edad">
-                                @error('edad')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>Campo Requerido</strong>
-                                    </span>
-                                @enderror
-                            </div>
+                        <div>
+                            <label class="filter-label">Edad</label>
+                            <input type="number" name="edad" value="{{ $item->edad ?? '' }}"
+                                class="filter-input @error('edad') is-invalid @enderror" required>
+                            @error('edad')
+                                <span class="text-danger" style="font-size:.75rem;">{{ $message }}</span>
+                            @enderror
                         </div>
-                        <div class="col-md-12 mb-3">
-                            <div
-                                class="input-group input-group-lg input-group-outline {{ isset($item->fecha_pago) ? 'is-filled' : '' }} my-3">
-                                <label class="form-label">Fecha Pago</label>
-                                <input value="{{ isset($item->fecha_pago) ? $item->fecha_pago : '' }}" required
-                                    type="date"
-                                    class="form-control form-control-lg @error('fecha_pago') is-invalid @enderror"
-                                    name="fecha_pago" id="fecha_pago">
-                                @error('edad')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>Campo Requerido</strong>
-                                    </span>
-                                @enderror
-                            </div>
+                        <div>
+                            <label class="filter-label">Fecha Pago</label>
+                            <input type="date" name="fecha_pago" value="{{ $item->fecha_pago ?? '' }}"
+                                class="filter-input @error('fecha_pago') is-invalid @enderror" required>
+                            @error('fecha_pago')
+                                <span class="text-danger" style="font-size:.75rem;">{{ $message }}</span>
+                            @enderror
+                        </div>
+                        <div class="d-flex justify-content-end pt-1">
+                            <button type="submit" class="s-btn-primary w-auto">Guardar cambios</button>
                         </div>
                     </div>
-                    <input class="btn btn-accion" type="submit" value="Guardar Cambios">
                 </form>
             </div>
         </div>
