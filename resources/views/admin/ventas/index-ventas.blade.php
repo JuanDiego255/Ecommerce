@@ -410,7 +410,7 @@
     </div>
 @endsection
 @section('script')
-    <script src="{{ asset('js/datatables.js') }}"></script>
+    {{-- No incluir datatables.js: ese asset auto-inicializa #table globalmente y causa conflicto --}}
     <script>
         $(document).ready(function() {
             var dtConfig = {
