@@ -326,7 +326,7 @@
 
 @endsection
 
-@push('js')
+@section('script')
 <script>
     function openLightbox(src, title) {
         document.getElementById('lightboxImg').src = src;
@@ -365,4 +365,4 @@
         }).then(r => { if (r.isConfirmed) document.getElementById('deleteForm').submit(); });
     }
 </script>
-@endpush
+@endsection

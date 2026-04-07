@@ -133,7 +133,7 @@
 
 @endsection
 
-@push('js')
+@section('script')
 <script>
     // Highlight checked condition labels
     document.querySelectorAll('.cond-checkbox').forEach(cb => {
@@ -151,4 +151,4 @@
         cb.addEventListener('change', applyStyle);
     });
 </script>
-@endpush
+@endsection

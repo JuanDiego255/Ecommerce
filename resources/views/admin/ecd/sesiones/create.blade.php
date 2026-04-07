@@ -158,7 +158,7 @@
 
 @endsection
 
-@push('js')
+@section('script')
 <script>
     const plantillaSelect = document.getElementById('plantillaSelect');
     const container = document.getElementById('dynamicFormContainer');
@@ -232,4 +232,4 @@
         plantillaSelect.dispatchEvent(new Event('change'));
     }
 </script>
-@endpush
+@endsection

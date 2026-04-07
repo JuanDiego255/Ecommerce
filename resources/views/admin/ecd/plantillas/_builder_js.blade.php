@@ -1,4 +1,3 @@
-@push('js')
 <script>
 // ─── Form Builder State ───────────────────────────────────────────────────────
 let builderData = {
@@ -256,4 +255,3 @@ document.getElementById('plantillaForm').addEventListener('submit', serializeCam
 // ─── Init ─────────────────────────────────────────────────────────────────────
 renderBuilder();
 </script>
-@endpush

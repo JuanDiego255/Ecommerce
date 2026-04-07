@@ -134,7 +134,7 @@
 
 @endsection
 
-@push('js')
+@section('script')
 <script>
     function updateComparison() {
         const antes   = document.getElementById('selectAntes').value;
@@ -159,4 +159,4 @@
         if (e.key === 'Escape') document.getElementById('lightbox').style.display = 'none';
     });
 </script>
-@endpush
+@endsection

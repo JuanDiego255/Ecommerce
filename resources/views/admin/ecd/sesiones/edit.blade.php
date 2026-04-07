@@ -155,7 +155,7 @@
 
 @endsection
 
-@push('js')
+@section('script')
 <script>
     const existingResponses = @json($respuestasMap->map(fn($r) => $r->valor));
 
@@ -225,4 +225,4 @@
         plantillaSelect.dispatchEvent(new Event('change'));
     }
 </script>
-@endpush
+@endsection

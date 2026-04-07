@@ -97,7 +97,7 @@
 
 @endsection
 
-@push('js')
+@section('script')
 <script>
     function confirmDelete(id, name) {
         Swal.fire({
@@ -111,4 +111,4 @@
         }).then(r => { if (r.isConfirmed) document.getElementById('del-cons-' + id).submit(); });
     }
 </script>
-@endpush
+@endsection

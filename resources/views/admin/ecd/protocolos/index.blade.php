@@ -130,7 +130,7 @@
 
 @endsection
 
-@push('js')
+@section('script')
 <script>
     const search      = document.getElementById('searchInput');
     const filterNivel = document.getElementById('filterNivel');
@@ -159,4 +159,4 @@
         }).then(r => { if (r.isConfirmed) document.getElementById('del-prot-' + id).submit(); });
     }
 </script>
-@endpush
+@endsection

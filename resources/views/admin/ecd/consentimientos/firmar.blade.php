@@ -87,7 +87,7 @@
 
 @endsection
 
-@push('js')
+@section('script')
 <script>
     // ── Date/time display ─────────────────────────────────────────────────────
     function updateFechaHora() {
@@ -175,4 +175,4 @@
         });
     });
 </script>
-@endpush
+@endsection

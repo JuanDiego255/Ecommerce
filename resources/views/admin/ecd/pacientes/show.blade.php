@@ -180,7 +180,7 @@
                         <span>{{ $paciente->expediente->ultima_visita->format('d/m/Y') }}</span>
                     </div>
                 @endif
-                @if($paciente->expediente?.proxima_cita ?? $paciente->sesiones->first()?->proxima_cita)
+                @if($paciente->expediente?->proxima_cita ?? $paciente->sesiones->first()?->proxima_cita)
                     @php $proxCita = $paciente->sesiones->first()?->proxima_cita @endphp
                     @if($proxCita)
                         <div class="d-flex justify-content-between mb-2" style="font-size:.85rem;">
@@ -303,7 +303,7 @@
 
 @endsection
 
-@push('js')
+@section('script')
 <script>
     function deleteSesion(id, titulo) {
         Swal.fire({
@@ -317,4 +317,4 @@
         }).then(r => { if (r.isConfirmed) document.getElementById('ds-' + id).submit(); });
     }
 </script>
-@endpush
+@endsection

@@ -143,7 +143,7 @@
 
 @endsection
 
-@push('js')
+@section('script')
 <script>
     const search = document.getElementById('searchInput');
     const filterEstado = document.getElementById('filterEstado');
@@ -180,4 +180,4 @@
         }).then(r => { if (r.isConfirmed) document.getElementById('del-plt-' + id).submit(); });
     }
 </script>
-@endpush
+@endsection

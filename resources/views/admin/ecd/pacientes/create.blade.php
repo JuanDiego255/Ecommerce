@@ -140,7 +140,7 @@
 
 @endsection
 
-@push('js')
+@section('script')
 <script>
     document.getElementById('fotoInput').addEventListener('change', function () {
         const file = this.files[0];
@@ -150,4 +150,4 @@
         reader.readAsDataURL(file);
     });
 </script>
-@endpush
+@endsection

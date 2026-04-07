@@ -137,7 +137,7 @@
 
 @endsection
 
-@push('js')
+@section('script')
 <script>
     // Client-side filter (simple)
     const search = document.getElementById('searchInput');
@@ -179,4 +179,4 @@
         });
     }
 </script>
-@endpush
+@endsection

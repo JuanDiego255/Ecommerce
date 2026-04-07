@@ -1,4 +1,3 @@
-@push('js')
 <script>
 // ── State ─────────────────────────────────────────────────────────────────────
 let materiales = @if($protocolo && $protocolo->materiales_necesarios) @json($protocolo->materiales_necesarios) @else [] @endif;
@@ -122,4 +121,3 @@ function escHtml(str) {
 renderMateriales();
 renderPasos();
 </script>
-@endpush

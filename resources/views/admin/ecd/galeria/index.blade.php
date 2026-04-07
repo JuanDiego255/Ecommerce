@@ -10,6 +10,10 @@
     <li class="breadcrumb-item active">Galería</li>
 @endsection
 @section('content')
+<style>
+.filter-tab { padding:.3rem .8rem;border-radius:20px;border:1.5px solid #e2e8f0;background:#fff;font-size:.82rem;cursor:pointer;transition:all .13s; }
+.filter-tab.active { border-color:#5e72e4;background:#eef2ff;color:#5e72e4;font-weight:600; }
+</style>
 
     <div class="page-header d-flex align-items-center justify-content-between mb-3">
         <div>
@@ -96,17 +100,8 @@
 
 @endsection
 
-@push('css')
-<style>
-.filter-tab {
-    padding: .3rem .8rem; border-radius: 20px; border: 1.5px solid #e2e8f0;
-    background: #fff; font-size: .82rem; cursor: pointer; transition: all .13s;
-}
-.filter-tab.active { border-color: #5e72e4; background: #eef2ff; color: #5e72e4; font-weight: 600; }
-</style>
-@endpush
 
-@push('js')
+@section('script')
 <script>
     function filterTipo(tipo, btn) {
         document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
@@ -128,4 +123,4 @@
     }
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
 </script>
-@endpush
+@endsection
