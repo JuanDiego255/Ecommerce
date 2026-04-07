@@ -214,6 +214,84 @@
                     <i class="fas fa-notes-medical me-1"></i> Ver / editar historia
                 </a>
             </div>
+
+            {{-- Alertas panel --}}
+            <div class="surface p-4 mt-3">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <div style="font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#94a3b8;">
+                        Alertas activas
+                    </div>
+                    <button class="act-btn ab-green" data-bs-toggle="modal" data-bs-target="#alertaModal" title="Nueva alerta" style="width:24px;height:24px;font-size:.65rem;">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+                @forelse($paciente->alertas as $alerta)
+                    <div class="d-flex align-items-start justify-content-between mb-2 pb-2" style="border-bottom:1px solid #f1f5f9;">
+                        <div>
+                            <span class="s-pill {{ $alerta->badge_class }}" style="font-size:.68rem;">{{ $alerta->tipo }}</span>
+                            @if($alerta->descripcion)
+                                <div style="font-size:.78rem;color:#64748b;margin-top:.2rem;">{{ $alerta->descripcion }}</div>
+                            @endif
+                        </div>
+                        <div class="d-flex gap-1 flex-shrink-0 ms-2">
+                            <form action="{{ route('ecd.alertas.resolve', [$paciente, $alerta]) }}" method="POST">
+                                @csrf @method('PATCH')
+                                <button type="submit" class="act-btn ab-green" title="Resolver" style="width:22px;height:22px;font-size:.6rem;">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                            </form>
+                            <form action="{{ route('ecd.alertas.destroy', [$paciente, $alerta]) }}" method="POST">
+                                @csrf @method('DELETE')
+                                <button type="submit" class="act-btn ab-red" title="Eliminar" style="width:22px;height:22px;font-size:.6rem;">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                @empty
+                    <p style="font-size:.8rem;color:#94a3b8;margin:0;">Sin alertas activas.</p>
+                @endforelse
+            </div>
+        </div>
+    </div>
+
+    {{-- Nueva alerta modal --}}
+    <div class="modal fade" id="alertaModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content" style="border-radius:14px;border:none;">
+                <div class="modal-header" style="border-bottom:1px solid #f0f0f0;padding:1.25rem 1.5rem;">
+                    <h5 class="modal-title" style="font-size:.95rem;font-weight:700;">Nueva alerta</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form action="{{ route('ecd.alertas.store', $paciente) }}" method="POST">
+                    @csrf
+                    <div class="modal-body" style="padding:1.5rem;">
+                        <div class="row g-3">
+                            <div class="col-md-8">
+                                <label class="filter-label">Tipo de alerta *</label>
+                                <input type="text" name="tipo" class="filter-input" required
+                                       placeholder="Ej: Alergia a lidocaína, Keloides...">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="filter-label">Nivel</label>
+                                <select name="nivel" class="filter-input">
+                                    <option value="danger">Peligro</option>
+                                    <option value="warning">Advertencia</option>
+                                    <option value="info">Informativo</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label class="filter-label">Descripción</label>
+                                <textarea name="descripcion" class="filter-input" rows="3" placeholder="Detalles adicionales..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer" style="border-top:1px solid #f0f0f0;padding:1rem 1.5rem;">
+                        <button type="button" class="s-btn-sec" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="s-btn-primary"><i class="fas fa-save me-1"></i> Guardar alerta</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 

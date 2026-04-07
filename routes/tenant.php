@@ -544,6 +544,27 @@ Route::middleware([
                 Route::post('/pacientes/{paciente}/sesiones/{sesion}/imagenes',               [\App\Http\Controllers\SesionImagenController::class, 'store'])->name('imagenes.store');
                 Route::delete('/pacientes/{paciente}/sesiones/{sesion}/imagenes/{imagen}',    [\App\Http\Controllers\SesionImagenController::class, 'destroy'])->name('imagenes.destroy');
                 Route::patch('/pacientes/{paciente}/sesiones/{sesion}/imagenes/{imagen}/favorita', [\App\Http\Controllers\SesionImagenController::class, 'toggleFavorita'])->name('imagenes.favorita');
+                // Alertas de paciente
+                Route::post('/pacientes/{paciente}/alertas',              [\App\Http\Controllers\AlertaPacienteController::class, 'store'])->name('alertas.store');
+                Route::patch('/pacientes/{paciente}/alertas/{alerta}/resolve', [\App\Http\Controllers\AlertaPacienteController::class, 'resolve'])->name('alertas.resolve');
+                Route::delete('/pacientes/{paciente}/alertas/{alerta}',   [\App\Http\Controllers\AlertaPacienteController::class, 'destroy'])->name('alertas.destroy');
+                // Plantillas de ficha (form builder)
+                Route::get('/plantillas',                         [\App\Http\Controllers\FichaPlantillaController::class, 'index'])->name('plantillas.index');
+                Route::get('/plantillas/crear',                   [\App\Http\Controllers\FichaPlantillaController::class, 'create'])->name('plantillas.create');
+                Route::post('/plantillas',                        [\App\Http\Controllers\FichaPlantillaController::class, 'store'])->name('plantillas.store');
+                Route::get('/plantillas/{plantilla}/editar',      [\App\Http\Controllers\FichaPlantillaController::class, 'edit'])->name('plantillas.edit');
+                Route::put('/plantillas/{plantilla}',             [\App\Http\Controllers\FichaPlantillaController::class, 'update'])->name('plantillas.update');
+                Route::delete('/plantillas/{plantilla}',          [\App\Http\Controllers\FichaPlantillaController::class, 'destroy'])->name('plantillas.destroy');
+                Route::post('/plantillas/{plantilla}/duplicate',  [\App\Http\Controllers\FichaPlantillaController::class, 'duplicate'])->name('plantillas.duplicate');
+                Route::patch('/plantillas/{plantilla}/toggle',    [\App\Http\Controllers\FichaPlantillaController::class, 'toggle'])->name('plantillas.toggle');
+                // Plantillas de consentimiento
+                Route::get('/consentimientos',                      [\App\Http\Controllers\ConsentimientoPlantillaController::class, 'index'])->name('consentimientos.index');
+                Route::get('/consentimientos/crear',                [\App\Http\Controllers\ConsentimientoPlantillaController::class, 'create'])->name('consentimientos.create');
+                Route::post('/consentimientos',                     [\App\Http\Controllers\ConsentimientoPlantillaController::class, 'store'])->name('consentimientos.store');
+                Route::get('/consentimientos/{consentimiento}/editar', [\App\Http\Controllers\ConsentimientoPlantillaController::class, 'edit'])->name('consentimientos.edit');
+                Route::put('/consentimientos/{consentimiento}',      [\App\Http\Controllers\ConsentimientoPlantillaController::class, 'update'])->name('consentimientos.update');
+                Route::delete('/consentimientos/{consentimiento}',   [\App\Http\Controllers\ConsentimientoPlantillaController::class, 'destroy'])->name('consentimientos.destroy');
+                Route::patch('/consentimientos/{consentimiento}/toggle', [\App\Http\Controllers\ConsentimientoPlantillaController::class, 'toggle'])->name('consentimientos.toggle');
             });
             // ─────────────────────────────────────────────────────────────
 
