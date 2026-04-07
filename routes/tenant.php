@@ -520,6 +520,33 @@ Route::middleware([
             Route::put('/suscriptor/update/{id}', [SuscriptorController::class, 'update']);
             Route::delete('/suscriptor/delete/{id}', [SuscriptorController::class, 'destroy']);
 
+            // ── ECD: Expediente Clínico Digital ───────────────────────────
+            Route::prefix('ecd')->name('ecd.')->group(function () {
+                // Pacientes
+                Route::get('/pacientes',                    [\App\Http\Controllers\PacienteController::class, 'index'])->name('pacientes.index');
+                Route::get('/pacientes/crear',              [\App\Http\Controllers\PacienteController::class, 'create'])->name('pacientes.create');
+                Route::post('/pacientes',                   [\App\Http\Controllers\PacienteController::class, 'store'])->name('pacientes.store');
+                Route::get('/pacientes/{paciente}',         [\App\Http\Controllers\PacienteController::class, 'show'])->name('pacientes.show');
+                Route::get('/pacientes/{paciente}/editar',  [\App\Http\Controllers\PacienteController::class, 'edit'])->name('pacientes.edit');
+                Route::put('/pacientes/{paciente}',         [\App\Http\Controllers\PacienteController::class, 'update'])->name('pacientes.update');
+                Route::delete('/pacientes/{paciente}',      [\App\Http\Controllers\PacienteController::class, 'destroy'])->name('pacientes.destroy');
+                // Historia clínica
+                Route::get('/pacientes/{paciente}/historia',  [\App\Http\Controllers\PacienteController::class, 'historia'])->name('pacientes.historia');
+                Route::put('/pacientes/{paciente}/historia',  [\App\Http\Controllers\PacienteController::class, 'updateHistoria'])->name('pacientes.updateHistoria');
+                // Sesiones
+                Route::get('/pacientes/{paciente}/sesiones/crear',        [\App\Http\Controllers\SesionClinicaController::class, 'create'])->name('sesiones.create');
+                Route::post('/pacientes/{paciente}/sesiones',             [\App\Http\Controllers\SesionClinicaController::class, 'store'])->name('sesiones.store');
+                Route::get('/pacientes/{paciente}/sesiones/{sesion}',     [\App\Http\Controllers\SesionClinicaController::class, 'show'])->name('sesiones.show');
+                Route::get('/pacientes/{paciente}/sesiones/{sesion}/editar', [\App\Http\Controllers\SesionClinicaController::class, 'edit'])->name('sesiones.edit');
+                Route::put('/pacientes/{paciente}/sesiones/{sesion}',     [\App\Http\Controllers\SesionClinicaController::class, 'update'])->name('sesiones.update');
+                Route::delete('/pacientes/{paciente}/sesiones/{sesion}',  [\App\Http\Controllers\SesionClinicaController::class, 'destroy'])->name('sesiones.destroy');
+                // Imágenes de sesión
+                Route::post('/pacientes/{paciente}/sesiones/{sesion}/imagenes',               [\App\Http\Controllers\SesionImagenController::class, 'store'])->name('imagenes.store');
+                Route::delete('/pacientes/{paciente}/sesiones/{sesion}/imagenes/{imagen}',    [\App\Http\Controllers\SesionImagenController::class, 'destroy'])->name('imagenes.destroy');
+                Route::patch('/pacientes/{paciente}/sesiones/{sesion}/imagenes/{imagen}/favorita', [\App\Http\Controllers\SesionImagenController::class, 'toggleFavorita'])->name('imagenes.favorita');
+            });
+            // ─────────────────────────────────────────────────────────────
+
             // Solo dueño (owner)
             Route::middleware('role:owner')->group(function () {
                 // Catálogo servicios global

@@ -854,6 +854,15 @@ aside.sidenav .submenu .nav-link {
                                         <span class="nav-link-text ms-1">Tipos de pago</span>
                                     </a>
                                 </li>
+                                <li class="nav-item">
+                                    <a @if(request()->is('ecd/*')) class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
+                                        href="{{ route('ecd.pacientes.index') }}">
+                                        <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                                            <i class="material-icons opacity-10">folder_shared</i>
+                                        </div>
+                                        <span class="nav-link-text ms-1">Expedientes</span>
+                                    </a>
+                                </li>
                             </ul>
                         </li>
                         <li class="nav-item {{ $tenantinfo->tenant == 'gestionarecr' ? 'd-block' : 'd-none' }}">
