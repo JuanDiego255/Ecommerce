@@ -46,4 +46,7 @@
     </form>
 
 @endsection
+
+@section('script')
 @include('admin.ecd.protocolos._form_js', ['protocolo' => $protocolo])
+@endsection

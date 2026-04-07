@@ -68,4 +68,6 @@
 
 @endsection
 
+@section('script')
 @include('admin.ecd.plantillas._builder_js', ['existingCampos' => $plantilla->campos])
+@endsection
