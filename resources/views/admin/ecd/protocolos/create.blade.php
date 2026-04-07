@@ -1,0 +1,43 @@
+@extends('layouts.admin')
+@section('metatag')
+    {!! SEOMeta::generate() !!}
+    {!! OpenGraph::generate() !!}
+@endsection
+@section('breadcrumb')
+    <li class="breadcrumb-item"><a href="{{ url('/') }}">Inicio</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('ecd.protocolos.index') }}">Protocolos</a></li>
+    <li class="breadcrumb-item active">Nuevo protocolo</li>
+@endsection
+@section('content')
+
+    @if($errors->any())
+        <div class="alert alert-danger alert-dismissible fade show">
+            <ul class="mb-0">@foreach($errors->all() as $e)<li>{{ $e }}</li>@endforeach</ul>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
+
+    <div class="page-header d-flex align-items-center justify-content-between mb-3">
+        <h4 class="mb-0">Nuevo protocolo de tratamiento</h4>
+        <a href="{{ route('ecd.protocolos.index') }}" class="s-btn-sec">
+            <i class="fas fa-arrow-left me-1"></i> Volver
+        </a>
+    </div>
+
+    <form action="{{ route('ecd.protocolos.store') }}" method="POST" id="protocoloForm">
+        @csrf
+        <input type="hidden" name="materiales_json" id="materialesJson">
+        <input type="hidden" name="pasos_json" id="pasosJson">
+
+        @include('admin.ecd.protocolos._form', ['protocolo' => null])
+
+        <div class="d-flex justify-content-end gap-2 mt-3">
+            <a href="{{ route('ecd.protocolos.index') }}" class="s-btn-sec">Cancelar</a>
+            <button type="submit" class="s-btn-primary" onclick="serializeProtocolo()">
+                <i class="fas fa-save me-1"></i> Guardar protocolo
+            </button>
+        </div>
+    </form>
+
+@endsection
+@include('admin.ecd.protocolos._form_js', ['protocolo' => null])

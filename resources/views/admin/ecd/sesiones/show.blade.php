@@ -212,6 +212,12 @@
                     <button class="s-btn-sec w-100" data-bs-toggle="modal" data-bs-target="#uploadModal">
                         <i class="fas fa-camera me-1"></i> Subir imágenes
                     </button>
+                    <button class="s-btn-sec w-100" data-bs-toggle="modal" data-bs-target="#consentModal">
+                        <i class="fas fa-file-signature me-1"></i> Firmar consentimiento
+                    </button>
+                    <a href="{{ route('ecd.consentimientos.firmados', $paciente) }}" class="s-btn-sec w-100 text-center">
+                        <i class="fas fa-list me-1"></i> Ver firmados
+                    </a>
                     <button class="s-btn-sec w-100 text-danger" style="color:#e53e3e!important;"
                             onclick="confirmDelete()">
                         <i class="fas fa-trash me-1"></i> Eliminar sesión
@@ -219,6 +225,48 @@
                     <form id="deleteForm" action="{{ route('ecd.sesiones.destroy', [$paciente, $sesion]) }}" method="POST" class="d-none">
                         @csrf @method('DELETE')
                     </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Consent selector modal --}}
+    <div class="modal fade" id="consentModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content" style="border-radius:14px;border:none;">
+                <div class="modal-header" style="border-bottom:1px solid #f0f0f0;padding:1.25rem 1.5rem;">
+                    <h5 class="modal-title" style="font-size:.95rem;font-weight:700;">Seleccionar consentimiento</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" style="padding:1.5rem;">
+                    @php
+                        $plantillasConsent = \App\Models\ConsentimientoPlantilla::where('activo', true)->orderBy('nombre')->get();
+                    @endphp
+                    @if($plantillasConsent->isEmpty())
+                        <p class="text-muted text-center" style="font-size:.85rem;">
+                            No hay plantillas de consentimiento activas.
+                            <a href="{{ route('ecd.consentimientos.create') }}">Crear una</a>.
+                        </p>
+                    @else
+                        <p style="font-size:.84rem;color:#64748b;margin-bottom:1rem;">
+                            Selecciona la plantilla de consentimiento que deseas que el paciente firme:
+                        </p>
+                        <div class="d-flex flex-column gap-2">
+                            @foreach($plantillasConsent as $pc)
+                                <a href="{{ route('ecd.consentimientos.firmar.create', [$paciente, $sesion, $pc]) }}"
+                                   style="display:flex;align-items:center;justify-content:space-between;padding:.75rem 1rem;border:1px solid #e2e8f0;border-radius:8px;text-decoration:none;color:#1e293b;font-size:.88rem;">
+                                    <div>
+                                        <span class="fw-semibold">{{ $pc->nombre }}</span>
+                                        <span style="font-size:.72rem;color:#94a3b8;display:block;">{{ $pc->tipo }} · v{{ $pc->version }}</span>
+                                    </div>
+                                    <i class="fas fa-chevron-right" style="color:#94a3b8;"></i>
+                                </a>
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
+                <div class="modal-footer" style="border-top:1px solid #f0f0f0;padding:1rem 1.5rem;">
+                    <button type="button" class="s-btn-sec" data-bs-dismiss="modal">Cerrar</button>
                 </div>
             </div>
         </div>

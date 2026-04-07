@@ -565,6 +565,21 @@ Route::middleware([
                 Route::put('/consentimientos/{consentimiento}',      [\App\Http\Controllers\ConsentimientoPlantillaController::class, 'update'])->name('consentimientos.update');
                 Route::delete('/consentimientos/{consentimiento}',   [\App\Http\Controllers\ConsentimientoPlantillaController::class, 'destroy'])->name('consentimientos.destroy');
                 Route::patch('/consentimientos/{consentimiento}/toggle', [\App\Http\Controllers\ConsentimientoPlantillaController::class, 'toggle'])->name('consentimientos.toggle');
+                // Consentimientos firmados
+                Route::get('/pacientes/{paciente}/sesiones/{sesion}/consentimientos/{plantilla}/firmar', [\App\Http\Controllers\ConsentimientoFirmadoController::class, 'create'])->name('consentimientos.firmar.create');
+                Route::post('/pacientes/{paciente}/sesiones/{sesion}/consentimientos/{plantilla}/firmar', [\App\Http\Controllers\ConsentimientoFirmadoController::class, 'store'])->name('consentimientos.firmar.store');
+                Route::get('/pacientes/{paciente}/consentimientos/firmados', [\App\Http\Controllers\ConsentimientoFirmadoController::class, 'indexPaciente'])->name('consentimientos.firmados');
+                // Dashboard ECD
+                Route::get('/dashboard', [\App\Http\Controllers\DashboardECDController::class, 'index'])->name('dashboard');
+                // Protocolos
+                Route::get('/protocolos',                       [\App\Http\Controllers\ProtocoloController::class, 'index'])->name('protocolos.index');
+                Route::get('/protocolos/crear',                 [\App\Http\Controllers\ProtocoloController::class, 'create'])->name('protocolos.create');
+                Route::post('/protocolos',                      [\App\Http\Controllers\ProtocoloController::class, 'store'])->name('protocolos.store');
+                Route::get('/protocolos/{protocolo}',           [\App\Http\Controllers\ProtocoloController::class, 'show'])->name('protocolos.show');
+                Route::get('/protocolos/{protocolo}/editar',    [\App\Http\Controllers\ProtocoloController::class, 'edit'])->name('protocolos.edit');
+                Route::put('/protocolos/{protocolo}',           [\App\Http\Controllers\ProtocoloController::class, 'update'])->name('protocolos.update');
+                Route::delete('/protocolos/{protocolo}',        [\App\Http\Controllers\ProtocoloController::class, 'destroy'])->name('protocolos.destroy');
+                Route::patch('/protocolos/{protocolo}/toggle',  [\App\Http\Controllers\ProtocoloController::class, 'toggle'])->name('protocolos.toggle');
             });
             // ─────────────────────────────────────────────────────────────
 
