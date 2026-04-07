@@ -205,6 +205,51 @@ aside.sidenav .submenu .nav-link {
                                         <span class="nav-link-text ms-1">Ventas</span>
                                     </a>
                                 </li>
+                                <li class="nav-item">
+                                    <a @if(request()->is('ecd/dashboard')) class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
+                                        href="{{ route('ecd.dashboard') }}">
+                                        <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                                            <i class="material-icons opacity-10">dashboard</i>
+                                        </div>
+                                        <span class="nav-link-text ms-1">Dashboard ECD</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a @if(request()->is('ecd/pacientes*')) class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
+                                        href="{{ route('ecd.pacientes.index') }}">
+                                        <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                                            <i class="material-icons opacity-10">folder_shared</i>
+                                        </div>
+                                        <span class="nav-link-text ms-1">Expedientes</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a @if(request()->is('ecd/plantillas*')) class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
+                                        href="{{ route('ecd.plantillas.index') }}">
+                                        <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                                            <i class="material-icons opacity-10">arrow_right_alt</i>
+                                        </div>
+                                        <span class="nav-link-text ms-1">Fichas / Plantillas</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a @if(request()->is('ecd/consentimientos*')) class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
+                                        href="{{ route('ecd.consentimientos.index') }}">
+                                        <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                                            <i class="material-icons opacity-10">arrow_right_alt</i>
+                                        </div>
+                                        <span class="nav-link-text ms-1">Consentimientos</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a @if(request()->is('ecd/protocolos*')) class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
+                                        href="{{ route('ecd.protocolos.index') }}">
+                                        <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
+                                            <i class="material-icons opacity-10">arrow_right_alt</i>
+                                        </div>
+                                        <span class="nav-link-text ms-1">Protocolos</span>
+                                    </a>
+                                </li>
                             </ul>
                         </li>
                     @endif
@@ -853,52 +898,7 @@ aside.sidenav .submenu .nav-link {
                                         </div>
                                         <span class="nav-link-text ms-1">Tipos de pago</span>
                                     </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a @if(request()->is('ecd/dashboard')) class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
-                                        href="{{ route('ecd.dashboard') }}">
-                                        <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
-                                            <i class="material-icons opacity-10">dashboard</i>
-                                        </div>
-                                        <span class="nav-link-text ms-1">Dashboard ECD</span>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a @if(request()->is('ecd/pacientes*')) class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
-                                        href="{{ route('ecd.pacientes.index') }}">
-                                        <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
-                                            <i class="material-icons opacity-10">folder_shared</i>
-                                        </div>
-                                        <span class="nav-link-text ms-1">Expedientes</span>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a @if(request()->is('ecd/plantillas*')) class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
-                                        href="{{ route('ecd.plantillas.index') }}">
-                                        <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
-                                            <i class="material-icons opacity-10">arrow_right_alt</i>
-                                        </div>
-                                        <span class="nav-link-text ms-1">Fichas / Plantillas</span>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a @if(request()->is('ecd/consentimientos*')) class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
-                                        href="{{ route('ecd.consentimientos.index') }}">
-                                        <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
-                                            <i class="material-icons opacity-10">arrow_right_alt</i>
-                                        </div>
-                                        <span class="nav-link-text ms-1">Consentimientos</span>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a @if(request()->is('ecd/protocolos*')) class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
-                                        href="{{ route('ecd.protocolos.index') }}">
-                                        <div class="text-sidebar text-center me-2 d-flex align-items-center justify-content-center">
-                                            <i class="material-icons opacity-10">arrow_right_alt</i>
-                                        </div>
-                                        <span class="nav-link-text ms-1">Protocolos</span>
-                                    </a>
-                                </li>
+                                </li>                                
                             </ul>
                         </li>
                         <li class="nav-item {{ $tenantinfo->tenant == 'gestionarecr' ? 'd-block' : 'd-none' }}">
