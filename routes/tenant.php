@@ -586,8 +586,18 @@ Route::middleware([
                 // Reportes imprimibles
                 Route::get('/pacientes/{paciente}/sesiones/{sesion}/reporte',            [\App\Http\Controllers\ReporteECDController::class, 'sesion'])->name('reportes.sesion');
                 Route::get('/pacientes/{paciente}/reporte',                              [\App\Http\Controllers\ReporteECDController::class, 'expediente'])->name('reportes.expediente');
+                // Portal del paciente — acciones admin (generar/revocar token)
+                Route::post('/ecd/pacientes/{paciente}/portal/generar',  [\App\Http\Controllers\PortalPacienteController::class, 'generateToken'])->name('portal.generate');
+                Route::delete('/ecd/pacientes/{paciente}/portal/revocar', [\App\Http\Controllers\PortalPacienteController::class, 'revokeToken'])->name('portal.revoke');
             });
             // ─────────────────────────────────────────────────────────────
+
+            // Portal del paciente — acceso público por token (sin auth)
+            Route::prefix('portal')->name('portal.')->group(function () {
+                Route::get('/paciente/{token}',                                [\App\Http\Controllers\PortalPacienteController::class, 'show'])->name('paciente.show');
+                Route::get('/paciente/{token}/sesion/{sesion}',                [\App\Http\Controllers\PortalPacienteController::class, 'sesion'])->name('paciente.sesion');
+                Route::get('/paciente/{token}/consentimiento/{firmado}',       [\App\Http\Controllers\PortalPacienteController::class, 'consentimiento'])->name('paciente.consentimiento');
+            });
 
             // Solo dueño (owner)
             Route::middleware('role:owner')->group(function () {

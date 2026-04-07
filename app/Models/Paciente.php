@@ -15,12 +15,13 @@ class Paciente extends Model
         'nombre', 'apellidos', 'cedula', 'fecha_nacimiento', 'sexo',
         'telefono', 'email', 'ocupacion', 'direccion', 'ciudad',
         'foto_perfil', 'grupo_sanguineo', 'fuente_referido',
-        'notas_internas', 'activo',
+        'notas_internas', 'activo', 'portal_token', 'portal_token_expires_at',
     ];
 
     protected $casts = [
-        'fecha_nacimiento' => 'date',
-        'activo' => 'boolean',
+        'fecha_nacimiento'        => 'date',
+        'activo'                  => 'boolean',
+        'portal_token_expires_at' => 'datetime',
     ];
 
     public function expediente()
@@ -66,5 +67,26 @@ class Paciente extends Model
         return $this->foto_perfil
             ? route('file', $this->foto_perfil)
             : 'https://ui-avatars.com/api/?name=' . urlencode($this->nombre_completo) . '&background=5e72e4&color=fff&size=120';
+    }
+
+    public function hasActivePortalToken(): bool
+    {
+        return $this->portal_token !== null
+            && ($this->portal_token_expires_at === null || $this->portal_token_expires_at->isFuture());
+    }
+
+    public function generatePortalToken(int $days = 30): string
+    {
+        $token = bin2hex(random_bytes(32)); // 64 hex chars
+        $this->update([
+            'portal_token'            => $token,
+            'portal_token_expires_at' => now()->addDays($days),
+        ]);
+        return $token;
+    }
+
+    public function revokePortalToken(): void
+    {
+        $this->update(['portal_token' => null, 'portal_token_expires_at' => null]);
     }
 }

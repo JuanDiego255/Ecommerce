@@ -17,6 +17,20 @@
         </div>
     @endif
 
+    @if(session('portal_url'))
+        <div class="alert alert-info alert-dismissible fade show d-flex align-items-center gap-3" style="background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af;">
+            <i class="fas fa-link fa-lg flex-shrink-0"></i>
+            <div class="flex-grow-1">
+                <div style="font-weight:600;margin-bottom:.25rem;">Enlace del portal generado (válido 30 días)</div>
+                <div id="portal-link-text" style="font-size:.82rem;word-break:break-all;">{{ session('portal_url') }}</div>
+            </div>
+            <button class="act-btn ab-blue flex-shrink-0" onclick="copyPortalLink('{{ session('portal_url') }}')" title="Copiar enlace">
+                <i class="fas fa-copy"></i>
+            </button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
+
     {{-- Header card --}}
     <div class="surface p-4 mb-3">
         <div class="d-flex align-items-center gap-3 flex-wrap">
@@ -61,6 +75,9 @@
                 <a href="{{ route('ecd.reportes.expediente', $paciente) }}" target="_blank" class="act-btn ab-teal" title="Imprimir expediente" data-bs-toggle="tooltip" data-bs-placement="top">
                     <i class="fas fa-print"></i>
                 </a>
+                <button class="act-btn ab-indigo" title="Portal del paciente" data-bs-toggle="modal" data-bs-target="#portalModal" data-bs-placement="top">
+                    <i class="fas fa-share-alt"></i>
+                </button>
                 <a href="{{ route('ecd.sesiones.create', $paciente) }}" class="ph-btn ph-btn-add" title="Nueva sesión" data-bs-toggle="tooltip" data-bs-placement="left">
                     <i class="fas fa-plus"></i>
                 </a>
@@ -221,6 +238,50 @@
                 </a>
             </div>
 
+            {{-- Portal del paciente --}}
+            <div class="surface p-4 mt-3">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <div style="font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#94a3b8;">
+                        Portal del paciente
+                    </div>
+                    @if($paciente->hasActivePortalToken())
+                        <span class="s-pill pill-green" style="font-size:.68rem;">Activo</span>
+                    @else
+                        <span class="s-pill pill-red" style="font-size:.68rem;">Sin acceso</span>
+                    @endif
+                </div>
+                @if($paciente->hasActivePortalToken())
+                    <div style="font-size:.78rem;color:#64748b;margin-bottom:.5rem;">
+                        Expira: {{ $paciente->portal_token_expires_at?->format('d/m/Y') }}
+                    </div>
+                    <div class="d-flex gap-2">
+                        <form method="POST" action="{{ route('ecd.portal.generate', $paciente) }}" class="flex-grow-1">
+                            @csrf
+                            <button type="submit" class="s-btn-sec w-100" style="font-size:.78rem;">
+                                <i class="fas fa-sync-alt me-1"></i> Renovar enlace
+                            </button>
+                        </form>
+                        <form method="POST" action="{{ route('ecd.portal.revoke', $paciente) }}">
+                            @csrf @method('DELETE')
+                            <button type="submit" class="act-btn ab-red" title="Revocar acceso"
+                                    onclick="return confirm('¿Revocar acceso al portal?')">
+                                <i class="fas fa-ban"></i>
+                            </button>
+                        </form>
+                    </div>
+                @else
+                    <p style="font-size:.82rem;color:#94a3b8;margin-bottom:.5rem;">
+                        El paciente no tiene acceso activo al portal.
+                    </p>
+                    <form method="POST" action="{{ route('ecd.portal.generate', $paciente) }}">
+                        @csrf
+                        <button type="submit" class="s-btn-primary w-100" style="font-size:.82rem;">
+                            <i class="fas fa-link me-1"></i> Generar enlace de acceso
+                        </button>
+                    </form>
+                @endif
+            </div>
+
             {{-- Alertas panel --}}
             <div class="surface p-4 mt-3">
                 <div class="d-flex align-items-center justify-content-between mb-2">
@@ -257,6 +318,63 @@
                 @empty
                     <p style="font-size:.8rem;color:#94a3b8;margin:0;">Sin alertas activas.</p>
                 @endforelse
+            </div>
+        </div>
+    </div>
+
+    {{-- Portal modal --}}
+    <div class="modal fade" id="portalModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content" style="border-radius:14px;border:none;">
+                <div class="modal-header" style="border-bottom:1px solid #f0f0f0;padding:1.25rem 1.5rem;">
+                    <h5 class="modal-title" style="font-size:.95rem;font-weight:700;">
+                        <i class="fas fa-share-alt me-2" style="color:#5e72e4;"></i>Portal del paciente
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" style="padding:1.5rem;">
+                    @if($paciente->hasActivePortalToken())
+                        <p style="font-size:.88rem;color:#64748b;margin-bottom:1rem;">
+                            Comparte este enlace con el paciente. Expira el <strong>{{ $paciente->portal_token_expires_at?->format('d/m/Y') }}</strong>.
+                        </p>
+                        @php $portalUrl = route('portal.paciente.show', $paciente->portal_token) @endphp
+                        <div class="d-flex gap-2">
+                            <input type="text" class="filter-input flex-grow-1" id="portal-url-input"
+                                   value="{{ $portalUrl }}" readonly style="font-size:.78rem;">
+                            <button class="act-btn ab-blue flex-shrink-0" onclick="copyPortalLink('{{ $portalUrl }}')" title="Copiar">
+                                <i class="fas fa-copy" id="copy-icon"></i>
+                            </button>
+                        </div>
+                        <div class="d-flex gap-2 mt-3">
+                            <a href="{{ $portalUrl }}" target="_blank" class="s-btn-sec flex-grow-1 text-center" style="font-size:.82rem;">
+                                <i class="fas fa-external-link-alt me-1"></i> Vista previa
+                            </a>
+                            @if($paciente->email)
+                                <a href="mailto:{{ $paciente->email }}?subject=Tu portal de seguimiento&body={{ urlencode('Hola ' . $paciente->nombre . ', accede a tu portal de seguimiento: ' . $portalUrl) }}"
+                                   class="act-btn ab-teal flex-shrink-0" title="Enviar por email">
+                                    <i class="fas fa-envelope"></i>
+                                </a>
+                            @endif
+                            @if($paciente->telefono)
+                                <a href="https://wa.me/{{ preg_replace('/\D/', '', $paciente->telefono) }}?text={{ urlencode('Hola ' . $paciente->nombre . ', accede a tu portal de seguimiento: ' . $portalUrl) }}"
+                                   target="_blank" class="act-btn ab-green flex-shrink-0" title="Enviar por WhatsApp">
+                                    <i class="fab fa-whatsapp"></i>
+                                </a>
+                            @endif
+                        </div>
+                    @else
+                        <div class="text-center py-3">
+                            <i class="fas fa-lock fa-2x mb-3" style="color:#94a3b8;"></i>
+                            <p style="font-size:.88rem;color:#64748b;">El paciente no tiene acceso activo al portal.</p>
+                            <form method="POST" action="{{ route('ecd.portal.generate', $paciente) }}">
+                                @csrf
+                                <button type="submit" class="s-btn-primary">
+                                    <i class="fas fa-link me-1"></i> Generar enlace de acceso
+                                </button>
+                            </form>
+                        </div>
+                    @endif
+                </div>
             </div>
         </div>
     </div>
@@ -315,6 +433,13 @@
             cancelButtonText: 'Cancelar',
             confirmButtonText: 'Sí, eliminar',
         }).then(r => { if (r.isConfirmed) document.getElementById('ds-' + id).submit(); });
+    }
+
+    function copyPortalLink(url) {
+        navigator.clipboard.writeText(url).then(function() {
+            var icon = document.getElementById('copy-icon');
+            if (icon) { icon.className = 'fas fa-check'; setTimeout(() => icon.className = 'fas fa-copy', 1800); }
+        });
     }
 </script>
 @endsection
