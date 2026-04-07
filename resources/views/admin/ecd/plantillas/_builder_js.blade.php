@@ -101,6 +101,9 @@ function escHtml(str) {
     return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
+// ─── Init (deferred until DOM + Bootstrap are ready) ─────────────────────────
+document.addEventListener('DOMContentLoaded', function () {
+
 // ─── Section actions ─────────────────────────────────────────────────────────
 document.getElementById('addSeccionBtn').addEventListener('click', () => {
     builderData.secciones.push({ titulo: '', campos: [] });
@@ -254,4 +257,6 @@ document.getElementById('plantillaForm').addEventListener('submit', serializeCam
 
 // ─── Init ─────────────────────────────────────────────────────────────────────
 renderBuilder();
+
+}); // DOMContentLoaded
 </script>

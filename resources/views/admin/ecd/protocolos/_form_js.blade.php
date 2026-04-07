@@ -31,6 +31,8 @@ function deleteMaterial(idx) {
     renderMateriales();
 }
 
+document.addEventListener('DOMContentLoaded', function () {
+
 document.getElementById('addMaterialBtn').addEventListener('click', addMaterial);
 document.getElementById('addMaterialBtn2').addEventListener('click', addMaterial);
 document.getElementById('materialInput').addEventListener('keydown', e => {
@@ -120,4 +122,6 @@ function escHtml(str) {
 // Init
 renderMateriales();
 renderPasos();
+
+}); // DOMContentLoaded
 </script>
