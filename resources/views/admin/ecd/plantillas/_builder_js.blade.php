@@ -10,6 +10,7 @@ let builderData = {
 @endif
 
 let activaSeccionIdx = 0;
+let campoModal; // initialized after Bootstrap loads
 
 // ─── Render ───────────────────────────────────────────────────────────────────
 function renderBuilder() {
@@ -101,16 +102,7 @@ function escHtml(str) {
     return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-// ─── Init (deferred until DOM + Bootstrap are ready) ─────────────────────────
-document.addEventListener('DOMContentLoaded', function () {
-
-// ─── Section actions ─────────────────────────────────────────────────────────
-document.getElementById('addSeccionBtn').addEventListener('click', () => {
-    builderData.secciones.push({ titulo: '', campos: [] });
-    activaSeccionIdx = builderData.secciones.length - 1;
-    renderBuilder();
-});
-
+// ─── Section actions (global — called from inline onclick) ────────────────────
 function setActivaSeccion(idx) {
     activaSeccionIdx = idx;
     renderBuilder();
@@ -137,18 +129,7 @@ function moveSeccion(idx, dir) {
     renderBuilder();
 }
 
-// ─── Campo actions ────────────────────────────────────────────────────────────
-document.querySelectorAll('.btn-tipo-campo').forEach(btn => {
-    btn.addEventListener('click', () => {
-        if (!builderData.secciones.length) {
-            builderData.secciones.push({ titulo: '', campos: [] });
-            activaSeccionIdx = 0;
-        }
-        const tipo = btn.dataset.tipo;
-        openCampoModal(activaSeccionIdx, null, tipo);
-    });
-});
-
+// ─── Campo actions (global — called from inline onclick) ──────────────────────
 function deleteCampo(sIdx, cIdx) {
     builderData.secciones[sIdx].campos.splice(cIdx, 1);
     renderBuilder();
@@ -167,9 +148,7 @@ function editCampo(sIdx, cIdx) {
     openCampoModal(sIdx, cIdx, campo.tipo, campo);
 }
 
-// ─── Campo modal ──────────────────────────────────────────────────────────────
-const campoModal = new bootstrap.Modal(document.getElementById('campoModal'));
-
+// ─── Campo modal (global — campoModal init deferred to DOMContentLoaded) ──────
 function openCampoModal(sIdx, cIdx, tipo, existing = null) {
     document.getElementById('editSeccionIdx').value = sIdx;
     document.getElementById('editCampoIdx').value   = cIdx !== null ? cIdx : '';
@@ -183,7 +162,6 @@ function openCampoModal(sIdx, cIdx, tipo, existing = null) {
     document.getElementById('campoAncho').value       = existing?.ancho       || 'mitad';
     document.getElementById('campoRequerido').checked = existing?.requerido   || false;
 
-    // Type-specific
     document.getElementById('opcionesContainer').style.display = tipo === 'select' ? '' : 'none';
     document.getElementById('escalaContainer').style.display   = tipo === 'escala' ? '' : 'none';
 
@@ -199,50 +177,8 @@ function openCampoModal(sIdx, cIdx, tipo, existing = null) {
     campoModal.show();
 }
 
-document.getElementById('saveCampoBtn').addEventListener('click', () => {
-    const etiqueta = document.getElementById('campoEtiqueta').value.trim();
-    if (!etiqueta) {
-        alert('La etiqueta del campo es obligatoria.');
-        return;
-    }
-
-    const sIdx = parseInt(document.getElementById('editSeccionIdx').value);
-    const cIdxRaw = document.getElementById('editCampoIdx').value;
-    const cIdx = cIdxRaw !== '' ? parseInt(cIdxRaw) : null;
-    const tipo = document.getElementById('editCampoTipo').value;
-
-    const campo = {
-        key:         (cIdx !== null ? builderData.secciones[sIdx].campos[cIdx].key : null) || crypto.randomUUID(),
-        tipo,
-        etiqueta,
-        placeholder: document.getElementById('campoPlaceholder').value.trim(),
-        ancho:       document.getElementById('campoAncho').value,
-        requerido:   document.getElementById('campoRequerido').checked,
-    };
-
-    if (tipo === 'select') {
-        campo.opciones = document.getElementById('campoOpciones').value
-            .split('\n').map(o => o.trim()).filter(o => o);
-    }
-    if (tipo === 'escala') {
-        campo.escala_min       = parseInt(document.getElementById('escalaMin').value);
-        campo.escala_max       = parseInt(document.getElementById('escalaMax').value);
-        campo.escala_max_label = document.getElementById('escalaMaxLabel').value.trim();
-    }
-
-    if (cIdx !== null) {
-        builderData.secciones[sIdx].campos[cIdx] = campo;
-    } else {
-        builderData.secciones[sIdx].campos.push(campo);
-    }
-
-    campoModal.hide();
-    renderBuilder();
-});
-
-// ─── Serialize on submit ──────────────────────────────────────────────────────
+// ─── Serialize (global — called from page-header save button) ─────────────────
 function serializeCampos() {
-    // Sync any open section title inputs
     document.querySelectorAll('.seccion-card').forEach((card, idx) => {
         const input = card.querySelector('input[type=text]');
         if (input && builderData.secciones[idx]) {
@@ -252,11 +188,69 @@ function serializeCampos() {
     document.getElementById('camposJson').value = JSON.stringify(builderData);
 }
 
-// Pre-serialize also on native form submit (fallback)
-document.getElementById('plantillaForm').addEventListener('submit', serializeCampos);
+// ─── Init (deferred until Bootstrap is ready) ─────────────────────────────────
+document.addEventListener('DOMContentLoaded', function () {
+    campoModal = new bootstrap.Modal(document.getElementById('campoModal'));
 
-// ─── Init ─────────────────────────────────────────────────────────────────────
-renderBuilder();
+    document.getElementById('addSeccionBtn').addEventListener('click', () => {
+        builderData.secciones.push({ titulo: '', campos: [] });
+        activaSeccionIdx = builderData.secciones.length - 1;
+        renderBuilder();
+    });
 
-}); // DOMContentLoaded
+    document.querySelectorAll('.btn-tipo-campo').forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (!builderData.secciones.length) {
+                builderData.secciones.push({ titulo: '', campos: [] });
+                activaSeccionIdx = 0;
+            }
+            openCampoModal(activaSeccionIdx, null, btn.dataset.tipo);
+        });
+    });
+
+    document.getElementById('saveCampoBtn').addEventListener('click', () => {
+        const etiqueta = document.getElementById('campoEtiqueta').value.trim();
+        if (!etiqueta) {
+            alert('La etiqueta del campo es obligatoria.');
+            return;
+        }
+
+        const sIdx    = parseInt(document.getElementById('editSeccionIdx').value);
+        const cIdxRaw = document.getElementById('editCampoIdx').value;
+        const cIdx    = cIdxRaw !== '' ? parseInt(cIdxRaw) : null;
+        const tipo    = document.getElementById('editCampoTipo').value;
+
+        const campo = {
+            key:         (cIdx !== null ? builderData.secciones[sIdx].campos[cIdx].key : null) || crypto.randomUUID(),
+            tipo,
+            etiqueta,
+            placeholder: document.getElementById('campoPlaceholder').value.trim(),
+            ancho:       document.getElementById('campoAncho').value,
+            requerido:   document.getElementById('campoRequerido').checked,
+        };
+
+        if (tipo === 'select') {
+            campo.opciones = document.getElementById('campoOpciones').value
+                .split('\n').map(o => o.trim()).filter(o => o);
+        }
+        if (tipo === 'escala') {
+            campo.escala_min       = parseInt(document.getElementById('escalaMin').value);
+            campo.escala_max       = parseInt(document.getElementById('escalaMax').value);
+            campo.escala_max_label = document.getElementById('escalaMaxLabel').value.trim();
+        }
+
+        if (cIdx !== null) {
+            builderData.secciones[sIdx].campos[cIdx] = campo;
+        } else {
+            builderData.secciones[sIdx].campos.push(campo);
+        }
+
+        campoModal.hide();
+        renderBuilder();
+    });
+
+    document.getElementById('plantillaForm').addEventListener('submit', serializeCampos);
+
+    renderBuilder();
+});
 </script>

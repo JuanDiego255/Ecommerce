@@ -3,7 +3,11 @@
 let materiales = @if($protocolo && $protocolo->materiales_necesarios) @json($protocolo->materiales_necesarios) @else [] @endif;
 let pasos      = @if($protocolo && $protocolo->pasos) @json($protocolo->pasos) @else [] @endif;
 
-// ── Materials ─────────────────────────────────────────────────────────────────
+function escHtml(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── Materials (global — called from inline onclick) ───────────────────────────
 function renderMateriales() {
     const list = document.getElementById('materialesList');
     list.innerHTML = materiales.map((m, i) => `
@@ -31,15 +35,7 @@ function deleteMaterial(idx) {
     renderMateriales();
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-
-document.getElementById('addMaterialBtn').addEventListener('click', addMaterial);
-document.getElementById('addMaterialBtn2').addEventListener('click', addMaterial);
-document.getElementById('materialInput').addEventListener('keydown', e => {
-    if (e.key === 'Enter') { e.preventDefault(); addMaterial(); }
-});
-
-// ── Steps ─────────────────────────────────────────────────────────────────────
+// ── Steps (global — called from inline onclick) ───────────────────────────────
 function renderPasos() {
     const list  = document.getElementById('pasosList');
     const empty = document.getElementById('pasoEmpty');
@@ -79,7 +75,7 @@ function renderPasos() {
         </div>
     `).join('');
 
-    // Bind live changes
+    // Bind live changes after re-render
     document.querySelectorAll('.paso-titulo').forEach(el => {
         el.addEventListener('input', e => { pasos[e.target.dataset.idx].titulo = e.target.value; });
     });
@@ -90,11 +86,6 @@ function renderPasos() {
         el.addEventListener('input', e => { pasos[e.target.dataset.idx].duracion_min = parseInt(e.target.value) || null; });
     });
 }
-
-document.getElementById('addPasoBtn').addEventListener('click', () => {
-    pasos.push({ titulo: '', descripcion: '', duracion_min: null });
-    renderPasos();
-});
 
 function deletePaso(idx) {
     pasos.splice(idx, 1);
@@ -108,20 +99,28 @@ function movePaso(idx, dir) {
     renderPasos();
 }
 
-// ── Serialize on submit ───────────────────────────────────────────────────────
+// ── Serialize (global — called from page-header save button) ──────────────────
 function serializeProtocolo() {
     document.getElementById('materialesJson').value = JSON.stringify(materiales);
     document.getElementById('pasosJson').value      = JSON.stringify(pasos);
 }
-document.getElementById('protocoloForm').addEventListener('submit', serializeProtocolo);
 
-function escHtml(str) {
-    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
+// ── Init (deferred until DOM is ready) ───────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('addMaterialBtn').addEventListener('click', addMaterial);
+    document.getElementById('addMaterialBtn2').addEventListener('click', addMaterial);
+    document.getElementById('materialInput').addEventListener('keydown', e => {
+        if (e.key === 'Enter') { e.preventDefault(); addMaterial(); }
+    });
 
-// Init
-renderMateriales();
-renderPasos();
+    document.getElementById('addPasoBtn').addEventListener('click', () => {
+        pasos.push({ titulo: '', descripcion: '', duracion_min: null });
+        renderPasos();
+    });
 
-}); // DOMContentLoaded
+    document.getElementById('protocoloForm').addEventListener('submit', serializeProtocolo);
+
+    renderMateriales();
+    renderPasos();
+});
 </script>

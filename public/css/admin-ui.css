@@ -393,6 +393,11 @@ h1.font-title, h2.font-title, h3.font-title {
 
 /* ── Page-header toolbar icon buttons ─────────────────────── */
 /* Use for primary add-actions and back navigation in page headers */
+
+/* Bootstrap modal must sit above the sidenav (z-index: 9999) */
+.modal         { --bs-modal-zindex: 10500; z-index: 10500 !important; }
+.modal-backdrop { --bs-backdrop-zindex: 10400; z-index: 10400 !important; }
+
 .ph-btn {
     display: inline-flex; align-items: center; justify-content: center;
     width: 38px; height: 38px; border-radius: 10px; flex-shrink: 0;
