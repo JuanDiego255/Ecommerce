@@ -25,8 +25,8 @@
 
     <div class="page-header d-flex align-items-center justify-content-between mb-3">
         <h4 class="mb-0">Plantillas de consentimiento</h4>
-        <a href="{{ route('ecd.consentimientos.create') }}" class="s-btn-primary">
-            <i class="fas fa-plus me-1"></i> Nueva plantilla
+        <a href="{{ route('ecd.consentimientos.create') }}" class="ph-btn ph-btn-add" title="Nueva plantilla" data-bs-toggle="tooltip" data-bs-placement="left">
+            <i class="fas fa-plus"></i>
         </a>
     </div>
 

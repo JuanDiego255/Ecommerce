@@ -12,8 +12,8 @@
 
     <div class="page-header d-flex align-items-center justify-content-between mb-3">
         <h4 class="mb-0">Administrar Cajas</h4>
-        <button type="button" data-bs-toggle="modal" data-bs-target="#add-caja-modal" class="s-btn-primary">
-            <i class="fas fa-plus me-1"></i> Nueva caja
+        <button type="button" data-bs-toggle="modal" data-bs-target="#add-caja-modal" class="ph-btn ph-btn-add" title="Nueva caja" data-bs-placement="left">
+            <i class="fas fa-plus"></i>
         </button>
     </div>
 

@@ -15,8 +15,8 @@
             <h4 class="mb-0">Consentimientos firmados</h4>
             <p style="font-size:.82rem;color:#64748b;margin:0;">{{ $paciente->nombre_completo }}</p>
         </div>
-        <a href="{{ route('ecd.pacientes.show', $paciente) }}" class="s-btn-sec">
-            <i class="fas fa-arrow-left me-1"></i> Volver
+        <a href="{{ route('ecd.pacientes.show', $paciente) }}" class="ph-btn ph-btn-back" title="Volver" data-bs-toggle="tooltip" data-bs-placement="left">
+            <i class="fas fa-arrow-left"></i>
         </a>
     </div>
 

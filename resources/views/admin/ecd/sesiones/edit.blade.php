@@ -17,8 +17,8 @@
             <h4 class="mb-0">Editar sesión</h4>
             <p style="font-size:.82rem;color:#64748b;margin:0;">{{ $paciente->nombre_completo }}</p>
         </div>
-        <a href="{{ route('ecd.sesiones.show', [$paciente, $sesion]) }}" class="s-btn-sec">
-            <i class="fas fa-arrow-left me-1"></i> Volver
+        <a href="{{ route('ecd.sesiones.show', [$paciente, $sesion]) }}" class="ph-btn ph-btn-back" title="Volver" data-bs-toggle="tooltip" data-bs-placement="left">
+            <i class="fas fa-arrow-left"></i>
         </a>
     </div>
 

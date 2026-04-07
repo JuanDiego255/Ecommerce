@@ -11,8 +11,8 @@
 @section('content')
     <div class="page-header d-flex align-items-center justify-content-between mb-3">
         <h4 class="mb-0">Administrar Arqueos</h4>
-        <a href="{{ url('/cajas/') }}" class="s-btn-sec">
-            <i class="fas fa-arrow-left me-1"></i> Volver
+        <a href="{{ url('/cajas/') }}" class="ph-btn ph-btn-back" title="Volver" data-bs-placement="left">
+            <i class="fas fa-arrow-left"></i>
         </a>
     </div>
 

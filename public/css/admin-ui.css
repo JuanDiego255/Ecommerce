@@ -376,7 +376,33 @@ h1.font-title, h2.font-title, h3.font-title {
 .act-btn.ab-neutral:hover { background: var(--gray1); }
 .act-btn.ab-add    { color: #fff; border-color: var(--blue); background: var(--blue); }
 .act-btn.ab-add:hover    { background: #0066d6; border-color: #0066d6; }
+/* Semantic color aliases */
+.act-btn.ab-blue   { color: var(--blue);   border-color: rgba(0,122,255,.25);  background: rgba(0,122,255,.08); }
+.act-btn.ab-blue:hover   { background: rgba(0,122,255,.18); }
+.act-btn.ab-green  { color: var(--green);  border-color: rgba(52,199,89,.25);  background: rgba(52,199,89,.08); }
+.act-btn.ab-green:hover  { background: rgba(52,199,89,.18); }
+.act-btn.ab-yellow { color: var(--orange); border-color: rgba(255,149,0,.25);  background: rgba(255,149,0,.08); }
+.act-btn.ab-yellow:hover { background: rgba(255,149,0,.18); }
+.act-btn.ab-red    { color: var(--red);    border-color: rgba(255,59,48,.25);  background: rgba(255,59,48,.08); }
+.act-btn.ab-red:hover    { background: rgba(255,59,48,.18); }
+.act-btn.ab-purple { color: #7c3aed;       border-color: rgba(124,58,237,.25); background: rgba(124,58,237,.08); }
+.act-btn.ab-purple:hover { background: rgba(124,58,237,.18); }
+.act-btn.ab-teal   { color: #0891b2;       border-color: rgba(8,145,178,.25);  background: rgba(8,145,178,.08); }
+.act-btn.ab-teal:hover   { background: rgba(8,145,178,.18); }
 .act-divider { width: 1px; height: 18px; background: var(--gray1); margin: 0 2px; flex-shrink: 0; }
+
+/* ── Page-header toolbar icon buttons ─────────────────────── */
+/* Use for primary add-actions and back navigation in page headers */
+.ph-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 38px; height: 38px; border-radius: 10px; flex-shrink: 0;
+    font-size: .9rem; cursor: pointer; border: 1.5px solid transparent;
+    text-decoration: none !important; transition: background .13s, border-color .13s, opacity .13s;
+}
+.ph-btn-add  { background: var(--blue); color: #fff !important; border-color: var(--blue); }
+.ph-btn-add:hover  { opacity: .85; }
+.ph-btn-back { background: var(--gray0); color: var(--gray4) !important; border-color: var(--gray1); }
+.ph-btn-back:hover { border-color: var(--blue); color: var(--blue) !important; }
 
 /* ═══════════════════════════════════════════════════════════════
    FORM CONTROLS

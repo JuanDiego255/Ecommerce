@@ -49,14 +49,20 @@
                 @endif
             </div>
             <div class="d-flex gap-2 flex-shrink-0">
-                <a href="{{ route('ecd.pacientes.edit', $paciente) }}" class="act-btn ab-yellow" title="Editar datos">
+                <a href="{{ route('ecd.pacientes.edit', $paciente) }}" class="act-btn ab-yellow" title="Editar datos" data-bs-toggle="tooltip" data-bs-placement="top">
                     <i class="fas fa-edit"></i>
                 </a>
-                <a href="{{ route('ecd.pacientes.historia', $paciente) }}" class="act-btn ab-blue" title="Historia clínica">
+                <a href="{{ route('ecd.pacientes.historia', $paciente) }}" class="act-btn ab-blue" title="Historia clínica" data-bs-toggle="tooltip" data-bs-placement="top">
                     <i class="fas fa-heartbeat"></i>
                 </a>
-                <a href="{{ route('ecd.sesiones.create', $paciente) }}" class="s-btn-primary" style="font-size:.82rem;padding:.4rem .9rem;">
-                    <i class="fas fa-plus me-1"></i> Nueva sesión
+                <a href="{{ route('ecd.galeria.index', $paciente) }}" class="act-btn ab-purple" title="Galería de imágenes" data-bs-toggle="tooltip" data-bs-placement="top">
+                    <i class="fas fa-images"></i>
+                </a>
+                <a href="{{ route('ecd.reportes.expediente', $paciente) }}" target="_blank" class="act-btn ab-teal" title="Imprimir expediente" data-bs-toggle="tooltip" data-bs-placement="top">
+                    <i class="fas fa-print"></i>
+                </a>
+                <a href="{{ route('ecd.sesiones.create', $paciente) }}" class="ph-btn ph-btn-add" title="Nueva sesión" data-bs-toggle="tooltip" data-bs-placement="left">
+                    <i class="fas fa-plus"></i>
                 </a>
             </div>
         </div>

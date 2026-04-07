@@ -32,9 +32,11 @@
         <div class="page-header d-flex align-items-center justify-content-between mb-3">
             <h4 class="mb-0">Editar plantilla</h4>
             <div class="d-flex gap-2">
-                <a href="{{ route('ecd.plantillas.index') }}" class="s-btn-sec">Cancelar</a>
-                <button type="submit" class="s-btn-primary" onclick="serializeCampos()">
-                    <i class="fas fa-save me-1"></i> Guardar cambios
+                <a href="{{ route('ecd.plantillas.index') }}" class="ph-btn ph-btn-back" title="Cancelar" data-bs-toggle="tooltip" data-bs-placement="left">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <button type="submit" class="ph-btn ph-btn-add" onclick="serializeCampos()" title="Guardar cambios" data-bs-toggle="tooltip" data-bs-placement="left">
+                    <i class="fas fa-save"></i>
                 </button>
             </div>
         </div>

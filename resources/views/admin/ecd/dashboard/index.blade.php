@@ -11,8 +11,8 @@
 
     <div class="page-header d-flex align-items-center justify-content-between mb-3">
         <h4 class="mb-0">Dashboard — Expediente Clínico</h4>
-        <a href="{{ route('ecd.pacientes.create') }}" class="s-btn-primary">
-            <i class="fas fa-plus me-1"></i> Nuevo paciente
+        <a href="{{ route('ecd.pacientes.create') }}" class="ph-btn ph-btn-add" title="Nuevo paciente" data-bs-toggle="tooltip" data-bs-placement="left">
+            <i class="fas fa-plus"></i>
         </a>
     </div>
 

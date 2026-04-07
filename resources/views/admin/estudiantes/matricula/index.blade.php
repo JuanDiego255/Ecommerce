@@ -24,11 +24,11 @@
         </h4>
         <div class="d-flex gap-2">
             <button type="button" data-bs-toggle="modal" data-bs-target="#matricula-estudiante-modal{{ $item->id }}"
-                class="s-btn-primary">
-                <i class="fas fa-plus me-1"></i> Nueva {{ $label }}
+                class="ph-btn ph-btn-add" title="Nueva {{ $label }}" data-bs-placement="left">
+                <i class="fas fa-plus"></i>
             </button>
-            <a href="{{ url('estudiantes/manage/' . ($item->tipo_estudiante == 'C' ? 'clases' : 'yoga')) }}" class="s-btn-sec">
-                <i class="fas fa-arrow-left me-1"></i> Volver
+            <a href="{{ url('estudiantes/manage/' . ($item->tipo_estudiante == 'C' ? 'clases' : 'yoga')) }}" class="ph-btn ph-btn-back" title="Volver" data-bs-placement="left">
+                <i class="fas fa-arrow-left"></i>
             </a>
         </div>
     </div>

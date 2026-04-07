@@ -12,8 +12,8 @@
 
     <div class="page-header d-flex align-items-center justify-content-between mb-3">
         <h4 class="mb-0">Administrar Especialistas</h4>
-        <button type="button" data-bs-toggle="modal" data-bs-target="#add-especialista-modal" class="s-btn-primary">
-            <i class="fas fa-plus me-1"></i> Nuevo especialista
+        <button type="button" data-bs-toggle="modal" data-bs-target="#add-especialista-modal" class="ph-btn ph-btn-add" title="Nuevo especialista" data-bs-placement="left">
+            <i class="fas fa-plus"></i>
         </button>
     </div>
 

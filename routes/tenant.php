@@ -580,6 +580,12 @@ Route::middleware([
                 Route::put('/protocolos/{protocolo}',           [\App\Http\Controllers\ProtocoloController::class, 'update'])->name('protocolos.update');
                 Route::delete('/protocolos/{protocolo}',        [\App\Http\Controllers\ProtocoloController::class, 'destroy'])->name('protocolos.destroy');
                 Route::patch('/protocolos/{protocolo}/toggle',  [\App\Http\Controllers\ProtocoloController::class, 'toggle'])->name('protocolos.toggle');
+                // Galería de imágenes
+                Route::get('/pacientes/{paciente}/galeria',                              [\App\Http\Controllers\GaleriaController::class, 'index'])->name('galeria.index');
+                Route::get('/pacientes/{paciente}/sesiones/{sesion}/comparar',           [\App\Http\Controllers\GaleriaController::class, 'comparar'])->name('galeria.comparar');
+                // Reportes imprimibles
+                Route::get('/pacientes/{paciente}/sesiones/{sesion}/reporte',            [\App\Http\Controllers\ReporteECDController::class, 'sesion'])->name('reportes.sesion');
+                Route::get('/pacientes/{paciente}/reporte',                              [\App\Http\Controllers\ReporteECDController::class, 'expediente'])->name('reportes.expediente');
             });
             // ─────────────────────────────────────────────────────────────
 

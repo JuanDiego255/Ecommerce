@@ -17,8 +17,8 @@
                 {{ $plantilla->nombre }} · {{ $paciente->nombre_completo }} · {{ $sesion->titulo }}
             </p>
         </div>
-        <a href="{{ route('ecd.sesiones.show', [$paciente, $sesion]) }}" class="s-btn-sec">
-            <i class="fas fa-arrow-left me-1"></i> Volver
+        <a href="{{ route('ecd.sesiones.show', [$paciente, $sesion]) }}" class="ph-btn ph-btn-back" title="Volver" data-bs-toggle="tooltip" data-bs-placement="left">
+            <i class="fas fa-arrow-left"></i>
         </a>
     </div>
 

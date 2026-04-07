@@ -44,11 +44,17 @@
                 </div>
             </div>
             <div class="d-flex gap-2">
-                <a href="{{ route('ecd.sesiones.edit', [$paciente, $sesion]) }}" class="act-btn ab-yellow" title="Editar sesión">
+                <a href="{{ route('ecd.sesiones.edit', [$paciente, $sesion]) }}" class="act-btn ab-yellow" title="Editar sesión" data-bs-toggle="tooltip" data-bs-placement="top">
                     <i class="fas fa-edit"></i>
                 </a>
-                <a href="{{ route('ecd.pacientes.show', $paciente) }}" class="s-btn-sec" style="font-size:.82rem;padding:.4rem .9rem;">
-                    <i class="fas fa-arrow-left me-1"></i> Volver
+                <a href="{{ route('ecd.galeria.comparar', [$paciente, $sesion]) }}" class="act-btn ab-purple" title="Comparar antes/después" data-bs-toggle="tooltip" data-bs-placement="top">
+                    <i class="fas fa-columns"></i>
+                </a>
+                <a href="{{ route('ecd.reportes.sesion', [$paciente, $sesion]) }}" target="_blank" class="act-btn ab-teal" title="Imprimir sesión" data-bs-toggle="tooltip" data-bs-placement="top">
+                    <i class="fas fa-print"></i>
+                </a>
+                <a href="{{ route('ecd.pacientes.show', $paciente) }}" class="ph-btn ph-btn-back" title="Volver" data-bs-toggle="tooltip" data-bs-placement="left">
+                    <i class="fas fa-arrow-left"></i>
                 </a>
             </div>
         </div>
