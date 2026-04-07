@@ -51,49 +51,102 @@
         {{-- Panel izquierdo: Modo y selección --}}
         <div class="col-md-4">
             <div class="surface p-3 h-100">
-                <p class="surface-title mb-3">Modo de venta</p>
+                <p style="font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:#a0aec0;margin-bottom:.75rem;">Modo de venta</p>
 
                 {{-- Opciones --}}
-                <div style="display:grid;gap:10px;margin-bottom:1rem;">
-                    <label class="d-flex align-items-start gap-2" style="cursor:pointer;">
-                        <input class="form-check-input mt-1" type="checkbox" value="1"
-                            @if ($especialista !== null && $especialista->especialista_id === null) checked @endif
-                            id="is_package" name="is_package">
-                        <span>
-                            <span class="fw-semibold" style="font-size:.85rem;">Solo paquetes o servicios</span><br>
-                            <small class="text-muted">No se asigna a un especialista específico.</small>
+                <div style="display:grid;gap:6px;margin-bottom:1rem;">
+                    <label class="venta-opt" for="is_package">
+                        <input type="checkbox" value="1" id="is_package" name="is_package"
+                            @if ($especialista !== null && $especialista->especialista_id === null) checked @endif>
+                        <span class="venta-opt-text">
+                            Solo paquetes o servicios
+                            <small>Sin especialista asignado</small>
                         </span>
                     </label>
-
-                    <label class="d-flex align-items-start gap-2" style="cursor:pointer;">
-                        <input @if ($especialista !== null && $especialista->is_gift_card === 1) checked @endif
-                            @if ($especialista === null || ($especialista !== null && $especialista->especialista_id !== null)) disabled @endif
-                            class="form-check-input mt-1" type="checkbox" value="1"
-                            id="gift_card" name="gift_card">
-                        <span>
-                            <span class="fw-semibold" style="font-size:.85rem;">Incluir tarjeta de regalo</span><br>
-                            <small class="text-muted">Suma ₡2,500 al monto de venta.</small>
+                    <label class="venta-opt" for="gift_card">
+                        <input type="checkbox" value="1" id="gift_card" name="gift_card"
+                            @if ($especialista !== null && $especialista->is_gift_card === 1) checked @endif
+                            @if ($especialista === null || ($especialista !== null && $especialista->especialista_id !== null)) disabled @endif>
+                        <span class="venta-opt-text">
+                            Incluir tarjeta de regalo
+                            <small>Suma ₡2,500 al monto</small>
                         </span>
                     </label>
-
-                    <label class="d-flex align-items-start gap-2" style="cursor:pointer;">
-                        <input class="form-check-input mt-1" type="checkbox" value="1"
-                            id="set_clinica" name="set_clinica">
-                        <span>
-                            <span class="fw-semibold" style="font-size:.85rem;">Todo el monto a la clínica</span><br>
-                            <small class="text-muted">El especialista recibe ₡0.</small>
+                    <label class="venta-opt" for="set_clinica">
+                        <input type="checkbox" value="1" id="set_clinica" name="set_clinica">
+                        <span class="venta-opt-text">
+                            Todo el monto a la clínica
+                            <small>El especialista recibe ₡0</small>
                         </span>
                     </label>
-
-                    <label class="d-flex align-items-start gap-2" style="cursor:pointer;">
-                        <input class="form-check-input mt-1" type="checkbox" value="1"
-                            id="custom_date" name="custom_date">
-                        <span>
-                            <span class="fw-semibold" style="font-size:.85rem;">Fecha manual</span><br>
-                            <small class="text-muted">Ingresar una fecha distinta a hoy.</small>
+                    <label class="venta-opt" for="custom_date">
+                        <input type="checkbox" value="1" id="custom_date" name="custom_date">
+                        <span class="venta-opt-text">
+                            Fecha manual
+                            <small>Distinta a la fecha de hoy</small>
                         </span>
                     </label>
                 </div>
+                <style>
+                    .venta-opt {
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+                        padding: 8px 10px;
+                        border-radius: 8px;
+                        cursor: pointer;
+                        transition: background .15s;
+                        border: 1px solid transparent;
+                    }
+                    .venta-opt:hover { background: #f4f6ff; border-color: #e0e4ff; }
+                    .venta-opt input[type=checkbox] {
+                        appearance: none;
+                        -webkit-appearance: none;
+                        width: 17px;
+                        height: 17px;
+                        min-width: 17px;
+                        border: 2px solid #cbd5e0;
+                        border-radius: 4px;
+                        background: #fff;
+                        cursor: pointer;
+                        transition: all .15s;
+                        position: relative;
+                    }
+                    .venta-opt input[type=checkbox]:checked {
+                        background: #5e72e4;
+                        border-color: #5e72e4;
+                    }
+                    .venta-opt input[type=checkbox]:checked::after {
+                        content: '';
+                        position: absolute;
+                        left: 3px; top: 0px;
+                        width: 5px; height: 9px;
+                        border: 2px solid #fff;
+                        border-top: none; border-left: none;
+                        transform: rotate(45deg);
+                    }
+                    .venta-opt input[type=checkbox]:disabled {
+                        opacity: .4;
+                        cursor: not-allowed;
+                    }
+                    .venta-opt-text {
+                        display: flex;
+                        flex-direction: column;
+                        font-size: .83rem;
+                        font-weight: 500;
+                        color: #2d3748;
+                        text-transform: none;
+                        letter-spacing: 0;
+                        line-height: 1.3;
+                    }
+                    .venta-opt-text small {
+                        font-size: .72rem;
+                        color: #a0aec0;
+                        font-weight: 400;
+                        text-transform: none;
+                        letter-spacing: 0;
+                    }
+                </style>
 
                 {{-- Campos de fecha manual (ocultos por defecto) --}}
                 <div id="custom_date_fields" class="d-none mb-3" style="display:grid;gap:10px;">
@@ -122,7 +175,7 @@
 
                 {{-- Separador --}}
                 <hr class="my-2">
-                <p class="surface-title mb-2">Especialista</p>
+                <p style="font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:#a0aec0;margin-bottom:.75rem;">Especialista</p>
 
                 <div style="display:grid;gap:10px;">
                     <div>
@@ -178,7 +231,7 @@
         {{-- Panel derecho: Montos y formulario --}}
         <div class="col-md-8">
             <div class="surface p-3">
-                <p class="surface-title mb-3">Detalle de la venta</p>
+                <p style="font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:#a0aec0;margin-bottom:.75rem;">Detalle de la venta</p>
 
                 <form class="form-horizontal" action="{{ url('venta/especialista/store') }}" method="post"
                     enctype="multipart/form-data">
@@ -204,7 +257,7 @@
 
                     <div class="row g-3">
                         {{-- Porcentaje (readonly, auto-llenado) --}}
-                        <div class="col-md-3" id="div_porc">
+                        <div class="col-md-2" id="div_porc">
                             <label class="filter-label">% Servicio</label>
                             <input readonly
                                 value="{{ old('input_porcentaje', isset($especialista->porcentaje) ? $especialista->porcentaje : '') }}"
@@ -214,7 +267,7 @@
                         </div>
 
                         {{-- Monto de venta --}}
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             <label class="filter-label">Monto de venta (₡)</label>
                             <input value="{{ old('monto_venta', isset($especialista->monto_venta) ? $especialista->monto_venta : '0') }}"
                                 required type="number" class="filter-input @error('monto_venta') is-invalid @enderror"
@@ -225,7 +278,7 @@
                         </div>
 
                         {{-- Monto producto --}}
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             <label class="filter-label">Monto producto (₡)</label>
                             <input value="{{ old('monto_producto_venta', isset($especialista->monto_producto_venta) ? $especialista->monto_producto_venta : '0') }}"
                                 type="number" class="filter-input @error('monto_producto_venta') is-invalid @enderror"
@@ -235,29 +288,31 @@
                             @enderror
                         </div>
 
-                        {{-- Tipo de pago + Calcular --}}
-                        <div class="col-md-3">
+                        {{-- Tipo de pago --}}
+                        <div class="col-md-4">
                             <label class="filter-label">Tipo de pago</label>
-                            <div class="d-flex gap-1">
-                                <select id="tipo_pago" name="tipo_pago"
-                                    class="filter-input @error('tipo_pago') is-invalid @enderror" style="flex:1;">
-                                    @foreach ($tipos as $key => $item)
-                                        @if (isset($especialista) && $especialista->tipo_pago_id == $item->id)
-                                            <option value="{{ $item->id }}" selected>{{ $item->tipo }}</option>
-                                        @endif
-                                        <option @if ($key == 0 && $especialista == null) selected @endif
-                                            value="{{ $item->id }}">{{ $item->tipo }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                <button type="button" id="btnCalculate" class="s-btn-primary"
-                                    style="white-space:nowrap;padding:.4rem .75rem;" title="Calcular montos">
-                                    <i class="fas fa-calculator"></i>
-                                </button>
-                            </div>
+                            <select id="tipo_pago" name="tipo_pago"
+                                class="filter-input @error('tipo_pago') is-invalid @enderror">
+                                @foreach ($tipos as $key => $item)
+                                    @if (isset($especialista) && $especialista->tipo_pago_id == $item->id)
+                                        <option value="{{ $item->id }}" selected>{{ $item->tipo }}</option>
+                                    @endif
+                                    <option @if ($key == 0 && $especialista == null) selected @endif
+                                        value="{{ $item->id }}">{{ $item->tipo }}
+                                    </option>
+                                @endforeach
+                            </select>
                             @error('tipo_pago')
                                 <span class="text-danger" style="font-size:.75rem;">{{ $message }}</span>
                             @enderror
+                        </div>
+
+                        {{-- Calcular --}}
+                        <div class="col-md-2 d-flex align-items-end">
+                            <button type="button" id="btnCalculate" class="s-btn-primary w-100"
+                                style="height:38px;" title="Calcular montos clínica / especialista">
+                                <i class="fas fa-calculator me-1"></i> Calcular
+                            </button>
                         </div>
 
                         {{-- Salario/servicio opcional --}}
