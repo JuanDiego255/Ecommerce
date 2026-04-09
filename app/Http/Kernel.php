@@ -71,5 +71,6 @@ class Kernel extends HttpKernel
         'setTenantDatabase' => \App\Http\Middleware\SetTenantDatabase::class,
         'isAre' => \App\Http\Middleware\GestionAre::class,
         'role' => \App\Http\Middleware\RoleMiddleware::class,
+        'ecd.access' => \App\Http\Middleware\EcdAccess::class,
     ];
 }

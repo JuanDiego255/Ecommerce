@@ -44,6 +44,7 @@ class TenantController extends Controller
             $tenant->license = $tenant_info->license;
             $tenant->manage_size = $tenant_info->manage_size;
             $tenant->manage_department = $tenant_info->manage_department;
+            $tenant->is_ecd = $tenant_info->is_ecd ?? 0;
             return $tenant;
         });
         return view('admin.tenant.index', compact('tenants'));
@@ -181,6 +182,25 @@ class TenantController extends Controller
             DB::rollBack();
         }
     }
+
+    public function isEcd($tenant, Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $tenants = Tenant::where('id', $tenant)->first();
+            tenancy()->initialize($tenants);
+            TenantInfo::where('tenant', $tenant)->update([
+                'is_ecd' => $request->is_ecd == '1' ? 1 : 0,
+            ]);
+            DB::commit();
+            tenancy()->end();
+            return redirect()->back()->with(['status' => 'Módulo ECD actualizado', 'icon' => 'success']);
+        } catch (\Exception $th) {
+            DB::rollBack();
+            return redirect()->back()->with(['status' => 'Error al actualizar', 'icon' => 'error']);
+        }
+    }
+
     public function store(Request $request)
     {
         //

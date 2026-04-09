@@ -521,7 +521,7 @@ Route::middleware([
             Route::delete('/suscriptor/delete/{id}', [SuscriptorController::class, 'destroy']);
 
             // ── ECD: Expediente Clínico Digital ───────────────────────────
-            Route::prefix('ecd')->name('ecd.')->group(function () {
+            Route::prefix('ecd')->name('ecd.')->middleware('ecd.access')->group(function () {
                 // Pacientes
                 Route::get('/pacientes',                    [\App\Http\Controllers\PacienteController::class, 'index'])->name('pacientes.index');
                 Route::get('/pacientes/crear',              [\App\Http\Controllers\PacienteController::class, 'create'])->name('pacientes.create');
