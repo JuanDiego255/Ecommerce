@@ -7,6 +7,14 @@ use Illuminate\Support\Facades\Http;
 
 class InstagramPublishService
 {
+    /**
+     * Max polling attempts and sleep between each (seconds) when waiting
+     * for a container to reach FINISHED status before publishing.
+     */
+    private const POLL_MAX     = 12;
+    private const POLL_SLEEP   = 5;   // seconds between polls
+    private const CHILD_SLEEP  = 3;   // initial wait after creating all child containers
+
     public function publishFeed(InstagramPost $post): array
     {
         $post->loadMissing(['account', 'media']);
@@ -19,51 +27,109 @@ class InstagramPublishService
             throw new \Exception('La publicación no tiene imágenes.');
         }
 
-        $token = $post->account->facebook_page_access_token;
+        $token    = $post->account->facebook_page_access_token;
         $igUserId = $post->account->instagram_business_account_id;
 
-        // Single o carrusel
+        // ── Single image ─────────────────────────────────────────────────
         if ($post->media->count() === 1) {
             $containerId = $this->createImageContainer(
                 igUserId: $igUserId,
-                token: $token,
+                token:    $token,
                 imageUrl: $this->buildTenantFileUrl($post, $post->media->first()->media_path),
-                caption: (string) $post->caption
+                caption:  (string) $post->caption
             );
+
+            $this->waitUntilContainerReady($igUserId, $token, $containerId);
 
             $mediaId = $this->publishContainer($igUserId, $token, $containerId);
 
             return ['container_id' => $containerId, 'media_id' => $mediaId];
         }
 
-        // Carrusel (hasta 10)
+        // ── Carousel (up to 10 images) ───────────────────────────────────
         $children = [];
         foreach ($post->media->take(10) as $m) {
-            $childContainerId = $this->createCarouselItemContainer(
+            $childId    = $this->createCarouselItemContainer(
                 igUserId: $igUserId,
-                token: $token,
+                token:    $token,
                 imageUrl: $this->buildTenantFileUrl($post, $m->media_path)
             );
-            $children[] = $childContainerId;
+            $children[] = $childId;
         }
+
+        // Give Instagram time to register all child containers internally
+        // before creating the carousel parent container.
+        sleep(self::CHILD_SLEEP);
 
         $carouselContainerId = $this->createCarouselContainer(
             igUserId: $igUserId,
-            token: $token,
+            token:    $token,
             children: $children,
-            caption: (string) $post->caption
+            caption:  (string) $post->caption
         );
+
+        // Poll until the carousel container is FINISHED processing
+        // (Instagram encodes + validates all images asynchronously).
+        $this->waitUntilContainerReady($igUserId, $token, $carouselContainerId);
 
         $mediaId = $this->publishContainer($igUserId, $token, $carouselContainerId);
 
         return ['container_id' => $carouselContainerId, 'media_id' => $mediaId];
     }
 
+    // ── Private helpers ──────────────────────────────────────────────────
+
+    /**
+     * Poll the container status until it is FINISHED (ready to publish).
+     *
+     * Instagram processes images asynchronously after creating a container.
+     * Possible status_code values: IN_PROGRESS, FINISHED, ERROR, PUBLISHED, EXPIRED.
+     *
+     * @throws \Exception if the container reports ERROR or doesn't finish in time.
+     */
+    private function waitUntilContainerReady(string $igUserId, string $token, string $containerId): void
+    {
+        for ($attempt = 1; $attempt <= self::POLL_MAX; $attempt++) {
+            sleep(self::POLL_SLEEP);
+
+            $resp = Http::get($this->graphUrl("/{$containerId}"), [
+                'fields'       => 'status_code,status',
+                'access_token' => $token,
+            ]);
+
+            if (!$resp->ok()) {
+                throw new \Exception(
+                    "Error verificando estado del container [{$containerId}]: " . $resp->body()
+                );
+            }
+
+            $statusCode = $resp->json('status_code');
+
+            if ($statusCode === 'FINISHED') {
+                return;
+            }
+
+            if ($statusCode === 'ERROR') {
+                $detail = $resp->json('status') ?? 'sin detalle';
+                throw new \Exception(
+                    "Container [{$containerId}] falló con estado ERROR: {$detail}"
+                );
+            }
+
+            // IN_PROGRESS, PUBLISHED (already published somehow), or unknown → keep waiting
+        }
+
+        throw new \Exception(
+            "El container [{$containerId}] no alcanzó FINISHED después de " .
+            (self::POLL_MAX * self::POLL_SLEEP) . " segundos. Intenta de nuevo."
+        );
+    }
+
     private function createImageContainer(string $igUserId, string $token, string $imageUrl, string $caption): string
     {
         $resp = Http::asForm()->post($this->graphUrl("/{$igUserId}/media"), [
-            'image_url' => $imageUrl,
-            'caption' => $caption,
+            'image_url'    => $imageUrl,
+            'caption'      => $caption,
             'access_token' => $token,
         ]);
 
@@ -80,9 +146,9 @@ class InstagramPublishService
     private function createCarouselItemContainer(string $igUserId, string $token, string $imageUrl): string
     {
         $resp = Http::asForm()->post($this->graphUrl("/{$igUserId}/media"), [
-            'image_url' => $imageUrl,
+            'image_url'        => $imageUrl,
             'is_carousel_item' => 'true',
-            'access_token' => $token,
+            'access_token'     => $token,
         ]);
 
         if (!$resp->ok()) {
@@ -98,9 +164,9 @@ class InstagramPublishService
     private function createCarouselContainer(string $igUserId, string $token, array $children, string $caption): string
     {
         $resp = Http::asForm()->post($this->graphUrl("/{$igUserId}/media"), [
-            'media_type' => 'CAROUSEL',
-            'children' => implode(',', $children),
-            'caption' => $caption,
+            'media_type'   => 'CAROUSEL',
+            'children'     => implode(',', $children),
+            'caption'      => $caption,
             'access_token' => $token,
         ]);
 
@@ -117,7 +183,7 @@ class InstagramPublishService
     private function publishContainer(string $igUserId, string $token, string $containerId): string
     {
         $resp = Http::asForm()->post($this->graphUrl("/{$igUserId}/media_publish"), [
-            'creation_id' => $containerId,
+            'creation_id'  => $containerId,
             'access_token' => $token,
         ]);
 
