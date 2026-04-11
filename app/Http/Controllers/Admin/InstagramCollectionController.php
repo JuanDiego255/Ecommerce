@@ -351,7 +351,7 @@ class InstagramCollectionController extends Controller
             'ecommerce_stock' => 'nullable|integer|min:0',
             'ecommerce_analysis_data' => 'nullable|string',
             'generated_caption' => 'nullable|string',
-            'caption_type' => 'nullable|string|in:instagram,ecommerce',
+            'caption_type' => 'nullable|string|in:template,instagram,ecommerce',
         ]);
 
         $account = InstagramAccount::where('is_active', true)->latest()->first();

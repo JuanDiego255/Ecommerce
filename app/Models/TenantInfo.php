@@ -14,7 +14,11 @@ class TenantInfo extends Model
         'title_suscrib_a', 'description_suscrib', 'footer', 'logo', 'login_image',
         'whatsapp', 'sinpe', 'email', 'iva', 'delivery', 'tenant', 'count',
         'parameters', 'cintillo', 'text_cintillo', 'logo_ico', 'about_us',
-        'kind_of_features', 'kind_business', 'license',
+        'kind_of_features', 'kind_business', 'license', 'is_ecd',
+    ];
+
+    protected $casts = [
+        'is_ecd' => 'boolean',
     ];
 
     // Indica si el tenant es de tipo landing page (página informativa)

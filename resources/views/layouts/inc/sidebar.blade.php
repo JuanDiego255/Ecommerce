@@ -205,6 +205,7 @@ aside.sidenav .submenu .nav-link {
                                         <span class="nav-link-text ms-1">Ventas</span>
                                     </a>
                                 </li>
+                                @if(!empty($tenantinfo->is_ecd))
                                 <li class="nav-item">
                                     <a @if(request()->is('ecd/dashboard')) class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-sidebar" @endif
                                         href="{{ route('ecd.dashboard') }}">
@@ -250,6 +251,7 @@ aside.sidenav .submenu .nav-link {
                                         <span class="nav-link-text ms-1">Protocolos</span>
                                     </a>
                                 </li>
+                                @endif
                             </ul>
                         </li>
                     @endif

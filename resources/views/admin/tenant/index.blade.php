@@ -72,6 +72,8 @@
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                     Licencia</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
+                                    ECD</th>
+                                <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                     Acciones</th>
 
                             </tr>
@@ -100,6 +102,22 @@
                                                 </div>
                                             </label>
 
+                                        </form>
+                                    </td>
+
+                                    <td class="align-middle text-center">
+                                        <form name="formEcd{{ $tenant->id }}" method="post"
+                                            action="{{ url('ecd-module/' . $tenant->id) }}" style="display:inline">
+                                            {{ csrf_field() }}
+                                            <label for="checkEcd{{ $tenant->id }}">
+                                                <div class="form-check">
+                                                    <input type="hidden" name="tenant" value="{{ $tenant->id }}">
+                                                    <input id="checkEcd{{ $tenant->id }}" class="form-check-input" type="checkbox"
+                                                        value="1" name="is_ecd"
+                                                        onchange="submitForm('formEcd{{ $tenant->id }}')"
+                                                        {{ $tenant->is_ecd == 1 ? 'checked' : '' }}>
+                                                </div>
+                                            </label>
                                         </form>
                                     </td>
 
