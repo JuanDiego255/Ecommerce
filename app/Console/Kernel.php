@@ -36,6 +36,12 @@ class Kernel extends ConsoleKernel
             ->appendOutputTo(storage_path('logs/auto_book_run.log'));
         $schedule->command('tenants:auto-book:expire-holds')->everyFiveMinutes()
             ->appendOutputTo(storage_path('logs/auto_book_expire_run.log'));
+        $schedule->command('instagram:clean-zombies --minutes=15')
+            ->everyTenMinutes()
+            ->appendOutputTo(storage_path('logs/instagram_zombie_cleanup.log'));
+        $schedule->command('instagram:reschedule-failed --window=4 --delay=30')
+            ->hourly()
+            ->appendOutputTo(storage_path('logs/instagram_reschedule_failed.log'));
     }
 
     /**

@@ -206,4 +206,66 @@ class InstagramPostController extends Controller
 
         return back()->with('ok', 'Publicación reprogramada.');
     }
+
+    /**
+     * Lightweight JSON endpoint polled by the frontend to track async publishing.
+     */
+    public function getStatus($id)
+    {
+        $post = InstagramPost::findOrFail($id);
+
+        return response()->json([
+            'id'           => $post->id,
+            'status'       => $post->status,
+            'status_text'  => $this->statusText($post->status),
+            'published_at' => $post->published_at
+                ? \Carbon\Carbon::parse($post->published_at)
+                    ->timezone(config('app.timezone'))
+                    ->format('Y-m-d H:i')
+                : null,
+            'error_message' => $post->error_message,
+        ]);
+    }
+
+    /**
+     * Reset a failed post back to draft so the user can retry publishing.
+     */
+    public function retryFailed($id)
+    {
+        $post = InstagramPost::findOrFail($id);
+
+        if ($post->status !== 'failed') {
+            return response()->json(['ok' => false, 'message' => 'Solo se puede reintentar posts fallidos.'], 422);
+        }
+
+        $post->update([
+            'status'        => 'draft',
+            'error_message' => null,
+        ]);
+
+        // Clear stored child container IDs so the next attempt creates fresh ones.
+        // (Instagram containers expire after ~24h anyway, and a new attempt may
+        //  use different images or a corrected domain, so reusing old IDs is unsafe.)
+        $post->media()->update(['meta_container_id' => null]);
+
+        // Also release the group lock so the carousel can be re-published
+        if ($post->collectionGroup) {
+            $post->collectionGroup->update(['instagram_post_id' => null]);
+        }
+
+        return response()->json(['ok' => true, 'message' => 'Post reiniciado. Puedes volver a publicar.']);
+    }
+
+    private function statusText(string $status): string
+    {
+        return match($status) {
+            'draft'      => 'Borrador',
+            'scheduled'  => 'Programado',
+            'publishing' => 'Publicando…',
+            'published'  => 'Publicado',
+            'failed'     => 'Fallido',
+            'cancelled'  => 'Cancelado',
+            default      => ucfirst($status),
+        };
+    }
 }

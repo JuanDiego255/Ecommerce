@@ -52,6 +52,16 @@ class PublishInstagramPostJob implements ShouldQueue
                 throw new \Exception('Tipo no soportado en MVP: ' . $post->type);
             }
 
+            // Token expiry check — fail fast with a clear message so the user knows
+            // they need to reconnect their Instagram account, not just retry the post.
+            if ($post->account && $post->account->token_expires_at && $post->account->token_expires_at->isPast()) {
+                throw new \Exception(
+                    'El token de Instagram ha expirado (venció el ' .
+                    $post->account->token_expires_at->format('d/m/Y') .
+                    '). Reconecta la cuenta desde Instagram → Configuración.'
+                );
+            }
+
             // Si está en draft/scheduled/failed -> lo pasamos a publishing
             // Si ya está publishing, lo dejamos (pero igual seguimos, porque el lock nos protege).
             if ($post->status !== 'publishing') {

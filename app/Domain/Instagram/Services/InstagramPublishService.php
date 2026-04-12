@@ -7,6 +7,10 @@ use Illuminate\Support\Facades\Http;
 
 class InstagramPublishService
 {
+    public function __construct(
+        private readonly InstagramPrePublishValidator $validator
+    ) {}
+
     /**
      * Max polling attempts and sleep between each (seconds) when waiting
      * for a container to reach FINISHED status before publishing.
@@ -19,13 +23,8 @@ class InstagramPublishService
     {
         $post->loadMissing(['account', 'media']);
 
-        if (!$post->account || !$post->account->facebook_page_access_token || !$post->account->instagram_business_account_id) {
-            throw new \Exception('Cuenta Instagram no está correctamente conectada (token/page/ig_user faltante).');
-        }
-
-        if ($post->media->count() < 1) {
-            throw new \Exception('La publicación no tiene imágenes.');
-        }
+        // Pre-flight validation: fail fast before touching the Instagram API.
+        $this->validator->validate($post);
 
         $token    = $post->account->facebook_page_access_token;
         $igUserId = $post->account->instagram_business_account_id;
@@ -47,13 +46,25 @@ class InstagramPublishService
         }
 
         // ── Carousel (up to 10 images) ───────────────────────────────────
+        // Idempotency: reuse any container IDs that were already created on a
+        // previous (failed) attempt so we don't create orphan containers.
         $children = [];
         foreach ($post->media->take(10) as $m) {
-            $childId    = $this->createCarouselItemContainer(
+            if (!empty($m->meta_container_id)) {
+                // Reuse the container from the previous attempt
+                $children[] = $m->meta_container_id;
+                continue;
+            }
+
+            $childId = $this->createCarouselItemContainer(
                 igUserId: $igUserId,
                 token:    $token,
                 imageUrl: $this->buildTenantFileUrl($post, $m->media_path)
             );
+
+            // Persist the container ID so retries can reuse it
+            $m->update(['meta_container_id' => $childId]);
+
             $children[] = $childId;
         }
 

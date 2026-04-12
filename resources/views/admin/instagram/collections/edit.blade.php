@@ -661,10 +661,18 @@
                                                 </div>
                                             @endif
 
-                                            @if (($post->status ?? null) === 'failed' && !empty($post->error_message))
-                                                <div class="ig-postbox-error">
-                                                    <strong>Error:</strong> {{ $post->error_message }}
-                                                </div>
+                                            @if (($post->status ?? null) === 'failed')
+                                                @if (!empty($post->error_message))
+                                                    <div class="ig-postbox-error">
+                                                        <strong>Error:</strong> {{ $post->error_message }}
+                                                    </div>
+                                                @endif
+                                                <button type="button"
+                                                    class="btn btn-sm btn-warning mt-2 w-100 btn-retry-post"
+                                                    data-post-id="{{ $post->id }}"
+                                                    data-group-id="{{ $group->id }}">
+                                                    <i class="fas fa-redo"></i> Reintentar publicación
+                                                </button>
                                             @endif
                                         </div>
                                     @endif
@@ -1761,9 +1769,116 @@
                 }
             }
 
+            // ── Async status polling ──────────────────────────────────────────────
+            // After dispatching an async job, poll the server every 4s until the
+            // post reaches a terminal status (published / failed / cancelled).
+            const _pollingTimers = {};
+
+            function pollPostStatus(postId, groupId) {
+                // Cancel any existing poll for this group
+                if (_pollingTimers[groupId]) clearTimeout(_pollingTimers[groupId]);
+
+                const statusUrl = `/instagram/posts/${postId}/status`;
+                const maxAttempts = 30;   // 30 × 4s = 2 minutes max
+                let attempts = 0;
+
+                async function checkStatus() {
+                    attempts++;
+                    try {
+                        const resp = await fetch(statusUrl, {
+                            headers: { 'Accept': 'application/json' }
+                        });
+                        if (!resp.ok) throw new Error('HTTP ' + resp.status);
+
+                        const data = await resp.json();
+                        const terminal = ['published', 'failed', 'cancelled'];
+
+                        if (terminal.includes(data.status)) {
+                            // Update the carousel card with final state
+                            updateCarouselToLocked(groupId, data);
+
+                            if (data.status === 'published') {
+                                showSuccessNotification('¡Publicado en Instagram correctamente!');
+                            } else if (data.status === 'failed') {
+                                showErrorNotification(
+                                    data.error_message
+                                        ? 'Error al publicar: ' + data.error_message
+                                        : 'La publicación falló. Revisa el error y reintenta.'
+                                );
+                                // Show retry button on the postbox
+                                showRetryButton(groupId, postId);
+                            }
+                            delete _pollingTimers[groupId];
+                            return;
+                        }
+
+                        // Still processing — keep polling unless max attempts reached
+                        if (attempts >= maxAttempts) {
+                            showErrorNotification('El proceso tardó demasiado. Verifica el estado manualmente.');
+                            delete _pollingTimers[groupId];
+                            return;
+                        }
+                    } catch (e) {
+                        console.warn('pollPostStatus error:', e);
+                    }
+
+                    _pollingTimers[groupId] = setTimeout(checkStatus, 4000);
+                }
+
+                _pollingTimers[groupId] = setTimeout(checkStatus, 4000);
+            }
+
+            function showRetryButton(groupId, postId) {
+                const col = document.querySelector(`.ig-list[data-group-id="${groupId}"]`);
+                if (!col) return;
+                const postbox = col.closest('.ig-col')?.querySelector('.ig-postbox');
+                if (!postbox) return;
+
+                // Don't add twice
+                if (postbox.querySelector('.btn-retry-post')) return;
+
+                const retryBtn = document.createElement('button');
+                retryBtn.className = 'btn btn-sm btn-warning mt-2 w-100 btn-retry-post';
+                retryBtn.innerHTML = '<i class="fas fa-redo"></i> Reintentar publicación';
+                retryBtn.addEventListener('click', () => retryPost(postId, groupId, retryBtn));
+                postbox.appendChild(retryBtn);
+            }
+
+            async function retryPost(postId, groupId, btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Reiniciando...';
+                try {
+                    const resp = await fetch(`/instagram/posts/${postId}/retry`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': @json(csrf_token()),
+                            'Accept': 'application/json'
+                        }
+                    });
+                    const data = await resp.json();
+                    if (!resp.ok || !data.ok) throw new Error(data.message || 'Error');
+
+                    showSuccessNotification(data.message);
+                    // Reload so the carousel shows publish buttons again
+                    setTimeout(() => window.location.reload(), 1200);
+                } catch (e) {
+                    showErrorNotification(e.message || 'Error al reintentar.');
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-redo"></i> Reintentar publicación';
+                }
+            }
+
+            // Double-submit guard: one in-flight request per group at a time.
+            const _submitting = {};
+
             // Handle publish button click via AJAX
             async function submitFormAjax(form, publishBtn) {
                 const groupId = form.getAttribute('data-group-id');
+
+                // Prevent double-submit for this specific group
+                if (_submitting[groupId]) return;
+                _submitting[groupId] = true;
+
                 const scheduleBtn = form.querySelector('.btn-open-schedule');
                 const originalBtnText = publishBtn ? publishBtn.innerHTML : 'Publicar ahora';
 
@@ -1794,15 +1909,20 @@
                         throw new Error(data.message || 'Error al publicar');
                     }
 
-                    // Success - update the UI
+                    // Success - update the UI (buttons stay locked; carousel is now published/queued)
                     updateCarouselToLocked(groupId, data.post);
                     showSuccessNotification(data.message);
+
+                    // Start polling if the post is still being processed
+                    if (data.post && data.post.id && data.post.status === 'publishing') {
+                        pollPostStatus(data.post.id, groupId);
+                    }
 
                 } catch (error) {
                     console.error('Error publishing:', error);
                     showErrorNotification(error.message || 'Error al publicar el carrusel');
 
-                    // Re-enable the buttons
+                    // Re-enable the buttons on failure
                     if (publishBtn) {
                         publishBtn.disabled = false;
                         publishBtn.innerHTML = originalBtnText;
@@ -1810,6 +1930,8 @@
                     if (scheduleBtn) {
                         scheduleBtn.disabled = false;
                     }
+                } finally {
+                    delete _submitting[groupId];
                 }
             }
 
@@ -1823,6 +1945,15 @@
                         form.querySelector('input[name="publish_mode"]').value = 'now';
                         submitFormAjax(form, this);
                     }
+                });
+            });
+
+            // Click handler for server-rendered retry buttons (failed posts already in the page)
+            document.querySelectorAll('.btn-retry-post[data-post-id]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const postId  = this.getAttribute('data-post-id');
+                    const groupId = this.getAttribute('data-group-id');
+                    retryPost(postId, groupId, this);
                 });
             });
 

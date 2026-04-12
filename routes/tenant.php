@@ -673,6 +673,8 @@ Route::middleware([
 
                 Route::post('/instagram/posts/{id}/publish-now', [InstagramPostController::class, 'publishNow'])->name('instagram.posts.publishNow');
                 Route::post('/instagram/posts/{id}/reschedule', [InstagramPostController::class, 'reschedule'])->name('instagram.posts.reschedule');
+                Route::get('/instagram/posts/{id}/status', [InstagramPostController::class, 'getStatus'])->name('instagram.posts.status');
+                Route::post('/instagram/posts/{id}/retry', [InstagramPostController::class, 'retryFailed'])->name('instagram.posts.retry');
 
                 /**
                  * Instagram - colecciones

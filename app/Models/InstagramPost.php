@@ -16,15 +16,17 @@ class InstagramPost extends Model
         'status',
         'scheduled_at',
         'published_at',
+        'auto_retried_at',
         'meta_container_id',
         'meta_media_id',
         'error_message',
-        'tenant_domain'
+        'tenant_domain',
     ];
 
     protected $casts = [
-        'scheduled_at' => 'datetime',
-        'published_at' => 'datetime',
+        'scheduled_at'   => 'datetime',
+        'published_at'   => 'datetime',
+        'auto_retried_at' => 'datetime',
     ];
 
     public function account()
@@ -37,6 +39,15 @@ class InstagramPost extends Model
         return $this->hasMany(InstagramPostMedia::class)->orderBy('sort_order')->orderBy('id');
     }
 
+
+    /**
+     * The collection group that generated this post (if any).
+     * Used to release the group lock when retrying a failed post.
+     */
+    public function collectionGroup()
+    {
+        return $this->hasOne(InstagramCollectionGroup::class, 'instagram_post_id');
+    }
 
     // Helpers rápidos (útiles en vistas)
     public function isFeed(): bool

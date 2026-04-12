@@ -13,6 +13,7 @@ class InstagramPostMedia extends Model
         'sort_order',
         'media_type',
         'media_path',
+        'meta_container_id',
     ];
 
     public function post()

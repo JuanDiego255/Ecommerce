@@ -513,13 +513,11 @@ class InstagramCollectionController extends Controller
         $post->refresh();
 
         if ($request->publish_mode === 'now') {
-            // Ejecuta inmediatamente (no requiere queue:work)
-            Bus::dispatchSync(new PublishInstagramPostJob($post->id));
+            // Dispatch async — the job runs in the queue worker (QUEUE_CONNECTION=database).
+            // The frontend will poll /instagram/posts/{id}/status until published or failed.
+            dispatch(new PublishInstagramPostJob($post->id));
 
-            // Recargar para obtener status actualizado después de publicar
-            $post->refresh();
-
-            $msg = "Carrusel '{$group->name}' publicado (o en proceso).";
+            $msg = "Carrusel '{$group->name}' enviado a publicar. El estado se actualizará en breve.";
 
             if ($isAjax) {
                 return response()->json([
@@ -527,10 +525,10 @@ class InstagramCollectionController extends Controller
                     'message' => $msg,
                     'post' => [
                         'id' => $post->id,
-                        'status' => $post->status,
+                        'status' => $post->status,   // 'publishing' at this point
                         'status_text' => $this->getStatusText($post->status),
-                        'published_at' => $post->published_at ? Carbon::parse($post->published_at)->timezone(config('app.timezone'))->format('Y-m-d H:i') : null,
-                        'error_message' => $post->error_message,
+                        'published_at' => null,
+                        'error_message' => null,
                     ],
                     'group' => [
                         'id' => $group->id,
