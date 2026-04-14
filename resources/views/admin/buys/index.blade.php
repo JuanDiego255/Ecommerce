@@ -366,6 +366,24 @@ div.dt-buttons button.dt-button:hover {
                                             <i class="material-icons">delete</i>
                                         </button>
                                     </form>
+
+                                    <div class="act-divider"></div>
+
+                                    {{-- Ver info de envío --}}
+                                    <button type="button"
+                                        class="act-btn ab-neutral btn-shipping-info"
+                                        data-buy-id="{{ $buy->id }}"
+                                        data-bs-toggle="tooltip" title="Ver info de envío">
+                                        <i class="material-icons">local_shipping</i>
+                                    </button>
+
+                                    {{-- Ver items --}}
+                                    <button type="button"
+                                        class="act-btn ab-neutral btn-view-items"
+                                        data-buy-id="{{ $buy->id }}"
+                                        data-bs-toggle="tooltip" title="Ver items del pedido">
+                                        <i class="material-icons">shopping_bag</i>
+                                    </button>
                                 </div>
                             </td>
 
@@ -483,7 +501,201 @@ div.dt-buttons button.dt-button:hover {
     </div>
 
 </div>
+
+{{-- ── Modal: Info de envío ──────────────────────────────────────────── --}}
+<div class="modal fade" id="shippingModal" tabindex="-1" aria-labelledby="shippingModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-md">
+        <div class="modal-content" style="border-radius:18px;border:none;overflow:hidden;">
+            <div class="modal-header" style="background:var(--gray0);border-bottom:1px solid var(--gray1);padding:16px 22px;">
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <div style="width:34px;height:34px;border-radius:10px;background:rgba(0,122,255,.1);display:flex;align-items:center;justify-content:center;">
+                        <i class="material-icons" style="font-size:1.1rem;color:var(--blue);">local_shipping</i>
+                    </div>
+                    <div>
+                        <h6 class="modal-title mb-0" id="shippingModalLabel" style="font-weight:700;font-size:.9rem;color:var(--black);">Información de envío</h6>
+                        <p class="mb-0" style="font-size:.72rem;color:var(--gray3);" id="shippingModalOrderId"></p>
+                    </div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" style="padding:22px;">
+                <div id="shippingModalBody">
+                    <div class="text-center py-4" id="shippingModalLoading">
+                        <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                        <p class="mt-2 mb-0" style="font-size:.78rem;color:var(--gray3);">Cargando…</p>
+                    </div>
+                    <div id="shippingModalContent" style="display:none;">
+                        <div class="row g-3">
+                            <div class="col-6">
+                                <label style="font-size:.67rem;font-weight:600;color:var(--gray3);text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:3px;">Nombre</label>
+                                <p class="mb-0" style="font-size:.85rem;font-weight:500;color:var(--black);" id="si-name">—</p>
+                            </div>
+                            <div class="col-6">
+                                <label style="font-size:.67rem;font-weight:600;color:var(--gray3);text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:3px;">Teléfono</label>
+                                <p class="mb-0" style="font-size:.85rem;font-weight:500;color:var(--black);" id="si-telephone">—</p>
+                            </div>
+                            <div class="col-12">
+                                <label style="font-size:.67rem;font-weight:600;color:var(--gray3);text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:3px;">E-mail</label>
+                                <p class="mb-0" style="font-size:.85rem;color:var(--black);" id="si-email">—</p>
+                            </div>
+                            <div class="col-12"><hr style="margin:4px 0;border-color:var(--gray1);"></div>
+                            <div class="col-6">
+                                <label style="font-size:.67rem;font-weight:600;color:var(--gray3);text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:3px;">País</label>
+                                <p class="mb-0" style="font-size:.85rem;color:var(--black);" id="si-country">—</p>
+                            </div>
+                            <div class="col-6">
+                                <label style="font-size:.67rem;font-weight:600;color:var(--gray3);text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:3px;">Provincia</label>
+                                <p class="mb-0" style="font-size:.85rem;color:var(--black);" id="si-province">—</p>
+                            </div>
+                            <div class="col-6">
+                                <label style="font-size:.67rem;font-weight:600;color:var(--gray3);text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:3px;">Cantón</label>
+                                <p class="mb-0" style="font-size:.85rem;color:var(--black);" id="si-city">—</p>
+                            </div>
+                            <div class="col-6">
+                                <label style="font-size:.67rem;font-weight:600;color:var(--gray3);text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:3px;">Distrito</label>
+                                <p class="mb-0" style="font-size:.85rem;color:var(--black);" id="si-district">—</p>
+                            </div>
+                            <div class="col-12">
+                                <label style="font-size:.67rem;font-weight:600;color:var(--gray3);text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:3px;">Dirección</label>
+                                <p class="mb-0" style="font-size:.85rem;color:var(--black);" id="si-address">—</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="shippingModalError" style="display:none;" class="alert alert-danger mb-0 py-2" style="font-size:.8rem;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- ── Modal: Ver items ──────────────────────────────────────────────── --}}
+<div class="modal fade" id="itemsModal" tabindex="-1" aria-labelledby="itemsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+        <div class="modal-content" style="border-radius:18px;border:none;overflow:hidden;">
+            <div class="modal-header" style="background:var(--gray0);border-bottom:1px solid var(--gray1);padding:16px 22px;">
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <div style="width:34px;height:34px;border-radius:10px;background:rgba(52,199,89,.1);display:flex;align-items:center;justify-content:center;">
+                        <i class="material-icons" style="font-size:1.1rem;color:var(--green);">shopping_bag</i>
+                    </div>
+                    <div>
+                        <h6 class="modal-title mb-0" id="itemsModalLabel" style="font-weight:700;font-size:.9rem;color:var(--black);">Artículos del pedido</h6>
+                        <p class="mb-0" style="font-size:.72rem;color:var(--gray3);" id="itemsModalOrderId"></p>
+                    </div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" style="padding:18px 22px;">
+                <div id="itemsModalLoading" class="text-center py-4">
+                    <div class="spinner-border spinner-border-sm text-success" role="status"></div>
+                    <p class="mt-2 mb-0" style="font-size:.78rem;color:var(--gray3);">Cargando artículos…</p>
+                </div>
+                <div id="itemsModalContent" style="display:none;"></div>
+                <div id="itemsModalError" style="display:none;" class="alert alert-danger mb-0 py-2"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection
 @section('script')
     <script src="{{ asset('js/datatables.js') }}"></script>
+    <script>
+    (function () {
+        const shippingModal = new bootstrap.Modal(document.getElementById('shippingModal'));
+        const itemsModal    = new bootstrap.Modal(document.getElementById('itemsModal'));
+        let lastFetched = {};   // cache per buy id to avoid repeated AJAX calls
+
+        async function fetchQuickInfo(buyId) {
+            if (lastFetched[buyId]) return lastFetched[buyId];
+            const resp = await fetch(`/buy/${buyId}/quick-info`, {
+                headers: { 'Accept': 'application/json' }
+            });
+            if (!resp.ok) throw new Error('Error al cargar los datos del pedido.');
+            const data = await resp.json();
+            lastFetched[buyId] = data;
+            return data;
+        }
+
+        // ── Shipping modal ──────────────────────────────────────────────
+        document.querySelectorAll('.btn-shipping-info').forEach(btn => {
+            btn.addEventListener('click', async function () {
+                const buyId = this.getAttribute('data-buy-id');
+                document.getElementById('shippingModalOrderId').textContent = 'Pedido #' + buyId;
+                document.getElementById('shippingModalLoading').style.display = 'block';
+                document.getElementById('shippingModalContent').style.display = 'none';
+                document.getElementById('shippingModalError').style.display   = 'none';
+                shippingModal.show();
+
+                try {
+                    const data = await fetchQuickInfo(buyId);
+                    const s = data.shipping;
+                    document.getElementById('si-name').textContent      = s.name      || '—';
+                    document.getElementById('si-telephone').textContent  = s.telephone || '—';
+                    document.getElementById('si-email').textContent      = s.email     || '—';
+                    document.getElementById('si-country').textContent    = s.country   || '—';
+                    document.getElementById('si-province').textContent   = s.province  || '—';
+                    document.getElementById('si-city').textContent       = s.city      || '—';
+                    document.getElementById('si-district').textContent   = s.district  || '—';
+                    document.getElementById('si-address').textContent    = s.address   || '—';
+                    document.getElementById('shippingModalLoading').style.display = 'none';
+                    document.getElementById('shippingModalContent').style.display = 'block';
+                } catch (e) {
+                    document.getElementById('shippingModalLoading').style.display = 'none';
+                    const errEl = document.getElementById('shippingModalError');
+                    errEl.textContent = e.message;
+                    errEl.style.display = 'block';
+                }
+            });
+        });
+
+        // ── Items modal ─────────────────────────────────────────────────
+        document.querySelectorAll('.btn-view-items').forEach(btn => {
+            btn.addEventListener('click', async function () {
+                const buyId = this.getAttribute('data-buy-id');
+                document.getElementById('itemsModalOrderId').textContent  = 'Pedido #' + buyId;
+                document.getElementById('itemsModalLoading').style.display  = 'block';
+                document.getElementById('itemsModalContent').style.display  = 'none';
+                document.getElementById('itemsModalError').style.display    = 'none';
+                itemsModal.show();
+
+                try {
+                    const data = await fetchQuickInfo(buyId);
+                    const container = document.getElementById('itemsModalContent');
+                    if (!data.items || data.items.length === 0) {
+                        container.innerHTML = '<p class="text-center py-3" style="color:var(--gray3);font-size:.82rem;">Sin artículos registrados.</p>';
+                    } else {
+                        container.innerHTML = data.items.map(item => {
+                            const attrs = (item.attributes || []).map(a =>
+                                `<span style="display:inline-flex;align-items:center;font-size:.68rem;font-weight:600;border-radius:20px;padding:3px 9px;background:var(--gray1);color:var(--gray3);white-space:nowrap;">${a}</span>`
+                            ).join(' ');
+                            const imgHtml = item.image_url
+                                ? `<img src="${item.image_url}" style="width:56px;height:56px;object-fit:cover;border-radius:10px;border:1px solid var(--gray1);flex-shrink:0;">`
+                                : `<div style="width:56px;height:56px;border-radius:10px;background:var(--gray1);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="material-icons" style="color:var(--gray3);font-size:1.4rem;">image_not_supported</i></div>`;
+                            return `
+                            <div style="display:flex;align-items:flex-start;gap:14px;padding:12px 0;border-bottom:1px solid var(--gray1);">
+                                ${imgHtml}
+                                <div style="flex:1;min-width:0;">
+                                    <p style="margin:0 0 4px;font-size:.85rem;font-weight:600;color:var(--black);">${item.name}</p>
+                                    <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:5px;">${attrs || '<span style="font-size:.75rem;color:var(--gray3);">Sin atributos</span>'}</div>
+                                </div>
+                                <div style="text-align:right;flex-shrink:0;">
+                                    <p style="margin:0 0 2px;font-size:.72rem;font-weight:600;color:var(--gray3);text-transform:uppercase;letter-spacing:.03em;">Cantidad</p>
+                                    <p style="margin:0;font-size:1.1rem;font-weight:700;color:var(--black);">${item.quantity}</p>
+                                    <p style="margin:4px 0 0;font-size:.75rem;color:var(--gray3);">₡${Number(item.total).toLocaleString('es-CR')}</p>
+                                </div>
+                            </div>`;
+                        }).join('');
+                    }
+                    document.getElementById('itemsModalLoading').style.display = 'none';
+                    container.style.display = 'block';
+                } catch (e) {
+                    document.getElementById('itemsModalLoading').style.display = 'none';
+                    const errEl = document.getElementById('itemsModalError');
+                    errEl.textContent = e.message;
+                    errEl.style.display = 'block';
+                }
+            });
+        });
+    })();
+    </script>
 @endsection

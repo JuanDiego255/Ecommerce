@@ -47,18 +47,11 @@ var dataTable = $('#table').DataTable({
     }
 });
 
-function setearEntregado() {
-    var headers = $('#table th');
-
-    headers.each(function (index) {
-        if ($(this).text().trim() === 'Entregado') {
-            dataTable.search("Pendiente").draw();
-            return false;
-        }
-    });
+// Apply initial filter based on the status dropdown (if it exists on this page).
+// Previously used a broken header-text check that never matched ("Entregado" vs "Entrega").
+if ($('#recordsPerStatus').length && $('#recordsPerStatus').val()) {
+    dataTable.search($('#recordsPerStatus').val()).draw();
 }
-
-setearEntregado();
 
 $('#recordsPerPage').on('change', function () {
     var recordsPerPage = parseInt($(this).val());
