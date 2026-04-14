@@ -601,9 +601,13 @@ div.dt-buttons button.dt-button:hover {
     <script src="{{ asset('js/datatables.js') }}"></script>
     <script>
     (function () {
-        const shippingModal = new bootstrap.Modal(document.getElementById('shippingModal'));
-        const itemsModal    = new bootstrap.Modal(document.getElementById('itemsModal'));
         let lastFetched = {};   // cache per buy id to avoid repeated AJAX calls
+
+        // Lazy modal getter — Bootstrap may not be available at script parse time
+        // because bootstrap.min.js uses `defer`. We instantiate on first use.
+        function getModal(id) {
+            return bootstrap.Modal.getOrCreateInstance(document.getElementById(id));
+        }
 
         async function fetchQuickInfo(buyId) {
             if (lastFetched[buyId]) return lastFetched[buyId];
@@ -624,7 +628,7 @@ div.dt-buttons button.dt-button:hover {
                 document.getElementById('shippingModalLoading').style.display = 'block';
                 document.getElementById('shippingModalContent').style.display = 'none';
                 document.getElementById('shippingModalError').style.display   = 'none';
-                shippingModal.show();
+                getModal('shippingModal').show();
 
                 try {
                     const data = await fetchQuickInfo(buyId);
@@ -656,7 +660,7 @@ div.dt-buttons button.dt-button:hover {
                 document.getElementById('itemsModalLoading').style.display  = 'block';
                 document.getElementById('itemsModalContent').style.display  = 'none';
                 document.getElementById('itemsModalError').style.display    = 'none';
-                itemsModal.show();
+                getModal('itemsModal').show();
 
                 try {
                     const data = await fetchQuickInfo(buyId);
