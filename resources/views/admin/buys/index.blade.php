@@ -621,84 +621,81 @@ div.dt-buttons button.dt-button:hover {
         }
 
         // ── Shipping modal ──────────────────────────────────────────────
-        document.querySelectorAll('.btn-shipping-info').forEach(btn => {
-            btn.addEventListener('click', async function () {
-                const buyId = this.getAttribute('data-buy-id');
-                document.getElementById('shippingModalOrderId').textContent = 'Pedido #' + buyId;
-                document.getElementById('shippingModalLoading').style.display = 'block';
-                document.getElementById('shippingModalContent').style.display = 'none';
-                document.getElementById('shippingModalError').style.display   = 'none';
-                getModal('shippingModal').show();
+        // jQuery delegation so clicks work on any DataTables-filtered state
+        $(document).on('click', '.btn-shipping-info', async function () {
+            const buyId = $(this).data('buy-id');
+            document.getElementById('shippingModalOrderId').textContent = 'Pedido #' + buyId;
+            document.getElementById('shippingModalLoading').style.display = 'block';
+            document.getElementById('shippingModalContent').style.display = 'none';
+            document.getElementById('shippingModalError').style.display   = 'none';
+            getModal('shippingModal').show();
 
-                try {
-                    const data = await fetchQuickInfo(buyId);
-                    const s = data.shipping;
-                    document.getElementById('si-name').textContent      = s.name      || '—';
-                    document.getElementById('si-telephone').textContent  = s.telephone || '—';
-                    document.getElementById('si-email').textContent      = s.email     || '—';
-                    document.getElementById('si-country').textContent    = s.country   || '—';
-                    document.getElementById('si-province').textContent   = s.province  || '—';
-                    document.getElementById('si-city').textContent       = s.city      || '—';
-                    document.getElementById('si-district').textContent   = s.district  || '—';
-                    document.getElementById('si-address').textContent    = s.address   || '—';
-                    document.getElementById('shippingModalLoading').style.display = 'none';
-                    document.getElementById('shippingModalContent').style.display = 'block';
-                } catch (e) {
-                    document.getElementById('shippingModalLoading').style.display = 'none';
-                    const errEl = document.getElementById('shippingModalError');
-                    errEl.textContent = e.message;
-                    errEl.style.display = 'block';
-                }
-            });
+            try {
+                const data = await fetchQuickInfo(buyId);
+                const s = data.shipping;
+                document.getElementById('si-name').textContent      = s.name      || '—';
+                document.getElementById('si-telephone').textContent  = s.telephone || '—';
+                document.getElementById('si-email').textContent      = s.email     || '—';
+                document.getElementById('si-country').textContent    = s.country   || '—';
+                document.getElementById('si-province').textContent   = s.province  || '—';
+                document.getElementById('si-city').textContent       = s.city      || '—';
+                document.getElementById('si-district').textContent   = s.district  || '—';
+                document.getElementById('si-address').textContent    = s.address   || '—';
+                document.getElementById('shippingModalLoading').style.display = 'none';
+                document.getElementById('shippingModalContent').style.display = 'block';
+            } catch (e) {
+                document.getElementById('shippingModalLoading').style.display = 'none';
+                const errEl = document.getElementById('shippingModalError');
+                errEl.textContent = e.message;
+                errEl.style.display = 'block';
+            }
         });
 
         // ── Items modal ─────────────────────────────────────────────────
-        document.querySelectorAll('.btn-view-items').forEach(btn => {
-            btn.addEventListener('click', async function () {
-                const buyId = this.getAttribute('data-buy-id');
-                document.getElementById('itemsModalOrderId').textContent  = 'Pedido #' + buyId;
-                document.getElementById('itemsModalLoading').style.display  = 'block';
-                document.getElementById('itemsModalContent').style.display  = 'none';
-                document.getElementById('itemsModalError').style.display    = 'none';
-                getModal('itemsModal').show();
+        $(document).on('click', '.btn-view-items', async function () {
+            const buyId = $(this).data('buy-id');
+            document.getElementById('itemsModalOrderId').textContent  = 'Pedido #' + buyId;
+            document.getElementById('itemsModalLoading').style.display  = 'block';
+            document.getElementById('itemsModalContent').style.display  = 'none';
+            document.getElementById('itemsModalError').style.display    = 'none';
+            getModal('itemsModal').show();
 
-                try {
-                    const data = await fetchQuickInfo(buyId);
-                    const container = document.getElementById('itemsModalContent');
-                    if (!data.items || data.items.length === 0) {
-                        container.innerHTML = '<p class="text-center py-3" style="color:var(--gray3);font-size:.82rem;">Sin artículos registrados.</p>';
-                    } else {
-                        container.innerHTML = data.items.map(item => {
-                            const attrs = (item.attributes || []).map(a =>
-                                `<span style="display:inline-flex;align-items:center;font-size:.68rem;font-weight:600;border-radius:20px;padding:3px 9px;background:var(--gray1);color:var(--gray3);white-space:nowrap;">${a}</span>`
-                            ).join(' ');
-                            const imgHtml = item.image_url
-                                ? `<img src="${item.image_url}" style="width:56px;height:56px;object-fit:cover;border-radius:10px;border:1px solid var(--gray1);flex-shrink:0;">`
-                                : `<div style="width:56px;height:56px;border-radius:10px;background:var(--gray1);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="material-icons" style="color:var(--gray3);font-size:1.4rem;">image_not_supported</i></div>`;
-                            return `
-                            <div style="display:flex;align-items:flex-start;gap:14px;padding:12px 0;border-bottom:1px solid var(--gray1);">
-                                ${imgHtml}
-                                <div style="flex:1;min-width:0;">
-                                    <p style="margin:0 0 4px;font-size:.85rem;font-weight:600;color:var(--black);">${item.name}</p>
-                                    <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:5px;">${attrs || '<span style="font-size:.75rem;color:var(--gray3);">Sin atributos</span>'}</div>
-                                </div>
-                                <div style="text-align:right;flex-shrink:0;">
-                                    <p style="margin:0 0 2px;font-size:.72rem;font-weight:600;color:var(--gray3);text-transform:uppercase;letter-spacing:.03em;">Cantidad</p>
-                                    <p style="margin:0;font-size:1.1rem;font-weight:700;color:var(--black);">${item.quantity}</p>
-                                    <p style="margin:4px 0 0;font-size:.75rem;color:var(--gray3);">₡${Number(item.total).toLocaleString('es-CR')}</p>
-                                </div>
-                            </div>`;
-                        }).join('');
-                    }
-                    document.getElementById('itemsModalLoading').style.display = 'none';
-                    container.style.display = 'block';
-                } catch (e) {
-                    document.getElementById('itemsModalLoading').style.display = 'none';
-                    const errEl = document.getElementById('itemsModalError');
-                    errEl.textContent = e.message;
-                    errEl.style.display = 'block';
+            try {
+                const data = await fetchQuickInfo(buyId);
+                const container = document.getElementById('itemsModalContent');
+                if (!data.items || data.items.length === 0) {
+                    container.innerHTML = '<p class="text-center py-3" style="color:var(--gray3);font-size:.82rem;">Sin artículos registrados.</p>';
+                } else {
+                    container.innerHTML = data.items.map(item => {
+                        const attrs = (item.attributes || []).map(a =>
+                            `<span style="display:inline-flex;align-items:center;font-size:.68rem;font-weight:600;border-radius:20px;padding:3px 9px;background:var(--gray1);color:var(--gray3);white-space:nowrap;">${a}</span>`
+                        ).join(' ');
+                        const imgHtml = item.image_url
+                            ? `<img src="${item.image_url}" style="width:56px;height:56px;object-fit:cover;border-radius:10px;border:1px solid var(--gray1);flex-shrink:0;">`
+                            : `<div style="width:56px;height:56px;border-radius:10px;background:var(--gray1);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="material-icons" style="color:var(--gray3);font-size:1.4rem;">image_not_supported</i></div>`;
+                        return `
+                        <div style="display:flex;align-items:flex-start;gap:14px;padding:12px 0;border-bottom:1px solid var(--gray1);">
+                            ${imgHtml}
+                            <div style="flex:1;min-width:0;">
+                                <p style="margin:0 0 4px;font-size:.85rem;font-weight:600;color:var(--black);">${item.name}</p>
+                                <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:5px;">${attrs || '<span style="font-size:.75rem;color:var(--gray3);">Sin atributos</span>'}</div>
+                            </div>
+                            <div style="text-align:right;flex-shrink:0;">
+                                <p style="margin:0 0 2px;font-size:.72rem;font-weight:600;color:var(--gray3);text-transform:uppercase;letter-spacing:.03em;">Cantidad</p>
+                                <p style="margin:0;font-size:1.1rem;font-weight:700;color:var(--black);">${item.quantity}</p>
+                                <p style="margin:4px 0 0;font-size:.75rem;color:var(--gray3);">₡${Number(item.total).toLocaleString('es-CR')}</p>
+                            </div>
+                        </div>`;
+                    }).join('');
                 }
-            });
+                document.getElementById('itemsModalLoading').style.display = 'none';
+                container.style.display = 'block';
+            } catch (e) {
+                document.getElementById('itemsModalLoading').style.display = 'none';
+                const errEl = document.getElementById('itemsModalError');
+                errEl.textContent = e.message;
+                errEl.style.display = 'block';
+            }
         });
     })();
     </script>
