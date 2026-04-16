@@ -1021,7 +1021,13 @@ class CheckOutController extends Controller
                 return redirect()->back()->with(['status' => 'Venta exitosa!', 'icon' => 'success']);
             }
             if ($request->has('telephone')) {
-                $this->sendEmail($cartItems, $total_price, $request->delivery);
+                $this->sendEmail(
+                    $cartItems,
+                    $total_price,
+                    $request->delivery,
+                    $request->input('email'),
+                    $request->input('name')
+                );
                 return redirect($prefix == "aclimate" ? $prefix : "" . '/')->with(['status' => 'Compra exitosa!', 'icon' => 'success']);
             }
 
@@ -1058,31 +1064,48 @@ class CheckOutController extends Controller
             return null;
         }
     }
-    public function sendEmail($cartItems, $total_price, $delivery)
+    public function sendEmail($cartItems, $total_price, $delivery, $customerEmail = null, $customerName = null)
     {
         try {
             $tenantinfo = TenantInfo::first();
-            $email = $tenantinfo->email;
-            if ($email) {
 
-                if ($delivery > 0) {
-                    $total_price = $total_price + $delivery;
-                }
-
-                $details = [
-                    'cartItems' => $cartItems,
+            // ── Email to the store (internal notification) ───────────────
+            $storeEmail = $tenantinfo->email ?? null;
+            if ($storeEmail) {
+                $storeDetails = [
+                    'cartItems'   => $cartItems,
                     'total_price' => $total_price,
-                    'title' => 'Se ha realizado una venta por medio del sitio web - ' . $tenantinfo->title
+                    'delivery'    => $delivery,
+                    'title'       => 'Se ha realizado una venta por medio del sitio web - ' . $tenantinfo->title,
                 ];
-
-                Mail::send('emails.sale', $details, function ($message) use ($details, $email) {
-                    $message->to($email)
-                        ->subject($details['title']);
+                Mail::send('emails.sale', $storeDetails, function ($message) use ($storeDetails, $storeEmail) {
+                    $message->to($storeEmail)->subject($storeDetails['title']);
                 });
             }
+
+            // ── Confirmation email to the customer ───────────────────────
+            $toEmail = $customerEmail;
+            // Fallback: try to get email from authenticated user
+            if (!$toEmail && Auth::check()) {
+                $toEmail = Auth::user()->email;
+            }
+
+            if ($toEmail) {
+                $customerDetails = [
+                    'cartItems'     => $cartItems,
+                    'total_price'   => $total_price,
+                    'delivery'      => $delivery,
+                    'store_name'    => $tenantinfo->title ?? 'Tienda',
+                    'customer_name' => $customerName ?? (Auth::check() ? Auth::user()->name : 'Cliente'),
+                ];
+                Mail::send('emails.sale-customer', $customerDetails, function ($message) use ($customerDetails, $toEmail) {
+                    $message->to($toEmail)
+                        ->subject('Confirmación de tu pedido – ' . $customerDetails['store_name']);
+                });
+            }
+
             return true;
         } catch (Exception $th) {
-            //dd($th->getMessage());
             return false;
         }
     }

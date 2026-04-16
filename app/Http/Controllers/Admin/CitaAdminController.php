@@ -12,11 +12,31 @@ class CitaAdminController extends Controller
 {
     public function index(Request $request)
     {
+        // Default to current month so we don't fetch the entire history on every load.
+        // Pass ?month=YYYY-MM to view other months.
+        $month = $request->get('month', now()->format('Y-m'));
+
+        // Validate the month format; fall back to current month on invalid input.
+        if (!preg_match('/^\d{4}-\d{2}$/', $month)) {
+            $month = now()->format('Y-m');
+        }
+
+        [$year, $monthNum] = explode('-', $month);
+
         $citas = Cita::with(['barbero'])
+            ->whereYear('starts_at', $year)
+            ->whereMonth('starts_at', $monthNum)
             ->orderByDesc('starts_at')
             ->get();
 
-        return view('admin.citas.index', compact('citas'));
+        // Build navigation months (current month ± 12 for the selector)
+        $months = [];
+        for ($i = -12; $i <= 2; $i++) {
+            $d = now()->addMonths($i);
+            $months[$d->format('Y-m')] = ucfirst($d->translatedFormat('F Y'));
+        }
+
+        return view('admin.citas.index', compact('citas', 'month', 'months'));
     }
 
     // Dentro de CitaAdminController@myIndex ya filtramos por barbero_id

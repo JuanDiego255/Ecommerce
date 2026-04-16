@@ -43,6 +43,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="{{ asset('css/admin-ui.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intro.js@7.2.0/introjs.min.css">
 </head>
 <style>
     :root {
@@ -121,6 +122,7 @@
     <script async defer src="https://buttons.github.io/buttons.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/intro.js@7.2.0/intro.min.js"></script>
     <script src="{{ asset('frontend/js/jquery-3.6.0.min.js') }}"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
@@ -377,6 +379,233 @@
         }
     })();
     </script>
+
+    {{-- ── ECD Tour & Promo ────────────────────────────────────────────── --}}
+    <style>
+        /* ── Tour tooltip ── */
+        .ecd-tour-tooltip .introjs-tooltip {
+            min-width: 320px;
+            max-width: 420px;
+            border-radius: 16px;
+            box-shadow: 0 12px 48px rgba(0,0,0,.18);
+            border: none;
+            padding: 0;
+            overflow: hidden;
+        }
+        .ecd-tour-tooltip .introjs-tooltiptext { padding: 0; }
+        .ecd-tour-tooltip .introjs-tooltipbuttons {
+            border-top: 1px solid #f1f5f9;
+            padding: 12px 16px;
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+        .ecd-tour-tooltip .introjs-button {
+            border-radius: 8px;
+            font-size: .8rem;
+            font-weight: 600;
+            padding: 7px 14px;
+            text-shadow: none;
+            border: none;
+        }
+        .ecd-tour-tooltip .introjs-nextbutton {
+            background: #5e72e4;
+            color: #fff;
+        }
+        .ecd-tour-tooltip .introjs-nextbutton:hover { background: #4a5fd4; }
+        .ecd-tour-tooltip .introjs-prevbutton {
+            background: #f1f5f9;
+            color: #475569;
+        }
+        .ecd-tour-tooltip .introjs-skipbutton {
+            color: #94a3b8;
+            font-size: .9rem;
+            padding: 6px 8px;
+        }
+        .ecd-tour-tooltip .introjs-progressbar { background: #5e72e4 !important; }
+        .ecd-tour-tooltip .introjs-progress { background: #e2e8f0; border-radius: 99px; }
+        .introjs-helperLayer { border-radius: 10px; }
+
+        /* ── Tooltip content ── */
+        .ecd-tip { padding: 18px 20px 14px; }
+        .ecd-tip-title {
+            font-size: .95rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+        .ecd-tip-body {
+            font-size: .82rem;
+            color: #475569;
+            line-height: 1.6;
+        }
+        .ecd-tip-body ul { padding-left: 1.1rem; margin: .4rem 0 0; }
+        .ecd-tip-body li { margin-bottom: .25rem; }
+        .ecd-tip-body strong { color: #1e293b; }
+        .ecd-tip-body code {
+            background: #f1f5f9;
+            border-radius: 4px;
+            padding: 1px 5px;
+            font-size: .78rem;
+            color: #5e72e4;
+        }
+
+        /* ── Floating replay button ── */
+        #ecd-tour-fab {
+            position: fixed;
+            bottom: 22px;
+            right: 22px;
+            z-index: 9990;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #5e72e4;
+            color: #fff;
+            border: none;
+            border-radius: 50px;
+            padding: 9px 16px 9px 12px;
+            font-size: .78rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(94,114,228,.45);
+            transition: all .2s;
+        }
+        #ecd-tour-fab:hover {
+            background: #4a5fd4;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(94,114,228,.5);
+        }
+        #ecd-tour-fab i { font-size: .9rem; }
+
+        @media (max-width: 576px) {
+            #ecd-tour-fab span { display: none; }
+            #ecd-tour-fab { padding: 10px 12px; border-radius: 50%; }
+        }
+
+    </style>
+
+    @if(isset($tenantinfo) && ($tenantinfo->tenant ?? '') === 'gestionarecr')
+    <style>
+        /* ── Promo toast ── */
+        #ecd-promo-toast {
+            position: fixed;
+            bottom: 22px;
+            right: 22px;
+            z-index: 9995;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: linear-gradient(135deg, #5e72e4 0%, #825ee4 100%);
+            color: #fff;
+            border-radius: 14px;
+            padding: 12px 16px;
+            max-width: 310px;
+            box-shadow: 0 6px 24px rgba(94,114,228,.5);
+            animation: ecd-toast-in .4s cubic-bezier(.34,1.56,.64,1) both;
+        }
+        @keyframes ecd-toast-in {
+            from { opacity:0; transform: translateY(20px) scale(.95); }
+            to   { opacity:1; transform: translateY(0)    scale(1); }
+        }
+        .ecd-toast-icon {
+            font-size: 1.6rem;
+            flex-shrink: 0;
+            animation: ecd-pulse 2.2s ease-in-out infinite;
+        }
+        @keyframes ecd-pulse {
+            0%,100% { transform: scale(1); }
+            50%      { transform: scale(1.12); }
+        }
+        .ecd-toast-body { flex: 1; min-width: 0; }
+        .ecd-toast-body strong {
+            display: block;
+            font-size: .82rem;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+        .ecd-toast-body span {
+            font-size: .73rem;
+            opacity: .88;
+            line-height: 1.4;
+        }
+        .ecd-toast-link {
+            flex-shrink: 0;
+            background: rgba(255,255,255,.22);
+            color: #fff;
+            font-size: .75rem;
+            font-weight: 700;
+            border-radius: 8px;
+            padding: 6px 10px;
+            text-decoration: none;
+            white-space: nowrap;
+            transition: background .2s;
+        }
+        .ecd-toast-link:hover {
+            background: rgba(255,255,255,.35);
+            color: #fff;
+        }
+        /* Push the tour FAB above the promo toast */
+        #ecd-tour-fab { bottom: 92px; }
+    </style>
+    @endif
+
+    @if(isset($tenantinfo) && ($tenantinfo->tenant ?? '') === 'gestionarecr')
+    {{-- Persistent promo toast — never goes away --}}
+    <div id="ecd-promo-toast">
+        <div class="ecd-toast-icon">🗂️</div>
+        <div class="ecd-toast-body">
+            <strong>Expediente Digital activo</strong>
+            <span>Gestioná cada paciente de forma profesional. ¡Ya está habilitado para vos!</span>
+        </div>
+        <a href="/ecd/dashboard" class="ecd-toast-link">Explorar →</a>
+    </div>
+
+    <script>
+    (function () {
+        // One-time SweetAlert promo per browser session
+        if (sessionStorage.getItem('ecd_promo_seen')) return;
+        sessionStorage.setItem('ecd_promo_seen', '1');
+
+        // Small delay so the page finishes rendering first
+        setTimeout(function () {
+            Swal.fire({
+                title: '🗂️ Expediente Digital',
+                html: '<div style="text-align:left;font-size:.9rem;line-height:1.6;">' +
+                    '<p style="margin-bottom:.8rem;">Gestiona cada paciente de forma <strong>profesional y centralizada</strong> con nuestro módulo de Expediente Clínico Digital:</p>' +
+                    '<ul style="padding-left:1.2rem;color:#475569;">' +
+                    '<li style="margin-bottom:.4rem;">📋 <strong>Fichas clínicas</strong> personalizadas por tipo de tratamiento</li>' +
+                    '<li style="margin-bottom:.4rem;">📸 <strong>Galería fotográfica</strong> de evolución del paciente</li>' +
+                    '<li style="margin-bottom:.4rem;">✍️ <strong>Consentimientos</strong> informados con firma digital</li>' +
+                    '<li style="margin-bottom:.4rem;">🗂️ <strong>Protocolos</strong> de tratamiento estandarizados</li>' +
+                    '<li>📊 <strong>Dashboard</strong> con métricas de tu práctica</li>' +
+                    '</ul>' +
+                    '</div>',
+                confirmButtonText: 'Explorar el módulo →',
+                cancelButtonText:  'Más tarde',
+                showCancelButton:  true,
+                confirmButtonColor: '#5e72e4',
+                cancelButtonColor:  '#94a3b8',
+                background:         '#fff',
+                customClass: {
+                    popup:          'rounded-4',
+                    confirmButton:  'px-4',
+                    cancelButton:   'px-3',
+                },
+                width: '480px',
+                padding: '2rem',
+            }).then(function (result) {
+                if (result.isConfirmed) {
+                    window.location.href = '/ecd/dashboard';
+                }
+            });
+        }, 1200);
+    })();
+    </script>
+    @endif
+
+    {{-- ECD tour (active on /ecd/* for any tenant) --}}
+    <script src="{{ asset('js/ecd-tour.js') }}"></script>
 
 </body>
 

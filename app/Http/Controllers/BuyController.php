@@ -752,4 +752,93 @@ class BuyController extends Controller
             'iva' => $tenantinfo->iva
         ]);
     }
+
+    /**
+     * Returns shipping info and order items as JSON for the quick-view modals
+     * in the /buys-admin table.
+     */
+    public function quickInfo($id)
+    {
+        // ── Shipping info ────────────────────────────────────────────────
+        $buy = Buy::leftJoin('users', 'buys.user_id', '=', 'users.id')
+            ->leftJoin('address_users', 'users.id', '=', 'address_users.user_id')
+            ->where('buys.id', $id)
+            ->select([
+                // From registered user
+                'users.name as user_name',
+                'users.email as user_email',
+                'users.telephone as user_telephone',
+                // From address_users (registered)
+                'address_users.address as addr_address',
+                'address_users.address_two as addr_district',
+                'address_users.city as addr_city',
+                'address_users.province as addr_province',
+                'address_users.country as addr_country',
+                // From buys directly (B2C / guest)
+                'buys.name as buy_name',
+                'buys.email as buy_email',
+                'buys.telephone as buy_telephone',
+                'buys.address as buy_address',
+                'buys.address_two as buy_district',
+                'buys.city as buy_city',
+                'buys.province as buy_province',
+                'buys.country as buy_country',
+            ])
+            ->first();
+
+        if (!$buy) {
+            return response()->json(['error' => 'Pedido no encontrado'], 404);
+        }
+
+        $shipping = [
+            'name'      => $buy->buy_name      ?? $buy->user_name      ?? '—',
+            'email'     => $buy->buy_email     ?? $buy->user_email     ?? '—',
+            'telephone' => $buy->buy_telephone ?? $buy->user_telephone ?? '—',
+            'country'   => $buy->buy_country   ?? $buy->addr_country   ?? '—',
+            'province'  => $buy->buy_province  ?? $buy->addr_province  ?? '—',
+            'city'      => $buy->buy_city      ?? $buy->addr_city      ?? '—',
+            'district'  => $buy->buy_district  ?? $buy->addr_district  ?? '—',
+            'address'   => $buy->buy_address   ?? $buy->addr_address   ?? '—',
+        ];
+
+        // ── Items ────────────────────────────────────────────────────────
+        $items = BuyDetail::where('buy_details.buy_id', $id)
+            ->join('clothing', 'buy_details.clothing_id', '=', 'clothing.id')
+            ->leftJoin('product_images', function ($join) {
+                $join->on('clothing.id', '=', 'product_images.clothing_id')
+                    ->whereRaw('product_images.id = (
+                        SELECT MIN(id) FROM product_images
+                        WHERE product_images.clothing_id = clothing.id
+                    )');
+            })
+            ->select([
+                'clothing.name as name',
+                'buy_details.quantity',
+                'buy_details.total',
+                DB::raw('IFNULL(product_images.image, "") as image'),
+                DB::raw('(
+                    SELECT GROUP_CONCAT(CONCAT(a.name, ": ", av.value) SEPARATOR ", ")
+                    FROM attribute_value_buys avb
+                    JOIN attributes a ON avb.attr_id = a.id
+                    JOIN attribute_values av ON avb.value_attr = av.id
+                    WHERE avb.buy_detail_id = buy_details.id
+                ) as attributes_values'),
+            ])
+            ->groupBy(
+                'clothing.name', 'buy_details.quantity', 'buy_details.total',
+                'product_images.image', 'buy_details.id'
+            )
+            ->get()
+            ->map(function ($item) {
+                $item->image_url = $item->image
+                    ? route('file', $item->image)
+                    : null;
+                $item->attributes = $item->attributes_values
+                    ? array_filter(array_map('trim', explode(',', $item->attributes_values)))
+                    : [];
+                return $item;
+            });
+
+        return response()->json(compact('shipping', 'items'));
+    }
 }
