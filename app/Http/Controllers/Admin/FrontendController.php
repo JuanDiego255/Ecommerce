@@ -25,6 +25,7 @@ use App\Models\Testimonial;
 use Artesaos\SEOTools\Facades\OpenGraph;
 use Artesaos\SEOTools\Facades\SEOMeta;
 use Illuminate\Support\Facades\Cache;
+use Artesaos\SEOTools\Facades\TwitterCard as SEOTwitter;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
@@ -308,14 +309,30 @@ class FrontendController extends Controller
             $clothing->atributos = $cleaned->toArray();
         }
 
+        $currentUrl = request()->fullUrl();
+        $baseUrl = request()->getSchemeAndHttpHost();
+        
+
         foreach ($tags as $tag) {
-            SEOMeta::setTitle($tag->title . " - " . $tenantinfo->title);
+            $title = $tag->title . " - " . $tenantinfo->title;
+            if($tenantinfo->tenant === "mitaibabyboutique"){
+                $title = $title . ' Costa Rica | Ropa para bebés y niños';
+            }
+            SEOMeta::setTitle($title);
             SEOMeta::setKeywords($tag->meta_keywords);
             SEOMeta::setDescription($tag->meta_description);
+             // Canonical dinámico del tenant actual
+            SEOMeta::setCanonical($currentUrl);
             //Opengraph
-            OpenGraph::addImage(URL::to($tag->url_image_og));
+            OpenGraph::setTitle($title);
+            OpenGraph::setUrl($currentUrl);
+            OpenGraph::addImage($tag->url_image_og);
             OpenGraph::setTitle($tag->title);
             OpenGraph::setDescription($tag->meta_og_description);
+             // Twitter
+            SEOTwitter::setTitle($title);
+            SEOTwitter::setDescription($tag->meta_og_description);
+            SEOTwitter::setImage($tag->url_image_og);
         }
         //Promociones
         $clothings_offer = Cache::remember('clothings_offer', $this->expirationTime, function () {
@@ -1096,6 +1113,31 @@ class FrontendController extends Controller
         $tenantinfo = Cache::remember('tenant_info', $this->expirationTime, function () {
             return TenantInfo::first();
         });
+
+        $currentUrl = request()->fullUrl();        
+        $tags = Cache::remember('meta_tags_specific_category', $this->expirationTime, function () {
+            return MetaTags::where('section', 'Acerca De Nosotros')->get();
+        });
+
+        foreach ($tags as $tag) {
+            
+            SEOMeta::setTitle($tag->title);
+            SEOMeta::setKeywords($tag->meta_keywords);
+            SEOMeta::setDescription($tag->meta_description);
+             // Canonical dinámico del tenant actual
+            SEOMeta::setCanonical($currentUrl);
+            //Opengraph
+            OpenGraph::setTitle($tag->title);
+            OpenGraph::setUrl($currentUrl);
+            OpenGraph::addImage($tag->url_image_og);
+            OpenGraph::setTitle($tag->title);
+            OpenGraph::setDescription($tag->meta_og_description);
+             // Twitter
+            SEOTwitter::setTitle($tag->title);
+            SEOTwitter::setDescription($tag->meta_og_description);
+            SEOTwitter::setImage($tag->url_image_og);
+        }       
+
         switch ((int) ($tenantinfo->kind_business ?? 0)) {
             case 6:
                 return view('frontend.av.about_us');

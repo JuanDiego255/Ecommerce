@@ -29,6 +29,8 @@
                                 </option>
                                 <option value="Categoría Específica">Categoría Específica
                                 </option>
+                                <option value="Acerca De Nosotros">Acerca De Nosotros
+                                </option>
                                 <option value="Carrito">Carrito
                                 </option>
                                 <option value="Mis Compras">Mis Compras
