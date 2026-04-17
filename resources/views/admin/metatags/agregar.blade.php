@@ -3,106 +3,143 @@
     {!! SEOMeta::generate() !!}
     {!! OpenGraph::generate() !!}
 @endsection
+@section('breadcrumb')
+    <li class="breadcrumb-item"><a href="{{ url('/') }}">Inicio</a></li>
+    <li class="breadcrumb-item"><a href="{{ url('meta-tags/indexadmin') }}">Meta Tags</a></li>
+    <li class="breadcrumb-item active">Nueva sección</li>
+@endsection
 @section('content')
-    <div class="card">
-        <div class="card-header">
-            <h4 class="text-dark">Agregar Metatag</h4>
+
+    @if($errors->any())
+        <div class="alert alert-danger alert-dismissible fade show">
+            <ul class="mb-0">@foreach($errors->all() as $e)<li>{{ $e }}</li>@endforeach</ul>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
-        <div class="card-body">
-            <form class="form-horizontal" action="{{ url('metatag') }}" method="post" enctype="multipart/form-data">
-                @csrf
-                <div class="row">
-                    <div class="col-md-12 mb-3">
+    @endif
 
-                        <div class="input-group input-group-static">
-                            <label>Sección</label>
-                            <select id="section" name="section"
-                                class="form-control form-control-lg @error('section') is-invalid @enderror" required
-                                autocomplete="section" autofocus>
-
-                                <option value="" disabled selected>— Seleccione una sección —</option>
-                                <option value="Inicio">Inicio</option>
-                                <option value="Departamentos">Departamentos</option>
-                                <option value="Categorias">Categorías</option>
-                                <option value="Categoría Específica">Categoría Específica</option>
-                                <option value="Acerca De Nosotros">Acerca De Nosotros</option>
-                                <option value="Carrito">Carrito</option>
-                                <option value="Mis Compras">Mis Compras</option>
-                                <option value="Checkout">Checkout</option>
-                                <option value="Registrarse">Registrarse</option>
-                                <option value="Ingresar">Ingresar</option>
-                                <option value="Blog">Blog</option>
-
-                            </select>
-                            @error('section')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <div class="input-group input-group-lg input-group-outline my-3">
-                            <label class="form-label">Title</label>
-                            <input required type="text" class="form-control form-control-lg" name="title">
-                        </div>
-                    </div>
-
-                    <div class="col-md-6 mb-3">
-                        <div class="input-group input-group-lg input-group-outline my-3">
-                            <label class="form-label">Meta description</label>
-                            <input required type="text" class="form-control form-control-lg" name="meta_description">
-                        </div>
-                    </div>                    
-                    <div class="col-md-6 mb-3">
-                        <div class="input-group input-group-lg input-group-outline my-3">
-                            <label class="form-label">Meta OG Title</label>
-                            <input required type="text" class="form-control form-control-lg" name="meta_og_title">
-                        </div>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <div class="input-group input-group-lg input-group-outline my-3">
-                            <label class="form-label">Meta OG description</label>
-                            <input required type="text" class="form-control form-control-lg" name="meta_og_description">
-                        </div>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <div class="input-group input-group-lg input-group-outline my-3">
-                            <label class="form-label">URL Canonical</label>
-                            <input type="text" class="form-control form-control-lg" name="url_canonical">
-                        </div>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <div class="input-group input-group-lg input-group-outline my-3">
-                            <label class="form-label">OG Image</label>
-                            <input type="text" class="form-control form-control-lg" name="url_image_og">
-                        </div>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <div class="input-group input-group-lg input-group-outline my-3">
-                            <label class="form-label">Meta Type</label>
-                            <input required type="text" class="form-control form-control-lg" name="meta_type">
-                        </div>
-                    </div>
-                    <div class="col-md-12 mb-3">
-                        <label class="form-label">Meta Keywords (Opcional - Presione enter para agregar la palabra
-                            clave)</label><br>
-                        <div class="tags-input">
-                            <ul id="tags"></ul>
-                            <input type="text" id="input-tag" placeholder="Escriba la palabra clave.." />
-                            <input type="hidden" value="" id="meta_keywords" name="meta_keywords">
-                        </div>
-                    </div>
-                </div>
-
-
-                <div class="col-md-6">
-                    <button type="submit" class="btn btn-accion">Agregar Metatag</button>
-                </div>
-
-            </form>
-        </div>
+    <div class="page-header d-flex align-items-center justify-content-between mb-3">
+        <h4 class="mb-0">Nueva sección de meta tags</h4>
+        <a href="{{ url('meta-tags/indexadmin') }}" class="ph-btn ph-btn-back"
+           title="Volver" data-bs-toggle="tooltip" data-bs-placement="left">
+            <i class="fas fa-arrow-left"></i>
+        </a>
     </div>
+
+    <form action="{{ url('metatag') }}" method="POST">
+        @csrf
+
+        {{-- Identificación --}}
+        <div class="surface p-4 mb-3">
+            <div style="font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#94a3b8;margin-bottom:1rem;">
+                Identificación
+            </div>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="filter-label">Sección *</label>
+                    <select name="section" class="filter-input" required>
+                        <option value="" disabled selected>— Seleccione —</option>
+                        @foreach(['Inicio','Departamentos','Categorias','Categoría Específica','Acerca De Nosotros','Carrito','Mis Compras','Checkout','Registrarse','Ingresar','Blog'] as $s)
+                            <option value="{{ $s }}" {{ old('section') === $s ? 'selected' : '' }}>{{ $s }}</option>
+                        @endforeach
+                    </select>
+                    @error('section')
+                        <span style="font-size:.75rem;color:#ef4444;">{{ $message }}</span>
+                    @enderror
+                </div>
+                <div class="col-md-8">
+                    <label class="filter-label">Title *</label>
+                    <input type="text" name="title" class="filter-input" value="{{ old('title') }}" required
+                           placeholder="Ej: Tienda online en Costa Rica | Ropa y accesorios">
+                    <span style="font-size:.72rem;color:#94a3b8;">Aparece en el tab del navegador. El sistema añade <strong>| Costa Rica</strong> automáticamente.</span>
+                </div>
+            </div>
+        </div>
+
+        {{-- Meta descripción y keywords --}}
+        <div class="surface p-4 mb-3">
+            <div style="font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#94a3b8;margin-bottom:1rem;">
+                Meta descripción y palabras clave
+            </div>
+            <div class="row g-3">
+                <div class="col-12">
+                    <label class="filter-label">Meta Description *</label>
+                    <textarea name="meta_description" class="filter-input" rows="3" required
+                              placeholder="Descripción que aparece en los resultados de Google. Máximo 160 caracteres recomendados.">{{ old('meta_description') }}</textarea>
+                </div>
+                <div class="col-12">
+                    <label class="filter-label">
+                        Meta Keywords
+                        <span style="font-weight:400;color:#94a3b8;">(opcional — presioná Enter para agregar)</span>
+                    </label>
+                    <div class="tags-input">
+                        <ul id="tags"></ul>
+                        <input type="text" id="input-tag" placeholder="Escribá la palabra clave y presioná Enter...">
+                        <input type="hidden" id="meta_keywords" name="meta_keywords" value="{{ old('meta_keywords') }}">
+                    </div>
+                    <span style="font-size:.72rem;color:#94a3b8;">Incluí términos geográficos: "Costa Rica", "CR", el nombre de la ciudad, etc.</span>
+                </div>
+            </div>
+        </div>
+
+        {{-- Open Graph --}}
+        <div class="surface p-4 mb-3">
+            <div style="font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#94a3b8;margin-bottom:.25rem;">
+                Open Graph
+            </div>
+            <div style="font-size:.75rem;color:#94a3b8;margin-bottom:1rem;">
+                Controla cómo se ve la página al compartirla en WhatsApp, Facebook e Instagram.
+            </div>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="filter-label">OG Title *</label>
+                    <input type="text" name="meta_og_title" class="filter-input" value="{{ old('meta_og_title') }}" required
+                           placeholder="Título para compartir en redes sociales">
+                </div>
+                <div class="col-md-6">
+                    <label class="filter-label">OG Description *</label>
+                    <input type="text" name="meta_og_description" class="filter-input" value="{{ old('meta_og_description') }}" required
+                           placeholder="Descripción al compartir en redes sociales">
+                </div>
+                <div class="col-12">
+                    <label class="filter-label">OG Image URL</label>
+                    <input type="text" name="url_image_og" class="filter-input" value="{{ old('url_image_og') }}"
+                           placeholder="https://... — URL de la imagen que aparece al compartir">
+                    <span style="font-size:.72rem;color:#94a3b8;">Tamaño recomendado: 1200 × 630 px.</span>
+                </div>
+            </div>
+        </div>
+
+        {{-- SEO técnico --}}
+        <div class="surface p-4 mb-3">
+            <div style="font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#94a3b8;margin-bottom:.25rem;">
+                SEO técnico
+            </div>
+            <div style="font-size:.75rem;color:#94a3b8;margin-bottom:1rem;">
+                Parámetros avanzados para motores de búsqueda.
+            </div>
+            <div class="row g-3">
+                <div class="col-md-8">
+                    <label class="filter-label">URL Canonical</label>
+                    <input type="text" name="url_canonical" class="filter-input" value="{{ old('url_canonical') }}"
+                           placeholder="https://mitaicr.com/...">
+                    <span style="font-size:.72rem;color:#94a3b8;">Indica a Google cuál es la URL principal. Evita penalizaciones por contenido duplicado.</span>
+                </div>
+                <div class="col-md-4">
+                    <label class="filter-label">Meta Type *</label>
+                    <input type="text" name="meta_type" class="filter-input" value="{{ old('meta_type', 'website') }}" required
+                           placeholder="website / article / product">
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-end gap-2">
+            <a href="{{ url('meta-tags/indexadmin') }}" class="s-btn-sec">Cancelar</a>
+            <button type="submit" class="s-btn-primary">
+                <i class="fas fa-save me-1"></i> Guardar meta tag
+            </button>
+        </div>
+    </form>
+
 @endsection
 @section('script')
     <script src="{{ asset('js/add-tag.js') }}"></script>
