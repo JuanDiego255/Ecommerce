@@ -112,7 +112,7 @@ class TenantController extends Controller
                 ->get();
         });
         foreach ($tags as $tag) {
-            SEOMeta::setTitle($tag->title . " - " . $tenantinfo->title);
+            SEOMeta::setTitle($tag->title . " | Costa Rica");
             SEOMeta::setKeywords($tag->meta_keywords);
             SEOMeta::setDescription($tag->meta_description);
             //Opengraph

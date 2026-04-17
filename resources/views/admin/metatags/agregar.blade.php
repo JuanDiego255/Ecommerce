@@ -20,25 +20,18 @@
                                 class="form-control form-control-lg @error('section') is-invalid @enderror" required
                                 autocomplete="section" autofocus>
 
-                                <option value="Inicio" selected>Inicio</option>
-
-                                <option value="Inicio">Inicio
-                                </option>
-                                <option value="Categorias">Categorías
-                                </option>
-                                <option value="Categoría Específica">Categoría Específica
-                                </option>
-                                <option value="Acerca De Nosotros">Acerca De Nosotros
-                                </option>
-                                <option value="Carrito">Carrito
-                                </option>
-                                <option value="Mis Compras">Mis Compras
-                                </option>
-                                <option value="Checkout">Checkout </option>
-                                <option value="Registrarse">Registrarse </option>
-                                <option value="Ingresar">Ingresar </option>
-                                <option value="Blog">Blog
-                                </option>
+                                <option value="" disabled selected>— Seleccione una sección —</option>
+                                <option value="Inicio">Inicio</option>
+                                <option value="Departamentos">Departamentos</option>
+                                <option value="Categorias">Categorías</option>
+                                <option value="Categoría Específica">Categoría Específica</option>
+                                <option value="Acerca De Nosotros">Acerca De Nosotros</option>
+                                <option value="Carrito">Carrito</option>
+                                <option value="Mis Compras">Mis Compras</option>
+                                <option value="Checkout">Checkout</option>
+                                <option value="Registrarse">Registrarse</option>
+                                <option value="Ingresar">Ingresar</option>
+                                <option value="Blog">Blog</option>
 
                             </select>
                             @error('section')

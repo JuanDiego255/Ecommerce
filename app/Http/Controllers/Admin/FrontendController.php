@@ -314,11 +314,7 @@ class FrontendController extends Controller
         
 
         foreach ($tags as $tag) {
-            $title = $tag->title . " - " . $tenantinfo->title;
-            if($tenantinfo->tenant === "mitaibabyboutique"){
-                $title = $title . ' Costa Rica | Ropa para bebés y niños';
-            }
-            SEOMeta::setTitle($title);
+            SEOMeta::setTitle($tag->title . " | Costa Rica");
             SEOMeta::setKeywords($tag->meta_keywords);
             SEOMeta::setDescription($tag->meta_description);
              // Canonical dinámico del tenant actual
@@ -508,7 +504,7 @@ class FrontendController extends Controller
         });
 
         foreach ($tags as $tag) {
-            SEOMeta::setTitle($tag->title . " - " . $tenantinfo->title);
+            SEOMeta::setTitle($tag->title . " | Costa Rica");
             SEOMeta::setKeywords($tag->meta_keywords);
             SEOMeta::setDescription($tag->meta_description);
             //Opengraph
@@ -743,7 +739,7 @@ class FrontendController extends Controller
         }
 
         foreach ($tags as $tag) {
-            SEOMeta::setTitle($category_name . " - " . $tenantinfo->title);
+            SEOMeta::setTitle($category_name . " | Costa Rica");
             SEOMeta::setKeywords($category->meta_keywords);
             SEOMeta::setDescription($category->description);
             //Opengraph
@@ -933,7 +929,7 @@ class FrontendController extends Controller
         }
 
         foreach ($tags as $tag) {
-            SEOMeta::setTitle($name_cloth . " - " . $tenantinfo->title);
+            SEOMeta::setTitle($name_cloth . " | Costa Rica");
             SEOMeta::setKeywords($meta_keywords_cloth);
             SEOMeta::setDescription($description_cloth);
             //Opengraph
@@ -1060,6 +1056,17 @@ class FrontendController extends Controller
                 ->orderBy('departments.department', 'asc')
                 ->simplePaginate(8);
         });
+
+        $tag = MetaTags::where('section', 'Departamentos')->first();
+        if ($tag) {
+            SEOMeta::setTitle($tag->title . " | Costa Rica");
+            SEOMeta::setKeywords($tag->meta_keywords);
+            SEOMeta::setDescription($tag->meta_description);
+            OpenGraph::addImage(URL::to($tag->url_image_og));
+            OpenGraph::setTitle($tag->title);
+            OpenGraph::setDescription($tag->meta_og_description);
+        }
+
         switch ($tenantinfo->kind_business) {
             case (6):
             case (7):
@@ -1088,9 +1095,9 @@ class FrontendController extends Controller
             return TenantInfo::first();
         });
 
-        SEOMeta::setTitle("Comparar Vehículos" . " - " . $tenantinfo->title);
-        SEOMeta::setKeywords("comparar vehiculos");
-        SEOMeta::setDescription("Compara vehículos en " . $tenantinfo->title);
+        SEOMeta::setTitle("Comparar Vehículos | Costa Rica");
+        SEOMeta::setKeywords("comparar vehiculos costa rica");
+        SEOMeta::setDescription("Compará vehículos en Costa Rica con nuestra herramienta de comparación.");
 
         $clothings = ClothingCategory::where('status', 1)
             ->leftJoin('product_images', function ($join) {

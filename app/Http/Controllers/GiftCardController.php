@@ -30,7 +30,7 @@ class GiftCardController extends Controller
         $tags = MetaTags::where('section', 'Mis Compras')->get();
         $tenantinfo = TenantInfo::first();
         foreach ($tags as $tag) {
-            SEOMeta::setTitle($tenantinfo->title . ' - ' . $tag->title);
+            SEOMeta::setTitle($tag->title . " | Costa Rica");
             SEOMeta::setKeywords($tag->meta_keywords);
             SEOMeta::setDescription($tag->meta_description);
             //Opengraph

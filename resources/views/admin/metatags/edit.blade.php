@@ -21,25 +21,12 @@
                                 class="form-control form-control-lg @error('section') is-invalid @enderror" required
                                 autocomplete="section" autofocus>
 
-                                <option value="{{ $metatag->section }}" selected>{{ $metatag->section }}</option>
-
-                                <option value="Inicio">Inicio
-                                </option>
-                                <option value="Categorías">Categorías
-                                </option>
-                                <option value="Categoría Específica">Categoría Específica
-                                </option>
-                                <option value="Acerca De Nosotros">Acerca De Nosotros
-                                </option>
-                                <option value="Carrito">Carrito
-                                </option>
-                                <option value="Mis Compras">Mis Compras
-                                </option>
-                                <option value="Checkout">Checkout </option>
-                                <option value="Registrarse">Registrarse </option>
-                                <option value="Ingresar">Ingresar </option>
-                                <option value="Blog">Blog
-                                </option>
+                                @php
+                                    $sections = ['Inicio','Departamentos','Categorias','Categoría Específica','Acerca De Nosotros','Carrito','Mis Compras','Checkout','Registrarse','Ingresar','Blog'];
+                                @endphp
+                                @foreach($sections as $s)
+                                    <option value="{{ $s }}" {{ $metatag->section === $s ? 'selected' : '' }}>{{ $s }}</option>
+                                @endforeach
 
                             </select>
                             @error('section')

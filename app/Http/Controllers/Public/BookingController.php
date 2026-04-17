@@ -34,7 +34,7 @@ class BookingController extends Controller
         $tenantinfo = TenantInfo::first();
         $tags = MetaTags::where('section', 'Blog')->get();
         foreach ($tags as $tag) {
-            SEOMeta::setTitle($tag->title . " - " . $barbero->nombre);
+            SEOMeta::setTitle($tag->title . " - " . $barbero->nombre . " | Costa Rica");
             SEOMeta::setKeywords($tag->meta_keywords);
             SEOMeta::setDescription($tag->meta_description);
             //Opengraph

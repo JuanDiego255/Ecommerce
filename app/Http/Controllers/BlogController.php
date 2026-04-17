@@ -110,7 +110,7 @@ class BlogController extends Controller
                 ->toArray();
         }
         foreach ($tags as $tag) {
-            SEOMeta::setTitle($tag->title);
+            SEOMeta::setTitle($tag->title . " | Costa Rica");
             SEOMeta::setKeywords($tag->meta_keywords);
             SEOMeta::setDescription($tag->meta_description);
             //Opengraph
@@ -253,10 +253,10 @@ class BlogController extends Controller
         $blog = $queryBlog;
 
         foreach ($tags as $tag) {
-            SEOMeta::setTitle($tag->title);
+            SEOMeta::setTitle($tag->title . " | Costa Rica");
             SEOMeta::setKeywords($tag->meta_keywords);
             SEOMeta::setDescription($tag->meta_description);
-            //Opengraph            
+            //Opengraph
             OpenGraph::setTitle($tag->title);
             OpenGraph::setDescription($tag->meta_description);
         }
