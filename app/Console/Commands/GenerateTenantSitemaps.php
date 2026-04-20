@@ -34,11 +34,18 @@ class GenerateTenantSitemaps extends Command
                 tenancy()->end();
             }
             $tenantinfo = TenantInfo::first();
+            if($tenantinfo->license == 0){
+                $this->info("Skipping tenant {$tenant->id} due to inactive license.");
+                continue;
+            }
 
             $sitemap = Sitemap::create();
 
             // Define the base URL for the tenant
             $tenantBaseUrl = $tenant->id == "muebleriasarchi" || $tenant->id == "avelectromecanica" ? "https://{$tenant->id}.com" : "https://{$tenant->id}.safeworsolutions.com";
+            if($tenant->id == "mitaibabyboutique"){
+                $tenantBaseUrl = "https://mitaicr.com";
+            }
             // Add static URLs with higher priority
             $sitemap->add(Url::create("{$tenantBaseUrl}/")->setPriority(1.0)); // Highest priority
             $sitemap->add(Url::create("{$tenantBaseUrl}/category")->setPriority(0.5));
