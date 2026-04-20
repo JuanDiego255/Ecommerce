@@ -43,6 +43,9 @@
             <a href="{{ url('new-item/' . $category_id) }}" class="act-btn ab-add" title="Agregar producto">
                 <span class="material-icons">add</span>
             </a>
+            <a href="{{ url('bulk-upload/' . $category_id) }}" class="act-btn ab-neutral" title="Carga masiva CSV">
+                <span class="material-icons">upload_file</span>
+            </a>
         </div>
     </div>
     <div class="s-card-body" style="display:grid;grid-template-columns:1fr 180px 150px 170px;gap:12px;">

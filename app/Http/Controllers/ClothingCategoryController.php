@@ -251,7 +251,7 @@ class ClothingCategoryController extends Controller
         $category = Categories::find($id);
         $category_name = $category->name;
         $category_id = $category->id;
-        $attributes = Attribute::where('name', '!=', 'Stock')->get();
+        $attributes = Attribute::where('name', '!=', 'Stock')->with('values')->get();
         return view('admin.clothing.add', compact('id', 'category_name', 'attributes', 'category_id'));
     }
     public function edit($id, $category_id)
@@ -301,7 +301,7 @@ class ClothingCategoryController extends Controller
 
         $details = ClothingDetails::where('clothing_id', $id)->first();
         $stocks = Stock::where('clothing_id', $id)->leftJoin('attributes', 'stocks.attr_id', 'attributes.id')->leftJoin('attribute_values', 'stocks.value_attr', 'attribute_values.id')->select('stocks.id as id', 'stocks.clothing_id as clothing_id', 'stocks.stock as stock', 'stocks.price as price', 'stocks.attr_id as attr_id', 'stocks.value_attr as value_attr', 'attributes.name as name', 'attributes.main as main', 'attribute_values.id as value_id', 'attribute_values.value as value')->get();
-        $attributes = Attribute::where('name', '!=', 'Stock')->get();
+        $attributes = Attribute::where('name', '!=', 'Stock')->with('values')->get();
         $stock_active = Stock::where('clothing_id', $id)->where('attr_id', '!=', '')->leftJoin('attributes', 'stocks.attr_id', 'attributes.id')->leftJoin('attribute_values', 'stocks.value_attr', 'attribute_values.id')->select('stocks.id as id', 'stocks.clothing_id as clothing_id', 'stocks.stock as stock', 'stocks.price as price', 'stocks.attr_id as attr_id', 'stocks.value_attr as value_attr', 'attributes.name as name', 'attribute_values.id as value_id', 'attribute_values.value as value')->first();
         return view('admin.clothing.edit', compact('clothing', 'selectedCategories', 'details', 'stock_active', 'category_id', 'attributes', 'categories', 'stocks'));
     }
@@ -754,6 +754,38 @@ class ClothingCategoryController extends Controller
                 ->with(['status' => 'No se importaron los productos!' . $th->getMessage(), 'icon' => 'error']);
         }
     }
+    public function bulkUploadView($id)
+    {
+        $category = Categories::find($id);
+        return view('admin.clothing.bulk-upload', compact('category'));
+    }
+
+    public function bulkUpload(Request $request, $id)
+    {
+        $request->validate(['csv_file' => 'required|file|mimes:csv,txt|max:10240']);
+
+        $path    = $request->file('csv_file')->getRealPath();
+        $handle  = fopen($path, 'r');
+        $rows    = [];
+        while (($line = fgetcsv($handle, 0, ',')) !== false) {
+            $rows[] = $line;
+        }
+        fclose($handle);
+
+        $importer = new \App\Imports\ProductsCsvImport();
+        $result   = $importer->import($rows);
+
+        $msg = "Creados: {$result['created']} · Omitidos: {$result['skipped']}";
+        if (!empty($result['errors'])) {
+            $msg .= ' · ' . implode('; ', array_slice($result['errors'], 0, 5));
+        }
+
+        return redirect()->back()->with([
+            'status' => $msg,
+            'icon'   => $result['created'] > 0 ? 'success' : 'warning',
+        ]);
+    }
+
     public function isStatus($id, Request $request)
     {
         DB::beginTransaction();

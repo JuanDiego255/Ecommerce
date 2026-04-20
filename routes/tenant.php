@@ -305,6 +305,8 @@ Route::middleware([
             Route::get('/new-item/{id}', [ClothingCategoryController::class, 'add']);
             Route::post('/insert-clothing', [ClothingCategoryController::class, 'store']);
             Route::post('/import/products/{id}', [ClothingCategoryController::class, 'importProducts']);
+            Route::get('/bulk-upload/{id}', [ClothingCategoryController::class, 'bulkUploadView']);
+            Route::post('/bulk-upload/{id}', [ClothingCategoryController::class, 'bulkUpload']);
             Route::get('/edit-clothing/{id}/{cat_id}', [ClothingCategoryController::class, 'edit']);
             Route::put('/update-clothing/{id}', [ClothingCategoryController::class, 'update']);
             Route::delete('/delete-clothing/{id}', [ClothingCategoryController::class, 'delete']);
