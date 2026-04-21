@@ -33,9 +33,10 @@ class BillController extends Controller
         DB::beginTransaction();
         try {
             $new_bill =  new  Bill();           
-            $new_bill->bill = $request->bill;
-            $new_bill->detail = $request->detail;
+            $new_bill->bill      = $request->bill;
+            $new_bill->detail    = $request->detail;
             $new_bill->bill_date = $request->bill_date;
+            $new_bill->company   = $request->company ?? 'safewor';
             $new_bill->save();
             DB::commit();
             return redirect()->back()->with(['status' => 'Se ha guardado el gasto con éxito', 'icon' => 'success']);

@@ -27,29 +27,40 @@ class TenantPaymentController extends Controller
             ->groupBy('tenants.id', 'tenants.plan', 'tenants.cool_pay', 'tenants.time_to_pay')
             ->get();
 
-        $bills = Bill::orderByDesc('bill_date')->get();
+        // ── Safewor bills ──────────────────────────────────────────────
+        $billsSafewor = Bill::where('company', 'safewor')->orderByDesc('bill_date')->get();
+        $billsSpace   = Bill::where('company', 'space360')->orderByDesc('bill_date')->get();
 
-        // ── KPIs server-side (full dataset, independent of pagination) ──
-        $totalPayments  = (float) TenantPayment::sum('payment');
-        $totalBills     = (float) Bill::sum('bill');
-        $totalFund      = $totalPayments - $totalBills;
+        // ── Safewor KPIs ───────────────────────────────────────────────
+        $totalPayments      = (float) TenantPayment::sum('payment');
+        $totalBillsSafewor  = (float) Bill::where('company', 'safewor')->sum('bill');
+        $totalFundSafewor   = $totalPayments - $totalBillsSafewor;
 
-        $monthPayments  = (float) TenantPayment::whereYear('payment_date',  now()->year)
-                            ->whereMonth('payment_date', now()->month)->sum('payment');
-        $monthBills     = (float) Bill::whereYear('bill_date',  now()->year)
-                            ->whereMonth('bill_date', now()->month)->sum('bill');
+        $monthPayments      = (float) TenantPayment::whereYear('payment_date', now()->year)
+                                ->whereMonth('payment_date', now()->month)->sum('payment');
+        $monthBillsSafewor  = (float) Bill::where('company', 'safewor')
+                                ->whereYear('bill_date', now()->year)
+                                ->whereMonth('bill_date', now()->month)->sum('bill');
 
-        $overdueCount   = $tenants->filter(function ($t) {
+        $overdueCount       = $tenants->filter(function ($t) {
             if (!$t->payment_date) return false;
             $due = \Carbon\Carbon::parse($t->payment_date)
                     ->addMonths(max(1, (int) $t->time_to_pay) - 1);
             return now() >= $due && $t->cool_pay != 1;
         })->count();
 
+        // ── Space 360 KPIs ─────────────────────────────────────────────
+        $totalBillsSpace  = (float) Bill::where('company', 'space360')->sum('bill');
+        $monthBillsSpace  = (float) Bill::where('company', 'space360')
+                                ->whereYear('bill_date', now()->year)
+                                ->whereMonth('bill_date', now()->month)->sum('bill');
+
         return view('admin.tenant.tenants-pay', compact(
-            'tenants', 'bills',
-            'totalPayments', 'totalBills', 'totalFund',
-            'monthPayments', 'monthBills', 'overdueCount'
+            'tenants',
+            'billsSafewor', 'billsSpace',
+            'totalPayments', 'totalBillsSafewor', 'totalFundSafewor',
+            'monthPayments', 'monthBillsSafewor', 'overdueCount',
+            'totalBillsSpace', 'monthBillsSpace'
         ));
     }
 
@@ -59,9 +70,9 @@ class TenantPaymentController extends Controller
                         ->orderByDesc('payment_date')
                         ->get();
 
-        $tenant       = Tenant::where('id', $id)->firstOrFail();
-        $totalPaid    = (float) $payments->sum('payment');
-        $lastPayment  = $payments->first();
+        $tenant      = Tenant::where('id', $id)->firstOrFail();
+        $totalPaid   = (float) $payments->sum('payment');
+        $lastPayment = $payments->first();
 
         return view('admin.tenant.tenant-pay-id', compact(
             'payments', 'tenant', 'id', 'totalPaid', 'lastPayment'
@@ -97,6 +108,25 @@ class TenantPaymentController extends Controller
                 ->with(['status' => 'Pago eliminado', 'icon' => 'success']);
         } catch (\Exception $e) {
             DB::rollBack();
+            return redirect()->back()
+                ->with(['status' => $e->getMessage(), 'icon' => 'error']);
+        }
+    }
+
+    public function toggleFreeze($id)
+    {
+        try {
+            $tenant = Tenant::where('id', $id)->firstOrFail();
+            $wasFrozen = (int) $tenant->cool_pay === 1;
+            $tenant->cool_pay = $wasFrozen ? 0 : 1;
+            $tenant->save();
+
+            $msg = $wasFrozen
+                ? "Inquilino {$id} activado con éxito"
+                : "Inquilino {$id} congelado con éxito";
+
+            return redirect()->back()->with(['status' => $msg, 'icon' => 'success']);
+        } catch (\Exception $e) {
             return redirect()->back()
                 ->with(['status' => $e->getMessage(), 'icon' => 'error']);
         }

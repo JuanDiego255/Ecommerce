@@ -210,6 +210,7 @@ Route::group(['middleware' => 'isAdmin'], function () {
     Route::get('tenant/manage-pay/{id}', [TenantPaymentController::class, 'indexPayment']);
     Route::post('tenant-payment/store/', [TenantPaymentController::class, 'store']);
     Route::delete('/delete/pay/{id}', [TenantPaymentController::class, 'destroy']);
+    Route::post('tenant/toggle-freeze/{id}', [TenantPaymentController::class, 'toggleFreeze']);
     //Rutas para gastos de safewor
     Route::get('/bills/', [BillController::class, 'index']);
     Route::post('bill/store/', [BillController::class, 'store']);
