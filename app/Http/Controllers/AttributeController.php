@@ -22,7 +22,7 @@ class AttributeController extends Controller
      */
     public function indexadmin()
     {
-        $attributes = Attribute::where('name','!=','Stock')->get();
+        $attributes = Attribute::where('name', '!=', 'Stock')->withCount('values')->get();
 
         return view('admin.attributes.index', compact('attributes'));
     }
@@ -294,5 +294,43 @@ class AttributeController extends Controller
     {
         $attr_id = AttributeValue::where('id', $id)->first();
         return response()->json($attr_id);
+    }
+
+    public function inlineStore(Request $request)
+    {
+        $request->validate(['name' => 'required|string|max:100']);
+        DB::beginTransaction();
+        try {
+            $attr = new Attribute();
+            $attr->name = $request->name;
+            $attr->type = 0;
+            $attr->main = 0;
+            $attr->save();
+            DB::commit();
+            return response()->json(['id' => $attr->id, 'name' => $attr->name, 'main' => 0, 'values' => []]);
+        } catch (\Exception $th) {
+            DB::rollBack();
+            return response()->json(['error' => $th->getMessage()], 500);
+        }
+    }
+
+    public function inlineStoreValue(Request $request)
+    {
+        $request->validate([
+            'attr_id' => 'required|integer|exists:attributes,id',
+            'value'   => 'required|string|max:1000',
+        ]);
+        DB::beginTransaction();
+        try {
+            $val = new AttributeValue();
+            $val->attribute_id = $request->attr_id;
+            $val->value        = $request->value;
+            $val->save();
+            DB::commit();
+            return response()->json(['id' => $val->id, 'value' => $val->value, 'attr_id' => $val->attribute_id]);
+        } catch (\Exception $th) {
+            DB::rollBack();
+            return response()->json(['error' => $th->getMessage()], 500);
+        }
     }
 }

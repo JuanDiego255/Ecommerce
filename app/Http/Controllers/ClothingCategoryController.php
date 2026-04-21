@@ -502,11 +502,8 @@ class ClothingCategoryController extends Controller
                     $count = 1;
                     foreach ($prices_attr as $itemId => $precio) {
                         $cantidad = $cantidades_attr[$itemId];
-                        $correct_price = 0;
-                        $attr_id = AttributeValue::where('attribute_values.id', $itemId)->join('attributes', 'attributes.id', '=', 'attribute_values.attribute_id')->select('attributes.id as attribute_id', 'attribute_values.id as value_id', 'attributes.main as main')->first();
-                        if ($attr_id->main != 0) {
-                            $correct_price = $precio > 0 ? $precio : $request->price;
-                        }
+                        $attr_id = AttributeValue::where('attribute_values.id', $itemId)->join('attributes', 'attributes.id', '=', 'attribute_values.attribute_id')->select('attributes.id as attribute_id', 'attribute_values.id as value_id')->first();
+                        $correct_price = $precio > 0 ? $precio : $request->price;
                         $correct_qty = $cantidad > 0 ? $cantidad : $request->stock;
                         $this->updateAttr($id, $correct_qty, $correct_price, $attr_id->attribute_id, $itemId, $request->manage_stock, $count);
                         $count++;
@@ -658,11 +655,8 @@ class ClothingCategoryController extends Controller
                         $count = 1;
                         foreach ($prices_attr as $itemId => $precio) {
                             $cantidad = $cantidades_attr[$itemId];
-                            $correct_price = 0;
-                            $attr_id = AttributeValue::where('attribute_values.id', $itemId)->join('attributes', 'attributes.id', '=', 'attribute_values.attribute_id')->select('attributes.id as attribute_id', 'attribute_values.id as value_id', 'attributes.main as main')->first();
-                            if ($attr_id->main != 0) {
-                                $correct_price = $precio > 0 ? $precio : $request->price;
-                            }
+                            $attr_id = AttributeValue::where('attribute_values.id', $itemId)->join('attributes', 'attributes.id', '=', 'attribute_values.attribute_id')->select('attributes.id as attribute_id', 'attribute_values.id as value_id')->first();
+                            $correct_price = $precio > 0 ? $precio : $request->price;
                             $correct_qty = $cantidad > 0 ? $cantidad : $request->stock;
                             $this->processAttr($clothingId, $correct_qty, $correct_price, $attr_id->attribute_id, $itemId, $request->manage_stock, $count);
                             $count++;

@@ -22,9 +22,26 @@
      data-attributes="{{ $vbAttrData->toJson() }}"
      data-existing="{{ $vbExisting->toJson() }}">
 
-    {{-- Attribute type pills --}}
+    {{-- Attribute type pills + "Crear tipo" toggle --}}
     <div class="surface-title mb-2">Tipos de atributo</div>
-    <div id="vb-attrs" class="d-flex flex-wrap gap-2 mb-3"></div>
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
+        <div id="vb-attrs" class="d-flex flex-wrap gap-2"></div>
+        <button type="button" id="vb-new-attr-toggle"
+                style="background:none;border:none;font-size:.75rem;color:var(--blue);
+                       cursor:pointer;padding:0;display:inline-flex;align-items:center;gap:3px;">
+            <i class="fas fa-plus" style="font-size:.65rem"></i> Crear tipo
+        </button>
+    </div>
+
+    {{-- Inline new attribute type row --}}
+    <div id="vb-new-attr-row" class="d-none d-flex gap-2 mb-3" style="max-width:320px">
+        <input type="text" id="vb-new-attr-input" class="filter-input vb-input"
+               placeholder="Nombre del tipo (ej: Material)" style="flex:1">
+        <button type="button" id="vb-new-attr-btn" class="s-btn-primary"
+                style="padding:4px 12px;font-size:.78rem;white-space:nowrap">
+            <i class="fas fa-plus me-1"></i>Agregar
+        </button>
+    </div>
 
     {{-- Value picker (shown after clicking a pill) --}}
     <div id="vb-picker" class="d-none mb-3 p-3"
@@ -37,7 +54,21 @@
                 Seleccionar todo
             </button>
         </div>
-        <div id="vb-values-grid" class="d-flex flex-wrap gap-2"></div>
+
+        {{-- Existing value chips --}}
+        <div id="vb-values-grid" class="d-flex flex-wrap gap-2 mb-2"></div>
+
+        {{-- Inline new value --}}
+        <div class="d-flex gap-2 mt-2" style="max-width:300px">
+            <input type="text" id="vb-new-val-input" class="filter-input vb-input"
+                   placeholder="Nuevo valor..." style="flex:1">
+            <button type="button" id="vb-new-val-btn"
+                    style="font-size:.72rem;padding:4px 10px;border:1px solid var(--blue);
+                           border-radius:6px;background:var(--blue);color:#fff;cursor:pointer;
+                           white-space:nowrap;">
+                <i class="fas fa-plus me-1"></i>Agregar
+            </button>
+        </div>
     </div>
 
     {{-- Variants table --}}
