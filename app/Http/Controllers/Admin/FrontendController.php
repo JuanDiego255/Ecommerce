@@ -320,13 +320,13 @@ class FrontendController extends Controller
              // Canonical dinámico del tenant actual
             SEOMeta::setCanonical($currentUrl);
             //Opengraph
-            OpenGraph::setTitle($title);
+            OpenGraph::setTitle($tag->title . " | Costa Rica");
             OpenGraph::setUrl($currentUrl);
             OpenGraph::addImage($tag->url_image_og);
             OpenGraph::setTitle($tag->title);
             OpenGraph::setDescription($tag->meta_og_description);
              // Twitter
-            SEOTwitter::setTitle($title);
+            SEOTwitter::setTitle($tag->title . " | Costa Rica");
             SEOTwitter::setDescription($tag->meta_og_description);
             SEOTwitter::setImage($tag->url_image_og);
         }
