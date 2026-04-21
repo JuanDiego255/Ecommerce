@@ -91,6 +91,90 @@
     </div>
 </div>
 
+{{-- ── Modal: Nuevo cliente Space 360 ─────────────────────────── --}}
+<div class="modal fade" id="add-space-client-modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content" style="border-radius:14px;border:none;">
+            <div class="modal-header border-0 pb-0">
+                <h6 class="modal-title fw-bold">Nuevo cliente — Space 360</h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="{{ url('space/client/store') }}" method="POST">
+                @csrf
+                <div class="modal-body" style="display:grid;gap:12px;">
+                    <div>
+                        <label class="filter-label">Nombre del cliente</label>
+                        <input type="text" name="name" class="filter-input"
+                            placeholder="Ej: Autos Grecia" required>
+                    </div>
+                    <div>
+                        <label class="filter-label">Tipo de pago</label>
+                        <select name="payment_type" id="sp-payment-type" class="filter-input" required>
+                            <option value="one_time">Pago único</option>
+                            <option value="monthly">Mensualidad</option>
+                        </select>
+                    </div>
+                    <div id="sp-time-to-pay-row" style="display:none;">
+                        <label class="filter-label">Intervalo (meses)</label>
+                        <input type="number" name="time_to_pay" id="sp-time-to-pay"
+                            class="filter-input" min="1" max="60" value="1"
+                            placeholder="1 = mensual, 3 = trimestral…">
+                    </div>
+                </div>
+                <div class="modal-footer border-0 pt-0 gap-2">
+                    <button type="button" class="s-btn-sec w-auto" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="s-btn-primary w-auto">
+                        <span class="material-icons" style="font-size:.9rem;vertical-align:middle;">person_add</span>
+                        Crear cliente
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{{-- ── Modal: Registrar pago Space 360 ────────────────────────── --}}
+<div class="modal fade" id="space-pay-modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content" style="border-radius:14px;border:none;">
+            <div class="modal-header border-0 pb-0">
+                <div>
+                    <h6 class="modal-title fw-bold mb-0">Registrar pago</h6>
+                    <p style="font-size:.75rem;color:var(--gray3);margin:2px 0 0;" id="sp-client-label"></p>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="{{ url('space/payment/store') }}" method="POST">
+                @csrf
+                <input type="hidden" name="client_id" id="sp-client-id">
+                <div class="modal-body" style="display:grid;gap:12px;">
+                    <div>
+                        <label class="filter-label">Monto (₡)</label>
+                        <input type="number" name="amount" id="sp-amount" class="filter-input"
+                            min="1" step="1" placeholder="Ej: 370000" required>
+                    </div>
+                    <div>
+                        <label class="filter-label">Fecha del pago</label>
+                        <input type="date" name="payment_date" id="sp-date" class="filter-input" required>
+                    </div>
+                    <div>
+                        <label class="filter-label">Descripción (opcional)</label>
+                        <input type="text" name="description" class="filter-input"
+                            placeholder="Ej: Cuota enero, proyecto X…">
+                    </div>
+                </div>
+                <div class="modal-footer border-0 pt-0 gap-2">
+                    <button type="button" class="s-btn-sec w-auto" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="s-btn-primary w-auto">
+                        <span class="material-icons" style="font-size:.9rem;vertical-align:middle;">payments</span>
+                        Guardar pago
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 {{-- ── Header ──────────────────────────────────────────────────── --}}
 <div class="page-header">
     <div>
@@ -375,10 +459,37 @@
         {{-- KPIs Space 360 --}}
         <div class="tp-kpi-row">
             <div class="tp-kpi">
+                <span class="material-icons tp-kpi-icon" style="color:#007aff;">payments</span>
+                <div>
+                    <div class="tp-kpi-value">{{ $fmt($totalSpaceIncome) }}</div>
+                    <div class="tp-kpi-label">Total ingresos</div>
+                </div>
+            </div>
+            <div class="tp-kpi">
                 <span class="material-icons tp-kpi-icon" style="color:#ff3b30;">receipt</span>
                 <div>
                     <div class="tp-kpi-value">{{ $fmt($totalBillsSpace) }}</div>
                     <div class="tp-kpi-label">Total gastos</div>
+                </div>
+            </div>
+            <div class="tp-kpi {{ $totalFundSpace >= 0 ? '' : 'tp-kpi-neg' }}">
+                <span class="material-icons tp-kpi-icon"
+                      style="color:{{ $totalFundSpace >= 0 ? '#34c759' : '#ff3b30' }};">
+                    account_balance_wallet
+                </span>
+                <div>
+                    <div class="tp-kpi-value"
+                         style="color:{{ $totalFundSpace >= 0 ? '#34c759' : '#ff3b30' }};">
+                        {{ $fmt($totalFundSpace) }}
+                    </div>
+                    <div class="tp-kpi-label">Fondo disponible</div>
+                </div>
+            </div>
+            <div class="tp-kpi">
+                <span class="material-icons tp-kpi-icon" style="color:#007aff;">calendar_today</span>
+                <div>
+                    <div class="tp-kpi-value">{{ $fmt($monthSpaceIncome) }}</div>
+                    <div class="tp-kpi-label">Ingresos este mes</div>
                 </div>
             </div>
             <div class="tp-kpi">
@@ -386,6 +497,130 @@
                 <div>
                     <div class="tp-kpi-value">{{ $fmt($monthBillsSpace) }}</div>
                     <div class="tp-kpi-label">Gastos este mes</div>
+                </div>
+            </div>
+            @if($spaceOverdueCount > 0)
+            <div class="tp-kpi" style="border-color:#ff3b30;background:rgba(255,59,48,.04);">
+                <span class="material-icons tp-kpi-icon" style="color:#ff3b30;">warning_amber</span>
+                <div>
+                    <div class="tp-kpi-value" style="color:#ff3b30;">{{ $spaceOverdueCount }}</div>
+                    <div class="tp-kpi-label">Cobros vencidos</div>
+                </div>
+            </div>
+            @endif
+        </div>
+
+        {{-- Tabla de clientes Space 360 --}}
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+                    <div>
+                        <p class="surface-title mb-0">Clientes — Space 360</p>
+                        <p style="font-size:.75rem;color:var(--gray3);margin:2px 0 0;">
+                            {{ $spaceClients->count() }} cliente{{ $spaceClients->count() !== 1 ? 's' : '' }}
+                        </p>
+                    </div>
+                    <div class="d-flex gap-2 align-items-end">
+                        <div>
+                            <label class="filter-label">Buscar</label>
+                            <input type="text" id="searchfor_sp" class="filter-input" placeholder="Filtrar clientes…">
+                        </div>
+                        <button type="button" class="s-btn-primary w-auto"
+                                data-bs-toggle="modal" data-bs-target="#add-space-client-modal">
+                            <span class="material-icons" style="font-size:.9rem;vertical-align:middle;">person_add</span>
+                            Nuevo cliente
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0" id="space-clients">
+                        <thead class="thead-lite">
+                            <tr>
+                                <th style="display:none;"></th>{{-- sort key --}}
+                                <th>Cliente</th>
+                                <th>Tipo</th>
+                                <th>Último pago</th>
+                                <th>Próx. cobro</th>
+                                <th class="text-end">Total pagado</th>
+                                <th class="text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($spaceClients as $sc)
+                            @php
+                                $scIsMonthly  = $sc->payment_type === 'monthly';
+                                $scTimePay    = max(1, (int) $sc->time_to_pay);
+                                $scHasPay     = (bool) $sc->last_payment_date;
+                                $scNextDate   = ($scIsMonthly && $scHasPay)
+                                    ? \Carbon\Carbon::parse($sc->next_payment_base)
+                                        ->addMonths($scTimePay - 1)->format('Y-m-d')
+                                    : null;
+                                $scOverdue    = $scNextDate && now()->toDateString() >= $scNextDate;
+                                $scSortKey    = $scIsMonthly ? ($scHasPay ? 0 : 2) : 3;
+                            @endphp
+                            <tr>
+                                <td style="display:none;">{{ $scSortKey }}</td>
+                                <td class="fw-semibold">{{ $sc->name }}</td>
+                                <td>
+                                    @if($scIsMonthly)
+                                        <span class="s-pill pill-blue">
+                                            Mensual{{ $scTimePay > 1 ? ' /' . $scTimePay . 'm' : '' }}
+                                        </span>
+                                    @else
+                                        <span class="s-pill pill-gray">Único</span>
+                                    @endif
+                                </td>
+                                <td style="font-size:.8rem;color:var(--gray3);">
+                                    {{ $scHasPay
+                                        ? \Carbon\Carbon::parse($sc->last_payment_date)->format('d/m/Y')
+                                        : '—' }}
+                                </td>
+                                <td>
+                                    @if(!$scIsMonthly)
+                                        <span class="s-pill pill-gray">—</span>
+                                    @elseif($scNextDate)
+                                        @if($scOverdue)
+                                            <span class="s-pill pill-red">
+                                                <span class="material-icons" style="font-size:.75rem;">warning</span>
+                                                {{ \Carbon\Carbon::parse($scNextDate)->format('d/m/Y') }}
+                                            </span>
+                                        @else
+                                            <span class="s-pill pill-green">
+                                                {{ \Carbon\Carbon::parse($scNextDate)->format('d/m/Y') }}
+                                            </span>
+                                        @endif
+                                    @else
+                                        <span class="s-pill pill-gray">Sin pagos</span>
+                                    @endif
+                                </td>
+                                <td class="text-end fw-semibold">{{ $fmt($sc->total_payment ?? 0) }}</td>
+                                <td class="text-center">
+                                    <div class="d-inline-flex gap-2 align-items-center">
+                                        <button type="button" class="act-btn ab-ok"
+                                            title="Registrar pago"
+                                            onclick="openSpacePayModal({{ $sc->id }}, '{{ addslashes($sc->name) }}')">
+                                            <span class="material-icons" style="font-size:.9rem;">payments</span>
+                                        </button>
+                                        <a href="{{ url('space/client/' . $sc->id . '/payments') }}"
+                                           class="act-btn ab-neutral" title="Ver historial">
+                                            <span class="material-icons" style="font-size:.9rem;">history</span>
+                                        </a>
+                                        <form method="POST"
+                                              action="{{ url('space/client/' . $sc->id) }}"
+                                              style="display:inline;"
+                                              onsubmit="return confirm('¿Eliminar a {{ addslashes($sc->name) }} y todos sus pagos?')">
+                                            @csrf @method('DELETE')
+                                            <button type="submit" class="act-btn ab-del" title="Eliminar cliente">
+                                                <span class="material-icons" style="font-size:.9rem;">delete</span>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -584,5 +819,39 @@ var dtBillsSp = $('#bills-sp').DataTable({
     }
 });
 $('#searchfor_bill_sp').on('input', function () { dtBillsSp.search(this.value).draw(); });
+
+/* ── DataTable: clientes Space 360 ─────────────────────────── */
+var dtSpaceClients = $('#space-clients').DataTable({
+    searching: true, lengthChange: false, pageLength: 50,
+    order: [[0, 'asc'], [4, 'asc']],
+    columnDefs: [
+        { targets: 0, visible: false },
+        { targets: [3, 6], orderable: false }
+    ],
+    language: {
+        sZeroRecords: 'Sin resultados', sEmptyTable: 'Sin clientes',
+        sInfo: '_START_–_END_ de _TOTAL_', sInfoEmpty: '0 registros',
+        sInfoFiltered: '(filtrado de _MAX_)',
+        oPaginate: { sNext: '›', sPrevious: '‹', sFirst: '«', sLast: '»' }
+    }
+});
+$('#searchfor_sp').on('input', function () { dtSpaceClients.search(this.value).draw(); });
+
+/* ── Modal: pago Space 360 ─────────────────────────────────── */
+function openSpacePayModal(clientId, clientName) {
+    document.getElementById('sp-client-id').value = clientId;
+    document.getElementById('sp-client-label').textContent = clientName;
+    document.getElementById('sp-date').valueAsDate = new Date();
+    document.getElementById('sp-amount').value = '';
+    bootstrap.Modal.getOrCreateInstance(
+        document.getElementById('space-pay-modal')
+    ).show();
+}
+
+/* ── Toggle intervalo en modal nuevo cliente ───────────────── */
+document.getElementById('sp-payment-type').addEventListener('change', function () {
+    var row = document.getElementById('sp-time-to-pay-row');
+    row.style.display = this.value === 'monthly' ? '' : 'none';
+});
 </script>
 @endsection

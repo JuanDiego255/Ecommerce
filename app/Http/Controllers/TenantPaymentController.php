@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Bill;
+use App\Models\SpaceClient;
+use App\Models\SpacePayment;
 use App\Models\Tenant;
 use App\Models\TenantPayment;
 use Illuminate\Http\Request;
@@ -12,6 +14,7 @@ class TenantPaymentController extends Controller
 {
     public function index()
     {
+        // ── Safewor: tenants ───────────────────────────────────────────
         $tenants = Tenant::where('tenants.id', '!=', 'main')
             ->where('active', 1)
             ->leftJoin('tenant_payments', 'tenants.id', 'tenant_payments.tenant_id')
@@ -49,18 +52,45 @@ class TenantPaymentController extends Controller
             return now() >= $due && $t->cool_pay != 1;
         })->count();
 
+        // ── Space 360: clients with aggregated payment data ────────────
+        $spaceClients = SpaceClient::leftJoin('space_payments', 'space_clients.id', 'space_payments.client_id')
+            ->select(
+                'space_clients.id as id',
+                'space_clients.name as name',
+                'space_clients.payment_type as payment_type',
+                'space_clients.time_to_pay as time_to_pay',
+                DB::raw('SUM(space_payments.amount) as total_payment'),
+                DB::raw('MAX(space_payments.payment_date) as last_payment_date'),
+                DB::raw('DATE_ADD(MAX(space_payments.payment_date), INTERVAL 1 MONTH) as next_payment_base')
+            )
+            ->groupBy('space_clients.id', 'space_clients.name', 'space_clients.payment_type', 'space_clients.time_to_pay')
+            ->get();
+
         // ── Space 360 KPIs ─────────────────────────────────────────────
-        $totalBillsSpace  = (float) Bill::where('company', 'space360')->sum('bill');
-        $monthBillsSpace  = (float) Bill::where('company', 'space360')
+        $totalSpaceIncome  = (float) SpacePayment::sum('amount');
+        $totalBillsSpace   = (float) Bill::where('company', 'space360')->sum('bill');
+        $totalFundSpace    = $totalSpaceIncome - $totalBillsSpace;
+
+        $monthSpaceIncome  = (float) SpacePayment::whereYear('payment_date', now()->year)
+                                ->whereMonth('payment_date', now()->month)->sum('amount');
+        $monthBillsSpace   = (float) Bill::where('company', 'space360')
                                 ->whereYear('bill_date', now()->year)
                                 ->whereMonth('bill_date', now()->month)->sum('bill');
+
+        $spaceOverdueCount = $spaceClients->filter(function ($c) {
+            if ($c->payment_type !== 'monthly' || !$c->last_payment_date) return false;
+            $due = \Carbon\Carbon::parse($c->next_payment_base)
+                    ->addMonths(max(1, (int) $c->time_to_pay) - 1);
+            return now() >= $due;
+        })->count();
 
         return view('admin.tenant.tenants-pay', compact(
             'tenants',
             'billsSafewor', 'billsSpace',
             'totalPayments', 'totalBillsSafewor', 'totalFundSafewor',
             'monthPayments', 'monthBillsSafewor', 'overdueCount',
-            'totalBillsSpace', 'monthBillsSpace'
+            'spaceClients', 'totalSpaceIncome', 'totalBillsSpace', 'totalFundSpace',
+            'monthSpaceIncome', 'monthBillsSpace', 'spaceOverdueCount'
         ));
     }
 
@@ -116,7 +146,7 @@ class TenantPaymentController extends Controller
     public function toggleFreeze($id)
     {
         try {
-            $tenant = Tenant::where('id', $id)->firstOrFail();
+            $tenant    = Tenant::where('id', $id)->firstOrFail();
             $wasFrozen = (int) $tenant->cool_pay === 1;
             $tenant->cool_pay = $wasFrozen ? 0 : 1;
             $tenant->save();

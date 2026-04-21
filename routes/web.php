@@ -18,6 +18,7 @@ use App\Http\Controllers\TenantCarouselController;
 use App\Http\Controllers\TenantController;
 use App\Http\Controllers\TenantInfoController;
 use App\Http\Controllers\TenantPaymentController;
+use App\Http\Controllers\SpacePaymentController;
 use App\Http\Controllers\TenantSocialNetworkController;
 use App\Http\Controllers\TestimonialController;
 use App\Http\Controllers\MetaDeletionController;
@@ -215,6 +216,12 @@ Route::group(['middleware' => 'isAdmin'], function () {
     Route::get('/bills/', [BillController::class, 'index']);
     Route::post('bill/store/', [BillController::class, 'store']);
     Route::delete('/delete/bill/{id}', [BillController::class, 'destroy']);
+    //Rutas Space 360
+    Route::post('space/client/store', [SpacePaymentController::class, 'storeClient']);
+    Route::delete('space/client/{id}', [SpacePaymentController::class, 'destroyClient']);
+    Route::post('space/payment/store', [SpacePaymentController::class, 'storePayment']);
+    Route::delete('space/payment/{id}', [SpacePaymentController::class, 'destroyPayment']);
+    Route::get('space/client/{id}/payments', [SpacePaymentController::class, 'indexClient']);
 });
 
 //images Tenant
