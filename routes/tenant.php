@@ -313,6 +313,7 @@ Route::middleware([
             Route::post('status/{id}', [ClothingCategoryController::class, 'isStatus']);
             Route::get('/get-total-categories/{id}', [ClothingCategoryController::class, 'getTotalCategories']);
             Route::get('/clothing/{id}/variants', [ClothingCategoryController::class, 'getVariants']);
+            Route::get('/get-combination/{clothingId}', [ClothingCategoryController::class, 'getCombination']);
             Route::post('/clothing/{id}/quick-edit', [ClothingCategoryController::class, 'quickEdit']);
             Route::post('/clothing/variants/update', [ClothingCategoryController::class, 'updateVariants']);
             Route::post('/clothing/bulk-action', [ClothingCategoryController::class, 'bulkAction']);

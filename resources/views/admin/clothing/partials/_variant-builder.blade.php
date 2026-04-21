@@ -8,12 +8,12 @@
         ];
     })->values();
 
-    $vbExisting = isset($stocks)
-        ? $stocks->filter(fn($s) => $s->attr_id)->map(fn($s) => [
-            'attr_id'    => $s->attr_id,
-            'value_attr' => $s->value_attr,
-            'price'      => $s->price,
-            'stock'      => $s->stock,
+    $vbExisting = isset($combinations)
+        ? $combinations->map(fn($c) => [
+            'combination_id' => $c->id,
+            'value_ids'      => $c->values->pluck('value_attr')->values(),
+            'price'          => $c->price,
+            'stock'          => $c->stock,
         ])->values()
         : collect([]);
 @endphp

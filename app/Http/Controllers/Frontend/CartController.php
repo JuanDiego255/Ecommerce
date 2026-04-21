@@ -95,6 +95,7 @@ class CartController extends Controller
                         $cart_item->quantity = $request->quantity != null ? $request->quantity : 1;
                         $cart_item->sold = $request->updateId != 0 ? 1 : 0;
                         $cart_item->buy_id = $request->updateId != 0 ? $updateId : null;
+                        $cart_item->combination_id = $request->combination_id ?: null;
                         $cart_item->save();
                         $cart_id = $cart_item->id;
                         foreach ($attributes as $attr) {
@@ -134,6 +135,7 @@ class CartController extends Controller
                             $cart_item->quantity = $quantity;
                             $cart_item->sold = 0;
                             $cart_item->unique_cart_id = $prefix_cart . Auth::id();
+                            $cart_item->combination_id = $request->combination_id ?: null;
                             $cart_item->save();
                             $cart_id = $cart_item->id;
                             foreach ($attributes as $attr) {
@@ -173,6 +175,7 @@ class CartController extends Controller
                         $cart_item->quantity = $quantity;
                         $cart_item->sold = 0;
                         $cart_item->unique_cart_id = $prefix_cart . $session_id;
+                        $cart_item->combination_id = $request->combination_id ?: null;
                         $cart_item->save();
                         $cart_id = $cart_item->id;
                         foreach ($attributes as $attr) {
@@ -340,12 +343,7 @@ class CartController extends Controller
                 $cart_items = Cart::where('carts.unique_cart_id', $unique_cart_id)
                     ->where('carts.sold', 0)
                     ->where('carts.user_id', null)
-                    ->leftJoin('attribute_value_cars', 'carts.id', 'attribute_value_cars.cart_id')
-                    ->leftJoin('attributes', 'attribute_value_cars.attr_id', 'attributes.id')
-                    ->leftJoin('attribute_values', 'attribute_value_cars.value_attr', 'attribute_values.id')
-                    ->leftJoin('stocks', function ($join) {
-                        $join->on('carts.clothing_id', '=', 'stocks.clothing_id')->on('attribute_value_cars.attr_id', '=', 'stocks.attr_id')->on('attribute_value_cars.value_attr', '=', 'stocks.value_attr')->where('stocks.price', '!=', 0);
-                    })
+                    ->leftJoin('variant_combinations', 'carts.combination_id', 'variant_combinations.id')
                     ->join('clothing', 'carts.clothing_id', 'clothing.id')
                     ->leftJoin('product_images', function ($join) {
                         $join->on('clothing.id', '=', 'product_images.clothing_id')->whereRaw('product_images.id = (
@@ -364,18 +362,16 @@ class CartController extends Controller
                         'carts.quantity as quantity',
                         'carts.id as cart_id',
                         'carts.unique_cart_id as unique_cart_id',
-                        'attributes.name as name_attr',
-                        'attribute_values.value as value',
-                        DB::raw('COALESCE(stocks.price, clothing.price) as price'),
-                        DB::raw('COALESCE(stocks.stock, clothing.stock) as stock'),
+                        DB::raw('COALESCE(NULLIF(variant_combinations.price, 0), clothing.price) as price'),
+                        DB::raw('COALESCE(variant_combinations.stock, clothing.stock) as stock'),
                         DB::raw('(
-                            SELECT GROUP_CONCAT(CONCAT(attributes.name, ": ", attribute_values.value) SEPARATOR ", ")
-                            FROM attribute_value_cars
-                            JOIN attributes ON attribute_value_cars.attr_id = attributes.id
-                            JOIN attribute_values ON attribute_value_cars.value_attr = attribute_values.id
-                            WHERE attribute_value_cars.cart_id = carts.id
+                            SELECT GROUP_CONCAT(CONCAT(a.name, ": ", av.value) SEPARATOR ", ")
+                            FROM attribute_value_cars avc
+                            JOIN attributes a ON avc.attr_id = a.id
+                            JOIN attribute_values av ON avc.value_attr = av.id
+                            WHERE avc.cart_id = carts.id
                         ) as attributes_values'),
-                        DB::raw('IFNULL(product_images.image, "") as image'), // Obtener la primera imagen del producto
+                        DB::raw('IFNULL(product_images.image, "") as image'),
                     )
                     ->groupBy(
                         'clothing.id',
@@ -384,11 +380,9 @@ class CartController extends Controller
                         'clothing.name',
                         'clothing.casa',
                         'clothing.description',
-                        'stocks.price',
-                        'stocks.stock',
+                        'variant_combinations.price',
+                        'variant_combinations.stock',
                         'clothing.mayor_price',
-                        'attributes.name',
-                        'attribute_values.value',
                         'clothing.status',
                         'clothing.discount',
                         'carts.quantity',
@@ -406,14 +400,7 @@ class CartController extends Controller
                     ->where('carts.session_id', null)
                     ->where('carts.sold', 0)
                     ->join('users', 'carts.user_id', 'users.id')
-                    ->leftJoin('attribute_value_cars', 'carts.id', 'attribute_value_cars.cart_id')
-                    ->leftJoin('attributes', 'attribute_value_cars.attr_id', 'attributes.id')
-                    ->leftJoin('attribute_values', 'attribute_value_cars.value_attr', 'attribute_values.id')
-
-                    ->leftJoin('stocks', function ($join) {
-                        $join->on('carts.clothing_id', '=', 'stocks.clothing_id')->on('attribute_value_cars.attr_id', '=', 'stocks.attr_id')->on('attribute_value_cars.value_attr', '=', 'stocks.value_attr')
-                            ->where('stocks.price', '!=', 0);
-                    })
+                    ->leftJoin('variant_combinations', 'carts.combination_id', 'variant_combinations.id')
                     ->join('clothing', 'carts.clothing_id', 'clothing.id')
                     ->leftJoin('product_images', function ($join) {
                         $join->on('clothing.id', '=', 'product_images.clothing_id')->whereRaw('product_images.id = (
@@ -432,18 +419,16 @@ class CartController extends Controller
                         'clothing.status as status',
                         'carts.quantity as quantity',
                         'carts.id as cart_id',
-                        'attributes.name as name_attr',
-                        'attribute_values.value as value',
-                        DB::raw('COALESCE(stocks.price, clothing.price) as price'),
-                        DB::raw('COALESCE(stocks.stock, clothing.stock) as stock'),
+                        DB::raw('COALESCE(NULLIF(variant_combinations.price, 0), clothing.price) as price'),
+                        DB::raw('COALESCE(variant_combinations.stock, clothing.stock) as stock'),
                         DB::raw('(
-                            SELECT GROUP_CONCAT(CONCAT(attributes.name, ": ", attribute_values.value) SEPARATOR ", ")
-                            FROM attribute_value_cars
-                            JOIN attributes ON attribute_value_cars.attr_id = attributes.id
-                            JOIN attribute_values ON attribute_value_cars.value_attr = attribute_values.id
-                            WHERE attribute_value_cars.cart_id = carts.id
+                            SELECT GROUP_CONCAT(CONCAT(a.name, ": ", av.value) SEPARATOR ", ")
+                            FROM attribute_value_cars avc
+                            JOIN attributes a ON avc.attr_id = a.id
+                            JOIN attribute_values av ON avc.value_attr = av.id
+                            WHERE avc.cart_id = carts.id
                         ) as attributes_values'),
-                        DB::raw('IFNULL(product_images.image, "") as image'), // Obtener la primera imagen del producto
+                        DB::raw('IFNULL(product_images.image, "") as image'),
                     )
                     ->groupBy(
                         'clothing.id',
@@ -452,11 +437,9 @@ class CartController extends Controller
                         'clothing.name',
                         'clothing.casa',
                         'clothing.description',
-                        'stocks.price',
-                        'stocks.stock',
+                        'variant_combinations.price',
+                        'variant_combinations.stock',
                         'clothing.mayor_price',
-                        'attributes.name',
-                        'attribute_values.value',
                         'clothing.status',
                         'clothing.discount',
                         'carts.quantity',
@@ -465,19 +448,13 @@ class CartController extends Controller
                         'product_images.image'
                     )
                     ->get();
-                // Resto del código para obtener los artículos del carrito para usuarios autenticados
                 return $cart_items;
             } else {
                 $session_id = session()->get('session_id');
                 $cart_items = Cart::where('carts.session_id', $session_id)
                     ->where('carts.user_id', null)
                     ->where('carts.sold', 0)
-                    ->leftJoin('attribute_value_cars', 'carts.id', 'attribute_value_cars.cart_id')
-                    ->leftJoin('attributes', 'attribute_value_cars.attr_id', 'attributes.id')
-                    ->leftJoin('attribute_values', 'attribute_value_cars.value_attr', 'attribute_values.id')
-                    ->leftJoin('stocks', function ($join) {
-                        $join->on('carts.clothing_id', '=', 'stocks.clothing_id')->on('attribute_value_cars.attr_id', '=', 'stocks.attr_id')->on('attribute_value_cars.value_attr', '=', 'stocks.value_attr')->where('stocks.price', '!=', 0);
-                    })
+                    ->leftJoin('variant_combinations', 'carts.combination_id', 'variant_combinations.id')
                     ->join('clothing', 'carts.clothing_id', 'clothing.id')
                     ->leftJoin('product_images', function ($join) {
                         $join->on('clothing.id', '=', 'product_images.clothing_id')->whereRaw('product_images.id = (
@@ -496,18 +473,16 @@ class CartController extends Controller
                         'clothing.status as status',
                         'carts.quantity as quantity',
                         'carts.id as cart_id',
-                        'attributes.name as name_attr',
-                        'attribute_values.value as value',
-                        DB::raw('COALESCE(stocks.price, clothing.price) as price'),
-                        DB::raw('COALESCE(stocks.stock, clothing.stock) as stock'),
+                        DB::raw('COALESCE(NULLIF(variant_combinations.price, 0), clothing.price) as price'),
+                        DB::raw('COALESCE(variant_combinations.stock, clothing.stock) as stock'),
                         DB::raw('(
-                            SELECT GROUP_CONCAT(CONCAT(attributes.name, ": ", attribute_values.value) SEPARATOR ", ")
-                            FROM attribute_value_cars
-                            JOIN attributes ON attribute_value_cars.attr_id = attributes.id
-                            JOIN attribute_values ON attribute_value_cars.value_attr = attribute_values.id
-                            WHERE attribute_value_cars.cart_id = carts.id
+                            SELECT GROUP_CONCAT(CONCAT(a.name, ": ", av.value) SEPARATOR ", ")
+                            FROM attribute_value_cars avc
+                            JOIN attributes a ON avc.attr_id = a.id
+                            JOIN attribute_values av ON avc.value_attr = av.id
+                            WHERE avc.cart_id = carts.id
                         ) as attributes_values'),
-                        DB::raw('IFNULL(product_images.image, "") as image'), // Obtener la primera imagen del producto
+                        DB::raw('IFNULL(product_images.image, "") as image'),
                     )
                     ->groupBy(
                         'clothing.id',
@@ -516,11 +491,9 @@ class CartController extends Controller
                         'clothing.name',
                         'clothing.casa',
                         'clothing.description',
-                        'stocks.price',
-                        'stocks.stock',
+                        'variant_combinations.price',
+                        'variant_combinations.stock',
                         'clothing.mayor_price',
-                        'attributes.name',
-                        'attribute_values.value',
                         'clothing.status',
                         'clothing.discount',
                         'carts.quantity',

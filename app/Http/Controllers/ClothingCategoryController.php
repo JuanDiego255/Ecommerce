@@ -13,6 +13,8 @@ use App\Models\PivotClothingCategory;
 use App\Models\ProductImage;
 use App\Models\Stock;
 use App\Models\TenantInfo;
+use App\Models\VariantCombination;
+use App\Models\VariantCombinationValue;
 use App\Rules\FourImage;
 use Exception;
 use Illuminate\Http\Request;
@@ -301,9 +303,10 @@ class ClothingCategoryController extends Controller
 
         $details = ClothingDetails::where('clothing_id', $id)->first();
         $stocks = Stock::where('clothing_id', $id)->leftJoin('attributes', 'stocks.attr_id', 'attributes.id')->leftJoin('attribute_values', 'stocks.value_attr', 'attribute_values.id')->select('stocks.id as id', 'stocks.clothing_id as clothing_id', 'stocks.stock as stock', 'stocks.price as price', 'stocks.attr_id as attr_id', 'stocks.value_attr as value_attr', 'attributes.name as name', 'attributes.main as main', 'attribute_values.id as value_id', 'attribute_values.value as value')->get();
+        $combinations = VariantCombination::where('clothing_id', $id)->with('values')->get();
         $attributes = Attribute::where('name', '!=', 'Stock')->with('values')->get();
         $stock_active = Stock::where('clothing_id', $id)->where('attr_id', '!=', '')->leftJoin('attributes', 'stocks.attr_id', 'attributes.id')->leftJoin('attribute_values', 'stocks.value_attr', 'attribute_values.id')->select('stocks.id as id', 'stocks.clothing_id as clothing_id', 'stocks.stock as stock', 'stocks.price as price', 'stocks.attr_id as attr_id', 'stocks.value_attr as value_attr', 'attributes.name as name', 'attribute_values.id as value_id', 'attribute_values.value as value')->first();
-        return view('admin.clothing.edit', compact('clothing', 'selectedCategories', 'details', 'stock_active', 'category_id', 'attributes', 'categories', 'stocks'));
+        return view('admin.clothing.edit', compact('clothing', 'selectedCategories', 'details', 'stock_active', 'category_id', 'attributes', 'categories', 'stocks', 'combinations'));
     }
     public function store(Request $request)
     {
@@ -480,38 +483,30 @@ class ClothingCategoryController extends Controller
                 }
             }
             if (isset($tenantinfo->manage_size) && $tenantinfo->manage_size == 1) {
-                if (!empty($prices_attr)) {
-                    $requestItemIds = array_keys($prices_attr);
-                    $updateAttr = true;
+                $combos = $request->input('combos', []);
+                if (!empty($combos)) {
+                    // Delete combinations removed by the user
+                    $submittedIds = collect($combos)
+                        ->pluck('combination_id')
+                        ->filter(fn($v) => $v !== '' && $v !== null)
+                        ->map('intval')
+                        ->toArray();
+                    VariantCombination::where('clothing_id', $id)
+                        ->when(!empty($submittedIds), fn($q) => $q->whereNotIn('id', $submittedIds))
+                        ->delete();
+                    $this->processCombos($id, $combos, $request->manage_stock);
                 } else {
-                    $updateAttr = false;
-                    $requestItemIds = [];
-                }
-                $currentClothingRecords = Stock::where('clothing_id', $id)->get();
-                foreach ($currentClothingRecords as $record) {
-                    if (!in_array($record->attribute_value_id, $requestItemIds)) {
-                        $record->delete();
-                    }
-                }
-                $validator_attr = Validator::make($request->all(), [
-                    'precios_attr' => 'required|array|min:1', // Verifica que precios sea un array y que contenga al menos un elemento
-                    'cantidades_attr' => 'required|array|min:1',
-                ]);
-                // Si la validación falla, redirecciona de vuelta al formulario con los errores
-                if (!$validator_attr->fails()) {
-                    $count = 1;
-                    foreach ($prices_attr as $itemId => $precio) {
-                        $cantidad = $cantidades_attr[$itemId];
-                        $attr_id = AttributeValue::where('attribute_values.id', $itemId)->join('attributes', 'attributes.id', '=', 'attribute_values.attribute_id')->select('attributes.id as attribute_id', 'attribute_values.id as value_id')->first();
-                        $correct_price = $precio > 0 ? $precio : $request->price;
-                        $correct_qty = $cantidad > 0 ? $cantidad : $request->stock;
-                        $this->updateAttr($id, $correct_qty, $correct_price, $attr_id->attribute_id, $itemId, $request->manage_stock, $count);
-                        $count++;
-                    }
-                } else {
-                    if ($updateAttr) {
-                        $value = AttributeValue::where('attributes.name', 'Stock')->where('attribute_values.value', 'Automático')->join('attributes', 'attributes.id', '=', 'attribute_values.attribute_id')->select('attributes.id as attr_id', 'attribute_values.id as value_id')->first();
-                        $this->updateAttr($id, $request->stock, $request->price, $value->attr_id, $value->value_id, $request->manage_stock, 1);
+                    // Fall back to legacy precios_attr[] format
+                    if (!empty($prices_attr)) {
+                        $count = 1;
+                        foreach ($prices_attr as $itemId => $precio) {
+                            $cantidad = $cantidades_attr[$itemId];
+                            $attr_id = AttributeValue::where('attribute_values.id', $itemId)->join('attributes', 'attributes.id', '=', 'attribute_values.attribute_id')->select('attributes.id as attribute_id', 'attribute_values.id as value_id')->first();
+                            $correct_price = $precio > 0 ? $precio : $request->price;
+                            $correct_qty = $cantidad > 0 ? $cantidad : $request->stock;
+                            $this->updateAttr($id, $correct_qty, $correct_price, $attr_id->attribute_id, $itemId, $request->manage_stock, $count);
+                            $count++;
+                        }
                     }
                 }
             } else {
@@ -646,12 +641,11 @@ class ClothingCategoryController extends Controller
                     $break = true;
                 }
                 if (isset($tenantinfo->manage_size) && $tenantinfo->manage_size == 1) {
-                    $validator_attr = Validator::make($request->all(), [
-                        'precios_attr' => 'required|array|min:1', // Verifica que precios sea un array y que contenga al menos un elemento
-                        'cantidades_attr' => 'required|array|min:1',
-                    ]);
-                    // Si la validación falla, redirecciona de vuelta al formulario con los errores
-                    if (!$validator_attr->fails()) {
+                    $combos = $request->input('combos', []);
+                    if (!empty($combos)) {
+                        $this->processCombos($clothingId, $combos, $request->manage_stock);
+                    } elseif (!empty($prices_attr)) {
+                        // Fall back to legacy precios_attr[] format
                         $count = 1;
                         foreach ($prices_attr as $itemId => $precio) {
                             $cantidad = $cantidades_attr[$itemId];
@@ -661,13 +655,7 @@ class ClothingCategoryController extends Controller
                             $this->processAttr($clothingId, $correct_qty, $correct_price, $attr_id->attribute_id, $itemId, $request->manage_stock, $count);
                             $count++;
                         }
-                    } else {
-                        //$value = AttributeValue::where('attributes.name', 'Stock')->where('attribute_values.value', 'Automático')->join('attributes', 'attributes.id', '=', 'attribute_values.attribute_id')->select('attributes.id as attr_id', 'attribute_values.id as value_id')->first();
-                        //$this->processAttr($clothingId, $request->stock, $request->price, $value->attr_id, $value->value_id, $request->manage_stock, 1);
                     }
-                } else {
-                    //$value = AttributeValue::where('attributes.name', 'Stock')->where('attribute_values.value', 'Automático')->join('attributes', 'attributes.id', '=', 'attribute_values.attribute_id')->select('attributes.id as attr_id', 'attribute_values.id as value_id')->first();
-                    //$this->processAttr($clothingId, $request->stock, $request->price, $value->attr_id, $value->value_id, $request->manage_stock, 1);
                 }
 
                 if ($break) {
@@ -820,6 +808,77 @@ class ClothingCategoryController extends Controller
             'manage_stock' => $clothing ? $clothing->manage_stock : 1,
             'variants'     => $variants,
         ]);
+    }
+
+    public function getCombination(Request $request, $clothingId)
+    {
+        $clothing = ClothingCategory::findOrFail($clothingId);
+        $valueIds = array_map('intval', $request->input('values', []));
+        sort($valueIds);
+
+        $combination = VariantCombination::where('clothing_id', $clothingId)
+            ->with('values')
+            ->get()
+            ->first(function ($combo) use ($valueIds) {
+                $ids = $combo->values->pluck('value_attr')->map('intval')->sort()->values()->toArray();
+                return $ids === $valueIds;
+            });
+
+        if (!$combination) {
+            return response()->json([
+                'found'          => false,
+                'combination_id' => null,
+                'price'          => (int) $clothing->price,
+                'stock'          => (int) $clothing->stock,
+                'manage_stock'   => $clothing->manage_stock,
+            ]);
+        }
+
+        return response()->json([
+            'found'          => true,
+            'combination_id' => $combination->id,
+            'price'          => $combination->price > 0 ? (int) $combination->price : (int) $clothing->price,
+            'stock'          => (int) $combination->stock,
+            'manage_stock'   => $combination->manage_stock,
+        ]);
+    }
+
+    protected function processCombos($clothingId, array $combos, $manage_stock)
+    {
+        foreach ($combos as $combo) {
+            $valueIds      = array_map('intval', $combo['values'] ?? []);
+            if (empty($valueIds)) continue;
+            $price         = (float) ($combo['price']          ?? 0);
+            $stockVal      = (int)   ($combo['stock']          ?? 0);
+            $combinationId = isset($combo['combination_id']) && $combo['combination_id'] !== ''
+                ? (int) $combo['combination_id'] : null;
+            $effectiveStock = $manage_stock == 1 ? $stockVal : -1;
+
+            if ($combinationId) {
+                VariantCombination::where('id', $combinationId)->update([
+                    'price'        => $price,
+                    'stock'        => $effectiveStock,
+                    'manage_stock' => $manage_stock,
+                ]);
+            } else {
+                $combination               = new VariantCombination();
+                $combination->clothing_id  = $clothingId;
+                $combination->price        = $price;
+                $combination->stock        = $effectiveStock;
+                $combination->manage_stock = $manage_stock;
+                $combination->save();
+
+                foreach ($valueIds as $vid) {
+                    $av = AttributeValue::find($vid);
+                    if (!$av) continue;
+                    $cv                 = new VariantCombinationValue();
+                    $cv->combination_id = $combination->id;
+                    $cv->attr_id        = $av->attribute_id;
+                    $cv->value_attr     = $vid;
+                    $cv->save();
+                }
+            }
+        }
     }
 
     public function quickEdit($id, Request $request)

@@ -814,15 +814,19 @@
     $(document).ready(function() {
         var attributeButtons = document.querySelectorAll('.attribute-btn');
 
+        // Count unique attribute types to know when all are selected
+        var attrTypeSet = new Set();
+        attributeButtons.forEach(function(btn) {
+            attrTypeSet.add(btn.getAttribute('data-attribute'));
+        });
+        var totalAttrTypes = attrTypeSet.size;
+
         // Inicializar la selección por defecto
         var defaultSelectedButtons = document.querySelectorAll('.attribute-btn.selected');
         defaultSelectedButtons.forEach(function(button) {
             updateHiddenInput(button);
-            var partes = button.getAttribute('data-value').split("-");
-            if (partes.length === 3) {
-                getStock(partes[2], partes[1], partes[0]);
-            }
         });
+        checkAndLoadCombination();
 
         attributeButtons.forEach(function(button) {
             button.addEventListener('click', function() {
@@ -830,21 +834,12 @@
                 var selectedButtons = document.querySelectorAll(
                     `.attribute-btn[data-attribute="${attributeType}"]`);
 
-                // Deseleccionar todos los botones del mismo atributo
                 selectedButtons.forEach(function(btn) {
                     btn.classList.remove('selected');
                 });
-
-                // Seleccionar el botón actual
                 this.classList.add('selected');
-
-                // Actualizar el valor del input oculto correspondiente
                 updateHiddenInput(this);
-
-                var partes = this.getAttribute('data-value').split("-");
-                if (partes.length === 3) {
-                    getStock(partes[2], partes[1], partes[0]);
-                }
+                checkAndLoadCombination();
             });
         });
 
@@ -856,55 +851,81 @@
             }
         }
 
+        function updatePriceDisplay(perPrice) {
+            var porcDescuento = document.getElementById("porcDescuento") ? document.getElementById("porcDescuento").value : 0;
+            var price = document.getElementById('text_price');
+            var price_discount = document.getElementById('text_price_discount');
+            if (!price) return;
+            if (porcDescuento > 0) {
+                var descuento = (perPrice * porcDescuento) / 100;
+                var precioConDescuento = perPrice - descuento;
+                price.textContent = '₡' + precioConDescuento.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.');
+                if (price_discount) price_discount.textContent = '₡' + perPrice.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.');
+            } else {
+                price.textContent = '₡' + perPrice.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.');
+            }
+        }
+
+        function checkAndLoadCombination() {
+            var selectedValues = [];
+            var rawInputValues = [];
+            var selectedCount  = 0;
+            var clothId        = null;
+
+            $('input[type="hidden"][name$="_id"]').each(function() {
+                var val = $(this).val();
+                var regex = /^\d+-\d+-\d+$/;
+                if (val && regex.test(val)) {
+                    var parts = val.split('-');
+                    selectedValues.push(parseInt(parts[0]));
+                    rawInputValues.push(parts);
+                    clothId = parts[2];
+                    selectedCount++;
+                }
+            });
+
+            if (totalAttrTypes > 1 && selectedCount === totalAttrTypes && clothId) {
+                // Multi-attribute product — look up combination
+                var query = selectedValues.map(function(v) { return 'values[]=' + v; }).join('&');
+                $.ajax({
+                    method: "GET",
+                    url: "/get-combination/" + clothId + "?" + query,
+                    success: function(response) {
+                        if (response.price) updatePriceDisplay(response.price);
+                        var maxStock = response.stock > 0 ? response.stock : '';
+                        $('input[name="quantity"]').attr('max', maxStock).val(1);
+
+                        var ci = document.getElementById('vb-combination-id');
+                        if (!ci) {
+                            ci = document.createElement('input');
+                            ci.type = 'hidden';
+                            ci.id   = 'vb-combination-id';
+                            ci.name = 'combination_id';
+                            document.querySelector('.product_data').appendChild(ci);
+                        }
+                        ci.value = response.combination_id || '';
+                    }
+                });
+            } else if (totalAttrTypes === 1 && selectedCount === 1 && rawInputValues.length) {
+                // Single-attribute product: use legacy getStock
+                var p = rawInputValues[0];
+                getStock(p[2], p[1], p[0]);
+            }
+        }
+
         function getStock(cloth_id, attr_id, value_attr) {
             $.ajax({
                 method: "GET",
                 url: "/get-stock/" + cloth_id + '/' + attr_id + '/' + value_attr,
                 success: function(stock) {
                     var maxStock = stock.stock > 0 ? stock.stock : '';
-                    var porcDescuento = document.getElementById("porcDescuento").value;
-                    var perPrice = stock.price;
-
-                    if (perPrice > 0) {
-                        $('input[name="quantity"]').attr('max', maxStock);
-                        $('input[name="quantity"]').val(1);
-
-                        var price = document.getElementById('text_price');
-                        var price_discount = document.getElementById('text_price_discount');
-                        if (porcDescuento > 0) {
-                            var descuento = (perPrice * porcDescuento) / 100;
-                            var precioConDescuento = perPrice - descuento;
-                            price.textContent =
-                                `₡${precioConDescuento.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
-                            price_discount.textContent =
-                                `₡${perPrice.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
-                        } else {
-                            price.textContent =
-                                `₡${perPrice.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
-                        }
+                    if (stock.price > 0) {
+                        $('input[name="quantity"]').attr('max', maxStock).val(1);
+                        updatePriceDisplay(stock.price);
                     }
                 }
             });
         }
-
-        function getQuantity() {
-            $('input[type="hidden"][name$="_id"]').each(function() {
-                var selected_value = $(this).val();
-                if (selected_value) {
-                    var partes = selected_value.split("-");
-                    if (partes.length === 3) {
-                        var value_attr = partes[0];
-                        var attr_id = partes[1];
-                        var cloth_id = partes[2];
-                        if (value_attr !== "") {
-                            getStock(cloth_id, attr_id, value_attr);
-                        }
-                    }
-                }
-            });
-        }
-
-        getQuantity();
     });
 
     $('.btnAddToCart').click(function(e) {
@@ -912,8 +933,8 @@
         var cloth_id = $(this).closest('.product_data').find('.cloth_item').val();
         var quantity = $(this).closest('.product_data').find('.quantity').val();
         var selected_attributes = [];
+        var combinationId = $('#vb-combination-id').val() || null;
 
-        // Recorrer todos los inputs ocultos con los valores seleccionados
         $('input[type="hidden"][name$="_id"]').each(function() {
             var selected_value = $(this).val();
             var regex = /^\d+-\d+-\d+$/;
@@ -922,47 +943,42 @@
             }
         });
 
-        // Convertir el array a una cadena JSON
         var attributes = JSON.stringify(selected_attributes);
 
         $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
+            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
         });
         $.ajax({
             method: "POST",
             url: "/add-to-cart",
             data: {
-                'clothing_id': cloth_id,
-                'quantity': quantity,
-                'attributes': attributes,
+                'clothing_id'   : cloth_id,
+                'quantity'      : quantity,
+                'attributes'    : attributes,
+                'combination_id': combinationId,
             },
             success: function(response) {
-                Swal.fire({
-                    title: response.status,
-                    icon: response.icon,
-                });
+                Swal.fire({ title: response.status, icon: response.icon });
                 var newCartNumber = response.cartNumber;
                 $('.badge').text(newCartNumber);
                 $('.badge-sk').text(newCartNumber);
                 $('.cartIcon').text(' ' + newCartNumber);
-                $('.cart-badge')
-                            .text(newCartNumber);
+                $('.cart-badge').text(newCartNumber);
                 getCart();
             }
         });
 
         const quantityInput = document.getElementById('quantityInput');
-
-        quantityInput.addEventListener('keydown', function(event) {
-            if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
-                return true;
-            } else {
-                event.preventDefault();
-                return false;
-            }
-        });
+        if (quantityInput) {
+            quantityInput.addEventListener('keydown', function(event) {
+                if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+                    return true;
+                } else {
+                    event.preventDefault();
+                    return false;
+                }
+            });
+        }
     });
 </script>
 @endsection
