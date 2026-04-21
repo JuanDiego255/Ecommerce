@@ -429,6 +429,8 @@ Route::middleware([
             Route::get('attribute/add', [AttributeController::class, 'add']);
             Route::post('attribute/store', [AttributeController::class, 'store']);
             Route::post('main-attribute/{id}', [AttributeController::class, 'mainAttribute']);
+            Route::post('attribute/inline-store', [AttributeController::class, 'inlineStore']);
+            Route::post('attribute-value/inline-store', [AttributeController::class, 'inlineStoreValue']);
             //Rutas para valores de los atributos
             Route::get('attribute-values/{id}', [AttributeController::class, 'values']);
             Route::get('get-values/{id}', [AttributeController::class, 'getValues']);

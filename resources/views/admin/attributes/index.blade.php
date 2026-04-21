@@ -3,143 +3,94 @@
     {!! SEOMeta::generate() !!}
     {!! OpenGraph::generate() !!}
 @endsection
+@section('breadcrumb')
+    <li class="breadcrumb-item"><a href="{{ url('/') }}">Inicio</a></li>
+    <li class="breadcrumb-item active">Atributos</li>
+@endsection
 @section('content')
-    <center>
-        <h2 class="text-center font-title">
-            <strong>{{ __('Gestiona los atributos') }}</strong>
-        </h2>
-    </center>
+
     @include('admin.attributes.add')
-    <div class="row w-50">
-        <div class="col-md-6">
-            <button type="button" data-bs-toggle="modal" data-bs-target="#add-attribute-modal"
-                class="btn btn-accion">{{ __('Nuevo atributo') }}</button>
-        </div>
-    </div>
-    <div class="card mt-3">
-        <div class="card-header">
-            <h4 class="text-dark">
-                {{ __('Puedes agregar todos los atributos que desees, ten en cuenta que solo existe un atributo principal, que puede variar entre precios, todos los demás son extras adicionales que no modifican el precio, por lo que lo ideal es que se contemplen en el precio total.') }}
-            </h4>
-        </div>
-        <div class="card-body">
-            <div class="row w-100">
-                <div class="col-md-6">
-                    <div class="input-group input-group-lg input-group-static my-3 w-100">
-                        <label>Filtrar</label>
-                        <input value="" placeholder="Escribe para filtrar...." type="text"
-                            class="form-control form-control-lg" name="searchfor" id="searchfor">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="input-group input-group-lg input-group-static my-3 w-100">
-                        <label>Mostrar</label>
-                        <select id="recordsPerPage" name="recordsPerPage" class="form-control form-control-lg"
-                            autocomplete="recordsPerPage">
-                            <option value="5">5 Registros</option>
-                            <option value="10">10 Registros</option>
-                            <option selected value="15">15 Registros</option>
-                            <option value="50">50 Registros</option>
-                        </select>
 
-                    </div>
-                </div>
-
+    <div class="page-header d-flex align-items-center justify-content-between mb-3">
+        <div>
+            <h4 class="page-header-title mb-0">Atributos globales</h4>
+            <div class="page-header-sub">
+                Administrá los tipos y valores disponibles para todos los productos.
+                También podés crear atributos y valores directamente desde la ficha de cada producto.
             </div>
         </div>
+        <button type="button" class="ph-btn ph-btn-add" data-bs-toggle="modal" data-bs-target="#add-attribute-modal"
+                title="Nuevo atributo">
+            <i class="fas fa-plus"></i>
+        </button>
     </div>
-    <div class="row row-cols-1 row-cols-md-2 g-4 align-content-center card-group mt-1">
 
-        <div class="col-md-12">
-            <div class="card p-2">
-                <div class="table-responsive">
-
-                    <table class="table align-items-center mb-0" id="table">
-                        <thead>
-                            <tr>
-                                <th class="text-secondary font-weight-bolder opacity-7">
-                                    {{ __('Acciones') }}</th>
-                                <th class="text-secondary font-weight-bolder opacity-7 ps-2">{{ __('Nombre') }}
-                                </th>
-                                <th class="text-secondary font-weight-bolder opacity-7">
-                                    {{ __('Estilo') }}</th>
-                                <th class="text-center text-secondary font-weight-bolder opacity-7">
-                                    {{ __('Atributo principal') }}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($attributes as $item)
-                                <tr>
-                                    <td class="align-middle">
-                                        <form name="delete-attribute{{ $item->id }}"
-                                            id="delete-attribute{{ $item->id }}" method="post"
-                                            action="{{ url('/delete-attribute/' . $item->id) }}">
-                                            {{ csrf_field() }}
-                                            {{ method_field('DELETE') }}
-                                        </form>
-                                        <button form="delete-attribute{{ $item->id }}" type="submit"
-                                            onclick="return confirm('Deseas borrar este atributo?')"
-                                            class="btn btn-link text-velvet ms-auto border-0" data-bs-toggle="tooltip"
-                                            data-bs-placement="bottom" title="Eliminar">
-                                            <i class="material-icons text-lg">delete</i>
-                                        </button>
-                                        <a class="btn btn-link text-velvet me-auto border-0"
-                                            href="{{ url('/attribute-values/' . $item->id) }}" data-bs-toggle="tooltip"
-                                            data-bs-placement="bottom" title="Valores">
-                                            <i class="material-icons text-lg">visibility</i>
-                                        </a>
-                                        <a class="btn btn-link text-velvet me-auto border-0"
-                                            href="{{ url('/attribute/' . $item->id . '/edit') }}" data-bs-toggle="tooltip"
-                                            data-bs-placement="bottom" title="Editar">
-                                            <i class="material-icons text-lg">edit</i>
-                                        </a>
-                                    </td>
-                                    <td class="align-middle text-xxs">
-                                        <p class=" font-weight-bold mb-0">{{ $item->name }}</p>
-                                    </td>
-                                    <td class="align-middle text-xxs">
-                                        <p class=" font-weight-bold mb-0">
-                                            @switch($item->type)
-                                                @case(0)
-                                                    {{ __('Botón simple') }}
-                                                @break
-
-                                                @case(1)
-                                                    {{ __('Seleccionador') }}
-                                                @break
-                                            @endswitch
-                                        </p>
-                                    </td>
-                                    <td class="align-middle text-center">
-                                        <form name="formMain{{ $item->id }}" id="formMain" method="post"
-                                            action="{{ url('main-attribute/' . $item->id) }}" style="display:inline">
-                                            {{ csrf_field() }}
-                                            <label for="checkMain">
-                                                <div class="form-check">
-                                                    <input id="checkMain" class="form-check-input" type="checkbox"
-                                                        value="1" name="main"
-                                                        onchange="submitForm('formMain{{ $item->id }}')"
-                                                        {{ $item->main == 1 ? 'checked' : '' }}>
-                                                </div>
-                                            </label>
-                                        </form>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
+    <div class="surface p-4">
+        <div class="row g-3 mb-3">
+            <div class="col-md-6">
+                <label class="filter-label">Filtrar</label>
+                <input value="" placeholder="Escribe para filtrar…" type="text"
+                    class="filter-input" name="searchfor" id="searchfor">
             </div>
+            <div class="col-md-3">
+                <label class="filter-label">Mostrar</label>
+                <select id="recordsPerPage" name="recordsPerPage" class="filter-input">
+                    <option value="5">5 registros</option>
+                    <option value="10">10 registros</option>
+                    <option selected value="15">15 registros</option>
+                    <option value="50">50 registros</option>
+                </select>
+            </div>
+        </div>
 
+        <div class="table-responsive">
+            <table class="table align-items-center mb-0 thead-lite" id="table">
+                <thead>
+                    <tr>
+                        <th>Acciones</th>
+                        <th>Nombre</th>
+                        <th>Estilo</th>
+                        <th>Valores</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($attributes as $item)
+                        <tr>
+                            <td class="align-middle">
+                                <form name="delete-attribute{{ $item->id }}"
+                                    id="delete-attribute{{ $item->id }}" method="post"
+                                    action="{{ url('/delete-attribute/' . $item->id) }}">
+                                    @csrf @method('DELETE')
+                                </form>
+                                <button form="delete-attribute{{ $item->id }}" type="submit"
+                                    onclick="return confirm('¿Eliminar este atributo y todos sus valores?')"
+                                    class="btn btn-link text-danger p-1" title="Eliminar">
+                                    <i class="material-icons" style="font-size:1.1rem">delete</i>
+                                </button>
+                                <a class="btn btn-link p-1" href="{{ url('/attribute-values/' . $item->id) }}"
+                                   title="Ver y editar valores">
+                                    <i class="material-icons" style="font-size:1.1rem">list</i>
+                                </a>
+                                <a class="btn btn-link p-1" href="{{ url('/attribute/' . $item->id . '/edit') }}"
+                                   title="Editar nombre">
+                                    <i class="material-icons" style="font-size:1.1rem">edit</i>
+                                </a>
+                            </td>
+                            <td class="align-middle fw-600">{{ $item->name }}</td>
+                            <td class="align-middle" style="font-size:.8rem;color:var(--gray4)">
+                                {{ $item->type == 1 ? 'Seleccionador' : 'Botón simple' }}
+                            </td>
+                            <td class="align-middle" style="font-size:.8rem;color:var(--gray4)">
+                                {{ $item->values_count ?? '—' }}
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
         </div>
     </div>
+
 @endsection
 @section('script')
     <script src="{{ asset('js/datatables.js') }}"></script>
-    <script>
-        function submitForm(alias) {
-            var form = document.querySelector('form[name="' + alias + '"]');
-            form.submit();
-        }
-    </script>
 @endsection
