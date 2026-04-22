@@ -82,7 +82,7 @@ class FrontendController extends Controller
                     'clothing.price as price',
                     'clothing.mayor_price as mayor_price',
                     'clothing.manage_stock as manage_stock',
-                    DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE clothing.stock END) as total_stock'),
+                    DB::raw('COALESCE((SELECT SUM(vc.stock) FROM variant_combinations vc WHERE vc.clothing_id = clothing.id AND vc.stock >= 0), SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE clothing.stock END)) as total_stock'),
                     DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'),
                     DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
                 )
@@ -129,7 +129,7 @@ class FrontendController extends Controller
                         'clothing.description as description',
                         'clothing.price as price',
                         'clothing.mayor_price as mayor_price',
-                        DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE clothing.stock END) as total_stock'),
+                        DB::raw('COALESCE((SELECT SUM(vc.stock) FROM variant_combinations vc WHERE vc.clothing_id = clothing.id AND vc.stock >= 0), SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE clothing.stock END)) as total_stock'),
                         DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'),
                         DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
                     )
@@ -349,7 +349,7 @@ class FrontendController extends Controller
                     'clothing.description as description',
                     'clothing.price as price',
                     'clothing.mayor_price as mayor_price',
-                    DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE clothing.stock END) as total_stock'),
+                    DB::raw('COALESCE((SELECT SUM(vc.stock) FROM variant_combinations vc WHERE vc.clothing_id = clothing.id AND vc.stock >= 0), SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE clothing.stock END)) as total_stock'),
                     DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'),
                     DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
                 )
@@ -417,7 +417,7 @@ class FrontendController extends Controller
                             'clothing.description as description',
                             'clothing.price as price',
                             'clothing.mayor_price as mayor_price',
-                            DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE clothing.stock END) as total_stock'),
+                            DB::raw('COALESCE((SELECT SUM(vc.stock) FROM variant_combinations vc WHERE vc.clothing_id = clothing.id AND vc.stock >= 0), SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE clothing.stock END)) as total_stock'),
                             DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'),
                             DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
                         )
@@ -537,7 +537,7 @@ class FrontendController extends Controller
                             'clothing.description as description',
                             'clothing.price as price',
                             'clothing.mayor_price as mayor_price',
-                            DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE clothing.stock END) as total_stock'),
+                            DB::raw('COALESCE((SELECT SUM(vc.stock) FROM variant_combinations vc WHERE vc.clothing_id = clothing.id AND vc.stock >= 0), SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE clothing.stock END)) as total_stock'),
                             DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'),
                             DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
                         )
@@ -643,7 +643,7 @@ class FrontendController extends Controller
                 'clothing.mayor_price as mayor_price',
                 'product_images.image as image',
                 'clothing.manage_stock as manage_stock',
-                DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE clothing.stock END) as total_stock'),
+                DB::raw('COALESCE((SELECT SUM(vc.stock) FROM variant_combinations vc WHERE vc.clothing_id = clothing.id AND vc.stock >= 0), SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE clothing.stock END)) as total_stock'),
                 DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'),
                 DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
             )
@@ -867,7 +867,7 @@ class FrontendController extends Controller
                 'clothing.mayor_price as mayor_price',
                 'product_images.image as image',
                 DB::raw('GROUP_CONCAT(product_images.image ORDER BY product_images.id ASC) AS images'),
-                DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE clothing.stock END) as total_stock'),
+                DB::raw('COALESCE((SELECT SUM(vc.stock) FROM variant_combinations vc WHERE vc.clothing_id = clothing.id AND vc.stock >= 0), SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE clothing.stock END)) as total_stock'),
                 DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'),
                 DB::raw('GROUP_CONCAT(stocks.price) AS price_per_size'),
                 DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
@@ -878,47 +878,65 @@ class FrontendController extends Controller
             ->orderBy('clothing.name', 'asc')
             ->get();
 
-        $result = DB::table('stocks as s')->where('s.clothing_id', $id)
-            ->join('attributes as a', 's.attr_id', '=', 'a.id')
-            ->join('attribute_values as v', 's.value_attr', '=', 'v.id')
-            ->select(
-                'a.name as columna_atributo',
-                'a.id as attr_id',
-                DB::raw('GROUP_CONCAT(v.value ORDER BY s.order ASC SEPARATOR "/") as valores'),
-                DB::raw('GROUP_CONCAT(v.id ORDER BY s.order ASC SEPARATOR "/") as ids'),
-                DB::raw('GROUP_CONCAT(s.stock ORDER BY s.order ASC SEPARATOR "/") as stock')
-            )
-            ->groupBy('a.name', 'a.id')
-            ->orderBy('a.name', 'asc')
+        $manageStock = $clothes->first()?->manage_stock ?? 1;
+
+        // Read from variant_combinations; fall back to legacy stocks if none exist
+        $combinations = DB::table('variant_combinations as vc')
+            ->where('vc.clothing_id', $id)
+            ->join('variant_combination_values as vcv', 'vcv.combination_id', '=', 'vc.id')
+            ->join('attribute_values as v', 'vcv.value_attr', '=', 'v.id')
+            ->join('attributes as a', 'vcv.attr_id', '=', 'a.id')
+            ->select('a.name as columna_atributo', 'a.id as attr_id', 'v.value', 'v.id as vid', 'vc.stock')
+            ->orderBy('a.name')->orderBy('vc.id')
             ->get();
 
-        $manageStock = $clothes->first()?->manage_stock ?? 1;
-        // Limpiar atributos con stock 0
-        $cleaned = $result->map(function ($item) use ($manageStock) {
-            $valores = explode('/', $item->valores);
-            $ids = explode('/', $item->ids);
-            $stock = explode('/', $item->stock);
+        if ($combinations->isNotEmpty()) {
+            $result = $combinations->groupBy('attr_id')->map(function ($rows) use ($manageStock) {
+                // A value is available if any combination containing it has stock > 0
+                $byValue = $rows->groupBy('vid')->map(fn($vRows) => [
+                    'value' => $vRows->first()->value,
+                    'id'    => $vRows->first()->vid,
+                    'stock' => $vRows->max('stock'),
+                ]);
+                $filtered = $manageStock == 0 ? $byValue : $byValue->filter(fn($x) => (int)$x['stock'] > 0);
+                if ($filtered->isEmpty()) return null;
+                return (object)[
+                    'columna_atributo' => $rows->first()->columna_atributo,
+                    'attr_id'          => $rows->first()->attr_id,
+                    'valores'          => $filtered->pluck('value')->implode('/'),
+                    'ids'              => $filtered->pluck('id')->implode('/'),
+                    'stock'            => $filtered->pluck('stock')->implode('/'),
+                ];
+            })->filter()->values()->toArray();
+        } else {
+            // Legacy path: read from stocks table
+            $legacyResult = DB::table('stocks as s')->where('s.clothing_id', $id)
+                ->join('attributes as a', 's.attr_id', '=', 'a.id')
+                ->join('attribute_values as v', 's.value_attr', '=', 'v.id')
+                ->select(
+                    'a.name as columna_atributo', 'a.id as attr_id',
+                    DB::raw('GROUP_CONCAT(v.value ORDER BY s.order ASC SEPARATOR "/") as valores'),
+                    DB::raw('GROUP_CONCAT(v.id ORDER BY s.order ASC SEPARATOR "/") as ids'),
+                    DB::raw('GROUP_CONCAT(s.stock ORDER BY s.order ASC SEPARATOR "/") as stock')
+                )
+                ->groupBy('a.name', 'a.id')->orderBy('a.name', 'asc')->get();
 
-            $rows = collect($stock)->map(fn($s, $i) => [
-                'value' => $valores[$i],
-                'id'    => $ids[$i],
-                'stock' => $s,
-            ]);
-
-            $filtered = $manageStock == 0 ? $rows : $rows->filter(fn($x) => (int)$x['stock'] > 0);
-
-            if ($filtered->isEmpty()) return null;
-
-            return (object)[
-                'columna_atributo' => $item->columna_atributo,
-                'attr_id'          => $item->attr_id,
-                'valores'          => $filtered->pluck('value')->implode('/'),
-                'ids'              => $filtered->pluck('id')->implode('/'),
-                'stock'            => $filtered->pluck('stock')->implode('/')
-            ];
-        })->filter()->values();
-
-        $result = $cleaned->toArray();
+            $result = $legacyResult->map(function ($item) use ($manageStock) {
+                $valores = explode('/', $item->valores);
+                $ids     = explode('/', $item->ids);
+                $stocks  = explode('/', $item->stock);
+                $rows    = collect($stocks)->map(fn($s, $i) => ['value' => $valores[$i], 'id' => $ids[$i], 'stock' => $s]);
+                $filtered = $manageStock == 0 ? $rows : $rows->filter(fn($x) => (int)$x['stock'] > 0);
+                if ($filtered->isEmpty()) return null;
+                return (object)[
+                    'columna_atributo' => $item->columna_atributo,
+                    'attr_id'          => $item->attr_id,
+                    'valores'          => $filtered->pluck('value')->implode('/'),
+                    'ids'              => $filtered->pluck('id')->implode('/'),
+                    'stock'            => $filtered->pluck('stock')->implode('/'),
+                ];
+            })->filter()->values()->toArray();
+        }
         $tags = MetaTags::where('section', 'Categoría Específica')->get();
         $tenantinfo = TenantInfo::first();
 
@@ -967,7 +985,7 @@ class FrontendController extends Controller
                 'clothing.mayor_price as mayor_price',
                 'clothing.manage_stock as manage_stock',
                 DB::raw('IFNULL(product_images.image, "") as image'), // Obtener la primera imagen del producto
-                DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE clothing.stock END) as total_stock'),
+                DB::raw('COALESCE((SELECT SUM(vc.stock) FROM variant_combinations vc WHERE vc.clothing_id = clothing.id AND vc.stock >= 0), SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE clothing.stock END)) as total_stock'),
                 DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'), // Obtener stock por talla
                 DB::raw('GROUP_CONCAT(stocks.price) AS price_per_size'),
                 DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
@@ -1204,7 +1222,7 @@ class FrontendController extends Controller
                         'clothing.mayor_price as mayor_price',
                         'product_images.image as image',
                         'clothing.manage_stock as manage_stock',
-                        DB::raw('SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE clothing.stock END) as total_stock'),
+                        DB::raw('COALESCE((SELECT SUM(vc.stock) FROM variant_combinations vc WHERE vc.clothing_id = clothing.id AND vc.stock >= 0), SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE clothing.stock END)) as total_stock'),
                         DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'),
                         DB::raw('(SELECT price FROM stocks WHERE clothing.id = stocks.clothing_id ORDER BY id ASC LIMIT 1) AS first_price')
                     )
