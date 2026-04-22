@@ -952,5 +952,18 @@ Route::prefix('api')->middleware([
         Route::post('/admin/attributes/{id}/values',                 [\App\Http\Controllers\Api\AdminProductApiController::class, 'storeAttributeValue']);
         Route::put('/admin/attributes/{id}/values/{valueId}',        [\App\Http\Controllers\Api\AdminProductApiController::class, 'updateAttributeValue']);
         Route::delete('/admin/attribute-values/{id}',                [\App\Http\Controllers\Api\AdminProductApiController::class, 'destroyAttributeValue']);
+
+        // ─── Orders API ────────────────────────────────────────────────────────
+        Route::get('/admin/orders',                    [\App\Http\Controllers\Api\AdminOrderApiController::class, 'index']);
+        Route::get('/admin/orders/{id}',               [\App\Http\Controllers\Api\AdminOrderApiController::class, 'show']);
+        Route::get('/admin/orders/{id}/quick-info',    [\App\Http\Controllers\Api\AdminOrderApiController::class, 'quickInfo']);
+        Route::put('/admin/orders/{id}/approve',       [\App\Http\Controllers\Api\AdminOrderApiController::class, 'toggleApprove']);
+        Route::put('/admin/orders/{id}/delivery',      [\App\Http\Controllers\Api\AdminOrderApiController::class, 'toggleDelivery']);
+        Route::put('/admin/orders/{id}/ready',         [\App\Http\Controllers\Api\AdminOrderApiController::class, 'toggleReady']);
+        Route::post('/admin/orders/{id}/cancel',       [\App\Http\Controllers\Api\AdminOrderApiController::class, 'updateCancelStatus']);
+        Route::post('/admin/orders/{id}/guide-number', [\App\Http\Controllers\Api\AdminOrderApiController::class, 'updateGuideNumber']);
+        Route::post('/admin/orders/{id}/note',         [\App\Http\Controllers\Api\AdminOrderApiController::class, 'updateNote']);
+        Route::post('/admin/orders/{id}/abono',        [\App\Http\Controllers\Api\AdminOrderApiController::class, 'addAbono']);
+        Route::delete('/admin/orders/{id}',            [\App\Http\Controllers\Api\AdminOrderApiController::class, 'destroy']);
     });
 });

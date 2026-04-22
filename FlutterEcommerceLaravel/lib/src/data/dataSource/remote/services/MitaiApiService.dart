@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:ecommerce_flutter/src/domain/models/AdminOrder.dart';
 import 'package:ecommerce_flutter/src/domain/models/AttributeType.dart';
 import 'package:ecommerce_flutter/src/domain/models/MitaiProduct.dart';
 import 'package:ecommerce_flutter/src/domain/models/ProductVariant.dart';
@@ -354,6 +355,182 @@ class MitaiApiService {
       final response = await http.delete(url, headers: _headers(token));
       if (response.statusCode == 200 || response.statusCode == 201) return Success(true);
       return Error(_parseError(response, 'Error'));
+    } catch (e) {
+      return Error(e.toString());
+    }
+  }
+
+  // ─── Orders API ───────────────────────────────────────────────────────────
+
+  Future<Resource<Map<String, dynamic>>> getOrdersPaged({
+    int page = 1,
+    int perPage = 15,
+    String search = '',
+    String status = 'all',
+    String kind = 'all',
+  }) async {
+    try {
+      final token = await _getToken();
+      final params = <String, String>{
+        'page': '$page',
+        'per_page': '$perPage',
+        'status': status,
+        'kind': kind,
+      };
+      if (search.isNotEmpty) params['search'] = search;
+      final url = Uri.https(_baseHost, '/api/admin/orders', params);
+      final response = await http.get(url, headers: _headers(token));
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return Success(json.decode(response.body) as Map<String, dynamic>);
+      }
+      return Error(_parseError(response, 'Error al cargar pedidos'));
+    } catch (e) {
+      return Error(e.toString());
+    }
+  }
+
+  Future<Resource<AdminOrder>> getOrderDetail(int id) async {
+    try {
+      final token = await _getToken();
+      final url = Uri.https(_baseHost, '/api/admin/orders/$id');
+      final response = await http.get(url, headers: _headers(token));
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = json.decode(response.body) as Map<String, dynamic>;
+        return Success(AdminOrder.fromJson(data['data'] as Map<String, dynamic>));
+      }
+      return Error(_parseError(response, 'Error al cargar pedido'));
+    } catch (e) {
+      return Error(e.toString());
+    }
+  }
+
+  Future<Resource<Map<String, dynamic>>> getOrderQuickInfo(int id) async {
+    try {
+      final token = await _getToken();
+      final url = Uri.https(_baseHost, '/api/admin/orders/$id/quick-info');
+      final response = await http.get(url, headers: _headers(token));
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return Success(json.decode(response.body) as Map<String, dynamic>);
+      }
+      return Error(_parseError(response, 'Error'));
+    } catch (e) {
+      return Error(e.toString());
+    }
+  }
+
+  Future<Resource<int>> toggleOrderApprove(int id) async {
+    try {
+      final token = await _getToken();
+      final url = Uri.https(_baseHost, '/api/admin/orders/$id/approve');
+      final response = await http.put(url, headers: _headers(token));
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = json.decode(response.body) as Map<String, dynamic>;
+        return Success(data['approved'] as int? ?? 0);
+      }
+      return Error(_parseError(response, 'Error'));
+    } catch (e) {
+      return Error(e.toString());
+    }
+  }
+
+  Future<Resource<int>> toggleOrderDelivery(int id) async {
+    try {
+      final token = await _getToken();
+      final url = Uri.https(_baseHost, '/api/admin/orders/$id/delivery');
+      final response = await http.put(url, headers: _headers(token));
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = json.decode(response.body) as Map<String, dynamic>;
+        return Success(data['delivered'] as int? ?? 0);
+      }
+      return Error(_parseError(response, 'Error'));
+    } catch (e) {
+      return Error(e.toString());
+    }
+  }
+
+  Future<Resource<int>> toggleOrderReady(int id) async {
+    try {
+      final token = await _getToken();
+      final url = Uri.https(_baseHost, '/api/admin/orders/$id/ready');
+      final response = await http.put(url, headers: _headers(token));
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = json.decode(response.body) as Map<String, dynamic>;
+        return Success(data['ready_to_give'] as int? ?? 0);
+      }
+      return Error(_parseError(response, 'Error'));
+    } catch (e) {
+      return Error(e.toString());
+    }
+  }
+
+  Future<Resource<int>> updateOrderCancel(int id, int cancel) async {
+    try {
+      final token = await _getToken();
+      final url = Uri.https(_baseHost, '/api/admin/orders/$id/cancel');
+      final response = await http.post(url,
+          headers: _headers(token), body: json.encode({'cancel': cancel}));
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = json.decode(response.body) as Map<String, dynamic>;
+        return Success(data['cancel_buy'] as int? ?? cancel);
+      }
+      return Error(_parseError(response, 'Error'));
+    } catch (e) {
+      return Error(e.toString());
+    }
+  }
+
+  Future<Resource<String>> updateOrderGuideNumber(int id, String guideNumber) async {
+    try {
+      final token = await _getToken();
+      final url = Uri.https(_baseHost, '/api/admin/orders/$id/guide-number');
+      final response = await http.post(url,
+          headers: _headers(token), body: json.encode({'guide_number': guideNumber}));
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = json.decode(response.body) as Map<String, dynamic>;
+        return Success(data['guide_number']?.toString() ?? guideNumber);
+      }
+      return Error(_parseError(response, 'Error'));
+    } catch (e) {
+      return Error(e.toString());
+    }
+  }
+
+  Future<Resource<bool>> updateOrderNote(int id, String note) async {
+    try {
+      final token = await _getToken();
+      final url = Uri.https(_baseHost, '/api/admin/orders/$id/note');
+      final response = await http.post(url,
+          headers: _headers(token), body: json.encode({'detail': note}));
+      if (response.statusCode == 200 || response.statusCode == 201) return Success(true);
+      return Error(_parseError(response, 'Error'));
+    } catch (e) {
+      return Error(e.toString());
+    }
+  }
+
+  Future<Resource<double>> addOrderAbono(int id, double monto) async {
+    try {
+      final token = await _getToken();
+      final url = Uri.https(_baseHost, '/api/admin/orders/$id/abono');
+      final response = await http.post(url,
+          headers: _headers(token), body: json.encode({'monto': monto}));
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = json.decode(response.body) as Map<String, dynamic>;
+        return Success((data['monto_apartado'] as num?)?.toDouble() ?? 0.0);
+      }
+      return Error(_parseError(response, 'Error'));
+    } catch (e) {
+      return Error(e.toString());
+    }
+  }
+
+  Future<Resource<bool>> deleteOrder(int id) async {
+    try {
+      final token = await _getToken();
+      final url = Uri.https(_baseHost, '/api/admin/orders/$id');
+      final response = await http.delete(url, headers: _headers(token));
+      if (response.statusCode == 200 || response.statusCode == 201) return Success(true);
+      return Error(_parseError(response, 'Error al eliminar pedido'));
     } catch (e) {
       return Error(e.toString());
     }
