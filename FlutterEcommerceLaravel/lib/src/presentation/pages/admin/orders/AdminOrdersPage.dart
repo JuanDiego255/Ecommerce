@@ -807,7 +807,9 @@ class _DropFilter extends StatelessWidget {
           style: TextStyle(fontSize: 12, color: active ? _kPrimary : _kText,
               fontWeight: active ? FontWeight.w700 : FontWeight.w500),
           onChanged: (v) { if (v != null) onChanged(v); },
-          items: items.map(((String val, String label)) {
+          items: items.map((item) {
+            final val = item.$1;
+            final label = item.$2;
             final isSelected = val == value;
             return DropdownMenuItem<String>(
               value: val,
