@@ -1,7 +1,9 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ecommerce_flutter/src/data/dataSource/remote/services/MitaiApiService.dart';
 import 'package:ecommerce_flutter/src/domain/models/Department.dart';
 import 'package:ecommerce_flutter/src/domain/models/MitaiProduct.dart';
 import 'package:ecommerce_flutter/src/domain/utils/Resource.dart';
+import 'package:ecommerce_flutter/src/presentation/pages/admin/catalog/AdminAttributePage.dart';
 import 'package:ecommerce_flutter/src/presentation/pages/admin/catalog/AdminCatalogCategoriesPage.dart';
 import 'package:ecommerce_flutter/src/presentation/pages/admin/catalog/AdminCatalogProductsPage.dart';
 import 'package:flutter/material.dart';
@@ -122,11 +124,30 @@ class _AdminCatalogPageState extends State<AdminCatalogPage> {
       backgroundColor: kBg,
       body: _buildBody(),
       floatingActionButton: !_loading && _error == null
-          ? FloatingActionButton.extended(
-              onPressed: _openWebAdmin,
-              backgroundColor: kPrimary,
-              icon: const Icon(Icons.edit, color: Colors.white),
-              label: const Text('Gestionar', style: TextStyle(color: Colors.white)),
+          ? Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                FloatingActionButton(
+                  heroTag: 'attrs',
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const AdminAttributePage()),
+                  ),
+                  backgroundColor: Colors.white,
+                  elevation: 2,
+                  mini: true,
+                  tooltip: 'Atributos',
+                  child: const Icon(Icons.label_outline, color: kPrimary, size: 20),
+                ),
+                const SizedBox(height: 10),
+                FloatingActionButton.extended(
+                  heroTag: 'webAdmin',
+                  onPressed: _openWebAdmin,
+                  backgroundColor: kPrimary,
+                  icon: const Icon(Icons.edit, color: Colors.white),
+                  label: const Text('Gestionar', style: TextStyle(color: Colors.white)),
+                ),
+              ],
             )
           : null,
     );
@@ -281,10 +302,11 @@ class _DepartmentCard extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
                 child: department.imageUrl.isNotEmpty
-                    ? Image.network(
-                        department.imageUrl,
+                    ? CachedNetworkImage(
+                        imageUrl: department.imageUrl,
                         fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => _placeholder(),
+                        placeholder: (_, __) => _placeholder(),
+                        errorWidget: (_, __, ___) => _placeholder(),
                       )
                     : _placeholder(),
               ),
@@ -353,10 +375,11 @@ class _CategoryCard extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
                 child: imageUrl.isNotEmpty
-                    ? Image.network(
-                        imageUrl,
+                    ? CachedNetworkImage(
+                        imageUrl: imageUrl,
                         fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => _placeholder(),
+                        placeholder: (_, __) => _placeholder(),
+                        errorWidget: (_, __, ___) => _placeholder(),
                       )
                     : _placeholder(),
               ),

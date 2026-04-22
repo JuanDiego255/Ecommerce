@@ -1,12 +1,13 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ecommerce_flutter/src/data/dataSource/remote/services/MitaiApiService.dart';
 import 'package:ecommerce_flutter/src/domain/models/MitaiProduct.dart';
 import 'package:ecommerce_flutter/src/domain/models/ProductVariant.dart';
 import 'package:ecommerce_flutter/src/domain/utils/Resource.dart';
+import 'package:ecommerce_flutter/src/presentation/pages/admin/catalog/AdminProductFormPage.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 const Color _kBg = Color(0xFFFAF8F5);
 const Color _kPrimary = Color(0xFF8B6F47);
@@ -103,12 +104,20 @@ class _AdminProductDetailPageState extends State<AdminProductDetailPage> {
     }
   }
 
-  void _openEditInWeb() {
-    launchUrl(
-      Uri.https(
-          'mitaicr.com', '/edit-clothing/${widget.product.id}/${widget.categoryId}'),
-      mode: LaunchMode.externalApplication,
+  Future<void> _openEditForm() async {
+    if (widget.product.id == null) return;
+    final updated = await Navigator.push<bool>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => AdminProductFormPage(
+          categoryId: widget.categoryId,
+          productId: widget.product.id,
+        ),
+      ),
     );
+    if (updated == true && mounted) {
+      _loadVariants();
+    }
   }
 
   @override
@@ -127,11 +136,11 @@ class _AdminProductDetailPageState extends State<AdminProductDetailPage> {
         children: [
           FloatingActionButton(
             heroTag: 'edit',
-            onPressed: _openEditInWeb,
+            onPressed: _openEditForm,
             backgroundColor: Colors.white,
             elevation: 2,
             mini: true,
-            tooltip: 'Editar en web',
+            tooltip: 'Editar producto',
             child: const Icon(Icons.edit_outlined, color: _kPrimary, size: 20),
           ),
           const SizedBox(height: 10),
@@ -175,10 +184,11 @@ class _AdminProductDetailPageState extends State<AdminProductDetailPage> {
       ),
       flexibleSpace: FlexibleSpaceBar(
         background: p.imageUrl.isNotEmpty
-            ? Image.network(
-                p.imageUrl,
+            ? CachedNetworkImage(
+                imageUrl: p.imageUrl,
                 fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => _imagePlaceholder(),
+                placeholder: (_, __) => _imagePlaceholder(),
+                errorWidget: (_, __, ___) => _imagePlaceholder(),
               )
             : _imagePlaceholder(),
       ),
@@ -642,10 +652,18 @@ class _ProductShareCard extends StatelessWidget {
     }
     return SizedBox(
       height: 260,
-      child: Image.network(
-        product.imageUrl,
+      child: CachedNetworkImage(
+        imageUrl: product.imageUrl,
         fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) => Container(
+        placeholder: (_, __) => Container(
+          height: 260,
+          color: const Color(0xFFF0EBE3),
+          child: const Center(
+            child: Icon(Icons.inventory_2_outlined,
+                size: 80, color: Color(0xFFC8966A)),
+          ),
+        ),
+        errorWidget: (_, __, ___) => Container(
           height: 260,
           color: const Color(0xFFF0EBE3),
           child: const Center(

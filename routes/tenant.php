@@ -934,4 +934,23 @@ Route::prefix('api')->middleware([
     Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
         return $request->user();
     });
+
+    // Admin CRUD (auth:sanctum required)
+    Route::middleware('auth:sanctum')->group(function () {
+        // Products
+        Route::get('/admin/product/{id}',        [\App\Http\Controllers\Api\AdminProductApiController::class, 'show']);
+        Route::post('/admin/products',            [\App\Http\Controllers\Api\AdminProductApiController::class, 'store']);
+        Route::post('/admin/products/{id}',       [\App\Http\Controllers\Api\AdminProductApiController::class, 'update']);
+        Route::delete('/admin/products/{id}',     [\App\Http\Controllers\Api\AdminProductApiController::class, 'destroy']);
+        // Categories & Attributes reference data
+        Route::get('/admin/categories-all',       [\App\Http\Controllers\Api\AdminProductApiController::class, 'allCategories']);
+        Route::get('/admin/attributes-all',       [\App\Http\Controllers\Api\AdminProductApiController::class, 'allAttributes']);
+        // Attribute types
+        Route::post('/admin/attributes',          [\App\Http\Controllers\Api\AdminProductApiController::class, 'storeAttribute']);
+        Route::delete('/admin/attributes/{id}',   [\App\Http\Controllers\Api\AdminProductApiController::class, 'destroyAttribute']);
+        // Attribute values
+        Route::post('/admin/attributes/{id}/values',                 [\App\Http\Controllers\Api\AdminProductApiController::class, 'storeAttributeValue']);
+        Route::put('/admin/attributes/{id}/values/{valueId}',        [\App\Http\Controllers\Api\AdminProductApiController::class, 'updateAttributeValue']);
+        Route::delete('/admin/attribute-values/{id}',                [\App\Http\Controllers\Api\AdminProductApiController::class, 'destroyAttributeValue']);
+    });
 });

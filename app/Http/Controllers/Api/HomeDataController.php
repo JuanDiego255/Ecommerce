@@ -70,8 +70,11 @@ class HomeDataController extends Controller
     {
         try {
             $statusFilter = request()->get('status', 2);
+            $search       = request()->get('search', '');
+            $page         = (int) request()->get('page', 1);
+            $perPage      = (int) request()->get('per_page', 15);
 
-            $products = DB::table('clothing')
+            $query = DB::table('clothing')
                 ->join('pivot_clothing_categories', 'clothing.id', '=', 'pivot_clothing_categories.clothing_id')
                 ->join('categories', 'pivot_clothing_categories.category_id', '=', 'categories.id')
                 ->leftJoin('stocks', 'clothing.id', '=', 'stocks.clothing_id')
@@ -86,11 +89,17 @@ class HomeDataController extends Controller
                 ->where('pivot_clothing_categories.category_id', $id);
 
             if ($statusFilter != 2) {
-                $products->where('clothing.status', $statusFilter);
+                $query->where('clothing.status', $statusFilter);
             }
 
-            $products = $products
-                ->select(
+            if ($search !== '') {
+                $query->where(function ($q) use ($search) {
+                    $q->where('clothing.name', 'like', "%{$search}%")
+                      ->orWhere('clothing.code', 'like', "%{$search}%");
+                });
+            }
+
+            $query->select(
                     'clothing.id',
                     'clothing.name',
                     'clothing.code',
@@ -114,12 +123,23 @@ class HomeDataController extends Controller
                     'clothing.manage_stock',
                     'product_images.image'
                 )
-                ->orderBy('clothing.name', 'asc')
-                ->get();
+                ->orderBy('clothing.name', 'asc');
+
+            $total   = DB::table(DB::raw("({$query->toSql()}) as sub"))
+                ->mergeBindings($query)
+                ->count();
+
+            $products = $query->offset(($page - 1) * $perPage)->limit($perPage)->get();
 
             return response()->json([
                 'success' => true,
-                'data' => $products,
+                'data'    => $products,
+                'pagination' => [
+                    'current_page' => $page,
+                    'per_page'     => $perPage,
+                    'total'        => $total,
+                    'last_page'    => (int) ceil($total / $perPage),
+                ],
             ]);
         } catch (\Exception $e) {
             return response()->json([
