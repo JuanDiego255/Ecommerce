@@ -21,6 +21,7 @@ class LoginContent extends StatefulWidget {
 
 class _LoginContentState extends State<LoginContent> {
   bool _obscurePassword = true;
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +29,7 @@ class _LoginContentState extends State<LoginContent> {
       backgroundColor: _kBg,
       body: SafeArea(
         child: Form(
-          key: widget.state.formKey,
+          key: _formKey,
           child: SingleChildScrollView(
             child: Column(
               children: [
@@ -173,7 +174,7 @@ class _LoginContentState extends State<LoginContent> {
       height: 52,
       child: ElevatedButton(
         onPressed: () {
-          if (widget.state.formKey!.currentState!.validate()) {
+          if (_formKey.currentState!.validate()) {
             widget.bloc?.add(LoginSubmit());
           } else {
             Fluttertoast.showToast(msg: 'Completá todos los campos', toastLength: Toast.LENGTH_SHORT);
