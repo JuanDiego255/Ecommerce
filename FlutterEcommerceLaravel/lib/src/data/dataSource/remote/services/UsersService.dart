@@ -18,7 +18,7 @@ class UsersService {
      try {
       print('METODO ACTUALIZAR SIN IMAGEN');
       // http://192.168.80.13:3000/users/5
-      Uri url = Uri.http(ApiConfig.API_ECOMMERCE, '/users/$id'); 
+      Uri url = Uri.http(ApiConfig.API_ECOMMERCE, '/api/users/$id'); 
       Map<String, String> headers = { 
         "Content-Type": "application/json",
         "Authorization": await token
@@ -47,7 +47,7 @@ class UsersService {
     try {
       print('METODO ACTUALIZAR CON IMAGEN');
       // http://192.168.80.13:3000/users/5
-      Uri url = Uri.http(ApiConfig.API_ECOMMERCE, '/users/upload/$id'); 
+      Uri url = Uri.http(ApiConfig.API_ECOMMERCE, '/api/users/upload/$id'); 
       final request = http.MultipartRequest('PUT', url);
       request.headers['Authorization'] = await token;
       request.files.add(http.MultipartFile(

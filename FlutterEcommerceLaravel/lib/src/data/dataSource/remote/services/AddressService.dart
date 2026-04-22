@@ -14,7 +14,7 @@ class AddressService {
 
   Future<Resource<Address>> create(Address address) async {
     try {
-      Uri url = Uri.http(ApiConfig.API_ECOMMERCE, '/address');      
+      Uri url = Uri.http(ApiConfig.API_ECOMMERCE, '/api/address');      
       Map<String, String> headers = { 
         "Content-Type": "application/json",
         "Authorization": await token
@@ -38,7 +38,7 @@ class AddressService {
 
   Future<Resource<List<Address>>> getUserAddress(int idUser) async {
      try {
-      Uri url = Uri.http(ApiConfig.API_ECOMMERCE, '/address/user/$idUser'); 
+      Uri url = Uri.http(ApiConfig.API_ECOMMERCE, '/api/address/user/$idUser'); 
       Map<String, String> headers = { 
         "Content-Type": "application/json",
         "Authorization": await token
@@ -61,7 +61,7 @@ class AddressService {
 
   Future<Resource<bool>> delete(int id) async {
      try {
-      Uri url = Uri.http(ApiConfig.API_ECOMMERCE, '/address/$id');     
+      Uri url = Uri.http(ApiConfig.API_ECOMMERCE, '/api/address/$id');     
       Map<String, String> headers = { 
         "Content-Type": "application/json",
         "Authorization": await token

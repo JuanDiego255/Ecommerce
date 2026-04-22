@@ -19,7 +19,7 @@ class MercadoPagoService {
 
    Future<Resource<List<MercadoPagoIdentificationType>>> getIdentificationTypes() async {
      try {
-      Uri url = Uri.http(ApiConfig.API_ECOMMERCE, '/mercadopago/identification_types'); 
+      Uri url = Uri.http(ApiConfig.API_ECOMMERCE, '/api/mercadopago/identification_types'); 
       Map<String, String> headers = { 
         "Content-Type": "application/json",
         "Authorization": await token
@@ -41,7 +41,7 @@ class MercadoPagoService {
 
   Future<Resource<MercadoPagoCardTokenResponse>> createCardToken(MercadoPagoCardTokenBody mercadoPagoCardTokenBody) async {
      try {
-      Uri url = Uri.http(ApiConfig.API_ECOMMERCE, '/mercadopago/card_token'); 
+      Uri url = Uri.http(ApiConfig.API_ECOMMERCE, '/api/mercadopago/card_token'); 
       Map<String, String> headers = { 
         "Content-Type": "application/json",
         "Authorization": await token
@@ -64,7 +64,7 @@ class MercadoPagoService {
 
   Future<Resource<MercadoPagoPaymentResponse>> createPayment(MercadoPagoPaymentBody mercadoPagoPaymentBody) async {
      try {
-      Uri url = Uri.http(ApiConfig.API_ECOMMERCE, '/mercadopago/payments'); 
+      Uri url = Uri.http(ApiConfig.API_ECOMMERCE, '/api/mercadopago/payments'); 
       Map<String, String> headers = { 
         "Content-Type": "application/json",
         "Authorization": await token
@@ -87,7 +87,7 @@ class MercadoPagoService {
 
   Future<Resource<MercadoPagoInstallments>> getInstallments(String firstSixDigits, String amount) async {
      try {
-      Uri url = Uri.http(ApiConfig.API_ECOMMERCE, '/mercadopago/installments/$firstSixDigits/$amount'); 
+      Uri url = Uri.http(ApiConfig.API_ECOMMERCE, '/api/mercadopago/installments/$firstSixDigits/$amount'); 
       Map<String, String> headers = { 
         "Content-Type": "application/json",
         "Authorization": await token

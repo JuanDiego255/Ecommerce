@@ -33,7 +33,7 @@ class AuthService {
   Future<Resource<AuthResponse>> register(User user) async {
     try {
       // http://192.168.80.13:3000/auth/register
-      Uri url = Uri.http(ApiConfig.API_ECOMMERCE, '/auth/register'); 
+      Uri url = Uri.http(ApiConfig.API_ECOMMERCE, '/api/auth/register'); 
       Map<String, String> headers = { "Content-Type": "application/json" };
       String body = json.encode(user);
       final response = await http.post(url, headers: headers, body: body);

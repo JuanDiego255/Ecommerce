@@ -17,7 +17,7 @@ class CategoriesService {
   Future<Resource<Category>> create(Category category, File file) async {
     try {
       // http://192.168.80.13:3000/users/5
-      Uri url = Uri.http(ApiConfig.API_ECOMMERCE, '/categories'); 
+      Uri url = Uri.http(ApiConfig.API_ECOMMERCE, '/api/categories'); 
       final request = http.MultipartRequest('POST', url);
       request.headers['Authorization'] = await token;
       request.files.add(http.MultipartFile(
@@ -46,7 +46,7 @@ class CategoriesService {
 
   Future<Resource<List<Category>>> getCategories() async {
      try {
-      Uri url = Uri.http(ApiConfig.API_ECOMMERCE, '/categories'); 
+      Uri url = Uri.http(ApiConfig.API_ECOMMERCE, '/api/categories'); 
       Map<String, String> headers = { 
         "Content-Type": "application/json",
         "Authorization": await token
@@ -68,7 +68,7 @@ class CategoriesService {
 
   Future<Resource<Category>> update(int id, Category category) async {
      try {
-      Uri url = Uri.http(ApiConfig.API_ECOMMERCE, '/categories/$id');      
+      Uri url = Uri.http(ApiConfig.API_ECOMMERCE, '/api/categories/$id');      
       Map<String, String> headers = { 
         "Content-Type": "application/json",
         "Authorization": await token
@@ -96,7 +96,7 @@ class CategoriesService {
 
   Future<Resource<Category>> updateImage(int id, Category category, File file) async {
     try {
-      Uri url = Uri.http(ApiConfig.API_ECOMMERCE, '/categories/$id'); 
+      Uri url = Uri.http(ApiConfig.API_ECOMMERCE, '/api/categories/$id'); 
       final request = http.MultipartRequest('PUT', url);
       request.headers['Authorization'] = await token;
       request.files.add(http.MultipartFile(
@@ -125,7 +125,7 @@ class CategoriesService {
 
   Future<Resource<bool>> delete(int id) async {
      try {
-      Uri url = Uri.http(ApiConfig.API_ECOMMERCE, '/categories/$id');     
+      Uri url = Uri.http(ApiConfig.API_ECOMMERCE, '/api/categories/$id');     
       Map<String, String> headers = { 
         "Content-Type": "application/json",
         "Authorization": await token

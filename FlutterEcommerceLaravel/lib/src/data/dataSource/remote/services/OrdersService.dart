@@ -13,7 +13,7 @@ class OrdersService {
 
   Future<Resource<List<Order>>> getOrders() async {
      try {
-      Uri url = Uri.http(ApiConfig.API_ECOMMERCE, '/orders'); 
+      Uri url = Uri.http(ApiConfig.API_ECOMMERCE, '/api/orders'); 
       Map<String, String> headers = { 
         "Content-Type": "application/json",
         "Authorization": await token
@@ -35,7 +35,7 @@ class OrdersService {
 
   Future<Resource<List<Order>>> getOrdersByClient(int idClient) async {
      try {
-      Uri url = Uri.http(ApiConfig.API_ECOMMERCE, '/orders/$idClient'); 
+      Uri url = Uri.http(ApiConfig.API_ECOMMERCE, '/api/orders/$idClient'); 
       Map<String, String> headers = { 
         "Content-Type": "application/json",
         "Authorization": await token
@@ -58,7 +58,7 @@ class OrdersService {
    Future<Resource<Order>> updateStatus(int id) async {
      try {
       print('Id order: $id');
-      Uri url = Uri.http(ApiConfig.API_ECOMMERCE, '/orders/$id');      
+      Uri url = Uri.http(ApiConfig.API_ECOMMERCE, '/api/orders/$id');      
       Map<String, String> headers = { 
         "Content-Type": "application/json",
         "Authorization": await token

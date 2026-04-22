@@ -41,7 +41,7 @@ class Product {
         description: json["description"] ?? '',
         image1: json["image1"],
         image2: json["image2"],
-        idCategory: json["id_category"] is String ? int.parse(json["id_category"]): json["id_category"],
+        idCategory: json["id_category"] is String ? int.tryParse(json["id_category"]) : json["id_category"],
         price: json["price"] is String 
               ? double.parse(json["price"]) 
               : json["price"] is int 

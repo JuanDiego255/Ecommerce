@@ -16,7 +16,7 @@ class ProductsService {
 
   Future<Resource<Product>> create(Product product, List<File> files) async {
     try {
-      Uri url = Uri.http(ApiConfig.API_ECOMMERCE, '/products'); 
+      Uri url = Uri.http(ApiConfig.API_ECOMMERCE, '/api/products'); 
       
       final request = http.MultipartRequest('POST', url);
       request.headers['Authorization'] = await token;
@@ -50,7 +50,7 @@ class ProductsService {
 
    Future<Resource<List<Product>>> getProductsByCategory(int idCategory) async {
      try {
-      Uri url = Uri.http(ApiConfig.API_ECOMMERCE, '/products/category/$idCategory'); 
+      Uri url = Uri.http(ApiConfig.API_ECOMMERCE, '/api/products/category/$idCategory'); 
       Map<String, String> headers = { 
         "Content-Type": "application/json",
         "Authorization": await token
@@ -73,7 +73,7 @@ class ProductsService {
   Future<Resource<Product>> update(int id, Product product, List<File>? files) async {
     try {
       // http://192.168.80.13:3000/users/5
-      Uri url = Uri.http(ApiConfig.API_ECOMMERCE, '/products/${id}'); 
+      Uri url = Uri.http(ApiConfig.API_ECOMMERCE, '/api/products/${id}'); 
       
       final request = http.MultipartRequest('PUT', url);
       request.headers['Authorization'] = await token;
@@ -112,7 +112,7 @@ class ProductsService {
    
   Future<Resource<bool>> delete(int id) async {
      try {
-      Uri url = Uri.http(ApiConfig.API_ECOMMERCE, '/products/$id');      
+      Uri url = Uri.http(ApiConfig.API_ECOMMERCE, '/api/products/$id');      
       Map<String, String> headers = { 
         "Content-Type": "application/json",
         "Authorization": await token
