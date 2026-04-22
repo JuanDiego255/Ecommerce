@@ -930,6 +930,7 @@ Route::prefix('api')->middleware([
     Route::get('/tenant/info/{tenant}', [HomeDataController::class, 'getTenantInfo']);
     Route::get('/products/category/{id}/{tenant}', [HomeDataController::class, 'apiIndexByCategory']);
     Route::get('/categories/by-department/{id}/{tenant}', [HomeDataController::class, 'apiCategoriesByDepartment']);
+    Route::get('/products/{id}/variants/{tenant}', [HomeDataController::class, 'apiProductVariants']);
     Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
         return $request->user();
     });

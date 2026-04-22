@@ -112,6 +112,38 @@ class HomeDataController extends Controller
             'data' => $products
         ]);
     }
+    //Método que devuelve las variantes/combinaciones de un producto
+    public function apiProductVariants($id, $tenant)
+    {
+        $tenants = Tenant::where('id', $tenant)->first();
+        if (!$tenants) {
+            return response()->json(['success' => false, 'message' => 'Tenant no encontrado'], 404);
+        }
+        tenancy()->initialize($tenants);
+
+        $rows = DB::table('variant_combinations as vc')
+            ->where('vc.clothing_id', $id)
+            ->join('variant_combination_values as vcv', 'vcv.combination_id', '=', 'vc.id')
+            ->join('attribute_values as v', 'vcv.value_attr', '=', 'v.id')
+            ->join('attributes as a', 'vcv.attr_id', '=', 'a.id')
+            ->select('vc.id as combination_id', 'a.name as attr', 'v.value as val', 'vc.stock', 'vc.price', 'vc.manage_stock')
+            ->orderBy('vc.id')->get();
+
+        $combinations = $rows->groupBy('combination_id')->map(function ($parts) {
+            $label = $parts->map(fn($r) => $r->attr . ': ' . $r->val)->implode(' / ');
+            $first = $parts->first();
+            return [
+                'combination_id' => $first->combination_id,
+                'label'          => $label,
+                'stock'          => $first->stock,
+                'price'          => (float) $first->price,
+                'manage_stock'   => $first->manage_stock,
+            ];
+        })->values();
+
+        tenancy()->end();
+        return response()->json(['success' => true, 'data' => $combinations]);
+    }
     //Método que devuelve las categorías por departamento
     public function apiCategoriesByDepartment($id, $tenant)
     {
