@@ -65,7 +65,46 @@ class _AdminCatalogPageState extends State<AdminCatalogPage> {
         _error = result.message;
         _loading = false;
       });
+      _showErrorDialog(result.message);
     }
+  }
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Row(
+          children: const [
+            Icon(Icons.error_outline, color: Colors.red, size: 24),
+            SizedBox(width: 8),
+            Text('Error del servidor'),
+          ],
+        ),
+        content: Text(
+          message,
+          style: const TextStyle(fontSize: 14, color: kTextSecondary),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: const Text('Cerrar', style: TextStyle(color: kTextSecondary)),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(ctx).pop();
+              _loadData();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: kPrimary,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            ),
+            child: const Text('Reintentar', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
   }
 
   @override

@@ -55,18 +55,26 @@ class MitaiApiService {
     }
   }
 
+  String _parseError(http.Response response, String fallback) {
+    try {
+      final data = json.decode(response.body) as Map<String, dynamic>;
+      return data['message']?.toString() ?? fallback;
+    } catch (_) {
+      return '$fallback (HTTP ${response.statusCode})';
+    }
+  }
+
   // GET https://mitaicr.com/api/home/admin/mitaicr
   Future<Resource<Map<String, dynamic>>> getHomeAdmin() async {
     try {
       final token = await _getToken();
       final url = Uri.https(_baseHost, '/api/home/admin/$_tenant');
       final response = await http.get(url, headers: _headers(token));
-      final data = json.decode(response.body) as Map<String, dynamic>;
       if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = json.decode(response.body) as Map<String, dynamic>;
         return Success(data);
       } else {
-        final msg = data['message']?.toString() ?? 'Error fetching home admin';
-        return Error(msg);
+        return Error(_parseError(response, 'Error al cargar el catálogo'));
       }
     } catch (e) {
       return Error(e.toString());
@@ -80,13 +88,12 @@ class MitaiApiService {
       final url = Uri.https(
           _baseHost, '/api/categories/by-department/$deptId/$_tenant');
       final response = await http.get(url, headers: _headers(token));
-      final data = json.decode(response.body) as Map<String, dynamic>;
       if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = json.decode(response.body) as Map<String, dynamic>;
         final list = data['data'] as List<dynamic>? ?? [];
         return Success(list);
       } else {
-        final msg = data['message']?.toString() ?? 'Error fetching categories';
-        return Error(msg);
+        return Error(_parseError(response, 'Error al cargar categorías'));
       }
     } catch (e) {
       return Error(e.toString());
@@ -101,13 +108,12 @@ class MitaiApiService {
       final url =
           Uri.https(_baseHost, '/api/products/category/$categoryId/$_tenant');
       final response = await http.get(url, headers: _headers(token));
-      final data = json.decode(response.body) as Map<String, dynamic>;
       if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = json.decode(response.body) as Map<String, dynamic>;
         final list = data['data'] as List<dynamic>? ?? [];
         return Success(MitaiProduct.fromJsonList(list));
       } else {
-        final msg = data['message']?.toString() ?? 'Error fetching products';
-        return Error(msg);
+        return Error(_parseError(response, 'Error al cargar productos'));
       }
     } catch (e) {
       return Error(e.toString());
@@ -122,13 +128,12 @@ class MitaiApiService {
       final url =
           Uri.https(_baseHost, '/api/products/$productId/variants/$_tenant');
       final response = await http.get(url, headers: _headers(token));
-      final data = json.decode(response.body) as Map<String, dynamic>;
       if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = json.decode(response.body) as Map<String, dynamic>;
         final list = data['data'] as List<dynamic>? ?? [];
         return Success(ProductVariant.fromJsonList(list));
       } else {
-        final msg = data['message']?.toString() ?? 'Error fetching variants';
-        return Error(msg);
+        return Error(_parseError(response, 'Error al cargar variantes'));
       }
     } catch (e) {
       return Error(e.toString());
