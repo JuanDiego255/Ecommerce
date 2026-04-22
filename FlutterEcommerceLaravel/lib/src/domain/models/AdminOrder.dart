@@ -1,3 +1,7 @@
+// DB stores monetary/qty columns as varchar — parse safely from either String or num
+double _d(dynamic v) => double.tryParse(v?.toString() ?? '') ?? 0.0;
+int _i(dynamic v) => int.tryParse(v?.toString() ?? '') ?? 0;
+
 class AdminOrderItem {
   final int id;
   final String productName;
@@ -18,15 +22,15 @@ class AdminOrderItem {
   });
 
   factory AdminOrderItem.fromJson(Map<String, dynamic> j) => AdminOrderItem(
-        id: j['id'] ?? 0,
+        id: _i(j['id']),
         productName: j['product_name'] ?? '',
-        quantity: j['quantity'] ?? 0,
-        total: (j['total'] as num?)?.toDouble() ?? 0.0,
+        quantity: _i(j['quantity']),
+        total: _d(j['total']),
         imageUrl: j['image_url'] as String?,
         attributes: (j['attributes'] as List<dynamic>? ?? [])
             .map((e) => e.toString())
             .toList(),
-        cancelItem: j['cancel_item'] ?? 0,
+        cancelItem: _i(j['cancel_item']),
       );
 }
 
@@ -146,20 +150,20 @@ class AdminOrder {
       );
 
   factory AdminOrder.fromJson(Map<String, dynamic> j) => AdminOrder(
-        id: j['id'] ?? 0,
+        id: _i(j['id']),
         displayName: j['display_name'] ?? 'Sin nombre',
         displayEmail: j['display_email'] ?? '',
         displayTelephone: j['display_telephone'] ?? '',
-        totalBuy: (j['total_buy'] as num?)?.toDouble() ?? 0.0,
-        totalDelivery: (j['total_delivery'] as num?)?.toDouble() ?? 0.0,
-        totalIva: (j['total_iva'] as num?)?.toDouble() ?? 0.0,
-        approved: j['approved'] ?? 0,
-        delivered: j['delivered'] ?? 0,
-        readyToGive: j['ready_to_give'] ?? 0,
-        cancelBuy: j['cancel_buy'] ?? 0,
+        totalBuy: _d(j['total_buy']),
+        totalDelivery: _d(j['total_delivery']),
+        totalIva: _d(j['total_iva']),
+        approved: _i(j['approved']),
+        delivered: _i(j['delivered']),
+        readyToGive: _i(j['ready_to_give']),
+        cancelBuy: _i(j['cancel_buy']),
         kindOfBuy: j['kind_of_buy'] ?? '',
-        apartado: j['apartado'] ?? 0,
-        montoApartado: (j['monto_apartado'] as num?)?.toDouble() ?? 0.0,
+        apartado: _i(j['apartado']),
+        montoApartado: _d(j['monto_apartado']),
         guideNumber: j['guide_number'] as String?,
         detail: j['detail'] as String?,
         createdAt: j['created_at'] ?? '',
