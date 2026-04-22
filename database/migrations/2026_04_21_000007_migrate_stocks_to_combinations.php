@@ -30,7 +30,7 @@ return new class extends Migration
 
             $comboId = DB::table('variant_combinations')->insertGetId([
                 'clothing_id'  => $s->clothing_id,
-                'price'        => $s->price ?? 0,
+                'price'        => is_numeric($s->price) ? (float) $s->price : 0,
                 'stock'        => $manageStock === 1 ? ($s->stock ?? 0) : -1,
                 'manage_stock' => $manageStock,
                 'created_at'   => now(),
