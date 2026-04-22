@@ -317,8 +317,7 @@ class _AdminOrdersPageState extends State<AdminOrdersPage> {
     return Column(
       children: [
         _buildSearchBar(),
-        _buildStatusChips(),
-        _buildKindChips(),
+        _buildFilterBar(),
         Expanded(child: _buildList()),
       ],
     );
@@ -362,30 +361,42 @@ class _AdminOrdersPageState extends State<AdminOrdersPage> {
     );
   }
 
-  Widget _buildStatusChips() {
-    return _FilterRow(
-      options: const [
-        ('all', 'Todos'),
-        ('vigente', 'Vigentes'),
-        ('entregado', 'Entregados'),
-        ('cancelado', 'Cancelados'),
-      ],
-      selected: _statusFilter,
-      onSelect: _setStatusFilter,
-    );
-  }
-
-  Widget _buildKindChips() {
-    return _FilterRow(
-      options: const [
-        ('all', 'Cualquier tipo'),
-        ('web', 'Web'),
-        ('interna', 'Interna'),
-        ('apartado', 'Apartado'),
-      ],
-      selected: _kindFilter,
-      onSelect: _setKindFilter,
-      secondary: true,
+  Widget _buildFilterBar() {
+    return Container(
+      color: _kSurface,
+      padding: const EdgeInsets.fromLTRB(16, 6, 16, 10),
+      child: Row(
+        children: [
+          Expanded(
+            child: _DropFilter(
+              icon: Icons.flag_outlined,
+              value: _statusFilter,
+              items: const [
+                ('all',       'Todos los estados'),
+                ('pendiente', 'Pendientes'),
+                ('vigente',   'Vigentes'),
+                ('entregado', 'Entregados'),
+                ('cancelado', 'Cancelados'),
+              ],
+              onChanged: _setStatusFilter,
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: _DropFilter(
+              icon: Icons.tune_outlined,
+              value: _kindFilter,
+              items: const [
+                ('all',       'Cualquier tipo'),
+                ('web',       'Web'),
+                ('interna',   'Interna'),
+                ('apartado',  'Apartado'),
+              ],
+              onChanged: _setKindFilter,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -767,50 +778,57 @@ class _ActionBtn extends StatelessWidget {
   }
 }
 
-class _FilterRow extends StatelessWidget {
-  final List<(String, String)> options;
-  final String selected;
-  final void Function(String) onSelect;
-  final bool secondary;
-  const _FilterRow(
-      {required this.options, required this.selected, required this.onSelect, this.secondary = false});
+class _DropFilter extends StatelessWidget {
+  final IconData icon;
+  final String value;
+  final List<(String, String)> items;
+  final void Function(String) onChanged;
+  const _DropFilter(
+      {required this.icon, required this.value, required this.items, required this.onChanged});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: secondary ? _kBg : _kSurface,
-      height: 40,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        itemCount: options.length,
-        itemBuilder: (_, i) {
-          final (value, label) = options[i];
-          final active = selected == value;
-          return Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: GestureDetector(
-              onTap: () => onSelect(value),
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 150),
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: active ? _kPrimary : Colors.transparent,
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: active ? _kPrimary : const Color(0xFFD6C9B8)),
-                ),
-                child: Text(
-                  label,
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: active ? FontWeight.w700 : FontWeight.w500,
-                    color: active ? Colors.white : _kSub,
+    final active = value != 'all';
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 150),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+      decoration: BoxDecoration(
+        color: active ? _kPrimary.withOpacity(0.07) : _kBg,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: active ? _kPrimary.withOpacity(0.5) : const Color(0xFFD6C9B8)),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          value: value,
+          isDense: true,
+          isExpanded: true,
+          icon: Icon(Icons.keyboard_arrow_down_rounded, size: 18,
+              color: active ? _kPrimary : _kSub),
+          style: TextStyle(fontSize: 12, color: active ? _kPrimary : _kText,
+              fontWeight: active ? FontWeight.w700 : FontWeight.w500),
+          onChanged: (v) { if (v != null) onChanged(v); },
+          items: items.map(((String val, String label)) {
+            final isSelected = val == value;
+            return DropdownMenuItem<String>(
+              value: val,
+              child: Row(
+                children: [
+                  Icon(icon, size: 13, color: isSelected ? _kPrimary : _kSub),
+                  const SizedBox(width: 6),
+                  Flexible(
+                    child: Text(label,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                          color: isSelected ? _kPrimary : _kText,
+                        )),
                   ),
-                ),
+                ],
               ),
-            ),
-          );
-        },
+            );
+          }).toList(),
+        ),
       ),
     );
   }

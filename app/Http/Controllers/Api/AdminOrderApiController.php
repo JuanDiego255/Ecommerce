@@ -53,6 +53,11 @@ class AdminOrderApiController extends Controller
         }
 
         switch ($status) {
+            case 'pendiente':
+                $query->where('buys.approved', 0)
+                      ->where('buys.delivered', 0)
+                      ->where('buys.cancel_buy', 0);
+                break;
             case 'vigente':
                 $query->where('buys.cancel_buy', 0)->where('buys.delivered', 0);
                 break;
@@ -84,7 +89,8 @@ class AdminOrderApiController extends Controller
             $total = 0;
         }
 
-        $items = $query->orderBy('buys.id', 'desc')
+        $items = $query->orderByRaw('CASE WHEN buys.approved = 0 AND buys.delivered = 0 AND buys.cancel_buy = 0 THEN 0 ELSE 1 END')
+            ->orderBy('buys.id', 'desc')
             ->offset(($page - 1) * $perPage)
             ->limit($perPage)
             ->get();
