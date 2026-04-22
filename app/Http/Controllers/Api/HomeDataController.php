@@ -15,12 +15,14 @@ class HomeDataController extends Controller
     //Método que devuelve los departmanentos o categorías API
     public function index($tenant)
     {
-        $tenants = Tenant::where('id', $tenant)->first();
-        tenancy()->initialize($tenants);
+        if (!tenancy()->initialized()) {
+            $tenants = \App\Models\Tenant::where('id', $tenant)->first();
+            tenancy()->initialize($tenants);
+        }
         $tenantinfo = TenantInfo::first();
 
         // Si el tenant maneja departamentos, devolvemos departamentos
-        if ($tenantinfo->manage_department == 1) {
+        if ($tenantinfo && $tenantinfo->manage_department == 1) {
             $departments = Department::where('department', '!=', 'Default')
                 ->orderBy('department', 'asc')
                 ->get(['id', 'department as name', 'image']);
@@ -46,8 +48,10 @@ class HomeDataController extends Controller
     //Método que devuelve los departmanentos o categorías API
     public function getTenantInfo($tenant)
     {
-        $tenants = Tenant::where('id', $tenant)->first();
-        tenancy()->initialize($tenants);
+        if (!tenancy()->initialized()) {
+            $tenants = \App\Models\Tenant::where('id', $tenant)->first();
+            tenancy()->initialize($tenants);
+        }
         $tenantinfo = TenantInfo::first();
         
         return response()->json([
@@ -57,8 +61,10 @@ class HomeDataController extends Controller
     //Método que devuelve los productos por categoría
     public function apiIndexByCategory($id, $tenant)
     {
-        $tenants = Tenant::where('id', $tenant)->first();
-        tenancy()->initialize($tenants);
+        if (!tenancy()->initialized()) {
+            $tenants = \App\Models\Tenant::where('id', $tenant)->first();
+            tenancy()->initialize($tenants);
+        }
         $statusFilter = request()->get('status', 2); // 2 = Todos
 
         $products = DB::table('clothing')
@@ -115,11 +121,13 @@ class HomeDataController extends Controller
     //Método que devuelve las variantes/combinaciones de un producto
     public function apiProductVariants($id, $tenant)
     {
-        $tenants = Tenant::where('id', $tenant)->first();
-        if (!$tenants) {
-            return response()->json(['success' => false, 'message' => 'Tenant no encontrado'], 404);
+        if (!tenancy()->initialized()) {
+            $tenants = \App\Models\Tenant::where('id', $tenant)->first();
+            if (!$tenants) {
+                return response()->json(['success' => false, 'message' => 'Tenant no encontrado'], 404);
+            }
+            tenancy()->initialize($tenants);
         }
-        tenancy()->initialize($tenants);
 
         $rows = DB::table('variant_combinations as vc')
             ->where('vc.clothing_id', $id)
@@ -147,8 +155,10 @@ class HomeDataController extends Controller
     //Método que devuelve las categorías por departamento
     public function apiCategoriesByDepartment($id, $tenant)
     {
-        $tenants = Tenant::where('id', $tenant)->first();
-        tenancy()->initialize($tenants);
+        if (!tenancy()->initialized()) {
+            $tenants = \App\Models\Tenant::where('id', $tenant)->first();
+            tenancy()->initialize($tenants);
+        }
         if ($id == null) {
             $department = Department::where('department', 'Default')->first();
             $department_id = $department->id;
