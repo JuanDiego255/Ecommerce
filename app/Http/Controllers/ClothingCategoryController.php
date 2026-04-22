@@ -783,7 +783,39 @@ class ClothingCategoryController extends Controller
 
     public function getVariants($id)
     {
-        $clothing = ClothingCategory::find($id);
+        $clothing     = ClothingCategory::find($id);
+        $combinations = VariantCombination::where('clothing_id', $id)
+            ->with(['values.attribute', 'values.attributeValue'])
+            ->get();
+
+        if ($combinations->isNotEmpty()) {
+            $variants = $combinations->map(function ($combo) {
+                $label = $combo->values->map(function ($v) {
+                    return optional($v->attribute)->name . ': ' . optional($v->attributeValue)->value;
+                })->filter()->join(' / ');
+
+                $singleVal = $combo->values->first();
+                return [
+                    'id'    => $combo->id,
+                    'type'  => 'combination',
+                    'attr'  => $combo->values->count() === 1 ? optional($singleVal->attribute)->name : '',
+                    'val'   => $combo->values->count() === 1 ? optional($singleVal->attributeValue)->value : '',
+                    'label' => $label,
+                    'stock' => (int) $combo->stock,
+                    'price' => (int) $combo->price,
+                ];
+            });
+
+            return response()->json([
+                'has_attr'     => true,
+                'base_price'   => $clothing ? (int) $clothing->price : 0,
+                'base_stock'   => $clothing ? (int) $clothing->stock : 0,
+                'manage_stock' => $clothing ? $clothing->manage_stock : 1,
+                'variants'     => $variants,
+            ]);
+        }
+
+        // Fallback to legacy stocks
         $variants = DB::table('stocks')
             ->join('attributes', 'stocks.attr_id', '=', 'attributes.id')
             ->join('attribute_values', 'stocks.value_attr', '=', 'attribute_values.id')
@@ -799,7 +831,16 @@ class ClothingCategoryController extends Controller
                 'stocks.order'
             )
             ->orderBy('stocks.order', 'asc')
-            ->get();
+            ->get()
+            ->map(fn($v) => [
+                'id'    => $v->id,
+                'type'  => 'stock',
+                'attr'  => $v->attr,
+                'val'   => $v->val,
+                'label' => $v->attr . ': ' . $v->val,
+                'stock' => (int) $v->stock,
+                'price' => (int) $v->price,
+            ]);
 
         return response()->json([
             'has_attr'     => $variants->isNotEmpty(),
@@ -906,10 +947,17 @@ class ClothingCategoryController extends Controller
         DB::beginTransaction();
         try {
             foreach ($request->input('variants', []) as $v) {
-                Stock::where('id', $v['id'])->update([
-                    'stock' => $v['stock'],
-                    'price' => $v['price'],
-                ]);
+                if (($v['type'] ?? 'stock') === 'combination') {
+                    VariantCombination::where('id', $v['id'])->update([
+                        'stock' => $v['stock'],
+                        'price' => $v['price'],
+                    ]);
+                } else {
+                    Stock::where('id', $v['id'])->update([
+                        'stock' => $v['stock'],
+                        'price' => $v['price'],
+                    ]);
+                }
             }
             DB::commit();
             $catId = $request->input('category_id');

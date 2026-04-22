@@ -7,7 +7,7 @@
     <form action="{{ url('insert-clothing') }}" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="row">
-            <div @if ($tenantinfo->manage_size != 0 || $tenantinfo->kind_business == 1) class="col-md-7" @else class="col-md-12" @endif>
+            <div @if ($tenantinfo->manage_size != 0 || $tenantinfo->kind_business == 1) class="col-md-6" @else class="col-md-12" @endif>
                 <div class="card">
                     <div class="card-header">
                         <h4 class="text-dark"> {{ __('Agregar nuevo ') }}
@@ -199,7 +199,7 @@
                     </div>
                 </div>
             </div>
-            <div @if ($tenantinfo->manage_size != 0) class="col-md-4" @else class="d-none" @endif>
+            <div @if ($tenantinfo->manage_size != 0) class="col-md-6" @else class="d-none" @endif>
                 @if (count($attributes) > 0)
                     <div class="surface p-3 mt-3">
                         @include('admin.clothing.partials._variant-builder')

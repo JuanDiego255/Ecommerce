@@ -74,20 +74,22 @@
     {{-- Variants table --}}
     <div id="vb-table-wrap" class="d-none">
         <div style="font-size:.71rem;color:var(--gray3);margin-bottom:.5rem;">
-            Precio <strong>0</strong> = usa precio base del producto &nbsp;·&nbsp;
+            Precio <strong>0</strong> = usa el precio base del producto &nbsp;·&nbsp;
             Stock <strong>−1</strong> = sin control de inventario.
         </div>
-        <table style="width:100%;border-collapse:collapse">
+        <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;min-width:320px">
             <thead>
                 <tr style="border-bottom:1px solid var(--gray1)">
-                    <th class="surface-title" style="padding:.4rem .6rem;text-align:left;font-size:.67rem">Variante</th>
-                    <th class="surface-title" style="padding:.4rem .6rem;text-align:left;width:130px;font-size:.67rem">Precio (₡)</th>
-                    <th class="surface-title" style="padding:.4rem .6rem;text-align:left;width:100px;font-size:.67rem">Stock</th>
-                    <th style="width:36px"></th>
+                    <th class="surface-title" style="padding:.4rem .6rem;text-align:left;font-size:.67rem">Combinación</th>
+                    <th class="surface-title" style="padding:.4rem .6rem;text-align:left;font-size:.67rem">Precio (₡)</th>
+                    <th class="surface-title" style="padding:.4rem .6rem;text-align:left;font-size:.67rem">Stock</th>
+                    <th style="width:32px"></th>
                 </tr>
             </thead>
             <tbody id="vb-tbody"></tbody>
         </table>
+        </div>
     </div>
 
     <div id="vb-empty-msg" style="font-size:.78rem;color:var(--gray3);text-align:center;padding:1.2rem 0">

@@ -297,19 +297,21 @@
           hiddenValues +
           '<input type="hidden" name="combos[' + i + '][combination_id]" value="' + existId + '">' +
         '</td>' +
-        '<td style="padding:.3rem .5rem;width:130px">' +
+        '<td style="padding:.3rem .4rem">' +
           '<input type="number" name="combos[' + i + '][price]" class="filter-input vb-input" ' +
+            'style="width:100%" ' +
             'value="' + price + '" min="0" step="1" placeholder="0 = base" ' +
             'data-combo-key="' + key + '" ' +
             'oninput="window.vbUpdateComboPrice(\'' + key + '\', this.value)">' +
         '</td>' +
-        '<td style="padding:.3rem .5rem;width:100px">' +
+        '<td style="padding:.3rem .4rem">' +
           '<input type="number" name="combos[' + i + '][stock]" class="filter-input vb-input" ' +
+            'style="width:100%" ' +
             'value="' + stock + '" min="-1" step="1" ' +
             'data-combo-key="' + key + '" ' +
             'oninput="window.vbUpdateComboStock(\'' + key + '\', this.value)">' +
         '</td>' +
-        '<td style="padding:.3rem .4rem;text-align:center;width:36px">' +
+        '<td style="padding:.3rem .4rem;text-align:center;width:32px">' +
           '<button type="button" class="vb-del" data-val-ids="' + valueIds.join(',') + '" title="Quitar estas variantes">' +
             '<i class="fas fa-times"></i>' +
           '</button>' +
