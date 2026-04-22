@@ -118,7 +118,7 @@ class _LoginContentState extends State<LoginContent> {
     return TextFormField(
       keyboardType: TextInputType.emailAddress,
       onChanged: (v) => widget.bloc?.add(EmailChanged(email: BlocFormItem(value: v))),
-      validator: (_) => widget.state.email.error,
+      validator: (v) => (v == null || v.trim().isEmpty) ? 'Ingresa el correo' : null,
       decoration: _inputDecoration('Correo electrónico', Icons.email_outlined),
     );
   }
@@ -127,7 +127,7 @@ class _LoginContentState extends State<LoginContent> {
     return TextFormField(
       obscureText: _obscurePassword,
       onChanged: (v) => widget.bloc?.add(PasswordChanged(password: BlocFormItem(value: v))),
-      validator: (_) => widget.state.password.error,
+      validator: (v) => (v == null || v.length < 6) ? 'Mínimo 6 caracteres' : null,
       decoration: _inputDecoration('Contraseña', Icons.lock_outline).copyWith(
         suffixIcon: IconButton(
           icon: Icon(
