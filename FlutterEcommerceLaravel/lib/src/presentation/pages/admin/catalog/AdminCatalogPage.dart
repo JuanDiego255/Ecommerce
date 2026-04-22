@@ -5,6 +5,7 @@ import 'package:ecommerce_flutter/src/domain/utils/Resource.dart';
 import 'package:ecommerce_flutter/src/presentation/pages/admin/catalog/AdminCatalogCategoriesPage.dart';
 import 'package:ecommerce_flutter/src/presentation/pages/admin/catalog/AdminCatalogProductsPage.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 const Color kBg = Color(0xFFFAF8F5);
 const Color kPrimary = Color(0xFF8B6F47);
@@ -107,11 +108,27 @@ class _AdminCatalogPageState extends State<AdminCatalogPage> {
     );
   }
 
+  void _openWebAdmin() {
+    final path = _type == 'departments' ? '/departments' : '/categories';
+    launchUrl(
+      Uri.https('mitaicr.com', path),
+      mode: LaunchMode.externalApplication,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: kBg,
       body: _buildBody(),
+      floatingActionButton: !_loading && _error == null
+          ? FloatingActionButton.extended(
+              onPressed: _openWebAdmin,
+              backgroundColor: kPrimary,
+              icon: const Icon(Icons.edit, color: Colors.white),
+              label: const Text('Gestionar', style: TextStyle(color: Colors.white)),
+            )
+          : null,
     );
   }
 
@@ -212,7 +229,7 @@ class _AdminCatalogPageState extends State<AdminCatalogPage> {
           final catName = cat['name']?.toString() ?? '';
           final catImage = cat['image']?.toString();
           final imageUrl = catImage != null && catImage.isNotEmpty
-              ? 'https://mitaicr.com/$catImage'
+              ? 'https://mitaicr.com/file/$catImage'
               : '';
           return _CategoryCard(
             name: catName,

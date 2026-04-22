@@ -4,6 +4,7 @@ import 'package:ecommerce_flutter/src/domain/utils/Resource.dart';
 import 'package:ecommerce_flutter/src/presentation/pages/admin/catalog/AdminProductDetailPage.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 const Color _kBg = Color(0xFFFAF8F5);
 const Color _kPrimary = Color(0xFF8B6F47);
@@ -84,6 +85,16 @@ class _AdminCatalogProductsPageState extends State<AdminCatalogProductsPage> {
           icon: const Icon(Icons.arrow_back_ios, color: _kPrimary),
           onPressed: () => Navigator.pop(context),
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.open_in_browser, color: _kPrimary),
+            tooltip: 'Gestionar en web',
+            onPressed: () => launchUrl(
+              Uri.https('mitaicr.com', '/categories/${widget.categoryId}'),
+              mode: LaunchMode.externalApplication,
+            ),
+          ),
+        ],
       ),
       body: _buildBody(),
     );
@@ -143,7 +154,10 @@ class _AdminCatalogProductsPageState extends State<AdminCatalogProductsPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => AdminProductDetailPage(product: product),
+                  builder: (_) => AdminProductDetailPage(
+              product: product,
+              categoryId: widget.categoryId,
+            ),
                 ),
               );
             },

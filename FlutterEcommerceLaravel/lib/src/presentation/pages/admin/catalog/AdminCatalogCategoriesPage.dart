@@ -137,7 +137,7 @@ class _AdminCatalogCategoriesPageState
           final catName = cat['name']?.toString() ?? '';
           final catImage = cat['image']?.toString();
           final imageUrl = catImage != null && catImage.isNotEmpty
-              ? 'https://mitaicr.com/$catImage'
+              ? 'https://mitaicr.com/file/$catImage'
               : '';
           return _CatalogCategoryCard(
             name: catName,

@@ -100,13 +100,16 @@ class MitaiApiService {
     }
   }
 
-  // GET https://mitaicr.com/api/products/category/{categoryId}/mitaicr
+  // GET https://mitaicr.com/api/products/category/{categoryId}/mitaicr?status=1
   Future<Resource<List<MitaiProduct>>> getProductsByCategory(
       int categoryId) async {
     try {
       final token = await _getToken();
-      final url =
-          Uri.https(_baseHost, '/api/products/category/$categoryId/$_tenant');
+      final url = Uri.https(
+        _baseHost,
+        '/api/products/category/$categoryId/$_tenant',
+        {'status': '1'},
+      );
       final response = await http.get(url, headers: _headers(token));
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = json.decode(response.body) as Map<String, dynamic>;

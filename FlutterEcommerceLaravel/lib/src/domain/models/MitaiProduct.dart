@@ -26,7 +26,7 @@ class MitaiProduct {
   });
 
   String get imageUrl =>
-      image != null && image!.isNotEmpty ? 'https://mitaicr.com/${image!}' : '';
+      image != null && image!.isNotEmpty ? 'https://mitaicr.com/file/${image!}' : '';
 
   List<String> get attrList =>
       availableAttr != null && availableAttr!.isNotEmpty

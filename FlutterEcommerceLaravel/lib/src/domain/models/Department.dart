@@ -10,7 +10,7 @@ class Department {
   });
 
   String get imageUrl =>
-      image != null ? 'https://mitaicr.com/${image!}' : '';
+      image != null && image!.isNotEmpty ? 'https://mitaicr.com/file/${image!}' : '';
 
   factory Department.fromJson(Map<String, dynamic> json) => Department(
         id: json["id"] ?? 0,
