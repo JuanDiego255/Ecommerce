@@ -3,10 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Department;
 use App\Models\Categories;
-use App\Models\Tenant;
 use App\Models\TenantInfo;
 use Illuminate\Support\Facades\DB;
 
@@ -15,17 +13,6 @@ class HomeDataController extends Controller
     public function index($tenant)
     {
         try {
-            if (!tenancy()->initialized()) {
-                $tenants = \App\Models\Tenant::where('id', $tenant)->first();
-                if (!$tenants) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => "Tenant '$tenant' no encontrado",
-                    ], 404);
-                }
-                tenancy()->initialize($tenants);
-            }
-
             $tenantinfo = TenantInfo::first();
 
             if ($tenantinfo && $tenantinfo->manage_department == 1) {
@@ -66,17 +53,6 @@ class HomeDataController extends Controller
     public function getTenantInfo($tenant)
     {
         try {
-            if (!tenancy()->initialized()) {
-                $tenants = \App\Models\Tenant::where('id', $tenant)->first();
-                if (!$tenants) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => "Tenant '$tenant' no encontrado",
-                    ], 404);
-                }
-                tenancy()->initialize($tenants);
-            }
-
             $tenantinfo = TenantInfo::first();
 
             return response()->json([
@@ -93,17 +69,6 @@ class HomeDataController extends Controller
     public function apiIndexByCategory($id, $tenant)
     {
         try {
-            if (!tenancy()->initialized()) {
-                $tenants = \App\Models\Tenant::where('id', $tenant)->first();
-                if (!$tenants) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => "Tenant '$tenant' no encontrado",
-                    ], 404);
-                }
-                tenancy()->initialize($tenants);
-            }
-
             $statusFilter = request()->get('status', 2);
 
             $products = DB::table('clothing')
@@ -152,8 +117,6 @@ class HomeDataController extends Controller
                 ->orderBy('clothing.name', 'asc')
                 ->get();
 
-            tenancy()->end();
-
             return response()->json([
                 'success' => true,
                 'data' => $products,
@@ -169,14 +132,6 @@ class HomeDataController extends Controller
     public function apiProductVariants($id, $tenant)
     {
         try {
-            if (!tenancy()->initialized()) {
-                $tenants = \App\Models\Tenant::where('id', $tenant)->first();
-                if (!$tenants) {
-                    return response()->json(['success' => false, 'message' => 'Tenant no encontrado'], 404);
-                }
-                tenancy()->initialize($tenants);
-            }
-
             $rows = DB::table('variant_combinations as vc')
                 ->where('vc.clothing_id', $id)
                 ->join('variant_combination_values as vcv', 'vcv.combination_id', '=', 'vc.id')
@@ -197,8 +152,6 @@ class HomeDataController extends Controller
                 ];
             })->values();
 
-            tenancy()->end();
-
             return response()->json(['success' => true, 'data' => $combinations]);
         } catch (\Exception $e) {
             return response()->json([
@@ -211,17 +164,6 @@ class HomeDataController extends Controller
     public function apiCategoriesByDepartment($id, $tenant)
     {
         try {
-            if (!tenancy()->initialized()) {
-                $tenants = \App\Models\Tenant::where('id', $tenant)->first();
-                if (!$tenants) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => "Tenant '$tenant' no encontrado",
-                    ], 404);
-                }
-                tenancy()->initialize($tenants);
-            }
-
             if ($id == null) {
                 $department = Department::where('department', 'Default')->first();
             } else {
@@ -238,8 +180,6 @@ class HomeDataController extends Controller
             $categories = Categories::where('department_id', $department->id)
                 ->orderBy('name', 'asc')
                 ->get(['id', 'name', 'image']);
-
-            tenancy()->end();
 
             return response()->json([
                 'success' => true,
