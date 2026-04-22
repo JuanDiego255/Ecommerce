@@ -45,13 +45,10 @@ class _LoginPageState extends State<LoginPage> {
               );
             }
             else if (responseState is Success) {
-              
-              WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
                 final authResponse = responseState.data as AuthResponse;
-              print('USUARIO DE SESION: ${authResponse?.toJson()}');
-              // _bloc?.add(LoginFormReset());
-              _bloc?.add(LoginSaveUserSession(authResponse: authResponse));
-                Navigator.pushNamedAndRemoveUntil(context, 'roles', (route) => false);
+                _bloc?.add(LoginSaveUserSession(authResponse: authResponse));
+                Navigator.pushNamedAndRemoveUntil(context, 'admin/home', (route) => false);
               });
             }
           },
