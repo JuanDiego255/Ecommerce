@@ -111,7 +111,7 @@ class _AdminProductDetailPageState extends State<AdminProductDetailPage> {
       MaterialPageRoute(
         builder: (_) => AdminProductFormPage(
           categoryId: widget.categoryId,
-          productId: widget.product.id,
+          product: widget.product,
         ),
       ),
     );
