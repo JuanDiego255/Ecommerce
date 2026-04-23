@@ -7,9 +7,9 @@ use Illuminate\Support\Str;
 
 class MobileToken extends Model
 {
-    // Always use the central DB so tokens created from the web admin
-    // are visible when validated from within any tenant API context.
-    protected $connection = 'mysql';
+    // Always use the 'central' connection — stancl/tenancy modifies the default
+    // 'mysql' connection when a tenant is initialized, but never touches 'central'.
+    protected $connection = 'central';
 
     protected $table = 'mobile_tokens';
 
