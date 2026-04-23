@@ -1,4 +1,4 @@
-import 'package:ecommerce_flutter/src/data/api/ApiConfig.dart';
+import 'dart:convert';
 import 'package:ecommerce_flutter/src/data/dataSource/local/TenantSession.dart';
 import 'package:ecommerce_flutter/src/domain/models/TenantConfig.dart';
 import 'package:ecommerce_flutter/src/presentation/pages/auth/login/bloc/LoginBloc.dart';
@@ -7,6 +7,7 @@ import 'package:ecommerce_flutter/src/presentation/pages/auth/login/bloc/LoginSt
 import 'package:ecommerce_flutter/src/presentation/utils/BlocFormItem.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 
 const Color _kPrimary = Color(0xFF8B6F47);
@@ -28,10 +29,10 @@ class _LoginContentState extends State<LoginContent> {
   late bool _showServerConfig;
   final _serverFormKey = GlobalKey<FormState>();
   late final TextEditingController _domainCtrl;
-  late final TextEditingController _nameCtrl;
   final TextEditingController _tokenCtrl = TextEditingController();
   bool _tokenVisible = false;
   bool _savingServer = false;
+  String? _serverError;
 
   // ─── Credential step ──────────────────────────────────────────────────────
   bool _obscurePassword = true;
@@ -42,33 +43,60 @@ class _LoginContentState extends State<LoginContent> {
     super.initState();
     _showServerConfig = !TenantSession.isConfigured;
     _domainCtrl = TextEditingController(text: TenantSession.host);
-    _nameCtrl = TextEditingController(text: TenantSession.displayName);
   }
 
   @override
   void dispose() {
     _domainCtrl.dispose();
-    _nameCtrl.dispose();
     _tokenCtrl.dispose();
     super.dispose();
   }
 
-  // ─── Save server config ───────────────────────────────────────────────────
+  // ─── Save server config with token validation ─────────────────────────────
 
   Future<void> _saveServer() async {
     if (!_serverFormKey.currentState!.validate()) return;
-    setState(() => _savingServer = true);
+    setState(() {
+      _savingServer = true;
+      _serverError = null;
+    });
 
-    // Normalise domain — strip scheme and trailing slash
     final raw = _domainCtrl.text.trim();
     final domain = raw
         .replaceAll(RegExp(r'^https?://'), '')
         .replaceAll(RegExp(r'/$'), '');
+    final token = _tokenCtrl.text.trim();
 
+    // Validate token against the server before saving anything.
+    try {
+      final response = await http
+          .get(
+            Uri.https(domain, '/api/app/ping'),
+            headers: {'X-App-Token': token, 'Accept': 'application/json'},
+          )
+          .timeout(const Duration(seconds: 10));
+
+      if (response.statusCode != 200) {
+        final body = jsonDecode(response.body);
+        final msg = body['message'] as String? ?? 'Token inválido o servidor incorrecto';
+        setState(() {
+          _savingServer = false;
+          _serverError = msg;
+        });
+        return;
+      }
+    } catch (_) {
+      setState(() {
+        _savingServer = false;
+        _serverError = 'No se pudo conectar al servidor. Verificá el dominio.';
+      });
+      return;
+    }
+
+    // Token validated — persist and proceed to credential step.
     await TenantSession.save(TenantConfig(
       domain: domain,
-      name: _nameCtrl.text.trim(),
-      appToken: _tokenCtrl.text.trim(),
+      appToken: token,
     ));
 
     if (!mounted) return;
@@ -101,9 +129,6 @@ class _LoginContentState extends State<LoginContent> {
 
   Widget _header(BuildContext context) {
     final h = MediaQuery.of(context).size.height;
-    final tenantName = TenantSession.isConfigured
-        ? TenantSession.displayName
-        : 'Admin';
     return Container(
       height: h * 0.34,
       width: double.infinity,
@@ -132,10 +157,10 @@ class _LoginContentState extends State<LoginContent> {
           ),
           const SizedBox(height: 16),
           Text(
-            tenantName,
+            TenantSession.isConfigured ? TenantSession.host : 'Admin',
             style: const TextStyle(
               color: Colors.white,
-              fontSize: 26,
+              fontSize: 22,
               fontWeight: FontWeight.w700,
               letterSpacing: 0.5,
             ),
@@ -176,35 +201,24 @@ class _LoginContentState extends State<LoginContent> {
             ),
             const SizedBox(height: 4),
             Text(
-              'Ingresa los datos del tenant al que deseas acceder.',
+              'Ingresá el dominio y el token de acceso generado desde el panel web.',
               style: TextStyle(fontSize: 13, color: Colors.grey[600]),
             ),
             const SizedBox(height: 24),
 
             // Domain
-            _serverField(
+            TextFormField(
               controller: _domainCtrl,
-              label: 'Dominio del tenant',
-              hint: 'ejemplo.com',
-              icon: Icons.language_outlined,
               keyboardType: TextInputType.url,
               validator: (v) {
-                if (v == null || v.trim().isEmpty) return 'Ingresa el dominio';
+                if (v == null || v.trim().isEmpty) return 'Ingresá el dominio';
                 final d = v.trim().replaceAll(RegExp(r'^https?://'), '');
                 if (!d.contains('.')) return 'Dominio inválido (ej: ejemplo.com)';
                 return null;
               },
-            ),
-            const SizedBox(height: 14),
-
-            // Tenant name
-            _serverField(
-              controller: _nameCtrl,
-              label: 'Nombre del negocio',
-              hint: 'Mi Tienda CR',
-              icon: Icons.store_outlined,
-              validator: (v) =>
-                  (v == null || v.trim().isEmpty) ? 'Ingresa el nombre del negocio' : null,
+              style: const TextStyle(fontSize: 14),
+              decoration: _inputDecoration('Dominio del tenant', Icons.language_outlined)
+                  .copyWith(hintText: 'ejemplo.com'),
             ),
             const SizedBox(height: 14),
 
@@ -213,7 +227,7 @@ class _LoginContentState extends State<LoginContent> {
               controller: _tokenCtrl,
               obscureText: !_tokenVisible,
               validator: (v) =>
-                  (v == null || v.trim().isEmpty) ? 'Ingresa el token de acceso' : null,
+                  (v == null || v.trim().isEmpty) ? 'Ingresá el token de acceso' : null,
               style: const TextStyle(fontSize: 14),
               decoration: _inputDecoration('Token de acceso', Icons.vpn_key_outlined).copyWith(
                 hintText: 'Token generado desde el panel web',
@@ -228,9 +242,32 @@ class _LoginContentState extends State<LoginContent> {
                 ),
               ),
             ),
+
+            if (_serverError != null) ...[
+              const SizedBox(height: 10),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                decoration: BoxDecoration(
+                  color: Colors.red.shade50,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.red.shade200),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.error_outline, size: 16, color: Colors.red.shade700),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        _serverError!,
+                        style: TextStyle(fontSize: 12, color: Colors.red.shade700),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
             const SizedBox(height: 28),
 
-            // Connect button
             SizedBox(
               width: double.infinity,
               height: 50,
@@ -251,13 +288,12 @@ class _LoginContentState extends State<LoginContent> {
                       )
                     : const Icon(Icons.link_rounded, size: 18),
                 label: Text(
-                  _savingServer ? 'Conectando...' : 'Conectar',
+                  _savingServer ? 'Verificando...' : 'Conectar',
                   style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                 ),
               ),
             ),
 
-            // Cancel (only if already configured)
             if (TenantSession.isConfigured) ...[
               const SizedBox(height: 12),
               Center(
@@ -271,31 +307,10 @@ class _LoginContentState extends State<LoginContent> {
               ),
             ],
 
-            // Privacy policy
             const SizedBox(height: 20),
             _privacyLink(),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _serverField({
-    required TextEditingController controller,
-    required String label,
-    required IconData icon,
-    String? hint,
-    TextInputType keyboardType = TextInputType.text,
-    String? Function(String?)? validator,
-  }) {
-    return TextFormField(
-      controller: controller,
-      keyboardType: keyboardType,
-      validator: validator,
-      style: const TextStyle(fontSize: 14),
-      decoration: _inputDecoration(label, icon).copyWith(
-        hintText: hint,
-        hintStyle: TextStyle(color: Colors.grey[400], fontSize: 12),
       ),
     );
   }
@@ -308,7 +323,6 @@ class _LoginContentState extends State<LoginContent> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Server info bar
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             decoration: BoxDecoration(
@@ -334,9 +348,11 @@ class _LoginContentState extends State<LoginContent> {
                 GestureDetector(
                   onTap: () {
                     _domainCtrl.text = TenantSession.host;
-                    _nameCtrl.text = TenantSession.displayName;
                     _tokenCtrl.clear();
-                    setState(() => _showServerConfig = true);
+                    setState(() {
+                      _showServerConfig = true;
+                      _serverError = null;
+                    });
                   },
                   child: Text(
                     'Cambiar',
@@ -389,7 +405,7 @@ class _LoginContentState extends State<LoginContent> {
       onChanged: (v) =>
           widget.bloc?.add(EmailChanged(email: BlocFormItem(value: v))),
       validator: (v) =>
-          (v == null || v.trim().isEmpty) ? 'Ingresa el correo' : null,
+          (v == null || v.trim().isEmpty) ? 'Ingresá el correo' : null,
       style: const TextStyle(fontSize: 14),
       decoration: _inputDecoration('Correo electrónico', Icons.email_outlined),
     );
@@ -452,7 +468,14 @@ class _LoginContentState extends State<LoginContent> {
     return Center(
       child: GestureDetector(
         onTap: () async {
-          final uri = Uri.parse(ApiConfig.PRIVACY_POLICY_URL);
+          final host = TenantSession.isConfigured
+              ? TenantSession.host
+              : _domainCtrl.text
+                  .trim()
+                  .replaceAll(RegExp(r'^https?://'), '')
+                  .replaceAll(RegExp(r'/$'), '');
+          if (host.isEmpty) return;
+          final uri = Uri.https(host, '/privacy-policy');
           if (await canLaunchUrl(uri)) {
             await launchUrl(uri, mode: LaunchMode.externalApplication);
           }

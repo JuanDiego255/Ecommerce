@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:ecommerce_flutter/src/data/dataSource/local/TenantSession.dart';
 import 'package:ecommerce_flutter/src/data/dataSource/remote/services/MitaiApiService.dart';
 import 'package:ecommerce_flutter/src/domain/utils/Resource.dart';
 import 'package:ecommerce_flutter/src/presentation/pages/admin/catalog/AdminCatalogProductsPage.dart';
@@ -138,7 +139,7 @@ class _AdminCatalogCategoriesPageState
           final catName = cat['name']?.toString() ?? '';
           final catImage = cat['image']?.toString();
           final imageUrl = catImage != null && catImage.isNotEmpty
-              ? 'https://mitaicr.com/file/$catImage'
+              ? 'https://${TenantSession.host}/file/$catImage'
               : '';
           return _CatalogCategoryCard(
             name: catName,

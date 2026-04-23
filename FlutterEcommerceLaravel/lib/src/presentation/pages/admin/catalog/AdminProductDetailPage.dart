@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:ecommerce_flutter/src/data/dataSource/local/TenantSession.dart';
 import 'package:ecommerce_flutter/src/data/dataSource/remote/services/MitaiApiService.dart';
 import 'package:ecommerce_flutter/src/domain/models/MitaiProduct.dart';
 import 'package:ecommerce_flutter/src/domain/models/ProductVariant.dart';
@@ -870,7 +871,7 @@ class _ProductShareCard extends StatelessWidget {
             Icon(Icons.storefront_rounded, size: 14, color: Color(0xFFC8966A)),
             SizedBox(width: 6),
             Text(
-              'mitaicr.com',
+              TenantSession.host,
               style: TextStyle(
                 fontSize: 12,
                 color: Color(0xFF8B6F47),

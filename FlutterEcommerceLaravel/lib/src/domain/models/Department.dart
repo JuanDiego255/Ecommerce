@@ -1,3 +1,5 @@
+import 'package:ecommerce_flutter/src/data/dataSource/local/TenantSession.dart';
+
 class Department {
   int id;
   String name;
@@ -10,7 +12,7 @@ class Department {
   });
 
   String get imageUrl =>
-      image != null && image!.isNotEmpty ? 'https://mitaicr.com/file/${image!}' : '';
+      image != null && image!.isNotEmpty ? 'https://${TenantSession.host}/file/${image!}' : '';
 
   factory Department.fromJson(Map<String, dynamic> json) => Department(
         id: json["id"] ?? 0,

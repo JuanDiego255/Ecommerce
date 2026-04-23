@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:ecommerce_flutter/src/data/dataSource/local/TenantSession.dart';
 import 'package:ecommerce_flutter/src/data/dataSource/remote/services/MitaiApiService.dart';
 import 'package:ecommerce_flutter/src/domain/models/Department.dart';
 import 'package:ecommerce_flutter/src/domain/models/MitaiProduct.dart';
@@ -113,7 +114,7 @@ class _AdminCatalogPageState extends State<AdminCatalogPage> {
   void _openWebAdmin() {
     final path = _type == 'departments' ? '/departments' : '/categories';
     launchUrl(
-      Uri.https('mitaicr.com', path),
+      Uri.https(TenantSession.host, path),
       mode: LaunchMode.externalApplication,
     );
   }
@@ -250,7 +251,7 @@ class _AdminCatalogPageState extends State<AdminCatalogPage> {
           final catName = cat['name']?.toString() ?? '';
           final catImage = cat['image']?.toString();
           final imageUrl = catImage != null && catImage.isNotEmpty
-              ? 'https://mitaicr.com/file/$catImage'
+              ? 'https://${TenantSession.host}/file/$catImage'
               : '';
           return _CategoryCard(
             name: catName,

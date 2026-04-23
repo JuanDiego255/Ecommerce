@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:ecommerce_flutter/src/data/dataSource/local/TenantSession.dart';
 import 'package:ecommerce_flutter/src/data/dataSource/remote/services/MitaiApiService.dart';
 import 'package:ecommerce_flutter/src/domain/models/MitaiProduct.dart';
 import 'package:ecommerce_flutter/src/domain/utils/Resource.dart';
@@ -183,7 +184,7 @@ class _AdminCatalogProductsPageState extends State<AdminCatalogProductsPage> {
             icon: const Icon(Icons.open_in_browser, color: _kPrimary),
             tooltip: 'Gestionar en web',
             onPressed: () => launchUrl(
-              Uri.https('mitaicr.com', '/categories/${widget.categoryId}'),
+              Uri.https(TenantSession.host, '/categories/${widget.categoryId}'),
               mode: LaunchMode.externalApplication,
             ),
           ),

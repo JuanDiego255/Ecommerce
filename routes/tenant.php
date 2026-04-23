@@ -926,6 +926,11 @@ Route::prefix('api')->middleware([
     'api',
 ])->group(function () {
     Route::post('/login', [ApiLoginController::class, 'login']);
+    // Token verification — called by the mobile app before showing the credential form.
+    // Requires a valid X-App-Token; no user authentication needed.
+    Route::middleware('mobile.token')->get('/app/ping', function () {
+        return response()->json(['ok' => true]);
+    });
     Route::get('/home/admin/{tenant}', [HomeDataController::class, 'index']);
     Route::get('/tenant/info/{tenant}', [HomeDataController::class, 'getTenantInfo']);
     Route::get('/products/category/{id}/{tenant}', [HomeDataController::class, 'apiIndexByCategory']);
