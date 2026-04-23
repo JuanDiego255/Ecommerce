@@ -864,12 +864,12 @@ class _ProductShareCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 14),
       color: const Color(0xFFFAF8F5),
-      child: const Center(
+      child: Center(
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.storefront_rounded, size: 14, color: Color(0xFFC8966A)),
-            SizedBox(width: 6),
+            const Icon(Icons.storefront_rounded, size: 14, color: Color(0xFFC8966A)),
+            const SizedBox(width: 6),
             Text(
               TenantSession.host,
               style: TextStyle(
