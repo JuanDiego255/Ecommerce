@@ -51,23 +51,8 @@ class VentaEspecialistaController extends Controller
      */
     public function listVentas()
     {
-        //
-        $arqueos = ArqueoCaja::take(10);
-        /*  $ventas = VentaEspecialista::leftJoin('especialistas', 'venta_especialistas.especialista_id', 'especialistas.id')
-            ->join('tipo_pagos', 'venta_especialistas.tipo_pago_id', 'tipo_pagos.id')
-            ->select(
-                'especialistas.nombre as nombre',
-                'tipo_pagos.tipo as tipo',
-                DB::raw("(
-                    SELECT GROUP_CONCAT(clothing.name ORDER BY clothing.name SEPARATOR ', ')
-                    FROM clothing
-                    WHERE FIND_IN_SET(clothing.id, venta_especialistas.clothing_id)
-                ) as servicios"),
-                'venta_especialistas.*'
-            )
-            ->orderBy('venta_especialistas.created_at', 'desc')
-            ->get(); */
-        return view('admin.ventas.list', compact('arqueos'));
+        $especialistas = Especialista::orderBy('nombre')->get(['id', 'nombre']);
+        return view('admin.ventas.list', compact('especialistas'));
     }
     //
     /**
@@ -468,6 +453,11 @@ class VentaEspecialistaController extends Controller
     }
     public function ajaxVentas(Request $request)
     {
+        $fechaDesde     = $request->input('fecha_desde');
+        $fechaHasta     = $request->input('fecha_hasta');
+        $especialistaId = $request->input('especialista_id');
+        $estado         = $request->input('estado', 'todos'); // todos | activas | anuladas
+
         $ventas = VentaEspecialista::leftJoin('especialistas', 'venta_especialistas.especialista_id', 'especialistas.id')
             ->join('tipo_pagos', 'venta_especialistas.tipo_pago_id', 'tipo_pagos.id')
             ->join('arqueo_cajas', 'venta_especialistas.arqueo_id', 'arqueo_cajas.id')
@@ -475,43 +465,67 @@ class VentaEspecialistaController extends Controller
                 'especialistas.nombre as nombre',
                 'tipo_pagos.tipo as tipo',
                 DB::raw("(
-                SELECT GROUP_CONCAT(clothing.name ORDER BY clothing.name SEPARATOR ', ')
-                FROM clothing
-                WHERE FIND_IN_SET(clothing.id, venta_especialistas.clothing_id)
-            ) as servicios"),
+                    SELECT GROUP_CONCAT(clothing.name ORDER BY clothing.name SEPARATOR ', ')
+                    FROM clothing
+                    WHERE FIND_IN_SET(clothing.id, venta_especialistas.clothing_id)
+                ) as servicios"),
                 'venta_especialistas.*'
             )
+            ->when($fechaDesde, fn($q) => $q->whereDate('venta_especialistas.created_at', '>=', $fechaDesde))
+            ->when($fechaHasta, fn($q) => $q->whereDate('venta_especialistas.created_at', '<=', $fechaHasta))
+            ->when($especialistaId, fn($q) => $q->where('venta_especialistas.especialista_id', $especialistaId))
+            ->when($estado === 'activas',  fn($q) => $q->where('venta_especialistas.estado', '!=', 'A'))
+            ->when($estado === 'anuladas', fn($q) => $q->where('venta_especialistas.estado', 'A'))
             ->orderBy('venta_especialistas.created_at', 'desc');
 
         return DataTables::of($ventas)
             ->addColumn('acciones', function ($item) {
                 $buttons = '';
                 if ($item->estado != 'A') {
-                    $buttons .= '<button type="button" class="btn btn-link text-velvet border-0" onclick="abrirAnularModal(' . $item->id . ')"><i class="material-icons text-lg">delete</i></button>';
+                    $buttons .= '<button type="button" class="act-btn ab-del" onclick="abrirAnularModal(' . $item->id . ')" title="Anular"><i class="fas fa-ban fa-sm"></i></button>';
                 }
-                $buttons .= '<a href="' . url('/ventas/especialistas/' . $item->id) . '" class="btn btn-link text-velvet border-0" data-bs-toggle="tooltip" title="Editar"><i class="material-icons text-lg">edit</i></a>';
-                $buttons .= '<button type="button" class="btn btn-link text-velvet border-0" onclick="abrirCambioArqueoModal(' . $item->id . ', \'' . $item->created_at . '\')"><i class="material-icons text-lg">autorenew</i></button>';
+                $buttons .= '<a href="' . url('/ventas/especialistas/' . $item->id) . '" class="act-btn ab-neutral" title="Editar"><i class="fas fa-edit fa-sm"></i></a>';
+                $buttons .= '<button type="button" class="act-btn ab-neutral" onclick="abrirCambioArqueoModal(' . $item->id . ', \'' . $item->created_at . '\')" title="Cambiar arqueo"><i class="fas fa-exchange-alt fa-sm"></i></button>';
                 return $buttons;
             })
             ->editColumn('servicios', function ($item) {
-                $servicios = str_replace(',', '<br>', $item->servicios);
+                $servicios = str_replace(',', '<br>', $item->servicios ?? '—');
                 if ($item->estado === 'A') {
-                    $servicios .= '<br><span class="badge badge-pill ml-2 text-xxs badge-date text-white">Anulado</span>';
+                    $servicios .= '<br><span style="font-size:.65rem;background:#fee2e2;color:#991b1b;padding:1px 7px;border-radius:20px;font-weight:600;">Anulado</span>';
                 }
                 return $servicios;
             })
-
-            ->editColumn('nombre', function ($item) {
-                return $item->nombre ?? 'Paquetes';
-            })
-            ->editColumn('monto_venta', fn($item) => '₡' . number_format($item->monto_venta))
-            ->editColumn('monto_clinica', fn($item) => '₡' . number_format($item->monto_clinica))
-            ->editColumn('monto_especialista', fn($item) => '₡' . number_format($item->monto_especialista))
+            ->editColumn('nombre', fn($item) => $item->nombre ?? '<span style="font-size:.75rem;color:#a0aec0;">Paquetes</span>')
+            ->editColumn('monto_venta',         fn($item) => '₡' . number_format($item->monto_venta))
+            ->editColumn('monto_clinica',        fn($item) => '₡' . number_format($item->monto_clinica))
+            ->editColumn('monto_especialista',   fn($item) => '₡' . number_format($item->monto_especialista))
             ->editColumn('monto_producto_venta', fn($item) => '₡' . number_format($item->monto_producto_venta))
-            ->editColumn('porcentaje', fn($item) => '%' . $item->porcentaje)
-            ->editColumn('created_at', fn($item) => $item->created_at->format('d/m/Y'))
-            ->rawColumns(['acciones', 'servicios'])
+            ->editColumn('porcentaje',           fn($item) => $item->porcentaje . '%')
+            ->editColumn('created_at',           fn($item) => $item->created_at->format('d/m/Y'))
+            ->rawColumns(['acciones', 'servicios', 'nombre'])
             ->make(true);
+    }
+
+    public function resumenVentas(Request $request)
+    {
+        $fechaDesde     = $request->input('fecha_desde');
+        $fechaHasta     = $request->input('fecha_hasta');
+        $especialistaId = $request->input('especialista_id');
+
+        $resumen = VentaEspecialista::where('venta_especialistas.estado', '!=', 'A')
+            ->when($fechaDesde, fn($q) => $q->whereDate('created_at', '>=', $fechaDesde))
+            ->when($fechaHasta, fn($q) => $q->whereDate('created_at', '<=', $fechaHasta))
+            ->when($especialistaId, fn($q) => $q->where('especialista_id', $especialistaId))
+            ->selectRaw('
+                COUNT(*) as total_registros,
+                COALESCE(SUM(monto_venta), 0) as total_venta,
+                COALESCE(SUM(monto_clinica), 0) as total_clinica,
+                COALESCE(SUM(monto_especialista), 0) as total_especialista,
+                COALESCE(SUM(monto_producto_venta), 0) as total_producto
+            ')
+            ->first();
+
+        return response()->json($resumen);
     }
     public function arqueosValidos(Request $request)
     {
