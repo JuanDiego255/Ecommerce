@@ -927,9 +927,17 @@ Route::prefix('api')->middleware([
 ])->group(function () {
     Route::post('/login', [ApiLoginController::class, 'login']);
     // Token verification — called by the mobile app before showing the credential form.
-    // Requires a valid X-App-Token; no user authentication needed.
     Route::middleware('mobile.token')->get('/app/ping', function () {
         return response()->json(['ok' => true]);
+    });
+    // Diagnostic: returns the SHA-256 hash of the provided token value (remove after debugging).
+    Route::get('/app/token-hash', function (\Illuminate\Http\Request $request) {
+        $plain = $request->query('v');
+        if (!$plain) return response()->json(['error' => 'Pass ?v=YOUR_TOKEN'], 400);
+        return response()->json([
+            'hash'   => hash('sha256', $plain),
+            'length' => strlen($plain),
+        ]);
     });
     Route::get('/home/admin/{tenant}', [HomeDataController::class, 'index']);
     Route::get('/tenant/info/{tenant}', [HomeDataController::class, 'getTenantInfo']);
