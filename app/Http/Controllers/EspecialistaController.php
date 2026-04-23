@@ -30,16 +30,9 @@ class EspecialistaController extends Controller
      */
     public function indexServices($id)
     {
-        //
-        $especialista = Especialista::where('id', $id)->first();
-        $services = PivotServiciosEspecialista::where('especialista_id', $id)
-            ->join('clothing', 'pivot_servicios_especialistas.clothing_id', 'clothing.id')
-            ->select(
-                'clothing.name as nombre',
-                'clothing.id as service_id'
-            )
-            ->get();
-        return view('admin.especialistas.index-services', compact('services', 'especialista'));
+        $especialista = Especialista::findOrFail($id);
+        $todosEspecialistas = Especialista::orderBy('nombre')->get(['id', 'nombre']);
+        return view('admin.especialistas.index-services', compact('especialista', 'todosEspecialistas'));
     }
 
     /**
@@ -50,19 +43,23 @@ class EspecialistaController extends Controller
      */
     public function store(Request $request)
     {
-        //
         DB::beginTransaction();
         try {
-            $especialista =  new  Especialista();
-            $especialista->nombre = $request->nombre;
-            $especialista->salario_base = $request->salario_base;
-            $especialista->monto_por_servicio = $request->monto_por_servicio;
+            $especialista = new Especialista();
+            $especialista->nombre              = $request->nombre;
+            $especialista->salario_base        = $request->salario_base;
+            $especialista->monto_por_servicio  = $request->monto_por_servicio;
+            $especialista->aplica_calc         = $request->boolean('aplica_calc');
+            $especialista->aplica_porc_tarjeta = $request->boolean('aplica_porc_tarjeta');
+            $especialista->aplica_porc_113     = $request->boolean('aplica_porc_113');
+            $especialista->aplica_porc_prod    = $request->boolean('aplica_porc_prod');
+            $especialista->set_campo_esp       = $request->boolean('set_campo_esp');
             $especialista->save();
             DB::commit();
             return redirect()->back()->with(['status' => 'Se ha guardado el especialista con éxito', 'icon' => 'success']);
         } catch (\Exception $th) {
             DB::rollBack();
-            return redirect()->back()->with(['status' => 'No se pudo guardar la caja', 'icon' => 'error']);
+            return redirect()->back()->with(['status' => 'No se pudo guardar el especialista', 'icon' => 'error']);
         }
     }
 
@@ -75,13 +72,17 @@ class EspecialistaController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
         DB::beginTransaction();
         try {
-            $especialista = Especialista::findOrfail($id);
-            $especialista->nombre = $request->nombre;
-            $especialista->salario_base = $request->salario_base;
-            $especialista->monto_por_servicio = $request->monto_por_servicio;
+            $especialista = Especialista::findOrFail($id);
+            $especialista->nombre              = $request->nombre;
+            $especialista->salario_base        = $request->salario_base;
+            $especialista->monto_por_servicio  = $request->monto_por_servicio;
+            $especialista->aplica_calc         = $request->boolean('aplica_calc');
+            $especialista->aplica_porc_tarjeta = $request->boolean('aplica_porc_tarjeta');
+            $especialista->aplica_porc_113     = $request->boolean('aplica_porc_113');
+            $especialista->aplica_porc_prod    = $request->boolean('aplica_porc_prod');
+            $especialista->set_campo_esp       = $request->boolean('set_campo_esp');
             $especialista->update();
             DB::commit();
             return redirect()->back()->with(['status' => 'Se ha editado el especialista con éxito', 'icon' => 'success']);
