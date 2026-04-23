@@ -72,5 +72,6 @@ class Kernel extends HttpKernel
         'isAre' => \App\Http\Middleware\GestionAre::class,
         'role' => \App\Http\Middleware\RoleMiddleware::class,
         'ecd.access' => \App\Http\Middleware\EcdAccess::class,
+        'mobile.token' => \App\Http\Middleware\ValidateMobileAppToken::class,
     ];
 }

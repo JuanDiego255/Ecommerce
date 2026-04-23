@@ -23,6 +23,7 @@ use App\Http\Controllers\TenantSocialNetworkController;
 use App\Http\Controllers\TestimonialController;
 use App\Http\Controllers\MetaDeletionController;
 use App\Http\Controllers\AdminSearchController;
+use App\Http\Controllers\MobileTokenController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
@@ -195,6 +196,11 @@ Route::group(['middleware' => 'isAdmin'], function () {
     Route::delete('delete-value/{id}', [AttributeController::class, 'destroyValue']);
     Route::post('/value/store/{id}', [AttributeController::class, 'storeValue']);
     Route::get('value/{attr_id}/{id}/edit', [AttributeController::class, 'editValue']);
+    //Rutas para tokens de app móvil
+    Route::get('/mobile-tokens', [MobileTokenController::class, 'index'])->name('mobile-tokens.index');
+    Route::post('/mobile-tokens', [MobileTokenController::class, 'store'])->name('mobile-tokens.store');
+    Route::patch('/mobile-tokens/{mobileToken}/toggle', [MobileTokenController::class, 'toggleActive'])->name('mobile-tokens.toggle');
+    Route::delete('/mobile-tokens/{mobileToken}', [MobileTokenController::class, 'destroy'])->name('mobile-tokens.destroy');
     //Rutas para inquilinos y pagos de inquilinos
     Route::get('/tenants', [TenantController::class, 'index']);
     Route::post('tenant/store/', [TenantController::class, 'store']);

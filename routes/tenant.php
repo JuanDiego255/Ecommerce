@@ -935,8 +935,8 @@ Route::prefix('api')->middleware([
         return $request->user();
     });
 
-    // Admin CRUD (auth:sanctum required)
-    Route::middleware('auth:sanctum')->group(function () {
+    // Admin CRUD (auth:sanctum + mobile app token required)
+    Route::middleware(['auth:sanctum', 'mobile.token'])->group(function () {
         // Products
         Route::get('/admin/product/{id}',        [\App\Http\Controllers\Api\AdminProductApiController::class, 'show']);
         Route::post('/admin/products',            [\App\Http\Controllers\Api\AdminProductApiController::class, 'store']);
