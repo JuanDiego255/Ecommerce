@@ -19,7 +19,7 @@ class MercadoPagoService {
 
    Future<Resource<List<MercadoPagoIdentificationType>>> getIdentificationTypes() async {
      try {
-      Uri url = Uri.http(ApiConfig.API_ECOMMERCE, '/api/mercadopago/identification_types'); 
+      Uri url = Uri.https(ApiConfig.API_ECOMMERCE, '/api/mercadopago/identification_types'); 
       Map<String, String> headers = { 
         "Content-Type": "application/json",
         "Authorization": await token
@@ -34,14 +34,13 @@ class MercadoPagoService {
         return Error(listToString(data['message']));
       }      
     } catch (e) {
-      print('Error: $e');
       return Error(e.toString());
     }
   }
 
   Future<Resource<MercadoPagoCardTokenResponse>> createCardToken(MercadoPagoCardTokenBody mercadoPagoCardTokenBody) async {
      try {
-      Uri url = Uri.http(ApiConfig.API_ECOMMERCE, '/api/mercadopago/card_token'); 
+      Uri url = Uri.https(ApiConfig.API_ECOMMERCE, '/api/mercadopago/card_token'); 
       Map<String, String> headers = { 
         "Content-Type": "application/json",
         "Authorization": await token
@@ -57,14 +56,13 @@ class MercadoPagoService {
         return Error(listToString(data['message']));
       }      
     } catch (e) {
-      print('Error: $e');
       return Error(e.toString());
     }
   }
 
   Future<Resource<MercadoPagoPaymentResponse>> createPayment(MercadoPagoPaymentBody mercadoPagoPaymentBody) async {
      try {
-      Uri url = Uri.http(ApiConfig.API_ECOMMERCE, '/api/mercadopago/payments'); 
+      Uri url = Uri.https(ApiConfig.API_ECOMMERCE, '/api/mercadopago/payments'); 
       Map<String, String> headers = { 
         "Content-Type": "application/json",
         "Authorization": await token
@@ -80,14 +78,13 @@ class MercadoPagoService {
         return Error(listToString(data['message']));
       }      
     } catch (e) {
-      print('Error: $e');
       return Error(e.toString());
     }
   }
 
   Future<Resource<MercadoPagoInstallments>> getInstallments(String firstSixDigits, String amount) async {
      try {
-      Uri url = Uri.http(ApiConfig.API_ECOMMERCE, '/api/mercadopago/installments/$firstSixDigits/$amount'); 
+      Uri url = Uri.https(ApiConfig.API_ECOMMERCE, '/api/mercadopago/installments/$firstSixDigits/$amount'); 
       Map<String, String> headers = { 
         "Content-Type": "application/json",
         "Authorization": await token
@@ -102,7 +99,6 @@ class MercadoPagoService {
         return Error(listToString(data['message']));
       }      
     } catch (e) {
-      print('Error: $e');
       return Error(e.toString());
     }
   }

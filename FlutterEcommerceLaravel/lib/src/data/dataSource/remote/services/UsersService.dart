@@ -16,9 +16,8 @@ class UsersService {
 
   Future<Resource<User>> update(int id, User user) async {
      try {
-      print('METODO ACTUALIZAR SIN IMAGEN');
       // http://192.168.80.13:3000/users/5
-      Uri url = Uri.http(ApiConfig.API_ECOMMERCE, '/api/users/$id'); 
+      Uri url = Uri.https(ApiConfig.API_ECOMMERCE, '/api/users/$id'); 
       Map<String, String> headers = { 
         "Content-Type": "application/json",
         "Authorization": await token
@@ -38,16 +37,14 @@ class UsersService {
         return Error(listToString(data['message']));
       }      
     } catch (e) {
-      print('Error: $e');
       return Error(e.toString());
     }
   }
 
   Future<Resource<User>> updateImage(int id, User user, File file) async {
     try {
-      print('METODO ACTUALIZAR CON IMAGEN');
       // http://192.168.80.13:3000/users/5
-      Uri url = Uri.http(ApiConfig.API_ECOMMERCE, '/api/users/upload/$id'); 
+      Uri url = Uri.https(ApiConfig.API_ECOMMERCE, '/api/users/upload/$id'); 
       final request = http.MultipartRequest('PUT', url);
       request.headers['Authorization'] = await token;
       request.files.add(http.MultipartFile(
@@ -63,7 +60,6 @@ class UsersService {
         'phone': user.phone,
       });
       final response = await request.send();
-      print('RESPONSE: ${response.statusCode}');
       final data = json.decode(await response.stream.transform(utf8.decoder).first);
       if (response.statusCode == 200 || response.statusCode == 201) {
         User userResponse = User.fromJson(data);
@@ -73,7 +69,6 @@ class UsersService {
         return Error(listToString(data['message']));
       }      
     } catch (e) {
-      print('Error: $e');
       return Error(e.toString());
     }
   }

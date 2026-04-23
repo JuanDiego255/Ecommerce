@@ -1,5 +1,6 @@
 import 'package:app_links/app_links.dart';
 import 'package:ecommerce_flutter/injection.dart';
+import 'package:ecommerce_flutter/src/data/dataSource/local/TenantSession.dart';
 import 'package:ecommerce_flutter/src/blocProviders.dart';
 import 'package:ecommerce_flutter/src/presentation/pages/admin/category/create/AdminCategoryCreatePage.dart';
 import 'package:ecommerce_flutter/src/presentation/pages/admin/category/update/AdminCategoryUpdatePage.dart';
@@ -30,6 +31,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await configureDependencies();
+  await TenantSession.initialize(); // Load saved tenant config before any API call
   runApp(const MyApp());
 }
 
@@ -46,7 +48,6 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _listenToLinks();
   }

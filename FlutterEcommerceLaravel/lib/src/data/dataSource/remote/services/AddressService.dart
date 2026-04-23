@@ -14,7 +14,7 @@ class AddressService {
 
   Future<Resource<Address>> create(Address address) async {
     try {
-      Uri url = Uri.http(ApiConfig.API_ECOMMERCE, '/api/address');      
+      Uri url = Uri.https(ApiConfig.API_ECOMMERCE, '/api/address');      
       Map<String, String> headers = { 
         "Content-Type": "application/json",
         "Authorization": await token
@@ -22,7 +22,6 @@ class AddressService {
       String body = json.encode(address.toJson());
       final response = await http.post(url, headers: headers, body: body);
       final data = json.decode(response.body);
-      print('Status code: ${response.statusCode}');
       if (response.statusCode == 200 || response.statusCode == 201) {
         Address addressResponse = Address.fromJson(data);
         return Success(addressResponse);
@@ -31,14 +30,13 @@ class AddressService {
         return Error(listToString(data['message']));
       }      
     } catch (e) {
-      print('Error: $e');
       return Error(e.toString());
     }
   }
 
   Future<Resource<List<Address>>> getUserAddress(int idUser) async {
      try {
-      Uri url = Uri.http(ApiConfig.API_ECOMMERCE, '/api/address/user/$idUser'); 
+      Uri url = Uri.https(ApiConfig.API_ECOMMERCE, '/api/address/user/$idUser'); 
       Map<String, String> headers = { 
         "Content-Type": "application/json",
         "Authorization": await token
@@ -47,21 +45,19 @@ class AddressService {
       final data = json.decode(response.body);
       if (response.statusCode == 200 || response.statusCode == 201) {
         List<Address> address = Address.fromJsonList(data);
-        print('Address: ${address}');
         return Success(address);
       }
       else { // ERROR
         return Error(listToString(data['message']));
       }      
     } catch (e) {
-      print('Error: $e');
       return Error(e.toString());
     }
   }
 
   Future<Resource<bool>> delete(int id) async {
      try {
-      Uri url = Uri.http(ApiConfig.API_ECOMMERCE, '/api/address/$id');     
+      Uri url = Uri.https(ApiConfig.API_ECOMMERCE, '/api/address/$id');     
       Map<String, String> headers = { 
         "Content-Type": "application/json",
         "Authorization": await token
@@ -75,7 +71,6 @@ class AddressService {
         return Error(listToString(data['message']));
       }      
     } catch (e) {
-      print('Error: $e');
       return Error(e.toString());
     }
   }

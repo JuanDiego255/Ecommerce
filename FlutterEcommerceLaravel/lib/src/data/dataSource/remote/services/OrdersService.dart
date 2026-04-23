@@ -13,7 +13,7 @@ class OrdersService {
 
   Future<Resource<List<Order>>> getOrders() async {
      try {
-      Uri url = Uri.http(ApiConfig.API_ECOMMERCE, '/api/orders'); 
+      Uri url = Uri.https(ApiConfig.API_ECOMMERCE, '/api/orders'); 
       Map<String, String> headers = { 
         "Content-Type": "application/json",
         "Authorization": await token
@@ -28,14 +28,13 @@ class OrdersService {
         return Error(listToString(data['message']));
       }      
     } catch (e) {
-      print('Error: $e');
       return Error(e.toString());
     }
   }
 
   Future<Resource<List<Order>>> getOrdersByClient(int idClient) async {
      try {
-      Uri url = Uri.http(ApiConfig.API_ECOMMERCE, '/api/orders/$idClient'); 
+      Uri url = Uri.https(ApiConfig.API_ECOMMERCE, '/api/orders/$idClient'); 
       Map<String, String> headers = { 
         "Content-Type": "application/json",
         "Authorization": await token
@@ -50,22 +49,19 @@ class OrdersService {
         return Error(listToString(data['message']));
       }      
     } catch (e) {
-      print('Error: $e');
       return Error(e.toString());
     }
   }
 
    Future<Resource<Order>> updateStatus(int id) async {
      try {
-      print('Id order: $id');
-      Uri url = Uri.http(ApiConfig.API_ECOMMERCE, '/api/orders/$id');      
+      Uri url = Uri.https(ApiConfig.API_ECOMMERCE, '/api/orders/$id');      
       Map<String, String> headers = { 
         "Content-Type": "application/json",
         "Authorization": await token
       };
       final response = await http.put(url, headers: headers);
       final data = json.decode(response.body);
-      print('Data: $data');
       if (response.statusCode == 200 || response.statusCode == 201) {
         Order orderResponse = Order.fromJson(data);
         return Success(orderResponse);
@@ -74,7 +70,6 @@ class OrdersService {
         return Error(listToString(data['message']));
       }      
     } catch (e) {
-      print('Error: $e');
       return Error(e.toString());
     }
   }

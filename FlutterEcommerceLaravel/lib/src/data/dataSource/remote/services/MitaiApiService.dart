@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:ecommerce_flutter/src/data/dataSource/local/TenantSession.dart';
 import 'package:ecommerce_flutter/src/domain/models/AdminOrder.dart';
 import 'package:ecommerce_flutter/src/domain/models/AttributeType.dart';
 import 'package:ecommerce_flutter/src/domain/models/MitaiProduct.dart';
@@ -9,8 +10,8 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MitaiApiService {
-  static const String _baseHost = 'mitaicr.com';
-  static const String _tenant = 'mitaicr';
+  // Host is read at call time from TenantSession — supports runtime tenant switching.
+  String get _baseHost => TenantSession.host;
 
   Future<String?> _getToken() async {
     try {
@@ -27,12 +28,16 @@ class MitaiApiService {
   Map<String, String> _headers(String? token) {
     final h = <String, String>{'Content-Type': 'application/json', 'Accept': 'application/json'};
     if (token != null && token.isNotEmpty) h['Authorization'] = 'Bearer $token';
+    final appToken = TenantSession.appToken;
+    if (appToken != null && appToken.isNotEmpty) h['X-App-Token'] = appToken;
     return h;
   }
 
   Map<String, String> _authHeaders(String? token) {
     final h = <String, String>{'Accept': 'application/json'};
     if (token != null && token.isNotEmpty) h['Authorization'] = 'Bearer $token';
+    final appToken = TenantSession.appToken;
+    if (appToken != null && appToken.isNotEmpty) h['X-App-Token'] = appToken;
     return h;
   }
 
@@ -50,8 +55,14 @@ class MitaiApiService {
   Future<Resource<Map<String, dynamic>>> login(String email, String password) async {
     try {
       final url = Uri.https(_baseHost, '/api/login');
+      final headers = <String, String>{
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      };
+      final appToken = TenantSession.appToken;
+      if (appToken != null && appToken.isNotEmpty) headers['X-App-Token'] = appToken;
       final response = await http.post(url,
-          headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
+          headers: headers,
           body: json.encode({'email': email, 'password': password}));
       final data = json.decode(response.body) as Map<String, dynamic>;
       if (response.statusCode == 200 || response.statusCode == 201) return Success(data);
@@ -66,7 +77,7 @@ class MitaiApiService {
   Future<Resource<Map<String, dynamic>>> getHomeAdmin() async {
     try {
       final token = await _getToken();
-      final url = Uri.https(_baseHost, '/api/home/admin/$_tenant');
+      final url = Uri.https(_baseHost, '/api/home/admin/${TenantSession.host.split(".").first}');
       final response = await http.get(url, headers: _headers(token));
       if (response.statusCode == 200 || response.statusCode == 201) {
         return Success(json.decode(response.body) as Map<String, dynamic>);
@@ -80,7 +91,7 @@ class MitaiApiService {
   Future<Resource<List<dynamic>>> getCategoriesByDepartment(int deptId) async {
     try {
       final token = await _getToken();
-      final url = Uri.https(_baseHost, '/api/categories/by-department/$deptId/$_tenant');
+      final url = Uri.https(_baseHost, '/api/categories/by-department/$deptId/${TenantSession.host.split(".").first}');
       final response = await http.get(url, headers: _headers(token));
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = json.decode(response.body) as Map<String, dynamic>;
@@ -107,7 +118,7 @@ class MitaiApiService {
         'per_page': '$perPage',
       };
       if (search.isNotEmpty) params['search'] = search;
-      final url = Uri.https(_baseHost, '/api/products/category/$categoryId/$_tenant', params);
+      final url = Uri.https(_baseHost, '/api/products/category/$categoryId/${TenantSession.host.split(".").first}', params);
       final response = await http.get(url, headers: _headers(token));
       if (response.statusCode == 200 || response.statusCode == 201) {
         return Success(json.decode(response.body) as Map<String, dynamic>);
@@ -121,7 +132,7 @@ class MitaiApiService {
   Future<Resource<List<MitaiProduct>>> getProductsByCategory(int categoryId) async {
     try {
       final token = await _getToken();
-      final url = Uri.https(_baseHost, '/api/products/category/$categoryId/$_tenant',
+      final url = Uri.https(_baseHost, '/api/products/category/$categoryId/${TenantSession.host.split(".").first}',
           {'status': '1', 'per_page': '200'});
       final response = await http.get(url, headers: _headers(token));
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -137,7 +148,7 @@ class MitaiApiService {
   Future<Resource<List<ProductVariant>>> getProductVariants(int productId) async {
     try {
       final token = await _getToken();
-      final url = Uri.https(_baseHost, '/api/products/$productId/variants/$_tenant');
+      final url = Uri.https(_baseHost, '/api/products/$productId/variants/${TenantSession.host.split(".").first}');
       final response = await http.get(url, headers: _headers(token));
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = json.decode(response.body) as Map<String, dynamic>;
