@@ -8,6 +8,7 @@ use App\Models\Especialista;
 use App\Models\MatriculaEstudiante;
 use App\Models\PagosMatricula;
 use App\Models\PivotServiciosEspecialista;
+use App\Services\CalculoVentaService;
 use App\Models\TipoPago;
 use App\Models\VentaEspecialista;
 use Yajra\DataTables\Facades\DataTables;
@@ -356,47 +357,59 @@ class VentaEspecialistaController extends Controller
             if (!$cajaAbierta && $type == "S") {
                 return redirect()->back()->with(['status' => 'No hay ninguna caja abierta para el día de hoy', 'icon' => 'warning'])->withInput();
             }
+            // Recalcular montos en el servidor (fuente de verdad única)
+            $especialistaId = $request->especialista_id ?: null;
+            $tipoPagoText   = TipoPago::find($request->tipo_pago)?->tipo ?? '';
+            $flags          = $this->flagsDeEspecialista($especialistaId ? (int) $especialistaId : null);
+
+            $calculado = app(CalculoVentaService::class)->calcular(array_merge($flags, [
+                'monto_venta'                  => (float) $request->monto_venta,
+                'porcentaje'                   => (float) $request->input_porcentaje,
+                'monto_producto_venta'         => (float) ($request->monto_producto_venta ?? 0),
+                'monto_por_servicio_o_salario' => (float) ($request->monto_por_servicio_o_salario ?? 0),
+                'tipo_pago'                    => $tipoPagoText,
+                'is_paquete'                   => !$especialistaId,
+                'set_clinica'                  => $request->boolean('set_clinica'),
+            ]));
+
             // Si viene un ID de venta, hacemos un update, si no, creamos una nueva venta
             if (!empty($request->venta_id)) {
-                // Buscar la venta existente               
                 $venta = VentaEspecialista::find($request->venta_id);
                 if ($venta) {
-                    // Actualizar los valores (sin modificar arqueo_id)
-                    $venta->especialista_id = $request->especialista_id;
+                    $venta->especialista_id              = $especialistaId;
                     if ($actualizarArqueo) {
-                        $venta->arqueo_id = $cajaAbierta->id;
+                        $venta->arqueo_id            = $cajaAbierta->id;
                         $venta->justificacion_arqueo = $request->input('motivo_fecha');
                     }
-                    $venta->clothing_id = $request->clothing_id;
-                    $venta->monto_venta = $request->monto_venta;
-                    $venta->tipo_pago_id = $request->tipo_pago;
-                    $venta->monto_producto_venta = $request->monto_producto_venta;
-                    $venta->porcentaje = $request->input_porcentaje;
-                    $venta->is_gift_card = $request->is_gift_card;
-                    $venta->descuento = $request->descuento;
+                    $venta->clothing_id                  = $request->clothing_id;
+                    $venta->monto_venta                  = $request->monto_venta;
+                    $venta->tipo_pago_id                 = $request->tipo_pago;
+                    $venta->monto_producto_venta         = $request->monto_producto_venta;
+                    $venta->porcentaje                   = $request->input_porcentaje;
+                    $venta->is_gift_card                 = $request->is_gift_card;
+                    $venta->descuento                    = $request->descuento;
                     $venta->monto_por_servicio_o_salario = $request->monto_por_servicio_o_salario;
-                    $venta->monto_clinica = $request->monto_clinica;
-                    $venta->monto_especialista = $request->monto_especialista;
-                    $venta->nombre_cliente = $request->nombre_cliente;
+                    $venta->monto_clinica                = $calculado['monto_clinica'];
+                    $venta->monto_especialista           = $calculado['monto_especialista'];
+                    $venta->nombre_cliente               = $request->nombre_cliente;
                     $venta->update();
                 }
             } else {
-                // Crear una nueva venta
                 $venta = new VentaEspecialista();
-                $venta->especialista_id = $request->especialista_id;
-                $venta->arqueo_id = $cajaAbierta->id; // Solo se asigna en la creación
-                $venta->clothing_id = $request->clothing_id;
-                $venta->monto_venta = $request->monto_venta;
-                $venta->tipo_pago_id = $request->tipo_pago;
-                $venta->monto_producto_venta = $request->monto_producto_venta;
-                $venta->is_gift_card = $request->is_gift_card;
-                $venta->justificacion_arqueo ??= $request->input('motivo_fecha');
-                $venta->porcentaje = $request->input_porcentaje;
-                $venta->descuento = $request->descuento;
+                $venta->especialista_id              = $especialistaId;
+                $venta->arqueo_id                    = $cajaAbierta->id;
+                $venta->clothing_id                  = $request->clothing_id;
+                $venta->monto_venta                  = $request->monto_venta;
+                $venta->tipo_pago_id                 = $request->tipo_pago;
+                $venta->monto_producto_venta         = $request->monto_producto_venta;
+                $venta->is_gift_card                 = $request->is_gift_card;
+                $venta->justificacion_arqueo        ??= $request->input('motivo_fecha');
+                $venta->porcentaje                   = $request->input_porcentaje;
+                $venta->descuento                    = $request->descuento;
                 $venta->monto_por_servicio_o_salario = $request->monto_por_servicio_o_salario;
-                $venta->monto_clinica = $request->monto_clinica;
-                $venta->monto_especialista = $request->monto_especialista;
-                $venta->nombre_cliente = $request->nombre_cliente;
+                $venta->monto_clinica                = $calculado['monto_clinica'];
+                $venta->monto_especialista           = $calculado['monto_especialista'];
+                $venta->nombre_cliente               = $request->nombre_cliente;
                 $venta->save();
             }
             DB::commit();
@@ -527,6 +540,48 @@ class VentaEspecialistaController extends Controller
 
         return response()->json($resumen);
     }
+    public function calcularVenta(Request $request)
+    {
+        $especialistaId = $request->input('especialista_id');
+        $tipoPagoText   = TipoPago::find($request->input('tipo_pago_id'))?->tipo ?? '';
+
+        $flags = $this->flagsDeEspecialista($especialistaId);
+
+        $resultado = app(CalculoVentaService::class)->calcular(array_merge($flags, [
+            'monto_venta'                  => (float) $request->input('monto_venta', 0),
+            'porcentaje'                   => (float) $request->input('porcentaje', 0),
+            'monto_producto_venta'         => (float) $request->input('monto_producto_venta', 0),
+            'monto_por_servicio_o_salario' => (float) $request->input('monto_por_servicio_o_salario', 0),
+            'tipo_pago'                    => $tipoPagoText,
+            'is_paquete'                   => !$especialistaId,
+            'set_clinica'                  => (bool)  $request->input('set_clinica', false),
+        ]));
+
+        return response()->json($resultado);
+    }
+
+    private function flagsDeEspecialista(?int $especialistaId): array
+    {
+        if (!$especialistaId) {
+            return [
+                'aplica_calc'         => false,
+                'aplica_porc_tarjeta' => false,
+                'aplica_porc_113'     => false,
+                'aplica_porc_prod'    => false,
+                'set_campo_esp'       => false,
+            ];
+        }
+
+        $esp = Especialista::find($especialistaId);
+        return [
+            'aplica_calc'         => (bool) ($esp?->aplica_calc         ?? false),
+            'aplica_porc_tarjeta' => (bool) ($esp?->aplica_porc_tarjeta ?? false),
+            'aplica_porc_113'     => (bool) ($esp?->aplica_porc_113     ?? false),
+            'aplica_porc_prod'    => (bool) ($esp?->aplica_porc_prod    ?? false),
+            'set_campo_esp'       => (bool) ($esp?->set_campo_esp       ?? false),
+        ];
+    }
+
     public function arqueosValidos(Request $request)
     {
         $fecha = $request->input('fecha');

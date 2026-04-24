@@ -512,6 +512,7 @@ Route::middleware([
             Route::get('get-list/especialistas/service/', [VentaEspecialistaController::class, 'getServices']);
             Route::get('/ajax/ventas', [VentaEspecialistaController::class, 'ajaxVentas'])->name('ajax.ventas');
             Route::get('/ajax/ventas/resumen', [VentaEspecialistaController::class, 'resumenVentas'])->name('ajax.ventas.resumen');
+            Route::post('/api/calcular-venta', [VentaEspecialistaController::class, 'calcularVenta'])->name('api.calcular.venta');
             Route::get('/api/arqueos-validos', [VentaEspecialistaController::class, 'arqueosValidos']);
 
             //Rutas para ver los movimientos de las cuentas

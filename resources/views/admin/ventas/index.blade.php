@@ -254,6 +254,7 @@
                     <input type="hidden" name="type" id="type"
                         value="{{ isset($especialista) ? 'U' : 'S' }}">
                     <input type="hidden" name="especialista_id" id="especialista_id">
+                    <input type="hidden" name="set_clinica" id="set_clinica_hidden" value="0">
 
                     <div class="row g-3">
                         {{-- Porcentaje (readonly, auto-llenado) --}}
@@ -565,87 +566,54 @@
                 calcularMontos();
             });
 
-            function calcularMontos() {
-                var aplica = $('#aplica').val();
-                var aplica_113 = $('#aplica_113').val();
-                var set_campo_esp = $('#set_campo_esp').val();
-                var aplica_prod = $('#aplica_prod').val();
-                var aplica_calc_tarjeta = $('#aplica_calc_tarjeta').val();
-                var monto_venta = parseFloat($('#monto_venta').val());
-                var porcentaje = parseFloat($('#input_porcentaje').val());
-                var monto_producto = parseFloat($('#monto_producto_venta').val());
-                var monto_serv_sal = parseFloat($('#monto_por_servicio_o_salario').val());
-                var tipo_pago = $('#tipo_pago option:selected').text();
-                var chkPackage = $('#is_package').prop('checked');
-                var chkSetClinica = $('#set_clinica').prop('checked');
-                var monto_venta_con_porc = 0;
-                var monto_calc_prod = 0;
-                var monto_total_cli = 0;
-                var monto_total_esp = 0;
-                var porc_prod = 0;
-                var monto_prod_fijo = monto_producto;
+            // ── Sincronizar set_clinica con el campo oculto del formulario ────
+            $('#set_clinica').on('change', function() {
+                $('#set_clinica_hidden').val($(this).prop('checked') ? 1 : 0);
+            });
 
-                if (monto_venta <= 0 && monto_producto <= 0) {
-                    Swal.fire({
-                        title: "Ingresa el monto de venta o el monto del producto para calcular.",
-                        icon: "warning",
-                    });
+            // ── calcularMontos: delega al servidor (CalculoVentaService) ─────
+            function calcularMontos() {
+                var montoVenta    = parseFloat($('#monto_venta').val()) || 0;
+                var montoProducto = parseFloat($('#monto_producto_venta').val()) || 0;
+
+                if (montoVenta <= 0 && montoProducto <= 0) {
+                    Swal.fire({ title: "Ingresa el monto de venta o el monto del producto para calcular.", icon: "warning" });
                     return;
                 }
 
-                if (tipo_pago.trim().toUpperCase() === "TARJETA" && !chkSetClinica) {
-                    if (aplica_113 == 1) monto_venta /= 1.13;
-                    if (aplica_calc_tarjeta == 1) monto_venta *= 1.13;
-                }
+                var $btn = $('#btnCalculate');
+                $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i> Calculando...');
 
-                if (monto_producto > 0 && !chkPackage && aplica_prod == 1) {
-                    monto_producto /= 1.13;
-                    porc_prod = 0.10;
-                }
+                $.ajax({
+                    method: 'POST',
+                    url: '/api/calcular-venta',
+                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                    data: {
+                        especialista_id:              $('#especialista_id').val() || null,
+                        tipo_pago_id:                 $('#tipo_pago').val(),
+                        monto_venta:                  montoVenta,
+                        porcentaje:                   parseFloat($('#input_porcentaje').val()) || 0,
+                        monto_producto_venta:         montoProducto,
+                        monto_por_servicio_o_salario: parseFloat($('#monto_por_servicio_o_salario').val()) || 0,
+                        set_clinica:                  $('#set_clinica').prop('checked') ? 1 : 0,
+                    },
+                    success: function(resp) {
+                        $('#monto_clinica').val(resp.monto_clinica);
+                        $('#monto_especialista').val(resp.monto_especialista);
 
-                monto_calc_prod = aplica_prod == 1 ? (monto_producto * porc_prod) : 0;
-                monto_venta_con_porc = porcentaje >= 0 ? (monto_venta * (porcentaje / 100)) : 0;
-                monto_total_cli = 0;
-                monto_total_esp = 0;
-
-                if (aplica_prod == 1 && monto_producto > 0) {
-                    monto_total_cli = monto_producto - monto_calc_prod;
-                    monto_total_esp = monto_calc_prod;
-                }
-
-                if (aplica == 1 || chkPackage) {
-                    monto_total_cli += monto_venta_con_porc;
-                    monto_total_esp += (monto_venta - monto_venta_con_porc);
-                }
-
-                if (monto_serv_sal > 0) {
-                    monto_total_cli += (monto_venta - monto_serv_sal);
-                    monto_total_esp += monto_serv_sal;
-                }
-
-                if (!chkSetClinica) {
-                    $('#monto_clinica').val(monto_total_cli);
-                    if (set_campo_esp == 1 && !chkPackage) {
-                        $('#monto_especialista').val(monto_total_esp);
-                    } else {
-                        const montoClinica = (monto_venta == 0 && monto_producto > 0 && aplica_prod) ?
-                            (monto_producto - monto_calc_prod) :
-                            (!chkPackage ? (monto_total_esp - monto_calc_prod + monto_producto) : (monto_total_esp + monto_producto));
-                        $('#monto_clinica').val(montoClinica);
-                        if (!chkPackage) {
-                            $('#monto_especialista').val(monto_calc_prod);
-                        }
+                        var fmt = function(n) { return '₡' + parseFloat(n).toLocaleString('es-CR', { maximumFractionDigits: 0 }); };
+                        $('#preview_clinica').text(fmt(resp.monto_clinica));
+                        $('#preview_esp').text(fmt(resp.monto_especialista));
+                        $('#preview_porc').text(($('#input_porcentaje').val() || 0) + '%');
+                        $('#resultado_preview').removeClass('d-none');
+                    },
+                    error: function() {
+                        Swal.fire({ title: "No se pudo calcular. Verifica tu conexión e intenta de nuevo.", icon: "error" });
+                    },
+                    complete: function() {
+                        $btn.prop('disabled', false).html('<i class="fas fa-calculator me-1"></i> Calcular');
                     }
-                } else {
-                    $('#monto_clinica').val(monto_venta + monto_prod_fijo);
-                    $('#monto_especialista').val(0);
-                }
-
-                // Mostrar preview de resultados
-                $('#preview_clinica').text('₡' + parseFloat($('#monto_clinica').val()).toLocaleString('es-CR'));
-                $('#preview_esp').text('₡' + parseFloat($('#monto_especialista').val()).toLocaleString('es-CR'));
-                $('#preview_porc').text(($('#input_porcentaje').val() || 0) + '%');
-                $('#resultado_preview').removeClass('d-none');
+                });
             }
 
             // Fecha manual
