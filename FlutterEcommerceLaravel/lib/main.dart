@@ -14,6 +14,7 @@ import 'package:ecommerce_flutter/src/presentation/pages/auth/register/RegisterP
 import 'package:ecommerce_flutter/src/presentation/pages/catalog/detail/CatalogProductDetailPage.dart';
 import 'package:ecommerce_flutter/src/presentation/pages/catalog/home/CatalogHomePage.dart';
 import 'package:ecommerce_flutter/src/presentation/pages/catalog/products/CatalogProductListPage.dart';
+import 'package:ecommerce_flutter/src/presentation/pages/catalog/wishlist/WishlistPage.dart';
 import 'package:ecommerce_flutter/src/presentation/pages/client/ShoppingBag/ClientShoppingBagPage.dart';
 import 'package:ecommerce_flutter/src/presentation/pages/client/address/create/ClientAddressCreatePage.dart';
 import 'package:ecommerce_flutter/src/presentation/pages/client/address/list/ClientAddressListPage.dart';
@@ -84,6 +85,7 @@ class _MyAppState extends State<MyApp> {
           'catalog/home': (BuildContext context) => const CatalogHomePage(),
           'catalog/products': (BuildContext context) => const CatalogProductListPage(),
           'catalog/product/detail': (BuildContext context) => const CatalogProductDetailPage(),
+          'catalog/wishlist': (BuildContext context) => const WishlistPage(),
           'roles': (BuildContext context) => RolesPage(),
           'profile/info': (BuildContext context) => ProfileInfoPage(),
           'profile/update': (BuildContext context) => ProfileUpdatePage(),

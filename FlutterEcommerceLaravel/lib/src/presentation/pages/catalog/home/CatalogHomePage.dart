@@ -180,6 +180,11 @@ class _ContentViewState extends State<_ContentView> {
             tooltip: 'WhatsApp',
             onPressed: () => _launchUrl(info.whatsappUrl),
           ),
+        IconButton(
+          icon: const Icon(Icons.favorite_border, color: _kAccent, size: 22),
+          tooltip: 'Favoritos',
+          onPressed: () => Navigator.pushNamed(context, 'catalog/wishlist'),
+        ),
         TextButton(
           onPressed: () => Navigator.pushNamed(context, 'login'),
           child: const Text(

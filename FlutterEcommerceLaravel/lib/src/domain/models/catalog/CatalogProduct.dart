@@ -71,6 +71,19 @@ class CatalogProduct {
     );
   }
 
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'name': name,
+        'code': code,
+        'price': price,
+        'mayor_price': mayorPrice,
+        'discount': discount,
+        'manage_stock': manageStock,
+        'total_stock': totalStock,
+        'image': image,
+        'available_attr': availableAttrs.join(','),
+      };
+
   static List<CatalogProduct> fromJsonList(List<dynamic> list) =>
       list.map((e) => CatalogProduct.fromJson(e as Map<String, dynamic>)).toList();
 }
