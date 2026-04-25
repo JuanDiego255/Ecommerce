@@ -99,6 +99,16 @@ class HomeDataController extends Controller
                 });
             }
 
+            $attrValues = array_values(array_filter(explode(',', request()->get('attr_values', ''))));
+            if (!empty($attrValues)) {
+                $query->whereExists(function ($q) use ($attrValues) {
+                    $q->select(DB::raw(1))
+                      ->from('stocks as s_filter')
+                      ->whereColumn('s_filter.clothing_id', 'clothing.id')
+                      ->whereIn('s_filter.value_attr', $attrValues);
+                });
+            }
+
             $query->select(
                     'clothing.id',
                     'clothing.name',
