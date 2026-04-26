@@ -936,6 +936,7 @@ Route::prefix('api')->middleware([
     Route::get('/catalog/home/{tenant}',                  [\App\Http\Controllers\Api\CatalogApiController::class, 'home']);
     Route::get('/catalog/product/{id}/{tenant}',          [\App\Http\Controllers\Api\CatalogApiController::class, 'productDetail']);
     Route::get('/catalog/attributes/{categoryId}/{tenant}', [\App\Http\Controllers\Api\CatalogApiController::class, 'attributesByCategory']);
+    Route::get('/catalog/search/{tenant}',                [\App\Http\Controllers\Api\HomeDataController::class, 'globalSearch']);
     // Diagnostic: returns the SHA-256 hash of the provided token value (remove after debugging).
     Route::get('/app/token-hash', function (\Illuminate\Http\Request $request) {
         $plain = $request->query('v');

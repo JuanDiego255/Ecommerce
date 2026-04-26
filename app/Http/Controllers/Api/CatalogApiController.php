@@ -35,7 +35,7 @@ class CatalogApiController extends Controller
             }
 
             // Featured: trending first, then newest — max 10 active products
-            $featured = DB::table('clothing')
+            $featuredBase = DB::table('clothing')
                 ->leftJoin('product_images', function ($join) {
                     $join->on('clothing.id', '=', 'product_images.clothing_id')
                          ->whereRaw('product_images.id = (
@@ -61,6 +61,26 @@ class CatalogApiController extends Controller
                 ->orderByRaw('COALESCE(clothing.trending, 0) DESC, clothing.created_at DESC')
                 ->limit(10)
                 ->get();
+
+            // Load attribute groups for featured products (single extra query)
+            $featuredIds = $featuredBase->pluck('id');
+            $attrRows = $featuredIds->isNotEmpty()
+                ? DB::table('stocks as s')
+                    ->join('attributes as a', 's.attr_id', '=', 'a.id')
+                    ->join('attribute_values as av', 's.value_attr', '=', 'av.id')
+                    ->whereIn('s.clothing_id', $featuredIds)
+                    ->select('s.clothing_id', 'a.name as attr_name', 'av.value')
+                    ->distinct()
+                    ->get()
+                    ->groupBy('clothing_id')
+                : collect();
+
+            $featured = $featuredBase->map(function ($p) use ($attrRows) {
+                $rows = $attrRows->get($p->id, collect());
+                $p->available_attr        = $rows->pluck('attr_name')->unique()->join(',');
+                $p->available_attr_groups = $rows->map(fn($r) => $r->attr_name . '|' . $r->value)->join(',');
+                return $p;
+            });
 
             $social = TenantSocialNetwork::all(['id', 'social_network', 'url']);
 

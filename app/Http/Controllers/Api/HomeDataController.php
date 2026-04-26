@@ -79,6 +79,7 @@ class HomeDataController extends Controller
                 ->join('categories', 'pivot_clothing_categories.category_id', '=', 'categories.id')
                 ->leftJoin('stocks', 'clothing.id', '=', 'stocks.clothing_id')
                 ->leftJoin('attributes', 'stocks.attr_id', '=', 'attributes.id')
+                ->leftJoin('attribute_values as av', 'stocks.value_attr', '=', 'av.id')
                 ->leftJoin('product_images', function ($join) {
                     $join->on('clothing.id', '=', 'product_images.clothing_id')
                         ->whereRaw('product_images.id = (
@@ -101,11 +102,13 @@ class HomeDataController extends Controller
 
             $attrValues = array_values(array_filter(explode(',', request()->get('attr_values', ''))));
             if (!empty($attrValues)) {
+                // stocks.value_attr stores attribute_values.id (int), so join to match by text value
                 $query->whereExists(function ($q) use ($attrValues) {
                     $q->select(DB::raw(1))
                       ->from('stocks as s_filter')
+                      ->join('attribute_values as av_f', 's_filter.value_attr', '=', 'av_f.id')
                       ->whereColumn('s_filter.clothing_id', 'clothing.id')
-                      ->whereIn('s_filter.value_attr', $attrValues);
+                      ->whereIn('av_f.value', $attrValues);
                 });
             }
 
@@ -120,6 +123,7 @@ class HomeDataController extends Controller
                     'clothing.manage_stock',
                     DB::raw('COALESCE((SELECT SUM(vc.stock) FROM variant_combinations vc WHERE vc.clothing_id = clothing.id AND vc.stock >= 0), SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE clothing.stock END)) as total_stock'),
                     DB::raw('GROUP_CONCAT(DISTINCT COALESCE(attributes.name, "")) AS available_attr'),
+                    DB::raw("GROUP_CONCAT(DISTINCT CASE WHEN attributes.name IS NOT NULL AND av.value IS NOT NULL THEN CONCAT(attributes.name, '|', av.value) ELSE NULL END SEPARATOR ',') AS available_attr_groups"),
                     'product_images.image as image'
                 )
                 ->groupBy(
@@ -188,6 +192,65 @@ class HomeDataController extends Controller
                 'success' => false,
                 'message' => 'Error al obtener variantes: ' . $e->getMessage(),
             ], 500);
+        }
+    }
+
+    public function globalSearch($tenant)
+    {
+        try {
+            $q       = trim(request()->get('q', ''));
+            $page    = (int) request()->get('page', 1);
+            $perPage = (int) request()->get('per_page', 20);
+
+            if ($q === '') {
+                return response()->json([
+                    'success'    => true,
+                    'data'       => [],
+                    'pagination' => ['current_page' => 1, 'per_page' => $perPage, 'total' => 0, 'last_page' => 1],
+                ]);
+            }
+
+            $query = DB::table('clothing')
+                ->leftJoin('stocks', 'clothing.id', '=', 'stocks.clothing_id')
+                ->leftJoin('attributes', 'stocks.attr_id', '=', 'attributes.id')
+                ->leftJoin('attribute_values as av', 'stocks.value_attr', '=', 'av.id')
+                ->leftJoin('product_images', function ($join) {
+                    $join->on('clothing.id', '=', 'product_images.clothing_id')
+                        ->whereRaw('product_images.id = (SELECT MIN(id) FROM product_images WHERE product_images.clothing_id = clothing.id)');
+                })
+                ->where('clothing.status', 1)
+                ->where(function ($sq) use ($q) {
+                    $sq->where('clothing.name', 'like', "%{$q}%")
+                       ->orWhere('clothing.code', 'like', "%{$q}%");
+                })
+                ->select(
+                    'clothing.id', 'clothing.name', 'clothing.code', 'clothing.description',
+                    'clothing.price', 'clothing.mayor_price', 'clothing.discount', 'clothing.manage_stock',
+                    DB::raw('COALESCE((SELECT SUM(vc.stock) FROM variant_combinations vc WHERE vc.clothing_id = clothing.id AND vc.stock >= 0), SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE clothing.stock END)) as total_stock'),
+                    DB::raw('GROUP_CONCAT(DISTINCT COALESCE(attributes.name, "")) AS available_attr'),
+                    DB::raw("GROUP_CONCAT(DISTINCT CASE WHEN attributes.name IS NOT NULL AND av.value IS NOT NULL THEN CONCAT(attributes.name, '|', av.value) ELSE NULL END SEPARATOR ',') AS available_attr_groups"),
+                    'product_images.image as image'
+                )
+                ->groupBy('clothing.id', 'clothing.name', 'clothing.code', 'clothing.description',
+                          'clothing.price', 'clothing.mayor_price', 'clothing.discount', 'clothing.manage_stock',
+                          'product_images.image')
+                ->orderBy('clothing.name');
+
+            $total    = DB::table(DB::raw("({$query->toSql()}) as sub"))->mergeBindings($query)->count();
+            $products = $query->offset(($page - 1) * $perPage)->limit($perPage)->get();
+
+            return response()->json([
+                'success'    => true,
+                'data'       => $products,
+                'pagination' => [
+                    'current_page' => $page,
+                    'per_page'     => $perPage,
+                    'total'        => $total,
+                    'last_page'    => (int) ceil($total / $perPage) ?: 1,
+                ],
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
 
