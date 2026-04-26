@@ -122,6 +122,23 @@ class CatalogService {
     }
   }
 
+  // ─── Product variants ─────────────────────────────────────────────────────
+
+  Future<Resource<List<dynamic>>> getProductVariants(int productId) async {
+    try {
+      final url = Uri.https(_host, '/api/products/$productId/variants/$_tenant');
+      final res = await http.get(url, headers: _headers)
+          .timeout(const Duration(seconds: 15));
+      if (res.statusCode == 200) {
+        final body = json.decode(res.body) as Map<String, dynamic>;
+        return Success(body['data'] as List<dynamic>? ?? []);
+      }
+      return Error(_parseError(res, 'Error al cargar variantes'));
+    } catch (e) {
+      return Error(e.toString());
+    }
+  }
+
   // ─── Attributes for filter ────────────────────────────────────────────────
 
   Future<Resource<List<dynamic>>> getAttributesByCategory(int categoryId) async {

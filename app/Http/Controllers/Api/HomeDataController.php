@@ -78,8 +78,6 @@ class HomeDataController extends Controller
                 ->join('pivot_clothing_categories', 'clothing.id', '=', 'pivot_clothing_categories.clothing_id')
                 ->join('categories', 'pivot_clothing_categories.category_id', '=', 'categories.id')
                 ->leftJoin('stocks', 'clothing.id', '=', 'stocks.clothing_id')
-                ->leftJoin('attributes', 'stocks.attr_id', '=', 'attributes.id')
-                ->leftJoin('attribute_values as av', 'stocks.value_attr', '=', 'av.id')
                 ->leftJoin('product_images', function ($join) {
                     $join->on('clothing.id', '=', 'product_images.clothing_id')
                         ->whereRaw('product_images.id = (
@@ -102,13 +100,27 @@ class HomeDataController extends Controller
 
             $attrValues = array_values(array_filter(explode(',', request()->get('attr_values', ''))));
             if (!empty($attrValues)) {
-                // stocks.value_attr stores attribute_values.id (int), so join to match by text value
-                $query->whereExists(function ($q) use ($attrValues) {
-                    $q->select(DB::raw(1))
-                      ->from('stocks as s_filter')
-                      ->join('attribute_values as av_f', 's_filter.value_attr', '=', 'av_f.id')
-                      ->whereColumn('s_filter.clothing_id', 'clothing.id')
-                      ->whereIn('av_f.value', $attrValues);
+                $query->where(function ($filterQ) use ($attrValues) {
+                    // Legacy stocks
+                    $filterQ->whereExists(function ($q) use ($attrValues) {
+                        $q->select(DB::raw(1))
+                          ->from('stocks as s_filter')
+                          ->join('attribute_values as av_f', 's_filter.value_attr', '=', 'av_f.id')
+                          ->whereColumn('s_filter.clothing_id', 'clothing.id')
+                          ->whereIn('av_f.value', $attrValues);
+                    })
+                    // New combination system (in-stock only)
+                    ->orWhereExists(function ($q) use ($attrValues) {
+                        $q->select(DB::raw(1))
+                          ->from('variant_combinations as vc_f')
+                          ->join('variant_combination_values as vcv_f', 'vcv_f.combination_id', '=', 'vc_f.id')
+                          ->join('attribute_values as av_f2', 'vcv_f.value_attr', '=', 'av_f2.id')
+                          ->whereColumn('vc_f.clothing_id', 'clothing.id')
+                          ->whereIn('av_f2.value', $attrValues)
+                          ->where(function ($sub) {
+                              $sub->where('vc_f.stock', '>', 0)->orWhere('vc_f.manage_stock', 0);
+                          });
+                    });
                 });
             }
 
@@ -122,8 +134,6 @@ class HomeDataController extends Controller
                     'clothing.discount',
                     'clothing.manage_stock',
                     DB::raw('COALESCE((SELECT SUM(vc.stock) FROM variant_combinations vc WHERE vc.clothing_id = clothing.id AND vc.stock >= 0), SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE clothing.stock END)) as total_stock'),
-                    DB::raw('GROUP_CONCAT(DISTINCT COALESCE(attributes.name, "")) AS available_attr'),
-                    DB::raw("GROUP_CONCAT(DISTINCT CASE WHEN attributes.name IS NOT NULL AND av.value IS NOT NULL THEN CONCAT(attributes.name, '|', av.value) ELSE NULL END SEPARATOR ',') AS available_attr_groups"),
                     'product_images.image as image'
                 )
                 ->groupBy(
@@ -144,6 +154,14 @@ class HomeDataController extends Controller
                 ->count();
 
             $products = $query->offset(($page - 1) * $perPage)->limit($perPage)->get();
+
+            // Enrich with in-stock attr groups (supports both legacy stocks and new variant_combinations)
+            $attrRows = $this->getInStockAttrGroups($products->pluck('id')->toArray());
+            $products = $products->map(function ($p) use ($attrRows) {
+                $rows = $attrRows->get($p->id, collect());
+                $p->available_attr_groups = $rows->map(fn($r) => $r->attr_name . '|' . $r->value)->unique()->join(',');
+                return $p;
+            });
 
             return response()->json([
                 'success' => true,
@@ -212,8 +230,6 @@ class HomeDataController extends Controller
 
             $query = DB::table('clothing')
                 ->leftJoin('stocks', 'clothing.id', '=', 'stocks.clothing_id')
-                ->leftJoin('attributes', 'stocks.attr_id', '=', 'attributes.id')
-                ->leftJoin('attribute_values as av', 'stocks.value_attr', '=', 'av.id')
                 ->leftJoin('product_images', function ($join) {
                     $join->on('clothing.id', '=', 'product_images.clothing_id')
                         ->whereRaw('product_images.id = (SELECT MIN(id) FROM product_images WHERE product_images.clothing_id = clothing.id)');
@@ -227,8 +243,6 @@ class HomeDataController extends Controller
                     'clothing.id', 'clothing.name', 'clothing.code', 'clothing.description',
                     'clothing.price', 'clothing.mayor_price', 'clothing.discount', 'clothing.manage_stock',
                     DB::raw('COALESCE((SELECT SUM(vc.stock) FROM variant_combinations vc WHERE vc.clothing_id = clothing.id AND vc.stock >= 0), SUM(CASE WHEN stocks.price != 0 THEN stocks.stock ELSE clothing.stock END)) as total_stock'),
-                    DB::raw('GROUP_CONCAT(DISTINCT COALESCE(attributes.name, "")) AS available_attr'),
-                    DB::raw("GROUP_CONCAT(DISTINCT CASE WHEN attributes.name IS NOT NULL AND av.value IS NOT NULL THEN CONCAT(attributes.name, '|', av.value) ELSE NULL END SEPARATOR ',') AS available_attr_groups"),
                     'product_images.image as image'
                 )
                 ->groupBy('clothing.id', 'clothing.name', 'clothing.code', 'clothing.description',
@@ -238,6 +252,14 @@ class HomeDataController extends Controller
 
             $total    = DB::table(DB::raw("({$query->toSql()}) as sub"))->mergeBindings($query)->count();
             $products = $query->offset(($page - 1) * $perPage)->limit($perPage)->get();
+
+            // Enrich with in-stock attr groups
+            $attrRows = $this->getInStockAttrGroups($products->pluck('id')->toArray());
+            $products = $products->map(function ($p) use ($attrRows) {
+                $rows = $attrRows->get($p->id, collect());
+                $p->available_attr_groups = $rows->map(fn($r) => $r->attr_name . '|' . $r->value)->unique()->join(',');
+                return $p;
+            });
 
             return response()->json([
                 'success'    => true,
@@ -252,6 +274,39 @@ class HomeDataController extends Controller
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
+    }
+
+    /**
+     * Returns in-stock attribute name+value pairs grouped by clothing_id.
+     * Prefers new variant_combinations; falls back to legacy stocks for products without combos.
+     */
+    protected function getInStockAttrGroups(array $ids): \Illuminate\Support\Collection
+    {
+        if (empty($ids)) return collect();
+
+        $comboRows = DB::table('variant_combinations as vc')
+            ->join('variant_combination_values as vcv', 'vcv.combination_id', '=', 'vc.id')
+            ->join('attributes as a', 'vcv.attr_id', '=', 'a.id')
+            ->join('attribute_values as av', 'vcv.value_attr', '=', 'av.id')
+            ->whereIn('vc.clothing_id', $ids)
+            ->where(function ($q) {
+                $q->where('vc.stock', '>', 0)->orWhere('vc.manage_stock', 0);
+            })
+            ->select('vc.clothing_id', 'a.name as attr_name', 'av.value')
+            ->distinct()->get()->groupBy('clothing_id');
+
+        $needsLegacy = collect($ids)->reject(fn($id) => $comboRows->has($id))->values()->toArray();
+        $legacyRows  = !empty($needsLegacy)
+            ? DB::table('stocks as s')
+                ->join('attributes as a', 's.attr_id', '=', 'a.id')
+                ->join('attribute_values as av', 's.value_attr', '=', 'av.id')
+                ->whereIn('s.clothing_id', $needsLegacy)
+                ->where(function ($q) { $q->where('s.stock', '>', 0)->orWhere('s.stock', -1); })
+                ->select('s.clothing_id', 'a.name as attr_name', 'av.value')
+                ->distinct()->get()->groupBy('clothing_id')
+            : collect();
+
+        return $comboRows->union($legacyRows);
     }
 
     public function apiCategoriesByDepartment($id, $tenant)

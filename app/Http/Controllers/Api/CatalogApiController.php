@@ -62,23 +62,16 @@ class CatalogApiController extends Controller
                 ->limit(10)
                 ->get();
 
-            // Load attribute groups for featured products (single extra query)
+            // Load in-stock attribute groups for featured products
             $featuredIds = $featuredBase->pluck('id');
-            $attrRows = $featuredIds->isNotEmpty()
-                ? DB::table('stocks as s')
-                    ->join('attributes as a', 's.attr_id', '=', 'a.id')
-                    ->join('attribute_values as av', 's.value_attr', '=', 'av.id')
-                    ->whereIn('s.clothing_id', $featuredIds)
-                    ->select('s.clothing_id', 'a.name as attr_name', 'av.value')
-                    ->distinct()
-                    ->get()
-                    ->groupBy('clothing_id')
+            $attrRows    = $featuredIds->isNotEmpty()
+                ? $this->getInStockAttrGroups($featuredIds->toArray())
                 : collect();
 
             $featured = $featuredBase->map(function ($p) use ($attrRows) {
                 $rows = $attrRows->get($p->id, collect());
                 $p->available_attr        = $rows->pluck('attr_name')->unique()->join(',');
-                $p->available_attr_groups = $rows->map(fn($r) => $r->attr_name . '|' . $r->value)->join(',');
+                $p->available_attr_groups = $rows->map(fn($r) => $r->attr_name . '|' . $r->value)->unique()->join(',');
                 return $p;
             });
 
@@ -197,15 +190,29 @@ class CatalogApiController extends Controller
     public function attributesByCategory($categoryId, $tenant)
     {
         try {
-            $attrIds = DB::table('attributes as a')
+            // Legacy stocks
+            $legacyAttrs = DB::table('attributes as a')
                 ->join('stocks as s', 's.attr_id', '=', 'a.id')
                 ->join('clothing as c', 's.clothing_id', '=', 'c.id')
                 ->join('pivot_clothing_categories as pcc', 'c.id', '=', 'pcc.clothing_id')
                 ->where('pcc.category_id', $categoryId)
                 ->where('c.status', 1)
-                ->distinct()
-                ->select('a.id', 'a.name')
-                ->get();
+                ->distinct()->select('a.id', 'a.name')->get();
+
+            // New combination system (in-stock only)
+            $comboAttrs = DB::table('attributes as a')
+                ->join('variant_combination_values as vcv', 'vcv.attr_id', '=', 'a.id')
+                ->join('variant_combinations as vc', 'vcv.combination_id', '=', 'vc.id')
+                ->join('clothing as c', 'vc.clothing_id', '=', 'c.id')
+                ->join('pivot_clothing_categories as pcc', 'c.id', '=', 'pcc.clothing_id')
+                ->where('pcc.category_id', $categoryId)
+                ->where('c.status', 1)
+                ->where(function ($q) {
+                    $q->where('vc.stock', '>', 0)->orWhere('vc.manage_stock', 0);
+                })
+                ->distinct()->select('a.id', 'a.name')->get();
+
+            $attrIds = $legacyAttrs->concat($comboAttrs)->unique('id');
 
             $result = $attrIds->map(function ($attr) {
                 $values = DB::table('attribute_values')
@@ -220,5 +227,38 @@ class CatalogApiController extends Controller
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
+    }
+
+    /**
+     * In-stock attribute name+value pairs grouped by clothing_id.
+     * Prefers variant_combinations; falls back to legacy stocks.
+     */
+    protected function getInStockAttrGroups(array $ids): \Illuminate\Support\Collection
+    {
+        if (empty($ids)) return collect();
+
+        $comboRows = DB::table('variant_combinations as vc')
+            ->join('variant_combination_values as vcv', 'vcv.combination_id', '=', 'vc.id')
+            ->join('attributes as a', 'vcv.attr_id', '=', 'a.id')
+            ->join('attribute_values as av', 'vcv.value_attr', '=', 'av.id')
+            ->whereIn('vc.clothing_id', $ids)
+            ->where(function ($q) {
+                $q->where('vc.stock', '>', 0)->orWhere('vc.manage_stock', 0);
+            })
+            ->select('vc.clothing_id', 'a.name as attr_name', 'av.value')
+            ->distinct()->get()->groupBy('clothing_id');
+
+        $needsLegacy = collect($ids)->reject(fn($id) => $comboRows->has($id))->values()->toArray();
+        $legacyRows  = !empty($needsLegacy)
+            ? DB::table('stocks as s')
+                ->join('attributes as a', 's.attr_id', '=', 'a.id')
+                ->join('attribute_values as av', 's.value_attr', '=', 'av.id')
+                ->whereIn('s.clothing_id', $needsLegacy)
+                ->where(function ($q) { $q->where('s.stock', '>', 0)->orWhere('s.stock', -1); })
+                ->select('s.clothing_id', 'a.name as attr_name', 'av.value')
+                ->distinct()->get()->groupBy('clothing_id')
+            : collect();
+
+        return $comboRows->union($legacyRows);
     }
 }
