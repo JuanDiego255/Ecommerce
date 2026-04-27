@@ -1,0 +1,289 @@
+[
+  {
+    "title": "1. Quiénes somos",
+    "paragraphs": [
+      "Safewor Solutions es una empresa de desarrollo de software y soluciones digitales con sede en Costa Rica. Diseñamos, construimos y operamos plataformas de comercio electrónico multi-tenant, sistemas a la medida, integraciones con redes sociales (incluyendo Instagram Graph API) y herramientas de gestión empresarial.",
+      "El presente sitio web main.safeworsolutions.com es la plataforma central desde la cual operamos y desde la que nuestros clientes (inquilinos / tenants) acceden a sus propios entornos digitales bajo el dominio {tenant}.safeworsolutions.com.",
+      "Para cualquier consulta sobre esta política puede contactarnos en: __EMAIL__"
+    ],
+    "items": [],
+    "note": null,
+    "subsections": []
+  },
+  {
+    "title": "2. Información que recopilamos",
+    "paragraphs": [],
+    "items": [],
+    "note": null,
+    "subsections": [
+      {
+        "title": "2.1 Datos que usted nos proporciona directamente",
+        "paragraphs": [],
+        "items": [
+          "Datos de registro: nombre, apellido, correo electrónico y contraseña al crear una cuenta.",
+          "Datos de compra: dirección de entrega, número de teléfono, método de pago al realizar pedidos.",
+          "Datos de contacto: información enviada a través de formularios, chat de WhatsApp o correo electrónico.",
+          "Datos de citas / reservas: fecha, hora, servicio y barbero/especialista seleccionado (en las plataformas de booking)."
+        ],
+        "note": null
+      },
+      {
+        "title": "2.2 Datos recopilados automáticamente",
+        "paragraphs": [],
+        "items": [
+          "Datos de sesión: identificador de sesión para mantener el carrito de compras de usuarios no registrados.",
+          "Datos de uso: páginas visitadas, acciones realizadas, hora y duración de la visita.",
+          "Datos del dispositivo: tipo de navegador, sistema operativo, dirección IP (usada exclusivamente para análisis de seguridad)."
+        ],
+        "note": null
+      },
+      {
+        "title": "2.3 Datos provenientes de Meta (Facebook / Instagram)",
+        "paragraphs": [
+          "Cuando un usuario o administrador conecta su cuenta de Facebook / Instagram a nuestra plataforma, recopilamos:"
+        ],
+        "items": [
+          "Identificador único de usuario de Facebook (Facebook User ID).",
+          "Nombre público del perfil de Facebook.",
+          "Correo electrónico asociado a la cuenta de Facebook (solo si el usuario otorga el permiso).",
+          "Identificador de la Página de Facebook seleccionada.",
+          "Token de acceso de la Página (almacenado de forma segura para publicaciones).",
+          "Identificador de la cuenta de Instagram Business (instagram_business_account_id).",
+          "Nombre de usuario de Instagram (@username)."
+        ],
+        "note": "Este bloque se detalla en las secciones 4 y 5."
+      }
+    ]
+  },
+  {
+    "title": "3. Cómo usamos su información",
+    "paragraphs": [],
+    "items": [
+      "Crear y gestionar su cuenta de usuario en la plataforma.",
+      "Procesar pedidos, cobros y gestionar el historial de compras.",
+      "Gestionar reservas de citas y enviar recordatorios.",
+      "Publicar contenido en Instagram a través del servicio de gestión de posts (únicamente en las cuentas que el administrador-tenant haya conectado y autorizado explícitamente).",
+      "Mejorar la experiencia del usuario y el rendimiento de la plataforma.",
+      "Cumplir con obligaciones legales y responder a solicitudes de autoridades competentes.",
+      "Enviar comunicaciones relacionadas con el servicio (no spam; solo notificaciones transaccionales)."
+    ],
+    "note": "No vendemos, alquilamos ni cedemos su información personal a terceros con fines publicitarios.",
+    "subsections": []
+  },
+  {
+    "title": "4. Integración con Meta — Facebook e Instagram",
+    "paragraphs": [],
+    "items": [],
+    "note": "Esta sección es relevante para los administradores que conectan su Cuenta Empresarial de Instagram a nuestra plataforma. Los usuarios finales (compradores / clientes) de las tiendas individuales no se ven afectados por esta integración a menos que hayan iniciado sesión usando Facebook OAuth.",
+    "subsections": [
+      {
+        "title": "4.1 Inicio de sesión con Facebook (OAuth)",
+        "paragraphs": [
+          "Ofrecemos la opción de iniciar sesión mediante Facebook OAuth en las plataformas tenant. Si usted elige esta opción, recibiremos de Meta los siguientes datos de su perfil público:"
+        ],
+        "items": [
+          "Identificador de usuario de Facebook.",
+          "Nombre y apellido (si están disponibles en su perfil).",
+          "Correo electrónico (si el usuario otorga acceso)."
+        ],
+        "note": "Estos datos se usan exclusivamente para crear o asociar su cuenta en nuestra plataforma. No accedemos a su lista de amigos, publicaciones, mensajes privados ni ningún otro dato de su perfil de Facebook."
+      },
+      {
+        "title": "4.2 Conexión de Instagram Business para publicación de contenido",
+        "paragraphs": [
+          "Los administradores de cada tenant pueden conectar voluntariamente su Cuenta Empresarial de Instagram para gestionar publicaciones desde el panel administrativo. Este proceso utiliza el flujo oficial de OAuth 2.0 de Meta y la Facebook Graph API v19.0.",
+          "El alcance de los permisos que solicitamos está estrictamente limitado a lo necesario para la publicación de contenido. Ver sección 5 para el detalle completo."
+        ],
+        "items": [],
+        "note": null
+      }
+    ]
+  },
+  {
+    "title": "5. Instagram Graph API — Permisos, datos y uso",
+    "paragraphs": [],
+    "items": [],
+    "note": "Esta sección está diseñada para cumplir con los requisitos de revisión de la App de Meta y con las Políticas de Plataforma de Meta.",
+    "subsections": [
+      {
+        "title": "5.1 Permisos solicitados",
+        "paragraphs": [
+          "Durante el flujo de autorización OAuth, nuestra aplicación solicita los siguientes permisos (scopes):"
+        ],
+        "items": [
+          "pages_show_list — Obtener la lista de Páginas de Facebook del usuario administrador para identificar la Página vinculada a la cuenta de Instagram Business. Datos accedidos: ID y nombre de las Páginas; token de acceso de la Página seleccionada.",
+          "instagram_basic — Leer el ID de la Cuenta Empresarial de Instagram vinculada a la Página y obtener el nombre de usuario. Datos accedidos: Instagram Business Account ID y @username. Sin acceso a mensajes, seguidores, insights ni contenido privado.",
+          "instagram_content_publish — Crear contenedores de medios y publicar imágenes y carruseles en la cuenta de Instagram Business del administrador. Datos accedidos: únicamente las imágenes y pies de foto configurados por el propio administrador en el panel."
+        ],
+        "note": "Lo que NO hacemos con la Instagram Graph API: no leemos mensajes directos (DMs) ni comentarios; no accedemos a métricas de audiencia, insights o estadísticas; no rastreamos seguidores ni datos de terceros; no accedemos a ninguna cuenta que no sea la Cuenta Empresarial expresamente vinculada; no almacenamos el contenido publicado más allá del estado de la publicación; no modificamos ni eliminamos publicaciones existentes."
+      },
+      {
+        "title": "5.2 Flujo técnico de publicación",
+        "paragraphs": [
+          "Cuando el administrador programa o publica inmediatamente una publicación desde nuestro panel:"
+        ],
+        "items": [
+          "1. Nuestro servidor crea un contenedor de medios en Meta llamando al endpoint POST /{ig_user_id}/media de la Graph API, con la imagen y el pie de foto.",
+          "2. Meta descarga la imagen desde nuestra URL para procesarla.",
+          "3. Llamamos a POST /{ig_user_id}/media_publish para hacer efectiva la publicación en Instagram.",
+          "4. Almacenamos localmente el meta_container_id y el meta_media_id retornados por Meta, únicamente como referencia de auditoría interna."
+        ],
+        "note": "Las imágenes publicadas en Instagram provienen exclusivamente del catálogo de productos del propio negocio. Nunca subimos imágenes de terceros sin autorización."
+      },
+      {
+        "title": "5.3 Token de acceso y seguridad",
+        "paragraphs": [
+          "El token de acceso de larga duración (~60 días de validez) de la Página de Facebook se almacena de forma cifrada en nuestra base de datos. Este token no se comparte con ningún tercero y se usa exclusivamente para realizar llamadas a la Graph API en nombre del administrador que lo otorgó. El administrador puede revocar el acceso en cualquier momento desde la Configuración de aplicaciones de Meta o desde el panel de Instagram de nuestra plataforma."
+        ],
+        "items": [],
+        "note": null
+      },
+      {
+        "title": "5.4 Uso legítimo y cumplimiento de políticas de Meta",
+        "paragraphs": [
+          "Nuestra aplicación cumple con las Políticas de Plataforma de Meta y las Condiciones del Servicio de Meta para Desarrolladores. En particular:"
+        ],
+        "items": [
+          "Solo solicitamos los permisos mínimos necesarios para la función de publicación de contenido.",
+          "Los permisos se solicitan solo después de que el administrador inicia el flujo de conexión de forma voluntaria.",
+          "Los datos obtenidos de la API de Meta se usan exclusivamente para la funcionalidad declarada (publicación de contenido en Instagram Business).",
+          "Implementamos los callbacks obligatorios de eliminación de datos y desautorización de Meta (ver sección 6).",
+          "No usamos los datos de la API de Meta para perfilado, publicidad dirigida ni ningún propósito no declarado."
+        ],
+        "note": null
+      }
+    ]
+  },
+  {
+    "title": "6. Callbacks de eliminación y desautorización de Meta",
+    "paragraphs": [
+      "Conforme a los requisitos de la Plataforma de Meta para aplicaciones que usan la Graph API, hemos implementado los siguientes endpoints de callback:"
+    ],
+    "items": [],
+    "note": null,
+    "subsections": [
+      {
+        "title": "6.1 Callback de eliminación de datos (Data Deletion Callback)",
+        "paragraphs": [
+          "Endpoint: POST https://main.safeworsolutions.com/facebook/data-deletion",
+          "Cuando un usuario solicita la eliminación de sus datos a través de los mecanismos de Meta, ésta notifica a nuestra plataforma mediante una petición firmada con HMAC-SHA256. Al recibirla:"
+        ],
+        "items": [
+          "1. Validamos la firma criptográfica de la solicitud para garantizar que proviene genuinamente de Meta.",
+          "2. Extraemos el Facebook User ID del payload.",
+          "3. Eliminamos permanentemente todos los registros de Instagram Account asociados a ese usuario (tokens de acceso, historial de publicaciones y medios vinculados).",
+          "4. Registramos la solicitud con un código de confirmación único.",
+          "5. Retornamos a Meta la URL de verificación del estado: GET /facebook/deletion-status/{codigo_confirmacion}."
+        ],
+        "note": "Procesamos las solicitudes de eliminación en un plazo máximo de 30 días hábiles."
+      },
+      {
+        "title": "6.2 Callback de desautorización (Deauthorize Callback)",
+        "paragraphs": [
+          "Endpoint: POST https://main.safeworsolutions.com/facebook/deauthorize",
+          "Cuando un usuario revoca los permisos de nuestra aplicación desde la configuración de Meta, desactivamos la cuenta de Instagram vinculada (is_active = false) y anulamos el token de acceso almacenado. El historial de publicaciones anteriores se conserva como registro de auditoría pero sin información identificable del usuario de Meta."
+        ],
+        "items": [],
+        "note": null
+      },
+      {
+        "title": "6.3 Verificación del estado de eliminación",
+        "paragraphs": [
+          "Cualquier usuario puede verificar el estado de su solicitud en: GET https://main.safeworsolutions.com/facebook/deletion-status/{codigo_confirmacion}"
+        ],
+        "items": [],
+        "note": null
+      }
+    ]
+  },
+  {
+    "title": "7. Compartir información con terceros",
+    "paragraphs": [
+      "Safewor Solutions no vende su información personal. Podemos compartir datos en los siguientes casos limitados:"
+    ],
+    "items": [
+      "Meta Platforms, Inc.: al usar la Graph API de Instagram, las imágenes y pies de foto que usted configura son procesados por los servidores de Meta para su publicación. Esta transferencia está sujeta a la Política de Privacidad de Meta.",
+      "Procesadores de pago: PayPal y SINPE Móvil procesan los pagos bajo sus propias políticas de privacidad. No almacenamos datos completos de tarjetas de crédito.",
+      "Autoridades legales: cuando sea requerido por ley, orden judicial o proceso legal válido."
+    ],
+    "note": null,
+    "subsections": []
+  },
+  {
+    "title": "8. Eliminación de sus datos",
+    "paragraphs": [
+      "Usted tiene derecho a solicitar la eliminación de su información personal en cualquier momento. Para hacerlo:"
+    ],
+    "items": [
+      "Correo electrónico: __EMAIL__",
+      "WhatsApp: __WHATSAPP__",
+      "A través del mecanismo automático de eliminación de Meta (ver sección 6)."
+    ],
+    "note": "Procesaremos su solicitud en un plazo máximo de 30 días hábiles. Tenga en cuenta que ciertos datos pueden conservarse si así lo requiere la ley (por ejemplo, registros de transacciones contables).",
+    "subsections": []
+  },
+  {
+    "title": "9. Seguridad de la información",
+    "paragraphs": [
+      "Implementamos las siguientes medidas técnicas y organizativas para proteger su información:"
+    ],
+    "items": [
+      "Transmisión de datos exclusivamente mediante HTTPS (TLS 1.2 o superior).",
+      "Contraseñas almacenadas con hash seguro (bcrypt).",
+      "Tokens de acceso de Meta almacenados de forma cifrada en la base de datos.",
+      "Validación criptográfica (HMAC-SHA256) de todos los callbacks de Meta.",
+      "Protección CSRF en todos los formularios de la plataforma.",
+      "Separación de bases de datos por tenant (arquitectura multi-tenant con Stancl/Tenancy).",
+      "Mecanismos de bloqueo de concurrencia para evitar duplicación de procesos automatizados."
+    ],
+    "note": "Ningún sistema de transmisión de datos por internet es 100 % seguro. Si detecta alguna vulnerabilidad, por favor notifíquenos de inmediato a info@safeworsolutions.com.",
+    "subsections": []
+  },
+  {
+    "title": "10. Cookies y sesiones",
+    "paragraphs": [],
+    "items": [
+      "Cookies de sesión: esenciales para mantener el carrito de compras, la sesión de usuario y el estado de autenticación. No persisten después de cerrar el navegador.",
+      "Token de sesión CSRF: protege contra ataques de tipo Cross-Site Request Forgery.",
+      "Estado OAuth: cookie temporal usada durante el flujo de autorización con Meta (se elimina al completar el proceso)."
+    ],
+    "note": "No usamos cookies de seguimiento publicitario de terceros.",
+    "subsections": []
+  },
+  {
+    "title": "11. Retención de datos",
+    "paragraphs": [],
+    "items": [
+      "Cuentas de usuario: conservadas mientras la cuenta esté activa. Eliminadas a solicitud del usuario.",
+      "Historial de pedidos: conservado por hasta 5 años por requisitos contables y legales.",
+      "Tokens de acceso de Meta: eliminados inmediatamente al desconectar la cuenta de Instagram o al recibir un callback de eliminación/desautorización.",
+      "Publicaciones de Instagram: el registro (texto, estado, IDs de Meta) se conserva como historial interno del tenant. Las imágenes no se conservan en nuestros servidores una vez publicadas.",
+      "Registros de solicitudes de eliminación de Meta: conservados 90 días como evidencia de cumplimiento."
+    ],
+    "note": null,
+    "subsections": []
+  },
+  {
+    "title": "12. Cambios a esta política",
+    "paragraphs": [
+      "Podemos actualizar esta política ocasionalmente para reflejar cambios en nuestras prácticas o en los requisitos legales y de las plataformas de terceros (incluyendo las Políticas de Plataforma de Meta). Notificaremos cambios significativos publicando la nueva versión en esta página con la fecha de actualización. Para cambios que afecten la forma en que procesamos sus datos de Meta, procuraremos notificarle con al menos 7 días de anticipación."
+    ],
+    "items": [],
+    "note": null,
+    "subsections": []
+  },
+  {
+    "title": "13. Contacto",
+    "paragraphs": [
+      "Si tiene preguntas, solicitudes de acceso, rectificación o eliminación de datos, comuníquese con nosotros:"
+    ],
+    "items": [
+      "Empresa: Safewor Solutions",
+      "Sitio web: main.safeworsolutions.com",
+      "Correo: __EMAIL__",
+      "WhatsApp: __WHATSAPP__"
+    ],
+    "note": null,
+    "subsections": []
+  }
+]

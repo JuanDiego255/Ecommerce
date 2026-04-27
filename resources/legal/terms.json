@@ -1,0 +1,284 @@
+[
+  {
+    "title": "1. Aceptación y ámbito de aplicación",
+    "paragraphs": [
+      "Los presentes Términos y Condiciones regulan el acceso y uso de la plataforma digital Safewor Solutions (en adelante, \"la Plataforma\"), operada por Safewor Solutions con sede en Costa Rica.",
+      "Al acceder, registrarse o utilizar cualquier parte de la Plataforma — ya sea como usuario final, como administrador de un tenant, o como visitante — usted manifiesta haber leído, entendido y aceptado estos Términos en su totalidad. Si no está de acuerdo, le rogamos que se abstenga de usar la Plataforma.",
+      "Estos Términos aplican a:"
+    ],
+    "items": [
+      "Usuarios finales: personas que navegan, se registran o realizan compras en las tiendas individuales de cada tenant bajo el dominio {tenant}.safeworsolutions.com.",
+      "Administradores (tenants): empresas o personas que contratan los servicios de Safewor Solutions para operar su propia instancia de la plataforma.",
+      "Visitantes: personas que acceden al sitio principal main.safeworsolutions.com sin registrarse."
+    ],
+    "note": null,
+    "subsections": []
+  },
+  {
+    "title": "2. Descripción del servicio",
+    "paragraphs": [
+      "Safewor Solutions ofrece una plataforma SaaS (Software as a Service) de comercio electrónico multi-tenant que incluye, entre otras funcionalidades:"
+    ],
+    "items": [
+      "Tiendas en línea personalizables con gestión de productos, categorías, inventario y precios.",
+      "Carrito de compras, procesamiento de pedidos e integración con pasarelas de pago (PayPal, SINPE Móvil).",
+      "Panel administrativo completo por cliente (tenant).",
+      "Sistema de reservas y citas para negocios de servicios (barberías, clínicas, etc.).",
+      "Módulo de publicación y gestión de contenido en Instagram Business mediante la Instagram Graph API.",
+      "Blog integrado, gestión de redes sociales, SEO optimizado y herramientas de marketing.",
+      "Gestión de usuarios, roles y permisos."
+    ],
+    "note": "Safewor Solutions se reserva el derecho de añadir, modificar o discontinuar funcionalidades en cualquier momento, con o sin aviso previo, según lo indicado en la sección 11.",
+    "subsections": []
+  },
+  {
+    "title": "3. Registro y cuentas de usuario",
+    "paragraphs": [
+      "Para acceder a ciertas funcionalidades, deberá crear una cuenta de usuario. Al hacerlo, usted se compromete a:"
+    ],
+    "items": [
+      "Proporcionar información verídica, precisa y actualizada.",
+      "Mantener la confidencialidad de sus credenciales de acceso (correo y contraseña).",
+      "Notificarnos de inmediato ante cualquier uso no autorizado de su cuenta.",
+      "No crear cuentas falsas, duplicadas o en nombre de terceros sin autorización."
+    ],
+    "note": "Usted es el único responsable de todas las actividades que ocurran bajo su cuenta. Safewor Solutions no será responsable por pérdidas o daños derivados del incumplimiento de estas obligaciones. También puede registrarse mediante el inicio de sesión con Facebook (OAuth), aceptando adicionalmente los Términos de Servicio de Meta.",
+    "subsections": []
+  },
+  {
+    "title": "4. Condiciones para administradores (tenants)",
+    "paragraphs": [],
+    "items": [],
+    "note": null,
+    "subsections": [
+      {
+        "title": "4.1 Contratación y licencia",
+        "paragraphs": [
+          "Los administradores (tenants) acceden a la Plataforma bajo una licencia de uso no exclusiva, intransferible y revocable, sujeta al pago de las tarifas acordadas con Safewor Solutions. El alta de un nuevo tenant implica la creación de una base de datos dedicada y un subdominio bajo .safeworsolutions.com."
+        ],
+        "items": [],
+        "note": null
+      },
+      {
+        "title": "4.2 Responsabilidades del administrador",
+        "paragraphs": ["El administrador (tenant) es responsable de:"],
+        "items": [
+          "El contenido que publica en su tienda (productos, imágenes, descripciones, precios).",
+          "El cumplimiento de las leyes aplicables en su jurisdicción, incluyendo las leyes de protección al consumidor, fiscales y de protección de datos.",
+          "La veracidad de la información de su negocio.",
+          "La gestión de pedidos, devoluciones y atención al cliente de su tienda.",
+          "El correcto uso del módulo de Instagram (ver sección 5).",
+          "Mantener un comportamiento ético y legal en el uso de la plataforma."
+        ],
+        "note": null
+      },
+      {
+        "title": "4.3 Licencia activa",
+        "paragraphs": [
+          "La disponibilidad de la plataforma del tenant está condicionada al estado activo de su licencia. Una licencia inactiva resulta en la suspensión temporal del acceso público a la tienda. Los datos se conservan por un período mínimo de 30 días después de la suspensión para facilitar la reactivación."
+        ],
+        "items": [],
+        "note": null
+      }
+    ]
+  },
+  {
+    "title": "5. Uso de la Instagram Graph API",
+    "paragraphs": [],
+    "items": [],
+    "note": "Esta sección regula el uso del módulo de publicación en Instagram disponible para administradores (tenants). Su uso implica la aceptación de las Políticas de Plataforma de Meta, las Condiciones de Servicio de Meta para Desarrolladores y las Políticas de Uso de Instagram.",
+    "subsections": [
+      {
+        "title": "5.1 Requisitos de elegibilidad",
+        "paragraphs": ["Para usar el módulo de Instagram, el administrador debe:"],
+        "items": [
+          "Poseer una Cuenta Profesional de Instagram de tipo Business (no Creator ni Personal) vinculada a una Página de Facebook.",
+          "Ser el titular o administrador legítimo de dicha cuenta de Instagram Business.",
+          "Autorizar a nuestra aplicación de Meta los permisos necesarios (pages_show_list, instagram_basic, instagram_content_publish) a través del flujo oficial de OAuth 2.0.",
+          "Cumplir con las políticas de contenido de Instagram y Meta en todo momento."
+        ],
+        "note": null
+      },
+      {
+        "title": "5.2 Uso permitido",
+        "paragraphs": ["El módulo de Instagram puede utilizarse para:"],
+        "items": [
+          "Publicar imágenes de los productos de su tienda en su cuenta de Instagram Business.",
+          "Programar publicaciones futuras con pies de foto predefinidos.",
+          "Crear carruseles de imágenes (hasta 10 imágenes por publicación).",
+          "Gestionar plantillas de pies de foto y colecciones de imágenes."
+        ],
+        "note": null
+      },
+      {
+        "title": "5.3 Uso prohibido",
+        "paragraphs": [],
+        "items": [
+          "Publicar contenido que infrinja derechos de autor, marcas registradas u otros derechos de propiedad intelectual de terceros.",
+          "Publicar contenido que promueva el odio, la violencia, el acoso, la discriminación o actividades ilegales.",
+          "Publicar imágenes de personas sin su consentimiento explícito.",
+          "Usar el módulo para publicar spam, contenido engañoso o publicidad encubierta no declarada como tal.",
+          "Intentar acceder a datos de Instagram más allá de los permisos otorgados.",
+          "Automatizar interacciones que violen las restricciones de tasa (rate limits) de la Graph API de Meta.",
+          "Usar las credenciales obtenidas a través de nuestra plataforma en aplicaciones o servicios de terceros."
+        ],
+        "note": "Está estrictamente prohibido usar el módulo de Instagram para los fines listados arriba."
+      },
+      {
+        "title": "5.4 Responsabilidad sobre el contenido publicado",
+        "paragraphs": [
+          "El administrador (tenant) es el único responsable del contenido que publica en Instagram a través de nuestra plataforma. Safewor Solutions actúa únicamente como intermediario técnico y no revisa ni aprueba el contenido antes de su publicación. El incumplimiento de las políticas de Meta puede resultar en la suspensión de la cuenta de Instagram por parte de Meta, sin que Safewor Solutions incurra en responsabilidad alguna."
+        ],
+        "items": [],
+        "note": null
+      },
+      {
+        "title": "5.5 Revocación de acceso",
+        "paragraphs": [
+          "El administrador puede desconectar su cuenta de Instagram en cualquier momento desde el panel administrativo o desde la Configuración de aplicaciones de Meta. Safewor Solutions también puede revocar el acceso si detecta un uso contrario a estos Términos o a las políticas de Meta."
+        ],
+        "items": [],
+        "note": null
+      },
+      {
+        "title": "5.6 Cambios en la API de Meta",
+        "paragraphs": [
+          "La disponibilidad del módulo de Instagram depende de las políticas y la infraestructura de Meta Platforms, Inc. Safewor Solutions no garantiza la disponibilidad permanente de esta funcionalidad y no se responsabiliza por interrupciones derivadas de cambios en la Graph API, revisiones de permisos por parte de Meta o modificaciones en sus políticas."
+        ],
+        "items": [],
+        "note": null
+      }
+    ]
+  },
+  {
+    "title": "6. Contenido y propiedad intelectual",
+    "paragraphs": [],
+    "items": [],
+    "note": null,
+    "subsections": [
+      {
+        "title": "6.1 Propiedad de Safewor Solutions",
+        "paragraphs": [
+          "La Plataforma, su código fuente, diseño, logotipos, nombre comercial \"Safewor Solutions\" y toda la documentación asociada son propiedad exclusiva de Safewor Solutions y están protegidos por las leyes de propiedad intelectual aplicables. Queda prohibida su reproducción, distribución, modificación o ingeniería inversa sin autorización escrita."
+        ],
+        "items": [],
+        "note": null
+      },
+      {
+        "title": "6.2 Contenido del tenant",
+        "paragraphs": [
+          "Los administradores conservan la propiedad de todo el contenido que suben a la plataforma (imágenes, textos, logos, productos). Al subirlo, otorgan a Safewor Solutions una licencia no exclusiva para almacenar, procesar y mostrar dicho contenido exclusivamente en el marco de la prestación del servicio."
+        ],
+        "items": [],
+        "note": null
+      },
+      {
+        "title": "6.3 Contenido del usuario final",
+        "paragraphs": [
+          "Los comentarios, testimonios y reseñas enviados por usuarios finales pueden ser moderados, aprobados o rechazados por el administrador del tenant. Safewor Solutions no se responsabiliza por el contenido generado por usuarios."
+        ],
+        "items": [],
+        "note": null
+      }
+    ]
+  },
+  {
+    "title": "7. Pagos y facturación",
+    "paragraphs": [
+      "Los pagos realizados en las tiendas de cada tenant se procesan a través de las pasarelas de pago habilitadas (PayPal y/o SINPE Móvil). Las condiciones específicas están sujetas a los términos del tenant correspondiente y a los términos del procesador de pago utilizado.",
+      "Safewor Solutions no almacena datos completos de tarjetas de crédito ni débito. Toda la información de pago sensible es procesada directamente por las pasarelas certificadas.",
+      "Las tarifas por el uso de la plataforma para administradores (tenants) son acordadas de forma individual con Safewor Solutions y pueden variar según el plan contratado. El incumplimiento en el pago puede resultar en la suspensión de la licencia conforme a la sección 4.3."
+    ],
+    "items": [],
+    "note": null,
+    "subsections": []
+  },
+  {
+    "title": "8. Disponibilidad del servicio",
+    "paragraphs": [
+      "Safewor Solutions procura mantener la Plataforma disponible las 24 horas, los 7 días de la semana. Sin embargo, no garantizamos disponibilidad ininterrumpida y nos reservamos el derecho de realizar mantenimientos programados o de emergencia que puedan causar interrupciones temporales.",
+      "Las funcionalidades que dependen de APIs de terceros (Meta Graph API, PayPal, etc.) están sujetas a la disponibilidad y políticas de dichos terceros, frente a los cuales Safewor Solutions no asume responsabilidad por interrupciones."
+    ],
+    "items": [],
+    "note": null,
+    "subsections": []
+  },
+  {
+    "title": "9. Conducta prohibida",
+    "paragraphs": ["Queda expresamente prohibido el uso de la Plataforma para:"],
+    "items": [
+      "Cualquier actividad ilegal o contraria a la moral y el orden público.",
+      "Intentar vulnerar la seguridad de la Plataforma, acceder sin autorización a datos de otros usuarios o realizar ataques de cualquier tipo (DoS, inyección SQL, XSS, etc.).",
+      "Comercializar productos falsificados, ilegales o que infrinjan derechos de terceros.",
+      "Recopilar datos de otros usuarios sin su consentimiento.",
+      "Suplantar la identidad de otra persona o empresa.",
+      "Intentar hacer ingeniería inversa del software de la Plataforma.",
+      "Usar robots, scrapers o herramientas automatizadas para acceder a la Plataforma de forma masiva sin autorización escrita."
+    ],
+    "note": "La violación de estas prohibiciones puede resultar en la suspensión inmediata de la cuenta y, en los casos que corresponda, en acciones legales.",
+    "subsections": []
+  },
+  {
+    "title": "10. Limitación de responsabilidad",
+    "paragraphs": [
+      "En la máxima medida permitida por la ley aplicable, Safewor Solutions no será responsable por:"
+    ],
+    "items": [
+      "Pérdidas indirectas, incidentales, especiales o consecuentes derivadas del uso o la imposibilidad de usar la Plataforma.",
+      "Pérdida de datos, ingresos, beneficios o oportunidades de negocio.",
+      "Daños causados por el contenido publicado por administradores o usuarios en la Plataforma.",
+      "Interrupciones del servicio debidas a fuerza mayor, fallos de terceros proveedores o ataques externos.",
+      "Cambios en las políticas o la disponibilidad de la API de Meta que afecten las funcionalidades de Instagram.",
+      "Decisiones de Meta de rechazar, suspender o limitar el acceso de nuestra aplicación a la Graph API."
+    ],
+    "note": "En ningún caso la responsabilidad total acumulada de Safewor Solutions superará el monto pagado por el tenant en los últimos tres (3) meses de servicio.",
+    "subsections": []
+  },
+  {
+    "title": "11. Modificaciones al servicio y a estos Términos",
+    "paragraphs": [
+      "Safewor Solutions puede modificar estos Términos en cualquier momento. Los cambios entrarán en vigor en el momento de su publicación en esta página, salvo que se indique una fecha de vigencia diferente. El uso continuado de la Plataforma tras la publicación de los cambios implica su aceptación.",
+      "Para cambios materiales que afecten significativamente los derechos u obligaciones de los administradores (tenants), procuraremos notificar con al menos 15 días de anticipación."
+    ],
+    "items": [],
+    "note": null,
+    "subsections": []
+  },
+  {
+    "title": "12. Terminación",
+    "paragraphs": [
+      "Safewor Solutions se reserva el derecho de suspender o terminar el acceso a la Plataforma, con o sin causa y con o sin previo aviso, en los siguientes casos (no limitativos):"
+    ],
+    "items": [
+      "Violación de estos Términos o de las políticas de Meta.",
+      "Falta de pago de la tarifa acordada.",
+      "Actividad fraudulenta, ilegal o dañina.",
+      "Solicitud de cierre de cuenta por parte del propio usuario o administrador."
+    ],
+    "note": "Ante la terminación, Safewor Solutions conservará los datos del tenant por un período de 30 días para facilitar la recuperación de información antes de proceder a su eliminación definitiva.",
+    "subsections": []
+  },
+  {
+    "title": "13. Legislación aplicable y resolución de disputas",
+    "paragraphs": [
+      "Estos Términos se rigen por las leyes de la República de Costa Rica. Cualquier disputa derivada de su interpretación o aplicación será sometida, en primera instancia, a un proceso de mediación de buena fe entre las partes. De no alcanzarse un acuerdo, las partes se someten a la jurisdicción de los Tribunales de Justicia de Costa Rica."
+    ],
+    "items": [],
+    "note": null,
+    "subsections": []
+  },
+  {
+    "title": "14. Contacto",
+    "paragraphs": [
+      "Si tiene preguntas sobre estos Términos o necesita reportar una violación, contáctenos:"
+    ],
+    "items": [
+      "Empresa: Safewor Solutions",
+      "Sitio web: main.safeworsolutions.com",
+      "Correo: __EMAIL__",
+      "WhatsApp: __WHATSAPP__"
+    ],
+    "note": null,
+    "subsections": []
+  }
+]
