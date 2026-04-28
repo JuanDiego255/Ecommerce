@@ -33,7 +33,7 @@
     <div class="alert alert-danger">{{ $errors->first() }}</div>
 @endif
 
-<div class="card">
+<div class="surface">
     <div class="card-body">
         <div class="d-flex flex-wrap gap-3 mb-3">
             <div style="flex:1;min-width:180px;">
