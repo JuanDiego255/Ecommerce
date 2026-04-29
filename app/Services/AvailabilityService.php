@@ -75,7 +75,9 @@ class AvailabilityService
                 $busy = false;
 
                 foreach ($citas as $c) {
-                    if ($overlaps($cStart, $cEnd, $c->starts_at, $c->ends_at)) {
+                    $cs = $c->starts_at instanceof \Carbon\Carbon ? $c->starts_at : Carbon::parse($c->starts_at);
+                    $ce = $c->ends_at   instanceof \Carbon\Carbon ? $c->ends_at   : Carbon::parse($c->ends_at);
+                    if ($overlaps($cStart, $cEnd, $cs, $ce)) {
                         $busy = true;
                         break;
                     }
@@ -113,27 +115,34 @@ class AvailabilityService
      */
     private function getWorkWindows(Barbero $barbero, string $dateYmd, int $dayIdx): array
     {
-        $horarios = $barbero->horarios()->get();
+        // Guard: table may not exist yet on tenants that haven't run the migration
+        try {
+            $horarios = $barbero->horarios()->get();
+        } catch (\Throwable $e) {
+            $horarios = collect();
+        }
 
         if ($horarios->isNotEmpty()) {
             $windows = [];
             foreach ($horarios as $h) {
-                $dias = is_array($h->dias) ? $h->dias : json_decode($h->dias, true);
-                if (!in_array($dayIdx, $dias ?? [], true)) continue;
+                $raw  = is_array($h->dias) ? $h->dias : json_decode($h->dias, true);
+                // Cast to int to handle both string ("1") and integer (1) stored values
+                $dias = array_map('intval', $raw ?? []);
+                if (!in_array($dayIdx, $dias)) continue;
 
                 $windows[] = [
                     'start' => Carbon::createFromFormat('Y-m-d H:i', $dateYmd . ' ' . substr($h->hora_inicio, 0, 5)),
                     'end'   => Carbon::createFromFormat('Y-m-d H:i', $dateYmd . ' ' . substr($h->hora_fin, 0, 5)),
                 ];
             }
-            // Sort by start time so multi-block days are processed in order
             usort($windows, fn($a, $b) => $a['start']->timestamp - $b['start']->timestamp);
             return $windows;
         }
 
         // ── Legacy fallback ──────────────────────────────────────────────
-        $workDays = $barbero->work_days ? json_decode($barbero->work_days, true) : [1, 2, 3, 4, 5];
-        if (!in_array($dayIdx, $workDays ?? [], true)) return [];
+        $raw      = $barbero->work_days ? json_decode($barbero->work_days, true) : [1, 2, 3, 4, 5];
+        $workDays = array_map('intval', $raw ?? []);
+        if (!in_array($dayIdx, $workDays)) return [];
 
         $workStart = substr($barbero->work_start ?? '09:00', 0, 5);
         $workEnd   = substr($barbero->work_end   ?? '18:00', 0, 5);
