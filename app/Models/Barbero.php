@@ -67,4 +67,9 @@ class Barbero extends Model
     {
         return $this->hasMany(\App\Models\BarberoPhoto::class);
     }
+
+    public function horarios()
+    {
+        return $this->hasMany(\App\Models\BarberoHorario::class);
+    }
 }
