@@ -118,7 +118,7 @@
             Los bloques del mismo día no pueden solaparse.
         </small>
     </div>
-    <button type="button" class="s-btn-primary btn-sm" id="btn-add-horario" style="white-space:nowrap;flex-shrink:0;">
+    <button type="button" class="s-btn-primary w-auto" id="btn-add-horario" style="white-space:nowrap;flex-shrink:0;">
         <span class="material-icons" style="font-size:.85rem;vertical-align:middle;">add</span>
         Agregar bloque
     </button>
