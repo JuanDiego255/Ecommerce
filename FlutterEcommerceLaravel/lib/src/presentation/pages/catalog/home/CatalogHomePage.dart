@@ -202,7 +202,9 @@ class _ContentViewState extends State<_ContentView> {
           icon: const Icon(Icons.more_vert, color: _kSub, size: 20),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           onSelected: (value) {
-            if (value == 'admin') {
+            if (value == 'login_client') {
+              Navigator.pushNamed(context, 'login');
+            } else if (value == 'admin') {
               Navigator.pushNamed(
                 context,
                 TenantSession.hasAdminAccess ? 'login' : 'admin/token',
@@ -212,6 +214,16 @@ class _ContentViewState extends State<_ContentView> {
             }
           },
           itemBuilder: (_) => [
+            const PopupMenuItem(
+              value: 'login_client',
+              child: Row(
+                children: [
+                  Icon(Icons.person_outline, size: 18, color: _kAccent),
+                  SizedBox(width: 10),
+                  Text('Iniciar sesión', style: TextStyle(fontSize: 13)),
+                ],
+              ),
+            ),
             const PopupMenuItem(
               value: 'admin',
               child: Row(
