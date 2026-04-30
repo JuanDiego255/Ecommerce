@@ -14,6 +14,19 @@
         }
     }
 
+    /* Existing descansos for edit mode */
+    $existingDescansos = [];
+    if ($isEditar && $b) {
+        foreach ($b->descansos ?? [] as $d) {
+            $existingDescansos[] = [
+                'dias'        => is_array($d->dias) ? $d->dias : json_decode($d->dias, true),
+                'hora_inicio' => substr($d->hora_inicio, 0, 5),
+                'hora_fin'    => substr($d->hora_fin,    0, 5),
+                'motivo'      => $d->motivo ?? '',
+            ];
+        }
+    }
+
     /* Legacy fallback values (used when no horarios exist yet) */
     $legacyStart = old('work_start', $b ? substr($b->work_start ?? '09:00', 0, 5) : '09:00');
     $legacyEnd   = old('work_end',   $b ? substr($b->work_end   ?? '18:00', 0, 5) : '18:00');
@@ -177,6 +190,28 @@
     </div>
 </div>
 
+{{-- ── Descansos recurrentes ───────────────────────────────────────────── --}}
+<hr class="my-4" style="border-color:var(--border-color,#e5e7eb);">
+<div class="d-flex align-items-center justify-content-between mb-3">
+    <div>
+        <p class="mb-0 fw-semibold" style="color:var(--text-primary,#111);">Descansos recurrentes</p>
+        <small style="color:var(--text-secondary,#6b7280);">
+            Pausas que se repiten semanalmente (almuerzo, reunión, etc.).
+            Se bloquean automáticamente en la disponibilidad.
+        </small>
+    </div>
+    <button type="button" class="s-btn-primary w-auto" id="btn-add-descanso" style="white-space:nowrap;flex-shrink:0;">
+        <span class="material-icons" style="font-size:.85rem;vertical-align:middle;">add</span>
+        Agregar pausa
+    </button>
+</div>
+
+<div id="descansos-container"></div>
+
+<div id="descansos-empty-msg" class="text-center py-2 mb-2" style="color:var(--text-secondary,#6b7280);">
+    <small>Sin pausas configuradas. Los clientes podrán agendar durante todo el horario.</small>
+</div>
+
 {{-- ── Submit ──────────────────────────────────────────────────────────── --}}
 <div class="mt-4 text-center">
     <button type="submit" class="s-btn-primary">
@@ -319,5 +354,126 @@
     }
 
     updateEmptyState();
+})();
+</script>
+
+{{-- ── Descanso block template ─────────────────────────────────────────── --}}
+<template id="descanso-block-tpl">
+    <div class="descanso-block surface mb-3 p-3" data-index="__DIDX__"
+         style="border-left:3px solid var(--warning,#f59e0b);">
+        <div class="d-flex align-items-center justify-content-between mb-2">
+            <span class="fw-semibold" style="font-size:.85rem;color:var(--text-primary,#111);">
+                <span class="material-icons" style="font-size:.9rem;vertical-align:middle;color:var(--warning,#f59e0b);">coffee</span>
+                Pausa <span class="pausa-num">1</span>
+            </span>
+            <button type="button" class="btn-remove-descanso act-btn ab-danger btn-sm" title="Eliminar pausa">
+                <span class="material-icons" style="font-size:.85rem;">delete</span>
+            </button>
+        </div>
+
+        <div class="mb-2">
+            <label class="filter-label" for="dmotivo___DIDX__">Motivo (opcional)</label>
+            <input id="dmotivo___DIDX__" type="text" maxlength="100"
+                   name="descansos[__DIDX__][motivo]"
+                   class="filter-input" placeholder="Almuerzo, Reunión…">
+        </div>
+
+        <div class="mb-2">
+            <label class="filter-label mb-1">Días</label>
+            <div class="d-flex flex-wrap gap-2">
+                @foreach ($dayLabels as $idx => $lbl)
+                    <label class="day-chip" for="dday_{{ $idx }}___DIDX__">
+                        <input type="checkbox"
+                               name="descansos[__DIDX__][dias][]"
+                               id="dday_{{ $idx }}___DIDX__"
+                               value="{{ $idx }}"
+                               style="display:none;"
+                               onchange="this.closest('.day-chip').classList.toggle('day-chip--active', this.checked)">
+                        {{ $lbl }}
+                    </label>
+                @endforeach
+            </div>
+        </div>
+
+        <div class="row g-2">
+            <div class="col-6">
+                <label class="filter-label" for="dinicio___DIDX__">Desde</label>
+                <input id="dinicio___DIDX__" type="time"
+                       name="descansos[__DIDX__][hora_inicio]"
+                       class="filter-input" required>
+            </div>
+            <div class="col-6">
+                <label class="filter-label" for="dfin___DIDX__">Hasta</label>
+                <input id="dfin___DIDX__" type="time"
+                       name="descansos[__DIDX__][hora_fin]"
+                       class="filter-input" required>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+(function () {
+    const dContainer = document.getElementById('descansos-container');
+    const dEmptyMsg  = document.getElementById('descansos-empty-msg');
+    const dBtnAdd    = document.getElementById('btn-add-descanso');
+    const dTpl       = document.getElementById('descanso-block-tpl');
+    let dCounter = 0;
+
+    const initialDescansos = @json($existingDescansos);
+
+    function updateDEmpty() {
+        const blocks = dContainer.querySelectorAll('.descanso-block');
+        dEmptyMsg.style.display = blocks.length === 0 ? 'block' : 'none';
+        blocks.forEach((b, i) => {
+            const span = b.querySelector('.pausa-num');
+            if (span) span.textContent = i + 1;
+        });
+    }
+
+    function addDescansoBlock(preset) {
+        const idx  = dCounter++;
+        const html = dTpl.innerHTML.replace(/__DIDX__/g, idx);
+        const wrap = document.createElement('div');
+        wrap.innerHTML = html;
+        const block = wrap.firstElementChild;
+
+        if (preset) {
+            if (preset.dias) {
+                preset.dias.forEach(function (d) {
+                    const cb = block.querySelector('input[value="' + d + '"]');
+                    if (cb) { cb.checked = true; cb.closest('.day-chip').classList.add('day-chip--active'); }
+                });
+            }
+            if (preset.hora_inicio) {
+                const el = block.querySelector('[name$="[hora_inicio]"]');
+                if (el) el.value = preset.hora_inicio;
+            }
+            if (preset.hora_fin) {
+                const el = block.querySelector('[name$="[hora_fin]"]');
+                if (el) el.value = preset.hora_fin;
+            }
+            if (preset.motivo) {
+                const el = block.querySelector('[name$="[motivo]"]');
+                if (el) el.value = preset.motivo;
+            }
+        }
+
+        block.querySelector('.btn-remove-descanso').addEventListener('click', function () {
+            block.remove();
+            updateDEmpty();
+        });
+
+        dContainer.appendChild(block);
+        updateDEmpty();
+    }
+
+    dBtnAdd.addEventListener('click', function () { addDescansoBlock(null); });
+
+    if (initialDescansos && initialDescansos.length > 0) {
+        initialDescansos.forEach(function (d) { addDescansoBlock(d); });
+    }
+
+    updateDEmpty();
 })();
 </script>

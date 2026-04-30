@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Barbero;
 use App\Models\BarberoHorario;
+use App\Models\BarberoDescanso;
 use App\Models\Servicio;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -37,6 +38,7 @@ class BarberoController extends Controller
         $workStart = substr($barbero->work_start ?? '09:00', 0, 5);
         $workEnd   = substr($barbero->work_end   ?? '18:00', 0, 5);
         $horarios  = $barbero->horarios()->get();
+        $descansos = $barbero->descansos()->get();
 
         $tz    = config('app.timezone', 'America/Costa_Rica');
         $start = $request->filled('start') ? Carbon::parse($request->input('start'), $tz)->startOfDay() : now($tz)->subDays(30)->startOfDay();
@@ -71,7 +73,7 @@ class BarberoController extends Controller
 
         return view('admin.barberos.profile', compact(
             'barbero', 'tab', 'back', 'allServicios',
-            'workDays', 'slot', 'workStart', 'workEnd', 'horarios',
+            'workDays', 'slot', 'workStart', 'workEnd', 'horarios', 'descansos',
             'fotos', 'start', 'end', 'stats', 'porStatusBarbero', 'porDiaBarbero'
         ));
     }
@@ -92,9 +94,16 @@ class BarberoController extends Controller
             'horarios.*.dias.*'  => ['integer', 'between:0,6'],
             'horarios.*.hora_inicio' => ['required_with:horarios', 'date_format:H:i'],
             'horarios.*.hora_fin'    => ['required_with:horarios', 'date_format:H:i'],
+            'descansos'              => ['nullable', 'array'],
+            'descansos.*.dias'       => ['required_with:descansos', 'array', 'min:1'],
+            'descansos.*.dias.*'     => ['integer', 'between:0,6'],
+            'descansos.*.hora_inicio' => ['required_with:descansos', 'date_format:H:i'],
+            'descansos.*.hora_fin'    => ['required_with:descansos', 'date_format:H:i'],
+            'descansos.*.motivo'      => ['nullable', 'string', 'max:100'],
         ]);
 
-        $horariosInput = $request->input('horarios', []);
+        $horariosInput  = $request->input('horarios', []);
+        $descansosInput = $request->input('descansos', []);
 
         // If no horarios blocks submitted, fall back to legacy fields
         if (empty($horariosInput)) {
@@ -113,7 +122,7 @@ class BarberoController extends Controller
         }
 
         $data['activo'] = (bool)($data['activo'] ?? true);
-        unset($data['horarios']);
+        unset($data['horarios'], $data['descansos']);
 
         if ($request->hasFile('image')) {
             $data['photo_path'] = $request->file('image')->store('uploads', 'public');
@@ -124,6 +133,7 @@ class BarberoController extends Controller
         if (!empty($horariosInput)) {
             $this->syncHorarios($barbero, $horariosInput);
         }
+        $this->syncDescansos($barbero, $descansosInput);
 
         return back()->with('ok', 'Barbero creado');
     }
@@ -146,9 +156,16 @@ class BarberoController extends Controller
             'horarios.*.dias.*'  => ['integer', 'between:0,6'],
             'horarios.*.hora_inicio' => ['required_with:horarios', 'date_format:H:i'],
             'horarios.*.hora_fin'    => ['required_with:horarios', 'date_format:H:i'],
+            'descansos'              => ['nullable', 'array'],
+            'descansos.*.dias'       => ['required_with:descansos', 'array', 'min:1'],
+            'descansos.*.dias.*'     => ['integer', 'between:0,6'],
+            'descansos.*.hora_inicio' => ['required_with:descansos', 'date_format:H:i'],
+            'descansos.*.hora_fin'    => ['required_with:descansos', 'date_format:H:i'],
+            'descansos.*.motivo'      => ['nullable', 'string', 'max:100'],
         ]);
 
-        $horariosInput = $request->input('horarios', []);
+        $horariosInput  = $request->input('horarios', []);
+        $descansosInput = $request->input('descansos', []);
 
         if (empty($horariosInput)) {
             $legacyData = $request->validate([
@@ -166,7 +183,7 @@ class BarberoController extends Controller
         }
 
         $data['activo'] = (bool)($data['activo'] ?? $barbero->activo);
-        unset($data['horarios']);
+        unset($data['horarios'], $data['descansos']);
 
         if ($request->hasFile('image')) {
             if ($barbero->photo_path) Storage::delete('public/' . $barbero->photo_path);
@@ -178,6 +195,7 @@ class BarberoController extends Controller
         if (!empty($horariosInput)) {
             $this->syncHorarios($barbero, $horariosInput);
         }
+        $this->syncDescansos($barbero, $descansosInput);
 
         return back()->with('ok', 'Barbero actualizado');
     }
@@ -326,6 +344,23 @@ class BarberoController extends Controller
                 'dias'        => $h['dias'],
                 'hora_inicio' => $h['hora_inicio'],
                 'hora_fin'    => $h['hora_fin'],
+            ]);
+        }
+    }
+
+    /**
+     * Replaces all recurring breaks for a barbero.
+     * Passing an empty array removes all breaks (e.g. clear on form submit).
+     */
+    private function syncDescansos(Barbero $barbero, array $descansosInput): void
+    {
+        $barbero->descansos()->delete();
+        foreach ($descansosInput as $d) {
+            $barbero->descansos()->create([
+                'dias'        => $d['dias'],
+                'hora_inicio' => $d['hora_inicio'],
+                'hora_fin'    => $d['hora_fin'],
+                'motivo'      => $d['motivo'] ?? null,
             ]);
         }
     }

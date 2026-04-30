@@ -72,4 +72,9 @@ class Barbero extends Model
     {
         return $this->hasMany(\App\Models\BarberoHorario::class);
     }
+
+    public function descansos()
+    {
+        return $this->hasMany(\App\Models\BarberoDescanso::class);
+    }
 }
