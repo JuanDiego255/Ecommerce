@@ -99,7 +99,7 @@ class ApiLoginController extends Controller
             'id'    => 'client',
             'name'  => 'Cliente',
             'image' => 'https://cdn-icons-png.flaticon.com/512/1077/1077063.png',
-            'route' => 'client/home',
+            'route' => 'catalog/home',
         ];
 
         $adminRole = [
