@@ -934,6 +934,7 @@ Route::prefix('api')->middleware([
         return response()->json(['ok' => true]);
     });
     // ─── Public catalog endpoints (no auth, no app token) ────────────────────
+    Route::post('/orders/guest',                           [\App\Http\Controllers\Api\ClientApiController::class, 'guestOrder']);
     Route::get('/catalog/home/{tenant}',                  [\App\Http\Controllers\Api\CatalogApiController::class, 'home']);
     Route::get('/catalog/product/{id}/{tenant}',          [\App\Http\Controllers\Api\CatalogApiController::class, 'productDetail']);
     Route::get('/catalog/attributes/{categoryId}/{tenant}', [\App\Http\Controllers\Api\CatalogApiController::class, 'attributesByCategory']);

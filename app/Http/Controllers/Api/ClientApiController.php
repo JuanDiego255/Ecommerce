@@ -145,6 +145,77 @@ class ClientApiController extends Controller
         }
     }
 
+    // ─── Guest order (no auth required) ──────────────────────────────────────
+
+    public function guestOrder(Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                'name'        => ['required', 'string', 'max:191'],
+                'email'       => ['required', 'email', 'max:191'],
+                'telephone'   => ['required', 'string', 'max:50'],
+                'country'     => ['nullable', 'string', 'max:100'],
+                'province'    => ['required', 'string', 'max:100'],
+                'city'        => ['required', 'string', 'max:100'],
+                'address_two' => ['nullable', 'string', 'max:100'],
+                'address'     => ['required', 'string', 'max:191'],
+                'postal_code' => ['nullable', 'string', 'max:20'],
+                'items'               => ['required', 'array', 'min:1'],
+                'items.*.product_id'  => ['required', 'integer'],
+                'items.*.quantity'    => ['required', 'integer', 'min:1'],
+                'items.*.price'       => ['required', 'numeric', 'min:0'],
+            ]);
+        } catch (ValidationException $e) {
+            return response()->json(['message' => $e->errors()], 422);
+        }
+
+        $total = collect($validated['items'])
+            ->sum(fn ($item) => $item['price'] * $item['quantity']);
+
+        // If authenticated, link to user; otherwise guest
+        $userId = optional($request->user())->id;
+
+        DB::beginTransaction();
+        try {
+            $buy                 = new Buy();
+            $buy->user_id        = $userId;
+            $buy->name           = $validated['name'];
+            $buy->email          = $validated['email'];
+            $buy->telephone      = $validated['telephone'];
+            $buy->country        = $validated['country'] ?? 'Costa Rica';
+            $buy->province       = $validated['province'];
+            $buy->city           = $validated['city'];
+            $buy->address_two    = $validated['address_two'] ?? '';
+            $buy->address        = $validated['address'];
+            $buy->postal_code    = $validated['postal_code'] ?? '';
+            $buy->total_buy      = $total;
+            $buy->total_iva      = 0;
+            $buy->total_delivery = 0;
+            $buy->approved       = 0;
+            $buy->delivered      = 0;
+            $buy->kind_of_buy    = 'A';
+            $buy->cancel_buy     = 0;
+            $buy->save();
+
+            foreach ($validated['items'] as $item) {
+                $detail              = new BuyDetail();
+                $detail->buy_id      = $buy->id;
+                $detail->clothing_id = $item['product_id'];
+                $detail->quantity    = $item['quantity'];
+                $detail->total       = $item['price'] * $item['quantity'];
+                $detail->iva         = 0;
+                $detail->cancel_item = 0;
+                $detail->save();
+            }
+
+            DB::commit();
+            return response()->json($this->_formatOrder($buy->fresh()), 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+
     // ─── Profile ──────────────────────────────────────────────────────────────
 
     public function updateProfile(Request $request)
