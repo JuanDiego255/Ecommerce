@@ -168,7 +168,7 @@ class ClientApiController extends Controller
                 'address_two' => ['nullable', 'string', 'max:100'],
                 'address'     => ['required', 'string', 'max:191'],
                 'postal_code' => ['nullable', 'string', 'max:20'],
-                'image'               => ['nullable', 'image', 'max:5120'],
+                'image'               => ['required', 'image', 'max:5120'],
                 'items'               => ['required', 'array', 'min:1'],
                 'items.*.product_id'  => ['required', 'integer'],
                 'items.*.quantity'    => ['required', 'integer', 'min:1'],
