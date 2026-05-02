@@ -7,8 +7,11 @@ use App\Http\Controllers\Controller;
 use App\Models\AddressUser;
 use App\Models\Buy;
 use App\Models\BuyDetail;
+use App\Models\ClothingCategory;
+use App\Models\TenantInfo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
 
 class ClientApiController extends Controller
@@ -149,6 +152,11 @@ class ClientApiController extends Controller
 
     public function guestOrder(Request $request)
     {
+        // items may arrive as a JSON string (multipart) or a native array (JSON body)
+        if (is_string($request->input('items'))) {
+            $request->merge(['items' => json_decode($request->input('items'), true) ?? []]);
+        }
+
         try {
             $validated = $request->validate([
                 'name'        => ['required', 'string', 'max:191'],
@@ -160,6 +168,7 @@ class ClientApiController extends Controller
                 'address_two' => ['nullable', 'string', 'max:100'],
                 'address'     => ['required', 'string', 'max:191'],
                 'postal_code' => ['nullable', 'string', 'max:20'],
+                'image'               => ['nullable', 'image', 'max:5120'],
                 'items'               => ['required', 'array', 'min:1'],
                 'items.*.product_id'  => ['required', 'integer'],
                 'items.*.quantity'    => ['required', 'integer', 'min:1'],
@@ -195,6 +204,9 @@ class ClientApiController extends Controller
             $buy->delivered      = 0;
             $buy->kind_of_buy    = 'A';
             $buy->cancel_buy     = 0;
+            if ($request->hasFile('image')) {
+                $buy->image = $request->file('image')->store('uploads', 'public');
+            }
             $buy->save();
 
             foreach ($validated['items'] as $item) {
@@ -206,10 +218,26 @@ class ClientApiController extends Controller
                 $detail->iva         = 0;
                 $detail->cancel_item = 0;
                 $detail->save();
+
+                // Decrement product stock when managed
+                $qty = (int) $item['quantity'];
+                $clothing = ClothingCategory::find((int) $item['product_id']);
+                if ($clothing && $clothing->manage_stock == 1) {
+                    ClothingCategory::where('id', $clothing->id)
+                        ->update(['stock' => DB::raw("GREATEST(0, stock - {$qty})")]);
+                    $remaining = ClothingCategory::where('id', $clothing->id)->value('stock');
+                    if ($remaining <= 0) {
+                        ClothingCategory::where('id', $clothing->id)->update(['status' => 0]);
+                    }
+                }
             }
 
             DB::commit();
-            return response()->json($this->_formatOrder($buy->fresh()), 201);
+
+            $formatted = $this->_formatOrder($buy->fresh());
+            $this->_sendOrderEmail($validated['items'], $total, $validated['email'], $validated['name']);
+
+            return response()->json($formatted, 201);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['message' => $e->getMessage()], 500);
@@ -333,5 +361,48 @@ class ClientApiController extends Controller
             'address'         => $address,
             'orderHasProducts'=> $orderProducts,
         ];
+    }
+
+    private function _sendOrderEmail(array $items, float $total, string $customerEmail, string $customerName): void
+    {
+        try {
+            $tenantinfo = TenantInfo::first();
+
+            $cartItems = collect($items)->map(function ($item) {
+                $clothing = ClothingCategory::find((int) $item['product_id']);
+                return (object) [
+                    'name'     => $clothing ? $clothing->name : 'Producto',
+                    'quantity' => $item['quantity'],
+                    'total'    => $item['price'] * $item['quantity'],
+                ];
+            });
+
+            $storeEmail = $tenantinfo->email ?? null;
+            if ($storeEmail) {
+                $storeDetails = [
+                    'cartItems'   => $cartItems,
+                    'total_price' => $total,
+                    'delivery'    => 0,
+                    'title'       => 'Nuevo pedido desde la app móvil - ' . ($tenantinfo->title ?? ''),
+                ];
+                Mail::send('emails.sale', $storeDetails, function ($message) use ($storeDetails, $storeEmail) {
+                    $message->to($storeEmail)->subject($storeDetails['title']);
+                });
+            }
+
+            $customerDetails = [
+                'cartItems'     => $cartItems,
+                'total_price'   => $total,
+                'delivery'      => 0,
+                'store_name'    => $tenantinfo->title ?? 'Tienda',
+                'customer_name' => $customerName,
+            ];
+            Mail::send('emails.sale-customer', $customerDetails, function ($message) use ($customerDetails, $customerEmail) {
+                $message->to($customerEmail)
+                    ->subject('Confirmación de tu pedido – ' . $customerDetails['store_name']);
+            });
+        } catch (\Exception $e) {
+            // Email failure must not block the order response
+        }
     }
 }
