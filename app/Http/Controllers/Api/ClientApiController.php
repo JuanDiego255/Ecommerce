@@ -250,18 +250,24 @@ class ClientApiController extends Controller
     {
         try {
             $validated = $request->validate([
-                'name'  => ['required', 'string', 'max:255'],
-                'phone' => ['nullable', 'string', 'max:50'],
+                'name'     => ['required', 'string', 'max:255'],
+                'lastname' => ['nullable', 'string', 'max:255'],
+                'phone'    => ['nullable', 'string', 'max:50'],
             ]);
         } catch (ValidationException $e) {
             return response()->json(['message' => $e->errors()], 422);
         }
 
-        $user       = $request->user();
-        $user->name = $validated['name'];
+        $user = $request->user();
+
+        // Combine name + lastname into users.name (same split used by _formatUser to reconstruct them)
+        $fullName   = trim(($validated['name'] ?? '') . ' ' . ($validated['lastname'] ?? ''));
+        $user->name = $fullName ?: $validated['name'];
+
         if (!empty($validated['phone'])) {
             $user->telephone = $validated['phone'];
         }
+
         $user->save();
 
         return response()->json(ApiLoginController::_formatUser($user));

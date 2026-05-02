@@ -27,21 +27,21 @@
                             <div class="col-md-6 mb-3">
                                 <div class="input-group input-group-static mb-4">
                                     <label>{{ __('Teléfono') }}</label>
-                                    <input value="{{ $user->telephone }}" required type="text"
+                                    <input value="{{ $user->telephone }}" type="text"
                                         class="form-control form-control-lg" name="telephone">
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <div class="input-group input-group-static mb-4">
                                     <label>{{ __('E-mail') }}</label>
-                                    <input value="{{ $user->email }}" required type="text"
+                                    <input value="{{ $user->email }}" type="text"
                                         class="form-control form-control-lg" name="email">
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <div class="input-group input-group-static mb-4">
                                     <label>{{ __('Código (Favoritos)') }}</label>
-                                    <input value="{{ $user->code_love }}" required type="text"
+                                    <input value="{{ $user->code_love }}" type="text"
                                         class="form-control form-control-lg" name="code">
                                 </div>
                             </div>
