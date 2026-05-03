@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Auth\ApiLoginController;
 use App\Http\Controllers\Controller;
 use App\Models\AddressUser;
+use App\Models\AttributeValueBuy;
 use App\Models\Buy;
 use App\Models\BuyDetail;
 use App\Models\ClothingCategory;
+use App\Models\VariantCombinationValue;
 use App\Models\TenantInfo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -170,9 +172,10 @@ class ClientApiController extends Controller
                 'postal_code' => ['nullable', 'string', 'max:20'],
                 'image'               => ['required', 'image', 'max:5120'],
                 'items'               => ['required', 'array', 'min:1'],
-                'items.*.product_id'  => ['required', 'integer'],
-                'items.*.quantity'    => ['required', 'integer', 'min:1'],
-                'items.*.price'       => ['required', 'numeric', 'min:0'],
+                'items.*.product_id'    => ['required', 'integer'],
+                'items.*.quantity'      => ['required', 'integer', 'min:1'],
+                'items.*.price'         => ['required', 'numeric', 'min:0'],
+                'items.*.combination_id' => ['nullable', 'integer'],
             ]);
         } catch (ValidationException $e) {
             return response()->json(['message' => $e->errors()], 422);
@@ -218,6 +221,19 @@ class ClientApiController extends Controller
                 $detail->iva         = 0;
                 $detail->cancel_item = 0;
                 $detail->save();
+
+                // Track variant selection in attribute_value_buys (for admin order view)
+                $combinationId = isset($item['combination_id']) ? (int) $item['combination_id'] : null;
+                if ($combinationId) {
+                    $combValues = VariantCombinationValue::where('combination_id', $combinationId)->get();
+                    foreach ($combValues as $cv) {
+                        AttributeValueBuy::create([
+                            'buy_detail_id' => $detail->id,
+                            'attr_id'       => $cv->attr_id,
+                            'value_attr'    => $cv->value_attr,
+                        ]);
+                    }
+                }
 
                 // Decrement product stock when managed
                 $qty = (int) $item['quantity'];

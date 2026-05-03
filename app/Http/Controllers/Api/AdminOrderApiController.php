@@ -38,7 +38,8 @@ class AdminOrderApiController extends Controller
                 'buys.monto_apartado',
                 'buys.guide_number',
                 'buys.detail',
-                'buys.created_at'
+                'buys.created_at',
+                'buys.image'
             );
 
         if ($search) {
@@ -93,7 +94,12 @@ class AdminOrderApiController extends Controller
             ->orderBy('buys.id', 'desc')
             ->offset(($page - 1) * $perPage)
             ->limit($perPage)
-            ->get();
+            ->get()
+            ->map(function ($item) {
+                $item->proof_url = ($item->image ?? '') !== '' ? route('file', $item->image) : null;
+                unset($item->image);
+                return $item;
+            });
 
         return response()->json([
             'success' => true,
@@ -139,7 +145,8 @@ class AdminOrderApiController extends Controller
                 DB::raw('COALESCE(buys.province,     address_users.province,     "") as s_province'),
                 DB::raw('COALESCE(buys.city,         address_users.city,         "") as s_city'),
                 DB::raw('COALESCE(buys.address_two,  address_users.address_two,  "") as s_district'),
-                DB::raw('COALESCE(buys.address,      address_users.address,      "") as s_address')
+                DB::raw('COALESCE(buys.address,      address_users.address,      "") as s_address'),
+                'buys.image'
             )
             ->first();
 
@@ -150,6 +157,8 @@ class AdminOrderApiController extends Controller
         $items = $this->_fetchItems($id);
 
         $result = $buy->toArray();
+        $result['proof_url'] = ($result['image'] ?? '') !== '' ? route('file', $result['image']) : null;
+        unset($result['image']);
         $result['items'] = $items;
 
         return response()->json(['success' => true, 'data' => $result]);
