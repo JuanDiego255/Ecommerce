@@ -914,28 +914,30 @@ class FrontendController extends Controller
     }
     public function getStock($cloth_id, $attr_id, $value_attr)
     {
+        // Check variant_combinations first (handles both new and migrated products)
+        $combo = DB::table('variant_combinations as vc')
+            ->join('variant_combination_values as vcv', 'vcv.combination_id', '=', 'vc.id')
+            ->where('vc.clothing_id', $cloth_id)
+            ->where('vcv.attr_id', $attr_id)
+            ->where('vcv.value_attr', $value_attr)
+            ->select(
+                'vc.id as id',
+                'vc.clothing_id as clothing_id',
+                'vc.price as price',
+                'vc.stock as stock',
+                'vc.manage_stock as manage_stock'
+            )
+            ->first();
+
+        if ($combo) {
+            return response()->json($combo);
+        }
+
+        // Fall back to legacy stocks system
         $stock = Stock::where('clothing_id', $cloth_id)
             ->where('attr_id', $attr_id)
             ->where('value_attr', $value_attr)
             ->first();
-
-        if (!$stock) {
-            $combo = DB::table('variant_combinations as vc')
-                ->join('variant_combination_values as vcv', 'vcv.combination_id', '=', 'vc.id')
-                ->where('vc.clothing_id', $cloth_id)
-                ->where('vcv.attr_id', $attr_id)
-                ->where('vcv.value_attr', $value_attr)
-                ->select(
-                    'vc.id as id',
-                    'vc.clothing_id as clothing_id',
-                    'vc.price as price',
-                    'vc.stock as stock',
-                    'vc.manage_stock as manage_stock'
-                )
-                ->first();
-
-            return response()->json($combo);
-        }
 
         return response()->json($stock);
     }

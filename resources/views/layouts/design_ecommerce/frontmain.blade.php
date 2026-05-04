@@ -724,6 +724,7 @@
                             'clothing_id': productId,
                             'quantity': quantity,
                             'attributes': attributes,
+                            'combination_id': currentModalCombinationId,
                         },
                         success: function(response) {
                             swal(response.status,
@@ -759,6 +760,7 @@
             }
         });
 
+        var currentModalCombinationId = null;
         function getStock(cloth_id, attr_id, value_attr, porcDescuento) {
             var prefix = document.getElementById('prefix').value == "aclimate" ? document.getElementById('prefix')
                 .value : '';
@@ -768,6 +770,7 @@
                 method: "GET",
                 url: url,
                 success: function(stock) {
+                    currentModalCombinationId = stock.id || null;
                     var maxStock = stock.stock > 0 ? stock.stock : '';
                     var perPrice = stock.price;
                     if (perPrice > 0) {

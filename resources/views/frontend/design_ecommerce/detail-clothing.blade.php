@@ -579,6 +579,7 @@
         }
         getQuantity();
     });
+    var currentCombinationId = null;
     $('.btnAddToCart').click(function(e) {
         e.preventDefault();
         var prefix = document.getElementById('prefix').value == "aclimate" ? document.getElementById('prefix')
@@ -611,6 +612,7 @@
                 'clothing_id': cloth_id,
                 'quantity': quantity,
                 'attributes': attributes,
+                'combination_id': currentCombinationId,
             },
             success: function(response) {
                 console.log(response);
@@ -660,6 +662,7 @@
             method: "GET",
             url: url,
             success: function(stock) {
+                currentCombinationId = stock.id || null;
                 var maxStock = stock.stock > 0 ? stock.stock : '';
                 var porcDescuento = document.getElementById("porcDescuento").value;
                 var perPrice = stock.price;
