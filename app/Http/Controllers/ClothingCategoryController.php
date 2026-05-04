@@ -74,6 +74,7 @@ class ClothingCategoryController extends Controller
                     DB::raw('GROUP_CONCAT(COALESCE(attributes.name, "")) AS available_attr'),
                     DB::raw('GROUP_CONCAT(stocks.stock) AS stock_per_size'),
                     DB::raw('GROUP_CONCAT(COALESCE(stocks.attr_id, "")) AS attr_id_per_size'),
+                    DB::raw('(SELECT COUNT(1) FROM variant_combinations vc WHERE vc.clothing_id = clothing.id) as combination_count'),
                     'product_images.image as image'
                 )
                 ->groupBy('clothing.id', 'clothing.casa', 'clothing.mayor_price', 'clothing.discount', 'categories.name', 'clothing.code', 'clothing.status', 'clothing.manage_stock', 'clothing.name', 'clothing.trending', 'clothing.description', 'clothing.price', 'product_images.image')
@@ -117,11 +118,13 @@ class ClothingCategoryController extends Controller
                             </div>';
                 })
                 ->addColumn('acciones', function ($item) use ($id) {
-                    $attr = explode(',', $item->available_attr ?? '');
-                    $attrPer = explode(',', $item->attr_id_per_size ?? '');
-                    $hasAttr = false;
-                    for ($i = 0; $i < count($attr); $i++) {
-                        if (!empty($attrPer[$i]) && $attr[$i] !== 'Stock') { $hasAttr = true; break; }
+                    $hasAttr = (int)($item->combination_count ?? 0) > 0;
+                    if (!$hasAttr) {
+                        $attr = explode(',', $item->available_attr ?? '');
+                        $attrPer = explode(',', $item->attr_id_per_size ?? '');
+                        for ($i = 0; $i < count($attr); $i++) {
+                            if (!empty($attrPer[$i]) && $attr[$i] !== 'Stock') { $hasAttr = true; break; }
+                        }
                     }
                     return '<div class="act-group">
                                 <button class="act-btn ab-del btnDeleteItem"
@@ -166,16 +169,15 @@ class ClothingCategoryController extends Controller
                             </td>';
                 })
                 ->addColumn('atributos', function ($item) {
-                    // Convertir las cadenas en arreglos
-                    $stockPerSize = explode(',', $item->stock_per_size);
-                    $attrPerItem = explode(',', $item->attr_id_per_size);
-                    $attr = explode(',', $item->available_attr);
-
-                    $exist_attr = false;
-                    for ($i = 0; $i < count($attr); $i++) {
-                        if (!empty($attrPerItem[$i]) && $attr[$i] !== 'Stock') {
-                            $exist_attr = true;
-                            break;
+                    $exist_attr = (int)($item->combination_count ?? 0) > 0;
+                    if (!$exist_attr) {
+                        $attrPerItem = explode(',', $item->attr_id_per_size ?? '');
+                        $attr = explode(',', $item->available_attr ?? '');
+                        for ($i = 0; $i < count($attr); $i++) {
+                            if (!empty($attrPerItem[$i]) && $attr[$i] !== 'Stock') {
+                                $exist_attr = true;
+                                break;
+                            }
                         }
                     }
 

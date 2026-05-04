@@ -918,6 +918,25 @@ class FrontendController extends Controller
             ->where('attr_id', $attr_id)
             ->where('value_attr', $value_attr)
             ->first();
+
+        if (!$stock) {
+            $combo = DB::table('variant_combinations as vc')
+                ->join('variant_combination_values as vcv', 'vcv.combination_id', '=', 'vc.id')
+                ->where('vc.clothing_id', $cloth_id)
+                ->where('vcv.attr_id', $attr_id)
+                ->where('vcv.value_attr', $value_attr)
+                ->select(
+                    'vc.id as id',
+                    'vc.clothing_id as clothing_id',
+                    'vc.price as price',
+                    'vc.stock as stock',
+                    'vc.manage_stock as manage_stock'
+                )
+                ->first();
+
+            return response()->json($combo);
+        }
+
         return response()->json($stock);
     }
     public function compareIndex()
