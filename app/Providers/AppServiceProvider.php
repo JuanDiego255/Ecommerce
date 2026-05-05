@@ -203,11 +203,12 @@ class AppServiceProvider extends ServiceProvider
                                 ->on('attribute_value_cars.value_attr', '=', 'stocks.value_attr')
                                 ->where('stocks.price', '!=', 0);
                         })
+                        ->leftJoin('variant_combinations', 'carts.combination_id', '=', 'variant_combinations.id')
                         ->join('clothing', 'carts.clothing_id', 'clothing.id')
                         ->leftJoin('product_images', function ($join) {
                             $join->on('clothing.id', '=', 'product_images.clothing_id')
                                 ->whereRaw('product_images.id = (
-                                    SELECT MIN(id) FROM product_images 
+                                    SELECT MIN(id) FROM product_images
                                     WHERE product_images.clothing_id = clothing.id
                                 )');
                         })
@@ -221,10 +222,11 @@ class AppServiceProvider extends ServiceProvider
                             'clothing.status as status',
                             'carts.quantity as quantity',
                             'carts.id as cart_id',
+                            'carts.combination_id as combination_id',
                             'attributes.name as name_attr',
                             'attribute_values.value as value',
-                            DB::raw('COALESCE(stocks.price, clothing.price) as price'),
-                            DB::raw('COALESCE(stocks.stock, clothing.stock) as stock'),
+                            DB::raw('COALESCE(NULLIF(variant_combinations.price, 0), NULLIF(stocks.price, 0), clothing.price) as price'),
+                            DB::raw('COALESCE(variant_combinations.stock, stocks.stock, clothing.stock) as stock'),
                             DB::raw('(
                                 SELECT GROUP_CONCAT(CONCAT(attributes.name, ": ", attribute_values.value) SEPARATOR ", ")
                                 FROM attribute_value_cars
@@ -232,7 +234,7 @@ class AppServiceProvider extends ServiceProvider
                                 JOIN attribute_values ON attribute_value_cars.value_attr = attribute_values.id
                                 WHERE attribute_value_cars.cart_id = carts.id
                             ) as attributes_values'),
-                            DB::raw('IFNULL(product_images.image, "") as image'), // Obtener la primera imagen del producto
+                            DB::raw('IFNULL(product_images.image, "") as image'),
 
                         )
                         ->groupBy(
@@ -244,6 +246,9 @@ class AppServiceProvider extends ServiceProvider
                             'clothing.description',
                             'stocks.price',
                             'stocks.stock',
+                            'variant_combinations.price',
+                            'variant_combinations.stock',
+                            'carts.combination_id',
                             'clothing.mayor_price',
                             'attributes.name',
                             'attribute_values.value',
@@ -270,11 +275,12 @@ class AppServiceProvider extends ServiceProvider
                                 ->on('attribute_value_cars.value_attr', '=', 'stocks.value_attr')
                                 ->where('stocks.price', '!=', 0);
                         })
+                        ->leftJoin('variant_combinations', 'carts.combination_id', '=', 'variant_combinations.id')
                         ->join('clothing', 'carts.clothing_id', 'clothing.id')
                         ->leftJoin('product_images', function ($join) {
                             $join->on('clothing.id', '=', 'product_images.clothing_id')
                                 ->whereRaw('product_images.id = (
-                                    SELECT MIN(id) FROM product_images 
+                                    SELECT MIN(id) FROM product_images
                                     WHERE product_images.clothing_id = clothing.id
                                 )');
                         })
@@ -288,10 +294,11 @@ class AppServiceProvider extends ServiceProvider
                             'clothing.status as status',
                             'carts.quantity as quantity',
                             'carts.id as cart_id',
+                            'carts.combination_id as combination_id',
                             'attributes.name as name_attr',
                             'attribute_values.value as value',
-                            DB::raw('COALESCE(stocks.price, clothing.price) as price'),
-                            DB::raw('COALESCE(stocks.stock, clothing.stock) as stock'),
+                            DB::raw('COALESCE(NULLIF(variant_combinations.price, 0), NULLIF(stocks.price, 0), clothing.price) as price'),
+                            DB::raw('COALESCE(variant_combinations.stock, stocks.stock, clothing.stock) as stock'),
                             DB::raw('(
                                 SELECT GROUP_CONCAT(CONCAT(attributes.name, ": ", attribute_values.value) SEPARATOR ", ")
                                 FROM attribute_value_cars
@@ -299,7 +306,7 @@ class AppServiceProvider extends ServiceProvider
                                 JOIN attribute_values ON attribute_value_cars.value_attr = attribute_values.id
                                 WHERE attribute_value_cars.cart_id = carts.id
                             ) as attributes_values'),
-                            DB::raw('IFNULL(product_images.image, "") as image'), // Obtener la primera imagen del producto
+                            DB::raw('IFNULL(product_images.image, "") as image'),
 
                         )
                         ->groupBy(
@@ -311,6 +318,9 @@ class AppServiceProvider extends ServiceProvider
                             'clothing.description',
                             'stocks.price',
                             'stocks.stock',
+                            'variant_combinations.price',
+                            'variant_combinations.stock',
+                            'carts.combination_id',
                             'clothing.mayor_price',
                             'attributes.name',
                             'attribute_values.value',

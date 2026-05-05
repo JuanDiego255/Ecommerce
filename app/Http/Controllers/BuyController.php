@@ -147,16 +147,25 @@ class BuyController extends Controller
                     'buy_details.quantity as quantity',
                     'buys.approved as approved',
                     'buys.kind_of_buy as kind_of_buy',
+                    'buy_details.combination_id as combination_id',
                     DB::raw('IFNULL(product_images.image, "") as image'),
                     DB::raw('(
-                        SELECT GROUP_CONCAT(CONCAT(attributes.name, ": ", attribute_values.value) SEPARATOR ", ")
-                        FROM attribute_value_buys
-                        JOIN attributes ON attribute_value_buys.attr_id = attributes.id
-                        JOIN attribute_values ON attribute_value_buys.value_attr = attribute_values.id
-                        WHERE attribute_value_buys.buy_detail_id = buy_details.id
+                        CASE WHEN buy_details.combination_id IS NOT NULL THEN (
+                            SELECT GROUP_CONCAT(CONCAT(a.name, ": ", av.value) SEPARATOR ", ")
+                            FROM variant_combination_values vcv
+                            JOIN attributes a ON vcv.attr_id = a.id
+                            JOIN attribute_values av ON vcv.value_attr = av.id
+                            WHERE vcv.combination_id = buy_details.combination_id
+                        ) ELSE (
+                            SELECT GROUP_CONCAT(CONCAT(attributes.name, ": ", attribute_values.value) SEPARATOR ", ")
+                            FROM attribute_value_buys
+                            JOIN attributes ON attribute_value_buys.attr_id = attributes.id
+                            JOIN attribute_values ON attribute_value_buys.value_attr = attribute_values.id
+                            WHERE attribute_value_buys.buy_detail_id = buy_details.id
+                        ) END
                     ) as attributes_values'),
                 )
-                ->groupBy('clothing.id', 'buys.kind_of_buy', 'clothing.name', 'clothing.casa', 'clothing.description', 'buy_details.total', 'buy_details.iva', 'buy_details.id', 'buy_details.buy_id', 'buy_details.cancel_item', 'clothing.status', 'buy_details.quantity', 'buys.approved', 'product_images.image')
+                ->groupBy('clothing.id', 'buys.kind_of_buy', 'clothing.name', 'clothing.casa', 'clothing.description', 'buy_details.total', 'buy_details.iva', 'buy_details.id', 'buy_details.buy_id', 'buy_details.cancel_item', 'buy_details.combination_id', 'clothing.status', 'buy_details.quantity', 'buys.approved', 'product_images.image')
                 ->get();
         });
         $iva = $tenantinfo->iva;
@@ -234,15 +243,24 @@ class BuyController extends Controller
                     'buys.province as province_b',
                     'buys.postal_code as postal_code_b',
                     'buys.kind_of_buy as kind_of_buy',
+                    'buy_details.combination_id as combination_id',
                     DB::raw('(
-                        SELECT GROUP_CONCAT(CONCAT(attributes.name, ": ", attribute_values.value) SEPARATOR ", ")
-                        FROM attribute_value_buys
-                        JOIN attributes ON attribute_value_buys.attr_id = attributes.id
-                        JOIN attribute_values ON attribute_value_buys.value_attr = attribute_values.id
-                        WHERE attribute_value_buys.buy_detail_id = buy_details.id
+                        CASE WHEN buy_details.combination_id IS NOT NULL THEN (
+                            SELECT GROUP_CONCAT(CONCAT(a.name, ": ", av.value) SEPARATOR ", ")
+                            FROM variant_combination_values vcv
+                            JOIN attributes a ON vcv.attr_id = a.id
+                            JOIN attribute_values av ON vcv.value_attr = av.id
+                            WHERE vcv.combination_id = buy_details.combination_id
+                        ) ELSE (
+                            SELECT GROUP_CONCAT(CONCAT(attributes.name, ": ", attribute_values.value) SEPARATOR ", ")
+                            FROM attribute_value_buys
+                            JOIN attributes ON attribute_value_buys.attr_id = attributes.id
+                            JOIN attribute_values ON attribute_value_buys.value_attr = attribute_values.id
+                            WHERE attribute_value_buys.buy_detail_id = buy_details.id
+                        ) END
                     ) as attributes_values'),
                 )
-                ->groupBy('clothing.id', 'buys.kind_of_buy', 'users.name', 'users.telephone', 'users.email', 'clothing.name', 'clothing.casa', 'clothing.description', 'buy_details.total', 'buy_details.iva', 'buy_details.id', 'buy_details.buy_id', 'buy_details.cancel_item', 'clothing.status', 'buy_details.quantity', 'buys.approved', 'address_users.user_id', 'address_users.address', 'address_users.address_two', 'address_users.city', 'address_users.country', 'address_users.province', 'address_users.postal_code', 'buys.name', 'buys.telephone', 'buys.email', 'buys.address', 'buys.address_two', 'buys.city', 'buys.country', 'buys.province', 'buys.postal_code', 'product_images.image')
+                ->groupBy('clothing.id', 'buys.kind_of_buy', 'users.name', 'users.telephone', 'users.email', 'clothing.name', 'clothing.casa', 'clothing.description', 'buy_details.total', 'buy_details.iva', 'buy_details.id', 'buy_details.buy_id', 'buy_details.cancel_item', 'buy_details.combination_id', 'clothing.status', 'buy_details.quantity', 'buys.approved', 'address_users.user_id', 'address_users.address', 'address_users.address_two', 'address_users.city', 'address_users.country', 'address_users.province', 'address_users.postal_code', 'buys.name', 'buys.telephone', 'buys.email', 'buys.address', 'buys.address_two', 'buys.city', 'buys.country', 'buys.province', 'buys.postal_code', 'product_images.image')
                 ->get();
         });
         $iva = $tenantinfo->iva;
