@@ -24,6 +24,7 @@
             $precioConDescuento = $precio - $descuento;
         @endphp
         <input type="hidden" name="porcDescuento" value="{{ $item->discount }}" id="porcDescuento">
+        <input type="hidden" id="basePriceDetail" value="{{ $item->price }}">
         <div class="container p-t-30">
             <div class="bread-crumb flex-w p-l-25 p-r-15 p-lr-0-lg">
                 @if (isset($tenantinfo->manage_department) && $tenantinfo->manage_department != 1)
@@ -580,6 +581,7 @@
         getQuantity();
     });
     var currentCombinationId = null;
+    var basePriceDetail = parseFloat(document.getElementById('basePriceDetail') ? document.getElementById('basePriceDetail').value : 0) || 0;
     $('.btnAddToCart').click(function(e) {
         e.preventDefault();
         var prefix = document.getElementById('prefix').value == "aclimate" ? document.getElementById('prefix')
@@ -645,8 +647,9 @@
             }
         }); */
     });
-    $(".js-select2").on("change", function() {
+    $(document).on("change", ".js-select2", function() {
         var selected_value = $(this).val();
+        if (!selected_value) return;
         var partes = selected_value.split("-");
         if (partes.length === 3) {
             getStock(partes[2], partes[1], partes[0]);
@@ -662,28 +665,27 @@
             method: "GET",
             url: url,
             success: function(stock) {
+                if (!stock) return;
                 currentCombinationId = stock.id || null;
                 var maxStock = stock.stock > 0 ? stock.stock : '';
-                var porcDescuento = document.getElementById("porcDescuento").value;
-                var perPrice = stock.price;
+                var porcDescuento = parseFloat(document.getElementById("porcDescuento").value) || 0;
+                var perPrice = (stock.price > 0) ? parseFloat(stock.price) : basePriceDetail;
 
-                if (perPrice > 0) {
-                    $('input[name="quantity"]').attr('max', maxStock);
-                    $('input[name="quantity"]').val(1);
+                $('input[name="quantity"]').attr('max', maxStock);
+                $('input[name="quantity"]').val(1);
 
-                    var price = document.getElementById('text_price');
-                    var price_discount = document.getElementById('text_price_discount');
-                    if (porcDescuento > 0) {
-                        var descuento = (perPrice * porcDescuento) / 100;
-                        var precioConDescuento = perPrice - descuento;
-                        price.textContent =
-                            `₡${precioConDescuento.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
-                        price_discount.textContent =
-                            `₡${perPrice.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
-                    } else {
-                        price.textContent =
-                            `₡${perPrice.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
-                    }
+                var price = document.getElementById('text_price');
+                var price_discount = document.getElementById('text_price_discount');
+                if (porcDescuento > 0) {
+                    var descuento = (perPrice * porcDescuento) / 100;
+                    var precioConDescuento = perPrice - descuento;
+                    if (price) price.textContent =
+                        `₡${precioConDescuento.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
+                    if (price_discount) price_discount.textContent =
+                        `₡${perPrice.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
+                } else {
+                    if (price) price.textContent =
+                        `₡${perPrice.toLocaleString('es-CR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(',', '.')}`;
                 }
             }
         });

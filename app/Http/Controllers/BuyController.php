@@ -812,18 +812,27 @@ class BuyController extends Controller
                 'clothing.name as name',
                 'buy_details.quantity',
                 'buy_details.total',
+                'buy_details.combination_id',
                 DB::raw('IFNULL(product_images.image, "") as image'),
                 DB::raw('(
-                    SELECT GROUP_CONCAT(CONCAT(a.name, ": ", av.value) SEPARATOR ", ")
-                    FROM attribute_value_buys avb
-                    JOIN attributes a ON avb.attr_id = a.id
-                    JOIN attribute_values av ON avb.value_attr = av.id
-                    WHERE avb.buy_detail_id = buy_details.id
+                    CASE WHEN buy_details.combination_id IS NOT NULL THEN (
+                        SELECT GROUP_CONCAT(CONCAT(a.name, ": ", av.value) SEPARATOR ", ")
+                        FROM variant_combination_values vcv
+                        JOIN attributes a ON vcv.attr_id = a.id
+                        JOIN attribute_values av ON vcv.value_attr = av.id
+                        WHERE vcv.combination_id = buy_details.combination_id
+                    ) ELSE (
+                        SELECT GROUP_CONCAT(CONCAT(a.name, ": ", av.value) SEPARATOR ", ")
+                        FROM attribute_value_buys avb
+                        JOIN attributes a ON avb.attr_id = a.id
+                        JOIN attribute_values av ON avb.value_attr = av.id
+                        WHERE avb.buy_detail_id = buy_details.id
+                    ) END
                 ) as attributes_values'),
             ])
             ->groupBy(
                 'clothing.name', 'buy_details.quantity', 'buy_details.total',
-                'product_images.image', 'buy_details.id'
+                'buy_details.combination_id', 'product_images.image', 'buy_details.id'
             )
             ->get()
             ->map(function ($item) {
