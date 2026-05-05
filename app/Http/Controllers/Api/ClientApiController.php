@@ -9,6 +9,7 @@ use App\Models\AttributeValueBuy;
 use App\Models\Buy;
 use App\Models\BuyDetail;
 use App\Models\ClothingCategory;
+use App\Models\VariantCombination;
 use App\Models\VariantCombinationValue;
 use App\Models\TenantInfo;
 use Illuminate\Http\Request;
@@ -93,6 +94,8 @@ class ClientApiController extends Controller
                 'items.*.product_id'      => ['required', 'integer'],
                 'items.*.quantity'        => ['required', 'integer', 'min:1'],
                 'items.*.price'           => ['required', 'numeric', 'min:0'],
+                'items.*.combination_id'  => ['nullable', 'integer'],
+                'items.*.selected_variant' => ['nullable', 'string'],
             ]);
         } catch (ValidationException $e) {
             return response()->json(['message' => $e->errors()], 422);
@@ -132,14 +135,57 @@ class ClientApiController extends Controller
             $buy->save();
 
             foreach ($validated['items'] as $item) {
-                $detail              = new BuyDetail();
-                $detail->buy_id      = $buy->id;
-                $detail->clothing_id = $item['product_id'];
-                $detail->quantity    = $item['quantity'];
-                $detail->total       = $item['price'] * $item['quantity'];
-                $detail->iva         = 0;
-                $detail->cancel_item = 0;
+                $detail               = new BuyDetail();
+                $detail->buy_id       = $buy->id;
+                $detail->clothing_id  = $item['product_id'];
+                $detail->quantity     = $item['quantity'];
+                $detail->total        = $item['price'] * $item['quantity'];
+                $detail->iva          = 0;
+                $detail->cancel_item  = 0;
+                $combinationId = isset($item['combination_id']) ? (int) $item['combination_id'] : null;
+                if ($combinationId) {
+                    $detail->combination_id = $combinationId;
+                }
                 $detail->save();
+
+                // Track variant selection in attribute_value_buys
+                if ($combinationId) {
+                    $combValues = VariantCombinationValue::where('combination_id', $combinationId)->get();
+                    foreach ($combValues as $cv) {
+                        AttributeValueBuy::create([
+                            'buy_detail_id' => $detail->id,
+                            'attr_id'       => $cv->attr_id,
+                            'value_attr'    => $cv->value_attr,
+                        ]);
+                    }
+                }
+
+                // Deduct stock: variant combination first, then product-level fallback
+                $qty = (int) $item['quantity'];
+                if ($combinationId) {
+                    $combo = VariantCombination::find($combinationId);
+                    if ($combo && $combo->manage_stock == 1) {
+                        VariantCombination::where('id', $combinationId)
+                            ->update(['stock' => DB::raw("GREATEST(0, stock - {$qty})")]);
+                        $remaining = VariantCombination::where('id', $combinationId)->value('stock');
+                        if ($remaining <= 0) {
+                            $totalStock = VariantCombination::where('clothing_id', $combo->clothing_id)->sum('stock');
+                            if ($totalStock <= 0) {
+                                ClothingCategory::where('id', $combo->clothing_id)->update(['status' => 0]);
+                            }
+                        }
+                    }
+                } else {
+                    $clothing = ClothingCategory::find((int) $item['product_id']);
+                    if ($clothing && $clothing->manage_stock == 1) {
+                        ClothingCategory::where('id', $clothing->id)
+                            ->update(['stock' => DB::raw("GREATEST(0, stock - {$qty})")]);
+                        $remaining = ClothingCategory::where('id', $clothing->id)->value('stock');
+                        if ($remaining <= 0) {
+                            ClothingCategory::where('id', $clothing->id)->update(['status' => 0]);
+                        }
+                    }
+                }
             }
 
             DB::commit();
@@ -235,15 +281,30 @@ class ClientApiController extends Controller
                     }
                 }
 
-                // Decrement product stock when managed
+                // Deduct stock: variant combination first, then product-level fallback
                 $qty = (int) $item['quantity'];
-                $clothing = ClothingCategory::find((int) $item['product_id']);
-                if ($clothing && $clothing->manage_stock == 1) {
-                    ClothingCategory::where('id', $clothing->id)
-                        ->update(['stock' => DB::raw("GREATEST(0, stock - {$qty})")]);
-                    $remaining = ClothingCategory::where('id', $clothing->id)->value('stock');
-                    if ($remaining <= 0) {
-                        ClothingCategory::where('id', $clothing->id)->update(['status' => 0]);
+                if ($combinationId) {
+                    $combo = VariantCombination::find($combinationId);
+                    if ($combo && $combo->manage_stock == 1) {
+                        VariantCombination::where('id', $combinationId)
+                            ->update(['stock' => DB::raw("GREATEST(0, stock - {$qty})")]);
+                        $remaining = VariantCombination::where('id', $combinationId)->value('stock');
+                        if ($remaining <= 0) {
+                            $totalStock = VariantCombination::where('clothing_id', $combo->clothing_id)->sum('stock');
+                            if ($totalStock <= 0) {
+                                ClothingCategory::where('id', $combo->clothing_id)->update(['status' => 0]);
+                            }
+                        }
+                    }
+                } else {
+                    $clothing = ClothingCategory::find((int) $item['product_id']);
+                    if ($clothing && $clothing->manage_stock == 1) {
+                        ClothingCategory::where('id', $clothing->id)
+                            ->update(['stock' => DB::raw("GREATEST(0, stock - {$qty})")]);
+                        $remaining = ClothingCategory::where('id', $clothing->id)->value('stock');
+                        if ($remaining <= 0) {
+                            ClothingCategory::where('id', $clothing->id)->update(['status' => 0]);
+                        }
                     }
                 }
             }
