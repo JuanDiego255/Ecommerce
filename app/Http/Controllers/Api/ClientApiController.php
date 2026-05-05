@@ -436,7 +436,9 @@ class ClientApiController extends Controller
                     'image1'      => $imageUrl,
                     'image2'      => null,
                     'id_category' => 0,
-                    'price'       => (float) $d->product_price,
+                    'price'       => (int) $d->quantity > 0
+                                        ? round((float) $d->total / (int) $d->quantity, 2)
+                                        : (float) $d->product_price,
                     'quantity'    => (int) $d->quantity,
                 ],
             ];
