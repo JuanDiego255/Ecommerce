@@ -12,8 +12,10 @@ class AddressService {
   Map<String, String> get _headers {
     final h = <String, String>{
       'Content-Type': 'application/json',
-      'Authorization': SecureStorageService.authToken,
+      'Accept': 'application/json',
     };
+    final token = SecureStorageService.authToken;
+    if (token.isNotEmpty) h['Authorization'] = 'Bearer $token';
     final appToken = TenantSession.appToken;
     if (appToken != null && appToken.isNotEmpty) h['X-App-Token'] = appToken;
     return h;
@@ -21,8 +23,12 @@ class AddressService {
 
   Future<Resource<Address>> create(Address address) async {
     try {
-      final url = Uri.https(ApiConfig.API_ECOMMERCE, '/api/address');
-      final response = await http.post(url, headers: _headers, body: json.encode(address.toJson()));
+      final url = Uri.https(ApiConfig.API_ECOMMERCE, '/api/client/addresses');
+      final response = await http.post(
+        url,
+        headers: _headers,
+        body: json.encode(address.toJson()),
+      );
       final data = json.decode(response.body);
       if (response.statusCode == 200 || response.statusCode == 201) {
         return Success(Address.fromJson(data));
@@ -35,11 +41,11 @@ class AddressService {
 
   Future<Resource<List<Address>>> getUserAddress(int idUser) async {
     try {
-      final url = Uri.https(ApiConfig.API_ECOMMERCE, '/api/address/user/$idUser');
+      final url = Uri.https(ApiConfig.API_ECOMMERCE, '/api/client/addresses');
       final response = await http.get(url, headers: _headers);
       final data = json.decode(response.body);
       if (response.statusCode == 200 || response.statusCode == 201) {
-        return Success(Address.fromJsonList(data));
+        return Success(Address.fromJsonList(data as List<dynamic>));
       }
       return Error(listToString(data['message']));
     } catch (e) {
@@ -49,12 +55,12 @@ class AddressService {
 
   Future<Resource<bool>> delete(int id) async {
     try {
-      final url = Uri.https(ApiConfig.API_ECOMMERCE, '/api/address/$id');
+      final url = Uri.https(ApiConfig.API_ECOMMERCE, '/api/client/addresses/$id');
       final response = await http.delete(url, headers: _headers);
-      final data = json.decode(response.body);
       if (response.statusCode == 200 || response.statusCode == 201) {
         return Success(true);
       }
+      final data = json.decode(response.body);
       return Error(listToString(data['message']));
     } catch (e) {
       return Error(e.toString());

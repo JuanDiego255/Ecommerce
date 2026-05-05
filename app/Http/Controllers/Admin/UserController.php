@@ -88,12 +88,12 @@ class UserController extends Controller
             $this->validate($request, $campos, $mensaje);
             $user = User::findOrfail($id);
 
-            $user->name = $request->name;
+            $user->name      = $request->name;
             $user->telephone = $request->telephone;
-            $user->email = $request->email;
+            $user->email     = $request->email;
             $user->code_love = $request->code;
-            $user->role_as = $request->role_id;
-            $user->update();
+            $user->role_as   = $request->role_id;
+            $user->save();
             db::commit();
             return redirect('users')->with(['status' => 'Usuario actualizado con éxito!', 'icon' => 'success']);
         } catch (\Exception $th) {

@@ -15,8 +15,8 @@ String orderToJson(List<Order> data) => json.encode(List<dynamic>.from(data.map(
 
 class Order {
     int id;
-    int idClient;
-    int idAddress;
+    int? idClient;
+    int? idAddress;
     String status;
     DateTime createdAt;
     DateTime updatedAt;
@@ -26,8 +26,8 @@ class Order {
 
     Order({
         required this.id,
-        required this.idClient,
-        required this.idAddress,
+        this.idClient,
+        this.idAddress,
         required this.status,
         required this.createdAt,
         required this.updatedAt,
@@ -48,10 +48,10 @@ class Order {
     factory Order.fromJson(Map<String, dynamic> json) {
       print('Order Data: ${json}');
       return Order(
-        id: json["id"],
-        idClient: json["id_user"],
-        idAddress: json["id_address"],
-        status: json["status"],
+        id: json["id"] as int,
+        idClient: json["id_user"] as int?,
+        idAddress: json["id_address"] as int?,
+        status: (json["status"] ?? '').toString(),
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
         user: json["user"] != null ? User.fromJson(json["user"]) : null,
@@ -117,12 +117,16 @@ class OrderHasProduct {
     });
 
     factory OrderHasProduct.fromJson(Map<String, dynamic> json) => OrderHasProduct(
-        idOrder: json["id_order"],
-        idProduct: json["id_product"],
-        quantity: json["quantity"],
-        createdAt: DateTime.parse(json["created_at"]),
-        updatedAt: DateTime.parse(json["updated_at"]),
-        product: Product.fromJson(json["product"]),
+        idOrder: (json["id_order"] as num?)?.toInt() ?? 0,
+        idProduct: (json["id_product"] as num?)?.toInt() ?? 0,
+        quantity: (json["quantity"] as num?)?.toInt() ?? 1,
+        createdAt: json["created_at"] != null
+            ? DateTime.tryParse(json["created_at"].toString()) ?? DateTime.now()
+            : DateTime.now(),
+        updatedAt: json["updated_at"] != null
+            ? DateTime.tryParse(json["updated_at"].toString()) ?? DateTime.now()
+            : DateTime.now(),
+        product: Product.fromJson(json["product"] ?? {}),
     );
 
     Map<String, dynamic> toJson() => {

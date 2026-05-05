@@ -550,8 +550,8 @@
     </style>
     @endif
 
-    @if(isset($tenantinfo) && ($tenantinfo->tenant ?? '') === 'gestionarecr')
-    {{-- Persistent promo toast — never goes away --}}
+    {{-- @if(isset($tenantinfo) && ($tenantinfo->tenant ?? '') === 'gestionarecr')
+    
     <div id="ecd-promo-toast">
         <div class="ecd-toast-icon">🗂️</div>
         <div class="ecd-toast-body">
@@ -602,7 +602,7 @@
         }, 1200);
     })();
     </script>
-    @endif
+    @endif --}}
 
     {{-- ECD tour (active on /ecd/* for any tenant) --}}
     <script src="{{ asset('js/ecd-tour.js') }}"></script>

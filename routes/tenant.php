@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AdvertController;
 use App\Http\Controllers\Api\HomeDataController;
 use App\Http\Controllers\AttributeController;
+use App\Http\Controllers\Api\ClientApiController;
 use App\Http\Controllers\Auth\ApiLoginController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\BuyController;
@@ -933,6 +934,7 @@ Route::prefix('api')->middleware([
         return response()->json(['ok' => true]);
     });
     // ─── Public catalog endpoints (no auth, no app token) ────────────────────
+    Route::post('/orders/guest',                           [\App\Http\Controllers\Api\ClientApiController::class, 'guestOrder']);
     Route::get('/catalog/home/{tenant}',                  [\App\Http\Controllers\Api\CatalogApiController::class, 'home']);
     Route::get('/catalog/product/{id}/{tenant}',          [\App\Http\Controllers\Api\CatalogApiController::class, 'productDetail']);
     Route::get('/catalog/attributes/{categoryId}/{tenant}', [\App\Http\Controllers\Api\CatalogApiController::class, 'attributesByCategory']);
@@ -987,5 +989,19 @@ Route::prefix('api')->middleware([
         Route::post('/admin/orders/{id}/note',         [\App\Http\Controllers\Api\AdminOrderApiController::class, 'updateNote']);
         Route::post('/admin/orders/{id}/abono',        [\App\Http\Controllers\Api\AdminOrderApiController::class, 'addAbono']);
         Route::delete('/admin/orders/{id}',            [\App\Http\Controllers\Api\AdminOrderApiController::class, 'destroy']);
+    });
+
+    // ─── Client auth & account routes ────────────────────────────────────────
+    Route::post('/auth/register', [ApiLoginController::class, 'register']);
+
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get   ('/client/addresses',      [ClientApiController::class, 'addresses']);
+        Route::post  ('/client/addresses',      [ClientApiController::class, 'storeAddress']);
+        Route::delete('/client/addresses/{id}', [ClientApiController::class, 'deleteAddress']);
+
+        Route::get   ('/client/orders',         [ClientApiController::class, 'orders']);
+        Route::post  ('/client/orders',         [ClientApiController::class, 'storeOrder']);
+
+        Route::put   ('/client/profile',        [ClientApiController::class, 'updateProfile']);
     });
 });

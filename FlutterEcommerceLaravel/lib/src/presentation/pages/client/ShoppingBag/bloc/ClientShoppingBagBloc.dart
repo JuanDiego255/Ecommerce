@@ -1,3 +1,4 @@
+import 'package:ecommerce_flutter/src/data/dataSource/local/CartNotifier.dart';
 import 'package:ecommerce_flutter/src/domain/models/Product.dart';
 import 'package:ecommerce_flutter/src/domain/useCases/ShoppingBag/ShoppingBagUseCases.dart';
 import 'package:ecommerce_flutter/src/presentation/pages/client/ShoppingBag/bloc/ClientShoppingBagEvent.dart';
@@ -18,6 +19,7 @@ class ClientShoppingBagBloc extends Bloc<ClientShoppingBagEvent, ClientShoppingB
 
   Future<void> _onGetShoppingBag(GetShoppingBag event, Emitter<ClientShoppingBagState> emit) async {
     List<Product> products = await shoppingBagUseCases.getProducts.run();
+    CartNotifier.instance.update(products.length);
     emit(
       state.copyWith(products: products)
     );
@@ -25,6 +27,10 @@ class ClientShoppingBagBloc extends Bloc<ClientShoppingBagEvent, ClientShoppingB
   }
 
   Future<void> _onAddItem(AddItem event, Emitter<ClientShoppingBagState> emit) async {
+    final p = event.product;
+    if (p.variantManageStock == 1 && p.variantStock != null && p.variantStock! > 0) {
+      if ((p.quantity ?? 0) >= p.variantStock!) return;
+    }
     event.product.quantity = event.product.quantity! + 1;
     await shoppingBagUseCases.add.run(event.product);
     add(GetShoppingBag());
