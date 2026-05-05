@@ -230,8 +230,17 @@ class ClientApiController extends Controller
         $total = collect($validated['items'])
             ->sum(fn ($item) => $item['price'] * $item['quantity']);
 
-        // If authenticated, link to user; otherwise guest
-        $userId = optional($request->user())->id;
+        // If authenticated, link to user; otherwise guest.
+        // The route is public (no auth:sanctum), so $request->user() is always null.
+        // Resolve the Bearer token manually so orders placed while logged-in are linked.
+        $userId = null;
+        $bearerToken = $request->bearerToken();
+        if ($bearerToken) {
+            $accessToken = \Laravel\Sanctum\PersonalAccessToken::findToken($bearerToken);
+            if ($accessToken) {
+                $userId = $accessToken->tokenable_id;
+            }
+        }
 
         DB::beginTransaction();
         try {
