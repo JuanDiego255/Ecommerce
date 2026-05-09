@@ -1,0 +1,38 @@
+# -------------------------------------------------------
+# ROOT-LEVEL PROTECTION
+# If the web server document root points to the project
+# root instead of /public, this file blocks sensitive
+# paths before they can be served.
+# -------------------------------------------------------
+
+Options -Indexes
+
+# Block all dotfiles and sensitive project files
+<FilesMatch "^(\.env(\..*)?|\.git.*|composer\.(json|lock)|phpunit\.xml|artisan|server\.php|webpack\.mix\.js|package(-lock)?\.json|\.editorconfig|\.styleci\.yml)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Block .git directory traversal
+    RewriteRule ^\.git(/.*)?$ - [F,L]
+
+    # Block direct access to storage, bootstrap/cache, config, database, routes, app, tests
+    RewriteRule ^(storage|bootstrap/cache|config|database|routes|app|tests|vendor)(/.*)?$ - [F,L]
+
+    # If document root is the project root (misconfigured), redirect to public/
+    # Remove or comment this block once you fix the server config to point to /public
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteCond %{DOCUMENT_ROOT}/public/index.php -f
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ public/$1 [L]
+
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteCond %{DOCUMENT_ROOT}/public/index.php -f
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^$ public/index.php [L]
+</IfModule>

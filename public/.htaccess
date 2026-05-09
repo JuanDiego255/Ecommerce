@@ -1,3 +1,22 @@
+# -------------------------------------------------------
+# Block sensitive files and directories
+# -------------------------------------------------------
+
+# Block .env files (all variants)
+<FilesMatch "^\.env(\..*)?$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Block access to .git, .htpasswd, composer files, etc.
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^(\.git|\.gitignore|\.gitattributes|composer\.(json|lock)|phpunit\.xml|\.env.*|storage/logs) - [F,L]
+</IfModule>
+
+# -------------------------------------------------------
+# Laravel rewrite rules
+# -------------------------------------------------------
 <IfModule mod_rewrite.c>
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes
