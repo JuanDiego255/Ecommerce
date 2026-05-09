@@ -98,13 +98,13 @@ class LandingController extends Controller
         $to = $tenantinfo->email ?? null;
 
         if ($to) {
-            Mail::raw(
-                "Nombre: {$request->nombre}\nEmail: {$request->email}\n\nMensaje:\n{$request->mensaje}",
-                function ($m) use ($to, $tenantinfo) {
-                    $m->to($to)
-                      ->subject("Nuevo mensaje de contacto - {$tenantinfo->title}");
-                }
-            );
+            app(\App\Services\TenantMailService::class)->getMailer()
+                ->raw(
+                    "Nombre: {$request->nombre}\nEmail: {$request->email}\n\nMensaje:\n{$request->mensaje}",
+                    function ($m) use ($to, $tenantinfo) {
+                        $m->to($to)->subject("Nuevo mensaje de contacto - {$tenantinfo->title}");
+                    }
+                );
         }
 
         return redirect()->route('landing.contacto')

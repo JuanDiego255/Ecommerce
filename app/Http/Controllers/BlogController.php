@@ -721,10 +721,10 @@ class BlogController extends Controller
                 $details['body'] .= 'Consulta: ' . $request->question . PHP_EOL;
 
                 // Aquí enviamos el correo sin necesidad de especificar una vista
-                Mail::raw($details['body'], function ($message) use ($details, $email) {
-                    $message->to($email)
-                        ->subject($details['title']);
-                });
+                app(\App\Services\TenantMailService::class)->getMailer()
+                    ->raw($details['body'], function ($message) use ($details, $email) {
+                        $message->to($email)->subject($details['title']);
+                    });
             }
             return redirect()->back()->with(['status' => 'Hemos recibido la información, en breve te contáctaremos!', 'icon' => 'success']);
         } catch (Exception $th) {

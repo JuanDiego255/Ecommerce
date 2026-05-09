@@ -137,7 +137,7 @@ class TenantController extends Controller
         $tenantinfo = TenantInfo::first();
         return view('public.privacy', [
             'tenantTitle'    => $tenantinfo->title ?? config('app.name'),
-            'tenantEmail'    => $tenantinfo->email ?? env('MAIL_FROM_ADDRESS'),
+            'tenantEmail'    => $tenantinfo->email ?? config('mail.from.address'),
             'tenantWhatsapp' => $tenantinfo->whatsapp ?? null,
         ]);
     }
@@ -147,7 +147,7 @@ class TenantController extends Controller
         $tenantinfo = TenantInfo::first();
         return view('public.terms', [
             'tenantTitle'    => $tenantinfo->title ?? config('app.name'),
-            'tenantEmail'    => $tenantinfo->email ?? env('MAIL_FROM_ADDRESS'),
+            'tenantEmail'    => $tenantinfo->email ?? config('mail.from.address'),
             'tenantWhatsapp' => $tenantinfo->whatsapp ?? null,
         ]);
     }

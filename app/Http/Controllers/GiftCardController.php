@@ -159,19 +159,15 @@ class GiftCardController extends Controller
     {
         try {
             $tenantinfo = TenantInfo::first();
-            // Enviar el correo con el PDF adjunto
             $details = [
                 'title' => 'Adquiriste una tarjeta de regalo para canjear en el sitio web - ' . $tenantinfo->title,
             ];
-
-            Mail::send('emails.gift', $details, function ($message) use ($details, $email, $templateOutputPath) {
+            $mailer = app(\App\Services\TenantMailService::class)->getMailer();
+            $mailer->send('emails.gift', $details, function ($message) use ($details, $email, $templateOutputPath) {
                 $message
                     ->to($email)
                     ->subject($details['title'])
-                    ->attach($templateOutputPath, [
-                        'as' => 'gift_card.pdf',
-                        'mime' => 'application/pdf',
-                    ]);
+                    ->attach($templateOutputPath, ['as' => 'gift_card.pdf', 'mime' => 'application/pdf']);
             });
 
             return true;
@@ -183,19 +179,15 @@ class GiftCardController extends Controller
     {
         try {
             $tenantinfo = TenantInfo::first();
-            // Enviar el correo con el PDF adjunto
             $details = [
                 'title' => 'Tarjeta de regalo - Se realizó una venta por medio del sitio web - ' . $tenantinfo->title,
             ];
-
-            Mail::send('emails.gift', $details, function ($message) use ($details, $email, $templateOutputPath) {
+            $mailer = app(\App\Services\TenantMailService::class)->getMailer();
+            $mailer->send('emails.gift', $details, function ($message) use ($details, $email, $templateOutputPath) {
                 $message
                     ->to($email)
                     ->subject($details['title'])
-                    ->attach($templateOutputPath, [
-                        'as' => 'gift_card.pdf',
-                        'mime' => 'application/pdf',
-                    ]);
+                    ->attach($templateOutputPath, ['as' => 'gift_card.pdf', 'mime' => 'application/pdf']);
             });
 
             return true;

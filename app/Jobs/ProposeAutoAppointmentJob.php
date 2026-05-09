@@ -147,12 +147,15 @@ class ProposeAutoAppointmentJob implements ShouldQueue
             'reschedHours'     => optional($tenant)->reschedule_window_hours,
         ];
 
-        Mail::send(
+        $mailer      = app(\App\Services\TenantMailService::class)->getMailer();
+        $fromAddress = config('mail.from.address');
+        $fromName    = config('mail.from.name', 'Info Barbería');
+        $mailer->send(
             ['html' => 'emails.auto_proposed', 'text' => 'emails.auto_proposed_text'],
             $viewData,
-            function ($m) use ($client, $barbero, $startLocal) {
+            function ($m) use ($client, $barbero, $startLocal, $fromAddress, $fromName) {
                 $m->to($client->email)
-                  ->from(env('MAIL_FROM_ADDRESS'), 'Info Barbería')
+                  ->from($fromAddress, $fromName)
                   ->subject('Cita agendada con ' . $barbero->nombre . ' — ' . $startLocal->format('d/m/Y'));
             }
         );
