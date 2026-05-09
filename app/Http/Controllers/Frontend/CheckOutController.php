@@ -277,10 +277,31 @@ class CheckOutController extends Controller
         $province = null,
         $postal_code = null
     ) {
-        try {            
+        try {
+            $request = request();
+
+            // Honeypot: bots llenan campos ocultos, humanos no
+            if ($request->filled('_hp_email')) {
+                return redirect()->back()->with(['status' => 'Error al procesar el pedido.', 'icon' => 'error']);
+            }
+
+            // Carrito vacío: rechazar sin enviar email
+            $userId = Auth::id();
+            $sessionId = session()->get('session_id');
+            $hasCart = \App\Models\Cart::where('sold', 0)
+                ->where(function ($q) use ($userId, $sessionId) {
+                    if ($userId) {
+                        $q->where('user_id', $userId)->whereNull('session_id');
+                    } else {
+                        $q->where('session_id', $sessionId)->whereNull('user_id');
+                    }
+                })->exists();
+            if (!$hasCart) {
+                return redirect()->back()->with(['status' => 'No hay productos en el carrito.', 'icon' => 'warning']);
+            }
+
             // Obtener la IP del usuario
             $userIp = request()->ip();
-            $request = request();
             $prefix = $request->prefix;
             // Utilizar una API de geolocalización para obtener la ubicación basada en la IP
             /* $details = GeoLocation::lookup($userIp);

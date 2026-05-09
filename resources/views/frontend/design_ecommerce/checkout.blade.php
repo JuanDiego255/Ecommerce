@@ -60,6 +60,8 @@
                     <h4 class="mtext-109 clnew p-b-30">Formulario de compra</h4>
                     <form action="{{ url(($prefix == 'aclimate' ? $prefix . '/' : '') .'payment') }}" method="POST" enctype="multipart/form-data">
                         @csrf
+                        {{-- Honeypot: campo trampa invisible para bots --}}
+                        <input type="text" name="_hp_email" value="" style="display:none!important" tabindex="-1" autocomplete="off">
                         <input type="hidden" value="0" name="delivery" id="delivery">
                         <input type="hidden" value="{{ $prefix }}" name="prefix" id="prefix">
                         <input type="hidden" value="{{ $delivery }}" name="total_delivery" id="total_delivery">
