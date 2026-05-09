@@ -7,12 +7,16 @@ use App\Models\Event;
 use App\Models\Registration;
 use App\Models\TenantInfo;
 use Illuminate\Support\Facades\DB;
+use App\Traits\ChecksBotProtection;
 use Illuminate\Support\Facades\Mail;
 
 class PublicRegistrationController extends Controller
 {
+    use ChecksBotProtection;
+
     public function store(StoreRegistrationRequest $request, $id)
     {
+        $this->guardAgainstBots($request);
         //abort_unless($event->activo, 404);
         $event = Event::where('id', $id)->first();
         $imagen = null;

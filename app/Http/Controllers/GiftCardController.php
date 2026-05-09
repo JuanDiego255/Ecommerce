@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
+use App\Traits\ChecksBotProtection;
 use PhpOffice\PhpWord\TemplateProcessor;
 use Illuminate\Support\Facades\Mail;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -19,6 +20,8 @@ use Illuminate\Support\Facades\Storage;
 
 class GiftCardController extends Controller
 {
+    use ChecksBotProtection;
+
     public function index()
     {
         $gifts = GiftCard::where('user_id', Auth::user()->id)->get();
@@ -60,6 +63,7 @@ class GiftCardController extends Controller
      */
     public function store(Request $request)
     {
+        $this->guardAgainstBots($request);
         DB::beginTransaction();
         try {
             $campos = [

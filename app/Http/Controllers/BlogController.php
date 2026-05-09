@@ -19,12 +19,15 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use App\Traits\ChecksBotProtection;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 
 class BlogController extends Controller
 {
+    use ChecksBotProtection;
+
     protected $expirationTime;
 
     public function __construct()
@@ -704,6 +707,7 @@ class BlogController extends Controller
     }
     public function sendEmail(Request $request)
     {
+        $this->guardAgainstBots($request);
         try {
             $tenantinfo = TenantInfo::first();
             $email = $tenantinfo->email;

@@ -16,6 +16,7 @@
                 <form class="form-horizontal" action="{{ url('gift/store') }}" method="post"
                     enctype="multipart/form-data">
                     @csrf
+                    <x-bot-protection />
                     <h1 class="gift-title">{{ $tenantinfo->title }}</h1>
                     <div class="row">
                         <div class="input-group-gift col-md-12">
