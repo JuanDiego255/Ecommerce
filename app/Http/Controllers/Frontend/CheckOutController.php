@@ -285,17 +285,26 @@ class CheckOutController extends Controller
                 return redirect()->back()->with(['status' => 'Error al procesar el pedido.', 'icon' => 'error']);
             }
 
-            // Carrito vacío: rechazar sin enviar email
-            $userId = Auth::id();
-            $sessionId = session()->get('session_id');
-            $hasCart = \App\Models\Cart::where('sold', 0)
-                ->where(function ($q) use ($userId, $sessionId) {
-                    if ($userId) {
-                        $q->where('user_id', $userId)->whereNull('session_id');
-                    } else {
-                        $q->where('session_id', $sessionId)->whereNull('user_id');
-                    }
-                })->exists();
+            // Carrito vacío: rechazar sin enviar email.
+            // Las ventas internas (kind_of = "F") usan carts sin user_id ni session_id.
+            // Las ventas normales (kind_of = "V") usan carts vinculados al usuario o sesión.
+            if ($request->input('kind_of') === 'F') {
+                $hasCart = \App\Models\Cart::where('sold', 0)
+                    ->whereNull('user_id')
+                    ->whereNull('session_id')
+                    ->exists();
+            } else {
+                $userId    = Auth::id();
+                $sessionId = session()->get('session_id');
+                $hasCart   = \App\Models\Cart::where('sold', 0)
+                    ->where(function ($q) use ($userId, $sessionId) {
+                        if ($userId) {
+                            $q->where('user_id', $userId)->whereNull('session_id');
+                        } else {
+                            $q->where('session_id', $sessionId)->whereNull('user_id');
+                        }
+                    })->exists();
+            }
             if (!$hasCart) {
                 return redirect()->back()->with(['status' => 'No hay productos en el carrito.', 'icon' => 'warning']);
             }
