@@ -103,7 +103,7 @@ class ProposeAutoAppointmentJob implements ShouldQueue
             'cliente_email'     => $client->email,
             'cliente_phone'     => $client->telefono,
             'resumen_servicios' => 'Propuesta automática',
-            'total_cents'       => 0,
+            'total_cents'       => $client->auto_book_price ? (int)($client->auto_book_price * 100) : 0,
         ]);
 
         Log::channel('auto_book')->info('[AutoBook] Cita creada exitosamente', array_merge($ctx, [

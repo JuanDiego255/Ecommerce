@@ -87,6 +87,16 @@
                                         class="form-control form-control-lg">
                                 </div>
                             </div>
+                            <div class="col-md-4">
+                                <div class="input-group input-group-lg input-group-outline is-filled my-3">
+                                    <label class="form-label">Precio de la cita (₡)</label>
+                                    <input type="number" min="0" step="100"
+                                        name="auto_book_price"
+                                        value="{{ old('auto_book_price', $client->auto_book_price) }}"
+                                        class="form-control form-control-lg"
+                                        placeholder="Ej: 5000">
+                                </div>
+                            </div>
                             <div class="col-md-6">
                                 <div class="input-group input-group-lg input-group-outline is-filled my-3">
                                     <label class="form-label">Próximo disparo (next_due_at)</label>
