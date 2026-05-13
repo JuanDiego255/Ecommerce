@@ -137,6 +137,17 @@ class BlogController extends Controller
                 break;
         }
     }
+
+    public function projects()
+    {
+        $projects = Blog::where('is_project', 1)
+            ->orderBy('title', 'asc')
+            ->select('id', 'title', 'name_url', 'image')
+            ->get();
+
+        return view('frontend.av.projects', compact('projects'));
+    }
+
     /**
 
      * Get all the blogs.

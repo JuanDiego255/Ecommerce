@@ -159,6 +159,7 @@ Route::middleware([
         Route::group(['middleware' => 'isAre'], function () {
             Route::get('category', [FrontendController::class, 'category']);
             Route::get('/blog/index',  [BlogController::class, 'index']);
+            Route::get('/proyectos', [BlogController::class, 'projects'])->name('av.projects');
             Route::get('blog/{blog}/{name_url}', [BlogController::class, 'showArticles']);
             Route::post('send-email/blog', [BlogController::class, 'sendEmail'])->middleware('throttle:10,1');
             Route::get('departments/index', [FrontendController::class, 'departments']);
