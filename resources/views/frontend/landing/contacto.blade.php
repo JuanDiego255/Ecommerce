@@ -219,6 +219,7 @@
 
                     <form action="{{ route('landing.contacto.send') }}" method="POST">
                         @csrf
+                        <x-bot-protection />
                         <div class="row">
                             <div class="col-sm-6" style="margin-bottom:1.2rem;">
                                 <label class="cf-label">Nombre *</label>

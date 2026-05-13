@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
+use App\Traits\ChecksBotProtection;
 use PhpOffice\PhpWord\TemplateProcessor;
 use Illuminate\Support\Facades\Mail;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -19,6 +20,8 @@ use Illuminate\Support\Facades\Storage;
 
 class GiftCardController extends Controller
 {
+    use ChecksBotProtection;
+
     public function index()
     {
         $gifts = GiftCard::where('user_id', Auth::user()->id)->get();
@@ -60,6 +63,7 @@ class GiftCardController extends Controller
      */
     public function store(Request $request)
     {
+        $this->guardAgainstBots($request);
         DB::beginTransaction();
         try {
             $campos = [
@@ -159,19 +163,15 @@ class GiftCardController extends Controller
     {
         try {
             $tenantinfo = TenantInfo::first();
-            // Enviar el correo con el PDF adjunto
             $details = [
                 'title' => 'Adquiriste una tarjeta de regalo para canjear en el sitio web - ' . $tenantinfo->title,
             ];
-
-            Mail::send('emails.gift', $details, function ($message) use ($details, $email, $templateOutputPath) {
+            $mailer = app(\App\Services\TenantMailService::class)->getMailer();
+            $mailer->send('emails.gift', $details, function ($message) use ($details, $email, $templateOutputPath) {
                 $message
                     ->to($email)
                     ->subject($details['title'])
-                    ->attach($templateOutputPath, [
-                        'as' => 'gift_card.pdf',
-                        'mime' => 'application/pdf',
-                    ]);
+                    ->attach($templateOutputPath, ['as' => 'gift_card.pdf', 'mime' => 'application/pdf']);
             });
 
             return true;
@@ -183,19 +183,15 @@ class GiftCardController extends Controller
     {
         try {
             $tenantinfo = TenantInfo::first();
-            // Enviar el correo con el PDF adjunto
             $details = [
                 'title' => 'Tarjeta de regalo - Se realizó una venta por medio del sitio web - ' . $tenantinfo->title,
             ];
-
-            Mail::send('emails.gift', $details, function ($message) use ($details, $email, $templateOutputPath) {
+            $mailer = app(\App\Services\TenantMailService::class)->getMailer();
+            $mailer->send('emails.gift', $details, function ($message) use ($details, $email, $templateOutputPath) {
                 $message
                     ->to($email)
                     ->subject($details['title'])
-                    ->attach($templateOutputPath, [
-                        'as' => 'gift_card.pdf',
-                        'mime' => 'application/pdf',
-                    ]);
+                    ->attach($templateOutputPath, ['as' => 'gift_card.pdf', 'mime' => 'application/pdf']);
             });
 
             return true;

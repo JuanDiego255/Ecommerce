@@ -159,8 +159,9 @@ Route::middleware([
         Route::group(['middleware' => 'isAre'], function () {
             Route::get('category', [FrontendController::class, 'category']);
             Route::get('/blog/index',  [BlogController::class, 'index']);
+            Route::get('/proyectos', [BlogController::class, 'projects'])->name('av.projects');
             Route::get('blog/{blog}/{name_url}', [BlogController::class, 'showArticles']);
-            Route::post('send-email/blog', [BlogController::class, 'sendEmail']);
+            Route::post('send-email/blog', [BlogController::class, 'sendEmail'])->middleware('throttle:10,1');
             Route::get('departments/index', [FrontendController::class, 'departments']);
             Route::get('category/{id}', [FrontendController::class, 'category']);
             Route::get('clothes-category/{id}/{department_id}', [FrontendController::class, 'clothesByCategory']);
@@ -171,13 +172,13 @@ Route::middleware([
             Route::get('/view-cart/{unique_cart_id}', [CartController::class, 'viewCart']);
             Route::get('/get-cart-items', [CartController::class, 'getCart']);
             Route::delete('/delete-item-cart/{id}', [CartController::class, 'delete']);
-            Route::post('/payment', [CheckOutController::class, 'payment']);
-            Route::post('/payment/apartado/{id}', [CheckOutController::class, 'paymentApartado']);
+            Route::post('/payment', [CheckOutController::class, 'payment'])->middleware('throttle:5,1');
+            Route::post('/payment/apartado/{id}', [CheckOutController::class, 'paymentApartado'])->middleware('throttle:5,1');
             Route::get('/paypal/process/{orderId}', [CheckOutController::class, 'process']);
             Route::post('/comments/store/', [TestimonialController::class, 'store']);
             Route::get('/get-stock/{cloth_id}/{attr_id}/{value_attr}', [FrontendController::class, 'getStock']);
             Route::get('/gift-code/{id}', [GiftCardController::class, 'applyCode']);
-            Route::post('gift/store', [GiftCardController::class, 'store']);
+            Route::post('gift/store', [GiftCardController::class, 'store'])->middleware('throttle:10,1');
             Route::get('/get/products/select/', [ClothingCategoryController::class, 'getProductsToSelect']);
             Route::get('/catalogo/{barber}', [FrontendController::class, 'index']);
 
@@ -186,7 +187,7 @@ Route::middleware([
             Route::get('/barberos/{barbero}/agendar', [BookingController::class, 'showForm']);
             Route::get('/barberos/{barbero}/servicios', [BookingController::class, 'servicios']);
             Route::get('/barberos/{barbero}/disponibilidad', [BookingController::class, 'disponibilidad']);
-            Route::post('/reservas', [BookingController::class, 'reservar']);
+            Route::post('/reservas', [BookingController::class, 'reservar'])->middleware('throttle:10,1');
             // routes/web.php
             Route::get('/clients/{client}/auto-optin', function (\App\Models\Client $client) {
                 $client->update(['auto_book_opt_in' => true]);
@@ -204,7 +205,7 @@ Route::middleware([
                 ->middleware('signed')->name('auto.resched.apply');
             //Rutas para los usuarios del form de ciclismo
             Route::get('/eventos/{event}', [PublicEventController::class, 'show']);
-            Route::post('/eventos/{event}/inscribirse', [PublicRegistrationController::class, 'store']);
+            Route::post('/eventos/{event}/inscribirse', [PublicRegistrationController::class, 'store'])->middleware('throttle:10,1');
             Route::get('/registrations/show', [PublicRegistrationController::class, 'show'])->name('registrations.show');
         });
 
@@ -247,7 +248,7 @@ Route::middleware([
             Route::get('category', [FrontendController::class, 'category']);
             Route::get('/blog/index',  [BlogController::class, 'index']);
             Route::get('blog/{blog}/{name_url}', [BlogController::class, 'showArticles']);
-            Route::post('send-email/blog', [BlogController::class, 'sendEmail']);
+            Route::post('send-email/blog', [BlogController::class, 'sendEmail'])->middleware('throttle:10,1');
             Route::get('departments/index', [FrontendController::class, 'departments']);
             Route::get('category/{id}', [FrontendController::class, 'category']);
             Route::get('checkout', [CheckOutController::class, 'index']);
@@ -259,13 +260,13 @@ Route::middleware([
             Route::get('/view-cart/{unique_cart_id}', [CartController::class, 'viewCart']);
             Route::get('/get-cart-items', [CartController::class, 'getCart']);
             Route::delete('/delete-item-cart/{id}', [CartController::class, 'delete']);
-            Route::post('/payment', [CheckOutController::class, 'payment']);
-            Route::post('/payment/apartado/{id}', [CheckOutController::class, 'paymentApartado']);
+            Route::post('/payment', [CheckOutController::class, 'payment'])->middleware('throttle:5,1');
+            Route::post('/payment/apartado/{id}', [CheckOutController::class, 'paymentApartado'])->middleware('throttle:5,1');
             Route::get('/paypal/process/{orderId}', [CheckOutController::class, 'process']);
             Route::post('/comments/store/', [TestimonialController::class, 'store']);
             Route::get('/get-stock/{cloth_id}/{attr_id}/{value_attr}', [FrontendController::class, 'getStock']);
             Route::get('/gift-code/{id}', [GiftCardController::class, 'applyCode']);
-            Route::post('gift/store', [GiftCardController::class, 'store']);
+            Route::post('gift/store', [GiftCardController::class, 'store'])->middleware('throttle:10,1');
             Route::get('/get/products/select/', [ClothingCategoryController::class, 'getProductsToSelect']);
         });
         Route::group(['auth'], function () {
@@ -873,7 +874,7 @@ Route::middleware([
 
             // Inscripciones (admin)
             Route::get('/registrations', [RegistrationController::class, 'index'])->name('registrations.index');
-            Route::post('/registration/store/{id}', [PublicRegistrationController::class, 'store'])->name('registration.store');
+            Route::post('/registration/store/{id}', [PublicRegistrationController::class, 'store'])->name('registration.store')->middleware('throttle:10,1');
             Route::patch('/registrations/{id}/estado', [RegistrationController::class, 'updateEstado'])->name('registrations.updateEstado');
             Route::get('/registrations/{id}/comprobante', [RegistrationController::class, 'descargarComprobante'])->name('registrations.download');
         });
@@ -887,7 +888,7 @@ Route::middleware([
         Route::get('/preguntas-frecuentes',  [\App\Http\Controllers\LandingController::class, 'faq'])->name('landing.faq');
         Route::get('/nuestro-blog',          [\App\Http\Controllers\LandingController::class, 'blog'])->name('landing.blog');
         Route::get('/contacto',             [\App\Http\Controllers\LandingController::class, 'contacto'])->name('landing.contacto');
-        Route::post('/contacto/send',       [\App\Http\Controllers\LandingController::class, 'sendContacto'])->name('landing.contacto.send');
+        Route::post('/contacto/send',       [\App\Http\Controllers\LandingController::class, 'sendContacto'])->name('landing.contacto.send')->middleware('throttle:10,1');
     });
 
     // ─────────────────────────────────────────────────────────────────────────

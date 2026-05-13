@@ -17,6 +17,7 @@ use App\Services\PricingService;
 use App\Services\AvailabilityService;
 use App\Services\TenantMailService;
 use App\Support\TenantSettings;
+use App\Traits\ChecksBotProtection;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Artesaos\SEOTools\Facades\OpenGraph;
@@ -28,6 +29,8 @@ use Illuminate\Support\Facades\URL;
 
 class BookingController extends Controller
 {
+    use ChecksBotProtection;
+
 
     public function showForm(Barbero $barbero, Request $request)
     {
@@ -200,6 +203,7 @@ class BookingController extends Controller
 
     public function reservar(Request $request, PricingService $pricing, AvailabilityService $availability,  TenantMailService $tenantMailService)
     {
+        $this->guardAgainstBots($request);
         $data = $request->validate([
             'barbero_id' => ['required', 'integer', 'exists:barberos,id'],
             'cliente_nombre' => ['required', 'string', 'max:120'],

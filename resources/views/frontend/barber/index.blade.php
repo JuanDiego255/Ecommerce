@@ -62,24 +62,25 @@
                         </div>
                     </div>
                 </div>
-                <div class="row team-active dot-style">
-                    <!-- single Tem -->
-                    {{-- profesional info --}}
+                <div class="row justify-content-center">
                     @if (isset($barbers))
                         @foreach ($barbers as $item)
-                            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-">
-                                <div class="single-team mb-80 text-center">
-                                    <div class="team-img">
-                                        <img src="{{ isset($item->photo_path) ? route('file', $item->photo_path) : url('images/barber.PNG') }}"
-                                            alt="">
-                                    </div>
-                                    <div class="team-caption">
-                                        <span></span>
-                                        <h3><a href="{{ url('/barberos/' . $item->id . '/agendar/') }}">{{ $item->nombre }}
-                                                / Reservar</a>
-                                        </h3>
-                                    </div>
-                                </div>
+                            <div class="col-4" style="max-width:160px;">
+                                <a href="{{ url('/barberos/' . $item->id . '/agendar/') }}"
+                                   style="display:block;text-decoration:none;text-align:center;padding:0 8px 24px;">
+                                    <img src="{{ isset($item->photo_path) ? route('file', $item->photo_path) : url('images/barber.PNG') }}"
+                                         alt="{{ $item->nombre }}"
+                                         style="width:90px;height:90px;border-radius:50%;object-fit:cover;object-position:top;
+                                                border:2px solid var(--btn_cart);display:block;margin:0 auto 10px;">
+                                    <p style="color:#fff;font-size:.9rem;font-weight:600;margin:0 0 6px;
+                                              white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                                        {{ $item->nombre }}
+                                    </p>
+                                    <span style="font-size:.72rem;color:var(--btn_cart);text-transform:uppercase;
+                                                 letter-spacing:1px;font-weight:700;">
+                                        Reservar &rsaquo;
+                                    </span>
+                                </a>
                             </div>
                         @endforeach
                     @endif

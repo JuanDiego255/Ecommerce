@@ -277,10 +277,40 @@ class CheckOutController extends Controller
         $province = null,
         $postal_code = null
     ) {
-        try {            
+        try {
+            $request = request();
+
+            // Honeypot: bots llenan campos ocultos, humanos no
+            if ($request->filled('_hp_email')) {
+                return redirect()->back()->with(['status' => 'Error al procesar el pedido.', 'icon' => 'error']);
+            }
+
+            // Carrito vacío: rechazar sin enviar email.
+            // Las ventas internas (kind_of = "F") usan carts sin user_id ni session_id.
+            // Las ventas normales (kind_of = "V") usan carts vinculados al usuario o sesión.
+            if ($request->input('kind_of') === 'F') {
+                $hasCart = \App\Models\Cart::where('sold', 0)
+                    ->whereNull('user_id')
+                    ->whereNull('session_id')
+                    ->exists();
+            } else {
+                $userId    = Auth::id();
+                $sessionId = session()->get('session_id');
+                $hasCart   = \App\Models\Cart::where('sold', 0)
+                    ->where(function ($q) use ($userId, $sessionId) {
+                        if ($userId) {
+                            $q->where('user_id', $userId)->whereNull('session_id');
+                        } else {
+                            $q->where('session_id', $sessionId)->whereNull('user_id');
+                        }
+                    })->exists();
+            }
+            if (!$hasCart) {
+                return redirect()->back()->with(['status' => 'No hay productos en el carrito.', 'icon' => 'warning']);
+            }
+
             // Obtener la IP del usuario
             $userIp = request()->ip();
-            $request = request();
             $prefix = $request->prefix;
             // Utilizar una API de geolocalización para obtener la ubicación basada en la IP
             /* $details = GeoLocation::lookup($userIp);
@@ -1128,6 +1158,32 @@ class CheckOutController extends Controller
         try {
             $tenantinfo = TenantInfo::first();
 
+            // Resolve mailer: use DB SMTP config if configured, otherwise fall back to .env
+            $tenantId    = $tenantinfo->tenant ?? null;
+            $emailConfig = $tenantId
+                ? \App\Models\CompanyEmailSetting::where('tenant_id', $tenantId)->first()
+                : null;
+
+            if ($emailConfig) {
+                config([
+                    'mail.mailers.dynamic' => [
+                        'transport'  => $emailConfig->mailer ?? 'smtp',
+                        'host'       => $emailConfig->host,
+                        'port'       => $emailConfig->port,
+                        'encryption' => $emailConfig->encryption,
+                        'username'   => $emailConfig->username,
+                        'password'   => $emailConfig->password,
+                        'timeout'    => null,
+                        'auth_mode'  => null,
+                    ],
+                    'mail.from.address' => $emailConfig->from_address,
+                    'mail.from.name'    => $emailConfig->from_name ?? $tenantinfo->title ?? config('app.name'),
+                ]);
+                $mailer = Mail::mailer('dynamic');
+            } else {
+                $mailer = Mail::mailer(config('mail.default', 'smtp'));
+            }
+
             // ── Email to the store (internal notification) ───────────────
             $storeEmail = $tenantinfo->email ?? null;
             if ($storeEmail) {
@@ -1137,14 +1193,13 @@ class CheckOutController extends Controller
                     'delivery'    => $delivery,
                     'title'       => 'Se ha realizado una venta por medio del sitio web - ' . $tenantinfo->title,
                 ];
-                Mail::send('emails.sale', $storeDetails, function ($message) use ($storeDetails, $storeEmail) {
+                $mailer->send('emails.sale', $storeDetails, function ($message) use ($storeDetails, $storeEmail) {
                     $message->to($storeEmail)->subject($storeDetails['title']);
                 });
             }
 
             // ── Confirmation email to the customer ───────────────────────
             $toEmail = $customerEmail;
-            // Fallback: try to get email from authenticated user
             if (!$toEmail && Auth::check()) {
                 $toEmail = Auth::user()->email;
             }
@@ -1157,7 +1212,7 @@ class CheckOutController extends Controller
                     'store_name'    => $tenantinfo->title ?? 'Tienda',
                     'customer_name' => $customerName ?? (Auth::check() ? Auth::user()->name : 'Cliente'),
                 ];
-                Mail::send('emails.sale-customer', $customerDetails, function ($message) use ($customerDetails, $toEmail) {
+                $mailer->send('emails.sale-customer', $customerDetails, function ($message) use ($customerDetails, $toEmail) {
                     $message->to($toEmail)
                         ->subject('Confirmación de tu pedido – ' . $customerDetails['store_name']);
                 });
