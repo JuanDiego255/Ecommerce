@@ -56,38 +56,95 @@
                 <!-- Section Tittle -->
                 <div class="row justify-content-center">
                     <div class="col-xl-8 col-lg-8 col-md-11 col-sm-11">
-                        <div class="section-tittle text-center mb-100">
+                        <div class="section-tittle text-center mb-60">
                             <span>Nuestro equipo profesional</span>
                             <h2>Los mejores en lo que hacen</h2>
                         </div>
                     </div>
                 </div>
-                <div class="row justify-content-center">
+
+                {{-- Desktop layout (md and above) --}}
+                <div class="d-none d-md-flex justify-content-center flex-wrap" style="gap:32px;">
                     @if (isset($barbers))
                         @foreach ($barbers as $item)
-                            <div class="col-4" style="max-width:160px;">
-                                <a href="{{ url('/barberos/' . $item->id . '/agendar/') }}"
-                                   style="display:block;text-decoration:none;text-align:center;padding:0 8px 24px;">
+                            <a href="{{ url('/barberos/' . $item->id . '/agendar/') }}"
+                               class="barber-card-desktop"
+                               style="text-decoration:none;display:flex;flex-direction:column;
+                                      width:260px;border-radius:12px;overflow:hidden;
+                                      background:#111;border:1px solid rgba(255,255,255,.08);
+                                      transition:transform .3s ease,box-shadow .3s ease;position:relative;">
+                                <div style="position:relative;overflow:hidden;height:300px;">
                                     <img src="{{ isset($item->photo_path) ? route('file', $item->photo_path) : url('images/barber.PNG') }}"
                                          alt="{{ $item->nombre }}"
-                                         style="width:90px;height:90px;border-radius:50%;object-fit:cover;object-position:top;
-                                                border:2px solid var(--btn_cart);display:block;margin:0 auto 10px;">
-                                    <p style="color:#fff;font-size:.9rem;font-weight:600;margin:0 0 6px;
-                                              white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
-                                        {{ $item->nombre }}
-                                    </p>
-                                    <span style="font-size:.72rem;color:var(--btn_cart);text-transform:uppercase;
-                                                 letter-spacing:1px;font-weight:700;">
+                                         style="width:100%;height:100%;object-fit:cover;object-position:top;
+                                                transition:transform .4s ease;">
+                                    <div style="position:absolute;inset:0;
+                                                background:linear-gradient(to top, rgba(0,0,0,.85) 30%, transparent 70%);"></div>
+                                    <div style="position:absolute;bottom:0;left:0;right:0;padding:20px 20px 16px;">
+                                        <p style="color:#fff;font-size:1.15rem;font-weight:700;margin:0 0 4px;
+                                                  letter-spacing:.5px;text-shadow:0 1px 4px rgba(0,0,0,.6);">
+                                            {{ $item->nombre }}
+                                        </p>
+                                        <span style="font-size:.75rem;color:var(--btn_cart);text-transform:uppercase;
+                                                     letter-spacing:2px;font-weight:700;">
+                                            Barbero profesional
+                                        </span>
+                                    </div>
+                                </div>
+                                <div style="padding:16px 20px;display:flex;align-items:center;justify-content:space-between;
+                                            border-top:1px solid rgba(255,255,255,.08);">
+                                    <span style="color:#bbb;font-size:.82rem;letter-spacing:.5px;">
+                                        <i class="fas fa-calendar-check mr-1" style="color:var(--btn_cart);"></i>
+                                        Reservar cita
+                                    </span>
+                                    <span style="background:var(--btn_cart);color:var(--btn_cart_text);
+                                                 font-size:.78rem;font-weight:700;padding:6px 14px;border-radius:20px;
+                                                 text-transform:uppercase;letter-spacing:1px;">
                                         Reservar &rsaquo;
                                     </span>
-                                </a>
-                            </div>
+                                </div>
+                            </a>
+                        @endforeach
+                    @endif
+                </div>
+
+                {{-- Mobile layout (sm and below) --}}
+                <div class="d-flex d-md-none justify-content-center flex-wrap" style="gap:20px;">
+                    @if (isset($barbers))
+                        @foreach ($barbers as $item)
+                            <a href="{{ url('/barberos/' . $item->id . '/agendar/') }}"
+                               style="display:flex;flex-direction:column;align-items:center;
+                                      text-decoration:none;width:110px;">
+                                <img src="{{ isset($item->photo_path) ? route('file', $item->photo_path) : url('images/barber.PNG') }}"
+                                     alt="{{ $item->nombre }}"
+                                     style="width:88px;height:88px;border-radius:50%;object-fit:cover;object-position:top;
+                                            border:2px solid var(--btn_cart);margin-bottom:10px;">
+                                <p style="color:#fff;font-size:.88rem;font-weight:600;margin:0 0 6px;
+                                          text-align:center;white-space:nowrap;overflow:hidden;
+                                          text-overflow:ellipsis;width:100%;">
+                                    {{ $item->nombre }}
+                                </p>
+                                <span style="font-size:.7rem;color:var(--btn_cart);text-transform:uppercase;
+                                             letter-spacing:1px;font-weight:700;">
+                                    Reservar &rsaquo;
+                                </span>
+                            </a>
                         @endforeach
                     @endif
                 </div>
             </div>
         </div>
         <!-- Team End -->
+
+        <style>
+            .barber-card-desktop:hover {
+                transform: translateY(-6px);
+                box-shadow: 0 16px 40px rgba(0,0,0,.5), 0 0 0 1px var(--btn_cart);
+            }
+            .barber-card-desktop:hover img {
+                transform: scale(1.05);
+            }
+        </style>
         <!-- slider Area End-->
         <!--? About Area Start -->
         <section class="about-area section-padding30 position-relative" id="about">
