@@ -8,9 +8,7 @@ use Illuminate\Support\Facades\Artisan;
 
 class TenantsArtisanActive extends Command
 {
-    protected $signature = 'tenants:artisan-active
-                            {commandstring : Comando artisan a ejecutar (ej: "migrate --path=database/migrations/tenant")}
-                            {--tenant=* : Ejecutar solo en tenant(s) específicos activos (puede repetirse)}';
+    protected $signature = 'tenants:artisan-active {commandstring : Comando artisan (ej: "migrate --path=database/migrations/tenant")} {--tenant=* : Correr solo en estos tenant IDs activos}';
 
     protected $description = 'Ejecuta un comando Artisan únicamente en tenants con active = 1';
 
