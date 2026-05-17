@@ -407,18 +407,20 @@
                 $.get('/clothing/' + qeItemId + '/variants', function(data) {
                     var html = '';
                     if (data.has_attr) {
-                        html += '<p style="font-size:.75rem;color:var(--gray3);margin-bottom:.6rem;">Editá precio y stock por variante. Precio <strong>0</strong> = usa el precio base del producto. Stock <strong>−1</strong> = sin control.</p>';
+                        html += '<p style="font-size:.75rem;color:var(--gray3);margin-bottom:.6rem;">Precio/Stock <strong>0</strong> = usa el valor base del producto. Stock <strong>−1</strong> = sin control. Marque <strong>Forzar</strong> para guardar 0 como valor real.</p>';
                         html += '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse">';
                         html += '<thead><tr style="border-bottom:1px solid var(--gray1)">'
                             + '<th class="surface-title" style="padding:.35rem .5rem;font-size:.67rem;text-align:left">Variante</th>'
                             + '<th class="surface-title" style="padding:.35rem .5rem;font-size:.67rem;width:90px">Stock</th>'
                             + '<th class="surface-title" style="padding:.35rem .5rem;font-size:.67rem;width:110px">Precio (₡)</th>'
+                            + '<th class="surface-title" style="padding:.35rem .5rem;font-size:.67rem;width:52px;text-align:center" title="Forzar 0 como valor real">Forzar</th>'
                             + '</tr></thead><tbody>';
                         data.variants.forEach(function(v) {
                             html += '<tr>'
                                 + '<td style="padding:.3rem .4rem"><span class="vb-variant-chip" style="font-size:.72rem">' + v.label + '</span></td>'
                                 + '<td style="padding:.25rem .4rem"><input type="number" class="filter-input qe-stock" style="width:100%" data-id="' + v.id + '" data-type="' + (v.type || 'stock') + '" value="' + v.stock + '" min="-1"></td>'
                                 + '<td style="padding:.25rem .4rem"><input type="number" class="filter-input qe-price" style="width:100%" data-id="' + v.id + '" value="' + v.price + '" min="0" placeholder="0 = base"></td>'
+                                + '<td style="padding:.25rem .4rem;text-align:center"><input type="checkbox" class="qe-override" data-id="' + v.id + '" title="Forzar 0 literal"' + (v.override_base ? ' checked' : '') + '></td>'
                                 + '</tr>';
                         });
                         html += '</tbody></table></div>';
@@ -445,7 +447,7 @@
                     $('.qe-stock').each(function() {
                         var id   = $(this).data('id');
                         var type = $(this).data('type') || 'stock';
-                        variants.push({ id, type, stock: $(this).val(), price: $('.qe-price[data-id="' + id + '"]').val() });
+                        variants.push({ id, type, stock: $(this).val(), price: $('.qe-price[data-id="' + id + '"]').val(), override_base: $('.qe-override[data-id="' + id + '"]').is(':checked') ? 1 : 0 });
                     });
                     $.ajax({ url: '/clothing/variants/update', method: 'POST',
                         data: { _token: CSRF_TOKEN, variants, category_id: CATEGORY_ID },

@@ -505,8 +505,8 @@ class BuyController extends Controller
                     'carts.quantity as quantity',
                     'carts.id as cart_id',
                     'carts.custom_price as custom_price',
-                    DB::raw('COALESCE(NULLIF(variant_combinations.price, 0), clothing.price) as price'),
-                    DB::raw('COALESCE(variant_combinations.stock, clothing.stock) as stock'),
+                    DB::raw('CASE WHEN variant_combinations.override_base = 0 AND variant_combinations.price = 0 THEN clothing.price ELSE variant_combinations.price END as price'),
+                    DB::raw('CASE WHEN variant_combinations.override_base = 0 AND variant_combinations.stock = 0 THEN clothing.stock ELSE COALESCE(variant_combinations.stock, clothing.stock) END as stock'),
                     DB::raw('(
                             SELECT GROUP_CONCAT(CONCAT(a.name, ": ", av.value) SEPARATOR ", ")
                             FROM attribute_value_cars avc
@@ -604,7 +604,7 @@ class BuyController extends Controller
             ->groupBy(
                 'clothing.id', 'clothing.name', 'clothing.price', 'clothing.stock',
                 'clothing.casa', 'clothing.code', 'clothing.description',
-                'variant_combinations.price', 'variant_combinations.stock',
+                'variant_combinations.price', 'variant_combinations.stock', 'variant_combinations.override_base',
                 'clothing.mayor_price', 'clothing.status', 'clothing.discount',
                 'carts.quantity', 'carts.id', 'carts.custom_price', 'product_images.image'
             )
@@ -646,6 +646,52 @@ class BuyController extends Controller
                 ->select('a.name as columna_atributo', 'a.id as attr_id', 's.clothing_id as clothing_id', DB::raw('GROUP_CONCAT(v.value ORDER BY v.value ASC SEPARATOR "/") as valores'), DB::raw('GROUP_CONCAT(v.id ORDER BY v.value ASC SEPARATOR "/") as ids'), DB::raw('GROUP_CONCAT(s.stock ORDER BY v.value ASC SEPARATOR "/") as stock'))
                 ->groupBy('a.name', 'a.id', 's.clothing_id')
                 ->get();
+            if ($result->isEmpty()) {
+                $rows = DB::table('variant_combination_values as vcv')
+                    ->join('variant_combinations as vc', 'vcv.combination_id', '=', 'vc.id')
+                    ->join('clothing as c', 'vc.clothing_id', '=', 'c.id')
+                    ->join('attributes as a', 'vcv.attr_id', '=', 'a.id')
+                    ->join('attribute_values as av', 'vcv.value_attr', '=', 'av.id')
+                    ->where('vc.clothing_id', $cloth_check->id)
+                    ->select(
+                        'a.id as attr_id', 'a.name', 'av.id as value_id', 'av.value',
+                        DB::raw('CASE WHEN vc.override_base = 0 AND vc.stock = 0 THEN c.stock ELSE vc.stock END as vc_stock'),
+                        'vc.clothing_id'
+                    )
+                    ->get();
+
+                $grouped = [];
+                foreach ($rows as $row) {
+                    if (!isset($grouped[$row->attr_id])) {
+                        $grouped[$row->attr_id] = [
+                            'attr_id' => $row->attr_id, 'name' => $row->name,
+                            'clothing_id' => $row->clothing_id, 'vals' => [],
+                        ];
+                    }
+                    $vid = $row->value_id;
+                    if (!isset($grouped[$row->attr_id]['vals'][$vid])) {
+                        $grouped[$row->attr_id]['vals'][$vid] = ['id' => $vid, 'value' => $row->value, 'stock' => -999];
+                    }
+                    $cur = $grouped[$row->attr_id]['vals'][$vid]['stock'];
+                    $new = (int) $row->vc_stock;
+                    $grouped[$row->attr_id]['vals'][$vid]['stock'] =
+                        ($new === -1 || $cur === -1) ? -1 : max($cur === -999 ? 0 : $cur, $new);
+                }
+
+                $result = collect(array_values($grouped))->map(function ($g) {
+                    $vals = array_values($g['vals']);
+                    usort($vals, fn($a, $b) => strcmp($a['value'], $b['value']));
+                    return (object) [
+                        'columna_atributo' => $g['name'],
+                        'attr_id'          => $g['attr_id'],
+                        'clothing_id'      => $g['clothing_id'],
+                        'valores'          => implode('/', array_column($vals, 'value')),
+                        'ids'              => implode('/', array_column($vals, 'id')),
+                        'stock'            => implode('/', array_map(fn($v) => $v['stock'] === -999 ? 0 : $v['stock'], $vals)),
+                    ];
+                });
+            }
+
             return response()->json(['status' => 'success', 'results' => $result]);
         } else {
             return response()->json(['status' => 'No existe ningún producto con el código digitado', 'icon' => 'warning']);

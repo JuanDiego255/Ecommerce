@@ -1,0 +1,114 @@
+{
+  "$meta": {
+    "name": "Oscuro Premium",
+    "platform": "Flutter",
+    "target": "lib/src/presentation",
+    "generatedFor": "FlutterEcommerceApp"
+  },
+  "color": {
+    "background": {
+      "base": "#0E0E10",
+      "surface": "#17171A",
+      "surfaceAlt": "#1F1F23",
+      "elevated": "#202024"
+    },
+    "text": {
+      "primary": "#F5F5F0",
+      "muted": "#A0A09A",
+      "subtle": "#6B6B66",
+      "onAccent": "#0E0E10"
+    },
+    "border": {
+      "default": "#28282D",
+      "subtle": "#202024",
+      "strong": "#3A3A40"
+    },
+    "accent": {
+      "primary": "#C9A961",
+      "primaryHover": "#D4B673",
+      "primaryPressed": "#B89853"
+    },
+    "feedback": {
+      "success": "#7AAE8C",
+      "danger": "#E07A6B",
+      "warning": "#D4B673"
+    }
+  },
+  "typography": {
+    "fontFamily": "Inter",
+    "weights": {
+      "regular": 400,
+      "medium": 500,
+      "semibold": 600
+    },
+    "scale": {
+      "display": { "size": 32, "weight": 500, "letterSpacing": -0.64, "lineHeight": 1.15 },
+      "h1":      { "size": 24, "weight": 500, "letterSpacing": -0.48, "lineHeight": 1.2 },
+      "h2":      { "size": 20, "weight": 500, "letterSpacing": -0.4, "lineHeight": 1.25 },
+      "h3":      { "size": 17, "weight": 500, "letterSpacing": -0.34, "lineHeight": 1.3 },
+      "body":    { "size": 15, "weight": 400, "letterSpacing": 0, "lineHeight": 1.5 },
+      "bodySm":  { "size": 13, "weight": 400, "letterSpacing": 0, "lineHeight": 1.45 },
+      "caption": { "size": 11, "weight": 500, "letterSpacing": 0.6, "lineHeight": 1.3, "case": "uppercase" },
+      "price":   { "size": 18, "weight": 500, "letterSpacing": -0.2, "lineHeight": 1.2 }
+    }
+  },
+  "spacing": {
+    "unit": 4,
+    "scale": [0, 4, 8, 12, 16, 20, 24, 32, 40, 48, 64]
+  },
+  "radius": {
+    "sm": 4,
+    "md": 6,
+    "lg": 10,
+    "pill": 999
+  },
+  "elevation": {
+    "card": "none",
+    "sheet": "0 -8px 32px rgba(0,0,0,0.6)",
+    "stickyBar": "0 -1px 0 #28282D"
+  },
+  "components": {
+    "productCard": {
+      "imageAspectRatio": "1 / 1.15",
+      "imageRadius": 6,
+      "padding": 0,
+      "wishlistIcon": { "size": 32, "background": "rgba(14,14,16,0.6)", "iconColor": "#F5F5F0" },
+      "discountBadge": { "background": "#C9A961", "color": "#0E0E10", "padding": "3px 6px", "fontSize": 10, "weight": 600 }
+    },
+    "primaryButton": {
+      "height": 52,
+      "radius": 6,
+      "background": "#C9A961",
+      "color": "#0E0E10",
+      "weight": 600,
+      "letterSpacing": 0.2
+    },
+    "secondaryButton": {
+      "height": 52,
+      "radius": 6,
+      "background": "transparent",
+      "border": "1px solid #28282D",
+      "color": "#F5F5F0"
+    },
+    "input": {
+      "height": 48,
+      "radius": 6,
+      "background": "#17171A",
+      "border": "1px solid #28282D",
+      "borderFocus": "1px solid #C9A961",
+      "color": "#F5F5F0",
+      "placeholder": "#6B6B66"
+    },
+    "bottomSheet": {
+      "background": "#17171A",
+      "topRadius": 16,
+      "handleColor": "#3A3A40",
+      "scrim": "rgba(0,0,0,0.7)"
+    },
+    "navBar": {
+      "background": "#0E0E10",
+      "border": "1px solid #28282D",
+      "height": 56
+    }
+  }
+}

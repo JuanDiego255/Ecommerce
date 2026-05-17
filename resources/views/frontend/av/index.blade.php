@@ -140,7 +140,7 @@
                     <div class="row">
                         <div class="col-xl-12">
                             <div class="more_close_btn text-center">
-                                <a href="{{ route('av.projects') }}" class="boxed-btn3-line">Explorar más</a>
+                                <a href="{{ url(($prefix == 'aclimate' ? $prefix : '') . '/proyectos') }}" class="boxed-btn3-line">Explorar más</a>
                             </div>
                         </div>
                     </div>
