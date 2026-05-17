@@ -5,12 +5,27 @@ namespace App\Console\Commands;
 use App\Models\Tenant;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
 
 class TenantsArtisanActive extends Command
 {
-    protected $signature = 'tenants:artisan-active {commandstring : Comando artisan (ej: "migrate --path=database/migrations/tenant")} {--tenant=* : Correr solo en estos tenant IDs activos}';
+    protected $name        = 'tenants:artisan-active';
+    protected $description = 'Ejecuta un comando Artisan solo en tenants con active = 1';
 
-    protected $description = 'Ejecuta un comando Artisan únicamente en tenants con active = 1';
+    protected function getArguments(): array
+    {
+        return [
+            ['commandstring', InputArgument::REQUIRED, 'Comando artisan a ejecutar (ej: migrate --path=database/migrations/tenant)'],
+        ];
+    }
+
+    protected function getOptions(): array
+    {
+        return [
+            ['tenant', null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_OPTIONAL, 'Correr solo en estos tenant IDs activos'],
+        ];
+    }
 
     public function handle(): int
     {
