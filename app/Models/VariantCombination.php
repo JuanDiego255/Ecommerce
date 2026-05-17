@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class VariantCombination extends Model
 {
-    protected $fillable = ['clothing_id', 'price', 'stock', 'manage_stock'];
+    protected $fillable = ['clothing_id', 'price', 'stock', 'manage_stock', 'override_base'];
 
     public function values()
     {
