@@ -798,13 +798,14 @@ class ClothingCategoryController extends Controller
 
                 $singleVal = $combo->values->first();
                 return [
-                    'id'    => $combo->id,
-                    'type'  => 'combination',
-                    'attr'  => $combo->values->count() === 1 ? optional($singleVal->attribute)->name : '',
-                    'val'   => $combo->values->count() === 1 ? optional($singleVal->attributeValue)->value : '',
-                    'label' => $label,
-                    'stock' => (int) $combo->stock,
-                    'price' => (int) $combo->price,
+                    'id'            => $combo->id,
+                    'type'          => 'combination',
+                    'attr'          => $combo->values->count() === 1 ? optional($singleVal->attribute)->name : '',
+                    'val'           => $combo->values->count() === 1 ? optional($singleVal->attributeValue)->value : '',
+                    'label'         => $label,
+                    'stock'         => (int) $combo->stock,
+                    'price'         => (int) $combo->price,
+                    'override_base' => (int) $combo->override_base,
                 ];
             });
 
@@ -880,8 +881,10 @@ class ClothingCategoryController extends Controller
         return response()->json([
             'found'          => true,
             'combination_id' => $combination->id,
-            'price'          => $combination->price > 0 ? (int) $combination->price : (int) $clothing->price,
-            'stock'          => (int) $combination->stock,
+            'price'          => ($combination->override_base == 0 && $combination->price == 0)
+                                    ? (int) $clothing->price : (int) $combination->price,
+            'stock'          => ($combination->override_base == 0 && $combination->stock == 0)
+                                    ? (int) $clothing->stock : (int) $combination->stock,
             'manage_stock'   => $combination->manage_stock,
         ]);
     }
@@ -895,20 +898,23 @@ class ClothingCategoryController extends Controller
             $stockVal      = (int)   ($combo['stock']          ?? 0);
             $combinationId = isset($combo['combination_id']) && $combo['combination_id'] !== ''
                 ? (int) $combo['combination_id'] : null;
+            $overrideBase   = !empty($combo['override_base']) ? 1 : 0;
             $effectiveStock = $manage_stock == 1 ? $stockVal : -1;
 
             if ($combinationId) {
                 VariantCombination::where('id', $combinationId)->update([
-                    'price'        => $price,
-                    'stock'        => $effectiveStock,
-                    'manage_stock' => $manage_stock,
+                    'price'         => $price,
+                    'stock'         => $effectiveStock,
+                    'manage_stock'  => $manage_stock,
+                    'override_base' => $overrideBase,
                 ]);
             } else {
-                $combination               = new VariantCombination();
-                $combination->clothing_id  = $clothingId;
-                $combination->price        = $price;
-                $combination->stock        = $effectiveStock;
-                $combination->manage_stock = $manage_stock;
+                $combination                = new VariantCombination();
+                $combination->clothing_id   = $clothingId;
+                $combination->price         = $price;
+                $combination->stock         = $effectiveStock;
+                $combination->manage_stock  = $manage_stock;
+                $combination->override_base = $overrideBase;
                 $combination->save();
 
                 foreach ($valueIds as $vid) {
@@ -951,8 +957,9 @@ class ClothingCategoryController extends Controller
             foreach ($request->input('variants', []) as $v) {
                 if (($v['type'] ?? 'stock') === 'combination') {
                     VariantCombination::where('id', $v['id'])->update([
-                        'stock' => $v['stock'],
-                        'price' => $v['price'],
+                        'stock'         => $v['stock'],
+                        'price'         => $v['price'],
+                        'override_base' => !empty($v['override_base']) ? 1 : 0,
                     ]);
                 } else {
                     Stock::where('id', $v['id'])->update([

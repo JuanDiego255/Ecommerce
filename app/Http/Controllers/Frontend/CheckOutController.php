@@ -85,8 +85,8 @@ class CheckOutController extends Controller
                     'carts.combination_id as combination_id',
                     'attributes.name as name_attr',
                     'attribute_values.value as value',
-                    DB::raw('COALESCE(NULLIF(variant_combinations.price, 0), stocks.price, clothing.price) as price'),
-                    DB::raw('COALESCE(stocks.stock, clothing.stock) as stock'),
+                    DB::raw('CASE WHEN variant_combinations.override_base = 0 AND variant_combinations.price = 0 THEN COALESCE(NULLIF(stocks.price, 0), clothing.price) ELSE variant_combinations.price END as price'),
+                    DB::raw('CASE WHEN variant_combinations.override_base = 0 AND variant_combinations.stock = 0 THEN clothing.stock ELSE COALESCE(variant_combinations.stock, stocks.stock, clothing.stock) END as stock'),
                     DB::raw('(
                     SELECT GROUP_CONCAT(CONCAT(attributes.name, ": ", attribute_values.value) SEPARATOR ", ")
                     FROM attribute_value_cars
@@ -114,6 +114,8 @@ class CheckOutController extends Controller
                     'carts.id',
                     'carts.combination_id',
                     'variant_combinations.price',
+                    'variant_combinations.stock',
+                    'variant_combinations.override_base',
                     'product_images.image'
                 )
                 ->get();
@@ -175,8 +177,8 @@ class CheckOutController extends Controller
                     'carts.combination_id as combination_id',
                     'attributes.name as name_attr',
                     'attribute_values.value as value',
-                    DB::raw('COALESCE(NULLIF(variant_combinations.price, 0), stocks.price, clothing.price) as price'),
-                    DB::raw('COALESCE(stocks.stock, clothing.stock) as stock'),
+                    DB::raw('CASE WHEN variant_combinations.override_base = 0 AND variant_combinations.price = 0 THEN COALESCE(NULLIF(stocks.price, 0), clothing.price) ELSE variant_combinations.price END as price'),
+                    DB::raw('CASE WHEN variant_combinations.override_base = 0 AND variant_combinations.stock = 0 THEN clothing.stock ELSE COALESCE(variant_combinations.stock, stocks.stock, clothing.stock) END as stock'),
                     DB::raw('(
                     SELECT GROUP_CONCAT(CONCAT(attributes.name, ": ", attribute_values.value) SEPARATOR ", ")
                     FROM attribute_value_cars
@@ -204,6 +206,8 @@ class CheckOutController extends Controller
                     'carts.id',
                     'carts.combination_id',
                     'variant_combinations.price',
+                    'variant_combinations.stock',
+                    'variant_combinations.override_base',
                     'product_images.image'
                 )
                 ->get();
@@ -362,8 +366,8 @@ class CheckOutController extends Controller
                             'carts.combination_id as combination_id',
                             'attributes.name as name_attr',
                             'attribute_values.value as value',
-                            DB::raw('COALESCE(NULLIF(variant_combinations.price, 0), stocks.price, clothing.price) as price'),
-                            DB::raw('COALESCE(stocks.stock, clothing.stock) as stock'),
+                            DB::raw('CASE WHEN variant_combinations.override_base = 0 AND variant_combinations.price = 0 THEN COALESCE(NULLIF(stocks.price, 0), clothing.price) ELSE variant_combinations.price END as price'),
+                            DB::raw('CASE WHEN variant_combinations.override_base = 0 AND variant_combinations.stock = 0 THEN clothing.stock ELSE COALESCE(variant_combinations.stock, stocks.stock, clothing.stock) END as stock'),
                             DB::raw('(
                                 SELECT GROUP_CONCAT(CONCAT(attributes.id, "-", attribute_values.id) SEPARATOR ", ")
                                 FROM attribute_value_cars
@@ -618,8 +622,8 @@ class CheckOutController extends Controller
                             'carts.combination_id as combination_id',
                             'attributes.name as name_attr',
                             'attribute_values.value as value',
-                            DB::raw('COALESCE(NULLIF(variant_combinations.price, 0), stocks.price, clothing.price) as price'),
-                            DB::raw('COALESCE(stocks.stock, clothing.stock) as stock'),
+                            DB::raw('CASE WHEN variant_combinations.override_base = 0 AND variant_combinations.price = 0 THEN COALESCE(NULLIF(stocks.price, 0), clothing.price) ELSE variant_combinations.price END as price'),
+                            DB::raw('CASE WHEN variant_combinations.override_base = 0 AND variant_combinations.stock = 0 THEN clothing.stock ELSE COALESCE(variant_combinations.stock, stocks.stock, clothing.stock) END as stock'),
                             DB::raw('(
                                 SELECT GROUP_CONCAT(CONCAT(attributes.id, "-", attribute_values.id) SEPARATOR ", ")
                                 FROM attribute_value_cars
@@ -888,8 +892,8 @@ class CheckOutController extends Controller
                         'carts.custom_price as custom_price',
                         'attributes.name as name_attr',
                         'attribute_values.value as value',
-                        DB::raw('COALESCE(NULLIF(variant_combinations.price, 0), stocks.price, clothing.price) as price'),
-                        DB::raw('COALESCE(stocks.stock, clothing.stock) as stock'),
+                        DB::raw('CASE WHEN variant_combinations.override_base = 0 AND variant_combinations.price = 0 THEN COALESCE(NULLIF(stocks.price, 0), clothing.price) ELSE variant_combinations.price END as price'),
+                        DB::raw('CASE WHEN variant_combinations.override_base = 0 AND variant_combinations.stock = 0 THEN clothing.stock ELSE COALESCE(variant_combinations.stock, stocks.stock, clothing.stock) END as stock'),
                         DB::raw('(
                             SELECT GROUP_CONCAT(CONCAT(attributes.id, "-", attribute_values.id) SEPARATOR ", ")
                             FROM attribute_value_cars
@@ -926,6 +930,8 @@ class CheckOutController extends Controller
                         'carts.id',
                         'carts.combination_id',
                         'variant_combinations.price',
+                        'variant_combinations.stock',
+                        'variant_combinations.override_base',
                         'carts.custom_price',
                         'product_images.image'
                     )
