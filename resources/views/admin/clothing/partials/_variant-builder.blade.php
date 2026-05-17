@@ -14,6 +14,7 @@
             'value_ids'      => $c->values->pluck('value_attr')->values(),
             'price'          => $c->price,
             'stock'          => $c->stock,
+            'override_base'  => (int) $c->override_base,
         ])->values()
         : collect([]);
 @endphp
@@ -74,8 +75,10 @@
     {{-- Variants table --}}
     <div id="vb-table-wrap" class="d-none">
         <div style="font-size:.71rem;color:var(--gray3);margin-bottom:.5rem;">
-            Precio <strong>0</strong> = usa el precio base del producto &nbsp;·&nbsp;
-            Stock <strong>−1</strong> = sin control de inventario.
+            Precio <strong>0</strong> = usa el precio base &nbsp;·&nbsp;
+            Stock <strong>0</strong> = usa el stock base &nbsp;·&nbsp;
+            Stock <strong>−1</strong> = sin control &nbsp;·&nbsp;
+            Marque <strong>Forzar</strong> para guardar 0 como valor real.
         </div>
         <div style="overflow-x:auto;">
         <table style="width:100%;border-collapse:collapse;min-width:320px">
@@ -84,6 +87,7 @@
                     <th class="surface-title" style="padding:.4rem .6rem;text-align:left;font-size:.67rem">Combinación</th>
                     <th class="surface-title" style="padding:.4rem .6rem;text-align:left;font-size:.67rem">Precio (₡)</th>
                     <th class="surface-title" style="padding:.4rem .6rem;text-align:left;font-size:.67rem">Stock</th>
+                    <th class="surface-title" style="padding:.4rem .6rem;text-align:center;font-size:.67rem;width:40px" title="Forzar 0 como valor real (no heredar del producto)">Forzar</th>
                     <th style="width:32px"></th>
                 </tr>
             </thead>

@@ -24,6 +24,7 @@ class Client extends Model
         'discount',
         'auto_book_frequency',
         'auto_book_lookahead_days',
+        'auto_book_price',
         'due_price'
     ];
     protected $casts = [

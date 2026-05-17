@@ -19,12 +19,15 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use App\Traits\ChecksBotProtection;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 
 class BlogController extends Controller
 {
+    use ChecksBotProtection;
+
     protected $expirationTime;
 
     public function __construct()
@@ -134,6 +137,17 @@ class BlogController extends Controller
                 break;
         }
     }
+
+    public function projects()
+    {
+        $projects = Blog::where('is_project', 1)
+            ->orderBy('title', 'asc')
+            ->select('id', 'title', 'name_url', 'image')
+            ->get();
+
+        return view('frontend.av.projects', compact('projects'));
+    }
+
     /**
 
      * Get all the blogs.
@@ -704,6 +718,7 @@ class BlogController extends Controller
     }
     public function sendEmail(Request $request)
     {
+        $this->guardAgainstBots($request);
         try {
             $tenantinfo = TenantInfo::first();
             $email = $tenantinfo->email;
@@ -721,10 +736,10 @@ class BlogController extends Controller
                 $details['body'] .= 'Consulta: ' . $request->question . PHP_EOL;
 
                 // Aquí enviamos el correo sin necesidad de especificar una vista
-                Mail::raw($details['body'], function ($message) use ($details, $email) {
-                    $message->to($email)
-                        ->subject($details['title']);
-                });
+                app(\App\Services\TenantMailService::class)->getMailer()
+                    ->raw($details['body'], function ($message) use ($details, $email) {
+                        $message->to($email)->subject($details['title']);
+                    });
             }
             return redirect()->back()->with(['status' => 'Hemos recibido la información, en breve te contáctaremos!', 'icon' => 'success']);
         } catch (Exception $th) {

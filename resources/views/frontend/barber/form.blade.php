@@ -211,6 +211,7 @@
 
                         <form action="{{ url('/reservas') }}" method="POST" id="formBooking">
                             @csrf
+                            <x-bot-protection />
                             {{-- For general barber, JS will set this when a barber is selected from modal --}}
                             <input type="hidden" name="barbero_id" id="barberoIdInput"
                                    value="{{ $isGeneral ? '' : $barbero->id }}">

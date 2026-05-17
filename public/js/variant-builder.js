@@ -6,12 +6,13 @@
  *
  * Form output per combination index i:
  *   combos[i][values][]       — hidden, one per value_id in the combo
- *   combos[i][price]          — decimal price (0 = use product base price)
- *   combos[i][stock]          — integer stock (-1 = no inventory control)
+ *   combos[i][price]          — decimal price (0 = use product base price unless override_base=1)
+ *   combos[i][stock]          — integer stock (-1 = no inventory control; 0 = use base unless override_base=1)
  *   combos[i][combination_id] — existing PK, or empty string for new
+ *   combos[i][override_base]  — 1 = save 0 as literal; 0 = 0 inherits base price/stock
  *
  * data-existing format (from PHP):
- *   [{"combination_id":5,"value_ids":[12,34],"price":5000,"stock":10}, …]
+ *   [{"combination_id":5,"value_ids":[12,34],"price":5000,"stock":10,"override_base":0}, …]
  *
  * Inline creation:
  *   "Nuevo valor" input → POST /attribute-value/inline-store
@@ -30,9 +31,10 @@
   // Map<valueId:number, {attrId, attrName, valName}>
   var selected    = new Map();
   // Maps keyed by comboKey (sorted value IDs joined by "_")
-  var comboPrices = new Map();
-  var comboStocks = new Map();
-  var comboIds    = new Map();
+  var comboPrices    = new Map();
+  var comboStocks    = new Map();
+  var comboIds       = new Map();
+  var comboOverrides = new Map();
 
   var activeAttrId = null;
 
@@ -68,6 +70,7 @@
       comboPrices.set(key, combo.price != null ? parseFloat(combo.price) : 0);
       comboStocks.set(key, combo.stock != null ? parseInt(combo.stock)   : 0);
       comboIds.set(key, combo.combination_id || null);
+      comboOverrides.set(key, combo.override_base ? 1 : 0);
     });
     renderPills();
     renderTable();
@@ -280,6 +283,7 @@
       var price    = comboPrices.has(key) ? comboPrices.get(key) : 0;
       var stock    = comboStocks.has(key) ? comboStocks.get(key) : 0;
       var existId  = comboIds.has(key) ? (comboIds.get(key) || '') : '';
+      var override = comboOverrides.has(key) ? comboOverrides.get(key) : 0;
 
       var label = combo.map(function (c) {
         return c.attrName + ': ' + c.valName;
@@ -296,6 +300,7 @@
           '<span class="vb-variant-chip">' + label + '</span>' +
           hiddenValues +
           '<input type="hidden" name="combos[' + i + '][combination_id]" value="' + existId + '">' +
+          '<input type="hidden" name="combos[' + i + '][override_base]" class="vb-override-hidden" value="' + override + '" data-combo-key="' + key + '">' +
         '</td>' +
         '<td style="padding:.3rem .4rem">' +
           '<input type="number" name="combos[' + i + '][price]" class="filter-input vb-input" ' +
@@ -311,11 +316,22 @@
             'data-combo-key="' + key + '" ' +
             'oninput="window.vbUpdateComboStock(\'' + key + '\', this.value)">' +
         '</td>' +
+        '<td style="padding:.3rem .4rem;text-align:center;width:40px" title="Marcar para guardar 0 como valor real en lugar de heredar del producto">' +
+          '<input type="checkbox" class="vb-override-check" data-combo-key="' + key + '"' + (override ? ' checked' : '') + '>' +
+        '</td>' +
         '<td style="padding:.3rem .4rem;text-align:center;width:32px">' +
           '<button type="button" class="vb-del" data-val-ids="' + valueIds.join(',') + '" title="Quitar estas variantes">' +
             '<i class="fas fa-times"></i>' +
           '</button>' +
         '</td>';
+
+      tr.querySelector('.vb-override-check').addEventListener('change', function () {
+        var k   = this.dataset.comboKey;
+        var val = this.checked ? 1 : 0;
+        comboOverrides.set(k, val);
+        var hidden = tr.querySelector('.vb-override-hidden[data-combo-key="' + k + '"]');
+        if (hidden) hidden.value = val;
+      });
 
       tr.querySelector('.vb-del').addEventListener('click', function () {
         var ids = this.dataset.valIds.split(',').map(Number);

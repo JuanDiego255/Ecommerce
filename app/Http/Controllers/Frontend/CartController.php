@@ -362,8 +362,8 @@ class CartController extends Controller
                         'carts.quantity as quantity',
                         'carts.id as cart_id',
                         'carts.unique_cart_id as unique_cart_id',
-                        DB::raw('COALESCE(NULLIF(variant_combinations.price, 0), clothing.price) as price'),
-                        DB::raw('COALESCE(variant_combinations.stock, clothing.stock) as stock'),
+                        DB::raw('CASE WHEN variant_combinations.override_base = 0 AND variant_combinations.price = 0 THEN clothing.price ELSE variant_combinations.price END as price'),
+                        DB::raw('CASE WHEN variant_combinations.override_base = 0 AND variant_combinations.stock = 0 THEN clothing.stock ELSE COALESCE(variant_combinations.stock, clothing.stock) END as stock'),
                         DB::raw('(
                             SELECT GROUP_CONCAT(CONCAT(a.name, ": ", av.value) SEPARATOR ", ")
                             FROM attribute_value_cars avc
@@ -382,6 +382,7 @@ class CartController extends Controller
                         'clothing.description',
                         'variant_combinations.price',
                         'variant_combinations.stock',
+                        'variant_combinations.override_base',
                         'clothing.mayor_price',
                         'clothing.status',
                         'clothing.discount',
@@ -419,8 +420,8 @@ class CartController extends Controller
                         'clothing.status as status',
                         'carts.quantity as quantity',
                         'carts.id as cart_id',
-                        DB::raw('COALESCE(NULLIF(variant_combinations.price, 0), clothing.price) as price'),
-                        DB::raw('COALESCE(variant_combinations.stock, clothing.stock) as stock'),
+                        DB::raw('CASE WHEN variant_combinations.override_base = 0 AND variant_combinations.price = 0 THEN clothing.price ELSE variant_combinations.price END as price'),
+                        DB::raw('CASE WHEN variant_combinations.override_base = 0 AND variant_combinations.stock = 0 THEN clothing.stock ELSE COALESCE(variant_combinations.stock, clothing.stock) END as stock'),
                         DB::raw('(
                             SELECT GROUP_CONCAT(CONCAT(a.name, ": ", av.value) SEPARATOR ", ")
                             FROM attribute_value_cars avc
@@ -439,6 +440,7 @@ class CartController extends Controller
                         'clothing.description',
                         'variant_combinations.price',
                         'variant_combinations.stock',
+                        'variant_combinations.override_base',
                         'clothing.mayor_price',
                         'clothing.status',
                         'clothing.discount',
@@ -473,8 +475,8 @@ class CartController extends Controller
                         'clothing.status as status',
                         'carts.quantity as quantity',
                         'carts.id as cart_id',
-                        DB::raw('COALESCE(NULLIF(variant_combinations.price, 0), clothing.price) as price'),
-                        DB::raw('COALESCE(variant_combinations.stock, clothing.stock) as stock'),
+                        DB::raw('CASE WHEN variant_combinations.override_base = 0 AND variant_combinations.price = 0 THEN clothing.price ELSE variant_combinations.price END as price'),
+                        DB::raw('CASE WHEN variant_combinations.override_base = 0 AND variant_combinations.stock = 0 THEN clothing.stock ELSE COALESCE(variant_combinations.stock, clothing.stock) END as stock'),
                         DB::raw('(
                             SELECT GROUP_CONCAT(CONCAT(a.name, ": ", av.value) SEPARATOR ", ")
                             FROM attribute_value_cars avc
@@ -493,6 +495,7 @@ class CartController extends Controller
                         'clothing.description',
                         'variant_combinations.price',
                         'variant_combinations.stock',
+                        'variant_combinations.override_base',
                         'clothing.mayor_price',
                         'clothing.status',
                         'clothing.discount',

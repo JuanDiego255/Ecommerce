@@ -12,10 +12,13 @@ use App\Models\TenantInfo;
 use App\Models\TenantSocialNetwork;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use App\Traits\ChecksBotProtection;
 use Illuminate\Support\Facades\Mail;
 
 class LandingController extends Controller
 {
+    use ChecksBotProtection;
+
     protected int $ttl = 30; // minutos de caché
 
     private function baseData(): array
@@ -88,6 +91,7 @@ class LandingController extends Controller
 
     public function sendContacto(Request $request)
     {
+        $this->guardAgainstBots($request);
         $request->validate([
             'nombre'  => 'required|string|max:200',
             'email'   => 'required|email|max:200',
@@ -98,13 +102,13 @@ class LandingController extends Controller
         $to = $tenantinfo->email ?? null;
 
         if ($to) {
-            Mail::raw(
-                "Nombre: {$request->nombre}\nEmail: {$request->email}\n\nMensaje:\n{$request->mensaje}",
-                function ($m) use ($to, $tenantinfo) {
-                    $m->to($to)
-                      ->subject("Nuevo mensaje de contacto - {$tenantinfo->title}");
-                }
-            );
+            app(\App\Services\TenantMailService::class)->getMailer()
+                ->raw(
+                    "Nombre: {$request->nombre}\nEmail: {$request->email}\n\nMensaje:\n{$request->mensaje}",
+                    function ($m) use ($to, $tenantinfo) {
+                        $m->to($to)->subject("Nuevo mensaje de contacto - {$tenantinfo->title}");
+                    }
+                );
         }
 
         return redirect()->route('landing.contacto')

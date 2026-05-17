@@ -90,6 +90,7 @@
 
                             <form action="{{ url('send-email/blog') }}" method="POST" enctype="multipart/form-data">
                                 @csrf
+                                <x-bot-protection />
                                 <input type="hidden" name="title" value="{{ $blog->title }}">
                                 <div class="bor19 m-b-20">
                                     <textarea class="stext-111 cl2 plh3 size-124 p-lr-18 p-tb-15" name="question" placeholder="Consulta..."></textarea>

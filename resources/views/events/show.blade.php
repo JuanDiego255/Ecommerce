@@ -163,6 +163,7 @@
                     <form action="{{ route('registration.store', $event->id) }}" method="POST"
                         enctype="multipart/form-data" autocomplete="off">
                         @csrf
+                        <x-bot-protection />
 
                         <div class="row">
                             <div class="col-md-6">

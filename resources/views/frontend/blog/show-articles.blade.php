@@ -87,6 +87,7 @@
                         <div class="card-body">
                             <form action="{{ url('send-email/blog') }}" method="POST" enctype="multipart/form-data">
                                 @csrf
+                                <x-bot-protection />
                                 <div class="row">
                                     <div class="col-md-12 mb-3">
                                         <label class="form-label">Nombre</label>

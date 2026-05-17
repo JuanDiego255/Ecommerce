@@ -471,6 +471,7 @@ class ClientApiController extends Controller
                 ];
             });
 
+            $mailer     = app(\App\Services\TenantMailService::class)->getMailer();
             $storeEmail = $tenantinfo->email ?? null;
             if ($storeEmail) {
                 $storeDetails = [
@@ -479,7 +480,7 @@ class ClientApiController extends Controller
                     'delivery'    => 0,
                     'title'       => 'Nuevo pedido desde la app móvil - ' . ($tenantinfo->title ?? ''),
                 ];
-                Mail::send('emails.sale', $storeDetails, function ($message) use ($storeDetails, $storeEmail) {
+                $mailer->send('emails.sale', $storeDetails, function ($message) use ($storeDetails, $storeEmail) {
                     $message->to($storeEmail)->subject($storeDetails['title']);
                 });
             }
@@ -491,7 +492,7 @@ class ClientApiController extends Controller
                 'store_name'    => $tenantinfo->title ?? 'Tienda',
                 'customer_name' => $customerName,
             ];
-            Mail::send('emails.sale-customer', $customerDetails, function ($message) use ($customerDetails, $customerEmail) {
+            $mailer->send('emails.sale-customer', $customerDetails, function ($message) use ($customerDetails, $customerEmail) {
                 $message->to($customerEmail)
                     ->subject('Confirmación de tu pedido – ' . $customerDetails['store_name']);
             });

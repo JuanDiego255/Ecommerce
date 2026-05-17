@@ -33,6 +33,7 @@ class ClientController extends Controller
             'auto_book_frequency'  => 'nullable|in:weekly,biweekly',
             'cadence_days'         => 'nullable|integer|min:1|max:60',
             'auto_book_lookahead_days' => 'nullable|integer|min:7|max:60',
+            'auto_book_price'          => 'nullable|integer|min:0',
             'preferred_barbero_id' => 'nullable|exists:barberos,id',
             'preferred_days'       => 'nullable|array',
             'preferred_days.*'     => 'integer|min:0|max:6',

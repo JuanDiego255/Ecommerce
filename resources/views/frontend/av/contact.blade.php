@@ -1370,6 +1370,7 @@
                         <h4>¡Déjanos un mensaje!</h4>
                         <form action="{{ url('send-email/blog') }}" method="POST" enctype="multipart/form-data">
                             @csrf
+                            <x-bot-protection />
                             <div class="row">
                                 <div class="col-12">
                                     <div class="form-group">

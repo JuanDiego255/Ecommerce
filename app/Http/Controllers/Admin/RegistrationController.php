@@ -45,25 +45,27 @@ class RegistrationController extends Controller
         } else {
             return back()->with('success', 'Estado actualizado.');
         }
+        $mailer      = app(\App\Services\TenantMailService::class)->getMailer();
+        $fromAddress = config('mail.from.address');
+        $fromName    = config('mail.from.name', 'Info ' . $tenantinfo->title);
+
         if ($request->input('estado') === "approved") {
-            // Si prefieres encolar, puedes usar un Mailable. Como pediste Mail::send, lo dejo así:
-            Mail::send(
+            $mailer->send(
                 ['html' => 'emails.inscriptors.approved'],
                 $viewData,
-                function ($m) use ($email, $tenantinfo) {
+                function ($m) use ($email, $fromAddress, $fromName) {
                     $m->to($email)
-                        ->from(env('MAIL_FROM_ADDRESS'), 'Info ' . $tenantinfo->title) // 👈 aquí cambias el nombre visible
+                        ->from($fromAddress, $fromName)
                         ->subject('📅 Inscripción aprobada');
                 }
             );
         } else if ($request->input('estado') === "rejected") {
-            // Si prefieres encolar, puedes usar un Mailable. Como pediste Mail::send, lo dejo así:
-            Mail::send(
+            $mailer->send(
                 ['html' => 'emails.inscriptors.cancel'],
                 $viewData,
-                function ($m) use ($email, $tenantinfo) {
+                function ($m) use ($email, $fromAddress, $fromName) {
                     $m->to($email)
-                        ->from(env('MAIL_FROM_ADDRESS'), 'Info ' . $tenantinfo->title) // 👈 aquí cambias el nombre visible
+                        ->from($fromAddress, $fromName)
                         ->subject('📅 Inscripción cancelada');
                 }
             );

@@ -84,6 +84,7 @@
                         enctype="multipart/form-data">
                         <h2>¿Tienes alguna duda?, ¡contáctanos!</h2>
                         @csrf
+                        <x-bot-protection />
                         <div class="form-group">
                             <label for="" class="label">Nombre</label>
                             <input type="text" class="form-control" name="name" required
