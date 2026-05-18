@@ -596,8 +596,8 @@ class BuyController extends Controller
                 'clothing.status as status', 'clothing.price as price_cloth',
                 'carts.quantity as quantity', 'carts.id as cart_id',
                 'carts.custom_price as custom_price',
-                DB::raw('COALESCE(NULLIF(variant_combinations.price, 0), clothing.price) as price'),
-                DB::raw('COALESCE(variant_combinations.stock, clothing.stock) as stock'),
+                DB::raw('CASE WHEN variant_combinations.override_base = 0 AND variant_combinations.price = 0 THEN clothing.price ELSE variant_combinations.price END as price'),
+                DB::raw('CASE WHEN variant_combinations.override_base = 0 AND variant_combinations.stock = 0 THEN clothing.stock ELSE COALESCE(variant_combinations.stock, clothing.stock) END as stock'),
                 DB::raw('(SELECT GROUP_CONCAT(CONCAT(a.name, ": ", av.value) SEPARATOR ", ") FROM attribute_value_cars avc JOIN attributes a ON avc.attr_id = a.id JOIN attribute_values av ON avc.value_attr = av.id WHERE avc.cart_id = carts.id) as attributes_values'),
                 DB::raw('IFNULL(product_images.image, "") as image')
             )

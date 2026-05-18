@@ -487,15 +487,6 @@ class ClothingCategoryController extends Controller
             if (isset($tenantinfo->manage_size) && $tenantinfo->manage_size == 1) {
                 $combos = $request->input('combos', []);
                 if (!empty($combos)) {
-                    // Delete combinations removed by the user
-                    $submittedIds = collect($combos)
-                        ->pluck('combination_id')
-                        ->filter(fn($v) => $v !== '' && $v !== null)
-                        ->map('intval')
-                        ->toArray();
-                    VariantCombination::where('clothing_id', $id)
-                        ->when(!empty($submittedIds), fn($q) => $q->whereNotIn('id', $submittedIds))
-                        ->delete();
                     $this->processCombos($id, $combos, $request->manage_stock);
                 } else {
                     // Fall back to legacy precios_attr[] format
@@ -791,7 +782,7 @@ class ClothingCategoryController extends Controller
             ->get();
 
         if ($combinations->isNotEmpty()) {
-            $variants = $combinations->map(function ($combo) {
+            $variants = $combinations->map(function ($combo) use ($clothing) {
                 $label = $combo->values->map(function ($v) {
                     return optional($v->attribute)->name . ': ' . optional($v->attributeValue)->value;
                 })->filter()->join(' / ');
@@ -803,8 +794,10 @@ class ClothingCategoryController extends Controller
                     'attr'          => $combo->values->count() === 1 ? optional($singleVal->attribute)->name : '',
                     'val'           => $combo->values->count() === 1 ? optional($singleVal->attributeValue)->value : '',
                     'label'         => $label,
-                    'stock'         => (int) $combo->stock,
-                    'price'         => (int) $combo->price,
+                    'stock'         => ($combo->override_base == 0 && $combo->stock == 0 && $clothing)
+                                           ? (int) $clothing->stock : (int) $combo->stock,
+                    'price'         => ($combo->override_base == 0 && $combo->price == 0 && $clothing)
+                                           ? (int) $clothing->price : (int) $combo->price,
                     'override_base' => (int) $combo->override_base,
                 ];
             });
@@ -891,23 +884,32 @@ class ClothingCategoryController extends Controller
 
     protected function processCombos($clothingId, array $combos, $manage_stock)
     {
+        $existing = VariantCombination::where('clothing_id', $clothingId)->with('values')->get();
+        $keptIds  = [];
+
         foreach ($combos as $combo) {
-            $valueIds      = array_map('intval', $combo['values'] ?? []);
+            $valueIds = array_values(array_unique(array_map('intval', $combo['values'] ?? [])));
             if (empty($valueIds)) continue;
-            $price         = (float) ($combo['price']          ?? 0);
-            $stockVal      = (int)   ($combo['stock']          ?? 0);
-            $combinationId = isset($combo['combination_id']) && $combo['combination_id'] !== ''
-                ? (int) $combo['combination_id'] : null;
+            sort($valueIds);
+
+            $price          = (float) ($combo['price']  ?? 0);
+            $stockVal       = (int)   ($combo['stock']  ?? 0);
             $overrideBase   = !empty($combo['override_base']) ? 1 : 0;
             $effectiveStock = $manage_stock == 1 ? $stockVal : -1;
 
-            if ($combinationId) {
-                VariantCombination::where('id', $combinationId)->update([
+            $found = $existing->first(function ($c) use ($valueIds) {
+                $ids = $c->values->pluck('value_attr')->map('intval')->sort()->values()->toArray();
+                return $ids === $valueIds;
+            });
+
+            if ($found) {
+                $found->update([
                     'price'         => $price,
                     'stock'         => $effectiveStock,
                     'manage_stock'  => $manage_stock,
                     'override_base' => $overrideBase,
                 ]);
+                $keptIds[] = $found->id;
             } else {
                 $combination                = new VariantCombination();
                 $combination->clothing_id   = $clothingId;
@@ -926,7 +928,14 @@ class ClothingCategoryController extends Controller
                     $cv->value_attr     = $vid;
                     $cv->save();
                 }
+                $keptIds[] = $combination->id;
             }
+        }
+
+        if (!empty($keptIds)) {
+            VariantCombination::where('clothing_id', $clothingId)
+                ->whereNotIn('id', $keptIds)
+                ->delete();
         }
     }
 

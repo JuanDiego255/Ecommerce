@@ -12,8 +12,10 @@
         ? $combinations->map(fn($c) => [
             'combination_id' => $c->id,
             'value_ids'      => $c->values->pluck('value_attr')->values(),
-            'price'          => $c->price,
-            'stock'          => $c->stock,
+            'price'          => ($c->override_base == 0 && $c->price == 0 && isset($clothing))
+                                    ? (int) $clothing->price : (int) $c->price,
+            'stock'          => ($c->override_base == 0 && $c->stock == 0 && isset($clothing))
+                                    ? (int) $clothing->stock : (int) $c->stock,
             'override_base'  => (int) $c->override_base,
         ])->values()
         : collect([]);
