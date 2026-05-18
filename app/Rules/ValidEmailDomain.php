@@ -30,13 +30,11 @@ class ValidEmailDomain implements Rule
             return false;
         }
 
-        // ── 2. Verificación DNS: registros MX ────────────────────────────────
+        // ── 2. Verificación DNS: solo registros MX ───────────────────────────
+        // No usamos fallback de registro A ni gethostbyname() porque el hosting
+        // hace DNS wildcarding: resuelve cualquier dominio a una IP propia,
+        // lo que haría pasar dominios inexistentes.
         if ($this->hasMx($domain)) {
-            return true;
-        }
-
-        // ── 3. Fallback DNS: registro A ──────────────────────────────────────
-        if ($this->hasA($domain)) {
             return true;
         }
 
@@ -54,31 +52,11 @@ class ValidEmailDomain implements Rule
     private function hasMx(string $domain): bool
     {
         try {
-            // dns_get_record es más fiable que checkdnsrr en hosting compartido
             $records = @dns_get_record($domain, DNS_MX);
             if (is_array($records) && count($records) > 0) {
                 return true;
             }
-            // Segundo intento con checkdnsrr
             return (bool) @checkdnsrr($domain, 'MX');
-        } catch (\Throwable $e) {
-            return false;
-        }
-    }
-
-    private function hasA(string $domain): bool
-    {
-        try {
-            $records = @dns_get_record($domain, DNS_A);
-            if (is_array($records) && count($records) > 0) {
-                return true;
-            }
-            if (@checkdnsrr($domain, 'A')) {
-                return true;
-            }
-            // Último recurso: resolución de hostname
-            $resolved = gethostbyname($domain);
-            return $resolved !== $domain;
         } catch (\Throwable $e) {
             return false;
         }
