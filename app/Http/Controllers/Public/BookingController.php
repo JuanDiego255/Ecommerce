@@ -207,7 +207,7 @@ class BookingController extends Controller
         $data = $request->validate([
             'barbero_id' => ['required', 'integer', 'exists:barberos,id'],
             'cliente_nombre' => ['required', 'string', 'max:120'],
-            'cliente_email' => ['required', 'email', 'max:120'],
+            'cliente_email' => ['required', 'email:rfc,dns', 'max:120'],
             'cliente_telefono' => ['nullable', 'string', 'max:50'],
             'servicios' => ['required', 'array', 'min:1'],
             'servicios.*' => ['integer', 'exists:servicios,id'],
