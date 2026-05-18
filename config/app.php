@@ -123,6 +123,11 @@ return [
 
     'cipher' => 'AES-256-CBC',
 
+    // Clave dedicada para cifrar contraseñas SMTP de tenants.
+    // Generá una con: php -r "echo 'base64:'.base64_encode(random_bytes(32)).PHP_EOL;"
+    // Esta clave NUNCA debe rotarse; si cambia, los passwords SMTP quedan ilegibles.
+    'email_encryption_key' => env('EMAIL_ENCRYPTION_KEY'),
+
     /*
     |--------------------------------------------------------------------------
     | Autoloaded Service Providers
