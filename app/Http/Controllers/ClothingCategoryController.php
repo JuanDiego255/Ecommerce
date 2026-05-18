@@ -884,17 +884,26 @@ class ClothingCategoryController extends Controller
 
     protected function processCombos($clothingId, array $combos, $manage_stock)
     {
-        $existing = VariantCombination::where('clothing_id', $clothingId)->with('values')->get();
-        $keptIds  = [];
+        $existing  = VariantCombination::where('clothing_id', $clothingId)->with('values')->get();
+        $keptIds   = [];
+        $base      = ClothingCategory::find($clothingId);
+        $basePrice = $base ? (float) $base->price : 0;
+        $baseStock = $base ? (int)   $base->stock : 0;
 
         foreach ($combos as $combo) {
             $valueIds = array_values(array_unique(array_map('intval', $combo['values'] ?? [])));
             if (empty($valueIds)) continue;
             sort($valueIds);
 
-            $price          = (float) ($combo['price']  ?? 0);
-            $stockVal       = (int)   ($combo['stock']  ?? 0);
-            $overrideBase   = !empty($combo['override_base']) ? 1 : 0;
+            $price        = (float) ($combo['price'] ?? 0);
+            $stockVal     = (int)   ($combo['stock'] ?? 0);
+            $overrideBase = !empty($combo['override_base']) ? 1 : 0;
+
+            if (!$overrideBase) {
+                if ($price    == 0) $price    = $basePrice;
+                if ($stockVal == 0) $stockVal = $baseStock;
+            }
+
             $effectiveStock = $manage_stock == 1 ? $stockVal : -1;
 
             $found = $existing->first(function ($c) use ($valueIds) {
