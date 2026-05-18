@@ -308,14 +308,21 @@
                                 <p class="step-hint">Completa tus datos para confirmar la reserva.</p>
                                 <div class="form-group mb-3">
                                     <input type="text" class="form-control" name="cliente_nombre"
+                                           value="{{ old('cliente_nombre') }}"
                                            placeholder="Tu nombre completo" required>
                                 </div>
                                 <div class="form-group mb-3">
-                                    <input type="email" class="form-control" name="cliente_email"
+                                    <input type="email" class="form-control @error('cliente_email') is-invalid @enderror"
+                                           name="cliente_email"
+                                           value="{{ old('cliente_email') }}"
                                            placeholder="Tu correo electrónico" required>
+                                    @error('cliente_email')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                                 <div class="form-group mb-0">
                                     <input type="text" class="form-control" name="cliente_telefono"
+                                           value="{{ old('cliente_telefono') }}"
                                            placeholder="Tu teléfono (opcional)">
                                 </div>
                             </div>
@@ -346,14 +353,21 @@
                                 <p class="step-hint">Completa tus datos para confirmar la reserva.</p>
                                 <div class="form-group mb-3">
                                     <input type="text" class="form-control" name="cliente_nombre"
+                                           value="{{ old('cliente_nombre') }}"
                                            placeholder="Tu nombre completo" required>
                                 </div>
                                 <div class="form-group mb-3">
-                                    <input type="email" class="form-control" name="cliente_email"
+                                    <input type="email" class="form-control @error('cliente_email') is-invalid @enderror"
+                                           name="cliente_email"
+                                           value="{{ old('cliente_email') }}"
                                            placeholder="Tu correo electrónico" required>
+                                    @error('cliente_email')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                                 <div class="form-group mb-0">
                                     <input type="text" class="form-control" name="cliente_telefono"
+                                           value="{{ old('cliente_telefono') }}"
                                            placeholder="Tu teléfono (opcional)">
                                 </div>
                             </div>

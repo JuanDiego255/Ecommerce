@@ -13,6 +13,7 @@ use App\Models\Especialista;
 use App\Models\MetaTags;
 use App\Models\Servicio;
 use App\Models\TenantInfo;
+use App\Rules\ValidEmailDomain;
 use App\Services\PricingService;
 use App\Services\AvailabilityService;
 use App\Services\TenantMailService;
@@ -207,7 +208,7 @@ class BookingController extends Controller
         $data = $request->validate([
             'barbero_id' => ['required', 'integer', 'exists:barberos,id'],
             'cliente_nombre' => ['required', 'string', 'max:120'],
-            'cliente_email' => ['required', 'email:rfc,dns', 'max:120'],
+            'cliente_email' => ['required', 'email', 'max:120', new ValidEmailDomain()],
             'cliente_telefono' => ['nullable', 'string', 'max:50'],
             'servicios' => ['required', 'array', 'min:1'],
             'servicios.*' => ['integer', 'exists:servicios,id'],
