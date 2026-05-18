@@ -21,6 +21,13 @@
     <div class="alert alert-success">{{ session('ok') }}</div>
 @endif
 
+@if(!empty($passwordCorrupted))
+    <div class="alert alert-warning">
+        <strong>La contraseña SMTP guardada no se puede descifrar</strong> (la clave de la aplicación cambió desde la última configuración).
+        Ingresá la contraseña nuevamente y guardá para restaurar el envío de correos.
+    </div>
+@endif
+
 <div class="card">
     <div class="card-body">
         <form action="{{ route('settings.email.update') }}" method="POST">

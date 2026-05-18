@@ -58,7 +58,7 @@ class AppointmentApproved extends Mailable
         // 🔹 1) Obtener config de correo del tenant
         $emailConfig = CompanyEmailSetting::where('tenant_id', $tenantId)->first();
 
-        if ($emailConfig) {
+        if ($emailConfig && $emailConfig->password !== null) {
             // 🔹 2) Configurar mailer dinámico para ESTE envío
             config([
                 'mail.mailers.dynamic' => [

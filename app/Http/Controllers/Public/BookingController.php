@@ -404,17 +404,18 @@ class BookingController extends Controller
                             ->subject('📅 Nueva cita agendada — #' . $cita->id);
                     }
                 ); */
-                $mailer->send(
-                    ['html' => 'emails.citas.new_for_barber'],
-                    $viewData,
-                    function ($m) use ($barberoEmail, $cita) {
-                        $m->to($barberoEmail)
-                            // from ya viene por config('mail.from.*'),
-                            // solo lo pones aquí si quieres sobreescribirlo:
-                            // ->from($settings->from_address, $settings->from_name)
-                            ->subject('📅 Nueva cita agendada — #' . $cita->id);
-                    }
-                );
+                try {
+                    $mailer->send(
+                        ['html' => 'emails.citas.new_for_barber'],
+                        $viewData,
+                        function ($m) use ($barberoEmail, $cita) {
+                            $m->to($barberoEmail)
+                                ->subject('📅 Nueva cita agendada — #' . $cita->id);
+                        }
+                    );
+                } catch (\Throwable $e) {
+                    \Illuminate\Support\Facades\Log::warning('Email barbero falló cita #' . $cita->id . ': ' . $e->getMessage());
+                }
 
                 //Enviar correo al cliente para que pueda eliminar, cancelar la cita
                 $tenantId = TenantInfo::first()->tenant;
@@ -462,19 +463,23 @@ class BookingController extends Controller
                 ];
 
                 // Enviar con tu estilo Mail::send
-                $mailer->send(
-                    [
-                        'html' => 'emails.auto_proposed',
-                        'text' => 'emails.auto_proposed_text'
-                    ],
-                    $viewData,
-                    function ($m) use ($cita, $barbero, $startsAt) {
-                        $m->to($cita->cliente_email)
-                            ->subject(
-                                'Cita confirmada con ' . $barbero->nombre . ' — ' . $startsAt->format('d/m/Y')
-                            );
-                    }
-                );
+                try {
+                    $mailer->send(
+                        [
+                            'html' => 'emails.auto_proposed',
+                            'text' => 'emails.auto_proposed_text'
+                        ],
+                        $viewData,
+                        function ($m) use ($cita, $barbero, $startsAt) {
+                            $m->to($cita->cliente_email)
+                                ->subject(
+                                    'Cita confirmada con ' . $barbero->nombre . ' — ' . $startsAt->format('d/m/Y')
+                                );
+                        }
+                    );
+                } catch (\Throwable $e) {
+                    \Illuminate\Support\Facades\Log::warning('Email cliente falló cita #' . $cita->id . ': ' . $e->getMessage());
+                }
             }
         });
 

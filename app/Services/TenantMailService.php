@@ -23,7 +23,7 @@ class TenantMailService
             ? CompanyEmailSetting::where('tenant_id', $tenantId)->first()
             : null;
 
-        if ($settings) {
+        if ($settings && $settings->password !== null) {
             config([
                 'mail.mailers.dynamic' => [
                     'transport'  => $settings->mailer ?? 'smtp',
@@ -60,23 +60,26 @@ class TenantMailService
      */
     public function forTenant(string $tenantId)
     {
-        $settings = CompanyEmailSetting::where('tenant_id', $tenantId)->firstOrFail();
+        $settings = CompanyEmailSetting::where('tenant_id', $tenantId)->first();
 
-        config([
-            'mail.mailers.dynamic' => [
-                'transport'  => $settings->mailer ?? 'smtp',
-                'host'       => $settings->host,
-                'port'       => $settings->port,
-                'encryption' => $settings->encryption,
-                'username'   => $settings->username,
-                'password'   => $settings->password,
-                'timeout'    => null,
-                'auth_mode'  => null,
-            ],
-            'mail.from.address' => $settings->from_address,
-            'mail.from.name'    => $settings->from_name ?? config('app.name'),
-        ]);
+        if ($settings && $settings->password !== null) {
+            config([
+                'mail.mailers.dynamic' => [
+                    'transport'  => $settings->mailer ?? 'smtp',
+                    'host'       => $settings->host,
+                    'port'       => $settings->port,
+                    'encryption' => $settings->encryption,
+                    'username'   => $settings->username,
+                    'password'   => $settings->password,
+                    'timeout'    => null,
+                    'auth_mode'  => null,
+                ],
+                'mail.from.address' => $settings->from_address,
+                'mail.from.name'    => $settings->from_name ?? config('app.name'),
+            ]);
+            return Mail::mailer('dynamic');
+        }
 
-        return Mail::mailer('dynamic');
+        return Mail::mailer(config('mail.default', 'smtp'));
     }
 }

@@ -12,9 +12,12 @@ class EmailSettingController extends Controller
 {
     public function index()
     {
-        $tenantId = TenantInfo::first()->tenant;
+        $tenantId      = TenantInfo::first()->tenant;
         $setting_email = CompanyEmailSetting::where('tenant_id', $tenantId)->first();
-        return view('admin.settings.email', compact('setting_email'));
+        $passwordCorrupted = $setting_email
+            && $setting_email->getRawOriginal('password')
+            && $setting_email->password === null;
+        return view('admin.settings.email', compact('setting_email', 'passwordCorrupted'));
     }
 
     public function update(Request $request)

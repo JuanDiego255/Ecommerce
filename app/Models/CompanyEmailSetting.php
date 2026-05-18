@@ -4,8 +4,8 @@
 
 namespace App\Models;
 
+use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Hash;
 
 class CompanyEmailSetting extends Model
 {
@@ -21,7 +21,6 @@ class CompanyEmailSetting extends Model
         'from_name',
     ];
 
-    // Si quieres encriptar password automáticamente:
     public function setPasswordAttribute($value)
     {
         $this->attributes['password'] = encrypt($value);
@@ -29,6 +28,11 @@ class CompanyEmailSetting extends Model
 
     public function getPasswordAttribute($value)
     {
-        return decrypt($value);
+        if (!$value) return null;
+        try {
+            return decrypt($value);
+        } catch (DecryptException $e) {
+            return null;
+        }
     }
 }

@@ -21,7 +21,7 @@ class AppointmentCancelled extends Mailable
         // 2) Obtener configuración SMTP del tenant
         $emailConfig = \App\Models\CompanyEmailSetting::where('tenant_id', $tenantId)->first();
 
-        if ($emailConfig) {
+        if ($emailConfig && $emailConfig->password !== null) {
 
             // 3) Configurar mailer dinámico
             config([

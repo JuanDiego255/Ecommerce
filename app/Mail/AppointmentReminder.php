@@ -19,7 +19,7 @@ class AppointmentReminder extends Mailable
         $tenantId    = tenant('id') ?? \App\Models\TenantInfo::first()->tenant;
         $emailConfig = \App\Models\CompanyEmailSetting::where('tenant_id', $tenantId)->first();
 
-        if ($emailConfig) {
+        if ($emailConfig && $emailConfig->password !== null) {
             config([
                 'mail.mailers.dynamic' => [
                     'transport'  => $emailConfig->mailer ?? 'smtp',
